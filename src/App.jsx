@@ -27,18 +27,9 @@ export default function App() {
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="w-full flex items-start gap-6">
+          <div className="w-full flex gap-6 mb-6 items-center">
             <div className="flex-1">
               <div className='w-full'>
-                {/* Badge de Status / Categoria */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-800/60 border border-blue-600 text-blue-100 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-4 shadow-sm backdrop-blur-sm">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
-                  </span>
-                  Infraestrutura
-                </div>
-
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
                   Painel Conecta Bahia
                 </h1>
@@ -49,16 +40,14 @@ export default function App() {
               </div>
             </div>
             <img
-              src="/img/LogoConecta.svg"
+              src="/img/LogoConecta.png"
               alt="Logo Conecta"
               className="ml-auto"
+              style={{ maxWidth: '400px' }}
             />
           </div>
         </div>
       </header>
-
-      {/* 3. CONTEÚDO PRINCIPAL - Overlapping Dashboard */}
-      {/* Mobile: Margem negativa menor e padding zero nas laterais. Desktop: Margem negativa maior. */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 -mt-8 md:-mt-16 relative z-20 mb-12">
         {/* Mobile: Edge-to-edge (encosta na tela, sem borda redonda). Desktop: Arredondado com sombra forte. */}
         <div className="bg-white sm:rounded-2xl shadow-2xl border-t sm:border border-slate-200 overflow-hidden min-h-[500px]">
