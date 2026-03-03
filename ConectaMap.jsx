@@ -107,6 +107,16 @@ const ConectaGovDashboard = () => {
   const getMunicipioInfo = (nomeTopo) => municipioMap[normalize(nomeTopo)];
   const getMunicipioColor = (nomeTopo) => getMunicipioInfo(nomeTopo)?.color || '#94A3B8';
 
+  // calcula o conjunto de territórios que têm pelo menos um município alcançado
+  const coveredTerritories = useMemo(() => {
+    const set = new Set();
+    conectaList.forEach((m) => {
+      const info = getMunicipioInfo(m.nome);
+      if (info && info.territorio) set.add(info.territorio);
+    });
+    return Array.from(set).sort();
+  }, [conectaList, municipioMap]);
+
   const loading = mapFeatures.length === 0 && !mapError;
 
   useEffect(() => {
@@ -224,6 +234,19 @@ const ConectaGovDashboard = () => {
             </div>
           </div>
 
+          {/* novos dados de território */}
+          <div className="flex items-center justify-between bg-green-50 border border-green-100 rounded-md p-3 mb-4">
+            <div>
+              <span className="block text-xl md:text-2xl font-bold text-green-800 leading-none">{coveredTerritories.length}</span>
+              <span className="text-[10px] uppercase font-bold text-green-600 mt-1 block">Territórios Atendidos</span>
+            </div>
+            <div className="h-8 w-8 md:h-10 md:w-10 bg-white rounded-full flex items-center justify-center shadow-sm text-green-600">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18" /></svg>
+            </div>
+          </div>
+
+
+
           <div className="relative">
             <input
               type="text"
@@ -312,8 +335,20 @@ const ConectaGovDashboard = () => {
           )}
 
           {mapFeatures.length > 0 && (
-            <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-full transform-gpu">
-              <g transform={`translate(${(1 - zoom) * SVG_W / 2 + pan.x} ${(1 - zoom) * SVG_H / 2 + pan.y}) scale(${zoom})`}>
+            <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-full">
+              {/*
+                Use CSS transform on the <g> instead of the SVG attribute so that
+                transitions can be applied. Tailwind classes below handle the
+                easing and duration; inline style adds the actual transform
+                computed from zoom/pan state (with "px" units to make the
+                browser treat it like a CSS transform).
+              */}
+              <g
+                className="transform-gpu transition-transform duration-500 ease-out"
+                style={{
+                  transform: `translate(${(1 - zoom) * SVG_W / 2 + pan.x}px, ${(1 - zoom) * SVG_H / 2 + pan.y}px) scale(${zoom})`,
+                }}
+              >
                 
                 {/* 1. Camada de Municípios */}
                 {mapFeatures.map(({ nome, geocodigo, d }) => {
