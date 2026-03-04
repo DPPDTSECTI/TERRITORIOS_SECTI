@@ -343,41 +343,53 @@ export async function fetchConectaData() {
   // 2. Tentar baixar planilha do SharePoint
   try {
     console.log('[Conecta] Baixando planilha do SharePoint...');
-    const res = await fetch(SHAREPOINT_PROXY_URL, { timeout: 15000 });
+    const res = await fetch(SHAREPOINT_PROXY_URL, { timeout: 30000 });
     
     console.log(`[Conecta] Response status: ${res.status}, Content-Type: ${res.headers.get('content-type')}`);
     
     if (res.ok) {
       const contentType = res.headers.get('content-type') || '';
       
-      // Verificar se não é HTML de erro
+      // Versão nova: JSON já parseado da Netlify Function
+      if (contentType.includes('application/json')) {
+        const data = await res.json();
+        
+        // Verificar se é um erro
+        if (data.error) {
+          console.error('[Conecta] Erro do servidor:', data.error);
+          throw new Error(data.error);
+        }
+        
+        // É o JSON já parseado!
+        const count = Object.keys(data).length;
+        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (JSON parseado): ${count} municípios.`);
+        return { data, source: 'sharepoint' };
+      }
+      
+      // Versão antiga (dev mode): arquivo Excel bruto
+      if (contentType.includes('spreadsheet') || contentType.includes('excel') || contentType.includes('octet-stream')) {
+        const buffer = await res.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        
+        if (bytes.length < 2 || bytes[0] !== 0x50 || bytes[1] !== 0x4B) {
+          console.error('[Conecta] Arquivo não é XLSX válido');
+          throw new Error('Arquivo não é Excel válido');
+        }
+        
+        const data = parseSpreadsheet(buffer);
+        const count = Object.keys(data).length;
+        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (Excel parseado): ${count} municípios.`);
+        return { data, source: 'sharepoint' };
+      }
+      
+      // HTML de erro
       if (contentType.includes('text/html')) {
         const html = await res.text();
         console.error('[Conecta] SharePoint retornou HTML:', html.substring(0, 500));
         throw new Error('SharePoint retornou HTML em vez de arquivo Excel');
       }
       
-      // Verificar se é JSON de erro da Netlify Function
-      if (contentType.includes('application/json')) {
-        const json = await res.json();
-        console.error('[Conecta] SharePoint retornou JSON de erro:', json);
-        throw new Error(json.error || 'Erro desconhecido no SharePoint');
-      }
-      
-      // Deve ser o arquivo Excel
-      const buffer = await res.arrayBuffer();
-      
-      // Validar se é realmente um arquivo Excel (começa com PK para ZIP/XLSX)
-      const bytes = new Uint8Array(buffer);
-      if (bytes.length < 2 || bytes[0] !== 0x50 || bytes[1] !== 0x4B) {
-        console.error('[Conecta] Arquivo não é XLSX válido. Primeiros bytes:', Array.from(bytes.slice(0, 20)));
-        throw new Error('Arquivo recebido não é um Excel válido');
-      }
-      
-      const data = parseSpreadsheet(buffer);
-      const count = Object.keys(data).length;
-      console.log(`[Conecta] ✓ Dados da planilha do SharePoint: ${count} municípios.`);
-      return { data, source: 'sharepoint' };
+      console.warn(`[Conecta] Content-Type desconhecido: ${contentType}`);
     } else {
       console.warn(`[Conecta] Falha ao baixar do SharePoint (HTTP ${res.status}), tentando fallback.`);
     }

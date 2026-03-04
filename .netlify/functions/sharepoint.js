@@ -1,48 +1,29 @@
 /**
  * Netlify Function: Proxy para download da planilha do SharePoint
- * Suporta redirecionamentos via HTML/JavaScript extraindo URLs
+ * Processa o Excel serverless e retorna JSON (evita limite de 6MB)
  */
+const { parseSpreadsheet } = require('./sharepoint-processor');
 
 /**
  * Extrai URL de redirecionamento de uma página HTML
  */
 function extractRedirectUrl(html) {
-  // Tentar meta refresh
-  const metaRefresh = html.match(/<meta[^>]*http-equiv=["']refresh["'][^>]*content=["'][^;"]*;\s*url=([^"']+)["']/i);
-  if (metaRefresh && metaRefresh[1]) {
-    console.log('[Netlify] Encontrada URL em meta refresh');
-    return metaRefresh[1];
-  }
+  const patterns = [
+    /<meta[^>]*http-equiv=["']refresh["'][^>]*content=["'][^;"]*;\s*url=([^"']+)["']/i,
+    /window\.location\s*=\s*["']([^"']+)["']/i,
+    /window\.location\.href\s*=\s*["']([^"']+)["']/i,
+    /location\.replace\s*\(\s*["']([^"']+)["']\s*\)/i,
+    /(https:\/\/[^"'\s<>]+sharepoint[^"'\s<>]*download[^"'\s<>]*)/i
+  ];
 
-  // Tentar window.location = "url"
-  const windowLocation = html.match(/window\.location\s*=\s*["']([^"']+)["']/i);
-  if (windowLocation && windowLocation[1]) {
-    console.log('[Netlify] Encontrada URL em window.location');
-    return windowLocation[1];
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match && match[1]) {
+      console.log('[Netlify] URL encontrada via regex');
+      return match[1];
+    }
   }
-
-  // Tentar window.location.href = "url"
-  const locationHref = html.match(/window\.location\.href\s*=\s*["']([^"']+)["']/i);
-  if (locationHref && locationHref[1]) {
-    console.log('[Netlify] Encontrada URL em window.location.href');
-    return locationHref[1];
-  }
-
-  // Tentar location.replace("url")
-  const locationReplace = html.match(/location\.replace\s*\(\s*["']([^"']+)["']\s*\)/i);
-  if (locationReplace && locationReplace[1]) {
-    console.log('[Netlify] Encontrada URL em location.replace');
-    return locationReplace[1];
-  }
-
-  // Tentar qualquer URL do SharePoint no HTML
-  const sharepointUrl = html.match(/(https:\/\/[^"'\s<>]+sharepoint[^"'\s<>]*download[^"'\s<>]*)/i);
-  if (sharepointUrl && sharepointUrl[1]) {
-    console.log('[Netlify] Encontrada URL do SharePoint no HTML');
-    return sharepointUrl[1];
-  }
-
-  console.log('[Netlify] Nenhuma URL de redirect encontrada no HTML');
+  
   return null;
 }
 
@@ -54,7 +35,7 @@ async function httpsGet(url, cookies = '') {
   
   return new Promise((resolve, reject) => {
     const headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*',
     };
 
@@ -62,15 +43,9 @@ async function httpsGet(url, cookies = '') {
       headers['Cookie'] = cookies;
     }
 
-    console.log(`[Netlify] GET ${url.substring(0, 100)}...`);
-
     https.default.get(url, { headers }, (response) => {
       const chunks = [];
-      
-      response.on('data', (chunk) => {
-        chunks.push(chunk);
-      });
-
+      response.on('data', (chunk) => chunks.push(chunk));
       response.on('end', () => {
         resolve({
           status: response.statusCode,
@@ -78,7 +53,6 @@ async function httpsGet(url, cookies = '') {
           data: Buffer.concat(chunks),
         });
       });
-
       response.on('error', reject);
     }).on('error', reject);
   });
@@ -87,14 +61,13 @@ async function httpsGet(url, cookies = '') {
 exports.handler = async (event, context) => {
   const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
 
-  console.log('[Netlify] === INICIANDO PROXY SHAREPOINT ===');
-  console.log('[Netlify] URL:', downloadUrl);
+  console.log('[Netlify] === PROXY SHAREPOINT (PARSE NO SERVIDOR) ===');
 
   try {
     let url = downloadUrl;
     let cookies = '';
     let attempts = 0;
-    const maxAttempts = 10; // Aumentar para suportar redirects HTML
+    const maxAttempts = 10;
 
     while (attempts < maxAttempts) {
       attempts++;
@@ -103,9 +76,7 @@ exports.handler = async (event, context) => {
       const response = await httpsGet(url, cookies);
       const contentType = response.headers['content-type'] || '';
 
-      console.log(`[Netlify] Status: ${response.status}`);
-      console.log(`[Netlify] Content-Type: ${contentType.substring(0, 50)}`);
-      console.log(`[Netlify] Data size: ${response.data.length} bytes`);
+      console.log(`[Netlify] Status: ${response.status}, Size: ${response.data.length} bytes`);
 
       // Atualizar cookies
       if (response.headers['set-cookie']) {
@@ -113,7 +84,6 @@ exports.handler = async (event, context) => {
           ? response.headers['set-cookie'] 
           : [response.headers['set-cookie']];
         cookies = setCookies.map(c => c.split(';')[0]).join('; ');
-        console.log(`[Netlify] Cookies recebidos e atualizados`);
       }
 
       // Seguir redirecionamentos HTTP
@@ -121,55 +91,60 @@ exports.handler = async (event, context) => {
         const location = response.headers.location;
         if (location) {
           url = location.startsWith('http') ? location : `https://prodeboffice365-my.sharepoint.com${location}`;
-          console.log(`[Netlify] → HTTP Redirect para: ${url.substring(0, 80)}...`);
+          console.log(`[Netlify] → HTTP Redirect`);
           continue;
-        } else {
-          console.error('[Netlify] Redirect sem Location header');
-          break;
         }
       }
 
-      // Status 200 - pode ser arquivo ou HTML de redirect
+      // Status 200
       if (response.status === 200) {
-        const isExcel = contentType.includes('spreadsheet') || 
-                       contentType.includes('excel') || 
-                       contentType.includes('octet-stream');
-        
-        if (isExcel) {
-          // Validar se realmente é um arquivo Excel (começa com PK para ZIP/XLSX)
-          if (response.data.length >= 2 && response.data[0] === 0x50 && response.data[1] === 0x4B) {
-            console.log(`[Netlify] ✓ Arquivo Excel válido recebido: ${response.data.length} bytes`);
+        // Verificar se é Excel (começa com PK)
+        if (response.data.length >= 2 && response.data[0] === 0x50 && response.data[1] === 0x4B) {
+          console.log(`[Netlify] ✓ Excel recebido: ${response.data.length} bytes`);
+          console.log(`[Netlify] Processando Excel...`);
+          
+          try {
+            const jsonData = parseSpreadsheet(response.data);
+            const jsonString = JSON.stringify(jsonData);
+            const jsonSize = Buffer.byteLength(jsonString);
+            
+            console.log(`[Netlify] ✓ JSON gerado: ${jsonSize} bytes (${Object.keys(jsonData).length} municípios)`);
             
             return {
               statusCode: 200,
               headers: {
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'Cache-Control': 'max-age=3600',
               },
-              body: response.data.toString('base64'),
-              isBase64Encoded: true,
+              body: jsonString,
             };
-          } else {
-            console.warn('[Netlify] Content-Type diz Excel mas dados não começam com PK');
+          } catch (parseError) {
+            console.error('[Netlify] Erro ao parsear Excel:', parseError.message);
+            return {
+              statusCode: 500,
+              headers: { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+              },
+              body: JSON.stringify({
+                error: 'Erro ao processar Excel',
+                details: parseError.message,
+              }),
+            };
           }
         }
         
-        // Tentar extrair URL de redirect do HTML
+        // HTML - tentar extrair redirect
         if (contentType.includes('text/html')) {
           const html = response.data.toString();
           const redirectUrl = extractRedirectUrl(html);
           
           if (redirectUrl) {
             url = redirectUrl.startsWith('http') ? redirectUrl : `https://prodeboffice365-my.sharepoint.com${redirectUrl}`;
-            console.log(`[Netlify] → HTML Redirect extraído: ${url.substring(0, 80)}...`);
+            console.log(`[Netlify] → HTML Redirect extraído`);
             continue;
           } else {
-            // HTML mas sem redirect detectável
-            const preview = html.substring(0, 300);
-            console.error(`[Netlify] ✗ HTML sem redirect detectável`);
-            console.error(`[Netlify] Preview:`, preview);
-            
             return {
               statusCode: 400,
               headers: { 
@@ -177,20 +152,14 @@ exports.handler = async (event, context) => {
                 'Access-Control-Allow-Origin': '*'
               },
               body: JSON.stringify({
-                error: 'HTML sem URL de redirect detectável',
-                contentType: contentType,
-                preview: preview,
-                attempts: attempts,
+                error: 'HTML sem redirect',
+                preview: html.substring(0, 200),
               }),
             };
           }
         }
         
-        // Outro tipo de conteúdo
-        const preview = response.data.toString().substring(0, 300);
-        console.error(`[Netlify] ✗ Content-Type inesperado: ${contentType}`);
-        console.error(`[Netlify] Preview:`, preview);
-        
+        // Outro conteúdo
         return {
           statusCode: 400,
           headers: { 
@@ -200,14 +169,11 @@ exports.handler = async (event, context) => {
           body: JSON.stringify({
             error: 'Content-Type inválido',
             contentType: contentType,
-            preview: preview,
-            attempts: attempts,
           }),
         };
       }
 
       // Outros status
-      console.error(`[Netlify] Status inesperado: ${response.status}`);
       return {
         statusCode: response.status || 500,
         headers: { 
@@ -216,13 +182,10 @@ exports.handler = async (event, context) => {
         },
         body: JSON.stringify({
           error: `HTTP ${response.status}`,
-          url: url.substring(0, 100),
         }),
       };
     }
 
-    // Max redirects
-    console.error('[Netlify] Máximo de redirecionamentos atingido');
     return {
       statusCode: 500,
       headers: { 
@@ -230,13 +193,11 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        error: 'Máximo de redirecionamentos atingido',
-        attempts: maxAttempts,
+        error: 'Max redirects',
       }),
     };
   } catch (error) {
-    console.error('[Netlify] ✗ ERRO:', error.message);
-    console.error('[Netlify] Stack:', error.stack);
+    console.error('[Netlify] Erro:', error.message);
     
     return {
       statusCode: 502,
@@ -246,8 +207,6 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         error: error.message,
-        type: error.constructor.name,
-        stack: error.stack,
       }),
     };
   }
