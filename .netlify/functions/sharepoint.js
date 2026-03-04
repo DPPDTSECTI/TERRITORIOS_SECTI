@@ -8,22 +8,44 @@ const { parseSpreadsheet } = require('./sharepoint-processor');
  * Extrai URL de redirecionamento de uma página HTML
  */
 function extractRedirectUrl(html) {
+  // Log do HTML para debug
+  console.log('[Netlify] HTML recebido (primeiros 1000 chars):', html.substring(0, 1000));
+  
   const patterns = [
+    // Meta refresh
     /<meta[^>]*http-equiv=["']refresh["'][^>]*content=["'][^;"]*;\s*url=([^"']+)["']/i,
+    // Javascript redirects
     /window\.location\s*=\s*["']([^"']+)["']/i,
     /window\.location\.href\s*=\s*["']([^"']+)["']/i,
     /location\.replace\s*\(\s*["']([^"']+)["']\s*\)/i,
-    /(https:\/\/[^"'\s<>]+sharepoint[^"'\s<>]*download[^"'\s<>]*)/i
+    /document\.location\s*=\s*["']([^"']+)["']/i,
+    /document\.location\.href\s*=\s*["']([^"']+)["']/i,
+    // URLs diretas do SharePoint
+    /(https:\/\/[^"'\s<>]+sharepoint[^"'\s<>]*download[^"'\s<>]*)/i,
+    /(https:\/\/[^"'\s<>]+sharepoint\.com[^"'\s<>]+)/i,
+    // Padrão específico da página de redirect da Microsoft
+    /url=([^"'\s&<>]+)/i,
   ];
 
-  for (const pattern of patterns) {
+  for (let i = 0; i < patterns.length; i++) {
+    const pattern = patterns[i];
     const match = html.match(pattern);
     if (match && match[1]) {
-      console.log('[Netlify] URL encontrada via regex');
-      return match[1];
+      const url = match[1];
+      console.log(`[Netlify] ✓ URL encontrada via regex ${i}: ${url.substring(0, 150)}`);
+      
+      // Decodificar URL se necessário
+      try {
+        const decoded = decodeURIComponent(url);
+        console.log(`[Netlify] URL decodificada: ${decoded.substring(0, 150)}`);
+        return decoded;
+      } catch {
+        return url;
+      }
     }
   }
   
+  console.log('[Netlify] ✗ Nenhum redirect encontrado no HTML');
   return null;
 }
 
@@ -35,18 +57,26 @@ async function httpsGet(url, cookies = '') {
   
   return new Promise((resolve, reject) => {
     const headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream,*/*',
+      'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1',
     };
 
     if (cookies) {
       headers['Cookie'] = cookies;
     }
 
+    console.log(`[Netlify] Requisição: ${url.substring(0, 100)}...`);
+    console.log(`[Netlify] Headers:`, Object.keys(headers).join(', '));
+
     https.default.get(url, { headers }, (response) => {
       const chunks = [];
       response.on('data', (chunk) => chunks.push(chunk));
       response.on('end', () => {
+        console.log(`[Netlify] Resposta recebida: ${response.statusCode}, Content-Type: ${response.headers['content-type']}`);
         resolve({
           status: response.statusCode,
           headers: response.headers,
@@ -142,26 +172,32 @@ exports.handler = async (event, context) => {
           
           if (redirectUrl) {
             url = redirectUrl.startsWith('http') ? redirectUrl : `https://prodeboffice365-my.sharepoint.com${redirectUrl}`;
-            console.log(`[Netlify] → HTML Redirect extraído`);
+            console.log(`[Netlify] → HTML Redirect extraído: ${url.substring(0, 150)}`);
             continue;
           } else {
+            console.error('[Netlify] HTML recebido sem redirect válido');
+            console.error('[Netlify] HTML snippet:', html.substring(0, 500));
+            
             return {
-              statusCode: 400,
+              statusCode: 502,
               headers: { 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
               },
               body: JSON.stringify({
-                error: 'HTML sem redirect',
-                preview: html.substring(0, 200),
+                error: 'SharePoint retornou HTML sem redirect válido',
+                preview: html.substring(0, 300),
+                attempt: attempts,
+                contentType: contentType,
               }),
             };
           }
         }
         
         // Outro conteúdo
+        console.warn(`[Netlify] Content-Type inesperado: ${contentType}`);
         return {
-          statusCode: 400,
+          statusCode: 502,
           headers: { 
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -169,35 +205,43 @@ exports.handler = async (event, context) => {
           body: JSON.stringify({
             error: 'Content-Type inválido',
             contentType: contentType,
+            dataSize: response.data.length,
           }),
         };
       }
 
       // Outros status
+      console.warn(`[Netlify] Status HTTP inesperado: ${response.status}`);
       return {
-        statusCode: response.status || 500,
+        statusCode: 502,
         headers: { 
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
-          error: `HTTP ${response.status}`,
+          error: `SharePoint retornou HTTP ${response.status}`,
+          status: response.status,
         }),
       };
     }
 
+    // Max redirects atingido
+    console.error(`[Netlify] Máximo de redirects (${maxAttempts}) atingido`);
     return {
-      statusCode: 500,
+      statusCode: 502,
       headers: { 
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        error: 'Max redirects',
+        error: 'Máximo de redirects atingido',
+        attempts: maxAttempts,
       }),
     };
   } catch (error) {
+    console.error('[Netlify] !!! ERRO GERAL !!!');
     console.error('[Netlify] Erro:', error.message);
+    console.error('[Netlify] Stack:', error.stack);
     
     return {
       statusCode: 502,
@@ -206,7 +250,8 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        error: error.message,
+        error: 'Erro ao conectar com SharePoint',
+        details: error.message,
       }),
     };
   }

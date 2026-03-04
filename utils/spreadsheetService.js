@@ -16,7 +16,11 @@ import { MUNICIPIOS_BAHIA } from './Municipios.js';
 const CACHE_KEY = 'conecta_spreadsheet_data';
 
 // ─── URL do proxy para a planilha do SharePoint ─────────────────────────────
-const SHAREPOINT_PROXY_URL = '/api/sharepoint';
+// Em desenvolvimento: /api/sharepoint (middleware do Vite)
+// Em produção: /.netlify/functions/sharepoint (função Netlify)
+const SHAREPOINT_PROXY_URL = import.meta.env.DEV 
+  ? '/api/sharepoint' 
+  : '/.netlify/functions/sharepoint';
 
 // ─── Padrões de colunas financeiras (serão excluídas) ───────────────────────
 const FINANCIAL_PATTERNS = [
@@ -342,8 +346,8 @@ export async function fetchConectaData() {
 
   // 2. Tentar baixar planilha do SharePoint
   try {
-    console.log('[Conecta] Baixando planilha do SharePoint...');
-    const res = await fetch(SHAREPOINT_PROXY_URL, { timeout: 30000 });
+    console.log(`[Conecta] Baixando planilha do SharePoint via ${SHAREPOINT_PROXY_URL}...`);
+    const res = await fetch(SHAREPOINT_PROXY_URL);
     
     console.log(`[Conecta] Response status: ${res.status}, Content-Type: ${res.headers.get('content-type')}`);
     
