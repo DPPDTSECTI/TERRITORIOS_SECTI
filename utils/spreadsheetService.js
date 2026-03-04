@@ -344,23 +344,41 @@ export async function fetchConectaData() {
   try {
     console.log('[Conecta] Baixando planilha do SharePoint...');
     const res = await fetch(SHAREPOINT_PROXY_URL);
+    
     if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) {
-        // Decodificar base64 para ArrayBuffer
-        const binaryString = atob(json.data);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
+      const contentType = res.headers.get('content-type') || '';
+      console.log(`[Conecta] Resposta do SharePoint: ${res.status}, Content-Type: ${contentType}`);
+      
+      // Verificar se é JSON (de Netlify Function)
+      if (contentType.includes('application/json')) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          console.log(`[Conecta] Arquivo recebido: ${json.size} bytes`);
+          
+          // Decodificar base64 para ArrayBuffer
+          const binaryString = atob(json.data);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+          
+          const data = parseSpreadsheet(buffer);
+          const count = Object.keys(data).length;
+          console.log(`[Conecta] Dados da planilha do SharePoint: ${count} municípios.`);
+          return { data, source: 'sharepoint' };
+        } else {
+          console.warn('[Conecta] JSON inválido do SharePoint:', json.error || 'sem dados');
         }
-        const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-        
+      } else if (contentType.includes('spreadsheet') || contentType.includes('excel') || contentType.includes('octet-stream')) {
+        // Dev mode: resposta é o arquivo direto
+        const buffer = await res.arrayBuffer();
         const data = parseSpreadsheet(buffer);
         const count = Object.keys(data).length;
         console.log(`[Conecta] Dados da planilha do SharePoint: ${count} municípios.`);
         return { data, source: 'sharepoint' };
       } else {
-        console.warn('[Conecta] Resposta inválida do SharePoint, usando fallback.');
+        console.warn(`[Conecta] Content-Type inválido do SharePoint: ${contentType}`);
       }
     } else {
       console.warn(`[Conecta] Falha ao baixar do SharePoint (HTTP ${res.status}), usando fallback.`);

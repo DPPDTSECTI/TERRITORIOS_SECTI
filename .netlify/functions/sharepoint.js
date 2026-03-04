@@ -7,6 +7,7 @@ exports.handler = async (event, context) => {
   const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
 
   console.log('[Netlify Function] Iniciando proxy do SharePoint...');
+  console.log('[Netlify Function] URL:', downloadUrl);
 
   try {
     const response = await fetch(downloadUrl, {
@@ -19,14 +20,34 @@ exports.handler = async (event, context) => {
       timeout: 30000,
     });
 
-    console.log(`[Netlify Function] Status: ${response.status}, Content-Type: ${response.headers.get('content-type')}`);
+    const contentType = response.headers.get('content-type') || '';
+    console.log(`[Netlify Function] Status: ${response.status}, Content-Type: ${contentType}`);
 
     if (!response.ok) {
       console.error(`[Netlify Function] Erro HTTP: ${response.status}`);
       return {
         statusCode: response.status,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: `HTTP ${response.status}` }),
+        body: JSON.stringify({ 
+          error: `HTTP ${response.status}`,
+          contentType: contentType
+        }),
+      };
+    }
+
+    // Verificar se é realmente um arquivo Excel
+    if (!contentType.includes('spreadsheet') && !contentType.includes('excel') && !contentType.includes('octet-stream')) {
+      console.error(`[Netlify Function] Content-Type inválido: ${contentType}`);
+      const preview = await response.text();
+      console.error(`[Netlify Function] Preview da resposta: ${preview.substring(0, 200)}`);
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          error: 'Arquivo não é um spreadsheet válido',
+          contentType: contentType,
+          preview: preview.substring(0, 200)
+        }),
       };
     }
 
@@ -52,10 +73,14 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error('[Netlify Function] Erro:', error.message);
+    console.error('[Netlify Function] Stack:', error.stack);
     return {
       statusCode: 502,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: error.message }),
+      body: JSON.stringify({ 
+        error: error.message,
+        stack: error.stack
+      }),
     };
   }
 };
