@@ -143,7 +143,16 @@ const ConectaGovDashboard = () => {
 
   const getPracas = (nomeMunicipio) => {
     const key = Object.keys(conectaData).find((k) => normalize(k) === normalize(nomeMunicipio));
-    return key ? conectaData[key] : [];
+    const pracas = key ? conectaData[key] : [];
+    
+    // Debug: mostrar quantas praças foram encontradas
+    if (key && pracas.length > 0) {
+      console.log(`[GetPracas] ${nomeMunicipio}: encontradas ${pracas.length} praças:`, pracas.map(p => p.nome_da_praca));
+    } else if (key && pracas.length === 0) {
+      console.warn(`[GetPracas] ${nomeMunicipio}: encontrado mas com 0 praças!`);
+    }
+    
+    return pracas;
   };
 
   const loading = mapFeatures.length === 0 && !mapError;
@@ -159,6 +168,18 @@ const ConectaGovDashboard = () => {
       .then(({ data, source }) => {
         if (!active) return;
         setDataSource(source);
+        
+        // Debug: mostrar estrutura dos dados carregados
+        console.log('[ConectaMap] Dados carregados:', {
+          totalMunicipios: Object.keys(data).length,
+          amostraMunicipios: Object.keys(data).slice(0, 3),
+          estruturaAmostra: Object.keys(data).slice(0, 1).map(nome => ({
+            nome,
+            pracasCount: data[nome]?.length,
+            primeiraProca: data[nome]?.[0]
+          }))
+        });
+        
         const list = Object.keys(data).map((nome) => ({ nome, pracas: data[nome] }));
         list.sort((a, b) => a.nome.localeCompare(b.nome));
         setConectaList(list);
@@ -283,6 +304,41 @@ const ConectaGovDashboard = () => {
           </div>
 
 
+          {/* Aviso quando usando dados estáticos (SharePoint falhou) */}
+          {dataSource === 'static' && (
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
+              <div className="flex gap-2">
+                <svg className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="flex-1">
+                  <p className="text-xs text-blue-800 leading-relaxed">
+                    Usando dados estáticos. Para dados atualizados, faça upload da planilha mais recente.
+                  </p>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-xs text-blue-700 hover:text-blue-900 font-semibold mt-1 underline"
+                  >
+                    Carregar planilha →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Aviso quando usando planilha carregada */}
+          {dataSource === 'sharepoint' && (
+            <div className="bg-green-50 border border-green-200 rounded-md p-2 mb-4">
+              <div className="flex gap-2 items-center">
+                <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p className="text-xs text-green-800">
+                  Dados atualizados do SharePoint
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Indicador de fonte de dados + Upload */}
           <div className="flex flex-col gap-2 mb-4">
