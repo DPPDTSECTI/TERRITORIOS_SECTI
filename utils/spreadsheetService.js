@@ -321,7 +321,7 @@ export function parseSpreadsheet(buffer) {
 /**
  * Carrega dados do Conecta Bahia.
  *   1. Se houver cache da planilha na sessão (upload anterior), usa ele.
- *   2. Tenta baixar a planilha do SharePoint.
+ *   2. Tenta baixar a planilha do SharePoint via proxy.
  *   3. Como fallback, carrega o JSON estático.
  *
  * @returns {{ data: Object, source: 'upload'|'sharepoint'|'static' }}
@@ -343,56 +343,33 @@ export async function fetchConectaData() {
   // 2. Tentar baixar planilha do SharePoint
   try {
     console.log('[Conecta] Baixando planilha do SharePoint...');
-    const res = await fetch(SHAREPOINT_PROXY_URL);
+    const res = await fetch(SHAREPOINT_PROXY_URL, { timeout: 15000 });
     
     if (res.ok) {
-      const contentType = res.headers.get('content-type') || '';
-      console.log(`[Conecta] Resposta do SharePoint: ${res.status}, Content-Type: ${contentType}`);
-      
-      // Verificar se é JSON (de Netlify Function)
-      if (contentType.includes('application/json')) {
-        const json = await res.json();
-        if (json.success && json.data) {
-          console.log(`[Conecta] Arquivo recebido: ${json.size} bytes`);
-          
-          // Decodificar base64 para ArrayBuffer
-          const binaryString = atob(json.data);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-          const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-          
-          const data = parseSpreadsheet(buffer);
-          const count = Object.keys(data).length;
-          console.log(`[Conecta] Dados da planilha do SharePoint: ${count} municípios.`);
-          return { data, source: 'sharepoint' };
-        } else {
-          console.warn('[Conecta] JSON inválido do SharePoint:', json.error || 'sem dados');
-        }
-      } else if (contentType.includes('spreadsheet') || contentType.includes('excel') || contentType.includes('octet-stream')) {
-        // Dev mode: resposta é o arquivo direto
-        const buffer = await res.arrayBuffer();
-        const data = parseSpreadsheet(buffer);
-        const count = Object.keys(data).length;
-        console.log(`[Conecta] Dados da planilha do SharePoint: ${count} municípios.`);
-        return { data, source: 'sharepoint' };
-      } else {
-        console.warn(`[Conecta] Content-Type inválido do SharePoint: ${contentType}`);
-      }
+      // Em produção Netlify, retorna base64 em ArrayBuffer
+      const buffer = await res.arrayBuffer();
+      const data = parseSpreadsheet(buffer);
+      const count = Object.keys(data).length;
+      console.log(`[Conecta] ✓ Dados da planilha do SharePoint: ${count} municípios.`);
+      return { data, source: 'sharepoint' };
     } else {
-      console.warn(`[Conecta] Falha ao baixar do SharePoint (HTTP ${res.status}), usando fallback.`);
+      console.warn(`[Conecta] Falha ao baixar do SharePoint (HTTP ${res.status}), tentando fallback.`);
     }
   } catch (err) {
-    console.warn(`[Conecta] Erro ao carregar do SharePoint: ${err.message}, usando fallback.`);
+    console.warn(`[Conecta] Erro ao carregar do SharePoint (${err.message}), tentando fallback.`);
   }
 
   // 3. JSON estático como fallback
-  const res = await fetch('/conectaMunicipios.json');
-  if (!res.ok) throw new Error(`HTTP ${res.status} ao carregar JSON.`);
-  const data = await res.json();
-  console.log(`[Conecta] ✓ Dados do JSON estático: ${Object.keys(data).length} municípios.`);
-  return { data, source: 'static' };
+  try {
+    const res = await fetch('/conectaMunicipios.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    console.log(`[Conecta] ✓ Dados do JSON estático: ${Object.keys(data).length} municípios.`);
+    return { data, source: 'static' };
+  } catch (err) {
+    console.error(`[Conecta] Erro ao carregar JSON estático: ${err.message}`);
+    throw new Error('Não foi possível carregar dados do Conecta Bahia');
+  }
 }
 
 // ─── Upload local (para processar arquivo .xlsx direto do navegador) ────────
