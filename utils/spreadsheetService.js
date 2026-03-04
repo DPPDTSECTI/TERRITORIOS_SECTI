@@ -345,11 +345,23 @@ export async function fetchConectaData() {
     console.log('[Conecta] Baixando planilha do SharePoint...');
     const res = await fetch(SHAREPOINT_PROXY_URL);
     if (res.ok) {
-      const buffer = await res.arrayBuffer();
-      const data = parseSpreadsheet(buffer);
-      const count = Object.keys(data).length;
-      console.log(`[Conecta] Dados da planilha do SharePoint: ${count} municípios.`);
-      return { data, source: 'sharepoint' };
+      const json = await res.json();
+      if (json.success && json.data) {
+        // Decodificar base64 para ArrayBuffer
+        const binaryString = atob(json.data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+        
+        const data = parseSpreadsheet(buffer);
+        const count = Object.keys(data).length;
+        console.log(`[Conecta] Dados da planilha do SharePoint: ${count} municípios.`);
+        return { data, source: 'sharepoint' };
+      } else {
+        console.warn('[Conecta] Resposta inválida do SharePoint, usando fallback.');
+      }
     } else {
       console.warn(`[Conecta] Falha ao baixar do SharePoint (HTTP ${res.status}), usando fallback.`);
     }

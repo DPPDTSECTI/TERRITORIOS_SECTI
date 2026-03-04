@@ -1,6 +1,6 @@
 /**
  * Netlify Function: Proxy para download da planilha do SharePoint
- * Evita problemas de CORS e autentica o download
+ * Retorna JSON com o arquivo em base64 para o cliente decodificar
  */
 
 exports.handler = async (event, context) => {
@@ -15,7 +15,7 @@ exports.handler = async (event, context) => {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*',
       },
-      redirect: 'follow', // Seguir redirecionamentos automaticamente
+      redirect: 'follow',
       timeout: 30000,
     });
 
@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
       console.error(`[Netlify Function] Erro HTTP: ${response.status}`);
       return {
         statusCode: response.status,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: `HTTP ${response.status}` }),
       };
     }
@@ -36,22 +36,25 @@ exports.handler = async (event, context) => {
 
     console.log(`[Netlify Function] Download concluído: ${data.length} bytes`);
 
+    // Retornar como JSON com base64
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': response.headers.get('content-type') || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'Content-Length': data.length.toString(),
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'max-age=3600', // Cache por 1 hora
+        'Cache-Control': 'max-age=3600',
       },
-      body: data.toString('base64'),
-      isBase64Encoded: true,
+      body: JSON.stringify({
+        success: true,
+        data: data.toString('base64'),
+        size: data.length,
+      }),
     };
   } catch (error) {
     console.error('[Netlify Function] Erro:', error.message);
     return {
       statusCode: 502,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: error.message }),
     };
   }
