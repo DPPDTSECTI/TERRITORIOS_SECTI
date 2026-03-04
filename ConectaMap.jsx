@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import * as topojson from 'topojson-client';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
+import { fetchConectaData, parseUploadedFile, clearSpreadsheetCache } from './utils/spreadsheetService';
 
-// --- UTILS ---
 const normalize = (s) =>
   (s || '')
     .normalize('NFD')
@@ -13,7 +13,6 @@ const normalize = (s) =>
 
 const simplifyName = (s) => normalize(s).replace(/\s*[\-–].*$/g, '').trim();
 
-// --- PALETA DOS TERRITÓRIOS ---
 const TERRITORY_COLORS = [
   '#EE2F5A', '#FBA751', '#CFDD90', '#0397DA', '#9CD3AF', '#EB278F', '#BE4481',
   '#BF8057', '#D7CB76', '#04AFED', '#b6b317', '#099D9E', '#F38735', '#A4C757',
@@ -32,7 +31,6 @@ const buildMunicipioMap = () => {
   return map;
 };
 
-// --- CONFIGURAÇÕES SVG ---
 const SVG_W = 600;
 const SVG_H = 600;
 const PADDING = 20;
@@ -87,17 +85,20 @@ function buildPaths(topology) {
   });
 }
 
-// --- COMPONENTE PRINCIPAL ---
 const ConectaGovDashboard = () => {
   const [mapFeatures, setMapFeatures] = useState([]);
   const [mapError, setMapError] = useState(null);
   const [conectaList, setConectaList] = useState([]);
   const [conectaSet, setConectaSet] = useState(new Set());
+  const [conectaData, setConectaData] = useState({});
   const [hoveredNome, setHoveredNome] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [dataSource, setDataSource] = useState(null); // 'online' | 'static' | 'upload'
+  const [showUpload, setShowUpload] = useState(false);
   
   const mapContainerRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState(null);
@@ -107,7 +108,26 @@ const ConectaGovDashboard = () => {
   const getMunicipioInfo = (nomeTopo) => municipioMap[normalize(nomeTopo)];
   const getMunicipioColor = (nomeTopo) => getMunicipioInfo(nomeTopo)?.color || '#94A3B8';
 
-  // calcula o conjunto de territórios que têm pelo menos um município alcançado
+  // Handler para upload de arquivo Excel local
+  const handleFileUpload = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const data = await parseUploadedFile(file);
+      const list = Object.keys(data).map((nome) => ({ nome, pracas: data[nome] }));
+      list.sort((a, b) => a.nome.localeCompare(b.nome));
+      setConectaList(list);
+      setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
+      setConectaData(data);
+      setDataSource('upload');
+      setShowUpload(false);
+    } catch (err) {
+      console.error('Erro ao processar arquivo:', err);
+      alert('Erro ao processar o arquivo. Verifique se é um .xlsx válido.');
+    }
+    // Limpar input para permitir reenvio do mesmo arquivo
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }, []);
   const coveredTerritories = useMemo(() => {
     const set = new Set();
     conectaList.forEach((m) => {
@@ -116,6 +136,15 @@ const ConectaGovDashboard = () => {
     });
     return Array.from(set).sort();
   }, [conectaList, municipioMap]);
+
+  const totalPracas = useMemo(() => {
+    return conectaList.reduce((acc, m) => acc + (m.pracas ? m.pracas.length : 0), 0);
+  }, [conectaList]);
+
+  const getPracas = (nomeMunicipio) => {
+    const key = Object.keys(conectaData).find((k) => normalize(k) === normalize(nomeMunicipio));
+    return key ? conectaData[key] : [];
+  };
 
   const loading = mapFeatures.length === 0 && !mapError;
 
@@ -126,13 +155,15 @@ const ConectaGovDashboard = () => {
       .then((r) => r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`))
       .then((topology) => active && setMapFeatures(buildPaths(topology)));
 
-    const conectaPromise = fetch('/conectaMunicipios.json')
-      .then((r) => r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`))
-      .then((data) => {
+    const conectaPromise = fetchConectaData()
+      .then(({ data, source }) => {
         if (!active) return;
-        const list = data.municipios || [];
-        setConectaList(list.sort((a, b) => a.nome.localeCompare(b.nome)));
+        setDataSource(source);
+        const list = Object.keys(data).map((nome) => ({ nome, pracas: data[nome] }));
+        list.sort((a, b) => a.nome.localeCompare(b.nome));
+        setConectaList(list);
         setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
+        setConectaData(data);
       });
 
     Promise.all([topoPromise, conectaPromise]).catch((e) => {
@@ -152,7 +183,6 @@ const ConectaGovDashboard = () => {
     if (!feature) return;
     
     const { centroid } = feature;
-    // Ajustei o nível de zoom para não ser tão agressivo em telas móveis
     const zoomLevel = 2.0; 
     const newPan = {
       x: zoomLevel * (SVG_W / 2 - centroid[0]),
@@ -164,7 +194,7 @@ const ConectaGovDashboard = () => {
     setSelectedMunicipio(nomeMunicipio);
   };
 
-  // Melhoria Mobile: Usando Pointer Events no lugar de Mouse Events
+  
   const handlePointerDown = (e) => {
     setDragStart({ x: e.clientX, y: e.clientY });
     if (e.target.hasPointerCapture) e.target.setPointerCapture(e.pointerId);
@@ -209,12 +239,10 @@ const ConectaGovDashboard = () => {
   }, [hoveredNome, mapFeatures, zoom, pan]);
 
   return (
-    // Mobile First: Container usa flex-col nativo, cresce livremente. 
-    // Altura mínima garantida para evitar achatamento.
+    
     <div className="flex flex-col md:flex-row h-auto md:h-[85vh] min-h-[700px] md:min-h-[600px] w-full bg-white font-sans border border-slate-300 rounded-lg overflow-hidden shadow-sm">
       
-      {/* SIDEBAR - PAINEL INSTITUCIONAL */}
-      {/* Mobile First: Limita a altura da barra lateral no mobile para que o mapa não suma da tela */}
+      
       <div className="w-full md:w-80 flex flex-col shrink-0 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 z-10">
         <div className="p-4 md:p-6 border-b border-slate-200 bg-white">
           <h1 className="text-lg md:text-xl font-bold text-slate-800 leading-tight">
@@ -233,8 +261,7 @@ const ConectaGovDashboard = () => {
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" /></svg>
             </div>
           </div>
-
-          {/* novos dados de território */}
+          
           <div className="flex items-center justify-between bg-green-50 border border-green-100 rounded-md p-3 mb-4">
             <div>
               <span className="block text-xl md:text-2xl font-bold text-green-800 leading-none">{coveredTerritories.length}</span>
@@ -245,7 +272,43 @@ const ConectaGovDashboard = () => {
             </div>
           </div>
 
+          <div className="flex items-center justify-between bg-amber-50 border border-amber-100 rounded-md p-3 mb-4">
+            <div>
+              <span className="block text-xl md:text-2xl font-bold text-amber-800 leading-none">{totalPracas}</span>
+              <span className="text-[10px] uppercase font-bold text-amber-600 mt-1 block">Praças Conectadas</span>
+            </div>
+            <div className="h-8 w-8 md:h-10 md:w-10 bg-white rounded-full flex items-center justify-center shadow-sm text-amber-600">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            </div>
+          </div>
 
+
+
+          {/* Indicador de fonte de dados + Upload */}
+          <div className="flex flex-col gap-2 mb-4">
+            <div className="flex items-center justify-between">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".xlsx,.xls"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
+            </div>
+            {dataSource === 'upload' && (
+              <button
+                onClick={() => {
+                  clearSpreadsheetCache();
+                  window.location.reload();
+                }}
+                className="text-[10px] text-red-500 hover:text-red-700 font-medium flex items-center gap-1 transition-colors self-end"
+                title="Voltar aos dados pré-carregados"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                Limpar planilha
+              </button>
+            )}
+          </div>
 
           <div className="relative">
             <input
@@ -258,8 +321,7 @@ const ConectaGovDashboard = () => {
             <svg className="absolute left-3 top-2.5 md:top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </div>
         </div>
-
-        {/* Mobile First: Scroll controlado. Em telas pequenas, lista ocupa até 35vh. */}
+        
         <div className="flex-1 overflow-y-auto p-2 custom-scrollbar bg-slate-50 max-h-[35vh] md:max-h-none">
           {filteredList.length === 0 ? (
             <p className="text-center text-sm text-slate-500 mt-4 font-medium">Nenhum registro encontrado.</p>
@@ -284,11 +346,10 @@ const ConectaGovDashboard = () => {
         </div>
       </div>
 
-      {/* ÁREA PRINCIPAL - MAPA */}
-      {/* Mobile First: min-h garante espaço para o toque */}
+      
       <div className="flex-1 min-h-[400px] relative bg-[#F8FAFC] flex flex-col touch-none">
         
-        {/* Legenda Institucional Flutuante */}
+        
         <div className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-md shadow-sm border border-slate-200 pointer-events-none">
           <h2 className="text-[10px] font-bold text-slate-800 uppercase mb-1.5">Legenda</h2>
           <div className="flex items-center gap-2 mb-1">
@@ -301,19 +362,19 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        {/* Controles de Zoom Cartográficos */}
+        
         <div className="absolute top-3 right-3 z-10 flex flex-col bg-white shadow-md rounded-md border border-slate-200 overflow-hidden">
           <button onClick={() => handleZoom(0.3)} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Aproximar">+</button>
           <button onClick={() => handleZoom(-0.3)} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Afastar">−</button>
           <button onClick={resetZoom} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold text-xl" title="Centralizar">⟳</button>
         </div>
 
-        {/* Container do SVG */}
+        
         <div
           ref={mapContainerRef}
           className="w-full h-full overflow-hidden outline-none"
           style={{ cursor: dragStart ? 'grabbing' : 'grab' }}
-          // Uso de Pointer Events para suportar Touch e Mouse simultaneamente
+          
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -336,13 +397,7 @@ const ConectaGovDashboard = () => {
 
           {mapFeatures.length > 0 && (
             <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-full">
-              {/*
-                Use CSS transform on the <g> instead of the SVG attribute so that
-                transitions can be applied. Tailwind classes below handle the
-                easing and duration; inline style adds the actual transform
-                computed from zoom/pan state (with "px" units to make the
-                browser treat it like a CSS transform).
-              */}
+              
               <g
                 className="transform-gpu transition-transform duration-500 ease-out"
                 style={{
@@ -350,7 +405,7 @@ const ConectaGovDashboard = () => {
                 }}
               >
                 
-                {/* 1. Camada de Municípios */}
+                
                 {mapFeatures.map(({ nome, geocodigo, d }) => {
                   const isHovered = hoveredNome === nome;
                   const isSelected = selectedMunicipio === nome;
@@ -370,7 +425,7 @@ const ConectaGovDashboard = () => {
                         strokeLinejoin: 'round',
                         opacity: (isHovered || isSelected) && !hasConecta ? 0.8 : 1, 
                       }}
-                      // Toque direto no SVG seleciona a cidade na tela mobile
+                      
                       onClick={() => handleClickMunicipio(nome)}
                       onMouseEnter={() => setHoveredNome(nome)}
                       onMouseLeave={() => setHoveredNome(null)}
@@ -378,7 +433,7 @@ const ConectaGovDashboard = () => {
                   );
                 })}
 
-                {/* 2. Camada de Marcadores */}
+                
                 {mapFeatures.map(({ nome, centroid }) => {
                   if (!isConecta(nome)) return null;
                   const isHovered = hoveredNome === nome;
@@ -397,7 +452,7 @@ const ConectaGovDashboard = () => {
           )}
         </div>
 
-        {/* TOOLTIP DESKTOP (Invisível em touch/mobile puro dependendo do uso, mas mantido para mouses) */}
+        
         {hoveredNome && !selectedMunicipio && (
           <div
             className="hidden md:flex absolute pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full pb-3"
@@ -409,6 +464,8 @@ const ConectaGovDashboard = () => {
                 <>
                   <span className="text-[10px] text-slate-500 uppercase font-semibold">Território</span>
                   <span className="text-xs text-blue-700 font-medium mb-1 truncate">{getMunicipioInfo(hoveredNome)?.territorio || 'N/A'}</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-semibold mt-1">Praças</span>
+                  <span className="text-xs text-green-700 font-medium">{getPracas(hoveredNome).length} ponto(s)</span>
                 </>
               ) : (
                 <span className="text-xs text-slate-500 font-medium mt-1">Sem cobertura</span>
@@ -418,7 +475,7 @@ const ConectaGovDashboard = () => {
           </div>
         )}
 
-        {/* QR CODE CARD - Documento do Projeto */}
+        
         <div className="absolute bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg border border-slate-200 flex flex-col items-center z-10 max-w-[200px] hidden md:flex">
           <img 
             src="/img/qr-code-DIRETORIA DE TECNOLOGIA E CONECTIVIDADE - DTC.png" 
@@ -433,7 +490,7 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        {/* CARD INFORMATIVO FIXO (MOBILE FIRST) - Aparece na base do mapa quando clica */}
+        
         {selectedMunicipio && (
           <div className="absolute bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-80 bg-white p-4 rounded-xl shadow-2xl border border-blue-100 flex flex-col z-20 animate-in slide-in-from-bottom-5">
             <div className="flex justify-between items-start mb-2">
@@ -457,6 +514,53 @@ const ConectaGovDashboard = () => {
                   <span className="w-3 h-3 rounded-full bg-green-600 animate-pulse"></span>
                   <span className="text-xs font-bold text-green-800 uppercase">Cobertura Ativa</span>
                 </div>
+                {(() => {
+                  const pracas = getPracas(selectedMunicipio);
+                  if (pracas.length === 0) return null;
+                  
+                  // Campos extras relevantes para exibição (não-financeiros)
+                  const DISPLAY_FIELDS = [
+                    { key: 'status_instalacao', label: 'Status Instalação' },
+                    { key: 'status_homologacao_pontos', label: 'Homologação' },
+                    { key: 'status_instalacao_com_link_pontos', label: 'Link Instalado' },
+                    { key: 'data_instalacao', label: 'Data Instalação' },
+                    { key: 'ano_implantacao', label: 'Ano' },
+                    { key: 'cep', label: 'CEP' },
+                    { key: 'populacao_beneficiada', label: 'Pop. Beneficiada' },
+                    { key: 'localizacao', label: 'Localização' },
+                    { key: 'status_inauguracao', label: 'Inauguração' },
+                    { key: 'data_inauguracao', label: 'Data Inauguração' },
+                    { key: 'equipamento_fabricante', label: 'Fabricante' },
+                    { key: 'observacao', label: 'Observação' },
+                  ];
+
+                  return (
+                    <div className="flex flex-col mt-2">
+                      <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Praças ({pracas.length})</span>
+                      <div className="max-h-48 overflow-y-auto custom-scrollbar space-y-1.5">
+                        {pracas.map((p, i) => (
+                          <div key={i} className="bg-slate-50 border border-slate-100 rounded-md px-2 py-2 flex flex-col gap-1">
+                            <div className="flex items-start gap-2">
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
+                              <span className="text-xs text-slate-700 leading-tight font-medium">{p.nome_da_praca || 'Sem nome'}</span>
+                            </div>
+                            {/* Campos extras da planilha */}
+                            {dataSource !== 'static' && DISPLAY_FIELDS.map(({ key, label }) => {
+                              const val = p[key];
+                              if (!val) return null;
+                              return (
+                                <div key={key} className="flex items-baseline gap-1.5 pl-1">
+                                  <span className="text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
+                                  <span className="text-[10px] text-slate-600 leading-tight">{val}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             ) : (
               <div className="mt-2 bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center gap-2">
