@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import * as topojson from 'topojson-client';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
 import { fetchConectaData, parseUploadedFile, clearSpreadsheetCache } from './utils/spreadsheetService';
+import PDFExportButton from './src/components/PDFExportButton';
 
 const normalize = (s) =>
   (s || '')
@@ -461,7 +462,7 @@ const ConectaGovDashboard = () => {
       <div className="flex-1 min-h-[400px] relative bg-[#F8FAFC] flex flex-col touch-none">
 
 
-        <div className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-md shadow-sm border border-slate-200 pointer-events-none">
+        <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-md shadow-sm border border-slate-200 pointer-events-none">
           <h2 className="text-[10px] font-bold text-slate-800 uppercase mb-1.5">Legenda</h2>
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#1E3A8A] border-2 border-white shadow-sm block"></span>
@@ -478,6 +479,19 @@ const ConectaGovDashboard = () => {
           <button onClick={() => handleZoom(0.3)} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Aproximar">+</button>
           <button onClick={() => handleZoom(-0.3)} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Afastar">−</button>
           <button onClick={resetZoom} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold text-xl" title="Centralizar">⟳</button>
+        </div>
+
+        {/* Botão de Exportação PDF */}
+        <div className="absolute top-3 left-3 z-10">
+          <PDFExportButton
+            municipiosData={conectaList.map((m) => ({
+              nome: m.nome,
+              quantidade: m.pracas ? m.pracas.length : 0,
+              territorio: getMunicipioInfo(m.nome)?.territorio || 'N/A',
+            }))}
+            mapRef={mapContainerRef}
+            className="shadow-md"
+          />
         </div>
 
 
