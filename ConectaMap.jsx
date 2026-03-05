@@ -154,14 +154,6 @@ const ConectaGovDashboard = () => {
   const getPracas = (nomeMunicipio) => {
     const key = Object.keys(conectaData).find((k) => simplifyName(k) === simplifyName(nomeMunicipio));
     const pracas = key ? conectaData[key] : [];
-    
-    // Debug: mostrar quantas praças foram encontradas
-    if (key && pracas.length > 0) {
-      console.log(`[GetPracas] ${nomeMunicipio}: encontradas ${pracas.length} praças:`, pracas.map(p => p.nome_da_praca));
-    } else if (key && pracas.length === 0) {
-      console.warn(`[GetPracas] ${nomeMunicipio}: encontrado mas com 0 praças!`);
-    }
-    
     return pracas;
   };
 
@@ -178,7 +170,6 @@ const ConectaGovDashboard = () => {
     const handleBackgroundUpdate = (newData) => {
       if (!active) return;
       
-      console.log('[ConectaMap] ✓ Dados atualizados em background!');
       const list = Object.keys(newData).map((nome) => ({ nome, pracas: newData[nome] }));
       list.sort((a, b) => a.nome.localeCompare(b.nome));
       
