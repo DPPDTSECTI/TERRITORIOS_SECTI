@@ -80,7 +80,7 @@ function buildPaths(topology) {
   return geojson.features.filter((f) => f.geometry).map((f) => {
     const rings = f.geometry.type === 'Polygon' ? f.geometry.coordinates : f.geometry.coordinates.flat(1);
     const d = rings.map(ringToD).join(' ');
-    
+
     let sumX = 0, sumY = 0, count = 0;
     rings.forEach((ring) =>
       ring.forEach(([lon, lat]) => {
@@ -106,7 +106,7 @@ const ConectaGovDashboard = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false); // Indica atualização em background
   const [loadingData, setLoadingData] = useState(true); // Indica carregamento inicial dos dados
-  
+
   const mapContainerRef = useRef(null);
   const fileInputRef = useRef(null);
   const [zoom, setZoom] = useState(1);
@@ -147,6 +147,34 @@ const ConectaGovDashboard = () => {
     return Array.from(set).sort();
   }, [conectaList, municipioMap]);
 
+  // all territory names present in the reference JSON
+  const allTerritories = useMemo(() => {
+    return territoriosMunicipios.territorios_de_identidade
+      .map((t) => t.nome)
+      .sort();
+  }, []);
+
+  // map from territory name to the color assigned in the palette
+  const territoryColorMap = useMemo(() => {
+    const map = {};
+    territoriosMunicipios.territorios_de_identidade.forEach((t) => {
+      const color = TERRITORY_COLORS[t.id - 1] || '#94A3B8';
+      map[t.nome] = color;
+    });
+    return map;
+  }, []);
+
+  // territories that have no corresponding municipality in conectaList
+  const missingTerritories = useMemo(() => {
+    return allTerritories.filter((t) => !coveredTerritories.includes(t));
+  }, [allTerritories, coveredTerritories]);
+
+  const [showTerritoryModal, setShowTerritoryModal] = useState(false);
+
+  const handleClickTerritories = () => {
+    setShowTerritoryModal(true);
+  };
+
   const totalPracas = useMemo(() => {
     return conectaList.reduce((acc, m) => acc + (m.pracas ? m.pracas.length : 0), 0);
   }, [conectaList]);
@@ -169,10 +197,10 @@ const ConectaGovDashboard = () => {
     // Callback para atualização em background
     const handleBackgroundUpdate = (newData) => {
       if (!active) return;
-      
+
       const list = Object.keys(newData).map((nome) => ({ nome, pracas: newData[nome] }));
       list.sort((a, b) => a.nome.localeCompare(b.nome));
-      
+
       setConectaList(list);
       setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
       setConectaData(newData);
@@ -185,12 +213,12 @@ const ConectaGovDashboard = () => {
         if (!active) return;
         setDataSource(source);
         setLoadingData(false);
-        
+
         // Se usou cache expirado, marca como atualizando
         if (!fresh) {
           setIsUpdating(true);
         }
-        
+
         // Debug: mostrar estrutura dos dados carregados
         console.log('[ConectaMap] Dados carregados:', {
           source,
@@ -203,7 +231,7 @@ const ConectaGovDashboard = () => {
             primeiraProca: data[nome]?.[0]
           }))
         });
-        
+
         const list = Object.keys(data).map((nome) => ({ nome, pracas: data[nome] }));
         list.sort((a, b) => a.nome.localeCompare(b.nome));
         setConectaList(list);
@@ -227,20 +255,20 @@ const ConectaGovDashboard = () => {
   const handleClickMunicipio = (nomeMunicipio) => {
     const feature = mapFeatures.find((f) => sameMunicipio(f.nome, nomeMunicipio));
     if (!feature) return;
-    
+
     const { centroid } = feature;
-    const zoomLevel = 2.0; 
+    const zoomLevel = 2.0;
     const newPan = {
       x: zoomLevel * (SVG_W / 2 - centroid[0]),
       y: zoomLevel * (SVG_H / 2 - centroid[1]),
     };
-    
+
     setZoom(zoomLevel);
     setPan(newPan);
     setSelectedMunicipio(feature.nome);
   };
 
-  
+
   const handlePointerDown = (e) => {
     setDragStart({ x: e.clientX, y: e.clientY });
     if (e.target.hasPointerCapture) e.target.setPointerCapture(e.pointerId);
@@ -256,8 +284,8 @@ const ConectaGovDashboard = () => {
   };
 
   const isConecta = (nomeTopo) => conectaSet.has(simplifyName(nomeTopo));
-  
-  const filteredList = conectaList.filter(m => 
+
+  const filteredList = conectaList.filter(m =>
     normalize(m.nome).includes(normalize(searchTerm))
   );
 
@@ -284,10 +312,10 @@ const ConectaGovDashboard = () => {
   }, [hoveredNome, mapFeatures, zoom, pan]);
 
   return (
-    
+
     <div className="flex flex-col md:flex-row h-auto md:h-[85vh] min-h-[700px] md:min-h-[600px] w-full bg-white font-sans border border-slate-300 rounded-lg overflow-hidden shadow-sm">
-      
-      
+
+
       <div className="w-full md:w-80 flex flex-col shrink-0 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 z-10">
         <div className="p-4 md:p-6 border-b border-slate-200 bg-white">
           <h1 className="text-lg md:text-xl font-bold text-slate-800 leading-tight">
@@ -296,7 +324,7 @@ const ConectaGovDashboard = () => {
           <p className="text-[10px] md:text-xs text-slate-500 mt-1 mb-4 font-medium uppercase tracking-wide">
             Mapa de Cobertura Oficial
           </p>
-          
+
           <div className="flex items-center justify-between bg-blue-50 border border-blue-100 rounded-md p-3 mb-4">
             <div>
               <span className="block text-xl md:text-2xl font-bold text-blue-800 leading-none">{conectaList.length}</span>
@@ -306,8 +334,12 @@ const ConectaGovDashboard = () => {
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" /></svg>
             </div>
           </div>
-          
-          <div className="flex items-center justify-between bg-green-50 border border-green-100 rounded-md p-3 mb-4">
+
+          <div
+            onClick={handleClickTerritories}
+            title="Clique para ver quais territórios ainda não têm municípios atendidos"
+            className="flex items-center justify-between bg-green-50 border border-green-100 rounded-md p-3 mb-4 cursor-pointer hover:bg-green-100"
+          >
             <div>
               <span className="block text-xl md:text-2xl font-bold text-green-800 leading-none">{coveredTerritories.length}</span>
               <span className="text-[10px] uppercase font-bold text-green-600 mt-1 block">Territórios Atendidos</span>
@@ -400,7 +432,7 @@ const ConectaGovDashboard = () => {
             <svg className="absolute left-3 top-2.5 md:top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </div>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto p-2 custom-scrollbar bg-slate-50 max-h-[35vh] md:max-h-none">
           {filteredList.length === 0 ? (
             <p className="text-center text-sm text-slate-500 mt-4 font-medium">Nenhum registro encontrado.</p>
@@ -425,10 +457,10 @@ const ConectaGovDashboard = () => {
         </div>
       </div>
 
-      
+
       <div className="flex-1 min-h-[400px] relative bg-[#F8FAFC] flex flex-col touch-none">
-        
-        
+
+
         <div className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-md shadow-sm border border-slate-200 pointer-events-none">
           <h2 className="text-[10px] font-bold text-slate-800 uppercase mb-1.5">Legenda</h2>
           <div className="flex items-center gap-2 mb-1">
@@ -441,19 +473,19 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        
+
         <div className="absolute top-3 right-3 z-10 flex flex-col bg-white shadow-md rounded-md border border-slate-200 overflow-hidden">
           <button onClick={() => handleZoom(0.3)} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Aproximar">+</button>
           <button onClick={() => handleZoom(-0.3)} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Afastar">−</button>
           <button onClick={resetZoom} className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold text-xl" title="Centralizar">⟳</button>
         </div>
 
-        
+
         <div
           ref={mapContainerRef}
           className="w-full h-full overflow-hidden outline-none"
           style={{ cursor: dragStart ? 'grabbing' : 'grab' }}
-          
+
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -481,22 +513,22 @@ const ConectaGovDashboard = () => {
 
           {mapFeatures.length > 0 && (
             <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-full">
-              
+
               <g
                 className="transform-gpu transition-transform duration-500 ease-out"
                 style={{
                   transform: `translate(${(1 - zoom) * SVG_W / 2 + pan.x}px, ${(1 - zoom) * SVG_H / 2 + pan.y}px) scale(${zoom})`,
                 }}
               >
-                
-                
+
+
                 {mapFeatures.map(({ nome, geocodigo, d }) => {
                   const isHovered = sameMunicipio(hoveredNome, nome);
                   const isSelected = sameMunicipio(selectedMunicipio, nome);
                   const hasConecta = isConecta(nome);
-                  
+
                   const baseColor = hasConecta ? getMunicipioColor(nome) : '#E2E8F0';
-                  
+
                   return (
                     <path
                       key={geocodigo}
@@ -507,9 +539,9 @@ const ConectaGovDashboard = () => {
                         stroke: isHovered || isSelected ? '#0F172A' : '#FFFFFF',
                         strokeWidth: isHovered || isSelected ? '1.5' : '0.5',
                         strokeLinejoin: 'round',
-                        opacity: (isHovered || isSelected) && !hasConecta ? 0.8 : 1, 
+                        opacity: (isHovered || isSelected) && !hasConecta ? 0.8 : 1,
                       }}
-                      
+
                       onClick={() => handleClickMunicipio(nome)}
                       onMouseEnter={() => setHoveredNome(nome)}
                       onMouseLeave={() => setHoveredNome(null)}
@@ -517,7 +549,7 @@ const ConectaGovDashboard = () => {
                   );
                 })}
 
-                
+
                 {mapFeatures.map(({ nome, centroid }) => {
                   if (!isConecta(nome)) return null;
                   const isHovered = sameMunicipio(hoveredNome, nome);
@@ -536,7 +568,7 @@ const ConectaGovDashboard = () => {
           )}
         </div>
 
-        
+
         {hoveredNome && !selectedMunicipio && (
           <div
             className="hidden md:flex absolute pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full pb-3"
@@ -559,10 +591,10 @@ const ConectaGovDashboard = () => {
           </div>
         )}
 
-        
+
         <div className="absolute bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg border border-slate-200 flex flex-col items-center z-10 max-w-[200px] hidden md:flex">
-          <img 
-            src="/img/qr-code-DIRETORIA DE TECNOLOGIA E CONECTIVIDADE - DTC.png" 
+          <img
+            src="/img/qr-code-DIRETORIA DE TECNOLOGIA E CONECTIVIDADE - DTC.png"
             alt="QR Code Documento do Projeto"
             className="w-32 h-32 mb-3"
           />
@@ -574,12 +606,12 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        
+
         {selectedMunicipio && (
           <div className="absolute bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-80 bg-white p-4 rounded-xl shadow-2xl border border-blue-100 flex flex-col z-20 animate-in slide-in-from-bottom-5">
             <div className="flex justify-between items-start mb-2">
               <span className="text-lg font-bold text-slate-800 leading-none">{selectedMunicipio}</span>
-              <button 
+              <button
                 onClick={() => setSelectedMunicipio(null)}
                 className="bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-full p-1"
                 aria-label="Fechar"
@@ -587,7 +619,7 @@ const ConectaGovDashboard = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            
+
             {isConecta(selectedMunicipio) ? (
               <div className="flex flex-col gap-2 mt-1">
                 <div className="flex flex-col">
@@ -601,7 +633,7 @@ const ConectaGovDashboard = () => {
                 {(() => {
                   const pracas = getPracas(selectedMunicipio);
                   if (pracas.length === 0) return null;
-                  
+
                   // Campos extras relevantes para exibição (não-financeiros)
                   const DISPLAY_FIELDS = [
                     // campos extras exibidos no card (não financeiros)
@@ -655,6 +687,111 @@ const ConectaGovDashboard = () => {
         )}
       </div>
 
+      {/* territory coverage modal */}
+      {showTerritoryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          {/* Overlay com Blur */}
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowTerritoryModal(false)}
+          />
+
+          {/* Modal Container */}
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
+
+            {/* Header Fixo */}
+            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100">
+              <div>
+                <h3 className="text-xl font-bold text-slate-800">
+                  Cobertura por Território
+                </h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Visão geral das áreas de atuação
+                </p>
+              </div>
+              <button
+                onClick={() => setShowTerritoryModal(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                aria-label="Fechar"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Body Scrollável */}
+            <div className="p-6 overflow-y-auto custom-scrollbar">
+
+              {/* Seção: Atendidos */}
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-1.5 bg-green-100 rounded-full text-green-600">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h4 className="text-base font-semibold text-slate-800">
+                    Atendidos <span className="text-slate-400 text-sm font-normal ml-1">({coveredTerritories.length})</span>
+                  </h4>
+                </div>
+
+                {coveredTerritories.length > 0 ? (
+                  <div className="flex flex-wrap gap-2.5">
+                    {coveredTerritories.map((t) => (
+                      <span
+                        key={t}
+                        className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full shadow-sm border border-black/5"
+                        style={{
+                          backgroundColor: territoryColorMap[t] || '#64748b',
+                          color: '#ffffff'
+                        }}
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500 italic">Nenhum território atendido no momento.</p>
+                )}
+              </div>
+
+              {/* Linha Divisória */}
+              <hr className="border-slate-100 mb-8" />
+
+              {/* Seção: Faltam */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-1.5 bg-red-100 rounded-full text-red-600">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-base font-semibold text-slate-800">
+                    Pendentes <span className="text-slate-400 text-sm font-normal ml-1">({missingTerritories.length})</span>
+                  </h4>
+                </div>
+
+                {missingTerritories.length > 0 ? (
+                  <div className="flex flex-wrap gap-2.5">
+                    {missingTerritories.map((t) => (
+                      <span
+                        key={t}
+                        className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors cursor-default"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500 italic">Todos os territórios foram cobertos! 🎉</p>
+                )}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
