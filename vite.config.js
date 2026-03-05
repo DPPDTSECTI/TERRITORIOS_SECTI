@@ -94,7 +94,7 @@ function handleResponse(response, res) {
       console.log(`[Proxy SharePoint] ✓ Download completo: ${buffer.length} bytes`);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Cache-Control', 'public, max-age=300');
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
       res.end(buffer);
     });
     response.on('error', (err) => {

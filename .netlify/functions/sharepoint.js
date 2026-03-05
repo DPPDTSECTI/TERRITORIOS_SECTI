@@ -140,12 +140,18 @@ exports.handler = async (event, context) => {
             
             console.log(`[Netlify] ✓ JSON gerado: ${jsonSize} bytes (${Object.keys(jsonData).length} municípios)`);
             
+            // Gerar ETag baseado no conteúdo
+            const crypto = require('crypto');
+            const etag = crypto.createHash('md5').update(jsonString).digest('hex');
+            
             return {
               statusCode: 200,
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'max-age=3600',
+                'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+                'ETag': `"${etag}"`,
+                'X-Content-Source': 'sharepoint-processed',
               },
               body: jsonString,
             };

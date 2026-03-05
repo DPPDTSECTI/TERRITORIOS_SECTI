@@ -11,7 +11,15 @@ const normalize = (s) =>
     .replace(/[^a-z0-9\s]/g, '')
     .trim();
 
-const simplifyName = (s) => normalize(s).replace(/\s*[\-–].*$/g, '').trim();
+const MUNICIPIO_ALIASES = {
+  camacan: 'camaca',
+};
+
+const simplifyName = (s) => {
+  const base = normalize(s).replace(/\s*[\-–].*$/g, '').trim();
+  return MUNICIPIO_ALIASES[base] || base;
+};
+const sameMunicipio = (a, b) => simplifyName(a) === simplifyName(b);
 
 const TERRITORY_COLORS = [
   '#EE2F5A', '#FBA751', '#CFDD90', '#0397DA', '#9CD3AF', '#EB278F', '#BE4481',
@@ -25,7 +33,7 @@ const buildMunicipioMap = () => {
   territoriosMunicipios.territorios_de_identidade.forEach((t) => {
     const color = TERRITORY_COLORS[t.id - 1] || '#94A3B8';
     t.municipios.forEach((m) => {
-      map[normalize(m)] = { color, territorio: t.nome, territorioId: t.id };
+      map[simplifyName(m)] = { color, territorio: t.nome, territorioId: t.id };
     });
   });
   return map;
@@ -94,8 +102,10 @@ const ConectaGovDashboard = () => {
   const [hoveredNome, setHoveredNome] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const [dataSource, setDataSource] = useState(null); // 'online' | 'static' | 'upload'
+  const [dataSource, setDataSource] = useState(null); // 'sharepoint' | 'upload' | 'cache'
   const [showUpload, setShowUpload] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false); // Indica atualização em background
+  const [loadingData, setLoadingData] = useState(true); // Indica carregamento inicial dos dados
   
   const mapContainerRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -105,7 +115,7 @@ const ConectaGovDashboard = () => {
   const [selectedMunicipio, setSelectedMunicipio] = useState(null);
 
   const municipioMap = useMemo(() => buildMunicipioMap(), []);
-  const getMunicipioInfo = (nomeTopo) => municipioMap[normalize(nomeTopo)];
+  const getMunicipioInfo = (nomeTopo) => municipioMap[simplifyName(nomeTopo)];
   const getMunicipioColor = (nomeTopo) => getMunicipioInfo(nomeTopo)?.color || '#94A3B8';
 
   // Handler para upload de arquivo Excel local
@@ -142,7 +152,7 @@ const ConectaGovDashboard = () => {
   }, [conectaList]);
 
   const getPracas = (nomeMunicipio) => {
-    const key = Object.keys(conectaData).find((k) => normalize(k) === normalize(nomeMunicipio));
+    const key = Object.keys(conectaData).find((k) => simplifyName(k) === simplifyName(nomeMunicipio));
     const pracas = key ? conectaData[key] : [];
     
     // Debug: mostrar quantas praças foram encontradas
@@ -155,7 +165,7 @@ const ConectaGovDashboard = () => {
     return pracas;
   };
 
-  const loading = mapFeatures.length === 0 && !mapError;
+  const loading = (mapFeatures.length === 0 && !mapError) || loadingData;
 
   useEffect(() => {
     let active = true;
@@ -164,13 +174,36 @@ const ConectaGovDashboard = () => {
       .then((r) => r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`))
       .then((topology) => active && setMapFeatures(buildPaths(topology)));
 
-    const conectaPromise = fetchConectaData()
-      .then(({ data, source }) => {
+    // Callback para atualização em background
+    const handleBackgroundUpdate = (newData) => {
+      if (!active) return;
+      
+      console.log('[ConectaMap] ✓ Dados atualizados em background!');
+      const list = Object.keys(newData).map((nome) => ({ nome, pracas: newData[nome] }));
+      list.sort((a, b) => a.nome.localeCompare(b.nome));
+      
+      setConectaList(list);
+      setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
+      setConectaData(newData);
+      setDataSource('sharepoint');
+      setIsUpdating(false);
+    };
+
+    const conectaPromise = fetchConectaData(handleBackgroundUpdate)
+      .then(({ data, source, fresh }) => {
         if (!active) return;
         setDataSource(source);
+        setLoadingData(false);
+        
+        // Se usou cache expirado, marca como atualizando
+        if (!fresh) {
+          setIsUpdating(true);
+        }
         
         // Debug: mostrar estrutura dos dados carregados
         console.log('[ConectaMap] Dados carregados:', {
+          source,
+          fresh,
           totalMunicipios: Object.keys(data).length,
           amostraMunicipios: Object.keys(data).slice(0, 3),
           estruturaAmostra: Object.keys(data).slice(0, 1).map(nome => ({
@@ -190,7 +223,8 @@ const ConectaGovDashboard = () => {
     Promise.all([topoPromise, conectaPromise]).catch((e) => {
       if (!active) return;
       console.error('Erro ao carregar dados:', e);
-      setMapError('Não foi possível carregar as bases cartográficas.');
+      setMapError('Não foi possível carregar os dados.');
+      setLoadingData(false);
     });
 
     return () => { active = false; };
@@ -200,7 +234,7 @@ const ConectaGovDashboard = () => {
   const resetZoom = () => { setZoom(1); setPan({ x: 0, y: 0 }); setSelectedMunicipio(null); };
 
   const handleClickMunicipio = (nomeMunicipio) => {
-    const feature = mapFeatures.find((f) => f.nome === nomeMunicipio);
+    const feature = mapFeatures.find((f) => sameMunicipio(f.nome, nomeMunicipio));
     if (!feature) return;
     
     const { centroid } = feature;
@@ -212,7 +246,7 @@ const ConectaGovDashboard = () => {
     
     setZoom(zoomLevel);
     setPan(newPan);
-    setSelectedMunicipio(nomeMunicipio);
+    setSelectedMunicipio(feature.nome);
   };
 
   
@@ -239,8 +273,7 @@ const ConectaGovDashboard = () => {
   useEffect(() => {
     if (!hoveredNome || !mapContainerRef.current || mapFeatures.length === 0) return;
 
-    const feature = mapFeatures.find((f) => f.nome === hoveredNome)
-      || mapFeatures.find((f) => normalize(f.nome) === normalize(hoveredNome));
+    const feature = mapFeatures.find((f) => sameMunicipio(f.nome, hoveredNome));
 
     if (!feature) return;
 
@@ -304,23 +337,22 @@ const ConectaGovDashboard = () => {
           </div>
 
 
-          {/* Aviso quando usando dados estáticos (SharePoint falhou) */}
-          {dataSource === 'static' && (
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
+
+
+          {/* Indicador de atualização em background */}
+          {isUpdating && (
+            <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-4">
               <div className="flex gap-2">
-                <svg className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
                 <div className="flex-1">
-                  <p className="text-xs text-blue-800 leading-relaxed">
-                    Usando dados estáticos. Para dados atualizados, faça upload da planilha mais recente.
+                  <p className="text-xs text-green-800 leading-relaxed font-semibold">
+                    Atualizando dados em segundo plano...
                   </p>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="text-xs text-blue-700 hover:text-blue-900 font-semibold mt-1 underline"
-                  >
-                    Carregar planilha →
-                  </button>
+                  <p className="text-[10px] text-green-700 mt-0.5">
+                    Os dados mais recentes estão sendo carregados
+                  </p>
                 </div>
               </div>
             </div>
@@ -388,12 +420,12 @@ const ConectaGovDashboard = () => {
                 onClick={() => handleClickMunicipio(m.nome)}
                 onMouseEnter={() => setHoveredNome(m.nome)}
                 onMouseLeave={() => setHoveredNome(null)}
-                className={`w-full text-left px-3 py-2.5 mb-1 rounded-md transition-all flex items-center justify-between outline-none ${selectedMunicipio === m.nome ? 'bg-blue-700 text-white shadow-md md:ring-2 ring-blue-400' : hoveredNome === m.nome ? 'bg-blue-600 text-white shadow-sm' : 'hover:bg-slate-200 text-slate-700 active:bg-slate-300'}`}
+                className={`w-full text-left px-3 py-2.5 mb-1 rounded-md transition-all flex items-center justify-between outline-none ${sameMunicipio(selectedMunicipio, m.nome) ? 'bg-blue-700 text-white shadow-md md:ring-2 ring-blue-400' : sameMunicipio(hoveredNome, m.nome) ? 'bg-blue-600 text-white shadow-sm' : 'hover:bg-slate-200 text-slate-700 active:bg-slate-300'}`}
               >
                 <span className="text-sm font-medium truncate pr-2">
                   {m.nome}
                 </span>
-                {(hoveredNome === m.nome || selectedMunicipio === m.nome) && (
+                {(sameMunicipio(hoveredNome, m.nome) || sameMunicipio(selectedMunicipio, m.nome)) && (
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 )}
               </button>
@@ -438,8 +470,13 @@ const ConectaGovDashboard = () => {
         >
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-20">
-              <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-3" />
-              <p className="text-sm font-semibold text-slate-600">Carregando cartografia...</p>
+              <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4" />
+              <p className="text-base font-bold text-slate-700 mb-1">
+                {loadingData ? 'Carregando dados...' : 'Carregando mapa...'}
+              </p>
+              <p className="text-xs text-slate-500">
+                {loadingData ? 'Buscando informações do SharePoint' : 'Preparando cartografia'}
+              </p>
             </div>
           )}
 
@@ -463,8 +500,8 @@ const ConectaGovDashboard = () => {
                 
                 
                 {mapFeatures.map(({ nome, geocodigo, d }) => {
-                  const isHovered = hoveredNome === nome;
-                  const isSelected = selectedMunicipio === nome;
+                  const isHovered = sameMunicipio(hoveredNome, nome);
+                  const isSelected = sameMunicipio(selectedMunicipio, nome);
                   const hasConecta = isConecta(nome);
                   
                   const baseColor = hasConecta ? getMunicipioColor(nome) : '#E2E8F0';
@@ -492,8 +529,8 @@ const ConectaGovDashboard = () => {
                 
                 {mapFeatures.map(({ nome, centroid }) => {
                   if (!isConecta(nome)) return null;
-                  const isHovered = hoveredNome === nome;
-                  const isSelected = selectedMunicipio === nome;
+                  const isHovered = sameMunicipio(hoveredNome, nome);
+                  const isSelected = sameMunicipio(selectedMunicipio, nome);
                   const fillColor = isSelected ? '#EF4444' : '#1E3A8A';
 
                   return (
@@ -576,17 +613,16 @@ const ConectaGovDashboard = () => {
                   
                   // Campos extras relevantes para exibição (não-financeiros)
                   const DISPLAY_FIELDS = [
-                    { key: 'status_instalacao', label: 'Status Instalação' },
+                    // campos extras exibidos no card (não financeiros)
+                    // 'status_instalacao', 'localizacao' e 'equipamento_fabricante' são omitidos
                     { key: 'status_homologacao_pontos', label: 'Homologação' },
                     { key: 'status_instalacao_com_link_pontos', label: 'Link Instalado' },
                     { key: 'data_instalacao', label: 'Data Instalação' },
                     { key: 'ano_implantacao', label: 'Ano' },
                     { key: 'cep', label: 'CEP' },
                     { key: 'populacao_beneficiada', label: 'Pop. Beneficiada' },
-                    { key: 'localizacao', label: 'Localização' },
                     { key: 'status_inauguracao', label: 'Inauguração' },
                     { key: 'data_inauguracao', label: 'Data Inauguração' },
-                    { key: 'equipamento_fabricante', label: 'Fabricante' },
                     { key: 'observacao', label: 'Observação' },
                   ];
 

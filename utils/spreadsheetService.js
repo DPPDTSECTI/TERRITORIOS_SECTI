@@ -12,8 +12,10 @@
 import * as XLSX from 'xlsx';
 import { MUNICIPIOS_BAHIA } from './Municipios.js';
 
-// ─── Chave do sessionStorage ────────────────────────────────────────────────
+// ─── Chave do cache e configuração ─────────────────────────────────────────
 const CACHE_KEY = 'conecta_spreadsheet_data';
+const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp';
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hora em milissegundos
 
 // ─── URL do proxy para a planilha do SharePoint ─────────────────────────────
 // Em desenvolvimento: /api/sharepoint (middleware do Vite)
@@ -323,30 +325,100 @@ export function parseSpreadsheet(buffer) {
 // ─── Carregamento de dados ──────────────────────────────────────────────────
 
 /**
- * Carrega dados do Conecta Bahia.
- *   1. Se houver cache da planilha na sessão (upload anterior), usa ele.
- *   2. Tenta baixar a planilha do SharePoint via proxy.
- *   3. Como fallback, carrega o JSON estático.
+ * Carrega dados do Conecta Bahia com cache persistente e atualização em background.
+ * 
+ * Estratégia stale-while-revalidate:
+ *   1. Se houver cache válido (< 1 hora), retorna imediatamente.
+ *   2. Se houver cache expirado, retorna ele mas busca atualização em background.
+ *   3. Se não houver cache, busca do SharePoint (mostra loading).
  *
- * @returns {{ data: Object, source: 'upload'|'sharepoint'|'static' }}
+ * @param {Function} onUpdate - Callback opcional chamado quando dados são atualizados em background
+ * @returns {{ data: Object, source: 'upload'|'sharepoint'|'cache', fresh: boolean }}
  */
-export async function fetchConectaData() {
-  // 1. Verificar cache no sessionStorage (de upload anterior nesta sessão)
+export async function fetchConectaData(onUpdate = null) {
+  // 1. Verificar cache no localStorage
+  let cachedData = null;
+  let cacheAge = Infinity;
+  
   try {
-    const cached = sessionStorage.getItem(CACHE_KEY);
-    if (cached) {
-      const data = JSON.parse(cached);
-      const count = Object.keys(data).length;
+    const cached = localStorage.getItem(CACHE_KEY);
+    const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+    
+    if (cached && timestamp) {
+      cachedData = JSON.parse(cached);
+      cacheAge = Date.now() - parseInt(timestamp, 10);
+      const count = Object.keys(cachedData).length;
+      
+      console.log(`[Conecta] Cache encontrado: ${count} municípios, idade: ${Math.round(cacheAge / 1000)}s`);
+      
+      // Cache ainda válido (< 1 hora) - retorna imediatamente
+      if (cacheAge < CACHE_DURATION && count > 0) {
+        console.log(`[Conecta] ✓ Usando cache válido (${Math.round(cacheAge / 60000)} minutos de idade)`);
+        return { data: cachedData, source: 'cache', fresh: true };
+      }
+      
+      // Cache expirado mas disponível - retorna mas inicia atualização em background
       if (count > 0) {
-        console.log(`[Conecta] ✓ Dados do cache da sessão: ${count} municípios.`);
-        return { data, source: 'upload' };
+        console.log(`[Conecta] ⚠️ Cache expirado (${Math.round(cacheAge / 60000)} minutos), retornando mas atualizando em background...`);
+        
+        // Atualizar em background
+        fetchFreshData(onUpdate);
+        
+        return { data: cachedData, source: 'cache', fresh: false };
       }
     }
-  } catch { /* sessionStorage pode não estar disponível */ }
+  } catch (e) {
+    console.warn('[Conecta] Erro ao ler cache:', e.message);
+  }
 
-  // 2. Tentar baixar planilha do SharePoint
+  // 2. Sem cache - buscar direto do SharePoint
+  console.log('[Conecta] Sem cache, buscando dados do SharePoint...');
+  
   try {
-    console.log(`[Conecta] Baixando planilha do SharePoint via ${SHAREPOINT_PROXY_URL}...`);
+    const data = await fetchFromSharePoint();
+    if (data) {
+      saveToCache(data);
+      return { data, source: 'sharepoint', fresh: true };
+    }
+  } catch (err) {
+    console.error(`[Conecta] Erro ao carregar do SharePoint: ${err.message}`);
+    throw new Error('Não foi possível carregar dados do SharePoint');
+  }
+  
+  throw new Error('Não foi possível carregar dados do Conecta Bahia');
+}
+
+/**
+ * Busca dados frescos do SharePoint e atualiza cache em background.
+ * @param {Function} onUpdate - Callback chamado quando atualização completa
+ */
+async function fetchFreshData(onUpdate) {
+  try {
+    console.log('[Conecta] [Background] Iniciando atualização...');
+    const data = await fetchFromSharePoint();
+    
+    if (data) {
+      saveToCache(data);
+      console.log('[Conecta] [Background] ✓ Cache atualizado com sucesso!');
+      
+      if (onUpdate && typeof onUpdate === 'function') {
+        onUpdate(data);
+      }
+    }
+  } catch (err) {
+    console.warn('[Conecta] [Background] Falha na atualização:', err.message);
+  }
+}
+
+/**
+ * Busca dados do SharePoint via proxy.
+ * @returns {Promise<Object>} Dados parseados ou null se falhar
+ */
+async function fetchFromSharePoint() {
+  console.log(`[Conecta] Baixando planilha do SharePoint via ${SHAREPOINT_PROXY_URL}...`);
+  const startTime = Date.now();
+  
+  try {
     const res = await fetch(SHAREPOINT_PROXY_URL);
     
     console.log(`[Conecta] Response status: ${res.status}, Content-Type: ${res.headers.get('content-type')}`);
@@ -366,8 +438,9 @@ export async function fetchConectaData() {
         
         // É o JSON já parseado!
         const count = Object.keys(data).length;
-        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (JSON parseado): ${count} municípios.`);
-        return { data, source: 'sharepoint' };
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (JSON parseado): ${count} municípios em ${elapsed}s`);
+        return data;
       }
       
       // Versão antiga (dev mode): arquivo Excel bruto
@@ -382,8 +455,9 @@ export async function fetchConectaData() {
         
         const data = parseSpreadsheet(buffer);
         const count = Object.keys(data).length;
-        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (Excel parseado): ${count} municípios.`);
-        return { data, source: 'sharepoint' };
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (Excel parseado): ${count} municípios em ${elapsed}s`);
+        return data;
       }
       
       // HTML de erro
@@ -395,22 +469,26 @@ export async function fetchConectaData() {
       
       console.warn(`[Conecta] Content-Type desconhecido: ${contentType}`);
     } else {
-      console.warn(`[Conecta] Falha ao baixar do SharePoint (HTTP ${res.status}), tentando fallback.`);
+      console.warn(`[Conecta] Falha ao baixar do SharePoint (HTTP ${res.status})`);
     }
+    
+    return null;
   } catch (err) {
-    console.warn(`[Conecta] Erro ao carregar do SharePoint (${err.message}), tentando fallback.`);
+    console.warn(`[Conecta] Erro ao conectar com SharePoint: ${err.message}`);
+    return null;
   }
+}
 
-  // 3. JSON estático como fallback
+/**
+ * Salva dados no cache persistente (localStorage).
+ */
+function saveToCache(data) {
   try {
-    const res = await fetch('/conectaMunicipios.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    console.log(`[Conecta] ✓ Dados do JSON estático: ${Object.keys(data).length} municípios.`);
-    return { data, source: 'static' };
-  } catch (err) {
-    console.error(`[Conecta] Erro ao carregar JSON estático: ${err.message}`);
-    throw new Error('Não foi possível carregar dados do Conecta Bahia');
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+    console.log(`[Conecta] ✓ Cache salvo: ${Object.keys(data).length} municípios`);
+  } catch (e) {
+    console.warn('[Conecta] Erro ao salvar cache:', e.message);
   }
 }
 
@@ -424,17 +502,49 @@ export async function parseUploadedFile(file) {
   const buf = await file.arrayBuffer();
   const data = parseSpreadsheet(buf);
 
-  // Salvar no sessionStorage para sobreviver a reloads
-  try {
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
-  } catch { /* quota exceeded ou indisponível */ }
+  // Salvar no cache persistente
+  saveToCache(data);
 
   return data;
 }
 
 /**
- * Limpa o cache da planilha (volta ao JSON estático).
+ * Limpa o cache da planilha (força recarregamento).
  */
 export function clearSpreadsheetCache() {
-  try { sessionStorage.removeItem(CACHE_KEY); } catch { /* noop */ }
+  try {
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
+    console.log('[Conecta] Cache limpo');
+  } catch (e) {
+    console.warn('[Conecta] Erro ao limpar cache:', e.message);
+  }
+}
+
+/**
+ * Retorna informações sobre o cache atual.
+ */
+export function getCacheInfo() {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+    
+    if (cached && timestamp) {
+      const data = JSON.parse(cached);
+      const age = Date.now() - parseInt(timestamp, 10);
+      const valid = age < CACHE_DURATION;
+      
+      return {
+        exists: true,
+        count: Object.keys(data).length,
+        age: Math.round(age / 1000), // segundos
+        valid,
+        timestamp: new Date(parseInt(timestamp, 10)).toLocaleString('pt-BR')
+      };
+    }
+    
+    return { exists: false };
+  } catch {
+    return { exists: false };
+  }
 }
