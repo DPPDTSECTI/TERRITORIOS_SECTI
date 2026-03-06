@@ -1,7 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ConectaMap from '../ConectaMap';
 
 export default function App() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleForceRefresh = async () => {
+    if (isRefreshing) {
+      return;
+    }
+
+    setIsRefreshing(true);
+
+    try {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+
+        await Promise.all(
+          registrations.map(async (registration) => {
+            await registration.update();
+
+            if (registration.waiting) {
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+
+            if (registration.active) {
+              registration.active.postMessage({ type: 'CLEAR_CACHE' });
+            }
+          })
+        );
+      }
+
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+      }
+    } catch (err) {
+      console.warn('[App] Falha ao forcar atualizacao completa:', err);
+    }
+
+    const refreshUrl = new URL(window.location.href);
+    refreshUrl.searchParams.set('refresh', String(Date.now()));
+    window.location.replace(refreshUrl.toString());
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col">
 
@@ -28,6 +69,17 @@ export default function App() {
             <p className="text-blue-100/90 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl mx-auto md:mx-0 font-medium">
               Consulte a disponibilidade de praças com Wi-Fi gratuito em todo o estado. Uma iniciativa oficial para democratizar o acesso à internet e promover a inclusão digital do cidadão.
             </p>
+            <div className="mt-6 flex justify-center md:justify-start">
+              <button
+                type="button"
+                onClick={handleForceRefresh}
+                disabled={isRefreshing}
+                className="inline-flex items-center justify-center rounded-lg border border-white/40 bg-white/10 px-4 py-2 text-xs sm:text-sm font-semibold tracking-wide text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-70"
+                title="Limpa cache e recarrega a aplicacao com os dados mais recentes"
+              >
+                {isRefreshing ? 'Atualizando...' : 'Forçar atualizacao'}
+              </button>
+            </div>
           </div>
           <div className="w-full md:w-auto flex justify-center shrink-0">
             <img
