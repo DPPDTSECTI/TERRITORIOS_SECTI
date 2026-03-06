@@ -609,12 +609,63 @@ const ConectaGovDashboard = () => {
                     <div className="flex flex-col mt-2">
                       <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Praças ({pracas.length})</span>
                       <div className="flex flex-col space-y-1.5">
-                        {pracas.map((p, i) => (
+                        {pracas.map((p, i) => {
+                          const hasKitIndigena = p.kit_aldeias_indigenas && parseInt(String(p.kit_aldeias_indigenas).trim(), 10) > 0;
+                          const hasKitQuilombo = p.kit_quilombo && parseInt(String(p.kit_quilombo).trim(), 10) > 0;
+                          
+                          return (
                           <div key={i} className="bg-slate-50 border border-slate-100 rounded-md px-2 py-2 flex flex-col gap-1">
                             <div className="flex items-start gap-2">
                               <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
-                              <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium">{p.nome_da_praca || 'Sem nome'}</span>
+                              <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium flex-1">{p.nome_da_praca || 'Sem nome'}</span>
+                              {/* Indicadores de Kit */}
+                              <div className="flex items-center gap-1 shrink-0">
+                                {hasKitIndigena && (
+                                  <img 
+                                    src="/img/Indigena.svg" 
+                                    alt="Kit Aldeias Indígenas" 
+                                    className="w-4 h-4" 
+                                    title={`Kit Aldeias Indígenas: ${p.kit_aldeias_indigenas}`}
+                                  />
+                                )}
+                                {hasKitQuilombo && (
+                                  <img 
+                                    src="/img/quilombo.svg" 
+                                    alt="Kit Quilombo" 
+                                    className="w-4 h-4" 
+                                    title={`Kit Quilombo: ${p.kit_quilombo}`}
+                                  />
+                                )}
+                              </div>
                             </div>
+                            
+                            {/* Badges informativos sobre os kits */}
+                            {hasKitIndigena && (
+                              <div className="flex items-center gap-1.5 bg-purple-50 border border-purple-200 rounded px-2 py-1 mt-1">
+                                <img 
+                                  src="/img/Indigena.svg" 
+                                  alt="Aldeias Indígenas" 
+                                  className="w-3 h-3 shrink-0" 
+                                />
+                                <span className="text-[9px] md:text-[10px] text-purple-800 font-semibold">
+                                  Contém {p.kit_aldeias_indigenas} ponto{parseInt(p.kit_aldeias_indigenas) !== 1 ? 's' : ''} em comunidade indígena
+                                </span>
+                              </div>
+                            )}
+                            
+                            {hasKitQuilombo && (
+                              <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
+                                <img 
+                                  src="/img/quilombo.svg" 
+                                  alt="Quilombo" 
+                                  className="w-3 h-3 shrink-0" 
+                                />
+                                <span className="text-[9px] md:text-[10px] text-amber-900 font-semibold">
+                                  Contém {p.kit_quilombo} ponto{parseInt(p.kit_quilombo) !== 1 ? 's' : ''} em comunidade quilombola
+                                </span>
+                              </div>
+                            )}
+                            
                             {dataSource !== 'static' && DISPLAY_FIELDS.map(({ key, label }) => {
                               const val = p[key];
                               if (!val) return null;
@@ -626,7 +677,8 @@ const ConectaGovDashboard = () => {
                               );
                             })}
                           </div>
-                        ))}
+                        );
+                        })}
                       </div>
                     </div>
                   );
