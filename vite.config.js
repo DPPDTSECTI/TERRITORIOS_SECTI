@@ -1,14 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import https from 'https'
-import { parseSpreadsheet } from './.netlify/functions/sharepoint-processor.js'
 
 // Cache em memória para desenvolvimento
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
 
-// Plugin para criar proxy do SharePoint (PROCESSA EXCEL NO SERVIDOR = RÁPIDO)
+// Plugin para criar proxy do SharePoint em DEV
+// NOTA: Em produção, usa Netlify Function que processa server-side
 const sharepointProxyPlugin = () => ({
   name: 'sharepoint-proxy',
   configureServer(server) {
@@ -20,9 +20,9 @@ const sharepointProxyPlugin = () => ({
         const age = Math.round((Date.now() - (devCacheExpiry - DEV_CACHE_TTL)) / 1000);
         console.log(`[Dev Proxy] ✓ Cache HIT (idade: ${age}s) - respondendo instantaneamente`);
         
-        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Cache-Control', 'public, max-age=1800, stale-while-revalidate=86400');
+        res.setHeader('Cache-Control', 'public, max-age=1800');
         res.setHeader('X-Content-Source', 'dev-cache');
         res.setHeader('X-Cache-Age', age.toString());
         res.end(devCache);
@@ -34,7 +34,7 @@ const sharepointProxyPlugin = () => ({
       
       const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
       
-      console.log(`[Dev Proxy] Cache MISS - baixando e processando Excel...`);
+      console.log(`[Dev Proxy] Cache MISS - baixando Excel...`);
       
       // Verificar se cliente desconectou
       let clientDisconnected = false;
@@ -118,37 +118,21 @@ function handleResponse(response, res, startTime) {
       const downloadTime = Date.now() - startTime;
       console.log(`[Dev Proxy] ✓ Excel baixado em ${downloadTime}ms: ${buffer.length} bytes`);
       
-      try {
-        // OTIMIZAÇÃO CRÍTICA: Processar Excel no servidor (Node.js é 10x+ mais rápido que navegador)
-        const parseStart = Date.now();
-        const jsonData = parseSpreadsheet(buffer);
-        const parseTime = Date.now() - parseStart;
-        
-        const jsonString = JSON.stringify(jsonData);
-        const jsonSize = Buffer.byteLength(jsonString);
-        
-        console.log(`[Dev Proxy] ✓ JSON gerado em ${parseTime}ms: ${jsonSize} bytes (${Object.keys(jsonData).length} municípios)`);
-        
-        // Salvar no cache para próximas requisições
-        devCache = jsonString;
-        devCacheExpiry = Date.now() + DEV_CACHE_TTL;
-        console.log(`[Dev Proxy] ✓ Cache salvo (válido por ${DEV_CACHE_TTL / 60000} minutos)`);
-        
-        const totalTime = Date.now() - startTime;
-        console.log(`[Dev Proxy] ✓ TEMPO TOTAL: ${totalTime}ms (download: ${downloadTime}ms + parse: ${parseTime}ms)`);
-        
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Cache-Control', 'public, max-age=1800, stale-while-revalidate=86400');
-        res.setHeader('X-Content-Source', 'sharepoint-processed');
-        res.setHeader('X-Parse-Time', parseTime.toString());
-        res.setHeader('X-Total-Time', totalTime.toString());
-        res.end(jsonString);
-        
-      } catch (parseError) {
-        console.error('[Dev Proxy] ✗ Erro ao processar Excel:', parseError.message);
-        sendError(res, 500, `Erro ao processar Excel: ${parseError.message}`);
-      }
+      // Salvar no cache para próximas requisições
+      devCache = buffer;
+      devCacheExpiry = Date.now() + DEV_CACHE_TTL;
+      console.log(`[Dev Proxy] ✓ Cache salvo (válido por ${DEV_CACHE_TTL / 60000} minutos)`);
+      
+      const totalTime = Date.now() - startTime;
+      console.log(`[Dev Proxy] ✓ TEMPO TOTAL: ${totalTime}ms`);
+      
+      // Retornar Excel bruto (cliente processa com IndexedDB cache)
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'public, max-age=1800');
+      res.setHeader('X-Content-Source', 'sharepoint-raw');
+      res.setHeader('X-Download-Time', downloadTime.toString());
+      res.end(buffer);
     });
     response.on('error', (err) => {
       console.error('[Dev Proxy] Erro ao ler response:', err.message);
