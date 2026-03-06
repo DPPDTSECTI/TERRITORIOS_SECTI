@@ -1,8 +1,18 @@
 /**
  * Netlify Function: Proxy para download da planilha do SharePoint
  * Processa o Excel serverless e retorna JSON (evita limite de 6MB)
+ * OTIMIZADO: Cache em memória + Compressão gzip
  */
 const { parseSpreadsheet } = require('./sharepoint-processor');
+const zlib = require('zlib');
+const { promisify } = require('util');
+
+const gzip = promisify(zlib.gzip);
+
+// Cache em memória (válido durante a execução da função serverless)
+let cachedData = null;
+let cacheExpiry = 0;
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutos
 
 /**
  * Extrai URL de redirecionamento de uma página HTML
@@ -91,7 +101,54 @@ async function httpsGet(url, cookies = '') {
 exports.handler = async (event, context) => {
   const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
 
-  console.log('[Netlify] === PROXY SHAREPOINT (PARSE NO SERVIDOR) ===');
+  console.log('[Netlify] === PROXY SHAREPOINT (PARSE NO SERVIDOR + CACHE + GZIP) ===');
+  
+  // OTIMIZAÇÃO 1: Verificar cache em memória
+  if (cachedData && Date.now() < cacheExpiry) {
+    const age = Math.round((Date.now() - (cacheExpiry - CACHE_TTL)) / 1000);
+    console.log(`[Netlify] ✓ Cache HIT (idade: ${age}s)`);
+    
+    const acceptsGzip = (event.headers['accept-encoding'] || '').includes('gzip');
+    
+    if (acceptsGzip) {
+      try {
+        const compressed = await gzip(cachedData.jsonString);
+        console.log(`[Netlify] ✓ Comprimido: ${cachedData.jsonString.length} → ${compressed.length} bytes (${Math.round(100 - (compressed.length / cachedData.jsonString.length * 100))}% menor)`);
+        
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Encoding': 'gzip',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
+            'ETag': cachedData.etag,
+            'X-Content-Source': 'cache-compressed',
+            'X-Cache-Age': age.toString(),
+          },
+          body: compressed.toString('base64'),
+          isBase64Encoded: true,
+        };
+      } catch (compressError) {
+        console.warn('[Netlify] Erro ao comprimir, enviando sem compressão:', compressError.message);
+      }
+    }
+    
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
+        'ETag': cachedData.etag,
+        'X-Content-Source': 'cache',
+        'X-Cache-Age': age.toString(),
+      },
+      body: cachedData.jsonString,
+    };
+  }
+  
+  console.log('[Netlify] Cache MISS - buscando dados do SharePoint...');
 
   try {
     let url = downloadUrl;
@@ -134,24 +191,65 @@ exports.handler = async (event, context) => {
           console.log(`[Netlify] Processando Excel...`);
           
           try {
+            const startParse = Date.now();
             const jsonData = parseSpreadsheet(response.data);
+            const parseTime = Date.now() - startParse;
+            
             const jsonString = JSON.stringify(jsonData);
             const jsonSize = Buffer.byteLength(jsonString);
             
-            console.log(`[Netlify] ✓ JSON gerado: ${jsonSize} bytes (${Object.keys(jsonData).length} municípios)`);
+            console.log(`[Netlify] ✓ JSON gerado em ${parseTime}ms: ${jsonSize} bytes (${Object.keys(jsonData).length} municípios)`);
             
             // Gerar ETag baseado no conteúdo
             const crypto = require('crypto');
             const etag = crypto.createHash('md5').update(jsonString).digest('hex');
+            
+            // OTIMIZAÇÃO 2: Salvar no cache em memória
+            cachedData = { jsonString, etag };
+            cacheExpiry = Date.now() + CACHE_TTL;
+            console.log(`[Netlify] ✓ Dados salvos no cache (válido por ${CACHE_TTL / 60000} minutos)`);
+            
+            // OTIMIZAÇÃO 3: Comprimir resposta (se cliente aceitar)
+            const acceptsGzip = (event.headers['accept-encoding'] || '').includes('gzip');
+            
+            if (acceptsGzip) {
+              try {
+                const startCompress = Date.now();
+                const compressed = await gzip(jsonString);
+                const compressTime = Date.now() - startCompress;
+                const compressionRatio = Math.round(100 - (compressed.length / jsonSize * 100));
+                
+                console.log(`[Netlify] ✓ Comprimido em ${compressTime}ms: ${jsonSize} → ${compressed.length} bytes (${compressionRatio}% menor)`);
+                
+                return {
+                  statusCode: 200,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Encoding': 'gzip',
+                    'Access-Control-Allow-Origin': '*',
+                    'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
+                    'ETag': `"${etag}"`,
+                    'X-Content-Source': 'sharepoint-processed-compressed',
+                    'X-Parse-Time': parseTime.toString(),
+                    'X-Compress-Time': compressTime.toString(),
+                  },
+                  body: compressed.toString('base64'),
+                  isBase64Encoded: true,
+                };
+              } catch (compressError) {
+                console.warn('[Netlify] Erro ao comprimir, enviando sem compressão:', compressError.message);
+              }
+            }
             
             return {
               statusCode: 200,
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+                'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
                 'ETag': `"${etag}"`,
                 'X-Content-Source': 'sharepoint-processed',
+                'X-Parse-Time': parseTime.toString(),
               },
               body: jsonString,
             };

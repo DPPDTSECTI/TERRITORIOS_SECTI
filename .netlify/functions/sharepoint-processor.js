@@ -79,7 +79,20 @@ function findColIndex(headers, patterns) {
 }
 
 function parseSpreadsheet(buffer) {
-  const workbook = XLSX.read(buffer, { type: 'buffer' });
+  const startTime = Date.now();
+  
+  // OTIMIZAÇÃO: Lendo apenas os dados necessários, ignorando formatações pesadas
+  const workbook = XLSX.read(buffer, { 
+    type: 'buffer',
+    cellFormula: false,    // Ignora fórmulas
+    cellHTML: false,       // Ignora HTML
+    cellStyles: false,     // Ignora estilos
+    cellText: false,       // Ignora formatação de texto
+    sheetStubs: false,     // Ignora células vazias
+    bookVBA: false,        // Ignora macros VBA
+    bookDeps: false,       // Ignora dependências
+    bookSheets: false,     // Não carrega todas as planilhas
+  });
   
   let sheetName = workbook.SheetNames[1];
   const acompanhaSheet = workbook.SheetNames.find(name => 
@@ -88,7 +101,14 @@ function parseSpreadsheet(buffer) {
   if (acompanhaSheet) sheetName = acompanhaSheet;
   
   const sheet = workbook.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+  
+  // OTIMIZAÇÃO: Converter para JSON apenas uma vez
+  const rows = XLSX.utils.sheet_to_json(sheet, { 
+    header: 1, 
+    defval: '',
+    raw: true,           // Valores raw (mais rápido)
+    blankrows: false,    // Ignora linhas vazias
+  });
   
   if (rows.length < 2) throw new Error('Planilha vazia');
   
@@ -111,12 +131,22 @@ function parseSpreadsheet(buffer) {
   const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
   
   const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterPlaca].filter((i) => i !== -1));
+  
+  // OTIMIZAÇÃO: Filtrar apenas colunas relevantes (não financeiras)
   const extraCols = headers
     .map((h, i) => ({ h, i }))
     .filter(({ h, i }) => !keyIndices.has(i) && h && !isFinancial(h))
+    .slice(0, 15) // OTIMIZAÇÃO: Limitar a 15 colunas extras para reduzir payload
     .map(({ h, i }) => ({ key: headerToKey(h), label: h, idx: i }));
   
   const result = {};
+  let processedRows = 0;
+  
+  // OTIMIZAÇÃO: Pre-criar Map para normalização de municípios (evita loop O(n) em cada linha)
+  const municipiosMap = new Map();
+  MUNICIPIOS_BAHIA.forEach(m => {
+    municipiosMap.set(normalizeMunicipioKey(m), m);
+  });
   
   for (let r = headerIdx + 1; r < rows.length; r++) {
     const row = rows[r];
@@ -130,7 +160,9 @@ function parseSpreadsheet(buffer) {
     const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
     if (!municipioInput) continue;
     
-    const municipioNome = normalizeMunicipioNome(municipioInput);
+    // OTIMIZAÇÃO: Usar Map ao invés de loop para normalizar município
+    const nomeKey = normalizeMunicipioKey(municipioInput);
+    const municipioNome = municipiosMap.get(nomeKey) || municipioInput;
     
     const praca = {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
@@ -138,9 +170,12 @@ function parseSpreadsheet(buffer) {
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
     };
     
+    // OTIMIZAÇÃO: Processar apenas colunas extras definidas
     for (const col of extraCols) {
       const val = row[col.idx];
-      let processedVal = val != null ? String(val).trim() : '';
+      if (val == null || val === '') continue; // OTIMIZAÇÃO: Pular valores vazios
+      
+      let processedVal = String(val).trim();
       if ((col.label.toLowerCase().includes('data') || col.label.toLowerCase().includes('date')) && processedVal) {
         processedVal = convertExcelDate(processedVal);
       }
@@ -149,9 +184,13 @@ function parseSpreadsheet(buffer) {
     
     if (!result[municipioNome]) result[municipioNome] = [];
     result[municipioNome].push(praca);
+    processedRows++;
   }
   
-  console.log(`[Parser] Dados parseados: ${Object.keys(result).length} municípios, ${Object.values(result).flat().length} praças`);
+  const parseTime = Date.now() - startTime;
+  const totalPracas = Object.values(result).flat().length;
+  
+  console.log(`[Parser] ✓ Parseado em ${parseTime}ms: ${Object.keys(result).length} municípios, ${totalPracas} praças (${processedRows} linhas processadas)`);
   
   return result;
 }

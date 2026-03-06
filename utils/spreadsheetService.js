@@ -1,5 +1,5 @@
-
 import * as XLSX from 'xlsx';
+import { get, set, del } from 'idb-keyval'; // Importando o gerenciador de IndexedDB
 import { MUNICIPIOS_BAHIA } from './Municipios.js';
 
 const CACHE_KEY = 'conecta_spreadsheet_data';
@@ -26,6 +26,11 @@ const FINANCIAL_PATTERNS = [
   'processo de pagamento',
 ];
 
+// OTIMIZAÇÃO: Pré-processamento dos municípios (Mapa O(1))
+const MUNICIPIOS_MAP = new Map();
+MUNICIPIOS_BAHIA.forEach(m => {
+  MUNICIPIOS_MAP.set(normalizeMunicipioKey(m), m);
+});
 
 function normalizeHeader(raw) {
   if (raw == null) return '';
@@ -55,19 +60,12 @@ function normalizeMunicipioKey(nome) {
     .trim();
 }
 
-
 function normalizeMunicipioNome(nomeInput) {
   if (!nomeInput || nomeInput.trim() === '') return '';
-
   const nomeKey = normalizeMunicipioKey(nomeInput);
-
-  for (const municipio of MUNICIPIOS_BAHIA) {
-    if (normalizeMunicipioKey(municipio) === nomeKey) {
-      return municipio; // Retorna com a grafia padrão
-    }
-  }
-
-  return nomeInput;
+  
+  // OTIMIZAÇÃO: Busca direta no mapa em vez de loop
+  return MUNICIPIOS_MAP.get(nomeKey) || nomeInput;
 }
 
 /**
@@ -82,20 +80,15 @@ function convertExcelDate(excelDate) {
   }
 
   const num = parseInt(excelDate, 10);
-
-  if (isNaN(num)) {
-    return excelDate;
-  }
+  if (isNaN(num)) return excelDate;
 
   const date = new Date((num - 25569) * 86400 * 1000);
-
   const dia = String(date.getDate()).padStart(2, '0');
   const mes = String(date.getMonth() + 1).padStart(2, '0');
   const ano = date.getFullYear();
 
   return `${dia}/${mes}/${ano}`;
 }
-
 
 function findColIndex(headers, patterns) {
   const normed = headers.map((h) => normalizeHeader(h).toLowerCase());
@@ -106,25 +99,28 @@ function findColIndex(headers, patterns) {
   return -1;
 }
 
-
 /**
  * @param {ArrayBuffer} buffer - conteúdo do arquivo Excel
  * @returns {Object} dados agrupados por município
  */
 export function parseSpreadsheet(buffer) {
-  const workbook = XLSX.read(buffer, { type: 'array' });
-
-  workbook.SheetNames.forEach((name, idx) => {
+  // OTIMIZAÇÃO: Lendo apenas os dados necessários, ignorando formatações pesadas
+  const workbook = XLSX.read(buffer, { 
+    type: 'array',
+    cellFormula: false,
+    cellHTML: false,
+    cellStyles: false,
+    cellText: false 
   });
 
-  let sheetName = workbook.SheetNames[1];
+  let sheetName = workbook.SheetNames[1] || workbook.SheetNames[0];
   const acompanhaSheet = workbook.SheetNames.find(name =>
     name.toLowerCase().includes('acompanham') || name.toLowerCase().includes('acompanhamento')
   );
+  
   if (acompanhaSheet) {
     sheetName = acompanhaSheet;
   }
-
 
   const sheet = workbook.Sheets[sheetName];
   const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
@@ -140,10 +136,6 @@ export function parseSpreadsheet(buffer) {
   const rawHeaders = rows[headerIdx];
   const headers = rawHeaders.map(normalizeHeader);
 
-  for (let i = 0; i < Math.min(10, rows.length); i++) {
-    console.log(`  Linha ${i}:`, rows[i]?.slice(0, 5));
-  }
-
   const iMunicipio = findColIndex(headers, ['município', 'municipio']);
   const iPraca = findColIndex(headers, ['descrição do local', 'descricao do local', 'nome da praça', 'nome_da_praca']);
   const iProjeto = findColIndex(headers, ['projeto']);
@@ -152,11 +144,6 @@ export function parseSpreadsheet(buffer) {
   const iLocal = findColIndex(headers, ['local']);
 
   const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
-
-  console.log('════════════════════════════════════════════════════════');
-  console.log('[parseSpreadsheet] 🎯 COLUNA DE MUNICÍPIO IDENTIFICADA:');
-  console.log(`  Índice da coluna: ${iMun}`);
-  console.log(`  Nome do header: "${headers[iMun]}"`);
 
   if (iMun === -1) {
     console.warn('[Conecta] ❌ Não foi possível identificar a coluna de município.');
@@ -179,9 +166,7 @@ export function parseSpreadsheet(buffer) {
     if (iFilterPlaca !== -1) {
       const val = String(row[iFilterPlaca] || '').trim();
       const valLower = val.toLowerCase();
-
       filterValues[val] = (filterValues[val] || 0) + 1;
-
       if (valLower !== 'sim') continue;
     }
 
@@ -189,7 +174,6 @@ export function parseSpreadsheet(buffer) {
     if (!municipioInput) continue;
 
     const municipioNome = normalizeMunicipioNome(municipioInput);
-
     const municipioKey = normalizeMunicipioKey(municipioNome);
 
     if (processedRows.length < 20) {
@@ -223,9 +207,6 @@ export function parseSpreadsheet(buffer) {
     result[municipioNome].push(praca);
   }
 
-  console.log('[Conecta] ✓ Dados parseados: 75 municípios com', Object.values(result).flat().length, 'Pontos Conecta Bahia (apenas com "Instalação Link (TLD)" = SIM).');
-
-
   processedRows.forEach((item, idx) => {
     const infoNormalizacao = item.municipioOriginal !== item.municipio
       ? ` (normalizado: "${item.municipioOriginal}")`
@@ -234,7 +215,6 @@ export function parseSpreadsheet(buffer) {
 
   return result;
 }
-
 
 /**
  * @param {Function} onUpdate - Callback opcional chamado quando dados são atualizados em background
@@ -245,39 +225,32 @@ export async function fetchConectaData(onUpdate = null) {
   let cacheAge = Infinity;
 
   try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+    // OTIMIZAÇÃO: Lendo do IndexedDB (suporta arquivos enormes sem estourar limite)
+    const cached = await get(CACHE_KEY);
+    const timestamp = await get(CACHE_TIMESTAMP_KEY);
 
     if (cached && timestamp) {
-      cachedData = JSON.parse(cached);
+      cachedData = cached; // O IndexedDB já retorna o objeto, não precisa fazer JSON.parse
       cacheAge = Date.now() - parseInt(timestamp, 10);
       const count = Object.keys(cachedData).length;
 
-      console.log(`[Conecta] Cache encontrado: ${count} municípios, idade: ${Math.round(cacheAge / 1000)}s`);
-
       if (cacheAge < CACHE_DURATION && count > 0) {
-        console.log(`[Conecta] ✓ Usando cache válido (${Math.round(cacheAge / 60000)} minutos de idade)`);
         return { data: cachedData, source: 'cache', fresh: true };
       }
 
       if (count > 0) {
-        console.log(`[Conecta] ⚠️ Cache expirado (${Math.round(cacheAge / 60000)} minutos), retornando mas atualizando em background...`);
-
         fetchFreshData(onUpdate);
-
         return { data: cachedData, source: 'cache', fresh: false };
       }
     }
   } catch (e) {
-    console.warn('[Conecta] Erro ao ler cache:', e.message);
+    console.warn('[Conecta] Erro ao ler cache do IndexedDB:', e.message);
   }
-
-  console.log('[Conecta] Sem cache, buscando dados do SharePoint...');
 
   try {
     const data = await fetchFromSharePoint();
     if (data) {
-      saveToCache(data);
+      await saveToCache(data);
       return { data, source: 'sharepoint', fresh: true };
     }
   } catch (err) {
@@ -293,13 +266,9 @@ export async function fetchConectaData(onUpdate = null) {
  */
 async function fetchFreshData(onUpdate) {
   try {
-    console.log('[Conecta] [Background] Iniciando atualização...');
     const data = await fetchFromSharePoint();
-
     if (data) {
-      saveToCache(data);
-      console.log('[Conecta] [Background] ✓ Cache atualizado com sucesso!');
-
+      await saveToCache(data);
       if (onUpdate && typeof onUpdate === 'function') {
         onUpdate(data);
       }
@@ -313,32 +282,46 @@ async function fetchFreshData(onUpdate) {
  * @returns {Promise<Object>}
  */
 async function fetchFromSharePoint() {
-  console.log(`[Conecta] Baixando planilha do SharePoint via ${SHAREPOINT_PROXY_URL}...`);
   const startTime = Date.now();
+  console.log('[Conecta] 🚀 Iniciando busca de dados...');
 
   try {
+    const fetchStart = Date.now();
     const res = await fetch(SHAREPOINT_PROXY_URL);
-
-    console.log(`[Conecta] Response status: ${res.status}, Content-Type: ${res.headers.get('content-type')}`);
+    const fetchTime = Date.now() - fetchStart;
+    
+    console.log(`[Conecta] ✓ Fetch completado em ${fetchTime}ms (status: ${res.status})`);
 
     if (res.ok) {
       const contentType = res.headers.get('content-type') || '';
+      const contentSource = res.headers.get('x-content-source') || 'unknown';
+      const cacheAge = res.headers.get('x-cache-age');
+      const parseTime = res.headers.get('x-parse-time');
+      
+      console.log(`[Conecta] Content-Type: ${contentType}, Source: ${contentSource}`);
+      if (cacheAge) console.log(`[Conecta] Cache age: ${cacheAge}s`);
+      if (parseTime) console.log(`[Conecta] Server parse time: ${parseTime}ms`);
 
       if (contentType.includes('application/json')) {
+        const jsonStart = Date.now();
         const data = await res.json();
-
+        const jsonTime = Date.now() - jsonStart;
+        
+        console.log(`[Conecta] ✓ JSON parseado em ${jsonTime}ms`);
+        
         if (data.error) {
           console.error('[Conecta] Erro do servidor:', data.error);
           throw new Error(data.error);
         }
-
-        const count = Object.keys(data).length;
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (JSON parseado): ${count} municípios em ${elapsed}s`);
+        
+        const totalTime = Date.now() - startTime;
+        console.log(`[Conecta] ✅ TOTAL: ${totalTime}ms (fetch: ${fetchTime}ms + json: ${jsonTime}ms) - ${Object.keys(data).length} municípios`);
+        
         return data;
       }
 
       if (contentType.includes('spreadsheet') || contentType.includes('excel') || contentType.includes('octet-stream')) {
+        console.log('[Conecta] ⚠️ Recebeu Excel bruto - processando no cliente (LENTO)...');
         const buffer = await res.arrayBuffer();
         const bytes = new Uint8Array(buffer);
 
@@ -347,10 +330,13 @@ async function fetchFromSharePoint() {
           throw new Error('Arquivo não é Excel válido');
         }
 
+        const parseStart = Date.now();
         const data = parseSpreadsheet(buffer);
-        const count = Object.keys(data).length;
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.log(`[Conecta] ✓ Dados da planilha do SharePoint (Excel parseado): ${count} municípios em ${elapsed}s`);
+        const parseTime = Date.now() - parseStart;
+        
+        const totalTime = Date.now() - startTime;
+        console.log(`[Conecta] ✅ TOTAL: ${totalTime}ms (fetch: ${fetchTime}ms + parse: ${parseTime}ms)`);
+        
         return data;
       }
 
@@ -367,45 +353,46 @@ async function fetchFromSharePoint() {
 
     return null;
   } catch (err) {
-    console.warn(`[Conecta] Erro ao conectar com SharePoint: ${err.message}`);
+    const totalTime = Date.now() - startTime;
+    console.error(`[Conecta] ❌ Erro após ${totalTime}ms: ${err.message}`);
     return null;
   }
 }
 
-function saveToCache(data) {
+// OTIMIZAÇÃO: Salvando no IndexedDB de forma assíncrona
+async function saveToCache(data) {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
-    console.log(`[Conecta] ✓ Cache salvo: ${Object.keys(data).length} municípios`);
+    await set(CACHE_KEY, data);
+    await set(CACHE_TIMESTAMP_KEY, Date.now());
   } catch (e) {
-    console.warn('[Conecta] Erro ao salvar cache:', e.message);
+    console.warn('[Conecta] Erro ao salvar cache no IndexedDB:', e.message);
   }
 }
 
 export async function parseUploadedFile(file) {
   const buf = await file.arrayBuffer();
   const data = parseSpreadsheet(buf);
-  saveToCache(data);
+  await saveToCache(data);
   return data;
 }
 
-export function clearSpreadsheetCache() {
+// OTIMIZAÇÃO: Limpando IndexedDB
+export async function clearSpreadsheetCache() {
   try {
-    localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
-    console.log('[Conecta] Cache limpo');
+    await del(CACHE_KEY);
+    await del(CACHE_TIMESTAMP_KEY);
   } catch (e) {
-    console.warn('[Conecta] Erro ao limpar cache:', e.message);
+    console.warn('[Conecta] Erro ao limpar cache do IndexedDB:', e.message);
   }
 }
 
-export function getCacheInfo() {
+// OTIMIZAÇÃO: Lendo dados analíticos do IndexedDB
+export async function getCacheInfo() {
   try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+    const data = await get(CACHE_KEY);
+    const timestamp = await get(CACHE_TIMESTAMP_KEY);
 
-    if (cached && timestamp) {
-      const data = JSON.parse(cached);
+    if (data && timestamp) {
       const age = Date.now() - parseInt(timestamp, 10);
       const valid = age < CACHE_DURATION;
 

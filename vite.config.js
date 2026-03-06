@@ -1,22 +1,46 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import https from 'https'
+import { parseSpreadsheet } from './.netlify/functions/sharepoint-processor.js'
 
-// Plugin para criar proxy do SharePoint (evitar CORS)
+// Cache em memória para desenvolvimento
+let devCache = null;
+let devCacheExpiry = 0;
+const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
+
+// Plugin para criar proxy do SharePoint (PROCESSA EXCEL NO SERVIDOR = RÁPIDO)
 const sharepointProxyPlugin = () => ({
   name: 'sharepoint-proxy',
   configureServer(server) {
     server.middlewares.use('/api/sharepoint', async (req, res) => {
-      // Link atualizado fornecido pelo usuário
+      const startTime = Date.now();
+      
+      // OTIMIZAÇÃO: Cache em memória (retorna instantâneamente)
+      if (devCache && Date.now() < devCacheExpiry) {
+        const age = Math.round((Date.now() - (devCacheExpiry - DEV_CACHE_TTL)) / 1000);
+        console.log(`[Dev Proxy] ✓ Cache HIT (idade: ${age}s) - respondendo instantaneamente`);
+        
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=1800, stale-while-revalidate=86400');
+        res.setHeader('X-Content-Source', 'dev-cache');
+        res.setHeader('X-Cache-Age', age.toString());
+        res.end(devCache);
+        
+        const responseTime = Date.now() - startTime;
+        console.log(`[Dev Proxy] Resposta enviada em ${responseTime}ms ⚡`);
+        return;
+      }
+      
       const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
       
-      console.log(`[Proxy SharePoint] Iniciando download...`);
+      console.log(`[Dev Proxy] Cache MISS - baixando e processando Excel...`);
       
       // Verificar se cliente desconectou
       let clientDisconnected = false;
       res.on('close', () => {
         clientDisconnected = true;
-        console.log('[Proxy SharePoint] Cliente desconectou');
+        console.log('[Dev Proxy] Cliente desconectou');
       });
       
       https.get(downloadUrl, {
@@ -28,7 +52,7 @@ const sharepointProxyPlugin = () => ({
         if (clientDisconnected) return;
         
         const contentType = response.headers['content-type'] || '';
-        console.log(`[Proxy SharePoint] Status: ${response.statusCode}, Content-Type: ${contentType}`);
+        console.log(`[Dev Proxy] Status: ${response.statusCode}, Content-Type: ${contentType}`);
         
         // Seguir redirecionamentos
         if (response.statusCode === 301 || response.statusCode === 302 || response.statusCode === 307) {
@@ -39,7 +63,7 @@ const sharepointProxyPlugin = () => ({
             redirectUrl = `https://prodeboffice365-my.sharepoint.com${redirectUrl}`;
           }
           
-          console.log(`[Proxy SharePoint] Redirecionando para: ${redirectUrl?.substring(0, 80)}...`);
+          console.log(`[Dev Proxy] Redirecionando para: ${redirectUrl?.substring(0, 80)}...`);
           
           // Preservar cookies do redirecionamento
           const cookies = response.headers['set-cookie'];
@@ -54,11 +78,11 @@ const sharepointProxyPlugin = () => ({
           
           https.get(redirectUrl, { headers }, (redirectResponse) => {
             if (!clientDisconnected) {
-              handleResponse(redirectResponse, res);
+              handleResponse(redirectResponse, res, startTime);
             }
           }).on('error', (err) => {
             if (!clientDisconnected) {
-              console.error('[Proxy SharePoint] Erro no redirecionamento:', err.message);
+              console.error('[Dev Proxy] Erro no redirecionamento:', err.message);
               sendError(res, 500, err.message);
             }
           });
@@ -66,11 +90,11 @@ const sharepointProxyPlugin = () => ({
         }
         
         if (!clientDisconnected) {
-          handleResponse(response, res);
+          handleResponse(response, res, startTime);
         }
       }).on('error', (err) => {
         if (!clientDisconnected) {
-          console.error('[Proxy SharePoint] Erro:', err.message);
+          console.error('[Dev Proxy] Erro:', err.message);
           sendError(res, 500, err.message);
         }
       });
@@ -78,7 +102,7 @@ const sharepointProxyPlugin = () => ({
   }
 });
 
-function handleResponse(response, res) {
+function handleResponse(response, res, startTime) {
   const contentType = response.headers['content-type'] || '';
   
   // Verificar se é Excel
@@ -91,19 +115,48 @@ function handleResponse(response, res) {
     response.on('data', (chunk) => chunks.push(chunk));
     response.on('end', () => {
       const buffer = Buffer.concat(chunks);
-      console.log(`[Proxy SharePoint] ✓ Download completo: ${buffer.length} bytes`);
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
-      res.end(buffer);
+      const downloadTime = Date.now() - startTime;
+      console.log(`[Dev Proxy] ✓ Excel baixado em ${downloadTime}ms: ${buffer.length} bytes`);
+      
+      try {
+        // OTIMIZAÇÃO CRÍTICA: Processar Excel no servidor (Node.js é 10x+ mais rápido que navegador)
+        const parseStart = Date.now();
+        const jsonData = parseSpreadsheet(buffer);
+        const parseTime = Date.now() - parseStart;
+        
+        const jsonString = JSON.stringify(jsonData);
+        const jsonSize = Buffer.byteLength(jsonString);
+        
+        console.log(`[Dev Proxy] ✓ JSON gerado em ${parseTime}ms: ${jsonSize} bytes (${Object.keys(jsonData).length} municípios)`);
+        
+        // Salvar no cache para próximas requisições
+        devCache = jsonString;
+        devCacheExpiry = Date.now() + DEV_CACHE_TTL;
+        console.log(`[Dev Proxy] ✓ Cache salvo (válido por ${DEV_CACHE_TTL / 60000} minutos)`);
+        
+        const totalTime = Date.now() - startTime;
+        console.log(`[Dev Proxy] ✓ TEMPO TOTAL: ${totalTime}ms (download: ${downloadTime}ms + parse: ${parseTime}ms)`);
+        
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=1800, stale-while-revalidate=86400');
+        res.setHeader('X-Content-Source', 'sharepoint-processed');
+        res.setHeader('X-Parse-Time', parseTime.toString());
+        res.setHeader('X-Total-Time', totalTime.toString());
+        res.end(jsonString);
+        
+      } catch (parseError) {
+        console.error('[Dev Proxy] ✗ Erro ao processar Excel:', parseError.message);
+        sendError(res, 500, `Erro ao processar Excel: ${parseError.message}`);
+      }
     });
     response.on('error', (err) => {
-      console.error('[Proxy SharePoint] Erro ao ler response:', err.message);
+      console.error('[Dev Proxy] Erro ao ler response:', err.message);
       sendError(res, 500, 'Erro ao ler dados do SharePoint: ' + err.message);
     });
   } else {
     // HTML ou outro tipo - erro de autenticação
-    console.error(`[Proxy SharePoint] Tipo inválido: ${contentType}`);
+    console.error(`[Dev Proxy] Tipo inválido: ${contentType}`);
     sendError(res, 401, 'SharePoint retornou página HTML. Autenticação necessária ou link inválido.');
   }
 }
@@ -111,7 +164,7 @@ function handleResponse(response, res) {
 function sendError(res, statusCode, message) {
   // Verificar se headers já foram enviados
   if (res.headersSent) {
-    console.error('[Proxy SharePoint] Headers já foram enviados, ignorando erro:', message);
+    console.error('[Dev Proxy] Headers já foram enviados, ignorando erro:', message);
     return;
   }
   
@@ -125,4 +178,45 @@ function sendError(res, statusCode, message) {
 
 export default defineConfig({
   plugins: [react(), sharepointProxyPlugin()],
+  
+  // Otimizações de build
+  build: {
+    target: 'es2015',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: false, // Manter console.log para debug
+        drop_debugger: true,
+        pure_funcs: [], // Remover funções específicas se necessário
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separar dependências grandes em chunks próprios
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-xlsx': ['xlsx'],
+          'vendor-topojson': ['topojson-client'],
+          'vendor-storage': ['idb-keyval'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+    cssCodeSplit: true,
+    sourcemap: false, // Desabilitar sourcemaps em produção para reduzir tamanho
+  },
+  
+  // Otimizações de servidor de desenvolvimento
+  server: {
+    hmr: {
+      overlay: true,
+    },
+  },
+  
+  // Pré-bundling otimizado
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'xlsx', 'topojson-client', 'idb-keyval'],
+    exclude: [],
+  },
 })
+
