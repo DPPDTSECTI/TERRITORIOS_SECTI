@@ -1,6 +1,7 @@
 {
   "name": "location-map-filter-bahia",
   "version": "1.0.0",
+  "type": "module",
   "description": "Visualizador de pontos do programa Conecta Bahia no mapa da Bahia.",
   "scripts": {
     "dev": "vite",

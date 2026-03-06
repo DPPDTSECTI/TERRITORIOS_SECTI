@@ -182,14 +182,7 @@ export default defineConfig({
   // Otimizações de build
   build: {
     target: 'es2015',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: false, // Manter console.log para debug
-        drop_debugger: true,
-        pure_funcs: [], // Remover funções específicas se necessário
-      },
-    },
+    minify: 'esbuild', // esbuild é mais rápido que terser e já vem com Vite
     rollupOptions: {
       output: {
         manualChunks: {
