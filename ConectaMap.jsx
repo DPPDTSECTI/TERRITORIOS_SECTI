@@ -591,6 +591,8 @@ const ConectaGovDashboard = () => {
                   if (pracas.length === 0) return null;
 
                   const DISPLAY_FIELDS = [
+                    { key: 'kit_aldeias_indigenas', label: 'Kit Aldeias Indígenas', isSpecial: true },
+                    { key: 'kit_quilombo', label: 'Kit Quilombo', isSpecial: true },
                     { key: 'status_homologacao_pontos', label: 'Homologação' },
                     { key: 'status_instalacao_com_link_pontos', label: 'Link Instalado' },
                     { key: 'data_instalacao', label: 'Data Instalação' },
@@ -602,28 +604,57 @@ const ConectaGovDashboard = () => {
                     { key: 'observacao', label: 'Observação' },
                   ];
 
+                  // Verifica se uma praça tem kit especial
+                  const hasPracaSpecialKit = (praca) => {
+                    const kitIndigena = praca.kit_aldeias_indigenas;
+                    const kitQuilombo = praca.kit_quilombo;
+                    const numIndigena = kitIndigena ? parseInt(String(kitIndigena).trim(), 10) : 0;
+                    const numQuilombo = kitQuilombo ? parseInt(String(kitQuilombo).trim(), 10) : 0;
+                    return (numIndigena > 0) || (numQuilombo > 0);
+                  };
+
                   return (
                     <div className="flex flex-col mt-2">
                       <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Praças ({pracas.length})</span>
                       <div className="flex flex-col space-y-1.5">
-                        {pracas.map((p, i) => (
-                          <div key={i} className="bg-slate-50 border border-slate-100 rounded-md px-2 py-2 flex flex-col gap-1">
-                            <div className="flex items-start gap-2">
-                              <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
-                              <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium">{p.nome_da_praca || 'Sem nome'}</span>
+                        {pracas.map((p, i) => {
+                          const hasSpecialKit = hasPracaSpecialKit(p);
+                          return (
+                            <div key={i} className={`rounded-md px-2 py-2 flex flex-col gap-1 border ${hasSpecialKit ? 'bg-yellow-50 border-yellow-200 shadow-sm' : 'bg-slate-50 border-slate-100'}`}>
+                              <div className="flex items-start gap-2 flex-wrap">
+                                <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
+                                <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium flex-1">{p.nome_da_praca || 'Sem nome'}</span>
+                                {hasSpecialKit && (
+                                  <div className="flex items-center gap-1">
+                                    {parseInt(String(p.kit_aldeias_indigenas || '0').trim(), 10) > 0 && (
+                                      <img src="/img/Indigena.svg" alt="Kit Aldeias Indígenas" className="w-4 h-4" title="Kit Aldeias Indígenas" />
+                                    )}
+                                    {parseInt(String(p.kit_quilombo || '0').trim(), 10) > 0 && (
+                                      <img src="/img/quilombo.svg" alt="Kit Quilombo" className="w-4 h-4" title="Kit Quilombo" />
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              {dataSource !== 'static' && DISPLAY_FIELDS.map(({ key, label, isSpecial }) => {
+                                const val = p[key];
+                                if (!val) return null;
+                                
+                                // Para campos especiais (kits), só mostra se > 0
+                                if (isSpecial) {
+                                  const numVal = parseInt(String(val).trim(), 10);
+                                  if (isNaN(numVal) || numVal <= 0) return null;
+                                }
+                                
+                                return (
+                                  <div key={key} className={isSpecial ? `flex items-baseline gap-1.5 pl-1 ${parseInt(String(val).trim(), 10) > 0 ? 'bg-amber-100/50 px-1 py-0.5 rounded' : ''}` : 'flex items-baseline gap-1.5 pl-1'}>
+                                    <span className={`text-[7px] md:text-[8px] uppercase font-semibold shrink-0 ${isSpecial ? 'text-amber-700' : 'text-slate-400'}`}>{label}:</span>
+                                    <span className={`text-[9px] md:text-[10px] leading-tight ${isSpecial ? 'text-amber-900 font-semibold' : 'text-slate-600'}`}>{val}</span>
+                                  </div>
+                                );
+                              })}
                             </div>
-                            {dataSource !== 'static' && DISPLAY_FIELDS.map(({ key, label }) => {
-                              const val = p[key];
-                              if (!val) return null;
-                              return (
-                                <div key={key} className="flex items-baseline gap-1.5 pl-1">
-                                  <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
-                                  <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{val}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   );
