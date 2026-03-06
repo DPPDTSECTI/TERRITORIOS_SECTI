@@ -553,7 +553,7 @@ const ConectaGovDashboard = () => {
                     <img 
                       src="/img/Indigena.svg" 
                       alt="Aldeias Indígenas" 
-                      className="w-10 h-10" 
+                      className="w-5 h-5" 
                       title="Município com Kit Aldeias Indígenas"
                     />
                   )}
@@ -766,7 +766,7 @@ const ConectaGovDashboard = () => {
               <img 
                 src="/img/Indigena.svg" 
                 alt="Aldeias Indígenas" 
-                className="w-10 h-10" 
+                className="w-5 h-5" 
               />
               <span className="hidden sm:inline">Indígena</span>
               {filterIndigena && (
@@ -846,7 +846,7 @@ const ConectaGovDashboard = () => {
                         <img 
                           src="/img/Indigena.svg" 
                           alt="Aldeias Indígenas" 
-                          className="w-10 h-10" 
+                          className="w-5 h-5" 
                           title="Município com Kit Aldeias Indígenas"
                         />
                       )}
