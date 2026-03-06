@@ -107,6 +107,8 @@ const ConectaGovDashboard = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
+  const [filterIndigena, setFilterIndigena] = useState(false);
+  const [filterQuilombo, setFilterQuilombo] = useState(false);
 
   const mapContainerRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -180,6 +182,26 @@ const ConectaGovDashboard = () => {
     const key = Object.keys(conectaData).find((k) => simplifyName(k) === simplifyName(nomeMunicipio));
     const pracas = key ? conectaData[key] : [];
     return pracas;
+  };
+
+  // Verifica se o município possui Kit de Aldeias Indígenas
+  const hasKitAldeiasIndigenas = (nomeMunicipio) => {
+    const pracas = getPracas(nomeMunicipio);
+    return pracas.some(p => {
+      const kitValue = p.kit_aldeias_indigenas || p['kit_aldeias_indigenas'] || '';
+      const numValue = parseInt(String(kitValue).trim(), 10);
+      return !isNaN(numValue) && numValue > 0;
+    });
+  };
+
+  // Verifica se o município possui Kit Quilombo
+  const hasKitQuilombo = (nomeMunicipio) => {
+    const pracas = getPracas(nomeMunicipio);
+    return pracas.some(p => {
+      const kitValue = p.kit_quilombo || p['kit_quilombo'] || '';
+      const numValue = parseInt(String(kitValue).trim(), 10);
+      return !isNaN(numValue) && numValue > 0;
+    });
   };
 
   const loading = (mapFeatures.length === 0 && !mapError) || loadingData;
@@ -265,9 +287,13 @@ const ConectaGovDashboard = () => {
 
   const isConecta = (nomeTopo) => conectaSet.has(simplifyName(nomeTopo));
 
-  const filteredList = conectaList.filter(m =>
-    normalize(m.nome).includes(normalize(searchTerm))
-  );
+  const filteredList = conectaList.filter(m => {
+    const matchesSearch = normalize(m.nome).includes(normalize(searchTerm));
+    const matchesIndigena = !filterIndigena || hasKitAldeiasIndigenas(m.nome);
+    const matchesQuilombo = !filterQuilombo || hasKitQuilombo(m.nome);
+    
+    return matchesSearch && matchesIndigena && matchesQuilombo;
+  });
 
   useEffect(() => {
     if (!hoveredNome || !mapContainerRef.current || mapFeatures.length === 0) return;
@@ -451,7 +477,27 @@ const ConectaGovDashboard = () => {
             style={{ top: tooltipPos.y, left: tooltipPos.x }}
           >
             <div className="bg-white px-4 py-3 rounded-md shadow-lg border border-slate-200 flex flex-col min-w-[160px]">
-              <span className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-1 mb-1">{hoveredNome}</span>
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-1 mb-1">
+                <span className="text-sm font-bold text-slate-800">{hoveredNome}</span>
+                <div className="flex items-center gap-1">
+                  {hasKitAldeiasIndigenas(hoveredNome) && (
+                    <img 
+                      src="/img/Indigena.svg" 
+                      alt="Aldeias Indígenas" 
+                      className="w-10 h-10" 
+                      title="Kit Aldeias Indígenas"
+                    />
+                  )}
+                  {hasKitQuilombo(hoveredNome) && (
+                    <img 
+                      src="/img/quilombo.svg" 
+                      alt="Quilombo" 
+                      className="w-10 h-10" 
+                      title="Kit Quilombo"
+                    />
+                  )}
+                </div>
+              </div>
               {isConecta(hoveredNome) ? (
                 <>
                   <span className="text-[10px] text-slate-500 uppercase font-semibold">Território</span>
@@ -486,7 +532,27 @@ const ConectaGovDashboard = () => {
         {selectedMunicipio && (
           <div className="absolute bottom-2 left-2 right-2 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:w-80 bg-white p-3 md:p-4 rounded-xl shadow-2xl border border-blue-100 flex flex-col z-20 animate-in slide-in-from-bottom-5 max-h-[90%] overflow-y-auto custom-scrollbar">
             <div className="flex justify-between items-start mb-2 sticky top-0 bg-white z-10 pb-1">
-              <span className="text-base md:text-lg font-bold text-slate-800 leading-none">{selectedMunicipio}</span>
+              <div className="flex items-center gap-2 flex-1">
+                <span className="text-base md:text-lg font-bold text-slate-800 leading-none">{selectedMunicipio}</span>
+                <div className="flex items-center gap-1">
+                  {hasKitAldeiasIndigenas(selectedMunicipio) && (
+                    <img 
+                      src="/img/Indigena.svg" 
+                      alt="Aldeias Indígenas" 
+                      className="w-10 h-10" 
+                      title="Município com Kit Aldeias Indígenas"
+                    />
+                  )}
+                  {hasKitQuilombo(selectedMunicipio) && (
+                    <img 
+                      src="/img/quilombo.svg" 
+                      alt="Quilombo" 
+                      className="w-10 h-10 " 
+                      title="Município com Kit Quilombo"
+                    />
+                  )}
+                </div>
+              </div>
               <button
                 onClick={() => setSelectedMunicipio(null)}
                 className="bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-full p-1.5"
@@ -671,27 +737,121 @@ const ConectaGovDashboard = () => {
             />
             <svg className="absolute left-2.5 top-2 md:top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </div>
+
+          {/* Filtros por Tipo */}
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => setFilterIndigena(!filterIndigena)}
+              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${
+                filterIndigena 
+                  ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm' 
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+              title="Filtrar municípios com Kit Aldeias Indígenas"
+            >
+              <img 
+                src="/img/Indigena.svg" 
+                alt="Aldeias Indígenas" 
+                className="w-10 h-10" 
+              />
+              <span className="hidden sm:inline">Indígena</span>
+              {filterIndigena && (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </button>
+
+            <button
+              onClick={() => setFilterQuilombo(!filterQuilombo)}
+              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${
+                filterQuilombo 
+                  ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm' 
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+              title="Filtrar municípios com Kit Quilombo"
+            >
+              <img 
+                src="/img/quilombo.svg" 
+                alt="Quilombo" 
+                className="w-4 h-4" 
+              />
+              <span className="hidden sm:inline">Quilombo</span>
+              {filterQuilombo && (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </button>
+
+            {(filterIndigena || filterQuilombo) && (
+              <button
+                onClick={() => { setFilterIndigena(false); setFilterQuilombo(false); }}
+                className="ml-auto flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-all"
+                title="Limpar filtros"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span className="hidden sm:inline">Limpar</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Lista de Municípios - Sempre visível, rolagem independente */}
         <div className="flex-1 overflow-y-auto p-1.5 md:p-2 custom-scrollbar bg-slate-50">
+          {(filterIndigena || filterQuilombo || searchTerm) && (
+            <div className="mb-2 px-2 py-1.5 bg-blue-50 border border-blue-100 rounded-md">
+              <p className="text-xs text-blue-700 font-medium">
+                {filteredList.length} município{filteredList.length !== 1 ? 's' : ''} encontrado{filteredList.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+          )}
           {filteredList.length === 0 ? (
             <p className="text-center text-sm text-slate-500 mt-4 font-medium">Nenhum registro encontrado.</p>
           ) : (
-            filteredList.map((m, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleClickMunicipio(m.nome)}
-                onMouseEnter={() => setHoveredNome(m.nome)}
-                onMouseLeave={() => setHoveredNome(null)}
-                className={`w-full text-left px-3 py-2 md:py-2.5 mb-1 rounded-md transition-all flex items-center justify-between outline-none ${sameMunicipio(selectedMunicipio, m.nome) ? 'bg-blue-700 text-white shadow-md' : sameMunicipio(hoveredNome, m.nome) ? 'bg-blue-600 text-white shadow-sm' : 'hover:bg-slate-200 text-slate-700 active:bg-slate-300'}`}
-              >
-                <span className="text-xs md:text-sm font-medium truncate pr-2">{m.nome}</span>
-                {(sameMunicipio(hoveredNome, m.nome) || sameMunicipio(selectedMunicipio, m.nome)) && (
-                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                )}
-              </button>
-            ))
+            filteredList.map((m, idx) => {
+              const hasIndigena = hasKitAldeiasIndigenas(m.nome);
+              const hasQuilombo = hasKitQuilombo(m.nome);
+              const isSelected = sameMunicipio(selectedMunicipio, m.nome);
+              const isHovered = sameMunicipio(hoveredNome, m.nome);
+              
+              return (
+                <button
+                  key={idx}
+                  onClick={() => handleClickMunicipio(m.nome)}
+                  onMouseEnter={() => setHoveredNome(m.nome)}
+                  onMouseLeave={() => setHoveredNome(null)}
+                  className={`w-full text-left px-3 py-2 md:py-2.5 mb-1 rounded-md transition-all flex items-center justify-between outline-none ${isSelected ? 'bg-blue-700 text-white shadow-md' : isHovered ? 'bg-blue-600 text-white shadow-sm' : 'hover:bg-slate-200 text-slate-700 active:bg-slate-300'}`}
+                >
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-xs md:text-sm font-medium truncate">{m.nome}</span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {hasIndigena && (
+                        <img 
+                          src="/img/Indigena.svg" 
+                          alt="Aldeias Indígenas" 
+                          className="w-10 h-10" 
+                          title="Município com Kit Aldeias Indígenas"
+                        />
+                      )}
+                      {hasQuilombo && (
+                        <img 
+                          src="/img/quilombo.svg" 
+                          alt="Quilombo" 
+                          className="w-10 h-10 md:w-5 md:h-5" 
+                          title="Município com Kit Quilombo"
+                        />
+                      )}
+                    </div>
+                  </div>
+                  {(isHovered || isSelected) && (
+                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                  )}
+                </button>
+              );
+            })
           )}
         </div>
       </div>
