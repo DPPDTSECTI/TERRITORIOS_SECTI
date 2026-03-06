@@ -12,32 +12,50 @@ export default function App() {
     setIsRefreshing(true);
 
     try {
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
+      
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+      }
 
+      // 2. Limpar localStorage
+      if (window.localStorage) {
+        window.localStorage.clear();
+      }
+
+      // 3. Limpar sessionStorage
+      if (window.sessionStorage) {
+        window.sessionStorage.clear();
+      }
+
+      // 4. Limpar IndexedDB (todas as databases)
+      if (window.indexedDB && window.indexedDB.databases) {
+        const databases = await window.indexedDB.databases();
         await Promise.all(
-          registrations.map(async (registration) => {
-            await registration.update();
-
-            if (registration.waiting) {
-              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-            }
-
-            if (registration.active) {
-              registration.active.postMessage({ type: 'CLEAR_CACHE' });
+          databases.map((db) => {
+            if (db.name) {
+              return new Promise((resolve, reject) => {
+                const deleteRequest = window.indexedDB.deleteDatabase(db.name);
+                deleteRequest.onsuccess = () => resolve();
+                deleteRequest.onerror = () => reject();
+                deleteRequest.onblocked = () => resolve(); // Continua mesmo se bloqueado
+              });
             }
           })
         );
       }
 
-      if ('caches' in window) {
-        const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-      }
+      // 5. Limpar cookies do domínio atual
+      document.cookie.split(';').forEach((cookie) => {
+        const name = cookie.split('=')[0].trim();
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      });
+
     } catch (err) {
       console.warn('[App] Falha ao forcar atualizacao completa:', err);
     }
 
+    // Recarregar com timestamp único para evitar cache
     const refreshUrl = new URL(window.location.href);
     refreshUrl.searchParams.set('refresh', String(Date.now()));
     window.location.replace(refreshUrl.toString());
