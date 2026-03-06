@@ -187,8 +187,10 @@ const ConectaGovDashboard = () => {
   // Verifica se o município possui Kit de Aldeias Indígenas
   const hasKitAldeiasIndigenas = (nomeMunicipio) => {
     const pracas = getPracas(nomeMunicipio);
+    
     return pracas.some(p => {
-      const kitValue = p.kit_aldeias_indigenas || p['kit_aldeias_indigenas'] || '';
+      const kitValue = p.kit_aldeias_indigenas;
+      if (!kitValue) return false;
       const numValue = parseInt(String(kitValue).trim(), 10);
       return !isNaN(numValue) && numValue > 0;
     });
@@ -197,12 +199,24 @@ const ConectaGovDashboard = () => {
   // Verifica se o município possui Kit Quilombo
   const hasKitQuilombo = (nomeMunicipio) => {
     const pracas = getPracas(nomeMunicipio);
+    
     return pracas.some(p => {
-      const kitValue = p.kit_quilombo || p['kit_quilombo'] || '';
+      const kitValue = p.kit_quilombo;
+      if (!kitValue) return false;
       const numValue = parseInt(String(kitValue).trim(), 10);
       return !isNaN(numValue) && numValue > 0;
     });
   };
+
+  // Log de estatísticas dos kits (apenas uma vez após carregar dados)
+  useEffect(() => {
+    if (conectaList.length > 0) {
+      const comIndigena = conectaList.filter(m => hasKitAldeiasIndigenas(m.nome)).length;
+      const comQuilombo = conectaList.filter(m => hasKitQuilombo(m.nome)).length;
+      console.log(`[KITS] Municípios com Kit Aldeias Indígenas: ${comIndigena}`);
+      console.log(`[KITS] Municípios com Kit Quilombo: ${comQuilombo}`);
+    }
+  }, [conectaList]);
 
   const loading = (mapFeatures.length === 0 && !mapError) || loadingData;
 
