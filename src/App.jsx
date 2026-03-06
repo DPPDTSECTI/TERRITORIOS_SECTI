@@ -75,9 +75,9 @@ export default function App() {
                 onClick={handleForceRefresh}
                 disabled={isRefreshing}
                 className="inline-flex items-center justify-center rounded-lg border border-white/40 bg-white/10 px-4 py-2 text-xs sm:text-sm font-semibold tracking-wide text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-70"
-                title="Limpa cache e recarrega a aplicacao com os dados mais recentes"
+                title="Limpa cache e recarrega a aplicação com os dados mais recentes"
               >
-                {isRefreshing ? 'Atualizando...' : 'Forçar atualizacao'}
+                {isRefreshing ? 'Atualizando...' : 'Forçar atualização'}
               </button>
             </div>
           </div>
