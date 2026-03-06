@@ -239,7 +239,7 @@ export default function PDFExportButton({
       {showOptions && (
         <div
           ref={optionsRef}
-          className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden z-50"
+          className="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden z-50"
         >
           <div className="p-4 border-b border-slate-200">
             <h3 className="font-bold text-slate-900 text-sm">Tipo de Relatório</h3>

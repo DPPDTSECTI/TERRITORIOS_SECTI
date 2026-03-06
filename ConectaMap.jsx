@@ -292,7 +292,7 @@ const ConectaGovDashboard = () => {
 
   return (
     // Removido min-h-screen para usar 100dvh e overflow-hidden. Com isso, a tela não rola mais, agindo como um App.
-    <div className="flex flex-col md:flex-row h-[100dvh] md:h-[85vh] w-full bg-white font-sans border border-slate-300 md:rounded-lg overflow-hidden shadow-sm">
+    <div className="flex flex-col md:flex-row h-[100dvh] md:h-[85vh] w-full bg-white font-sans border border-slate-300 md:rounded-lg overflow-visible md:overflow-hidden shadow-sm">
       
       {/* ========================================================================
         ÁREA DO MAPA (order-1 no mobile, order-2 no desktop)

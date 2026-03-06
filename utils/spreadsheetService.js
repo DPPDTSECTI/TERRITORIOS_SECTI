@@ -300,7 +300,7 @@ async function fetchFromSharePoint() {
       
       console.log(`[Conecta] Content-Type: ${contentType}, Source: ${contentSource}`);
       if (cacheAge) console.log(`[Conecta] Cache age: ${cacheAge}s`);
-      if (parseTime) console.log(`[Conecta] Server parse time: ${parseTime}ms`);
+      if (parseTime) console.log(`[Conecta] Server parse time (geracao): ${parseTime}ms`);
 
       if (contentType.includes('application/json')) {
         const jsonStart = Date.now();
@@ -316,6 +316,12 @@ async function fetchFromSharePoint() {
         
         const totalTime = Date.now() - startTime;
         console.log(`[Conecta] ✅ TOTAL: ${totalTime}ms (fetch: ${fetchTime}ms + json: ${jsonTime}ms) - ${Object.keys(data).length} municípios`);
+        
+        // Em respostas de cache/CDN, X-Parse-Time representa a geracao original,
+        // nao o tempo desta requisicao atual.
+        if (parseTime && totalTime < 1000) {
+          console.log('[Conecta] ℹ️ Resposta veio de cache/CDN; parse-time e historico da geracao no servidor.');
+        }
         
         return data;
       }
