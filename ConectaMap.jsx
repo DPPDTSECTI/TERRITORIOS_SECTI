@@ -109,6 +109,8 @@ const ConectaGovDashboard = () => {
   const [loadingData, setLoadingData] = useState(true);
   const [filterIndigena, setFilterIndigena] = useState(false);
   const [filterQuilombo, setFilterQuilombo] = useState(false);
+  const [filterTerritory, setFilterTerritory] = useState(''); // empty means no territory filter
+  const [showTerritoryDropdown, setShowTerritoryDropdown] = useState(false);
 
   const mapContainerRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -187,7 +189,7 @@ const ConectaGovDashboard = () => {
   // Verifica se o município possui Kit de Aldeias Indígenas
   const hasKitAldeiasIndigenas = (nomeMunicipio) => {
     const pracas = getPracas(nomeMunicipio);
-    
+
     return pracas.some(p => {
       const kitValue = p.kit_aldeias_indigenas;
       if (!kitValue) return false;
@@ -199,7 +201,7 @@ const ConectaGovDashboard = () => {
   // Verifica se o município possui Kit Quilombo
   const hasKitQuilombo = (nomeMunicipio) => {
     const pracas = getPracas(nomeMunicipio);
-    
+
     return pracas.some(p => {
       const kitValue = p.kit_quilombo;
       if (!kitValue) return false;
@@ -305,8 +307,9 @@ const ConectaGovDashboard = () => {
     const matchesSearch = normalize(m.nome).includes(normalize(searchTerm));
     const matchesIndigena = !filterIndigena || hasKitAldeiasIndigenas(m.nome);
     const matchesQuilombo = !filterQuilombo || hasKitQuilombo(m.nome);
-    
-    return matchesSearch && matchesIndigena && matchesQuilombo;
+    const matchesTerritory = !filterTerritory || getMunicipioInfo(m.nome)?.territorio === filterTerritory;
+
+    return matchesSearch && matchesIndigena && matchesQuilombo && matchesTerritory;
   });
 
   useEffect(() => {
@@ -333,7 +336,7 @@ const ConectaGovDashboard = () => {
   return (
     // Removido min-h-screen para usar 100dvh e overflow-hidden. Com isso, a tela não rola mais, agindo como um App.
     <div className="flex flex-col md:flex-row h-[100dvh] md:h-[85vh] w-full bg-white font-sans border border-slate-300 md:rounded-lg overflow-visible md:overflow-hidden shadow-sm">
-      
+
       {/* ========================================================================
         ÁREA DO MAPA (order-1 no mobile, order-2 no desktop)
         No mobile ocupa 55% da tela.
@@ -393,21 +396,21 @@ const ConectaGovDashboard = () => {
                 <div className="w-full h-full flex items-center justify-center">
                   <svg viewBox="0 0 600 600" className="w-3/4 h-3/4 animate-pulse">
                     {/* Forma genérica da Bahia */}
-                    <path d="M 200 100 Q 250 80, 300 90 Q 350 85, 400 120 L 450 200 Q 460 280, 440 350 Q 430 420, 380 480 Q 320 520, 250 510 Q 180 500, 150 450 Q 120 380, 130 300 Q 140 220, 180 160 Z" fill="#CBD5E1" stroke="#94A3B8" strokeWidth="2"/>
+                    <path d="M 200 100 Q 250 80, 300 90 Q 350 85, 400 120 L 450 200 Q 460 280, 440 350 Q 430 420, 380 480 Q 320 520, 250 510 Q 180 500, 150 450 Q 120 380, 130 300 Q 140 220, 180 160 Z" fill="#CBD5E1" stroke="#94A3B8" strokeWidth="2" />
                     {/* Pontos simulados */}
-                    <circle cx="250" cy="200" r="6" fill="#64748B" opacity="0.4" className="animate-pulse"/>
-                    <circle cx="320" cy="250" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{animationDelay: '0.1s'}}/>
-                    <circle cx="280" cy="320" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{animationDelay: '0.2s'}}/>
-                    <circle cx="370" cy="280" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{animationDelay: '0.3s'}}/>
+                    <circle cx="250" cy="200" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" />
+                    <circle cx="320" cy="250" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{ animationDelay: '0.1s' }} />
+                    <circle cx="280" cy="320" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{ animationDelay: '0.2s' }} />
+                    <circle cx="370" cy="280" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{ animationDelay: '0.3s' }} />
                   </svg>
                 </div>
               </div>
-              
+
               {/* Spinner e mensagem */}
               <div className="relative z-10 flex flex-col items-center bg-white/90 backdrop-blur-sm px-8 py-6 rounded-xl shadow-lg border border-slate-200">
                 <div className="relative mb-4">
                   <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-                  <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-blue-400 rounded-full animate-spin" style={{animationDuration: '1.5s', animationDirection: 'reverse'}} />
+                  <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-blue-400 rounded-full animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />
                 </div>
                 <p className="text-sm md:text-base font-bold text-slate-700 mb-1">
                   {loadingData ? 'Carregando dados...' : 'Carregando mapa...'}
@@ -495,18 +498,18 @@ const ConectaGovDashboard = () => {
                 <span className="text-sm font-bold text-slate-800">{hoveredNome}</span>
                 <div className="flex items-center gap-1">
                   {hasKitAldeiasIndigenas(hoveredNome) && (
-                    <img 
-                      src="/img/Indigena.svg" 
-                      alt="Aldeias Indígenas" 
-                      className="w-10 h-10" 
+                    <img
+                      src="/img/Indigena.svg"
+                      alt="Aldeias Indígenas"
+                      className="w-10 h-10"
                       title="Kit Aldeias Indígenas"
                     />
                   )}
                   {hasKitQuilombo(hoveredNome) && (
-                    <img 
-                      src="/img/quilombo.svg" 
-                      alt="Quilombo" 
-                      className="w-10 h-10" 
+                    <img
+                      src="/img/quilombo.svg"
+                      alt="Quilombo"
+                      className="w-10 h-10"
                       title="Kit Quilombo"
                     />
                   )}
@@ -550,18 +553,18 @@ const ConectaGovDashboard = () => {
                 <span className="text-base md:text-lg font-bold text-slate-800 leading-none">{selectedMunicipio}</span>
                 <div className="flex items-center gap-1">
                   {hasKitAldeiasIndigenas(selectedMunicipio) && (
-                    <img 
-                      src="/img/Indigena.svg" 
-                      alt="Aldeias Indígenas" 
-                      className="w-5 h-5" 
+                    <img
+                      src="/img/Indigena.svg"
+                      alt="Aldeias Indígenas"
+                      className="w-5 h-5"
                       title="Município com Kit Aldeias Indígenas"
                     />
                   )}
                   {hasKitQuilombo(selectedMunicipio) && (
-                    <img 
-                      src="/img/quilombo.svg" 
-                      alt="Quilombo" 
-                      className="w-10 h-10 " 
+                    <img
+                      src="/img/quilombo.svg"
+                      alt="Quilombo"
+                      className="w-10 h-10 "
                       title="Município com Kit Quilombo"
                     />
                   )}
@@ -645,7 +648,7 @@ const ConectaGovDashboard = () => {
         ========================================================================
       */}
       <div className="order-2 md:order-1 flex flex-col w-full md:w-80 h-[45%] md:h-auto bg-slate-50 border-t md:border-t-0 md:border-r border-slate-200 z-10 shrink-0">
-        
+
         {/* Cabeçalho da Lista - Espaçamentos otimizados */}
         <div className="p-3 md:p-6 pb-2 md:pb-6 border-b border-slate-200 bg-white shadow-sm md:shadow-none z-10 relative shrink-0">
           <h1 className="text-base md:text-xl font-bold text-slate-800 leading-tight md:mb-1">
@@ -752,21 +755,93 @@ const ConectaGovDashboard = () => {
             <svg className="absolute left-2.5 top-2 md:top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </div>
 
+          {/* Dropdown Customizado de Território */}
+          <div className="relative my-3">
+            <button
+              type="button"
+              onClick={() => setShowTerritoryDropdown(!showTerritoryDropdown)}
+              className="w-full text-left flex items-center justify-between gap-2 px-3 py-2 text-xs border border-slate-300 rounded-md bg-white hover:border-blue-500 focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition outline-none"
+            >
+              <div className="flex items-center gap-2">
+                {filterTerritory ? (
+                  <>
+                    <span
+                      className="w-3 h-3 rounded-sm border border-slate-300 shrink-0"
+                      style={{ backgroundColor: territoryColorMap[filterTerritory] || '#94A3B8' }}
+                    />
+                    <span className="text-slate-700 font-medium truncate">{filterTerritory}</span>
+                  </>
+                ) : (
+                  <span className="text-slate-500">Todos territórios</span>
+                )}
+              </div>
+              <svg
+                className={`w-4 h-4 text-slate-400 transition-transform ${showTerritoryDropdown ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {showTerritoryDropdown && (
+              <>
+                {/* Backdrop para fechar ao clicar fora */}
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setShowTerritoryDropdown(false)}
+                />
+                {/* Menu dropdown */}
+                <div className="absolute z-20 w-full mt-1 bg-white border border-slate-300 rounded-md shadow-lg max-h-60 overflow-y-auto custom-scrollbar">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterTerritory('');
+                      setShowTerritoryDropdown(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2"
+                  >
+                    <span className="text-slate-600 font-medium">Todos territórios</span>
+                  </button>
+                  {allTerritories.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => {
+                        setFilterTerritory(t);
+                        setShowTerritoryDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2 ${
+                        filterTerritory === t ? 'bg-blue-50' : ''
+                      }`}
+                    >
+                      <span
+                        className="w-3 h-3 rounded-sm border border-slate-300 shrink-0"
+                        style={{ backgroundColor: territoryColorMap[t] || '#94A3B8' }}
+                      />
+                      <span className="text-slate-700 font-medium truncate">{t}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Filtros por Tipo */}
           <div className="flex gap-2 mt-2">
             <button
               onClick={() => setFilterIndigena(!filterIndigena)}
-              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${
-                filterIndigena 
-                  ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm' 
+              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterIndigena
+                  ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm'
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-              }`}
+                }`}
               title="Filtrar municípios com Kit Aldeias Indígenas"
             >
-              <img 
-                src="/img/Indigena.svg" 
-                alt="Aldeias Indígenas" 
-                className="w-5 h-5" 
+              <img
+                src="/img/Indigena.svg"
+                alt="Aldeias Indígenas"
+                className="w-5 h-5"
               />
               <span className="hidden sm:inline">Indígena</span>
               {filterIndigena && (
@@ -778,17 +853,16 @@ const ConectaGovDashboard = () => {
 
             <button
               onClick={() => setFilterQuilombo(!filterQuilombo)}
-              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${
-                filterQuilombo 
-                  ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm' 
+              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterQuilombo
+                  ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm'
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-              }`}
+                }`}
               title="Filtrar municípios com Kit Quilombo"
             >
-              <img 
-                src="/img/quilombo.svg" 
-                alt="Quilombo" 
-                className="w-4 h-4" 
+              <img
+                src="/img/quilombo.svg"
+                alt="Quilombo"
+                className="w-4 h-4"
               />
               <span className="hidden sm:inline">Quilombo</span>
               {filterQuilombo && (
@@ -798,9 +872,11 @@ const ConectaGovDashboard = () => {
               )}
             </button>
 
-            {(filterIndigena || filterQuilombo) && (
+            {/* territorio dropdown */}
+
+            {(filterIndigena || filterQuilombo || filterTerritory) && (
               <button
-                onClick={() => { setFilterIndigena(false); setFilterQuilombo(false); }}
+                onClick={() => { setFilterIndigena(false); setFilterQuilombo(false); setFilterTerritory(''); }}
                 className="ml-auto flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-all"
                 title="Limpar filtros"
               >
@@ -813,12 +889,14 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        {/* Lista de Municípios - Sempre visível, rolagem independente */}
         <div className="flex-1 overflow-y-auto p-1.5 md:p-2 custom-scrollbar bg-slate-50">
-          {(filterIndigena || filterQuilombo || searchTerm) && (
+          {(filterIndigena || filterQuilombo || filterTerritory || searchTerm) && (
             <div className="mb-2 px-2 py-1.5 bg-blue-50 border border-blue-100 rounded-md">
               <p className="text-xs text-blue-700 font-medium">
                 {filteredList.length} município{filteredList.length !== 1 ? 's' : ''} encontrado{filteredList.length !== 1 ? 's' : ''}
+                {filterTerritory && (
+                  <> • território: <span className="font-bold">{filterTerritory}</span></>
+                )}
               </p>
             </div>
           )}
@@ -830,7 +908,7 @@ const ConectaGovDashboard = () => {
               const hasQuilombo = hasKitQuilombo(m.nome);
               const isSelected = sameMunicipio(selectedMunicipio, m.nome);
               const isHovered = sameMunicipio(hoveredNome, m.nome);
-              
+
               return (
                 <button
                   key={idx}
@@ -843,18 +921,18 @@ const ConectaGovDashboard = () => {
                     <span className="text-xs md:text-sm font-medium truncate">{m.nome}</span>
                     <div className="flex items-center gap-1 shrink-0">
                       {hasIndigena && (
-                        <img 
-                          src="/img/Indigena.svg" 
-                          alt="Aldeias Indígenas" 
-                          className="w-5 h-5" 
+                        <img
+                          src="/img/Indigena.svg"
+                          alt="Aldeias Indígenas"
+                          className="w-5 h-5"
                           title="Município com Kit Aldeias Indígenas"
                         />
                       )}
                       {hasQuilombo && (
-                        <img 
-                          src="/img/quilombo.svg" 
-                          alt="Quilombo" 
-                          className="w-10 h-10 md:w-5 md:h-5" 
+                        <img
+                          src="/img/quilombo.svg"
+                          alt="Quilombo"
+                          className="w-10 h-10 md:w-5 md:h-5"
                           title="Município com Kit Quilombo"
                         />
                       )}

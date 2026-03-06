@@ -12,23 +12,18 @@ export default function App() {
     setIsRefreshing(true);
 
     try {
-      
+
       if ('caches' in window) {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
       }
-
-      // 2. Limpar localStorage
       if (window.localStorage) {
         window.localStorage.clear();
       }
-
-      // 3. Limpar sessionStorage
       if (window.sessionStorage) {
         window.sessionStorage.clear();
       }
 
-      // 4. Limpar IndexedDB (todas as databases)
       if (window.indexedDB && window.indexedDB.databases) {
         const databases = await window.indexedDB.databases();
         await Promise.all(
@@ -38,14 +33,13 @@ export default function App() {
                 const deleteRequest = window.indexedDB.deleteDatabase(db.name);
                 deleteRequest.onsuccess = () => resolve();
                 deleteRequest.onerror = () => reject();
-                deleteRequest.onblocked = () => resolve(); // Continua mesmo se bloqueado
+                deleteRequest.onblocked = () => resolve(); 
               });
             }
           })
         );
       }
 
-      // 5. Limpar cookies do domínio atual
       document.cookie.split(';').forEach((cookie) => {
         const name = cookie.split('=')[0].trim();
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
@@ -55,7 +49,6 @@ export default function App() {
       console.warn('[App] Falha ao forcar atualizacao completa:', err);
     }
 
-    // Recarregar com timestamp único para evitar cache
     const refreshUrl = new URL(window.location.href);
     refreshUrl.searchParams.set('refresh', String(Date.now()));
     window.location.replace(refreshUrl.toString());
@@ -64,7 +57,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col">
 
-      {/* 1. TOPBAR - Barra Institucional do Governo */}
       <div className="bg-slate-900 text-slate-200 py-2 px-4 sm:px-6 lg:px-8 text-[10px] sm:text-xs font-bold uppercase tracking-widest flex justify-between items-center z-20 relative">
         <span className="hidden sm:inline opacity-90">
           Governo do Estado da Bahia
@@ -115,12 +107,10 @@ export default function App() {
         </div>
       </main>
 
-      {/* 4. RODAPÉ INSTITUCIONAL OFICIAL */}
       <footer className="bg-white border-t border-slate-200 pt-12 pb-10 mt-auto text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 text-xs text-center md:text-left">
 
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-            {/* Centered items on mobile, left-aligned on desktop */}
             <span className="flex flex-col gap-1 items-center md:items-start">
               <img src="/img/MARCA%20GOVBA%200126%20-%20DO%20LADO%20DA%20GENTE__H.png" alt="Logo Governo BA" className="h-16 sm:h-20 w-auto object-contain" />
               <p className="font-medium text-slate-500 text-center md:text-left">Secretaria de Ciência, Tecnologia e Inovação</p>
