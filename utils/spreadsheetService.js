@@ -2,8 +2,8 @@ import * as XLSX from 'xlsx';
 import { get, set, del } from 'idb-keyval'; // Importando o gerenciador de IndexedDB
 import { MUNICIPIOS_BAHIA } from './Municipios.js';
 
-const CACHE_KEY = 'conecta_spreadsheet_data';
-const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp';
+const CACHE_KEY = 'conecta_spreadsheet_data_v3'; // v3: agora com kit_quilombo e kit_aldeias_indigenas
+const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v3';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hora em milissegundos
 
 const SHAREPOINT_PROXY_URL = import.meta.env.DEV
@@ -225,6 +225,16 @@ export async function fetchConectaData(onUpdate = null) {
   let cacheAge = Infinity;
 
   try {
+    // Limpar cache antigo (v1 e v2) se existir
+    try {
+      await del('conecta_spreadsheet_data');
+      await del('conecta_spreadsheet_timestamp');
+      await del('conecta_spreadsheet_data_v2');
+      await del('conecta_spreadsheet_timestamp_v2');
+    } catch (e) {
+      // Ignorar erros ao limpar cache antigo
+    }
+
     // OTIMIZAÇÃO: Lendo do IndexedDB (suporta arquivos enormes sem estourar limite)
     const cached = await get(CACHE_KEY);
     const timestamp = await get(CACHE_TIMESTAMP_KEY);

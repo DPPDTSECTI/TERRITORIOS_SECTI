@@ -3,8 +3,8 @@
  * Estratégia: Stale-While-Revalidate para resposta instantânea
  */
 
-const CACHE_NAME = 'conecta-bahia-v2';
-const DATA_CACHE_NAME = 'conecta-data-v2';
+const CACHE_NAME = 'conecta-bahia-v3';
+const DATA_CACHE_NAME = 'conecta-data-v3';
 
 // Arquivos estáticos para cache (App Shell)
 const STATIC_ASSETS = [
@@ -25,6 +25,9 @@ const DATA_URLS = [
 self.addEventListener('install', (event) => {
   console.log('[SW] Instalando Service Worker...');
   
+  // Forçar ativação imediata do novo SW
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[SW] Cache aberto, adicionando assets estáticos');
@@ -42,21 +45,22 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('[SW] Ativando Service Worker...');
   
+  // Assumir controle imediatamente
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
-            console.log('[SW] Removendo cache antigo:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      clients.claim(),
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
+              console.log('[SW] Removendo cache antigo:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+    ])
   );
-  
-  // Assumir controle imediato de todas as páginas
-  return self.clients.claim();
 });
 
 // Interceptar requisições
@@ -69,12 +73,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // IMPORTANTE: Em desenvolvimento (localhost), NÃO cachear a API
-  // O proxy do Vite já faz o cache em memória
-  if (url.hostname === 'localhost' && url.pathname.includes('/api/')) {
-    console.log('[SW] Modo dev: bypass cache para API:', url.pathname);
-    event.respondWith(fetch(request));
-    return;
+  // IMPORTANTE: Em desenvolvimento (localhost), SEMPRE fazer bypass do cache para API
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+    if (url.pathname.includes('/api/')) {
+      console.log('[SW] 🚫 Modo DEV: bypass total para:', url.pathname);
+      event.respondWith(fetch(request));
+      return;
+    }
   }
   
   // ESTRATÉGIA 1: Stale-While-Revalidate para dados da API

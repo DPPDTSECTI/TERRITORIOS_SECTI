@@ -127,10 +127,12 @@ function parseSpreadsheet(buffer) {
   const iTerritorio = findColIndex(headers, ['território de identidade', 'territorio de identidade', 'território', 'territorio']);
   const iFilterPlaca = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
   const iLocal = findColIndex(headers, ['local']);
+  const iKitIndigena = findColIndex(headers, ['kit aldeias indígenas', 'kit aldeias indigenas', 'aldeias indígenas', 'aldeias indigenas']);
+  const iKitQuilombo = findColIndex(headers, ['kit quilombo', 'quilombo']);
   
   const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
   
-  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterPlaca].filter((i) => i !== -1));
+  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterPlaca, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
   
   // OTIMIZAÇÃO: Filtrar apenas colunas relevantes (não financeiras)
   const extraCols = headers
@@ -168,6 +170,8 @@ function parseSpreadsheet(buffer) {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
       nome_da_praca: iPraca !== -1 ? String(row[iPraca] || '').trim() : '',
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
+      kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
+      kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
     };
     
     // OTIMIZAÇÃO: Processar apenas colunas extras definidas
