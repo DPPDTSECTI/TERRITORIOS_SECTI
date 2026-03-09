@@ -95,6 +95,7 @@ function buildPaths(topology) {
 }
 
 const ConectaGovDashboard = () => {
+  const [isFiltersOpen, setIsFiltersOpen] = useState(true); // Controle do Acordeão de Filtros
   const [mapFeatures, setMapFeatures] = useState([]);
   const [mapError, setMapError] = useState(null);
   const [conectaList, setConectaList] = useState([]);
@@ -109,7 +110,7 @@ const ConectaGovDashboard = () => {
   const [loadingData, setLoadingData] = useState(true);
   const [filterIndigena, setFilterIndigena] = useState(false);
   const [filterQuilombo, setFilterQuilombo] = useState(false);
-  const [filterTerritory, setFilterTerritory] = useState(''); // empty means no territory filter
+  const [filterTerritory, setFilterTerritory] = useState('');
   const [showTerritoryDropdown, setShowTerritoryDropdown] = useState(false);
   const [filterMode, setFilterMode] = useState('homologacao');
 
@@ -123,6 +124,27 @@ const ConectaGovDashboard = () => {
   const municipioMap = useMemo(() => buildMunicipioMap(), []);
   const getMunicipioInfo = (nomeTopo) => municipioMap[simplifyName(nomeTopo)];
   const getMunicipioColor = (nomeTopo) => getMunicipioInfo(nomeTopo)?.color || '#94A3B8';
+
+  const panoramaTotals = useMemo(() => {
+    let instalado = 0;
+    let homologado = 0;
+
+    Object.values(conectaData).forEach(pracas => {
+      pracas.forEach(p => {
+        const linkTLD = String(p.instalacao_link_tld || p.status_instalacao_com_link_pontos || '').trim().toLowerCase();
+        const isHomologado = String(p.homologacao_prodeb || p.status_homologacao_pontos || '').trim().toLowerCase();
+
+        if (linkTLD === 'sim' || linkTLD === 'true' || linkTLD === '1') {
+          instalado++;
+        }
+        if (isHomologado === 'sim' || isHomologado === 'true' || isHomologado === '1') {
+          homologado++;
+        }
+      });
+    });
+
+    return { instalado, homologado };
+  }, [conectaData]);
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files?.[0];
@@ -187,7 +209,6 @@ const ConectaGovDashboard = () => {
     return pracas;
   };
 
-  // Verifica se o município possui Kit de Aldeias Indígenas
   const hasKitAldeiasIndigenas = (nomeMunicipio) => {
     const pracas = getPracas(nomeMunicipio);
 
@@ -199,7 +220,6 @@ const ConectaGovDashboard = () => {
     });
   };
 
-  // Verifica se o município possui Kit Quilombo
   const hasKitQuilombo = (nomeMunicipio) => {
     const pracas = getPracas(nomeMunicipio);
 
@@ -211,7 +231,6 @@ const ConectaGovDashboard = () => {
     });
   };
 
-  // Log de estatísticas dos kits (apenas uma vez após carregar dados)
   useEffect(() => {
     if (conectaList.length > 0) {
       const comIndigena = conectaList.filter(m => hasKitAldeiasIndigenas(m.nome)).length;
@@ -238,7 +257,7 @@ const ConectaGovDashboard = () => {
 
       setConectaList(list);
       setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
-      setConectaData(newData); // Guardar dados SEM filtro para future updates
+      setConectaData(newData);
       setDataSource('sharepoint');
       setIsUpdating(false);
     };
@@ -258,20 +277,19 @@ const ConectaGovDashboard = () => {
         list.sort((a, b) => a.nome.localeCompare(b.nome));
         setConectaList(list);
         setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
-        setConectaData(data); // Guardar dados SEM filtro para future updates
+        setConectaData(data);
       });
 
     Promise.all([topoPromise, conectaPromise]).catch((e) => {
-    if (!active) return;
-    console.error('Erro ao carregar dados:', e);
-    setMapError('Não foi possível carregar os dados.');
-    setLoadingData(false);
-  });
+      if (!active) return;
+      console.error('Erro ao carregar dados:', e);
+      setMapError('Não foi possível carregar os dados.');
+      setLoadingData(false);
+    });
 
-  return () => { active = false; };
-}, []);
+    return () => { active = false; };
+  }, []);
 
-  // Quando filterMode muda, reaplicar filtro aos dados existentes
   useEffect(() => {
     if (Object.keys(conectaData).length === 0) return;
 
@@ -318,14 +336,16 @@ const ConectaGovDashboard = () => {
 
   const isConecta = (nomeTopo) => conectaSet.has(simplifyName(nomeTopo));
 
-  const filteredList = conectaList.filter(m => {
-    const matchesSearch = normalize(m.nome).includes(normalize(searchTerm));
-    const matchesIndigena = !filterIndigena || hasKitAldeiasIndigenas(m.nome);
-    const matchesQuilombo = !filterQuilombo || hasKitQuilombo(m.nome);
-    const matchesTerritory = !filterTerritory || getMunicipioInfo(m.nome)?.territorio === filterTerritory;
+  const passesAllFilters = (nomeMunicipio) => {
+    const matchesSearch = normalize(nomeMunicipio).includes(normalize(searchTerm));
+    const matchesIndigena = !filterIndigena || hasKitAldeiasIndigenas(nomeMunicipio);
+    const matchesQuilombo = !filterQuilombo || hasKitQuilombo(nomeMunicipio);
+    const matchesTerritory = !filterTerritory || getMunicipioInfo(nomeMunicipio)?.territorio === filterTerritory;
 
     return matchesSearch && matchesIndigena && matchesQuilombo && matchesTerritory;
-  });
+  };
+
+  const filteredList = conectaList.filter(m => passesAllFilters(m.nome));
 
   useEffect(() => {
     if (!hoveredNome || !mapContainerRef.current || mapFeatures.length === 0) return;
@@ -349,17 +369,11 @@ const ConectaGovDashboard = () => {
   }, [hoveredNome, mapFeatures, zoom, pan]);
 
   return (
-    // Removido min-h-screen para usar 100dvh e overflow-hidden. Com isso, a tela não rola mais, agindo como um App.
     <div className="flex flex-col md:flex-row h-[100dvh] md:h-[85vh] w-full bg-white font-sans border border-slate-300 md:rounded-lg overflow-visible md:overflow-hidden shadow-sm">
 
-      {/* ========================================================================
-        ÁREA DO MAPA (order-1 no mobile, order-2 no desktop)
-        No mobile ocupa 55% da tela.
-        ========================================================================
-      */}
+      {/* ÁREA DO MAPA */}
       <div className="order-1 md:order-2 flex flex-col relative h-[55%] md:h-auto md:flex-1 shrink-0 bg-[#F8FAFC] touch-none border-b md:border-b-0 border-slate-200">
 
-        {/* Legenda - Ajustada para ficar compacta no mobile */}
         <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 z-10 bg-white/90 backdrop-blur-sm px-2 py-1.5 md:px-3 md:py-2 rounded-md shadow-sm border border-slate-200 pointer-events-none">
           <h2 className="text-[9px] md:text-[10px] font-bold text-slate-800 uppercase mb-1">Legenda</h2>
           <div className="flex items-center gap-1.5 mb-1">
@@ -372,14 +386,12 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        {/* Controles de Zoom */}
         <div className="absolute top-3 right-3 z-10 flex flex-col bg-white shadow-md rounded-md border border-slate-200 overflow-hidden">
           <button onClick={() => handleZoom(0.3)} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Aproximar">+</button>
           <button onClick={() => handleZoom(-0.3)} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Afastar">−</button>
           <button onClick={resetZoom} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold text-xl" title="Centralizar">⟳</button>
         </div>
 
-        {/* Botão de Exportação PDF */}
         <div className="absolute top-3 left-3 z-20">
           <div className="bg-white/95 md:bg-transparent backdrop-blur-md md:backdrop-blur-none p-1 md:p-0 rounded-lg md:rounded-none shadow-sm md:shadow-none border border-slate-200 md:border-transparent transition-all">
             <PDFExportButton
@@ -394,7 +406,6 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        {/* Container do SVG do Mapa */}
         <div
           ref={mapContainerRef}
           className="w-full h-full overflow-hidden outline-none"
@@ -406,13 +417,10 @@ const ConectaGovDashboard = () => {
         >
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-white z-20">
-              {/* Skeleton do Mapa */}
               <div className="absolute inset-0 opacity-20">
                 <div className="w-full h-full flex items-center justify-center">
                   <svg viewBox="0 0 600 600" className="w-3/4 h-3/4 animate-pulse">
-                    {/* Forma genérica da Bahia */}
                     <path d="M 200 100 Q 250 80, 300 90 Q 350 85, 400 120 L 450 200 Q 460 280, 440 350 Q 430 420, 380 480 Q 320 520, 250 510 Q 180 500, 150 450 Q 120 380, 130 300 Q 140 220, 180 160 Z" fill="#CBD5E1" stroke="#94A3B8" strokeWidth="2" />
-                    {/* Pontos simulados */}
                     <circle cx="250" cy="200" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" />
                     <circle cx="320" cy="250" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{ animationDelay: '0.1s' }} />
                     <circle cx="280" cy="320" r="6" fill="#64748B" opacity="0.4" className="animate-pulse" style={{ animationDelay: '0.2s' }} />
@@ -421,7 +429,6 @@ const ConectaGovDashboard = () => {
                 </div>
               </div>
 
-              {/* Spinner e mensagem */}
               <div className="relative z-10 flex flex-col items-center bg-white/90 backdrop-blur-sm px-8 py-6 rounded-xl shadow-lg border border-slate-200">
                 <div className="relative mb-4">
                   <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
@@ -463,7 +470,8 @@ const ConectaGovDashboard = () => {
                   const isHovered = sameMunicipio(hoveredNome, nome);
                   const isSelected = sameMunicipio(selectedMunicipio, nome);
                   const hasConecta = isConecta(nome);
-                  const baseColor = hasConecta ? getMunicipioColor(nome) : '#E2E8F0';
+                  const passesFilters = passesAllFilters(nome);
+                  const baseColor = (hasConecta && passesFilters) ? getMunicipioColor(nome) : '#E2E8F0';
 
                   return (
                     <path
@@ -485,7 +493,7 @@ const ConectaGovDashboard = () => {
                 })}
 
                 {mapFeatures.map(({ nome, centroid }) => {
-                  if (!isConecta(nome)) return null;
+                  if (!isConecta(nome) || !passesAllFilters(nome)) return null;
                   const isHovered = sameMunicipio(hoveredNome, nome);
                   const isSelected = sameMunicipio(selectedMunicipio, nome);
                   const fillColor = isSelected ? '#EF4444' : '#1E3A8A';
@@ -502,7 +510,6 @@ const ConectaGovDashboard = () => {
           )}
         </div>
 
-        {/* Tooltip Desktop */}
         {hoveredNome && !selectedMunicipio && (
           <div
             className="hidden md:flex absolute pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full pb-3"
@@ -545,7 +552,6 @@ const ConectaGovDashboard = () => {
           </div>
         )}
 
-        {/* QR Code Oculto no Mobile */}
         <div className="absolute bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg border border-slate-200 items-center z-10 max-w-[200px] hidden md:flex flex-col">
           <img
             src="/img/qr-code-DIRETORIA DE TECNOLOGIA E CONECTIVIDADE - DTC.png"
@@ -560,7 +566,6 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        {/* Card do Município Selecionado - Com max-height para não quebrar a tela dividida */}
         {selectedMunicipio && (
           <div className="absolute bottom-2 left-2 right-2 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:w-80 bg-white p-3 md:p-4 rounded-xl shadow-2xl border border-blue-100 flex flex-col z-20 animate-in slide-in-from-bottom-5 max-h-[90%] overflow-y-auto custom-scrollbar">
             <div className="flex justify-between items-start mb-2 sticky top-0 bg-white z-10 pb-1">
@@ -633,7 +638,6 @@ const ConectaGovDashboard = () => {
                               <div className="flex items-start gap-2">
                                 <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
                                 <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium flex-1">{p.nome_da_praca || 'Sem nome'}</span>
-                                {/* Indicadores de Kit */}
                                 <div className="flex items-center gap-1 shrink-0">
                                   {hasKitIndigena && (
                                     <img
@@ -654,7 +658,6 @@ const ConectaGovDashboard = () => {
                                 </div>
                               </div>
 
-                              {/* Badges informativos sobre os kits */}
                               {hasKitIndigena && (
                                 <div className="flex items-center gap-1.5 bg-purple-50 border border-purple-200 rounded px-2 py-1 mt-1">
                                   <img
@@ -709,280 +712,285 @@ const ConectaGovDashboard = () => {
         )}
       </div>
 
-      {/* ========================================================================
-        BARRA LATERAL / LISTA (order-2 no mobile, order-1 no desktop)
-        No mobile ocupa 45% da tela (ficando exatamente abaixo do mapa).
-        ========================================================================
-      */}
+      {/* BARRA LATERAL / LISTA COM ACORDEÃO */}
       <div className="order-2 md:order-1 flex flex-col w-full md:w-80 h-[45%] md:h-auto bg-slate-50 border-t md:border-t-0 md:border-r border-slate-200 z-10 shrink-0">
 
-        {/* Cabeçalho da Lista - Espaçamentos otimizados */}
-        <div className="p-3 md:p-6 pb-2 md:pb-6 border-b border-slate-200 bg-white shadow-sm md:shadow-none z-10 relative shrink-0">
-          <h1 className="text-base md:text-xl font-bold text-slate-800 leading-tight md:mb-1">
-            Programa Conecta Bahia
-          </h1>
-          <p className="hidden md:block text-[10px] md:text-xs text-slate-500 mb-4 font-medium uppercase tracking-wide">
-            Mapa de Cobertura Oficial
-          </p>
-
-          {/* Grid de Estatísticas: Horizontal no mobile (3 colunas), Vertical no desktop */}
-          <div className="grid grid-cols-3 md:grid-cols-1 gap-1.5 md:gap-3 my-2 md:mb-4">
-            {/* Box 1: Municípios */}
-            <div className="flex flex-col md:flex-row items-center md:justify-between bg-blue-50 border border-blue-100 rounded-md py-1.5 px-1 md:p-3">
-              <div className="text-center md:text-left">
-                <span className="block text-base md:text-2xl font-bold text-blue-800 leading-none">{conectaList.length}</span>
-                <span className="text-[8px] md:text-[10px] uppercase font-bold text-blue-600 mt-0.5 md:mt-1 block leading-tight">Municípios</span>
-              </div>
-              <div className="hidden md:flex h-10 w-10 bg-white rounded-full items-center justify-center shadow-sm text-blue-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" /></svg>
-              </div>
+        {/* Cabeçalho da Lista / Botão de Ocultar Filtros */}
+        <div className="p-3 md:p-6 pb-2 md:pb-4 border-b border-slate-200 bg-white shadow-sm md:shadow-none z-10 relative shrink-0 transition-all duration-300">
+          <div className="flex justify-between items-start md:items-center">
+            <div>
+              <h1 className="text-base md:text-xl font-bold text-slate-800 leading-tight md:mb-1">
+                Programa Conecta Bahia
+              </h1>
+              <p className="hidden md:block text-[10px] md:text-xs text-slate-500 font-medium uppercase tracking-wide">
+                Mapa de Cobertura Oficial
+              </p>
             </div>
 
-            {/* Box 2: Territórios */}
-            <div onClick={handleClickTerritories} className="flex flex-col md:flex-row items-center md:justify-between bg-green-50 border border-green-100 rounded-md py-1.5 px-1 md:p-3 cursor-pointer hover:bg-green-100 transition-colors">
-              <div className="text-center md:text-left">
-                <span className="block text-base md:text-2xl font-bold text-green-800 leading-none">{coveredTerritories.length}</span>
-                <span className="text-[8px] md:text-[10px] uppercase font-bold text-green-600 mt-0.5 md:mt-1 block leading-tight">Territórios</span>
-              </div>
-              <div className="hidden md:flex h-10 w-10 bg-white rounded-full items-center justify-center shadow-sm text-green-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18" /></svg>
-              </div>
-            </div>
 
-            {/* Box 3: pontos */}
-            <div className="flex flex-col md:flex-row items-center md:justify-between bg-amber-50 border border-amber-100 rounded-md py-1.5 px-1 md:p-3">
-              <div className="text-center md:text-left">
-                <span className="block text-base md:text-2xl font-bold text-amber-800 leading-none">{totalPracas}</span>
-                <span className="text-[8px] md:text-[10px] uppercase font-bold text-amber-600 mt-0.5 md:mt-1 block leading-tight">pontos</span>
-              </div>
-              <div className="hidden md:flex h-10 w-10 bg-white rounded-full items-center justify-center shadow-sm text-amber-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              </div>
-            </div>
           </div>
-
-          {/* Avisos */}
-          {isUpdating && (
-            <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-2.5 mb-2 md:mb-4 flex items-center gap-2 shadow-sm">
-              <div className="relative">
-                <svg className="w-4 h-4 text-blue-600 flex-shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] md:text-xs text-blue-900 font-bold truncate">Atualizando dados...</p>
-                <p className="text-[9px] md:text-[10px] text-blue-600 truncate">Sincronizando com SharePoint em segundo plano</p>
-              </div>
-            </div>
-          )}
-
-          {dataSource === 'cache' && !isUpdating && (
-            <div className="hidden md:flex bg-amber-50 border border-amber-200 rounded-md p-2 mb-4 gap-2 items-center">
-              <svg className="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              <p className="text-xs text-amber-800">Carregado da memória do sistema (ultra-rápido)</p>
-            </div>
-          )}
-
-          {dataSource === 'sharepoint' && !isUpdating && (
-            <div className="hidden md:flex bg-green-50 border border-green-200 rounded-md p-2 mb-4 gap-2 items-center">
-              <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="text-xs text-green-800">Dados atualizados do SharePoint</p>
-            </div>
-          )}
-
-          {/* Input invisível e Limpeza de Cache */}
-          {dataSource === 'upload' && (
-            <div className="flex justify-end mb-2">
-              <button
-                onClick={() => { clearSpreadsheetCache(); window.location.reload(); }}
-                className="text-[10px] text-red-500 hover:text-red-700 font-medium flex items-center gap-1 transition-colors"
-                title="Voltar aos dados pré-carregados"
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                Limpar planilha local
-              </button>
-            </div>
-          )}
-          <input ref={fileInputRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleFileUpload} />
-
-          {/* Barra de Pesquisa */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Pesquisar município..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 md:py-2.5 bg-white border border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-md text-sm transition-all outline-none appearance-none"
-            />
-            <svg className="absolute left-2.5 top-2 md:top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-          </div>
-
-          {/* Dropdown Customizado de Território */}
-          <div className="relative my-3">
-            <button
-              type="button"
-              onClick={() => setShowTerritoryDropdown(!showTerritoryDropdown)}
-              className="w-full text-left flex items-center justify-between gap-2 px-3 py-2 text-xs border border-slate-300 rounded-md bg-white hover:border-blue-500 focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition outline-none"
+          <button
+            onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            className={`my-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all text-xs font-bold shrink-0 border ${isFiltersOpen
+              ? 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
+              : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200 shadow-sm'
+              }`}
+            title={isFiltersOpen ? "Ocultar painel de filtros" : "Expandir painel de filtros"}
+          >
+            <span>{isFiltersOpen ? 'Ocultar Filtros' : 'Mostrar Filtros'}</span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-300 ${isFiltersOpen ? 'rotate-180' : ''}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
             >
-              <div className="flex items-center gap-2">
-                {filterTerritory ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {/* PAINEL COLAPSÁVEL DE ESTATÍSTICAS E FILTROS */}
+          {isFiltersOpen && (
+            <div className="mt-3 md:mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+
+              <div className="grid grid-cols-3 md:grid-cols-1 gap-1.5 md:gap-3 mb-2 md:mb-4">
+                <div className="flex flex-col md:flex-row items-center md:justify-between bg-blue-50 border border-blue-100 rounded-md py-1.5 px-1 md:p-1">
+                  <div className="text-center md:text-left">
+                    <span className="block text-base md:text-2xl font-bold text-blue-800 leading-none">{conectaList.length}</span>
+                    <span className="text-[8px] md:text-[10px] uppercase font-bold text-blue-600 mt-0.5 md:mt-1 block leading-tight">Municípios</span>
+                  </div>
+                  <div className="hidden md:flex h-10 w-10 bg-white rounded-full items-center justify-center shadow-sm text-blue-600">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" /></svg>
+                  </div>
+                </div>
+
+                <div onClick={handleClickTerritories} className="flex flex-col md:flex-row items-center md:justify-between bg-green-50 border border-green-100 rounded-md py-1.5 px-1 md:p-1 cursor-pointer hover:bg-green-100 transition-colors">
+                  <div className="text-center md:text-left">
+                    <span className="block text-base md:text-2xl font-bold text-green-800 leading-none">{coveredTerritories.length}</span>
+                    <span className="text-[8px] md:text-[10px] uppercase font-bold text-green-600 mt-0.5 md:mt-1 block leading-tight">Territórios</span>
+                  </div>
+                  <div className="hidden md:flex h-10 w-10 bg-white rounded-full items-center justify-center shadow-sm text-green-600">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18" /></svg>
+                  </div>
+                </div>
+
+                <div className="flex flex-col bg-amber-50 border border-amber-100 rounded-md py-1.5 px-1.5 md:p-3 justify-center">
+                  <div className="flex flex-col md:flex-row items-center md:justify-between mb-1 md:mb-2 w-full">
+                    <div className="text-center md:text-left">
+                      <span className="block text-base md:text-2xl font-bold text-amber-800 leading-none">{panoramaTotals.instalado}</span>
+                      <span className="text-[8px] md:text-[10px] uppercase font-bold text-amber-600 mt-0.5 block leading-tight">Pontos Instalados</span>
+                    </div>
+                    <div className="text-center md:text-left">
+                      <span className="block text-base md:text-2xl font-bold text-amber-800 leading-none">{panoramaTotals.homologado}</span>
+                      <span className="text-[8px] md:text-[10px] uppercase font-bold text-amber-600 mt-0.5 block leading-tight">Pontos Homologados</span>
+                    </div>
+                    <div className="hidden md:flex h-10 w-10 bg-white rounded-full items-center justify-center shadow-sm text-amber-600 shrink-0">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {isUpdating && (
+                <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-2.5 mb-2 md:mb-4 flex items-center gap-2 shadow-sm">
+                  <div className="relative">
+                    <svg className="w-4 h-4 text-blue-600 flex-shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] md:text-xs text-blue-900 font-bold truncate">Atualizando dados...</p>
+                    <p className="text-[9px] md:text-[10px] text-blue-600 truncate">Sincronizando com SharePoint em segundo plano</p>
+                  </div>
+                </div>
+              )}
+
+              {dataSource === 'sharepoint' && !isUpdating && (
+                <div className="hidden md:flex bg-green-50 border border-green-200 rounded-md p-2 mb-4 gap-2 items-center">
+                  <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <p className="text-xs text-green-800">Dados atualizados do SharePoint</p>
+                </div>
+              )}
+
+              {dataSource === 'upload' && (
+                <div className="flex justify-end mb-2">
+                  <button
+                    onClick={() => { clearSpreadsheetCache(); window.location.reload(); }}
+                    className="text-[10px] text-red-500 hover:text-red-700 font-medium flex items-center gap-1 transition-colors"
+                    title="Voltar aos dados pré-carregados"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    Limpar planilha local
+                  </button>
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleFileUpload} />
+
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Pesquisar município..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 md:py-2.5 bg-white border border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-md text-sm transition-all outline-none appearance-none"
+                />
+                <svg className="absolute left-2.5 top-2 md:top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              </div>
+
+              <div className="relative my-3">
+                <button
+                  type="button"
+                  onClick={() => setShowTerritoryDropdown(!showTerritoryDropdown)}
+                  className="w-full text-left flex items-center justify-between gap-2 px-3 py-2 text-xs border border-slate-300 rounded-md bg-white hover:border-blue-500 focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition outline-none"
+                >
+                  <div className="flex items-center gap-2">
+                    {filterTerritory ? (
+                      <>
+                        <span
+                          className="w-3 h-3 rounded-sm border border-slate-300 shrink-0"
+                          style={{ backgroundColor: territoryColorMap[filterTerritory] || '#94A3B8' }}
+                        />
+                        <span className="text-slate-700 font-medium truncate">{filterTerritory}</span>
+                      </>
+                    ) : (
+                      <span className="text-slate-500">Todos territórios</span>
+                    )}
+                  </div>
+                  <svg
+                    className={`w-4 h-4 text-slate-400 transition-transform ${showTerritoryDropdown ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {showTerritoryDropdown && (
                   <>
-                    <span
-                      className="w-3 h-3 rounded-sm border border-slate-300 shrink-0"
-                      style={{ backgroundColor: territoryColorMap[filterTerritory] || '#94A3B8' }}
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowTerritoryDropdown(false)}
                     />
-                    <span className="text-slate-700 font-medium truncate">{filterTerritory}</span>
+                    <div className="absolute z-20 w-full mt-1 bg-white border border-slate-300 rounded-md shadow-lg max-h-60 overflow-y-auto custom-scrollbar">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFilterTerritory('');
+                          setShowTerritoryDropdown(false);
+                        }}
+                        className="w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2"
+                      >
+                        <span className="text-slate-600 font-medium">Todos territórios</span>
+                      </button>
+                      {allTerritories.map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => {
+                            setFilterTerritory(t);
+                            setShowTerritoryDropdown(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2 ${filterTerritory === t ? 'bg-blue-50' : ''}`}
+                        >
+                          <span
+                            className="w-3 h-3 rounded-sm border border-slate-300 shrink-0"
+                            style={{ backgroundColor: territoryColorMap[t] || '#94A3B8' }}
+                          />
+                          <span className="text-slate-700 font-medium truncate">{t}</span>
+                        </button>
+                      ))}
+                    </div>
                   </>
-                ) : (
-                  <span className="text-slate-500">Todos territórios</span>
                 )}
               </div>
-              <svg
-                className={`w-4 h-4 text-slate-400 transition-transform ${showTerritoryDropdown ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
 
-            {showTerritoryDropdown && (
-              <>
-                {/* Backdrop para fechar ao clicar fora */}
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setShowTerritoryDropdown(false)}
-                />
-                {/* Menu dropdown */}
-                <div className="absolute z-20 w-full mt-1 bg-white border border-slate-300 rounded-md shadow-lg max-h-60 overflow-y-auto custom-scrollbar">
+              <div className="flex flex-col gap-2 mt-3 mb-1 p-2 bg-slate-100 rounded-md border border-slate-200">
+                <label className="text-xs font-semibold text-slate-700">Filtro de Dados:</label>
+                <div className="grid gap-1.5">
                   <button
-                    type="button"
-                    onClick={() => {
-                      setFilterTerritory('');
-                      setShowTerritoryDropdown(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2"
+                    onClick={() => setFilterMode('linkTLD')}
+                    className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'linkTLD'
+                      ? 'bg-blue-500 border-blue-600 text-white shadow-sm'
+                      : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    title="Mostrar apenas pontos instalados"
                   >
-                    <span className="text-slate-600 font-medium">Todos territórios</span>
+                    📡 Instalado
                   </button>
-                  {allTerritories.map((t) => (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => {
-                        setFilterTerritory(t);
-                        setShowTerritoryDropdown(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2 ${filterTerritory === t ? 'bg-blue-50' : ''
-                        }`}
-                    >
-                      <span
-                        className="w-3 h-3 rounded-sm border border-slate-300 shrink-0"
-                        style={{ backgroundColor: territoryColorMap[t] || '#94A3B8' }}
-                      />
-                      <span className="text-slate-700 font-medium truncate">{t}</span>
-                    </button>
-                  ))}
+                  <button
+                    onClick={() => setFilterMode('homologacao')}
+                    className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'homologacao'
+                      ? 'bg-green-500 border-green-600 text-white shadow-sm'
+                      : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    title="Mostrar apenas pontos homologados pela PRODEB"
+                  >
+                    ✓ Homologado
+                  </button>
+                  <button
+                    onClick={() => setFilterIndigena(!filterIndigena)}
+                    className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterIndigena
+                      ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    title="Filtrar municípios com Kit Aldeias Indígenas"
+                  >
+                    <img src="/img/Indigena.svg" alt="Aldeias Indígenas" className="w-5 h-5" />
+                    <span className="hidden sm:inline">Indígena</span>
+                    {filterIndigena && (
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setFilterQuilombo(!filterQuilombo)}
+                    className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterQuilombo
+                      ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    title="Filtrar municípios com Kit Quilombo"
+                  >
+                    <img src="/img/quilombo.svg" alt="Quilombo" className="w-4 h-4" />
+                    <span className="hidden sm:inline">Quilombo</span>
+                    {filterQuilombo && (
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
-              </>
-            )}
-          </div>
+              </div>
 
-          {/* Selector de Modo de Filtro */}
-          <div className="flex flex-col gap-2 mt-3 mb-3 p-2 bg-slate-100 rounded-md border border-slate-200">
-            <label className="text-xs font-semibold text-slate-700">Filtro de Dados:</label>
-            <div className="grid gap-1.5">
-              <button
-                onClick={() => setFilterMode('linkTLD')}
-                className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'linkTLD'
-                  ? 'bg-blue-500 border-blue-600 text-white shadow-sm'
-                  : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
-                  }`}
-                title="Mostrar apenas pontos instalados"
-              >
-                📡 Instalado
-              </button>
-              <button
-                onClick={() => setFilterMode('homologacao')}
-                className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'homologacao'
-                  ? 'bg-green-500 border-green-600 text-white shadow-sm'
-                  : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
-                  }`}
-                title="Mostrar apenas pontos homologados pela PRODEB"
-              >
-                ✓ Homologado
-              </button>
+              <div className="flex gap-2 mt-2">
+                {(filterIndigena || filterQuilombo || filterTerritory) && (
+                  <button
+                    onClick={() => { setFilterIndigena(false); setFilterQuilombo(false); setFilterTerritory(''); }}
+                    className="ml-auto flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-all"
+                    title="Limpar filtros"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <span className="hidden sm:inline">Limpar</span>
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Filtros por Tipo */}
-          <div className="flex gap-2 mt-2">
-            <button
-              onClick={() => setFilterIndigena(!filterIndigena)}
-              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterIndigena
-                ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm'
-                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                }`}
-              title="Filtrar municípios com Kit Aldeias Indígenas"
-            >
-              <img
-                src="/img/Indigena.svg"
-                alt="Aldeias Indígenas"
-                className="w-5 h-5"
-              />
-              <span className="hidden sm:inline">Indígena</span>
-              {filterIndigena && (
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </button>
-
-            <button
-              onClick={() => setFilterQuilombo(!filterQuilombo)}
-              className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterQuilombo
-                ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm'
-                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                }`}
-              title="Filtrar municípios com Kit Quilombo"
-            >
-              <img
-                src="/img/quilombo.svg"
-                alt="Quilombo"
-                className="w-4 h-4"
-              />
-              <span className="hidden sm:inline">Quilombo</span>
-              {filterQuilombo && (
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </button>
-
-            {/* territorio dropdown */}
-
-            {(filterIndigena || filterQuilombo || filterTerritory) && (
-              <button
-                onClick={() => { setFilterIndigena(false); setFilterQuilombo(false); setFilterTerritory(''); }}
-                className="ml-auto flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-all"
-                title="Limpar filtros"
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span className="hidden sm:inline">Limpar</span>
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-1.5 md:p-2 custom-scrollbar bg-slate-50">
+        {/* LISTA DE MUNICÍPIOS (Expande quando o acordeão fecha) */}
+        <div className="flex-1 overflow-y-auto p-1.5 md:p-2 custom-scrollbar bg-slate-50 relative">
+
+          {/* Aviso Flutuante se tiver filtros ativos e o painel estiver oculto */}
+          {!isFiltersOpen && (filterIndigena || filterQuilombo || filterTerritory || searchTerm) && (
+            <div className="sticky top-0 z-10 mb-2 px-2 py-1.5 bg-amber-50 border border-amber-200 rounded-md shadow-sm flex justify-between items-center">
+              <span className="text-[10px] md:text-xs text-amber-800 font-medium">⚠️ Você possui filtros ativos.</span>
+              <button onClick={() => setIsFiltersOpen(true)} className="text-[10px] text-blue-600 font-bold underline">Revisar</button>
+            </div>
+          )}
+
           {(filterIndigena || filterQuilombo || filterTerritory || searchTerm) && (
             <div className="mb-2 px-2 py-1.5 bg-blue-50 border border-blue-100 rounded-md">
               <p className="text-xs text-blue-700 font-medium">
@@ -993,6 +1001,7 @@ const ConectaGovDashboard = () => {
               </p>
             </div>
           )}
+
           {filteredList.length === 0 ? (
             <p className="text-center text-sm text-slate-500 mt-4 font-medium">Nenhum registro encontrado.</p>
           ) : (
@@ -1041,7 +1050,7 @@ const ConectaGovDashboard = () => {
         </div>
       </div>
 
-      {/* Modal Territórios - Mantido intacto */}
+      {/* Modal Territórios */}
       {showTerritoryModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={() => setShowTerritoryModal(false)} />
