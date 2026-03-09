@@ -125,14 +125,15 @@ function parseSpreadsheet(buffer) {
   const iPraca = findColIndex(headers, ['descrição do local', 'descricao do local', 'nome da praça', 'nome_da_praca']);
   const iProjeto = findColIndex(headers, ['projeto']);
   const iTerritorio = findColIndex(headers, ['território de identidade', 'territorio de identidade', 'território', 'territorio']);
-  const iFilterPlaca = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
+  const iFilterLinkTLD = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
+  const iFilterHomologacao = findColIndex(headers, ['homologação prodeb', 'homologacao prodeb']);
   const iLocal = findColIndex(headers, ['local']);
   const iKitIndigena = findColIndex(headers, ['kit aldeias indígenas', 'kit aldeias indigenas', 'aldeias indígenas', 'aldeias indigenas']);
   const iKitQuilombo = findColIndex(headers, ['kit quilombo', 'quilombo']);
   
   const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
   
-  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterPlaca, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
+  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
   
   // OTIMIZAÇÃO: Filtrar apenas colunas relevantes (não financeiras)
   const extraCols = headers
@@ -154,15 +155,14 @@ function parseSpreadsheet(buffer) {
     const row = rows[r];
     if (!row || row.length === 0) continue;
     
-    if (iFilterPlaca !== -1) {
-      const val = String(row[iFilterPlaca] || '').trim();
-      if (val.toLowerCase() !== 'sim') continue;
-    }
-    
-    const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
+    // Aplicar filtro baseado no filterMode
+  const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
     if (!municipioInput) continue;
     
-    // OTIMIZAÇÃO: Usar Map ao invés de loop para normalizar município
+    // Pegar os valores brutos sem forçar o lowercase aqui (deixa pro frontend)
+    const valLinkTLD = iFilterLinkTLD !== -1 ? String(row[iFilterLinkTLD] || '').trim() : '';
+    const valHomologacao = iFilterHomologacao !== -1 ? String(row[iFilterHomologacao] || '').trim() : '';
+    
     const nomeKey = normalizeMunicipioKey(municipioInput);
     const municipioNome = municipiosMap.get(nomeKey) || municipioInput;
     
@@ -172,6 +172,9 @@ function parseSpreadsheet(buffer) {
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
       kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
       kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
+      // Adicionar explicitamente ao objeto:
+      instalacao_link_tld: valLinkTLD,
+      homologacao_prodeb: valHomologacao,
     };
     
     // OTIMIZAÇÃO: Processar apenas colunas extras definidas

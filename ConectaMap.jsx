@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import * as topojson from 'topojson-client';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
-import { fetchConectaData, parseUploadedFile, clearSpreadsheetCache } from './utils/spreadsheetService';
+import { fetchConectaData, parseUploadedFile, clearSpreadsheetCache, applyFilterMode } from './utils/spreadsheetService';
 import PDFExportButton from './src/components/PDFExportButton';
 
 const normalize = (s) =>
@@ -111,6 +111,7 @@ const ConectaGovDashboard = () => {
   const [filterQuilombo, setFilterQuilombo] = useState(false);
   const [filterTerritory, setFilterTerritory] = useState(''); // empty means no territory filter
   const [showTerritoryDropdown, setShowTerritoryDropdown] = useState(false);
+  const [filterMode, setFilterMode] = useState('homologacao');
 
   const mapContainerRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -231,12 +232,13 @@ const ConectaGovDashboard = () => {
 
     const handleBackgroundUpdate = (newData) => {
       if (!active) return;
-      const list = Object.keys(newData).map((nome) => ({ nome, pracas: newData[nome] }));
+      const filteredData = applyFilterMode(newData, filterMode);
+      const list = Object.keys(filteredData).map((nome) => ({ nome, pracas: filteredData[nome] }));
       list.sort((a, b) => a.nome.localeCompare(b.nome));
 
       setConectaList(list);
       setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
-      setConectaData(newData);
+      setConectaData(newData); // Guardar dados SEM filtro para future updates
       setDataSource('sharepoint');
       setIsUpdating(false);
     };
@@ -251,22 +253,35 @@ const ConectaGovDashboard = () => {
           setIsUpdating(true);
         }
 
-        const list = Object.keys(data).map((nome) => ({ nome, pracas: data[nome] }));
+        const filteredData = applyFilterMode(data, filterMode);
+        const list = Object.keys(filteredData).map((nome) => ({ nome, pracas: filteredData[nome] }));
         list.sort((a, b) => a.nome.localeCompare(b.nome));
         setConectaList(list);
         setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
-        setConectaData(data);
+        setConectaData(data); // Guardar dados SEM filtro para future updates
       });
 
     Promise.all([topoPromise, conectaPromise]).catch((e) => {
-      if (!active) return;
-      console.error('Erro ao carregar dados:', e);
-      setMapError('Não foi possível carregar os dados.');
-      setLoadingData(false);
-    });
+    if (!active) return;
+    console.error('Erro ao carregar dados:', e);
+    setMapError('Não foi possível carregar os dados.');
+    setLoadingData(false);
+  });
 
-    return () => { active = false; };
-  }, []);
+  return () => { active = false; };
+}, []);
+
+  // Quando filterMode muda, reaplicar filtro aos dados existentes
+  useEffect(() => {
+    if (Object.keys(conectaData).length === 0) return;
+
+    const filteredData = applyFilterMode(conectaData, filterMode);
+    const list = Object.keys(filteredData).map((nome) => ({ nome, pracas: filteredData[nome] }));
+    list.sort((a, b) => a.nome.localeCompare(b.nome));
+
+    setConectaList(list);
+    setConectaSet(new Set(list.map((m) => simplifyName(m.nome))));
+  }, [filterMode, conectaData]);
 
   const handleZoom = (delta) => setZoom((z) => Math.min(4, Math.max(0.5, z + delta)));
   const resetZoom = () => { setZoom(1); setPan({ x: 0, y: 0 }); setSelectedMunicipio(null); };
@@ -612,72 +627,72 @@ const ConectaGovDashboard = () => {
                         {pracas.map((p, i) => {
                           const hasKitIndigena = p.kit_aldeias_indigenas && parseInt(String(p.kit_aldeias_indigenas).trim(), 10) > 0;
                           const hasKitQuilombo = p.kit_quilombo && parseInt(String(p.kit_quilombo).trim(), 10) > 0;
-                          
+
                           return (
-                          <div key={i} className="bg-slate-50 border border-slate-100 rounded-md px-2 py-2 flex flex-col gap-1">
-                            <div className="flex items-start gap-2">
-                              <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
-                              <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium flex-1">{p.nome_da_praca || 'Sem nome'}</span>
-                              {/* Indicadores de Kit */}
-                              <div className="flex items-center gap-1 shrink-0">
-                                {hasKitIndigena && (
-                                  <img 
-                                    src="/img/Indigena.svg" 
-                                    alt="Kit Aldeias Indígenas" 
-                                    className="w-4 h-4" 
-                                    title={`Kit Aldeias Indígenas: ${p.kit_aldeias_indigenas}`}
-                                  />
-                                )}
-                                {hasKitQuilombo && (
-                                  <img 
-                                    src="/img/quilombo.svg" 
-                                    alt="Kit Quilombo" 
-                                    className="w-4 h-4" 
-                                    title={`Kit Quilombo: ${p.kit_quilombo}`}
-                                  />
-                                )}
-                              </div>
-                            </div>
-                            
-                            {/* Badges informativos sobre os kits */}
-                            {hasKitIndigena && (
-                              <div className="flex items-center gap-1.5 bg-purple-50 border border-purple-200 rounded px-2 py-1 mt-1">
-                                <img 
-                                  src="/img/Indigena.svg" 
-                                  alt="Aldeias Indígenas" 
-                                  className="w-3 h-3 shrink-0" 
-                                />
-                                <span className="text-[9px] md:text-[10px] text-purple-800 font-semibold">
-                                  Contém {p.kit_aldeias_indigenas} ponto{parseInt(p.kit_aldeias_indigenas) !== 1 ? 's' : ''} em comunidade indígena
-                                </span>
-                              </div>
-                            )}
-                            
-                            {hasKitQuilombo && (
-                              <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
-                                <img 
-                                  src="/img/quilombo.svg" 
-                                  alt="Quilombo" 
-                                  className="w-3 h-3 shrink-0" 
-                                />
-                                <span className="text-[9px] md:text-[10px] text-amber-900 font-semibold">
-                                  Contém {p.kit_quilombo} ponto{parseInt(p.kit_quilombo) !== 1 ? 's' : ''} em comunidade quilombola
-                                </span>
-                              </div>
-                            )}
-                            
-                            {dataSource !== 'static' && DISPLAY_FIELDS.map(({ key, label }) => {
-                              const val = p[key];
-                              if (!val) return null;
-                              return (
-                                <div key={key} className="flex items-baseline gap-1.5 pl-1">
-                                  <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
-                                  <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{val}</span>
+                            <div key={i} className="bg-slate-50 border border-slate-100 rounded-md px-2 py-2 flex flex-col gap-1">
+                              <div className="flex items-start gap-2">
+                                <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
+                                <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium flex-1">{p.nome_da_praca || 'Sem nome'}</span>
+                                {/* Indicadores de Kit */}
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {hasKitIndigena && (
+                                    <img
+                                      src="/img/Indigena.svg"
+                                      alt="Kit Aldeias Indígenas"
+                                      className="w-4 h-4"
+                                      title={`Kit Aldeias Indígenas: ${p.kit_aldeias_indigenas}`}
+                                    />
+                                  )}
+                                  {hasKitQuilombo && (
+                                    <img
+                                      src="/img/quilombo.svg"
+                                      alt="Kit Quilombo"
+                                      className="w-4 h-4"
+                                      title={`Kit Quilombo: ${p.kit_quilombo}`}
+                                    />
+                                  )}
                                 </div>
-                              );
-                            })}
-                          </div>
-                        );
+                              </div>
+
+                              {/* Badges informativos sobre os kits */}
+                              {hasKitIndigena && (
+                                <div className="flex items-center gap-1.5 bg-purple-50 border border-purple-200 rounded px-2 py-1 mt-1">
+                                  <img
+                                    src="/img/Indigena.svg"
+                                    alt="Aldeias Indígenas"
+                                    className="w-3 h-3 shrink-0"
+                                  />
+                                  <span className="text-[9px] md:text-[10px] text-purple-800 font-semibold">
+                                    Contém {p.kit_aldeias_indigenas} ponto{parseInt(p.kit_aldeias_indigenas) !== 1 ? 's' : ''} em comunidade indígena
+                                  </span>
+                                </div>
+                              )}
+
+                              {hasKitQuilombo && (
+                                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
+                                  <img
+                                    src="/img/quilombo.svg"
+                                    alt="Quilombo"
+                                    className="w-3 h-3 shrink-0"
+                                  />
+                                  <span className="text-[9px] md:text-[10px] text-amber-900 font-semibold">
+                                    Contém {p.kit_quilombo} ponto{parseInt(p.kit_quilombo) !== 1 ? 's' : ''} em comunidade quilombola
+                                  </span>
+                                </div>
+                              )}
+
+                              {dataSource !== 'static' && DISPLAY_FIELDS.map(({ key, label }) => {
+                                const val = p[key];
+                                if (!val) return null;
+                                return (
+                                  <div key={key} className="flex items-baseline gap-1.5 pl-1">
+                                    <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
+                                    <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{val}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
                         })}
                       </div>
                     </div>
@@ -767,7 +782,7 @@ const ConectaGovDashboard = () => {
               <svg className="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <p className="text-xs text-amber-800">Carregado do cache (ultra-rápido)</p>
+              <p className="text-xs text-amber-800">Carregado da memória do sistema (ultra-rápido)</p>
             </div>
           )}
 
@@ -864,9 +879,8 @@ const ConectaGovDashboard = () => {
                         setFilterTerritory(t);
                         setShowTerritoryDropdown(false);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2 ${
-                        filterTerritory === t ? 'bg-blue-50' : ''
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-100 transition flex items-center gap-2 ${filterTerritory === t ? 'bg-blue-50' : ''
+                        }`}
                     >
                       <span
                         className="w-3 h-3 rounded-sm border border-slate-300 shrink-0"
@@ -880,13 +894,40 @@ const ConectaGovDashboard = () => {
             )}
           </div>
 
+          {/* Selector de Modo de Filtro */}
+          <div className="flex flex-col gap-2 mt-3 mb-3 p-2 bg-slate-100 rounded-md border border-slate-200">
+            <label className="text-xs font-semibold text-slate-700">Filtro de Dados:</label>
+            <div className="grid gap-1.5">
+              <button
+                onClick={() => setFilterMode('linkTLD')}
+                className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'linkTLD'
+                  ? 'bg-blue-500 border-blue-600 text-white shadow-sm'
+                  : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
+                  }`}
+                title="Mostrar apenas pontos instalados"
+              >
+                📡 Instalado
+              </button>
+              <button
+                onClick={() => setFilterMode('homologacao')}
+                className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'homologacao'
+                  ? 'bg-green-500 border-green-600 text-white shadow-sm'
+                  : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
+                  }`}
+                title="Mostrar apenas pontos homologados pela PRODEB"
+              >
+                ✓ Homologado
+              </button>
+            </div>
+          </div>
+
           {/* Filtros por Tipo */}
           <div className="flex gap-2 mt-2">
             <button
               onClick={() => setFilterIndigena(!filterIndigena)}
               className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterIndigena
-                  ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm'
-                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm'
+                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               title="Filtrar municípios com Kit Aldeias Indígenas"
             >
@@ -906,8 +947,8 @@ const ConectaGovDashboard = () => {
             <button
               onClick={() => setFilterQuilombo(!filterQuilombo)}
               className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterQuilombo
-                  ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm'
-                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm'
+                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               title="Filtrar municípios com Kit Quilombo"
             >

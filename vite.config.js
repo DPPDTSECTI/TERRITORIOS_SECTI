@@ -74,8 +74,8 @@ function findColIndex(headers, patterns) {
 
 function parseSpreadsheet(buffer) {
   const startTime = Date.now();
-  
-  const workbook = XLSX.read(buffer, { 
+
+  const workbook = XLSX.read(buffer, {
     type: 'buffer',
     cellFormula: false,
     cellHTML: false,
@@ -86,100 +86,103 @@ function parseSpreadsheet(buffer) {
     bookDeps: false,
     bookSheets: false,
   });
-  
+
   let sheetName = workbook.SheetNames[1];
-  const acompanhaSheet = workbook.SheetNames.find(name => 
+  const acompanhaSheet = workbook.SheetNames.find(name =>
     name.toLowerCase().includes('acompanham') || name.toLowerCase().includes('acompanhamento')
   );
   if (acompanhaSheet) sheetName = acompanhaSheet;
-  
+
   const sheet = workbook.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(sheet, { 
-    header: 1, 
+  const rows = XLSX.utils.sheet_to_json(sheet, {
+    header: 1,
     defval: '',
     raw: true,
     blankrows: false,
   });
-  
+
   if (rows.length < 2) throw new Error('Planilha vazia');
-  
+
   let headerIdx = 0;
   for (let i = 0; i < Math.min(15, rows.length); i++) {
     const filled = (rows[i] || []).filter((c) => c != null && String(c).trim() !== '').length;
     if (filled >= 10) { headerIdx = i; break; }
   }
-  
+
   const rawHeaders = rows[headerIdx];
   const headers = rawHeaders.map(normalizeHeader);
-  
+
   const iMunicipio = findColIndex(headers, ['município', 'municipio']);
   const iPraca = findColIndex(headers, ['descrição do local', 'descricao do local', 'nome da praça', 'nome_da_praca']);
   const iProjeto = findColIndex(headers, ['projeto']);
   const iTerritorio = findColIndex(headers, ['território de identidade', 'territorio de identidade', 'território', 'territorio']);
-  const iFilterPlaca = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
+  const iFilterLinkTLD = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
+  const iFilterHomologacao = findColIndex(headers, ['homologação prodeb', 'homologacao prodeb']);
   const iLocal = findColIndex(headers, ['local']);
   const iKitIndigena = findColIndex(headers, ['kit aldeias indígenas', 'kit aldeias indigenas', 'aldeias indígenas', 'aldeias indigenas']);
   const iKitQuilombo = findColIndex(headers, ['kit quilombo', 'quilombo']);
-  
+
   console.log(`[Dev Parser] Colunas encontradas: Indígena=${iKitIndigena}, Quilombo=${iKitQuilombo}`);
-  
+
   const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
-  
-  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterPlaca, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
-  
+
+  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
+
   const extraCols = headers
     .map((h, i) => ({ h, i }))
     .filter(({ h, i }) => !keyIndices.has(i) && h && !isFinancial(h))
     .slice(0, 15)
     .map(({ h, i }) => ({ key: headerToKey(h), label: h, idx: i }));
-  
+
   const result = {};
   const municipiosMap = new Map();
   MUNICIPIOS_BAHIA.forEach(m => {
     municipiosMap.set(normalizeMunicipioKey(m), m);
   });
-  
+
   for (let r = headerIdx + 1; r < rows.length; r++) {
     const row = rows[r];
     if (!row || row.length === 0) continue;
-    
-    if (iFilterPlaca !== -1) {
-      const val = String(row[iFilterPlaca] || '').trim();
-      if (val.toLowerCase() !== 'sim') continue;
-    }
-    
+
     const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
     if (!municipioInput) continue;
-    
+
     const nomeKey = normalizeMunicipioKey(municipioInput);
     const municipioNome = municipiosMap.get(nomeKey) || municipioInput;
-    
+
+    // Pegar os valores das colunas
+    const valLinkTLD = iFilterLinkTLD !== -1 ? String(row[iFilterLinkTLD] || '').trim() : '';
+    const valHomologacao = iFilterHomologacao !== -1 ? String(row[iFilterHomologacao] || '').trim() : '';
+
     const praca = {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
       nome_da_praca: iPraca !== -1 ? String(row[iPraca] || '').trim() : '',
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
       kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
       kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
+      // Adicionar explicitamente ao objeto:
+      instalacao_link_tld: valLinkTLD,
+      homologacao_prodeb: valHomologacao,
     };
-    
+
     for (const col of extraCols) {
       const val = row[col.idx];
       if (val == null || val === '') continue;
-      
+
       let processedVal = String(val).trim();
       if ((col.label.toLowerCase().includes('data') || col.label.toLowerCase().includes('date')) && processedVal) {
         processedVal = convertExcelDate(processedVal);
       }
       praca[col.key] = processedVal;
     }
-    
+
     if (!result[municipioNome]) result[municipioNome] = [];
     result[municipioNome].push(praca);
   }
-  
+
   const parseTime = Date.now() - startTime;
   console.log(`[Dev Parser] ✓ Parseado em ${parseTime}ms: ${Object.keys(result).length} municípios`);
-  
+
   return result;
 }
 // ==================== FIM DO PROCESSADOR ====================
@@ -192,28 +195,33 @@ const sharepointProxyPlugin = () => ({
     server.middlewares.use('/api/sharepoint', async (req, res) => {
       console.log('[Dev Proxy] ⚡ Requisição recebida em /api/sharepoint');
       const startTime = Date.now();
-      
-      // OTIMIZAÇÃO: Cache em memória (retorna instantâneamente)
-      if (devCache && Date.now() < devCacheExpiry) {
+      const nocache = req.url.includes('nocache=true');
+
+      // OTIMIZAÇÃO: Cache em memória (retorna instantâneamente) - bypassar se ?nocache=true
+      if (!nocache && devCache && Date.now() < devCacheExpiry) {
         const age = Math.round((Date.now() - (devCacheExpiry - DEV_CACHE_TTL)) / 1000);
         console.log(`[Dev Proxy] ✓ Cache HIT (idade: ${age}s) - respondendo instantaneamente`);
-        
+
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         res.setHeader('X-Content-Source', 'dev-cache');
         res.setHeader('X-Cache-Age', age.toString());
         res.end(devCache);
-        
+
         const responseTime = Date.now() - startTime;
         console.log(`[Dev Proxy] Resposta enviada em ${responseTime}ms ⚡`);
         return;
       }
-      
+
       const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
-      
+
+      if (nocache) {
+        console.log('[Dev Proxy] 🚫 BYPASS DE CACHE SOLICITADO (nocache=true)');
+      }
+
       console.log(`[Dev Proxy] Cache MISS - baixando Excel...`);
-      
+
       // Verificar se cliente desconectou (mas continuar processando para popular cache)
       let clientDisconnected = false;
       res.on('close', () => {
@@ -224,7 +232,7 @@ const sharepointProxyPlugin = () => ({
         }
         clientDisconnected = true;
       });
-      
+
       https.get(downloadUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -233,29 +241,29 @@ const sharepointProxyPlugin = () => ({
       }, (response) => {
         const contentType = response.headers['content-type'] || '';
         console.log(`[Dev Proxy] Status: ${response.statusCode}, Content-Type: ${contentType}`);
-        
+
         // Seguir redirecionamentos
         if (response.statusCode === 301 || response.statusCode === 302 || response.statusCode === 307) {
           let redirectUrl = response.headers.location;
-          
+
           // Se for caminho relativo, construir URL completa
           if (redirectUrl && redirectUrl.startsWith('/')) {
             redirectUrl = `https://prodeboffice365-my.sharepoint.com${redirectUrl}`;
           }
-          
+
           console.log(`[Dev Proxy] Redirecionando para: ${redirectUrl?.substring(0, 80)}...`);
-          
+
           // Preservar cookies do redirecionamento
           const cookies = response.headers['set-cookie'];
           const headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*',
           };
-          
+
           if (cookies) {
             headers['Cookie'] = cookies.map(c => c.split(';')[0]).join('; ');
           }
-          
+
           https.get(redirectUrl, { headers }, (redirectResponse) => {
             handleResponse(redirectResponse, res, startTime);
           }).on('error', (err) => {
@@ -264,7 +272,7 @@ const sharepointProxyPlugin = () => ({
           });
           return;
         }
-        
+
         handleResponse(response, res, startTime);
       }).on('error', (err) => {
         console.error('[Dev Proxy] Erro:', err.message);
@@ -276,38 +284,38 @@ const sharepointProxyPlugin = () => ({
 
 function handleResponse(response, res, startTime) {
   const contentType = response.headers['content-type'] || '';
-  
+
   // Verificar se é Excel
-  if (contentType.includes('spreadsheet') || 
-      contentType.includes('excel') ||
-      contentType.includes('application/vnd.openxmlformats') ||
-      contentType.includes('application/octet-stream')) {
-    
+  if (contentType.includes('spreadsheet') ||
+    contentType.includes('excel') ||
+    contentType.includes('application/vnd.openxmlformats') ||
+    contentType.includes('application/octet-stream')) {
+
     const chunks = [];
     response.on('data', (chunk) => chunks.push(chunk));
     response.on('end', () => {
       const buffer = Buffer.concat(chunks);
       const downloadTime = Date.now() - startTime;
       console.log(`[Dev Proxy] ✓ Excel baixado em ${downloadTime}ms: ${buffer.length} bytes`);
-      
+
       try {
         // PROCESSAR Excel e converter para JSON (igual Netlify Function)
         console.log(`[Dev Proxy] 📊 Processando Excel...`);
         const parseStart = Date.now();
         const jsonData = parseSpreadsheet(buffer);
         const parseTime = Date.now() - parseStart;
-        
+
         const jsonString = JSON.stringify(jsonData);
         console.log(`[Dev Proxy] ✓ Parseado em ${parseTime}ms: ${Object.keys(jsonData).length} municípios`);
-        
+
         // Salvar JSON no cache para próximas requisições
         devCache = jsonString;
         devCacheExpiry = Date.now() + DEV_CACHE_TTL;
         console.log(`[Dev Proxy] ✓ Cache (JSON) salvo (válido por ${DEV_CACHE_TTL / 60000} minutos)`);
-        
+
         const totalTime = Date.now() - startTime;
         console.log(`[Dev Proxy] ✅ TOTAL: ${totalTime}ms (download: ${downloadTime}ms + parse: ${parseTime}ms)`);
-        
+
         // Retornar JSON processado (sem cache HTTP em dev)
         if (!res.writableEnded) {
           res.setHeader('Content-Type', 'application/json');
@@ -342,10 +350,10 @@ function sendError(res, statusCode, message) {
     console.error('[Dev Proxy] Headers já foram enviados, ignorando erro:', message);
     return;
   }
-  
+
   res.statusCode = statusCode;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ 
+  res.end(JSON.stringify({
     error: 'Erro ao acessar SharePoint',
     message,
   }));
@@ -353,7 +361,7 @@ function sendError(res, statusCode, message) {
 
 export default defineConfig({
   plugins: [react(), sharepointProxyPlugin()],
-  
+
   // Otimizações de build
   build: {
     target: 'es2015',
@@ -373,14 +381,14 @@ export default defineConfig({
     cssCodeSplit: true,
     sourcemap: false, // Desabilitar sourcemaps em produção para reduzir tamanho
   },
-  
+
   // Otimizações de servidor de desenvolvimento
   server: {
     hmr: {
       overlay: true,
     },
   },
-  
+
   // Pré-bundling otimizado
   optimizeDeps: {
     include: ['react', 'react-dom', 'xlsx', 'topojson-client', 'idb-keyval'],

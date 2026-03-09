@@ -100,11 +100,12 @@ async function httpsGet(url, cookies = '') {
 
 exports.handler = async (event, context) => {
   const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
+  const nocache = event.queryStringParameters?.nocache === 'true';
 
   console.log('[Netlify] === PROXY SHAREPOINT (PARSE NO SERVIDOR + CACHE + GZIP) ===');
   
-  // OTIMIZAÇÃO 1: Verificar cache em memória
-  if (cachedData && Date.now() < cacheExpiry) {
+  // OTIMIZAÇÃO 1: Verificar cache em memória (bypassar se nocache=true)
+  if (!nocache && cachedData && Date.now() < cacheExpiry) {
     const age = Math.round((Date.now() - (cacheExpiry - CACHE_TTL)) / 1000);
     console.log(`[Netlify] ✓ Cache HIT (idade: ${age}s)`);
     
@@ -148,7 +149,11 @@ exports.handler = async (event, context) => {
     };
   }
   
-  console.log('[Netlify] Cache MISS - buscando dados do SharePoint...');
+  if (nocache) {
+    console.log('[Netlify] 🚫 BYPASS DE CACHE SOLICITADO (nocache=true)');
+  } else {
+    console.log('[Netlify] Cache MISS - buscando dados do SharePoint...');
+  }
 
   try {
     let url = downloadUrl;

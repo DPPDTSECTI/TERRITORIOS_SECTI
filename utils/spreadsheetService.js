@@ -2,8 +2,8 @@ import * as XLSX from 'xlsx';
 import { get, set, del } from 'idb-keyval'; // Importando o gerenciador de IndexedDB
 import { MUNICIPIOS_BAHIA } from './Municipios.js';
 
-const CACHE_KEY = 'conecta_spreadsheet_data_v3'; // v3: agora com kit_quilombo e kit_aldeias_indigenas
-const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v3';
+const CACHE_KEY = 'conecta_spreadsheet_data_v4'; // v4: alteração coluna filtro (homologação prodeb)
+const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v4';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hora em milissegundos
 
 const SHAREPOINT_PROXY_URL = import.meta.env.DEV
@@ -63,7 +63,7 @@ function normalizeMunicipioKey(nome) {
 function normalizeMunicipioNome(nomeInput) {
   if (!nomeInput || nomeInput.trim() === '') return '';
   const nomeKey = normalizeMunicipioKey(nomeInput);
-  
+
   // OTIMIZAÇÃO: Busca direta no mapa em vez de loop
   return MUNICIPIOS_MAP.get(nomeKey) || nomeInput;
 }
@@ -101,23 +101,23 @@ function findColIndex(headers, patterns) {
 
 /**
  * @param {ArrayBuffer} buffer - conteúdo do arquivo Excel
- * @returns {Object} dados agrupados por município
+ * @returns {Object} dados agrupados por município (SEM FILTRO - retorna todos)
  */
 export function parseSpreadsheet(buffer) {
   // OTIMIZAÇÃO: Lendo apenas os dados necessários, ignorando formatações pesadas
-  const workbook = XLSX.read(buffer, { 
+  const workbook = XLSX.read(buffer, {
     type: 'array',
     cellFormula: false,
     cellHTML: false,
     cellStyles: false,
-    cellText: false 
+    cellText: false
   });
 
   let sheetName = workbook.SheetNames[1] || workbook.SheetNames[0];
   const acompanhaSheet = workbook.SheetNames.find(name =>
     name.toLowerCase().includes('acompanham') || name.toLowerCase().includes('acompanhamento')
   );
-  
+
   if (acompanhaSheet) {
     sheetName = acompanhaSheet;
   }
@@ -140,7 +140,10 @@ export function parseSpreadsheet(buffer) {
   const iPraca = findColIndex(headers, ['descrição do local', 'descricao do local', 'nome da praça', 'nome_da_praca']);
   const iProjeto = findColIndex(headers, ['projeto']);
   const iTerritorio = findColIndex(headers, ['território de identidade', 'territorio de identidade', 'território', 'territorio']);
-  const iFilterPlaca = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
+  const iFilterLinkTLD = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
+  const iFilterHomologacao = findColIndex(headers, ['homologação prodeb', 'homologacao prodeb']);
+  const iKitIndigena = findColIndex(headers, ['kit aldeias indígenas', 'kit aldeias indigenas', 'kit indigenas']);
+  const iKitQuilombo = findColIndex(headers, ['kit quilombo', 'quilombo']);
   const iLocal = findColIndex(headers, ['local']);
 
   const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
@@ -149,7 +152,25 @@ export function parseSpreadsheet(buffer) {
     console.warn('[Conecta] ❌ Não foi possível identificar a coluna de município.');
   }
 
-  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterPlaca].filter((i) => i !== -1));
+  // DEBUG: Log das colunas encontradas
+  console.log('[Conecta] 🔍 COLUNAS IDENTIFICADAS:');
+  console.log(`  - Município: índice ${iMun}`);
+  console.log(`  - Praça: índice ${iPraca}`);
+  console.log(`  - Projeto: índice ${iProjeto}`);
+  console.log(`  - Território: índice ${iTerritorio}`);
+  console.log(`  - Filtro (Link TLD): índice ${iFilterLinkTLD}`);
+  console.log(`  - Filtro (Homologação PRODEB): índice ${iFilterHomologacao}`);
+  console.log(`  - Kit Aldeias Indígenas: índice ${iKitIndigena}`);
+  console.log(`  - Kit Quilombo: índice ${iKitQuilombo}`);
+
+  if (iFilterLinkTLD === -1) {
+    console.warn('[Conecta] ⚠️ COLUNA "Link TLD" NÃO ENCONTRADA!');
+  }
+  if (iFilterHomologacao === -1) {
+    console.warn('[Conecta] ⚠️ COLUNA "Homologação PRODEB" NÃO ENCONTRADA!');
+  }
+
+  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
   const extraCols = headers
     .map((h, i) => ({ h, i }))
     .filter(({ h, i }) => !keyIndices.has(i) && h && !isFinancial(h))
@@ -162,13 +183,6 @@ export function parseSpreadsheet(buffer) {
   for (let r = headerIdx + 1; r < rows.length; r++) {
     const row = rows[r];
     if (!row || row.length === 0) continue;
-
-    if (iFilterPlaca !== -1) {
-      const val = String(row[iFilterPlaca] || '').trim();
-      const valLower = val.toLowerCase();
-      filterValues[val] = (filterValues[val] || 0) + 1;
-      if (valLower !== 'sim') continue;
-    }
 
     const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
     if (!municipioInput) continue;
@@ -190,6 +204,8 @@ export function parseSpreadsheet(buffer) {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
       nome_da_praca: iPraca !== -1 ? String(row[iPraca] || '').trim() : '',
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
+      kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
+      kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
     };
 
     for (const col of extraCols) {
@@ -220,7 +236,7 @@ export function parseSpreadsheet(buffer) {
  * @param {Function} onUpdate - Callback opcional chamado quando dados são atualizados em background
  * @returns {{ data: Object, source: 'upload'|'sharepoint'|'cache', fresh: boolean }}
  */
-export async function fetchConectaData(onUpdate = null) {
+export async function fetchConectaData(onUpdate = null, filterMode = 'ambos') {
   let cachedData = null;
   let cacheAge = Infinity;
 
@@ -249,7 +265,7 @@ export async function fetchConectaData(onUpdate = null) {
       }
 
       if (count > 0) {
-        fetchFreshData(onUpdate);
+        fetchFreshData(onUpdate, filterMode);
         return { data: cachedData, source: 'cache', fresh: false };
       }
     }
@@ -258,7 +274,7 @@ export async function fetchConectaData(onUpdate = null) {
   }
 
   try {
-    const data = await fetchFromSharePoint();
+    const data = await fetchFromSharePoint(filterMode);
     if (data) {
       await saveToCache(data);
       return { data, source: 'sharepoint', fresh: true };
@@ -273,10 +289,11 @@ export async function fetchConectaData(onUpdate = null) {
 
 /**
  * @param {Function} onUpdate - Callback chamado quando atualização completa
+ * @param {string} filterMode - Modo de filtro
  */
-async function fetchFreshData(onUpdate) {
+async function fetchFreshData(onUpdate, filterMode = 'ambos') {
   try {
-    const data = await fetchFromSharePoint();
+    const data = await fetchFromSharePoint(filterMode);
     if (data) {
       await saveToCache(data);
       if (onUpdate && typeof onUpdate === 'function') {
@@ -289,17 +306,20 @@ async function fetchFreshData(onUpdate) {
 }
 
 /**
+ * @param {string} filterMode - 'linkTLD' | 'homologacao' | 'ambos'
  * @returns {Promise<Object>}
  */
-async function fetchFromSharePoint() {
+async function fetchFromSharePoint(filterMode = 'ambos') {
   const startTime = Date.now();
   console.log('[Conecta] 🚀 Iniciando busca de dados...');
 
   try {
     const fetchStart = Date.now();
-    const res = await fetch(SHAREPOINT_PROXY_URL);
+    const nocacheParam = new URLSearchParams(location.search).get('nocache') ? '&nocache=true' : '';
+    const filterModeParam = typeof window !== 'undefined' && window.filterMode ? `?filterMode=${window.filterMode}` : `?filterMode=${encodeURIComponent(filterMode)}`;
+    const res = await fetch(SHAREPOINT_PROXY_URL + filterModeParam + nocacheParam);
     const fetchTime = Date.now() - fetchStart;
-    
+
     console.log(`[Conecta] ✓ Fetch completado em ${fetchTime}ms (status: ${res.status})`);
 
     if (res.ok) {
@@ -307,7 +327,7 @@ async function fetchFromSharePoint() {
       const contentSource = res.headers.get('x-content-source') || 'unknown';
       const cacheAge = res.headers.get('x-cache-age');
       const parseTime = res.headers.get('x-parse-time');
-      
+
       console.log(`[Conecta] Content-Type: ${contentType}, Source: ${contentSource}`);
       if (cacheAge) console.log(`[Conecta] Cache age: ${cacheAge}s`);
       if (parseTime) console.log(`[Conecta] Server parse time (geracao): ${parseTime}ms`);
@@ -316,23 +336,23 @@ async function fetchFromSharePoint() {
         const jsonStart = Date.now();
         const data = await res.json();
         const jsonTime = Date.now() - jsonStart;
-        
+
         console.log(`[Conecta] ✓ JSON parseado em ${jsonTime}ms`);
-        
+
         if (data.error) {
           console.error('[Conecta] Erro do servidor:', data.error);
           throw new Error(data.error);
         }
-        
+
         const totalTime = Date.now() - startTime;
         console.log(`[Conecta] ✅ TOTAL: ${totalTime}ms (fetch: ${fetchTime}ms + json: ${jsonTime}ms) - ${Object.keys(data).length} municípios`);
-        
+
         // Em respostas de cache/CDN, X-Parse-Time representa a geracao original,
         // nao o tempo desta requisicao atual.
         if (parseTime && totalTime < 1000) {
           console.log('[Conecta] ℹ️ Resposta veio de cache/CDN; parse-time e historico da geracao no servidor.');
         }
-        
+
         return data;
       }
 
@@ -349,10 +369,10 @@ async function fetchFromSharePoint() {
         const parseStart = Date.now();
         const data = parseSpreadsheet(buffer);
         const parseTime = Date.now() - parseStart;
-        
+
         const totalTime = Date.now() - startTime;
         console.log(`[Conecta] ✅ TOTAL: ${totalTime}ms (fetch: ${fetchTime}ms + parse: ${parseTime}ms)`);
-        
+
         return data;
       }
 
@@ -400,6 +420,42 @@ export async function clearSpreadsheetCache() {
   } catch (e) {
     console.warn('[Conecta] Erro ao limpar cache do IndexedDB:', e.message);
   }
+}
+
+/**
+ * Filtra dados conforme o filterMode selecionado pelo usuário
+ * @param {Object} data - Dados de todas as práças por município
+ * @param {string} filterMode - 'linkTLD' | 'homologacao' | 'ambos'
+ * @returns {Object} Dados filtrados
+ */
+export function applyFilterMode(data, filterMode = 'ambos') {
+  if (filterMode === 'ambos') {
+    return data; // Retornar tudo sem filtro
+  }
+
+  const filtered = {};
+
+  for (const municipio in data) {
+    const pracas = data[municipio];
+    const pracasFiltradas = pracas.filter(p => {
+      const linkTLD = String(p.instalacao_link_tld || p.status_instalacao_com_link_pontos || '').trim().toLowerCase();
+      const homologacao = String(p.homologacao_prodeb || p.status_homologacao_pontos || '').trim().toLowerCase();
+
+      if (filterMode === 'linkTLD') {
+        return linkTLD === 'sim' || linkTLD === 'true' || linkTLD === '1';
+      }
+      if (filterMode === 'homologacao') {
+        return homologacao === 'sim' || homologacao === 'true' || homologacao === '1';
+      }
+      return true;
+    });
+
+    if (pracasFiltradas.length > 0) {
+      filtered[municipio] = pracasFiltradas;
+    }
+  }
+
+  return filtered;
 }
 
 // OTIMIZAÇÃO: Lendo dados analíticos do IndexedDB
