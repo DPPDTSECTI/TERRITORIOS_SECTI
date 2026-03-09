@@ -519,7 +519,7 @@ const ConectaGovDashboard = () => {
                 <>
                   <span className="text-[10px] text-slate-500 uppercase font-semibold">Território</span>
                   <span className="text-xs text-blue-700 font-medium mb-1 truncate">{getMunicipioInfo(hoveredNome)?.territorio || 'N/A'}</span>
-                  <span className="text-[10px] text-slate-500 uppercase font-semibold mt-1">Praças</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-semibold mt-1">pontos</span>
                   <span className="text-xs text-green-700 font-medium">{getPracas(hoveredNome).length} ponto(s)</span>
                 </>
               ) : (
@@ -607,7 +607,7 @@ const ConectaGovDashboard = () => {
 
                   return (
                     <div className="flex flex-col mt-2">
-                      <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Praças ({pracas.length})</span>
+                      <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">pontos ({pracas.length})</span>
                       <div className="flex flex-col space-y-1.5">
                         {pracas.map((p, i) => {
                           const hasKitIndigena = p.kit_aldeias_indigenas && parseInt(String(p.kit_aldeias_indigenas).trim(), 10) > 0;
@@ -734,11 +734,11 @@ const ConectaGovDashboard = () => {
               </div>
             </div>
 
-            {/* Box 3: Praças */}
+            {/* Box 3: pontos */}
             <div className="flex flex-col md:flex-row items-center md:justify-between bg-amber-50 border border-amber-100 rounded-md py-1.5 px-1 md:p-3">
               <div className="text-center md:text-left">
                 <span className="block text-base md:text-2xl font-bold text-amber-800 leading-none">{totalPracas}</span>
-                <span className="text-[8px] md:text-[10px] uppercase font-bold text-amber-600 mt-0.5 md:mt-1 block leading-tight">Praças</span>
+                <span className="text-[8px] md:text-[10px] uppercase font-bold text-amber-600 mt-0.5 md:mt-1 block leading-tight">pontos</span>
               </div>
               <div className="hidden md:flex h-10 w-10 bg-white rounded-full items-center justify-center shadow-sm text-amber-600">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>

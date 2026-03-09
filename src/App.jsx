@@ -77,7 +77,7 @@ export default function App() {
               Painel Conecta Bahia
             </h1>
             <p className="text-blue-100/90 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl mx-auto md:mx-0 font-medium">
-              Consulte a disponibilidade de praças com Wi-Fi gratuito em todo o estado. Uma iniciativa oficial para democratizar o acesso à internet e promover a inclusão digital do cidadão.
+              Consulte a disponibilidade de pontos com Wi-Fi gratuito em todo o estado. Uma iniciativa oficial para democratizar o acesso à internet e promover a inclusão digital do cidadão.
             </p>
             <div className="mt-6 flex justify-center md:justify-start">
               <button
