@@ -8,6 +8,9 @@ const zlib = require('zlib');
 const { promisify } = require('util');
 
 const gzip = promisify(zlib.gzip);
+const gunzip = promisify(zlib.gunzip);
+const inflate = promisify(zlib.inflate);
+const brotliDecompress = promisify(zlib.brotliDecompress);
 
 // Cache em memória (válido durante a execução da função serverless)
 let cachedData = null;
@@ -98,9 +101,42 @@ async function httpsGet(url, cookies = '') {
   });
 }
 
+/**
+ * Decodifica corpo de resposta comprimido (gzip/deflate/br)
+ */
+async function decodeResponseBody(data, contentEncoding = '') {
+  if (!data || !contentEncoding) {
+    return data;
+  }
+
+  const encoding = String(contentEncoding).toLowerCase();
+
+  try {
+    if (encoding.includes('br')) {
+      return await brotliDecompress(data);
+    }
+    if (encoding.includes('gzip')) {
+      return await gunzip(data);
+    }
+    if (encoding.includes('deflate')) {
+      return await inflate(data);
+    }
+  } catch (decodeError) {
+    console.warn(`[Netlify] Falha ao descomprimir (${encoding}), usando dados brutos:`, decodeError.message);
+    return data;
+  }
+
+  return data;
+}
+
 exports.handler = async (event, context) => {
   const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
   const nocache = event.queryStringParameters?.nocache === 'true';
+  const requestAcceptEncoding = (
+    event?.headers?.['accept-encoding'] ||
+    event?.headers?.['Accept-Encoding'] ||
+    ''
+  ).toLowerCase();
 
   console.log('[Netlify] === PROXY SHAREPOINT (PARSE NO SERVIDOR + CACHE + GZIP) ===');
   
@@ -109,7 +145,7 @@ exports.handler = async (event, context) => {
     const age = Math.round((Date.now() - (cacheExpiry - CACHE_TTL)) / 1000);
     console.log(`[Netlify] ✓ Cache HIT (idade: ${age}s)`);
     
-    const acceptsGzip = (event.headers['accept-encoding'] || '').includes('gzip');
+    const acceptsGzip = requestAcceptEncoding.includes('gzip');
     
     if (acceptsGzip) {
       try {
@@ -166,9 +202,10 @@ exports.handler = async (event, context) => {
       console.log(`[Netlify] Tentativa ${attempts}/${maxAttempts}`);
 
       const response = await httpsGet(url, cookies);
+      const decodedData = await decodeResponseBody(response.data, response.headers['content-encoding']);
       const contentType = response.headers['content-type'] || '';
 
-      console.log(`[Netlify] Status: ${response.status}, Size: ${response.data.length} bytes`);
+      console.log(`[Netlify] Status: ${response.status}, Size(raw/decoded): ${response.data.length}/${decodedData.length} bytes`);
 
       // Atualizar cookies
       if (response.headers['set-cookie']) {
@@ -191,13 +228,13 @@ exports.handler = async (event, context) => {
       // Status 200
       if (response.status === 200) {
         // Verificar se é Excel (começa com PK)
-        if (response.data.length >= 2 && response.data[0] === 0x50 && response.data[1] === 0x4B) {
-          console.log(`[Netlify] ✓ Excel recebido: ${response.data.length} bytes`);
+        if (decodedData.length >= 2 && decodedData[0] === 0x50 && decodedData[1] === 0x4B) {
+          console.log(`[Netlify] ✓ Excel recebido: ${decodedData.length} bytes`);
           console.log(`[Netlify] Processando Excel...`);
           
           try {
             const startParse = Date.now();
-            const jsonData = parseSpreadsheet(response.data);
+            const jsonData = parseSpreadsheet(decodedData);
             const parseTime = Date.now() - startParse;
             
             const jsonString = JSON.stringify(jsonData);
@@ -215,7 +252,7 @@ exports.handler = async (event, context) => {
             console.log(`[Netlify] ✓ Dados salvos no cache (válido por ${CACHE_TTL / 60000} minutos)`);
             
             // OTIMIZAÇÃO 3: Comprimir resposta (se cliente aceitar)
-            const acceptsGzip = (event.headers['accept-encoding'] || '').includes('gzip');
+            const acceptsGzip = requestAcceptEncoding.includes('gzip');
             
             if (acceptsGzip) {
               try {
@@ -276,7 +313,7 @@ exports.handler = async (event, context) => {
         
         // HTML - tentar extrair redirect
         if (contentType.includes('text/html')) {
-          const html = response.data.toString();
+          const html = decodedData.toString();
           const redirectUrl = extractRedirectUrl(html);
           
           if (redirectUrl) {
@@ -314,7 +351,7 @@ exports.handler = async (event, context) => {
           body: JSON.stringify({
             error: 'Content-Type inválido',
             contentType: contentType,
-            dataSize: response.data.length,
+            dataSize: decodedData.length,
           }),
         };
       }
