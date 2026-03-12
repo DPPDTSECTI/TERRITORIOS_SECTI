@@ -110,7 +110,7 @@ export default function App() {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center rounded-full bg-blue-700 px-3 py-1 text-[10px] sm:text-xs font-bold tracking-wide uppercase text-white">
-                      Novidade oficial
+                      Novidade 
                     </span>
                     <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-2.5 py-1 text-[10px] sm:text-xs font-semibold text-blue-800">
                       11 de março de 2026
