@@ -102,6 +102,43 @@ export default function App() {
       </header>
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 -mt-8 md:-mt-16 relative z-20 mb-12">
+        <section className="mb-4 sm:mb-6 overflow-hidden sm:rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-white shadow-lg">
+          <div className="relative px-4 py-5 sm:px-6 sm:py-6">
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-1.5 bg-blue-700" />
+            <div className="pl-3 sm:pl-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center rounded-full bg-blue-700 px-3 py-1 text-[10px] sm:text-xs font-bold tracking-wide uppercase text-white">
+                      Novidade oficial
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-2.5 py-1 text-[10px] sm:text-xs font-semibold text-blue-800">
+                      11 de março de 2026
+                    </span>
+                  </div>
+                  <h2 className="mt-3 text-lg sm:text-2xl font-extrabold text-slate-900 leading-tight">
+                    Decreto nº 24.419 institui oficialmente o Programa Conecta Bahia
+                  </h2>
+                  <p className="mt-2 text-sm sm:text-[15px] text-slate-700 leading-relaxed max-w-4xl">
+                    A iniciativa amplia o acesso à internet gratuita e de qualidade em espaços públicos, comunidades rurais e territórios com menor cobertura, fortalecendo a inclusão digital, o acesso a serviços públicos, a educação e o desenvolvimento socioeconômico na Bahia.
+                  </p>
+                </div>
+                <div className="sm:pt-1 shrink-0">
+                  <a
+                    href="https://www.ba.gov.br/secti/sites/site-secti/files/2026-03/DECRETO%20CONECTA.pdf"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 py-2.5 text-xs sm:text-sm font-semibold tracking-wide text-white transition hover:bg-blue-800 shadow-sm"
+                  >
+                    Ler decreto na íntegra
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div className="bg-white sm:rounded-2xl shadow-2xl border-t sm:border border-slate-200 overflow-hidden min-h-[500px]">
           <ConectaMap />
         </div>
