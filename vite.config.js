@@ -146,13 +146,17 @@ function parseSpreadsheet(buffer) {
 
     const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
     if (!municipioInput) continue;
+    // Ignorar linhas de total/rodapé onde o campo munícipio é numérico
+    if (/^\d+([.,]\d+)?$/.test(municipioInput)) continue;
 
     const nomeKey = normalizeMunicipioKey(municipioInput);
     const municipioNome = municipiosMap.get(nomeKey) || municipioInput;
 
     // Pegar os valores das colunas
     const valLinkTLD = iFilterLinkTLD !== -1 ? String(row[iFilterLinkTLD] || '').trim() : '';
-    const valHomologacao = iFilterHomologacao !== -1 ? String(row[iFilterHomologacao] || '').trim() : '';
+    const rawHomologacao = iFilterHomologacao !== -1 ? String(row[iFilterHomologacao] || '').trim() : '';
+    // Converter serial numérico do Excel para DD/MM/AAAA (coluna agora contém data ou vazio)
+    const valHomologacao = rawHomologacao ? convertExcelDate(rawHomologacao) : '';
 
     const praca = {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',

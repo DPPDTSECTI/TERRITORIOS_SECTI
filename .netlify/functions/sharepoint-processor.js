@@ -158,10 +158,14 @@ function parseSpreadsheet(buffer) {
     // Aplicar filtro baseado no filterMode
   const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
     if (!municipioInput) continue;
+    // Ignorar linhas de total/rodapé onde o campo munícipio é numérico
+    if (/^\d+([.,]\d+)?$/.test(municipioInput)) continue;
     
     // Pegar os valores brutos sem forçar o lowercase aqui (deixa pro frontend)
     const valLinkTLD = iFilterLinkTLD !== -1 ? String(row[iFilterLinkTLD] || '').trim() : '';
-    const valHomologacao = iFilterHomologacao !== -1 ? String(row[iFilterHomologacao] || '').trim() : '';
+    const rawHomologacao = iFilterHomologacao !== -1 ? String(row[iFilterHomologacao] || '').trim() : '';
+    // Converter serial numérico do Excel para DD/MM/AAAA (coluna agora contém data ou vazio)
+    const valHomologacao = rawHomologacao ? convertExcelDate(rawHomologacao) : '';
     
     const nomeKey = normalizeMunicipioKey(municipioInput);
     const municipioNome = municipiosMap.get(nomeKey) || municipioInput;

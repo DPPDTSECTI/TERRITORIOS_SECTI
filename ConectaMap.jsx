@@ -132,12 +132,13 @@ const ConectaGovDashboard = () => {
     Object.values(conectaData).forEach(pracas => {
       pracas.forEach(p => {
         const linkTLD = String(p.instalacao_link_tld || p.status_instalacao_com_link_pontos || '').trim().toLowerCase();
-        const isHomologado = String(p.homologacao_prodeb || p.status_homologacao_pontos || '').trim().toLowerCase();
+        const homologacaoVal = String(p.homologacao_prodeb || p.status_homologacao_pontos || '').trim().toLowerCase();
 
         if (linkTLD === 'sim' || linkTLD === 'true' || linkTLD === '1') {
           instalado++;
         }
-        if (isHomologado === 'sim' || isHomologado === 'true' || isHomologado === '1') {
+        // Nova lógica: coluna contém a data da homologação (ou vazio = não homologado)
+        if (homologacaoVal !== '' && homologacaoVal !== 'não' && homologacaoVal !== 'nao' && homologacaoVal !== 'false' && homologacaoVal !== '0') {
           homologado++;
         }
       });
@@ -614,6 +615,7 @@ const ConectaGovDashboard = () => {
                   if (pracas.length === 0) return null;
 
                   const DISPLAY_FIELDS = [
+                    { key: 'homologacao_prodeb', label: 'Homologado em' },
                     { key: 'status_homologacao_pontos', label: 'Homologação' },
                     { key: 'status_instalacao_com_link_pontos', label: 'Link Instalado' },
                     { key: 'data_instalacao', label: 'Data Instalação' },
@@ -684,16 +686,39 @@ const ConectaGovDashboard = () => {
                                 </div>
                               )}
 
-                              {dataSource !== 'static' && DISPLAY_FIELDS.map(({ key, label }) => {
-                                const val = p[key];
-                                if (!val) return null;
+                              {dataSource !== 'static' && (() => {
+                                // Safety: converte serial numérico do Excel caso venha do cache antigo
+                                const rawHom = p.homologacao_prodeb || '';
+                                const homologadoEmNum = rawHom && /^\d{4,6}$/.test(String(rawHom).trim())
+                                  ? (() => { const n = parseInt(rawHom, 10); const d = new Date((n - 25569) * 86400 * 1000); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; })()
+                                  : rawHom;
+                                const homologadoEm = homologadoEmNum && homologadoEmNum.toLowerCase() !== 'sim' && homologadoEmNum.toLowerCase() !== 'não' && homologadoEmNum.toLowerCase() !== 'nao' ? homologadoEmNum : '';
                                 return (
-                                  <div key={key} className="flex items-baseline gap-1.5 pl-1">
-                                    <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
-                                    <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{val}</span>
-                                  </div>
+                                  <>
+                                    {homologadoEm ? (
+                                      <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded px-2 py-1 mt-0.5">
+                                        <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <span className="text-[9px] md:text-[10px] text-emerald-800 font-semibold">Homologado em {homologadoEm}</span>
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-200 rounded px-2 py-1 mt-0.5">
+                                        <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <span className="text-[9px] md:text-[10px] text-slate-500 font-medium">Pendente de homologação</span>
+                                      </div>
+                                    )}
+                                    {DISPLAY_FIELDS.filter(({ key }) => key !== 'homologacao_prodeb').map(({ key, label }) => {
+                                      const val = p[key];
+                                      if (!val) return null;
+                                      return (
+                                        <div key={key} className="flex items-baseline gap-1.5 pl-1">
+                                          <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
+                                          <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{val}</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </>
                                 );
-                              })}
+                              })()}
                             </div>
                           );
                         })}
@@ -915,7 +940,7 @@ const ConectaGovDashboard = () => {
                       }`}
                     title="Mostrar apenas pontos instalados"
                   >
-                    📡 Instalado
+                     Instalado
                   </button>
                   <button
                     onClick={() => setFilterMode('homologacao')}
@@ -925,7 +950,7 @@ const ConectaGovDashboard = () => {
                       }`}
                     title="Mostrar apenas pontos homologados pela PRODEB"
                   >
-                    ✓ Homologado
+                    Homologado Pela PRODEB
                   </button>
                   <button
                     onClick={() => setFilterIndigena(!filterIndigena)}

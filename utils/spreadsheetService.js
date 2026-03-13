@@ -2,8 +2,8 @@ import * as XLSX from 'xlsx';
 import { get, set, del } from 'idb-keyval'; // Importando o gerenciador de IndexedDB
 import { MUNICIPIOS_BAHIA } from './Municipios.js';
 
-const CACHE_KEY = 'conecta_spreadsheet_data_v4'; // v4: alteração coluna filtro (homologação prodeb)
-const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v4';
+const CACHE_KEY = 'conecta_spreadsheet_data_v6'; // v6: ignorar linhas com município numérico (total/rodapé)
+const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v6';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hora em milissegundos
 
 const SHAREPOINT_PROXY_URL = import.meta.env.DEV
@@ -186,6 +186,8 @@ export function parseSpreadsheet(buffer) {
 
     const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
     if (!municipioInput) continue;
+    // Ignorar linhas de total/rodapé onde o campo munícipio é numérico
+    if (/^\d+([.,]\d+)?$/.test(municipioInput)) continue;
 
     const municipioNome = normalizeMunicipioNome(municipioInput);
     const municipioKey = normalizeMunicipioKey(municipioNome);
@@ -200,12 +202,23 @@ export function parseSpreadsheet(buffer) {
       });
     }
 
+    // Converter data de homologação (pode ser serial numérico do Excel ou string)
+    let homologacaoVal = '';
+    if (iFilterHomologacao !== -1) {
+      const raw = row[iFilterHomologacao];
+      const rawStr = String(raw ?? '').trim();
+      if (rawStr) {
+        homologacaoVal = convertExcelDate(rawStr);
+      }
+    }
+
     const praca = {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
       nome_da_praca: iPraca !== -1 ? String(row[iPraca] || '').trim() : '',
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
       kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
       kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
+      homologacao_prodeb: homologacaoVal,
     };
 
     for (const col of extraCols) {
@@ -445,7 +458,8 @@ export function applyFilterMode(data, filterMode = 'ambos') {
         return linkTLD === 'sim' || linkTLD === 'true' || linkTLD === '1';
       }
       if (filterMode === 'homologacao') {
-        return homologacao === 'sim' || homologacao === 'true' || homologacao === '1';
+        // Nova lógica: coluna contém a data da homologação (ou vazio = não homologado)
+        return homologacao !== '' && homologacao !== 'não' && homologacao !== 'nao' && homologacao !== 'false' && homologacao !== '0';
       }
       return true;
     });
