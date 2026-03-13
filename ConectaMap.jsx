@@ -977,7 +977,7 @@ const ConectaGovDashboard = () => {
                     title="Filtrar municípios com Kit Quilombo"
                   >
                     <img src="/img/quilombo.svg" alt="Quilombo" className="w-4 h-4" />
-                    <span className="hidden sm:inline">Quilombo</span>
+                    <span className="hidden sm:inline">Quilombola</span>
                     {filterQuilombo && (
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
