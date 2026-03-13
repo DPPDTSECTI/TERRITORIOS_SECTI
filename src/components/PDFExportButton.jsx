@@ -2,10 +2,10 @@ import React, { useState, useRef } from 'react';
 import { generateAndDownloadReport, htmlElementToBase64 } from '../../utils/pdfReportService';
 
 /**
- * Componente para exportar relatório em PDF
- * @param {Array} municipiosData - Dados dos municípios
- * @param {React.RefObject} mapRef - Referência do mapa para capturar imagem
+ * @param {Array} municipiosData
+ * @param {React.RefObject} mapRef 
  */
+
 export default function PDFExportButton({
   municipiosData = [],
   mapRef = null,
@@ -19,9 +19,7 @@ export default function PDFExportButton({
   const sectiLogoPath = '/img/Secti_Vertical.png';
   const conectaLogoPath = '/img/LogoConecta.png';
 
-  /**
-   * Carrega imagens como base64
-   */
+
   const loadImageAsBase64 = async (imagePath) => {
     try {
       const response = await fetch(imagePath);
@@ -39,9 +37,7 @@ export default function PDFExportButton({
     }
   };
 
-  /**
-   * Gera relatório com todas as opções
-   */
+
   const handleGenerateFullReport = async () => {
     setIsLoading(true);
     setError(null);
@@ -79,9 +75,6 @@ export default function PDFExportButton({
     }
   };
 
-  /**
-   * Gera relatório com apenas estatísticas
-   */
   const handleGenerateStatisticsReport = async () => {
     setIsLoading(true);
     setError(null);
@@ -113,9 +106,6 @@ export default function PDFExportButton({
     }
   };
 
-  /**
-   * Gera relatório apenas com mapa
-   */
   const handleGenerateMapReport = async () => {
     if (!mapRef || !mapRef.current) {
       setError('Mapa não disponível');
@@ -155,7 +145,6 @@ export default function PDFExportButton({
     }
   };
 
-  // Fechar menu ao clicar fora
   React.useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionsRef.current && !optionsRef.current.contains(event.target)) {
@@ -235,7 +224,6 @@ export default function PDFExportButton({
         )}
       </button>
 
-      {/* Menu de opções */}
       {showOptions && (
         <div
           ref={optionsRef}
@@ -291,7 +279,6 @@ export default function PDFExportButton({
         </div>
       )}
 
-      {/* Mensagem de erro */}
       {error && (
         <div className="absolute -bottom-10 left-0 right-0 bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-700">
           {error}

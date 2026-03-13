@@ -145,7 +145,7 @@ function buildPaths(topology, getTerritoryByMunicipio) {
 }
 
 const ConectaGovDashboard = () => {
-  const [isFiltersOpen, setIsFiltersOpen] = useState(true); // Controle do Acordeão de Filtros
+  const [isFiltersOpen, setIsFiltersOpen] = useState(true); 
   const [mapFeatures, setMapFeatures] = useState([]);
   const [territoryOutlines, setTerritoryOutlines] = useState({});
   const [mapError, setMapError] = useState(null);
@@ -188,7 +188,6 @@ const ConectaGovDashboard = () => {
         if (linkTLD === 'sim' || linkTLD === 'true' || linkTLD === '1') {
           instalado++;
         }
-        // Nova lógica: coluna contém a data da homologação (ou vazio = não homologado)
         if (homologacaoVal !== '' && homologacaoVal !== 'não' && homologacaoVal !== 'nao' && homologacaoVal !== 'false' && homologacaoVal !== '0') {
           homologado++;
         }
@@ -246,6 +245,20 @@ const ConectaGovDashboard = () => {
   const missingTerritories = useMemo(() => {
     return allTerritories.filter((t) => !coveredTerritories.includes(t));
   }, [allTerritories, coveredTerritories]);
+
+  const territoryStatsMap = useMemo(() => {
+    const map = {};
+    territoriosMunicipios.territorios_de_identidade.forEach((t) => {
+      const total = t.municipios.length;
+      const installedList = t.municipios.filter((m) => conectaSet.has(simplifyName(m)));
+      const installed = installedList.length;
+      const missingList = t.municipios.filter((m) => !conectaSet.has(simplifyName(m)));
+      map[t.nome] = { total, installed, missing: total - installed, missingList };
+    });
+    return map;
+  }, [conectaSet]);
+
+  const selectedTerritoryStats = filterTerritory ? territoryStatsMap[filterTerritory] : null;
 
   const [showTerritoryModal, setShowTerritoryModal] = useState(false);
 
@@ -433,10 +446,10 @@ const ConectaGovDashboard = () => {
   }, [hoveredNome, mapFeatures, zoom, pan]);
 
   return (
-    <div className="flex flex-col md:flex-row h-[100dvh] md:h-[85vh] w-full bg-white font-sans border border-slate-300 md:rounded-lg overflow-visible md:overflow-hidden shadow-sm">
+    <div className="flex flex-col md:flex-row h-[100dvh] md:h-[90vh] lg:h-[85vh] w-full bg-white font-sans md:border border-slate-300 md:rounded-lg shadow-sm">
 
       {/* ÁREA DO MAPA */}
-      <div className="order-1 md:order-2 flex flex-col relative h-[55%] md:h-auto md:flex-1 shrink-0 bg-[#F8FAFC] touch-none border-b md:border-b-0 border-slate-200">
+      <div className="order-1 md:order-2 flex flex-col relative h-[45vh] md:h-auto md:flex-1 shrink-0 bg-[#F8FAFC] touch-none border-b md:border-b-0 md:border-l border-slate-200 min-h-0">
 
         <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 z-10 bg-white/90 backdrop-blur-sm px-2 py-1.5 md:px-3 md:py-2 rounded-md shadow-sm border border-slate-200 pointer-events-none">
           <h2 className="text-[9px] md:text-[10px] font-bold text-slate-800 uppercase mb-1">Legenda</h2>
@@ -450,13 +463,13 @@ const ConectaGovDashboard = () => {
           </div>
         </div>
 
-        <div className="absolute top-3 right-3 z-10 flex flex-col bg-white shadow-md rounded-md border border-slate-200 overflow-hidden">
+        <div className="absolute top-2 right-2 md:top-3 md:right-3 z-10 flex flex-col bg-white shadow-md rounded-md border border-slate-200 ">
           <button onClick={() => handleZoom(0.3)} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Aproximar">+</button>
           <button onClick={() => handleZoom(-0.3)} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold border-b border-slate-200 text-lg" title="Afastar">−</button>
           <button onClick={resetZoom} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 active:bg-slate-200 font-bold text-xl" title="Centralizar">⟳</button>
         </div>
 
-        <div className="absolute top-3 left-3 z-20">
+        <div className="absolute top-2 left-2 md:top-3 md:left-3 z-20">
           <div className="bg-white/95 md:bg-transparent backdrop-blur-md md:backdrop-blur-none p-1 md:p-0 rounded-lg md:rounded-none shadow-sm md:shadow-none border border-slate-200 md:border-transparent transition-all">
             <PDFExportButton
               municipiosData={conectaList.map((m) => ({
@@ -472,7 +485,7 @@ const ConectaGovDashboard = () => {
 
         <div
           ref={mapContainerRef}
-          className="w-full h-full overflow-hidden outline-none"
+          className="w-full h-full  outline-none"
           style={{ cursor: dragStart ? 'grabbing' : 'grab' }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -552,6 +565,7 @@ const ConectaGovDashboard = () => {
                       onClick={() => handleClickMunicipio(nome)}
                       onMouseEnter={() => setHoveredNome(nome)}
                       onMouseLeave={() => setHoveredNome(null)}
+                      onTouchStart={() => setHoveredNome(nome)}
                     />
                   );
                 })}
@@ -654,11 +668,11 @@ const ConectaGovDashboard = () => {
         </div>
 
         {selectedMunicipio && (
-          <div className="absolute bottom-2 left-2 right-2 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:w-80 bg-white p-3 md:p-4 rounded-xl shadow-2xl border border-blue-100 flex flex-col z-20 animate-in slide-in-from-bottom-5 max-h-[90%] overflow-y-auto custom-scrollbar">
-            <div className="flex justify-between items-start mb-2 sticky top-0 bg-white z-10 pb-1">
-              <div className="flex items-center gap-2 flex-1">
-                <span className="text-base md:text-lg font-bold text-slate-800 leading-none">{selectedMunicipio}</span>
-                <div className="flex items-center gap-1">
+          <div className="absolute bottom-0 left-0 w-full md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:w-80 lg:w-96 bg-white p-3 md:p-4 rounded-t-2xl md:rounded-xl shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.3)] md:shadow-2xl border border-blue-100 flex flex-col z-30 animate-in slide-in-from-bottom-5 max-h-[75%] md:max-h-[90%]">
+            <div className="flex justify-between items-start mb-2 sticky top-0 bg-white z-10 pb-1 shrink-0">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <span className="text-base md:text-lg font-bold text-slate-800 leading-none truncate">{selectedMunicipio}</span>
+                <div className="flex items-center gap-1 shrink-0">
                   {hasKitAldeiasIndigenas(selectedMunicipio) && (
                     <img
                       src="/img/Indigena.svg"
@@ -671,7 +685,7 @@ const ConectaGovDashboard = () => {
                     <img
                       src="/img/quilombo.svg"
                       alt="Quilombo"
-                      className="w-10 h-10 "
+                      className="w-5 h-5 md:w-10 md:h-10"
                       title="Município com Kit Quilombo"
                     />
                   )}
@@ -679,164 +693,164 @@ const ConectaGovDashboard = () => {
               </div>
               <button
                 onClick={() => setSelectedMunicipio(null)}
-                className="bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-full p-1.5"
+                className="bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-full p-1.5 ml-2 transition-colors"
                 aria-label="Fechar"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
 
-            {isConecta(selectedMunicipio) ? (
-              <div className="flex flex-col gap-2 mt-1">
-                <div className="flex flex-col">
-                  <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider">Território de Identidade</span>
-                  <span className="text-sm text-blue-800 font-medium">{getMunicipioInfo(selectedMunicipio)?.territorio || 'N/A'}</span>
-                </div>
-                <div className="flex items-center gap-2 mt-1 bg-green-50 p-2 rounded-lg border border-green-100">
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-600 animate-pulse"></span>
-                  <span className="text-[10px] md:text-xs font-bold text-green-800 uppercase">Cobertura Ativa</span>
-                </div>
-                {(() => {
-                  const pracas = getPracas(selectedMunicipio);
-                  if (pracas.length === 0) return null;
+            <div className="overflow-y-auto custom-scrollbar flex-1 pr-1">
+              {isConecta(selectedMunicipio) ? (
+                <div className="flex flex-col gap-2 mt-1">
+                  <div className="flex flex-col">
+                    <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider">Território de Identidade</span>
+                    <span className="text-sm text-blue-800 font-medium">{getMunicipioInfo(selectedMunicipio)?.territorio || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1 bg-green-50 p-2 rounded-lg border border-green-100">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-600 animate-pulse"></span>
+                    <span className="text-[10px] md:text-xs font-bold text-green-800 uppercase">Cobertura Ativa</span>
+                  </div>
+                  {(() => {
+                    const pracas = getPracas(selectedMunicipio);
+                    if (pracas.length === 0) return null;
 
-                  const DISPLAY_FIELDS = [
-                    { key: 'homologacao_prodeb', label: 'Homologado em' },
-                    { key: 'status_homologacao_pontos', label: 'Homologação' },
-                    { key: 'status_instalacao_com_link_pontos', label: 'Link Instalado' },
-                    { key: 'data_instalacao', label: 'Data Instalação' },
-                    { key: 'ano_implantacao', label: 'Ano' },
-                    { key: 'cep', label: 'CEP' },
-                    { key: 'populacao_beneficiada', label: 'Pop. Beneficiada' },
-                    { key: 'status_inauguracao', label: 'Inauguração' },
-                    { key: 'data_inauguracao', label: 'Data Inauguração' },
-                    { key: 'observacao', label: 'Observação' },
-                  ];
+                    const DISPLAY_FIELDS = [
+                      { key: 'homologacao_prodeb', label: 'Homologado em' },
+                      { key: 'status_homologacao_pontos', label: 'Homologação' },
+                      { key: 'status_instalacao_com_link_pontos', label: 'Link Instalado' },
+                      { key: 'data_instalacao', label: 'Data Instalação' },
+                      { key: 'ano_implantacao', label: 'Ano' },
+                      { key: 'cep', label: 'CEP' },
+                      { key: 'populacao_beneficiada', label: 'Pop. Beneficiada' },
+                      { key: 'status_inauguracao', label: 'Inauguração' },
+                      { key: 'data_inauguracao', label: 'Data Inauguração' },
+                      { key: 'observacao', label: 'Observação' },
+                    ];
 
-                  return (
-                    <div className="flex flex-col mt-2">
-                      <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">pontos ({pracas.length})</span>
-                      <div className="flex flex-col space-y-1.5">
-                        {pracas.map((p, i) => {
-                          const hasKitIndigena = p.kit_aldeias_indigenas && parseInt(String(p.kit_aldeias_indigenas).trim(), 10) > 0;
-                          const hasKitQuilombo = p.kit_quilombo && parseInt(String(p.kit_quilombo).trim(), 10) > 0;
+                    return (
+                      <div className="flex flex-col mt-2">
+                        <span className="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">pontos ({pracas.length})</span>
+                        <div className="flex flex-col space-y-1.5">
+                          {pracas.map((p, i) => {
+                            const hasKitIndigena = p.kit_aldeias_indigenas && parseInt(String(p.kit_aldeias_indigenas).trim(), 10) > 0;
+                            const hasKitQuilombo = p.kit_quilombo && parseInt(String(p.kit_quilombo).trim(), 10) > 0;
 
-                          return (
-                            <div key={i} className="bg-slate-50 border border-slate-100 rounded-md px-2 py-2 flex flex-col gap-1">
-                              <div className="flex items-start gap-2">
-                                <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
-                                <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium flex-1">{p.nome_da_praca || 'Sem nome'}</span>
-                                <div className="flex items-center gap-1 shrink-0">
-                                  {hasKitIndigena && (
+                            return (
+                              <div key={i} className="bg-slate-50 border border-slate-100 rounded-md px-2 py-2 flex flex-col gap-1">
+                                <div className="flex items-start gap-2">
+                                  <span className={`text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 ${p.projeto === 'Conecta I' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>{p.projeto || 'N/A'}</span>
+                                  <span className="text-[11px] md:text-xs text-slate-700 leading-tight font-medium flex-1">{p.nome_da_praca || 'Sem nome'}</span>
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    {hasKitIndigena && (
+                                      <img
+                                        src="/img/Indigena.svg"
+                                        alt="Kit Aldeias Indígenas"
+                                        className="w-4 h-4"
+                                        title={`Kit Aldeias Indígenas: ${p.kit_aldeias_indigenas}`}
+                                      />
+                                    )}
+                                    {hasKitQuilombo && (
+                                      <img
+                                        src="/img/quilombo.svg"
+                                        alt="Kit Quilombo"
+                                        className="w-4 h-4"
+                                        title={`Kit Quilombo: ${p.kit_quilombo}`}
+                                      />
+                                    )}
+                                  </div>
+                                </div>
+
+                                {hasKitIndigena && (
+                                  <div className="flex items-center gap-1.5 bg-purple-50 border border-purple-200 rounded px-2 py-1 mt-1">
                                     <img
                                       src="/img/Indigena.svg"
-                                      alt="Kit Aldeias Indígenas"
-                                      className="w-4 h-4"
-                                      title={`Kit Aldeias Indígenas: ${p.kit_aldeias_indigenas}`}
+                                      alt="Aldeias Indígenas"
+                                      className="w-3 h-3 shrink-0"
                                     />
-                                  )}
-                                  {hasKitQuilombo && (
+                                    <span className="text-[9px] md:text-[10px] text-purple-800 font-semibold">
+                                      Contém {p.kit_aldeias_indigenas} ponto{parseInt(p.kit_aldeias_indigenas) !== 1 ? 's' : ''} em comunidade indígena
+                                    </span>
+                                  </div>
+                                )}
+
+                                {hasKitQuilombo && (
+                                  <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
                                     <img
                                       src="/img/quilombo.svg"
-                                      alt="Kit Quilombo"
-                                      className="w-4 h-4"
-                                      title={`Kit Quilombo: ${p.kit_quilombo}`}
+                                      alt="Quilombo"
+                                      className="w-3 h-3 shrink-0"
                                     />
-                                  )}
-                                </div>
-                              </div>
+                                    <span className="text-[9px] md:text-[10px] text-amber-900 font-semibold">
+                                      Contém {p.kit_quilombo} ponto{parseInt(p.kit_quilombo) !== 1 ? 's' : ''} em comunidade quilombola
+                                    </span>
+                                  </div>
+                                )}
 
-                              {hasKitIndigena && (
-                                <div className="flex items-center gap-1.5 bg-purple-50 border border-purple-200 rounded px-2 py-1 mt-1">
-                                  <img
-                                    src="/img/Indigena.svg"
-                                    alt="Aldeias Indígenas"
-                                    className="w-3 h-3 shrink-0"
-                                  />
-                                  <span className="text-[9px] md:text-[10px] text-purple-800 font-semibold">
-                                    Contém {p.kit_aldeias_indigenas} ponto{parseInt(p.kit_aldeias_indigenas) !== 1 ? 's' : ''} em comunidade indígena
-                                  </span>
-                                </div>
-                              )}
-
-                              {hasKitQuilombo && (
-                                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
-                                  <img
-                                    src="/img/quilombo.svg"
-                                    alt="Quilombo"
-                                    className="w-3 h-3 shrink-0"
-                                  />
-                                  <span className="text-[9px] md:text-[10px] text-amber-900 font-semibold">
-                                    Contém {p.kit_quilombo} ponto{parseInt(p.kit_quilombo) !== 1 ? 's' : ''} em comunidade quilombola
-                                  </span>
-                                </div>
-                              )}
-
-                              {dataSource !== 'static' && (() => {
-                                // Safety: converte serial numérico do Excel caso venha do cache antigo
-                                const rawHom = p.homologacao_prodeb || '';
-                                const homologadoEmNum = rawHom && /^\d{4,6}$/.test(String(rawHom).trim())
-                                  ? (() => { const n = parseInt(rawHom, 10); const d = new Date((n - 25569) * 86400 * 1000); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; })()
-                                  : rawHom;
-                                const homologadoEm = homologadoEmNum && homologadoEmNum.toLowerCase() !== 'sim' && homologadoEmNum.toLowerCase() !== 'não' && homologadoEmNum.toLowerCase() !== 'nao' ? homologadoEmNum : '';
-                                return (
-                                  <>
-                                    {homologadoEm ? (
-                                      <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded px-2 py-1 mt-0.5">
-                                        <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        <span className="text-[9px] md:text-[10px] text-emerald-800 font-semibold">Homologado em {homologadoEm}</span>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-200 rounded px-2 py-1 mt-0.5">
-                                        <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        <span className="text-[9px] md:text-[10px] text-slate-500 font-medium">Pendente de homologação</span>
-                                      </div>
-                                    )}
-                                    {DISPLAY_FIELDS.filter(({ key }) => key !== 'homologacao_prodeb').map(({ key, label }) => {
-                                      const val = p[key];
-                                      if (!val) return null;
-                                      return (
-                                        <div key={key} className="flex items-baseline gap-1.5 pl-1">
-                                          <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
-                                          <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{val}</span>
+                                {dataSource !== 'static' && (() => {
+                                  const rawHom = p.homologacao_prodeb || '';
+                                  const homologadoEmNum = rawHom && /^\d{4,6}$/.test(String(rawHom).trim())
+                                    ? (() => { const n = parseInt(rawHom, 10); const d = new Date((n - 25569) * 86400 * 1000); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; })()
+                                    : rawHom;
+                                  const homologadoEm = homologadoEmNum && homologadoEmNum.toLowerCase() !== 'sim' && homologadoEmNum.toLowerCase() !== 'não' && homologadoEmNum.toLowerCase() !== 'nao' ? homologadoEmNum : '';
+                                  return (
+                                    <>
+                                      {homologadoEm ? (
+                                        <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded px-2 py-1 mt-0.5">
+                                          <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                          <span className="text-[9px] md:text-[10px] text-emerald-800 font-semibold">Homologado em {homologadoEm}</span>
                                         </div>
-                                      );
-                                    })}
-                                  </>
-                                );
-                              })()}
-                            </div>
-                          );
-                        })}
+                                      ) : (
+                                        <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-200 rounded px-2 py-1 mt-0.5">
+                                          <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                          <span className="text-[9px] md:text-[10px] text-slate-500 font-medium">Pendente de homologação</span>
+                                        </div>
+                                      )}
+                                      {DISPLAY_FIELDS.filter(({ key }) => key !== 'homologacao_prodeb').map(({ key, label }) => {
+                                        const val = p[key];
+                                        if (!val) return null;
+                                        return (
+                                          <div key={key} className="flex items-baseline gap-1.5 pl-1">
+                                            <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">{label}:</span>
+                                            <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{val}</span>
+                                          </div>
+                                        );
+                                      })}
+                                    </>
+                                  );
+                                })()}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            ) : (
-              <div className="mt-2 bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center gap-2">
-                <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span className="text-xs text-slate-600 font-medium">Município sem pontos instalados no momento.</span>
-              </div>
-            )}
+                    );
+                  })()}
+                </div>
+              ) : (
+                <div className="mt-2 bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span className="text-xs text-slate-600 font-medium">Município sem pontos instalados no momento.</span>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
 
-      <div className="order-2 md:order-1 flex flex-col w-full md:w-80 h-[45%] md:h-auto bg-slate-50 border-t md:border-t-0 md:border-r border-slate-200 z-10 shrink-0">
+      {/* BARRA LATERAL (Filtros, Estatísticas, Lista) */}
+      <div className="border-2 md:order-1 flex flex-col w-full md:w-80 lg:w-96 h-[55vh] md:h-auto bg-slate-50 border-t md:border-t-0 md:border-r border-slate-200 z-10 shrink-0 min-h-0 overflow-y-auto custom-scrollbar">
 
-        <div className="p-3 md:p-6 pb-2 md:pb-4 border-b border-slate-200 bg-white shadow-sm md:shadow-none z-10 relative shrink-0 transition-all duration-300">
+        <div className="p-3 md:p-6 pb-2 md:pb-4 border-b border-slate-200 bg-white shadow-sm md:shadow-none z-10">
           <div className="flex justify-between items-start md:items-center">
             <div>
-              <h1 className="text-base md:text-xl font-bold text-slate-800 leading-tight md:mb-1">
+              <h1 className="text-base md:text-xl lg:text-2xl font-bold text-slate-800 leading-tight md:mb-1">
                 Programa Conecta Bahia
               </h1>
               <p className="hidden md:block text-[10px] md:text-xs text-slate-500 font-medium uppercase tracking-wide">
                 Mapa de Cobertura 
               </p>
             </div>
-
-
           </div>
           <button
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
@@ -854,7 +868,7 @@ const ConectaGovDashboard = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          {/* PAINEL COLAPSÁVEL DE ESTATÍSTICAS E FILTROS */}
+
           {isFiltersOpen && (
             <div className="mt-3 md:mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
 
@@ -1018,7 +1032,7 @@ const ConectaGovDashboard = () => {
                 <div className="grid gap-1.5">
                   <button
                     onClick={() => setFilterMode('linkTLD')}
-                    className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'linkTLD'
+                    className={` px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'linkTLD'
                       ? 'bg-blue-500 border-blue-600 text-white shadow-sm'
                       : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
                       }`}
@@ -1028,7 +1042,7 @@ const ConectaGovDashboard = () => {
                   </button>
                   <button
                     onClick={() => setFilterMode('homologacao')}
-                    className={`overflow-hidden px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'homologacao'
+                    className={` px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'homologacao'
                       ? 'bg-green-500 border-green-600 text-white shadow-sm'
                       : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
                       }`}
@@ -1038,7 +1052,7 @@ const ConectaGovDashboard = () => {
                   </button>
                   <button
                     onClick={() => setFilterIndigena(!filterIndigena)}
-                    className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterIndigena
+                    className={` flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterIndigena
                       ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-sm'
                       : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                       }`}
@@ -1054,7 +1068,7 @@ const ConectaGovDashboard = () => {
                   </button>
                   <button
                     onClick={() => setFilterQuilombo(!filterQuilombo)}
-                    className={`overflow-hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterQuilombo
+                    className={` flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterQuilombo
                       ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm'
                       : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                       }`}
@@ -1089,10 +1103,9 @@ const ConectaGovDashboard = () => {
           )}
         </div>
 
-        {/* LISTA DE MUNICÍPIOS (Expande quando o acordeão fecha) */}
-        <div className="flex-1 overflow-y-auto p-1.5 md:p-2 custom-scrollbar bg-slate-50 relative">
+        {/* LISTA DE MUNICÍPIOS */}
+        <div className="flex-1 overflow-y-auto p-1.5 md:p-2 custom-scrollbar bg-slate-50 relative min-h-0">
 
-          {/* Aviso Flutuante se tiver filtros ativos e o painel estiver oculto */}
           {!isFiltersOpen && (filterIndigena || filterQuilombo || filterTerritory || searchTerm) && (
             <div className="sticky top-0 z-10 mb-2 px-2 py-1.5 bg-amber-50 border border-amber-200 rounded-md shadow-sm flex justify-between items-center">
               <span className="text-[10px] md:text-xs text-amber-800 font-medium">⚠️ Você possui filtros ativos.</span>
@@ -1108,6 +1121,19 @@ const ConectaGovDashboard = () => {
                   <> • território: <span className="font-bold">{filterTerritory}</span></>
                 )}
               </p>
+              {filterTerritory && selectedTerritoryStats && (
+                <div className="mt-1 text-[10px] text-slate-500">
+                  <p>
+                    {selectedTerritoryStats.installed} de {selectedTerritoryStats.total} municípios com Conecta (faltam {selectedTerritoryStats.missing})
+                  </p>
+                  {selectedTerritoryStats.missing > 0 && (
+                    <p className="mt-1">
+                      <span className="font-semibold">Faltando:</span>{' '}
+                      {selectedTerritoryStats.missingList.join(', ')}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

@@ -4,11 +4,10 @@ import https from 'https'
 import * as XLSX from 'xlsx'
 import { MUNICIPIOS_BAHIA } from './utils/Municipios.js'
 
-// Cache em memória para desenvolvimento (agora cacheia JSON ao invés de Excel)
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v3'; // v3: com kit_quilombo e kit_aldeias_indigenas
+const CACHE_VERSION = 'v3'; 
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 const FINANCIAL_PATTERNS = [

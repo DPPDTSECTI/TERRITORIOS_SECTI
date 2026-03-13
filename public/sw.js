@@ -1,12 +1,6 @@
-/**
- * Service Worker para cache agressivo de dados do Conecta Bahia
- * Estratégia: Stale-While-Revalidate para resposta instantânea
- */
-
 const CACHE_NAME = 'conecta-bahia-v3';
 const DATA_CACHE_NAME = 'conecta-data-v3';
 
-// Arquivos estáticos para cache (App Shell)
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -15,17 +9,14 @@ const STATIC_ASSETS = [
   '/img/MARCA%20GOVBA%200126%20-%20DO%20LADO%20DA%20GENTE__H.png',
 ];
 
-// URLs de dados dinâmicos (API)
 const DATA_URLS = [
   '/.netlify/functions/sharepoint',
   '/api/sharepoint',
 ];
 
-// Instalação: Pre-cache de arquivos estáticos
 self.addEventListener('install', (event) => {
   console.log('[SW] Instalando Service Worker...');
   
-  // Forçar ativação imediata do novo SW
   self.skipWaiting();
   
   event.waitUntil(
@@ -37,15 +28,12 @@ self.addEventListener('install', (event) => {
     })
   );
   
-  // Ativar imediatamente sem esperar
   self.skipWaiting();
 });
 
-// Ativação: Limpar caches antigos
 self.addEventListener('activate', (event) => {
   console.log('[SW] Ativando Service Worker...');
   
-  // Assumir controle imediatamente
   event.waitUntil(
     Promise.all([
       clients.claim(),
@@ -63,17 +51,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Interceptar requisições
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Ignorar requisições não-HTTP
   if (!url.protocol.startsWith('http')) {
     return;
   }
   
-  // IMPORTANTE: Em desenvolvimento (localhost), SEMPRE fazer bypass do cache para API
   if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
     if (url.pathname.includes('/api/')) {
       console.log('[SW] 🚫 Modo DEV: bypass total para:', url.pathname);
@@ -82,7 +67,6 @@ self.addEventListener('fetch', (event) => {
     }
   }
   
-  // ESTRATÉGIA 1: Stale-While-Revalidate para dados da API
   if (DATA_URLS.some(dataUrl => url.pathname.includes(dataUrl))) {
     event.respondWith(
       staleWhileRevalidate(request, DATA_CACHE_NAME)
@@ -90,7 +74,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // ESTRATÉGIA 2: Cache First para assets estáticos
   if (STATIC_ASSETS.some(asset => url.pathname === asset || url.pathname.endsWith(asset))) {
     event.respondWith(
       cacheFirst(request, CACHE_NAME)
@@ -98,24 +81,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // ESTRATÉGIA 3: Network First para todo o resto
   event.respondWith(
     networkFirst(request, CACHE_NAME)
   );
 });
 
-/**
- * Stale-While-Revalidate: Retorna cache imediatamente e atualiza em background
- * Ideal para dados que mudam ocasionalmente mas velocidade é crítica
- */
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
   
-  // Buscar atualização em background
   const fetchPromise = fetch(request).then((networkResponse) => {
     if (networkResponse && networkResponse.status === 200) {
-      // Clonar antes de salvar (Response pode ser lido apenas uma vez)
       cache.put(request, networkResponse.clone());
       console.log('[SW] Cache atualizado em background:', request.url);
     }
@@ -125,21 +101,15 @@ async function staleWhileRevalidate(request, cacheName) {
     return null;
   });
   
-  // Retornar cache imediatamente se existir
   if (cachedResponse) {
     console.log('[SW] Retornando do cache (stale):', request.url);
     return cachedResponse;
   }
   
-  // Se não houver cache, aguardar rede
   console.log('[SW] Sem cache, aguardando rede:', request.url);
   return fetchPromise;
 }
 
-/**
- * Cache First: Tenta cache primeiro, depois rede
- * Ideal para assets que não mudam
- */
 async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
@@ -159,10 +129,6 @@ async function cacheFirst(request, cacheName) {
   return networkResponse;
 }
 
-/**
- * Network First: Tenta rede primeiro, fallback para cache
- * Ideal para conteúdo que muda frequentemente
- */
 async function networkFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
   
@@ -186,7 +152,6 @@ async function networkFirst(request, cacheName) {
   }
 }
 
-// Mensagens do cliente
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();

@@ -1,14 +1,4 @@
-/**
- * Script Node.js para gerar o JSON estático a partir de um arquivo Excel local.
- *
- * Uso:
- *   node scripts/generateJson.mjs [caminho-do-arquivo.xlsx]
- *
- * Se nenhum caminho for informado, tenta baixar o arquivo do SharePoint
- * (requer acesso à rede interna / VPN).
- *
- * O JSON gerado é salvo em public/conectaMunicipios.json.
- */
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,11 +9,9 @@ const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
 const OUTPUT = path.join(ROOT, 'public', 'conectaMunicipios.json');
 
-// ─── URL de download direta do SharePoint ───────────────────────────────────
 const SHAREPOINT_DOWNLOAD_URL =
   'https://prodeboffice365-my.sharepoint.com/personal/valmir_ferreira_secti_ba_gov_br/_layouts/15/download.aspx?UniqueId=7ed06cd9-f10e-4c89-8191-bde4a43b30d9&e=kPaGNt';
 
-// ─── Padrões de colunas financeiras ─────────────────────────────────────────
 const FINANCIAL_PATTERNS = [
   'recurso',
   'inova cidade',
@@ -74,7 +62,6 @@ function processWorkbook(workbook) {
 
   if (rows.length < 2) throw new Error('Planilha vazia.');
 
-  // Encontrar cabeçalho
   let headerIdx = 0;
   for (let i = 0; i < Math.min(15, rows.length); i++) {
     const filled = (rows[i] || []).filter((c) => c != null && String(c).trim() !== '').length;
@@ -83,7 +70,6 @@ function processWorkbook(workbook) {
 
   const headers = rows[headerIdx].map(normalizeHeader);
 
-  // Colunas-chave
   const iMunicipio   = findColIndex(headers, ['município', 'municipio']);
   const iPraca       = findColIndex(headers, ['nome da praça', 'nome_da_praca', 'descrição do local']);
   const iProjeto     = findColIndex(headers, ['projeto']);
@@ -98,8 +84,6 @@ function processWorkbook(workbook) {
   console.log(`  Projeto:   ${iProjeto !== -1 ? `[${iProjeto}] "${headers[iProjeto]}"` : 'NÃO ENCONTRADA'}`);
   console.log(`  Território:${iTerritorio !== -1 ? `[${iTerritorio}] "${headers[iTerritorio]}"` : 'NÃO ENCONTRADA'}`);
   console.log(`  Filtro:    ${iFilterPlaca !== -1 ? `[${iFilterPlaca}] "${headers[iFilterPlaca]}"` : 'NÃO ENCONTRADA'}`);
-
-  // Extras (não-financeiras)
   const keySet = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterPlaca].filter((i) => i !== -1));
   const extraCols = headers
     .map((h, i) => ({ h, i }))
@@ -108,7 +92,6 @@ function processWorkbook(workbook) {
 
   console.log(`  Colunas extras (não-financeiras): ${extraCols.length}`);
 
-  // Processar linhas
   const result = {};
   let total = 0;
   let filtered = 0;
@@ -178,8 +161,6 @@ async function main() {
   }
 
   const data = processWorkbook(workbook);
-
-  // Ordenar chaves (municípios) alfabeticamente
   const sorted = {};
   Object.keys(data).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach((k) => {
     sorted[k] = data[k];
