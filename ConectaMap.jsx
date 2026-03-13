@@ -44,7 +44,37 @@ const SVG_W = 600;
 const SVG_H = 600;
 const PADDING = 20;
 
-function buildPaths(topology) {
+const lineToD = (line, project) =>
+  line.map(([lon, lat], i) => {
+    const [x, y] = project([lon, lat]);
+    return `${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
+  }).join(' ');
+
+const geometryToD = (geometry, project) => {
+  if (!geometry) return '';
+
+  if (geometry.type === 'LineString') {
+    return lineToD(geometry.coordinates, project);
+  }
+
+  if (geometry.type === 'MultiLineString') {
+    return geometry.coordinates.map((line) => lineToD(line, project)).join(' ');
+  }
+
+  if (geometry.type === 'Polygon') {
+    return geometry.coordinates.map((ring) => `${lineToD(ring, project)} Z`).join(' ');
+  }
+
+  if (geometry.type === 'MultiPolygon') {
+    return geometry.coordinates
+      .flatMap((polygon) => polygon.map((ring) => `${lineToD(ring, project)} Z`))
+      .join(' ');
+  }
+
+  return '';
+};
+
+function buildPaths(topology, getTerritoryByMunicipio) {
   const geojson = topojson.feature(topology, topology.objects.BA);
   let minLon = Infinity, maxLon = -Infinity;
   let minLat = Infinity, maxLat = -Infinity;
@@ -72,15 +102,9 @@ function buildPaths(topology) {
     PADDING + ((maxLat - lat) / rangeY) * drawH,
   ];
 
-  const ringToD = (ring) =>
-    ring.map(([lon, lat], i) => {
-      const [x, y] = project([lon, lat]);
-      return `${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
-    }).join(' ') + ' Z';
-
-  return geojson.features.filter((f) => f.geometry).map((f) => {
+  const features = geojson.features.filter((f) => f.geometry).map((f) => {
     const rings = f.geometry.type === 'Polygon' ? f.geometry.coordinates : f.geometry.coordinates.flat(1);
-    const d = rings.map(ringToD).join(' ');
+    const d = geometryToD(f.geometry, project);
 
     let sumX = 0, sumY = 0, count = 0;
     rings.forEach((ring) =>
@@ -92,11 +116,38 @@ function buildPaths(topology) {
     const centroid = count > 0 ? [sumX / count, sumY / count] : [0, 0];
     return { nome: f.properties.NOME, geocodigo: f.properties.GEOCODIGO, d, centroid };
   });
+
+  const territoryNames = new Set(
+    geojson.features
+      .map((f) => getTerritoryByMunicipio(f.properties?.NOME))
+      .filter(Boolean)
+  );
+
+  const territoryOutlines = {};
+  territoryNames.forEach((territory) => {
+    const mesh = topojson.mesh(topology, topology.objects.BA, (a, b) => {
+      const territoryA = getTerritoryByMunicipio(a?.properties?.NOME);
+      const territoryB = getTerritoryByMunicipio(b?.properties?.NOME);
+
+      if (territoryA !== territory && territoryB !== territory) return false;
+      if (territoryA === territory && territoryB === territory) return a === b;
+
+      return territoryA === territory || territoryB === territory;
+    });
+
+    const d = geometryToD(mesh, project);
+    if (d) {
+      territoryOutlines[territory] = d;
+    }
+  });
+
+  return { features, territoryOutlines };
 }
 
 const ConectaGovDashboard = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true); // Controle do Acordeão de Filtros
   const [mapFeatures, setMapFeatures] = useState([]);
+  const [territoryOutlines, setTerritoryOutlines] = useState({});
   const [mapError, setMapError] = useState(null);
   const [conectaList, setConectaList] = useState([]);
   const [conectaSet, setConectaSet] = useState(new Set());
@@ -190,6 +241,8 @@ const ConectaGovDashboard = () => {
     return map;
   }, []);
 
+  const activeTerritoryOutline = filterTerritory ? territoryOutlines[filterTerritory] : null;
+
   const missingTerritories = useMemo(() => {
     return allTerritories.filter((t) => !coveredTerritories.includes(t));
   }, [allTerritories, coveredTerritories]);
@@ -248,7 +301,17 @@ const ConectaGovDashboard = () => {
 
     const topoPromise = fetch('/BA_(1)9396399957704198.json')
       .then((r) => r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`))
-      .then((topology) => active && setMapFeatures(buildPaths(topology)));
+      .then((topology) => {
+        if (!active) return;
+
+        const { features, territoryOutlines: outlines } = buildPaths(
+          topology,
+          (nomeMunicipio) => municipioMap[simplifyName(nomeMunicipio)]?.territorio
+        );
+
+        setMapFeatures(features);
+        setTerritoryOutlines(outlines);
+      });
 
     const handleBackgroundUpdate = (newData) => {
       if (!active) return;
@@ -492,6 +555,29 @@ const ConectaGovDashboard = () => {
                     />
                   );
                 })}
+
+                {activeTerritoryOutline && (
+                  <g className="pointer-events-none">
+                    <path
+                      d={activeTerritoryOutline}
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth="6"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                    <path
+                      d={activeTerritoryOutline}
+                      fill="none"
+                      stroke={territoryColorMap[filterTerritory] || '#1E3A8A'}
+                      strokeWidth="3.5"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </g>
+                )}
 
                 {mapFeatures.map(({ nome, centroid }) => {
                   if (!isConecta(nome) || !passesAllFilters(nome)) return null;
@@ -737,10 +823,8 @@ const ConectaGovDashboard = () => {
         )}
       </div>
 
-      {/* BARRA LATERAL / LISTA COM ACORDEÃO */}
       <div className="order-2 md:order-1 flex flex-col w-full md:w-80 h-[45%] md:h-auto bg-slate-50 border-t md:border-t-0 md:border-r border-slate-200 z-10 shrink-0">
 
-        {/* Cabeçalho da Lista / Botão de Ocultar Filtros */}
         <div className="p-3 md:p-6 pb-2 md:pb-4 border-b border-slate-200 bg-white shadow-sm md:shadow-none z-10 relative shrink-0 transition-all duration-300">
           <div className="flex justify-between items-start md:items-center">
             <div>
@@ -748,7 +832,7 @@ const ConectaGovDashboard = () => {
                 Programa Conecta Bahia
               </h1>
               <p className="hidden md:block text-[10px] md:text-xs text-slate-500 font-medium uppercase tracking-wide">
-                Mapa de Cobertura Oficial
+                Mapa de Cobertura 
               </p>
             </div>
 

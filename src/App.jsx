@@ -117,7 +117,7 @@ export default function App() {
                     </span>
                   </div>
                   <h2 className="mt-3 text-lg sm:text-2xl font-extrabold text-slate-900 leading-tight">
-                    Decreto nº 24.419 institui oficialmente o Programa Conecta Bahia
+                    Decreto nº 24.419 institui o Programa Conecta Bahia
                   </h2>
                   <p className="mt-2 text-sm sm:text-[15px] text-slate-700 leading-relaxed max-w-4xl">
                     A iniciativa amplia o acesso à internet gratuita e de qualidade em espaços públicos, comunidades rurais e territórios com menor cobertura, fortalecendo a inclusão digital, o acesso a serviços públicos, a educação e o desenvolvimento socioeconômico na Bahia.
