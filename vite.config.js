@@ -19,6 +19,10 @@ const FINANCIAL_PATTERNS = [
   'pagamento efetuado', 'processo de pagamento',
 ];
 
+const MUNICIPIO_KEY_ALIASES = {
+  muquem_do_sao_francisco: 'muquem_de_sao_francisco',
+};
+
 function normalizeHeader(raw) {
   if (raw == null) return '';
   return String(raw).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -39,12 +43,14 @@ function isFinancial(header) {
 }
 
 function normalizeMunicipioKey(nome) {
-  return normalizeHeader(nome)
+  const normalized = normalizeHeader(nome)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/\s+/g, '_')
     .trim();
+
+  return MUNICIPIO_KEY_ALIASES[normalized] || normalized;
 }
 
 function convertExcelDate(excelDate) {
@@ -115,6 +121,7 @@ function parseSpreadsheet(buffer) {
   const iPraca = findColIndex(headers, ['descrição do local', 'descricao do local', 'nome da praça', 'nome_da_praca']);
   const iProjeto = findColIndex(headers, ['projeto']);
   const iTerritorio = findColIndex(headers, ['território de identidade', 'territorio de identidade', 'território', 'territorio']);
+  const iStatusInstalacao = findColIndex(headers, ['status instalação', 'status instalacao']);
   const iFilterLinkTLD = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
   const iFilterHomologacao = findColIndex(headers, ['homologação prodeb', 'homologacao prodeb']);
   const iLocal = findColIndex(headers, ['local']);
@@ -125,7 +132,7 @@ function parseSpreadsheet(buffer) {
 
   const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
 
-  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
+  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iStatusInstalacao, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
 
   const extraCols = headers
     .map((h, i) => ({ h, i }))
@@ -161,6 +168,7 @@ function parseSpreadsheet(buffer) {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
       nome_da_praca: iPraca !== -1 ? String(row[iPraca] || '').trim() : '',
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
+      status_instalacao: iStatusInstalacao !== -1 ? String(row[iStatusInstalacao] || '').trim() : '',
       kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
       kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
       // Adicionar explicitamente ao objeto:

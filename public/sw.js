@@ -1,9 +1,6 @@
-const CACHE_NAME = 'conecta-bahia-v3';
-const DATA_CACHE_NAME = 'conecta-data-v3';
+const CACHE_NAME = 'conecta-bahia-v4';
 
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
   '/BA_(1)9396399957704198.json',
   '/img/LogoConecta.png',
   '/img/MARCA%20GOVBA%200126%20-%20DO%20LADO%20DA%20GENTE__H.png',
@@ -40,7 +37,7 @@ self.addEventListener('activate', (event) => {
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
+            if (cacheName !== CACHE_NAME) {
               console.log('[SW] Removendo cache antigo:', cacheName);
               return caches.delete(cacheName);
             }
@@ -68,9 +65,7 @@ self.addEventListener('fetch', (event) => {
   }
   
   if (DATA_URLS.some(dataUrl => url.pathname.includes(dataUrl))) {
-    event.respondWith(
-      staleWhileRevalidate(request, DATA_CACHE_NAME)
-    );
+    event.respondWith(fetch(new Request(request, { cache: 'no-store' })));
     return;
   }
   
@@ -85,30 +80,6 @@ self.addEventListener('fetch', (event) => {
     networkFirst(request, CACHE_NAME)
   );
 });
-
-async function staleWhileRevalidate(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cachedResponse = await cache.match(request);
-  
-  const fetchPromise = fetch(request).then((networkResponse) => {
-    if (networkResponse && networkResponse.status === 200) {
-      cache.put(request, networkResponse.clone());
-      console.log('[SW] Cache atualizado em background:', request.url);
-    }
-    return networkResponse;
-  }).catch((err) => {
-    console.warn('[SW] Erro ao buscar atualização:', err);
-    return null;
-  });
-  
-  if (cachedResponse) {
-    console.log('[SW] Retornando do cache (stale):', request.url);
-    return cachedResponse;
-  }
-  
-  console.log('[SW] Sem cache, aguardando rede:', request.url);
-  return fetchPromise;
-}
 
 async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);

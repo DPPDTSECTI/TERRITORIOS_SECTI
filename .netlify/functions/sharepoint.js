@@ -15,7 +15,7 @@ const brotliDecompress = promisify(zlib.brotliDecompress);
 // Cache em memória (válido durante a execução da função serverless)
 let cachedData = null;
 let cacheExpiry = 0;
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutos
+const CACHE_TTL = 0; // sem cache em memória para evitar dado antigo em produção
 
 /**
  * Extrai URL de redirecionamento de uma página HTML
@@ -158,7 +158,7 @@ exports.handler = async (event, context) => {
             'Content-Type': 'application/json',
             'Content-Encoding': 'gzip',
             'Access-Control-Allow-Origin': '*',
-            'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
             'ETag': cachedData.etag,
             'X-Content-Source': 'cache-compressed',
             'X-Cache-Age': age.toString(),
@@ -176,7 +176,7 @@ exports.handler = async (event, context) => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
         'ETag': cachedData.etag,
         'X-Content-Source': 'cache',
         'X-Cache-Age': age.toString(),
@@ -269,7 +269,7 @@ exports.handler = async (event, context) => {
                     'Content-Type': 'application/json',
                     'Content-Encoding': 'gzip',
                     'Access-Control-Allow-Origin': '*',
-                    'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
+                    'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
                     'ETag': `"${etag}"`,
                     'X-Content-Source': 'sharepoint-processed-compressed',
                     'X-Parse-Time': parseTime.toString(),
@@ -288,7 +288,7 @@ exports.handler = async (event, context) => {
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'public, max-age=1800, stale-while-revalidate=86400',
+                'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
                 'ETag': `"${etag}"`,
                 'X-Content-Source': 'sharepoint-processed',
                 'X-Parse-Time': parseTime.toString(),

@@ -2,8 +2,8 @@ import * as XLSX from 'xlsx';
 import { get, set, del } from 'idb-keyval'; // Importando o gerenciador de IndexedDB
 import { MUNICIPIOS_BAHIA } from './Municipios.js';
 
-const CACHE_KEY = 'conecta_spreadsheet_data_v6'; // v6: ignorar linhas com município numérico (total/rodapé)
-const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v6';
+const CACHE_KEY = 'conecta_spreadsheet_data_v8'; // v8: normalizar aliases de municípios no payload
+const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v8';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hora em milissegundos
 
 const SHAREPOINT_PROXY_URL = import.meta.env.DEV
@@ -25,6 +25,10 @@ const FINANCIAL_PATTERNS = [
   'pagamento efetuado',
   'processo de pagamento',
 ];
+
+const MUNICIPIO_KEY_ALIASES = {
+  muquem_do_sao_francisco: 'muquem_de_sao_francisco',
+};
 
 // OTIMIZAÇÃO: Pré-processamento dos municípios (Mapa O(1))
 const MUNICIPIOS_MAP = new Map();
@@ -52,12 +56,14 @@ function isFinancial(header) {
 }
 
 function normalizeMunicipioKey(nome) {
-  return normalizeHeader(nome)
+  const normalized = normalizeHeader(nome)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/\s+/g, '_')
     .trim();
+
+  return MUNICIPIO_KEY_ALIASES[normalized] || normalized;
 }
 
 function normalizeMunicipioNome(nomeInput) {
@@ -97,6 +103,11 @@ function findColIndex(headers, patterns) {
     if (idx !== -1) return idx;
   }
   return -1;
+}
+
+function isInstalledStatus(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  return normalized === 'instalado';
 }
 
 /**
@@ -140,6 +151,7 @@ export function parseSpreadsheet(buffer) {
   const iPraca = findColIndex(headers, ['descrição do local', 'descricao do local', 'nome da praça', 'nome_da_praca']);
   const iProjeto = findColIndex(headers, ['projeto']);
   const iTerritorio = findColIndex(headers, ['território de identidade', 'territorio de identidade', 'território', 'territorio']);
+  const iStatusInstalacao = findColIndex(headers, ['status instalação', 'status instalacao']);
   const iFilterLinkTLD = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
   const iFilterHomologacao = findColIndex(headers, ['homologação prodeb', 'homologacao prodeb']);
   const iKitIndigena = findColIndex(headers, ['kit aldeias indígenas', 'kit aldeias indigenas', 'kit indigenas']);
@@ -158,6 +170,7 @@ export function parseSpreadsheet(buffer) {
   console.log(`  - Praça: índice ${iPraca}`);
   console.log(`  - Projeto: índice ${iProjeto}`);
   console.log(`  - Território: índice ${iTerritorio}`);
+  console.log(`  - Status Instalação: índice ${iStatusInstalacao}`);
   console.log(`  - Filtro (Link TLD): índice ${iFilterLinkTLD}`);
   console.log(`  - Filtro (Homologação PRODEB): índice ${iFilterHomologacao}`);
   console.log(`  - Kit Aldeias Indígenas: índice ${iKitIndigena}`);
@@ -170,7 +183,7 @@ export function parseSpreadsheet(buffer) {
     console.warn('[Conecta] ⚠️ COLUNA "Homologação PRODEB" NÃO ENCONTRADA!');
   }
 
-  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
+  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iStatusInstalacao, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
   const extraCols = headers
     .map((h, i) => ({ h, i }))
     .filter(({ h, i }) => !keyIndices.has(i) && h && !isFinancial(h))
@@ -216,6 +229,7 @@ export function parseSpreadsheet(buffer) {
       projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
       nome_da_praca: iPraca !== -1 ? String(row[iPraca] || '').trim() : '',
       territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
+      status_instalacao: iStatusInstalacao !== -1 ? String(row[iStatusInstalacao] || '').trim() : '',
       kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
       kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
       homologacao_prodeb: homologacaoVal,
@@ -319,7 +333,7 @@ async function fetchFreshData(onUpdate, filterMode = 'ambos') {
 }
 
 /**
- * @param {string} filterMode - 'linkTLD' | 'homologacao' | 'ambos'
+ * @param {string} filterMode - 'homologacao' | 'ambos'
  * @returns {Promise<Object>}
  */
 async function fetchFromSharePoint(filterMode = 'ambos') {
@@ -438,29 +452,26 @@ export async function clearSpreadsheetCache() {
 /**
  * Filtra dados conforme o filterMode selecionado pelo usuário
  * @param {Object} data - Dados de todas as práças por município
- * @param {string} filterMode - 'linkTLD' | 'homologacao' | 'ambos'
+ * @param {string} filterMode - 'instalado' | 'homologacao'
  * @returns {Object} Dados filtrados
  */
-export function applyFilterMode(data, filterMode = 'ambos') {
-  if (filterMode === 'ambos') {
-    return data; // Retornar tudo sem filtro
-  }
-
+export function applyFilterMode(data, filterMode = 'instalado') {
   const filtered = {};
 
   for (const municipio in data) {
     const pracas = data[municipio];
     const pracasFiltradas = pracas.filter(p => {
-      const linkTLD = String(p.instalacao_link_tld || p.status_instalacao_com_link_pontos || '').trim().toLowerCase();
+      const statusInstalacao = p.status_instalacao || '';
       const homologacao = String(p.homologacao_prodeb || p.status_homologacao_pontos || '').trim().toLowerCase();
 
-      if (filterMode === 'linkTLD') {
-        return linkTLD === 'sim' || linkTLD === 'true' || linkTLD === '1';
-      }
       if (filterMode === 'homologacao') {
-        // Nova lógica: coluna contém a data da homologação (ou vazio = não homologado)
         return homologacao !== '' && homologacao !== 'não' && homologacao !== 'nao' && homologacao !== 'false' && homologacao !== '0';
       }
+
+      if (filterMode === 'instalado') {
+        return isInstalledStatus(statusInstalacao);
+      }
+
       return true;
     });
 

@@ -14,6 +14,7 @@ const normalize = (s) =>
 
 const MUNICIPIO_ALIASES = {
   camacan: 'camaca',
+  'muquem do sao francisco': 'muquem de sao francisco',
 };
 
 const simplifyName = (s) => {
@@ -21,6 +22,8 @@ const simplifyName = (s) => {
   return MUNICIPIO_ALIASES[base] || base;
 };
 const sameMunicipio = (a, b) => simplifyName(a) === simplifyName(b);
+
+const isInstalledStatus = (value) => String(value || '').trim().toLowerCase() === 'instalado';
 
 const TERRITORY_COLORS = [
   '#EE2F5A', '#FBA751', '#CFDD90', '#0397DA', '#9CD3AF', '#EB278F', '#BE4481',
@@ -163,7 +166,8 @@ const ConectaGovDashboard = () => {
   const [filterQuilombo, setFilterQuilombo] = useState(false);
   const [filterTerritory, setFilterTerritory] = useState('');
   const [showTerritoryDropdown, setShowTerritoryDropdown] = useState(false);
-  const [filterMode, setFilterMode] = useState('homologacao');
+  const [filterMode, setFilterMode] = useState('instalado');
+  const [showQRCode, setShowQRCode] = useState(false);
 
   const mapContainerRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -182,12 +186,13 @@ const ConectaGovDashboard = () => {
 
     Object.values(conectaData).forEach(pracas => {
       pracas.forEach(p => {
-        const linkTLD = String(p.instalacao_link_tld || p.status_instalacao_com_link_pontos || '').trim().toLowerCase();
+        const statusInstalacao = p.status_instalacao || '';
         const homologacaoVal = String(p.homologacao_prodeb || p.status_homologacao_pontos || '').trim().toLowerCase();
 
-        if (linkTLD === 'sim' || linkTLD === 'true' || linkTLD === '1') {
+        if (isInstalledStatus(statusInstalacao)) {
           instalado++;
         }
+
         if (homologacaoVal !== '' && homologacaoVal !== 'não' && homologacaoVal !== 'nao' && homologacaoVal !== 'false' && homologacaoVal !== '0') {
           homologado++;
         }
@@ -653,18 +658,30 @@ const ConectaGovDashboard = () => {
           </div>
         )}
 
-        <div className="absolute bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg border border-slate-200 items-center z-10 max-w-[200px] hidden md:flex flex-col">
-          <img
-            src="/img/qr-code-DIRETORIA DE TECNOLOGIA E CONECTIVIDADE - DTC.png"
-            alt="QR Code Documento do Projeto"
-            className="w-32 h-32 mb-3"
-          />
-          <div className="text-center">
-            <p className="text-xs font-bold text-slate-800 mb-1">Escaneie o QR Code</p>
-            <p className="text-[10px] text-slate-600 leading-tight">
-              Acesse o documento completo do Projeto Conecta Bahia
-            </p>
-          </div>
+        <div className="absolute bottom-4 right-4 z-10 hidden md:flex flex-col items-end gap-2">
+          <button
+            onClick={() => setShowQRCode((prev) => !prev)}
+            className="bg-blue-600 px-3 py-2 rounded-lg shadow-lg border border-blue-700 text-xs font-semibold text-white hover:bg-blue-700 transition-colors"
+            title={showQRCode ? 'Ocultar QR Code' : 'Mostrar QR Code'}
+          >
+            {showQRCode ? 'Ocultar QR Code' : 'Mostrar QR Code'}
+          </button>
+
+          {showQRCode && (
+            <div className="bg-white p-4 rounded-xl shadow-lg border border-slate-200 items-center max-w-[200px] flex flex-col">
+              <img
+                src="/img/qr-code-DIRETORIA DE TECNOLOGIA E CONECTIVIDADE - DTC.png"
+                alt="QR Code Documento do Projeto"
+                className="w-32 h-32 mb-3"
+              />
+              <div className="text-center">
+                <p className="text-xs font-bold text-slate-800 mb-1">Escaneie o QR Code</p>
+                <p className="text-[10px] text-slate-600 leading-tight">
+                  Acesse o documento completo do Projeto Conecta Bahia
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {selectedMunicipio && (
@@ -718,7 +735,6 @@ const ConectaGovDashboard = () => {
                     const DISPLAY_FIELDS = [
                       { key: 'homologacao_prodeb', label: 'Homologado em' },
                       { key: 'status_homologacao_pontos', label: 'Homologação' },
-                      { key: 'status_instalacao_com_link_pontos', label: 'Link Instalado' },
                       { key: 'data_instalacao', label: 'Data Instalação' },
                       { key: 'ano_implantacao', label: 'Ano' },
                       { key: 'cep', label: 'CEP' },
@@ -786,6 +802,11 @@ const ConectaGovDashboard = () => {
                                     </span>
                                   </div>
                                 )}
+
+                                <div className="flex items-baseline gap-1.5 pl-1 mt-0.5">
+                                  <span className="text-[7px] md:text-[8px] text-slate-400 uppercase font-semibold shrink-0">Status Instalação:</span>
+                                  <span className="text-[9px] md:text-[10px] text-slate-600 leading-tight">{p.status_instalacao || '-'}</span>
+                                </div>
 
                                 {dataSource !== 'static' && (() => {
                                   const rawHom = p.homologacao_prodeb || '';
@@ -1031,17 +1052,17 @@ const ConectaGovDashboard = () => {
                 <label className="text-xs font-semibold text-slate-700">Filtro de Dados:</label>
                 <div className="grid gap-1.5">
                   <button
-                    onClick={() => setFilterMode('linkTLD')}
-                    className={` px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'linkTLD'
+                    onClick={() => setFilterMode('instalado')}
+                    className={` px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'instalado'
                       ? 'bg-blue-500 border-blue-600 text-white shadow-sm'
                       : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
                       }`}
-                    title="Mostrar apenas pontos instalados"
+                    title="Mostrar apenas pontos com Status Instalação = Instalado"
                   >
-                     Instalado
+                    Todos
                   </button>
                   <button
-                    onClick={() => setFilterMode('homologacao')}
+                    onClick={() => setFilterMode((prev) => prev === 'homologacao' ? 'instalado' : 'homologacao')}
                     className={` px-2.5 py-1.5 rounded-md text-xs font-medium transition-all border ${filterMode === 'homologacao'
                       ? 'bg-green-500 border-green-600 text-white shadow-sm'
                       : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
