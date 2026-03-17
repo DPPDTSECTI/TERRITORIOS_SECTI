@@ -149,7 +149,7 @@ export default function App() {
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
             <span className="flex flex-col gap-1 items-center md:items-start">
               <img src="/img/MARCA%20GOVBA%200126%20-%20DO%20LADO%20DA%20GENTE__H.png" alt="Logo Governo BA" className="h-16 sm:h-20 w-auto object-contain" />
-              <p className="font-medium text-slate-500 text-center md:text-left">Secretaria de Ciência, Tecnologia e Inovação</p>
+              <p className="font-medium text-slate-500 text-center ms-4">Secretaria de Ciência, Tecnologia e Inovação</p>
             </span>
           </div>
 
