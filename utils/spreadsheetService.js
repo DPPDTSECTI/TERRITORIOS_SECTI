@@ -263,7 +263,7 @@ export function parseSpreadsheet(buffer) {
  * @param {Function} onUpdate - Callback opcional chamado quando dados são atualizados em background
  * @returns {{ data: Object, source: 'upload'|'sharepoint'|'cache', fresh: boolean }}
  */
-export async function fetchConectaData(onUpdate = null, filterMode = 'ambos') {
+export async function fetchConectaData(onUpdate = null, filterMode = 'instalado') {
   let cachedData = null;
   let cacheAge = Infinity;
 
@@ -308,10 +308,33 @@ export async function fetchConectaData(onUpdate = null, filterMode = 'ambos') {
     }
   } catch (err) {
     console.error(`[Conecta] Erro ao carregar do SharePoint: ${err.message}`);
+    const fallbackData = await fetchStaticFallbackData();
+    if (fallbackData) {
+      return { data: fallbackData, source: 'static', fresh: true };
+    }
     throw new Error('Não foi possível carregar dados do SharePoint');
   }
 
+  const fallbackData = await fetchStaticFallbackData();
+  if (fallbackData) {
+    return { data: fallbackData, source: 'static', fresh: true };
+  }
+
   throw new Error('Não foi possível carregar dados do Conecta Bahia');
+}
+
+async function fetchStaticFallbackData() {
+  try {
+    console.log('[Conecta] Tentando fallback local: /conectaMunicipios.json');
+    const res = await fetch('/conectaMunicipios.json', { cache: 'no-store' });
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (!json || typeof json !== 'object') return null;
+    return json;
+  } catch (err) {
+    console.warn('[Conecta] Fallback local indisponível:', err.message);
+    return null;
+  }
 }
 
 /**
