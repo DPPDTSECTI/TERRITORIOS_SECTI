@@ -1,11 +1,16 @@
 /**
  * Netlify Function: Proxy para download da planilha do SharePoint
  * Processa o Excel serverless e retorna JSON (evita limite de 6MB)
- * OTIMIZADO: Cache em memória + Compressão gzip
+ * OTIMIZADO: Cache em memória + Compressão gzip + Netlify Blobs
  */
 const { parseSpreadsheet } = require('./sharepoint-processor');
+const { getStore } = require('@netlify/blobs');
 const zlib = require('zlib');
 const { promisify } = require('util');
+
+const BLOB_STORE_NAME = 'sharepoint-cache';
+const BLOB_KEY = 'conecta-data';
+const BLOB_MAX_AGE = 90 * 60 * 1000; // 90 minutos
 
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
@@ -194,9 +199,8 @@ exports.handler = async (event, context) => {
   // BLOB CACHE: Cache persistente entre invocações/cold starts → resposta instantânea
   if (!nocache) {
     try {
-      const { getStore } = require('@netlify/blobs');
-      const store = getStore('sharepoint-cache');
-      const blob = await store.get('conecta-data', { type: 'json' });
+      const store = getStore(BLOB_STORE_NAME);
+      const blob = await store.get(BLOB_KEY, { type: 'json' });
       if (blob && blob.jsonString && blob.timestamp) {
         const ageMs = Date.now() - blob.timestamp;
         const ageSec = Math.round(ageMs / 1000);
@@ -307,9 +311,8 @@ exports.handler = async (event, context) => {
 
             // BLOB: Persistência entre cold starts (elimina espera de 25s)
             try {
-              const { getStore } = require('@netlify/blobs');
-              const store = getStore('sharepoint-cache');
-              await store.setJSON('conecta-data', { jsonString, etag, timestamp: Date.now() });
+              const store = getStore(BLOB_STORE_NAME);
+              await store.setJSON(BLOB_KEY, { jsonString, etag, timestamp: Date.now() });
               console.log('[Netlify] ✓ Dados salvos no Netlify Blob (cache persistente)');
             } catch (blobSaveErr) {
               console.warn('[Netlify] Falha ao salvar no Blob (não crítico):', blobSaveErr.message);
