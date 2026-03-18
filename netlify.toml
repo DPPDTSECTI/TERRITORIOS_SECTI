@@ -5,6 +5,10 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Agendador: mantém o Blob sempre fresco → usuários nunca esperam 25s
+[functions."sharepoint-refresh"]
+  schedule = "*/30 * * * *"
   
 # Headers otimizados para performance
 [[headers]]

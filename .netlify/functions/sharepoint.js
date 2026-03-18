@@ -191,6 +191,60 @@ exports.handler = async (event, context) => {
     console.log('[Netlify] Cache MISS - buscando dados do SharePoint...');
   }
 
+  // BLOB CACHE: Cache persistente entre invocações/cold starts → resposta instantânea
+  if (!nocache) {
+    try {
+      const { getStore } = require('@netlify/blobs');
+      const store = getStore('sharepoint-cache');
+      const blob = await store.get('conecta-data', { type: 'json' });
+      if (blob && blob.jsonString && blob.timestamp) {
+        const ageMs = Date.now() - blob.timestamp;
+        const ageSec = Math.round(ageMs / 1000);
+        const BLOB_MAX_AGE = 90 * 60 * 1000; // 90 minutos
+        if (ageMs < BLOB_MAX_AGE) {
+          console.log(`[Netlify] ✓ Blob HIT (${ageSec}s < 90min) → resposta instantânea`);
+          const acceptsGzip = requestAcceptEncoding.includes('gzip');
+          if (acceptsGzip) {
+            try {
+              const compressed = await gzip(blob.jsonString);
+              return {
+                statusCode: 200,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Content-Encoding': 'gzip',
+                  'Access-Control-Allow-Origin': '*',
+                  'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+                  'X-Content-Source': 'blob-compressed',
+                  'X-Cache-Age': String(ageSec),
+                  'X-Geracao': String(blob.timestamp),
+                },
+                body: compressed.toString('base64'),
+                isBase64Encoded: true,
+              };
+            } catch (_) { /* fallback sem compressão */ }
+          }
+          return {
+            statusCode: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+              'X-Content-Source': 'blob',
+              'X-Cache-Age': String(ageSec),
+              'X-Geracao': String(blob.timestamp),
+            },
+            body: blob.jsonString,
+          };
+        }
+        console.log(`[Netlify] Blob stale (${ageSec}s ≥ 90min), buscando dados frescos...`);
+      } else {
+        console.log('[Netlify] Blob vazio/ausente, buscando do SharePoint...');
+      }
+    } catch (blobReadErr) {
+      console.warn('[Netlify] Blob read falhou:', blobReadErr.message);
+    }
+  }
+
   try {
     let url = downloadUrl;
     let cookies = '';
@@ -250,6 +304,16 @@ exports.handler = async (event, context) => {
             cachedData = { jsonString, etag };
             cacheExpiry = Date.now() + CACHE_TTL;
             console.log(`[Netlify] ✓ Dados salvos no cache (válido por ${CACHE_TTL / 60000} minutos)`);
+
+            // BLOB: Persistência entre cold starts (elimina espera de 25s)
+            try {
+              const { getStore } = require('@netlify/blobs');
+              const store = getStore('sharepoint-cache');
+              await store.setJSON('conecta-data', { jsonString, etag, timestamp: Date.now() });
+              console.log('[Netlify] ✓ Dados salvos no Netlify Blob (cache persistente)');
+            } catch (blobSaveErr) {
+              console.warn('[Netlify] Falha ao salvar no Blob (não crítico):', blobSaveErr.message);
+            }
             
             // OTIMIZAÇÃO 3: Comprimir resposta (se cliente aceitar)
             const acceptsGzip = requestAcceptEncoding.includes('gzip');
