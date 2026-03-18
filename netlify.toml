@@ -5,6 +5,7 @@
 
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["@netlify/blobs"]
 
 # Agendador: mantém o Blob sempre fresco → usuários nunca esperam 25s
 [functions."sharepoint-refresh"]
