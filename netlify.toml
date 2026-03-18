@@ -1,10 +1,11 @@
 [build]
-  command = "npm run build"
+  command = "cd .netlify/functions && npm install && cd ../.. && npm run build"
   functions = ".netlify/functions"
   publish = "dist"
 
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["@netlify/blobs"]
 
 # Agendador: mantém o Blob sempre fresco → usuários nunca esperam 25s
 [functions."sharepoint-refresh"]

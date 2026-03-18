@@ -4,9 +4,18 @@
  * OTIMIZADO: Cache em memória + Compressão gzip + Netlify Blobs
  */
 const { parseSpreadsheet } = require('./sharepoint-processor');
-const { getStore } = require('@netlify/blobs');
 const zlib = require('zlib');
 const { promisify } = require('util');
+
+// @netlify/blobs é external (não bundlado pelo esbuild) → resolvido em runtime
+// Carregamento lazy para isolar qualquer falha de import
+let _getStore = null;
+function getBlobStore(name) {
+  if (!_getStore) {
+    _getStore = require('@netlify/blobs').getStore;
+  }
+  return _getStore(name);
+}
 
 const BLOB_STORE_NAME = 'sharepoint-cache';
 const BLOB_KEY = 'conecta-data';
@@ -199,12 +208,11 @@ exports.handler = async (event, context) => {
   // BLOB CACHE: Cache persistente entre invocações/cold starts → resposta instantânea
   if (!nocache) {
     try {
-      const store = getStore(BLOB_STORE_NAME);
+      const store = getBlobStore(BLOB_STORE_NAME);
       const blob = await store.get(BLOB_KEY, { type: 'json' });
       if (blob && blob.jsonString && blob.timestamp) {
         const ageMs = Date.now() - blob.timestamp;
         const ageSec = Math.round(ageMs / 1000);
-        const BLOB_MAX_AGE = 90 * 60 * 1000; // 90 minutos
         if (ageMs < BLOB_MAX_AGE) {
           console.log(`[Netlify] ✓ Blob HIT (${ageSec}s < 90min) → resposta instantânea`);
           const acceptsGzip = requestAcceptEncoding.includes('gzip');
@@ -245,7 +253,8 @@ exports.handler = async (event, context) => {
         console.log('[Netlify] Blob vazio/ausente, buscando do SharePoint...');
       }
     } catch (blobReadErr) {
-      console.warn('[Netlify] Blob read falhou:', blobReadErr.message);
+      console.error('[Netlify] !!! BLOB READ ERRO:', blobReadErr.message);
+      console.error('[Netlify] BLOB STACK:', blobReadErr.stack);
     }
   }
 
@@ -311,11 +320,12 @@ exports.handler = async (event, context) => {
 
             // BLOB: Persistência entre cold starts (elimina espera de 25s)
             try {
-              const store = getStore(BLOB_STORE_NAME);
+              const store = getBlobStore(BLOB_STORE_NAME);
               await store.setJSON(BLOB_KEY, { jsonString, etag, timestamp: Date.now() });
               console.log('[Netlify] ✓ Dados salvos no Netlify Blob (cache persistente)');
             } catch (blobSaveErr) {
-              console.warn('[Netlify] Falha ao salvar no Blob (não crítico):', blobSaveErr.message);
+              console.error('[Netlify] !!! BLOB SAVE ERRO:', blobSaveErr.message);
+              console.error('[Netlify] BLOB SAVE STACK:', blobSaveErr.stack);
             }
             
             // OTIMIZAÇÃO 3: Comprimir resposta (se cliente aceitar)
