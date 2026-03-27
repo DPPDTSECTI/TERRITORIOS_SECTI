@@ -69,8 +69,9 @@ function findColumnIndex(normalizedHeaders, patterns) {
     idx = normalizedHeaders.findIndex((header) => header.split(/\s+/).includes(normPattern));
     if (idx !== -1) return idx;
 
-    // 3) fallback na antiga abordagem com includes
-    idx = normalizedHeaders.findIndex((header) => header.includes(normPattern));
+    // 3) correspondência por palavra com limite de borda (não sub-palavra dentro de outra palavra)
+    const regex = new RegExp(`(^|\\s)${normPattern}($|\\s)`);
+    idx = normalizedHeaders.findIndex((header) => regex.test(header));
     if (idx !== -1) return idx;
   }
   return -1;
@@ -161,8 +162,9 @@ function parseSpreadsheet(buffer) {
 
     const iEntidades = findColumnIndex(normalizedHeaders, ['valor entidades', 'entidades total', 'capacidade territorial']);
     let iEntidade = findColumnIndex(normalizedHeaders, ['entidade', 'institui', 'nome da entidade']);
-    if (iEntidade === iTerritorio) iEntidade = -1;
+    if (iEntidade === iTerritorio || normalizedHeaders[iEntidade]?.includes('territorio')) iEntidade = -1;
     const iTipo = findColumnIndex(normalizedHeaders, ['tipo', 'natureza', 'categoria']);
+    if (iTipo === iTerritorio || normalizedHeaders[iTipo]?.includes('territorio')) iTipo = -1;
     const iCampiUniv = findColumnIndex(normalizedHeaders, ['campi universit', 'campus universit']);
     const iCampiIfs = findColumnIndex(normalizedHeaders, ['campi de if', 'campus if', 'instituto federal']);
     const iEspacos = findColumnIndex(normalizedHeaders, ['espacos dinamizadores', 'espaco dinamizador']);

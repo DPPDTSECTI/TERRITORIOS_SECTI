@@ -122,7 +122,12 @@ function parseSpreadsheet(buffer) {
       idx = headers.findIndex((header) => normalize(header).split(/\s+/).includes(normPattern));
       if (idx !== -1) return idx;
 
-      // 3) fallback de includes em textos
+      // 3) correspondência por palavra com bordas (não sub-palavras dentro de outra palavra)
+      const regex = new RegExp(`(^|\\s)${normPattern}($|\\s)`);
+      idx = headers.findIndex((header) => regex.test(normalize(header)));
+      if (idx !== -1) return idx;
+
+      // 4) fallback mais amplo, caso não exista header estruturado
       idx = headers.findIndex((header) => normalize(header).includes(normPattern));
       if (idx !== -1) return idx;
     }
@@ -196,8 +201,9 @@ function parseSpreadsheet(buffer) {
     const iIfdmTi = findIndex(headers, ['ifdm ti', 'ifdmt', 'ifdm territorial']);
     const iEntidades = findIndex(headers, ['valor entidades', 'entidades total', 'capacidade territorial', 'qtd_enti', 'qtd ent', 'qtd entidades']);
     let iEntidade = findIndex(headers, ['entidade', 'institui', 'nome da entidade']);
-    if (iEntidade === iTerritorio) iEntidade = -1;
-    const iTipo = findIndex(headers, ['tipo', 'natureza', 'categoria']);
+    if (iEntidade === iTerritorio || normalize(headers[iEntidade]).includes('territorio')) iEntidade = -1;
+    let iTipo = findIndex(headers, ['tipo', 'natureza', 'categoria']);
+    if (iTipo === iTerritorio || normalize(headers[iTipo]).includes('territorio')) iTipo = -1;
     const iCampiUniv = findIndex(headers, ['campi universit', 'campus universit']);
     const iCampiIfs = findIndex(headers, ['campi de if', 'campus if', 'instituto federal']);
     const iEspacos = findIndex(headers, ['espacos dinamizadores', 'espaco dinamizador']);
