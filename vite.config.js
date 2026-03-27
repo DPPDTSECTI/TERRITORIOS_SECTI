@@ -92,107 +92,325 @@ function parseSpreadsheet(buffer) {
     bookSheets: false,
   });
 
-  let sheetName = workbook.SheetNames[1];
-  const acompanhaSheet = workbook.SheetNames.find(name =>
-    name.toLowerCase().includes('acompanham') || name.toLowerCase().includes('acompanhamento')
-  );
-  if (acompanhaSheet) sheetName = acompanhaSheet;
+  const targetSheetNames = workbook.SheetNames.slice(0, 3);
+  if (!targetSheetNames.length) throw new Error('Planilha vazia');
 
-  const sheet = workbook.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: '',
-    raw: true,
-    blankrows: false,
-  });
+  const normalize = (value) => String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
 
-  if (rows.length < 2) throw new Error('Planilha vazia');
+  const toNumber = (value) => {
+    if (value == null || value === '') return 0;
+    if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+    const cleaned = String(value).replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
 
-  let headerIdx = 0;
-  for (let i = 0; i < Math.min(15, rows.length); i++) {
-    const filled = (rows[i] || []).filter((c) => c != null && String(c).trim() !== '').length;
-    if (filled >= 10) { headerIdx = i; break; }
-  }
+  const findIndex = (headers, patterns) => {
+    for (const pattern of patterns) {
+      const normPattern = normalize(pattern);
 
-  const rawHeaders = rows[headerIdx];
-  const headers = rawHeaders.map(normalizeHeader);
+      // 1) correspondência exata do cabeçalho
+      let idx = headers.findIndex((header) => normalize(header) === normPattern);
+      if (idx !== -1) return idx;
 
-  const iMunicipio = findColIndex(headers, ['município', 'municipio']);
-  const iPraca = findColIndex(headers, ['descrição do local', 'descricao do local', 'nome da praça', 'nome_da_praca']);
-  const iProjeto = findColIndex(headers, ['projeto']);
-  const iTerritorio = findColIndex(headers, ['território de identidade', 'territorio de identidade', 'território', 'territorio']);
-  const iStatusInstalacao = findColIndex(headers, ['status instalação', 'status instalacao']);
-  const iFilterLinkTLD = findColIndex(headers, ['instalação link (tld)', 'instalacao link (tld)', 'link (tld)']);
-  const iFilterHomologacao = findColIndex(headers, ['homologação prodeb', 'homologacao prodeb']);
-  const iLocal = findColIndex(headers, ['local']);
-  const iKitIndigena = findColIndex(headers, ['kit aldeias indígenas', 'kit aldeias indigenas', 'aldeias indígenas', 'aldeias indigenas']);
-  const iKitQuilombo = findColIndex(headers, ['kit quilombo', 'quilombo']);
+      // 2) correspondência por palavra inteira
+      idx = headers.findIndex((header) => normalize(header).split(/\s+/).includes(normPattern));
+      if (idx !== -1) return idx;
 
-  console.log(`[Dev Parser] Colunas encontradas: Indígena=${iKitIndigena}, Quilombo=${iKitQuilombo}`);
+      // 3) fallback de includes em textos
+      idx = headers.findIndex((header) => normalize(header).includes(normPattern));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  };
 
-  const iMun = iMunicipio !== -1 ? iMunicipio : (iLocal !== -1 ? iLocal : findColIndex(headers, ['mun']));
+  const splitList = (value) => String(value || '').split(/[;,|]/).map((item) => item.trim()).filter(Boolean);
+  const isTruthy = (value) => ['sim', 's', 'yes', 'true', '1', 'existente', 'conecta'].includes(normalize(value));
 
-  const keyIndices = new Set([iMun, iPraca, iProjeto, iTerritorio, iStatusInstalacao, iFilterLinkTLD, iFilterHomologacao, iKitIndigena, iKitQuilombo].filter((i) => i !== -1));
+  const territoryMap = new Map();
 
-  const extraCols = headers
-    .map((h, i) => ({ h, i }))
-    .filter(({ h, i }) => !keyIndices.has(i) && h && !isFinancial(h))
-    .slice(0, 15)
-    .map(({ h, i }) => ({ key: headerToKey(h), label: h, idx: i }));
+  const getTerritory = (name) => {
+    if (!territoryMap.has(name)) {
+      territoryMap.set(name, {
+        territory: name,
+        capacidade: {
+          entidadesTotal: 0,
+          campiUniversitarios: 0,
+          campiIFs: 0,
+          espacosDinamizadores: 0,
+          incubadoras: 0,
+          universidades: 0,
+          icts: 0,
+          centrosPesquisa: 0,
+          parquesTecnologicos: 0,
+        },
+        capacidadeRows: [],
+        desenvolvimentoRows: [],
+        cadeiasRows: [],
+        desenvolvimento: { ifdmTi: null, somaIfdmPop: 0, populacaoTotal: 0 },
+        assistenciaPublica: { existe: false, iniciativas: new Set() },
+        cadeiasMap: new Map(),
+        semiaridoAcumulado: 0,
+        semiaridoContador: 0,
+      });
+    }
+    return territoryMap.get(name);
+  };
 
-  const result = {};
-  const municipiosMap = new Map();
-  MUNICIPIOS_BAHIA.forEach(m => {
-    municipiosMap.set(normalizeMunicipioKey(m), m);
-  });
+  const processSheet = (sheetName) => {
+    const sheet = workbook.Sheets[sheetName];
+    if (!sheet) return;
 
-  for (let r = headerIdx + 1; r < rows.length; r++) {
-    const row = rows[r];
-    if (!row || row.length === 0) continue;
+    const rows = XLSX.utils.sheet_to_json(sheet, {
+      header: 1,
+      defval: '',
+      raw: true,
+      blankrows: false,
+    });
 
-    const municipioInput = iMun !== -1 ? String(row[iMun] || '').trim() : '';
-    if (!municipioInput) continue;
-    // Ignorar linhas de total/rodapé onde o campo munícipio é numérico
-    if (/^\d+([.,]\d+)?$/.test(municipioInput)) continue;
+    if (rows.length < 2) return;
 
-    const nomeKey = normalizeMunicipioKey(municipioInput);
-    const municipioNome = municipiosMap.get(nomeKey) || municipioInput;
-
-    // Pegar os valores das colunas
-    const valLinkTLD = iFilterLinkTLD !== -1 ? String(row[iFilterLinkTLD] || '').trim() : '';
-    const rawHomologacao = iFilterHomologacao !== -1 ? String(row[iFilterHomologacao] || '').trim() : '';
-    // Converter serial numérico do Excel para DD/MM/AAAA (coluna agora contém data ou vazio)
-    const valHomologacao = rawHomologacao ? convertExcelDate(rawHomologacao) : '';
-
-    const praca = {
-      projeto: iProjeto !== -1 ? String(row[iProjeto] || '').trim() : '',
-      nome_da_praca: iPraca !== -1 ? String(row[iPraca] || '').trim() : '',
-      territorio_identidade: iTerritorio !== -1 ? String(row[iTerritorio] || '').trim() : '',
-      status_instalacao: iStatusInstalacao !== -1 ? String(row[iStatusInstalacao] || '').trim() : '',
-      kit_aldeias_indigenas: iKitIndigena !== -1 ? String(row[iKitIndigena] || '').trim() : '',
-      kit_quilombo: iKitQuilombo !== -1 ? String(row[iKitQuilombo] || '').trim() : '',
-      // Adicionar explicitamente ao objeto:
-      instalacao_link_tld: valLinkTLD,
-      homologacao_prodeb: valHomologacao,
-    };
-
-    for (const col of extraCols) {
-      const val = row[col.idx];
-      if (val == null || val === '') continue;
-
-      let processedVal = String(val).trim();
-      if ((col.label.toLowerCase().includes('data') || col.label.toLowerCase().includes('date')) && processedVal) {
-        processedVal = convertExcelDate(processedVal);
-      }
-      praca[col.key] = processedVal;
+    let headerIdx = 0;
+    for (let i = 0; i < Math.min(15, rows.length); i++) {
+      const filled = (rows[i] || []).filter((c) => c != null && String(c).trim() !== '').length;
+      if (filled >= 8) { headerIdx = i; break; }
     }
 
-    if (!result[municipioNome]) result[municipioNome] = [];
-    result[municipioNome].push(praca);
+    const rawHeaders = rows[headerIdx] || [];
+    const headers = rawHeaders.map(normalizeHeader);
+
+    const iTerritorio = findIndex(headers, ['territorio de identidade', 'territorio']);
+    if (iTerritorio === -1) {
+      console.log(`[Dev Parser] Aba ignorada (sem território): ${sheetName}`);
+      return;
+    }
+
+    const iMunicipio = findIndex(headers, ['municipio', 'local']);
+    const iPopulacao = findIndex(headers, ['populacao']);
+    const iIfdm = findIndex(headers, ['ifdm']);
+    const iIfdmTi = findIndex(headers, ['ifdm ti', 'ifdmt', 'ifdm territorial']);
+    const iEntidades = findIndex(headers, ['valor entidades', 'entidades total', 'capacidade territorial', 'qtd_enti', 'qtd ent', 'qtd entidades']);
+    let iEntidade = findIndex(headers, ['entidade', 'institui', 'nome da entidade']);
+    if (iEntidade === iTerritorio) iEntidade = -1;
+    const iTipo = findIndex(headers, ['tipo', 'natureza', 'categoria']);
+    const iCampiUniv = findIndex(headers, ['campi universit', 'campus universit']);
+    const iCampiIfs = findIndex(headers, ['campi de if', 'campus if', 'instituto federal']);
+    const iEspacos = findIndex(headers, ['espacos dinamizadores', 'espaco dinamizador']);
+    const iIncubadoras = findIndex(headers, ['incubadoras', 'incubadora']);
+    const iParques = findIndex(headers, ['parques tecnologicos', 'parque tecnologico']);
+    const iUniversidades = findIndex(headers, ['universidades']);
+    const iICTs = findIndex(headers, ['icts', 'ict']);
+    const iCentrosPesquisa = findIndex(headers, ['centros de pesquisa', 'centro de pesquisa']);
+    const iAssistencia = findIndex(headers, ['assistencia publica', 'presenca conecta', 'conecta']);
+    const iIniciativas = findIndex(headers, ['iniciativas', 'dispositivos estaduais']);
+    const iCadeias = findIndex(headers, ['cadeia produtiva', 'apl', 'arranjo produtivo']);
+    const iIGs = findIndex(headers, ['indicacao geografica', 'igs', 'ig']);
+    const iSatelite = findIndex(headers, ['municipio satelite', 'sede']);
+    const iSemiarido = findIndex(headers, ['semiarido', 'percentual semiarido']);
+
+    console.log(`[Dev Parser] Processando aba: ${sheetName}`);
+
+    for (let r = headerIdx + 1; r < rows.length; r++) {
+      const row = rows[r];
+      if (!row || row.length === 0) continue;
+
+      const territoryName = String(row[iTerritorio] || '').trim();
+      if (!territoryName) continue;
+
+      const territory = getTerritory(territoryName);
+      const municipio = iMunicipio !== -1 ? String(row[iMunicipio] || '').trim() : '';
+
+      let rowEntidades = 0;
+      if (iEntidades !== -1) {
+        rowEntidades = toNumber(row[iEntidades]);
+      }
+      if (rowEntidades <= 0) {
+        rowEntidades = 1;
+      }
+
+      const tipoText = iTipo !== -1 ? String(row[iTipo] || '').toLowerCase() : '';
+      if (tipoText.includes('universidade')) {
+        territory.capacidade.universidades += rowEntidades;
+      }
+      if (tipoText.includes('instituto federal') || tipoText.includes('\bif\b')) {
+        territory.capacidade.campiIFs += rowEntidades;
+      }
+      if (tipoText.includes('espaco dinamizador') || tipoText.includes('espaço dinamizador')) {
+        territory.capacidade.espacosDinamizadores += rowEntidades;
+      }
+      if (tipoText.includes('incubadora')) {
+        territory.capacidade.incubadoras += rowEntidades;
+      }
+      if (tipoText.includes('parque tecnologico') || tipoText.includes('parque tecnológico')) {
+        territory.capacidade.parquesTecnologicos += rowEntidades;
+      }
+
+      territory.capacidade.campiUniversitarios += iCampiUniv !== -1 ? toNumber(row[iCampiUniv]) : 0;
+      territory.capacidade.campiIFs += iCampiIfs !== -1 ? toNumber(row[iCampiIfs]) : 0;
+      territory.capacidade.espacosDinamizadores += iEspacos !== -1 ? toNumber(row[iEspacos]) : 0;
+      territory.capacidade.incubadoras += iIncubadoras !== -1 ? toNumber(row[iIncubadoras]) : 0;
+      territory.capacidade.parquesTecnologicos += iParques !== -1 ? toNumber(row[iParques]) : 0;
+      territory.capacidade.universidades += iUniversidades !== -1 ? toNumber(row[iUniversidades]) : 0;
+      territory.capacidade.icts += iICTs !== -1 ? toNumber(row[iICTs]) : 0;
+      territory.capacidade.centrosPesquisa += iCentrosPesquisa !== -1 ? toNumber(row[iCentrosPesquisa]) : 0;
+
+      if (!territory.rows) territory.rows = [];
+      territory.rows.push({
+        municipio,
+        entidade: iEntidade !== -1 ? String(row[iEntidade] || '').trim() : '',
+        tipo: iTipo !== -1 ? String(row[iTipo] || '').trim() : '',
+        qtd_enti: iEntidades !== -1 ? toNumber(row[iEntidades]) : 0,
+        capacidade_area: rowEntidades,
+      });
+
+      // Detalhe Capacidade
+      territory.capacidadeRows.push({
+        municipio,
+        entidade: iEntidade !== -1 ? String(row[iEntidade] || '').trim() : '',
+        tipo: iTipo !== -1 ? String(row[iTipo] || '').trim() : '',
+        valor: rowEntidades,
+      });
+
+      territory.capacidade.entidadesTotal += rowEntidades;
+
+      // Detalhe Desenvolvimento
+      if (iIfdm !== -1 || iPopulacao !== -1 || iIfdmTi !== -1) {
+        territory.desenvolvimentoRows.push({
+          municipio,
+          ifdm: iIfdm !== -1 ? toNumber(row[iIfdm]) : null,
+          populacao: iPopulacao !== -1 ? toNumber(row[iPopulacao]) : null,
+          ifdmTi: iIfdmTi !== -1 ? toNumber(row[iIfdmTi]) : null,
+        });
+      }
+
+      if (iIfdm !== -1 && iPopulacao !== -1) {
+        const ifdm = toNumber(row[iIfdm]);
+        const populacao = toNumber(row[iPopulacao]);
+        if (ifdm > 0 && populacao > 0) {
+          territory.desenvolvimento.somaIfdmPop += ifdm * populacao;
+          territory.desenvolvimento.populacaoTotal += populacao;
+        }
+      }
+
+      if (iIfdmTi !== -1) {
+        const ifdmTiRaw = toNumber(row[iIfdmTi]);
+        if (ifdmTiRaw > 0) {
+          territory.desenvolvimento.ifdmTi = ifdmTiRaw;
+        }
+      }
+
+      if (iAssistencia !== -1 && isTruthy(row[iAssistencia])) {
+        territory.assistenciaPublica.existe = true;
+        territory.assistenciaPublica.iniciativas.add('Conecta');
+      }
+
+      if (iIniciativas !== -1) {
+        splitList(row[iIniciativas]).forEach((initiative) => territory.assistenciaPublica.iniciativas.add(initiative));
+      }
+
+      const chainNames = [
+        ...(iCadeias !== -1 ? splitList(row[iCadeias]) : []),
+        ...(iIGs !== -1 ? splitList(row[iIGs]) : []),
+      ];
+      const satelite = iSatelite !== -1 ? String(row[iSatelite] || municipio || '').trim() : String(municipio || '').trim();
+
+      if (chainNames.length > 0) {
+        territory.cadeiasRows.push({
+          municipio,
+          cadeias: chainNames,
+          municipioSatelite: satelite,
+        });
+      }
+
+      chainNames.forEach((chainName) => {
+        if (!territory.cadeiasMap.has(chainName)) {
+          territory.cadeiasMap.set(chainName, { cadeia: chainName, municipios: new Set(), satelites: new Map() });
+        }
+        const chain = territory.cadeiasMap.get(chainName);
+        if (municipio) chain.municipios.add(municipio);
+        if (satelite) chain.satelites.set(satelite, (chain.satelites.get(satelite) || 0) + 1);
+      });
+
+      if (iSemiarido !== -1) {
+        const semiarido = toNumber(row[iSemiarido]);
+        if (semiarido > 0) {
+          territory.semiaridoAcumulado += semiarido > 1 ? semiarido : semiarido * 100;
+          territory.semiaridoContador += 1;
+        }
+      }
+    }
+  };
+
+  targetSheetNames.forEach(processSheet);
+
+  if (!territoryMap.size) {
+    throw new Error('Nenhuma linha territorial válida encontrada nas 3 tabelas da planilha.');
   }
 
+  const territories = Array.from(territoryMap.values()).map((entry) => {
+    const computedEntidades = entry.capacidade.universidades + entry.capacidade.campiUniversitarios + entry.capacidade.campiIFs + entry.capacidade.icts + entry.capacidade.centrosPesquisa + entry.capacidade.espacosDinamizadores + entry.capacidade.parquesTecnologicos + entry.capacidade.incubadoras;
+    if (entry.capacidade.entidadesTotal <= 0) {
+      entry.capacidade.entidadesTotal = computedEntidades;
+    }
+
+    if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.populacaoTotal > 0) {
+      entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdmPop / entry.desenvolvimento.populacaoTotal;
+    }
+
+    const cadeiasProdutivas = Array.from(entry.cadeiasMap.values())
+      .map((chain) => {
+        const orderedSatelites = Array.from(chain.satelites.entries()).sort((a, b) => b[1] - a[1]);
+        return {
+          cadeia: chain.cadeia,
+          municipioSatelite: orderedSatelites[0]?.[0] || null,
+          municipiosEnvolvidos: chain.municipios.size,
+        };
+      })
+      .sort((a, b) => b.municipiosEnvolvidos - a.municipiosEnvolvidos)
+      .slice(0, 2);
+
+    return {
+      territory: entry.territory,
+      capacidade: entry.capacidade,
+      capacidadeDetalhada: entry.capacidadeRows || [],
+      desenvolvimento: {
+        ifdmTi: entry.desenvolvimento.ifdmTi,
+        populacaoTotal: entry.desenvolvimento.populacaoTotal || null,
+        metodologia: 'IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)',
+      },
+      desenvolvimentoDetalhado: entry.desenvolvimentoRows || [],
+      assistenciaPublica: {
+        existe: entry.assistenciaPublica.existe,
+        iniciativas: Array.from(entry.assistenciaPublica.iniciativas),
+      },
+      cadeiasProdutivas,
+      cadeiasProdutivasDetalhado: entry.cadeiasRows || [],
+      semiaridoPercentual: entry.semiaridoContador > 0 ? entry.semiaridoAcumulado / entry.semiaridoContador : null,
+      futureSignals: {
+        agriculturaFamiliar: null,
+        gruposSubrepresentados: null,
+      },
+      parquesTecnologicosMunicipios: [],
+    };
+  }).sort((a, b) => a.territory.localeCompare(b.territory));
+
+  const result = {
+    generatedAt: new Date().toISOString(),
+    territories,
+    summary: {
+      territories: territories.length,
+      totalEntidades: territories.reduce((acc, item) => acc + (item.capacidade.entidadesTotal || 0), 0),
+      territoriosComAssistencia: territories.filter((item) => item.assistenciaPublica.existe).length,
+    },
+  };
+
   const parseTime = Date.now() - startTime;
-  console.log(`[Dev Parser] ✓ Parseado em ${parseTime}ms: ${Object.keys(result).length} municípios`);
+  console.log(`[Dev Parser] ✓ Parseado em ${parseTime}ms: ${result.summary.territories} territórios`);
 
   return result;
 }
@@ -225,7 +443,7 @@ const sharepointProxyPlugin = () => ({
         return;
       }
 
-      const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
+      const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1';
 
       if (nocache) {
         console.log('[Dev Proxy] 🚫 BYPASS DE CACHE SOLICITADO (nocache=true)');

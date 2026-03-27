@@ -1,28 +1,23 @@
 import React, { useState } from 'react';
-import ConectaMap from '../ConectaMap';
+import ConectaMap from '../ConectaMap'; // Ajuste o caminho conforme necessário
+import LandingHero from './components/hero';
 
 export default function App() {
+  const [page, setPage] = useState('overview');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(new Date().toLocaleTimeString());
 
   const handleForceRefresh = async () => {
-    if (isRefreshing) {
-      return;
-    }
-
+    if (isRefreshing) return;
     setIsRefreshing(true);
 
     try {
-
       if ('caches' in window) {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
       }
-      if (window.localStorage) {
-        window.localStorage.clear();
-      }
-      if (window.sessionStorage) {
-        window.sessionStorage.clear();
-      }
+      if (window.localStorage) window.localStorage.clear();
+      if (window.sessionStorage) window.sessionStorage.clear();
 
       if (window.indexedDB && window.indexedDB.databases) {
         const databases = await window.indexedDB.databases();
@@ -44,7 +39,6 @@ export default function App() {
         const name = cookie.split('=')[0].trim();
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
       });
-
     } catch (err) {
       console.warn('[App] Falha ao forcar atualizacao completa:', err);
     }
@@ -55,111 +49,105 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col">
+    <div className="flex h-screen bg-[#f1f5f9] font-sans text-slate-800 overflow-hidden">
+      
+      {/* Sidebar - Menu Lateral (Desktop) */}
+      <aside className="w-64 bg-[#fff] text-white flex-col hidden md:flex shrink-0 z-20 shadow-xl">
+        
 
-      <div className="bg-slate-900 text-slate-200 py-2 px-4 sm:px-6 lg:px-8 text-[10px] sm:text-xs font-bold uppercase tracking-widest flex justify-between items-center z-20 relative">
-        <span className="hidden sm:inline opacity-90">
-          Governo do Estado da Bahia
-        </span>
-        <span className="sm:hidden opacity-90 tracking-widest">
-          GOV.BA
-        </span>
-      </div>
-     
-      <header className="bg-[#1E3A8A] relative overflow-hidden pb-24 pt-10 md:pb-28 md:pt-16 px-4 sm:px-6 lg:px-8 shadow-inner">
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden">
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full border-[40px] border-white/10"></div>
-          <div className="absolute top-1/2 -left-20 w-64 h-64 rounded-full border-[20px] border-blue-400/20"></div>
+        {/* Itens de Navegação (Mocks baseados na imagem) */}
+        <nav className="flex-1 px-3 py-6 space-y-2 text-sm font-medium">
+          <div
+            className={`px-4 py-3 rounded-lg flex items-center gap-3 cursor-pointer transition-colors ${page === 'overview' ? 'bg-[#0f766e] text-white shadow-md' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+            onClick={() => setPage('overview')}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            Visão Geral
+          </div>
+          <div
+            className={`px-4 py-3 rounded-lg flex items-center gap-3 cursor-pointer transition-colors ${page === 'territorios' ? 'bg-[#0f766e] text-white shadow-md' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+            onClick={() => setPage('territorios')}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            Territórios
+          </div>
+          <div className="px-4 py-3 rounded-lg flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            Relatórios
+          </div>
+        </nav>
+
+        {/* Rodapé da Sidebar */}
+        <div className="p-4 border-t border-slate-700 text-xs text-slate-500 text-center">
+            <img src="/img/Secti_Vertical.png" alt="Brasão da Bahia" className="mx-auto mb-2 object-contain" />
+            <p className="mt-1">© {new Date().getFullYear()}</p>
         </div>
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-12">
-          <div className="flex-1 text-center md:text-left w-full">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4">
-              Painel Conecta Bahia
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        {/* Header Superior Top Bar */}
+        <header className="h-16 bg-[#fff] flex items-center justify-between px-4 lg:px-6 shrink-0 shadow-md z-10 border-b border-slate-700 md:border-none">
+          {/* Menu Hambúrguer (Mobile) & Título */}
+          <div className="flex items-center gap-4">
+            <button className="md:hidden text-slate-300 hover:text-white">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-wide text-slate-800 uppercase flex items-center gap-2">
+               <span className="hidden sm:inline">PAINEL SECTI TERRITÓRIOS</span>
+               <span className="sm:hidden">TERRITÓRIOS</span>
             </h1>
-            <p className="text-blue-100/90 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl mx-auto md:mx-0 font-medium">
-              Consulte a disponibilidade de pontos com Wi-Fi gratuito em todo o estado. Uma iniciativa oficial para democratizar o acesso à internet e promover a inclusão digital do cidadão.
-            </p>
-            <div className="mt-6 flex justify-center md:justify-start">
-              <button
-                type="button"
-                onClick={handleForceRefresh}
-                disabled={isRefreshing}
-                className="inline-flex items-center justify-center rounded-lg border border-white/40 bg-white/10 px-4 py-2 text-xs sm:text-sm font-semibold tracking-wide text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-70"
-                title="Verifica se há atualizações e recarrega a aplicação com os dados mais recentes"
-              >
-                {isRefreshing ? 'Atualizando...' : 'Verificar atualizações'}
-              </button>
-            </div>
           </div>
-          <div className="w-full md:w-auto flex justify-center shrink-0">
-            <img
-              src="/img/LogoConecta.png"
-              alt="Logo Conecta"
-              className="w-56 sm:w-64 md:w-80 lg:w-[400px] object-contain"
-            />
-          </div>
-        </div>
-      </header>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 -mt-8 md:-mt-16 relative z-20 mb-12">
-        <section className="mb-4 sm:mb-6 overflow-hidden sm:rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-white shadow-lg">
-          <div className="relative px-4 py-5 sm:px-6 sm:py-6">
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-1.5 bg-blue-700" />
-            <div className="pl-3 sm:pl-4">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center rounded-full bg-blue-700 px-3 py-1 text-[10px] sm:text-xs font-bold tracking-wide uppercase text-white">
-                      Novidade 
-                    </span>
-                    <span className="inline-flex items-center rounded-full border border-blue-200 bg-white px-2.5 py-1 text-[10px] sm:text-xs font-semibold text-blue-800">
-                      11 de março de 2026
-                    </span>
-                  </div>
-                  <h2 className="mt-3 text-lg sm:text-2xl font-extrabold text-slate-900 leading-tight">
-                    Decreto nº 24.419 institui o Programa Conecta Bahia
-                  </h2>
-                  <p className="mt-2 text-sm sm:text-[15px] text-slate-700 leading-relaxed max-w-4xl">
-                    A iniciativa amplia o acesso à internet gratuita e de qualidade em espaços públicos, comunidades rurais e territórios com menor cobertura, fortalecendo a inclusão digital, o acesso a serviços públicos, a educação e o desenvolvimento socioeconômico na Bahia.
-                  </p>
-                </div>
-                <div className="sm:pt-1 shrink-0">
-                  <a
-                    href="https://www.ba.gov.br/secti/sites/site-secti/files/2026-03/DECRETO%20CONECTA.pdf"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 py-2.5 text-xs sm:text-sm font-semibold tracking-wide text-white transition hover:bg-blue-800 shadow-sm"
+        </header>
+
+        {/* Content Body (Onde vai o Dashboard) */}
+        <div className="flex-1 overflow-y-auto ">
+          {page === 'overview' ? (
+            <LandingHero onAccessDashboard={() => setPage('territorios')} />
+          ) : (
+            <>
+              {/* Toolbar Principal (Botão de Atualizar que você pediu) */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleForceRefresh}
+                    disabled={isRefreshing}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#1e293b] px-4 py-2 text-sm font-semibold tracking-wide text-white transition-all hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-70 shadow-sm"
+                    title="Verifica se há atualizações e recarrega a aplicação com os dados mais recentes"
                   >
-                    Ler decreto na íntegra
-                  </a>
+                    {isRefreshing ? (
+                      <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    )}
+                    {isRefreshing ? 'Atualizando...' : 'Verificar atualizações'}
+                  </button>
+
+                  {!isRefreshing && (
+                    <span className="text-xs text-slate-500 font-medium whitespace-nowrap hidden sm:block">
+                      Última atualização: [{lastUpdate}]
+                    </span>
+                  )}
+                </div>
+
+                {/* Subtítulo Opcional do Relatório */}
+                <div className="text-right hidden lg:block">
+                  <h2 className="text-sm font-bold text-slate-700">Painel Territorial CT&I</h2>
+                  <p className="text-xs text-slate-500">Dados Consolidados</p>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
 
-        <div className="bg-white sm:rounded-2xl shadow-2xl border-t sm:border border-slate-200 overflow-hidden min-h-[500px]">
-          <ConectaMap />
+              {/* Injeção do seu Componente do Mapa */}
+              <div className="w-full">
+                <ConectaMap />
+              </div>
+            </>
+          )}
         </div>
       </main>
-
-      <footer className="bg-white border-t border-slate-200 pt-12 pb-10 mt-auto text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 text-xs text-center md:text-left">
-
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-            <span className="flex flex-col gap-1 items-center md:items-start">
-              <img src="/img/MARCA%20GOVBA%200126%20-%20DO%20LADO%20DA%20GENTE__H.png" alt="Logo Governo BA" className="h-16 sm:h-20 w-auto object-contain" />
-              <p className="font-medium text-slate-500 text-center ms-4">Secretaria de Ciência, Tecnologia e Inovação</p>
-            </span>
-          </div>
-
-          <div>
-            <p className="font-medium">© {new Date().getFullYear()} Todos os direitos reservados.</p>
-          </div>
-
-        </div>
-      </footer>
-
     </div>
   );
 }

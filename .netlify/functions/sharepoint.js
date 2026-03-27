@@ -144,7 +144,7 @@ async function decodeResponseBody(data, contentEncoding = '') {
 }
 
 exports.handler = async (event, context) => {
-  const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/valmir_ferreira_secti_ba_gov_br/IQDZbNB-DvGJTIGRveSkOzDZATYdKyDyClL0S6SsWABR4bw?download=1';
+  const downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1';
   const nocache = event.queryStringParameters?.nocache === 'true';
   const requestAcceptEncoding = (
     event?.headers?.['accept-encoding'] ||

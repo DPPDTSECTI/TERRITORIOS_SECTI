@@ -2,8 +2,8 @@ import * as XLSX from 'xlsx';
 import { get, set, del } from 'idb-keyval'; // Importando o gerenciador de IndexedDB
 import { MUNICIPIOS_BAHIA } from './Municipios.js';
 
-const CACHE_KEY = 'conecta_spreadsheet_data_v8'; // v8: normalizar aliases de municípios no payload
-const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v8';
+const CACHE_KEY = 'conecta_spreadsheet_data_v9'; // v9: invalida cache antigo após troca de planilha/link
+const CACHE_TIMESTAMP_KEY = 'conecta_spreadsheet_timestamp_v9';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hora em milissegundos
 
 const SHAREPOINT_PROXY_URL = import.meta.env.DEV
@@ -263,7 +263,7 @@ export function parseSpreadsheet(buffer) {
  * @param {Function} onUpdate - Callback opcional chamado quando dados são atualizados em background
  * @returns {{ data: Object, source: 'upload'|'sharepoint'|'cache', fresh: boolean }}
  */
-export async function fetchConectaData(onUpdate = null, filterMode = 'instalado') {
+export async function fetchConectaData(onUpdate = null, filterMode = 'ambos') {
   let cachedData = null;
   let cacheAge = Infinity;
 
@@ -274,6 +274,8 @@ export async function fetchConectaData(onUpdate = null, filterMode = 'instalado'
       await del('conecta_spreadsheet_timestamp');
       await del('conecta_spreadsheet_data_v2');
       await del('conecta_spreadsheet_timestamp_v2');
+      await del('conecta_spreadsheet_data_v8');
+      await del('conecta_spreadsheet_timestamp_v8');
     } catch (e) {
       // Ignorar erros ao limpar cache antigo
     }
