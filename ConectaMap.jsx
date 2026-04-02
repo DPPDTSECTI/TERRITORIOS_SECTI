@@ -19,6 +19,15 @@ const INTEGER_FORMATTER = new Intl.NumberFormat('pt-BR');
 
 const formatCount = (value) => INTEGER_FORMATTER.format(Number(value || 0));
 
+const getUniversityCampusCount = (capacidade) => {
+    const campiUniversitarios = Number(capacidade?.campiUniversitarios || 0);
+    if (campiUniversitarios > 0) {
+        return campiUniversitarios;
+    }
+
+    return Number(capacidade?.universidades || 0);
+};
+
 const DEFAULT_MAP_FILTERS = {
     query: '',
     assistencia: 'todos',
@@ -446,7 +455,7 @@ const ConectaGovDashboard = () => {
         },
         {
             label: 'QUANTIDADE CAMPI DE UNIVERSIDADES ESTADUAIS E FEDERAIS',
-            value: formatCount(selectedData.capacidade?.universidades || 0),
+            value: formatCount(getUniversityCampusCount(selectedData.capacidade)),
         },
         {
             label: 'QUANTIDADE CAMPI DE INSTITUTOS FEDERAIS',
@@ -560,7 +569,7 @@ const ConectaGovDashboard = () => {
                         />
                         <StatCard 
                             title="QUANTIDADE CAMPI DE UNIVERSIDADES ESTADUAIS E FEDERAIS" 
-                            value={selectedData ? formatCount(selectedData.capacidade?.universidades || 0) : '-'} 
+                            value={selectedData ? formatCount(getUniversityCampusCount(selectedData.capacidade)) : '-'} 
                             color="#d97706" 
                             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} /></svg>}
                         />

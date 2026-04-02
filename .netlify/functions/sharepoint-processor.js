@@ -52,6 +52,10 @@ function splitList(value) {
     .filter(Boolean);
 }
 
+function hasWholeWord(text, word) {
+  return new RegExp(`(^|\\s)${word}($|\\s)`).test(text);
+}
+
 function findHeaderRow(rows) {
   let bestIdx = 0;
   let bestScore = 0;
@@ -83,6 +87,10 @@ function findColumnIndex(normalizedHeaders, patterns) {
     // 3) correspondência por palavra com limite de borda (não sub-palavra dentro de outra palavra)
     const regex = new RegExp(`(^|\\s)${normPattern}($|\\s)`);
     idx = normalizedHeaders.findIndex((header) => regex.test(header));
+    if (idx !== -1) return idx;
+
+    // 4) fallback mais amplo para cabeçalhos menos padronizados
+    idx = normalizedHeaders.findIndex((header) => header.includes(normPattern));
     if (idx !== -1) return idx;
   }
   return -1;
@@ -212,6 +220,25 @@ function parseSpreadsheet(buffer) {
       if (municipio) territory.municipios.add(municipio);
 
       const capacidade = territory.capacidade;
+      let rowEntidades = 0;
+      if (iEntidades !== -1) {
+        rowEntidades = toNumber(row[iEntidades]);
+      }
+      if (rowEntidades <= 0) {
+        rowEntidades = 1;
+      }
+
+      const tipoText = iTipo !== -1 ? normalizeText(row[iTipo]) : '';
+
+      if (iUniversidades === -1 && tipoText.includes('universidade')) capacidade.universidades += rowEntidades;
+      if (iCampiUniv === -1 && (tipoText.includes('campi universit') || tipoText.includes('campus universit'))) capacidade.campiUniversitarios += rowEntidades;
+      if (iCampiIfs === -1 && (tipoText.includes('instituto federal') || hasWholeWord(tipoText, 'if'))) capacidade.campiIFs += rowEntidades;
+      if (iEspacos === -1 && tipoText.includes('espaco dinamizador')) capacidade.espacosDinamizadores += rowEntidades;
+      if (iIncubadoras === -1 && tipoText.includes('incubadora')) capacidade.incubadoras += rowEntidades;
+      if (iParques === -1 && tipoText.includes('parque tecnologico')) capacidade.parquesTecnologicos += rowEntidades;
+      if (iICTs === -1 && (tipoText.includes('icts') || hasWholeWord(tipoText, 'ict'))) capacidade.icts += rowEntidades;
+      if (iCentrosPesquisa === -1 && tipoText.includes('centro de pesquisa')) capacidade.centrosPesquisa += rowEntidades;
+
       if (iCampiUniv !== -1) capacidade.campiUniversitarios += toNumber(row[iCampiUniv]);
       if (iCampiIfs !== -1) capacidade.campiIFs += toNumber(row[iCampiIfs]);
       if (iEspacos !== -1) capacidade.espacosDinamizadores += toNumber(row[iEspacos]);
@@ -220,13 +247,7 @@ function parseSpreadsheet(buffer) {
       if (iUniversidades !== -1) capacidade.universidades += toNumber(row[iUniversidades]);
       if (iICTs !== -1) capacidade.icts += toNumber(row[iICTs]);
       if (iCentrosPesquisa !== -1) capacidade.centrosPesquisa += toNumber(row[iCentrosPesquisa]);
-
-      if (iEntidades !== -1) {
-        const entidadesValor = toNumber(row[iEntidades]);
-        if (entidadesValor > 0) {
-          capacidade.entidadesTotal += entidadesValor;
-        }
-      }
+      capacidade.entidadesTotal += rowEntidades;
 
       if (iIfdm !== -1 && iPopulacao !== -1) {
         const ifdm = toNumber(row[iIfdm]);
@@ -259,7 +280,7 @@ function parseSpreadsheet(buffer) {
         municipio,
         entidade: iEntidade !== -1 ? String(row[iEntidade] || '').trim() : '',
         tipo: iTipo !== -1 ? String(row[iTipo] || '').trim() : '',
-        quantidade: iEntidades !== -1 ? toNumber(row[iEntidades]) : 0,
+        quantidade: rowEntidades,
       });
 
       if (iIfdm !== -1 || iPopulacao !== -1 || iIfdmTi !== -1) {
@@ -323,7 +344,7 @@ function parseSpreadsheet(buffer) {
         territory.futureSignals.gruposSubrepresentados = String(row[iGruposSubrep]).trim();
       }
 
-      if (iParques !== -1 && toNumber(row[iParques]) > 0 && municipio) {
+      if (((iParques !== -1 && toNumber(row[iParques]) > 0) || (iParques === -1 && tipoText.includes('parque tecnologico'))) && municipio) {
         territory.parquesMunicipios.add(municipio);
       }
     }
