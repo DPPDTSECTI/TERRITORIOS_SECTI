@@ -9,6 +9,17 @@ function normalizeText(value) {
     .trim();
 }
 
+const TERRITORY_NAME_ALIASES = {
+  [normalizeText('Rio Corrente')]: 'Bacia do Rio Corrente',
+};
+
+function normalizeTerritoryName(value) {
+  const normalizedValue = normalizeText(value);
+  if (!normalizedValue) return '';
+
+  return TERRITORY_NAME_ALIASES[normalizedValue] || String(value || '').trim();
+}
+
 function toNumber(value) {
   if (value == null || value === '') return 0;
   if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
@@ -98,9 +109,12 @@ function parseSpreadsheet(buffer) {
   const territoryMap = new Map();
 
   const getTerritory = (name) => {
-    if (!territoryMap.has(name)) {
-      territoryMap.set(name, {
-        territory: name,
+    const canonicalName = normalizeTerritoryName(name);
+    if (!canonicalName) return null;
+
+    if (!territoryMap.has(canonicalName)) {
+      territoryMap.set(canonicalName, {
+        territory: canonicalName,
         municipios: new Set(),
         capacidade: {
           entidadesTotal: 0,
@@ -135,7 +149,7 @@ function parseSpreadsheet(buffer) {
         parquesMunicipios: new Set(),
       });
     }
-    return territoryMap.get(name);
+    return territoryMap.get(canonicalName);
   };
 
   const processSheet = (sheetName) => {
@@ -189,10 +203,11 @@ function parseSpreadsheet(buffer) {
 
     for (let r = headerRowIndex + 1; r < rows.length; r++) {
       const row = rows[r] || [];
-      const territoryRaw = String(row[iTerritorio] || '').trim();
+      const territoryRaw = normalizeTerritoryName(row[iTerritorio]);
       if (!territoryRaw) continue;
 
       const territory = getTerritory(territoryRaw);
+      if (!territory) continue;
       const municipio = iMunicipio !== -1 ? String(row[iMunicipio] || '').trim() : '';
       if (municipio) territory.municipios.add(municipio);
 

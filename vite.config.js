@@ -102,6 +102,17 @@ function parseSpreadsheet(buffer) {
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
+  const TERRITORY_NAME_ALIASES = {
+    [normalize('Rio Corrente')]: 'Bacia do Rio Corrente',
+  };
+
+  const normalizeTerritoryName = (value) => {
+    const normalizedValue = normalize(value);
+    if (!normalizedValue) return '';
+
+    return TERRITORY_NAME_ALIASES[normalizedValue] || String(value || '').trim();
+  };
+
   const toNumber = (value) => {
     if (value == null || value === '') return 0;
     if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
@@ -140,9 +151,12 @@ function parseSpreadsheet(buffer) {
   const territoryMap = new Map();
 
   const getTerritory = (name) => {
-    if (!territoryMap.has(name)) {
-      territoryMap.set(name, {
-        territory: name,
+    const canonicalName = normalizeTerritoryName(name);
+    if (!canonicalName) return null;
+
+    if (!territoryMap.has(canonicalName)) {
+      territoryMap.set(canonicalName, {
+        territory: canonicalName,
         capacidade: {
           entidadesTotal: 0,
           campiUniversitarios: 0,
@@ -164,7 +178,7 @@ function parseSpreadsheet(buffer) {
         semiaridoContador: 0,
       });
     }
-    return territoryMap.get(name);
+    return territoryMap.get(canonicalName);
   };
 
   const processSheet = (sheetName) => {
@@ -225,10 +239,11 @@ function parseSpreadsheet(buffer) {
       const row = rows[r];
       if (!row || row.length === 0) continue;
 
-      const territoryName = String(row[iTerritorio] || '').trim();
+      const territoryName = normalizeTerritoryName(row[iTerritorio]);
       if (!territoryName) continue;
 
       const territory = getTerritory(territoryName);
+      if (!territory) continue;
       const municipio = iMunicipio !== -1 ? String(row[iMunicipio] || '').trim() : '';
 
       let rowEntidades = 0;

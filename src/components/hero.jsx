@@ -16,15 +16,15 @@ const LandingHero = ({ onAccessDashboard }) => {
         {/* Text Section (Esquerda) */}
         <div className="flex-1 text-center lg:text-left">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-800 tracking-tight mb-6 leading-[1.15]">
-            Painel Territorial de <br className="hidden lg:block" />
+            Painel Territorial <em></em> <br className="hidden lg:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f766e] to-cyan-600 drop-shadow-sm">
-              Ciência e Tecnologia
+              Ciência, Tecnologia e Inovação
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
-            Uma plataforma interativa desenvolvida pela SECTI para explorar,
-            analisar e gerir os indicadores de capacidade e desenvolvimento em
+            Uma plataforma interativa desenvolvida pela SECTI para a
+            visualização das características inerentes à ciência, tecnologia e
             inovação nos territórios de identidade do Estado da Bahia.
           </p>
 

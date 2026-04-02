@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import * as topojson from 'topojson-client';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
-import { fetchTerritorialData, clearTerritorialCache, getAssistenciaStatusLabel } from './utils/territorialDataService';
+import { fetchTerritorialData } from './utils/territorialDataService';
+import { fetchConectaData, applyFilterMode } from './utils/spreadsheetService';
 
 const SVG_W = 700;
 const SVG_H = 700;
@@ -14,6 +15,30 @@ const TERRITORY_COLORS = [
     '#F8AFAD', '#47887A', '#D9CB72', '#B0BD77', '#C5C7DB', '#C8C6C4',
 ];
 
+const INTEGER_FORMATTER = new Intl.NumberFormat('pt-BR');
+
+const formatCount = (value) => INTEGER_FORMATTER.format(Number(value || 0));
+
+const DEFAULT_MAP_FILTERS = {
+    query: '',
+    assistencia: 'todos',
+    parques: 'todos',
+    capacidade: 'todas',
+};
+
+const matchesCapacityFilter = (value, filterValue) => {
+    switch (filterValue) {
+        case 'ate-10':
+            return value <= 10;
+        case '11-25':
+            return value >= 11 && value <= 25;
+        case '26+':
+            return value >= 26;
+        default:
+            return true;
+    }
+};
+
 function normalizeName(value) {
     if (!value) return '';
     return String(value || '')
@@ -21,22 +46,99 @@ function normalizeName(value) {
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9]/g, ' ')
-        .replace(/\s+/g, ' ').trim();
+        .replace(/\s+/g, ' ')
+        .trim();
 }
 
+const TERRITORY_NAME_ALIASES = {
+    [normalizeName('Rio Corrente')]: 'Bacia do Rio Corrente',
+};
+
+const getCanonicalTerritoryName = (value) => {
+    const normalizedValue = normalizeName(value);
+    if (!normalizedValue) return '';
+
+    return TERRITORY_NAME_ALIASES[normalizedValue] || String(value || '').trim();
+};
+
+const getTerritoryKey = (value) => normalizeName(getCanonicalTerritoryName(value));
+
 const territoryColorMap = {};
+const territoryNameMap = {};
+const territoryMunicipalityCountMap = {};
 territoriosMunicipios.territorios_de_identidade.forEach((territorio) => {
-    territoryColorMap[normalizeName(territorio.nome)] = TERRITORY_COLORS[territorio.id - 1] || '#E2E8F0';
+    const territoryKey = getTerritoryKey(territorio.nome);
+    const canonicalTerritoryName = getCanonicalTerritoryName(territorio.nome);
+
+    territoryColorMap[territoryKey] = TERRITORY_COLORS[territorio.id - 1] || '#E2E8F0';
+    territoryNameMap[territoryKey] = canonicalTerritoryName;
+    territoryMunicipalityCountMap[territoryKey] = territorio.municipios.length;
 });
+
+const resolveTerritoryName = (value) => {
+    const territoryKey = getTerritoryKey(value);
+    return territoryNameMap[territoryKey] || getCanonicalTerritoryName(value);
+};
 
 const buildMunicipioTerritoryMap = () => {
     const m = {};
     territoriosMunicipios.territorios_de_identidade.forEach((territorio) => {
         territorio.municipios.forEach((municipio) => {
-            m[normalizeName(municipio)] = territorio.nome;
+            m[normalizeName(municipio)] = getCanonicalTerritoryName(territorio.nome);
         });
     });
     return m;
+};
+
+const hasAssistencia = (value) => {
+    const normalizedValue = normalizeName(value);
+    return value === true || ['sim', 'existente', 'conecta'].includes(normalizedValue);
+};
+
+const getAssistenciaDisplayLabel = (value) => (hasAssistencia(value) ? 'Existente' : 'Não existente');
+
+const buildPriorityChains = (territoryData) => {
+    if (!territoryData) return [];
+
+    const summarizedChains = (territoryData.cadeiasProdutivas || [])
+        .map((item) => ({
+            cadeia: item?.cadeia || '',
+            municipioSede: item?.municipioSatelite || item?.municipio || '',
+        }))
+        .filter((item) => item.cadeia)
+        .slice(0, 2);
+
+    if (summarizedChains.length > 0) {
+        return summarizedChains;
+    }
+
+    const rankedChains = new Map();
+    const detailedChains = territoryData.cadeiasProdutivasDetalhado || territoryData.cadeiasRows || [];
+
+    detailedChains.forEach((row) => {
+        const cadeias = Array.isArray(row?.cadeias) ? row.cadeias : row?.cadeia ? [row.cadeia] : [];
+        const municipioSede = row?.municipioSatelite || row?.municipio || '';
+
+        cadeias.forEach((cadeia) => {
+            if (!cadeia) return;
+
+            if (!rankedChains.has(cadeia)) {
+                rankedChains.set(cadeia, { cadeia, municipioSede, total: 0 });
+            }
+
+            const currentChain = rankedChains.get(cadeia);
+            currentChain.total += 1;
+
+            if (!currentChain.municipioSede && municipioSede) {
+                currentChain.municipioSede = municipioSede;
+            }
+        });
+    });
+
+    return Array.from(rankedChains.values())
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 2)
+        .map(({ cadeia, municipioSede }) => ({ cadeia, municipioSede }));
 };
 
 const getPathD = (geometry, project) => {
@@ -64,14 +166,15 @@ const getPathD = (geometry, project) => {
 
 // Componente visual para os Cards de KPI
 const StatCard = ({ title, value, color, icon }) => (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between relative overflow-hidden">
+    <div className="group bg-white/95 p-4 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_-28px_rgba(15,23,42,0.45)]">
+        <div className="absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}></div>
         <div className={`absolute left-0 top-0 bottom-0 w-1`} style={{ backgroundColor: color }}></div>
         <div className="flex justify-between items-start pl-2">
             <div>
-                <h3 className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">{title}</h3>
+                <h3 className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 leading-tight">{title}</h3>
                 <span className="text-2xl sm:text-3xl font-extrabold text-slate-800">{value}</span>
             </div>
-            <div className="p-2 rounded-lg" style={{ backgroundColor: `${color}15`, color: color }}>
+            <div className="p-2 rounded-xl shadow-sm" style={{ backgroundColor: `${color}15`, color: color }}>
                 {icon}
             </div>
         </div>
@@ -87,12 +190,21 @@ const ConectaGovDashboard = () => {
     const [loading, setLoading] = useState(true);
     const mapContainerRef = useRef(null);
     const [error, setError] = useState(null);
+    const [homologatedConectaTerritories, setHomologatedConectaTerritories] = useState(() => new Set());
+    const [hasHomologacaoConectaData, setHasHomologacaoConectaData] = useState(false);
+    const [filters, setFilters] = useState(DEFAULT_MAP_FILTERS);
 
     const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
     const territoryDataMap = useMemo(() => {
         const map = {};
         (territorialData.territories || []).forEach((t) => {
-            map[t.territory] = t;
+            const territoryKey = getTerritoryKey(t?.territory);
+            if (!territoryKey) return;
+
+            map[territoryKey] = {
+                ...t,
+                territory: resolveTerritoryName(t.territory),
+            };
         });
         return map;
     }, [territorialData]);
@@ -113,6 +225,51 @@ const ConectaGovDashboard = () => {
 
         load();
     }, []);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadHomologatedConectaData = async () => {
+            try {
+                const { data } = await fetchConectaData(null, 'ambos');
+                if (!active || !data || typeof data !== 'object') return;
+
+                const hasMetadata = Object.values(data).some((pracas) =>
+                    Array.isArray(pracas) && pracas.some((praca) => praca && ('homologacao_prodeb' in praca || 'status_homologacao_pontos' in praca))
+                );
+
+                const homologatedData = applyFilterMode(data, 'homologacao');
+                const nextTerritories = new Set();
+
+                Object.entries(homologatedData || {}).forEach(([municipio, pracas]) => {
+                    if (!Array.isArray(pracas) || pracas.length === 0) return;
+
+                    const mappedTerritory = municipioTerritoryMap[normalizeName(municipio)];
+                    const fallbackTerritory = pracas.find((praca) => praca?.territorio_identidade)?.territorio_identidade || '';
+                    const territoryName = getTerritoryKey(mappedTerritory || fallbackTerritory);
+
+                    if (territoryName) {
+                        nextTerritories.add(territoryName);
+                    }
+                });
+
+                setHasHomologacaoConectaData(hasMetadata);
+                setHomologatedConectaTerritories(nextTerritories);
+            } catch (err) {
+                console.warn('[ConectaMap] Falha ao correlacionar homologação do Conecta:', err);
+                if (active) {
+                    setHasHomologacaoConectaData(false);
+                    setHomologatedConectaTerritories(new Set());
+                }
+            }
+        };
+
+        loadHomologatedConectaData();
+
+        return () => {
+            active = false;
+        };
+    }, [municipioTerritoryMap]);
 
     useEffect(() => {
         fetch('/BA_(1)9396399957704198.json')
@@ -145,7 +302,7 @@ const ConectaGovDashboard = () => {
 
                 const features = geo.features.map((feat) => {
                     const municipio = feat.properties?.NOME || feat.properties?.nome || '';
-                    const territoryName = municipioTerritoryMap[normalizeName(municipio)] || 'Sem Território';
+                    const territoryName = resolveTerritoryName(municipioTerritoryMap[normalizeName(municipio)] || 'Sem Território');
                     const d = getPathD(feat.geometry, project);
 
                     let centroid = [0, 0];
@@ -182,15 +339,158 @@ const ConectaGovDashboard = () => {
         });
     }, [mapFeatures]);
 
-    const hoveredData = hoveredTerritory ? territoryDataMap[hoveredTerritory] : null;
-    const selectedData = selectedTerritory ? territoryDataMap[selectedTerritory] : null;
+    const hoveredData = hoveredTerritory ? territoryDataMap[getTerritoryKey(hoveredTerritory)] : null;
+    const selectedData = selectedTerritory ? territoryDataMap[getTerritoryKey(selectedTerritory)] : null;
+    const hoveredPriorityChains = hoveredData ? buildPriorityChains(hoveredData) : [];
 
-    const selectedCapacidadeDetalhada = selectedData?.capacidadeDetalhada?.length
-        ? selectedData.capacidadeDetalhada
-        : selectedData?.capacidadeRows || [];
-    const selectedCadeiasDetalhado = selectedData?.cadeiasProdutivasDetalhado?.length
-        ? selectedData.cadeiasProdutivasDetalhado
-        : selectedData?.cadeiasRows || [];
+    const getTerritoryAssistenciaStatus = (territoryName, fallbackValue) => {
+        if (hasHomologacaoConectaData) {
+            return homologatedConectaTerritories.has(getTerritoryKey(territoryName)) ? 'Existente' : 'Não existente';
+        }
+
+        return getAssistenciaDisplayLabel(fallbackValue);
+    };
+
+    const filteredTerritorySummaries = useMemo(() => {
+        const normalizedQuery = normalizeName(filters.query);
+
+        return territoryPaths
+            .map((territory) => {
+                const normalizedTerritory = getTerritoryKey(territory.territory);
+                const data = territoryDataMap[normalizedTerritory];
+                const entitiesTotal = data?.capacidade?.entidadesTotal || 0;
+                const parkCount = data?.capacidade?.parquesTecnologicos || 0;
+                const assistenciaStatus = getTerritoryAssistenciaStatus(territory.territory, data?.assistenciaPublica?.existe);
+
+                const matchesQuery = !normalizedQuery || normalizedTerritory.includes(normalizedQuery);
+                const matchesAssistencia = filters.assistencia === 'todos'
+                    ? true
+                    : filters.assistencia === 'existente'
+                        ? assistenciaStatus === 'Existente'
+                        : assistenciaStatus !== 'Existente';
+                const matchesParques = filters.parques === 'todos'
+                    ? true
+                    : filters.parques === 'com'
+                        ? parkCount > 0
+                        : parkCount === 0;
+                const matchesCapacidade = matchesCapacityFilter(entitiesTotal, filters.capacidade);
+
+                return {
+                    territory: territory.territory,
+                    normalizedTerritory,
+                    entitiesTotal,
+                    parkCount,
+                    hasParks: parkCount > 0,
+                    assistenciaStatus,
+                    municipalityCount: territoryMunicipalityCountMap[normalizedTerritory] || 0,
+                    matchesFilters: matchesQuery && matchesAssistencia && matchesParques && matchesCapacidade,
+                };
+            })
+            .filter((item) => item.matchesFilters)
+            .sort((a, b) => a.territory.localeCompare(b.territory, 'pt-BR'));
+    }, [filters, getTerritoryAssistenciaStatus, territoryDataMap, territoryPaths]);
+
+    const filteredTerritoryKeys = useMemo(
+        () => new Set(filteredTerritorySummaries.map((item) => item.normalizedTerritory)),
+        [filteredTerritorySummaries],
+    );
+
+    const filteredTerritoryCount = filteredTerritorySummaries.length;
+    const filteredTerritoriesWithParks = useMemo(
+        () => filteredTerritorySummaries.reduce((total, territory) => total + (territory.hasParks ? 1 : 0), 0),
+        [filteredTerritorySummaries],
+    );
+
+    const hasActiveFilters = Boolean(
+        filters.query.trim() || filters.assistencia !== 'todos' || filters.parques !== 'todos' || filters.capacidade !== 'todas',
+    );
+
+    const activeFilterTags = useMemo(() => {
+        const tags = [];
+
+        if (filters.query.trim()) {
+            tags.push(`Busca: ${filters.query.trim()}`);
+        }
+        if (filters.assistencia === 'existente') {
+            tags.push('Assistência: existente');
+        } else if (filters.assistencia === 'nao-existente') {
+            tags.push('Assistência: não existente');
+        }
+        if (filters.parques === 'com') {
+            tags.push('Parques: com');
+        } else if (filters.parques === 'sem') {
+            tags.push('Parques: sem');
+        }
+        if (filters.capacidade === 'ate-10') {
+            tags.push('Capacidade: até 10');
+        } else if (filters.capacidade === '11-25') {
+            tags.push('Capacidade: 11 a 25');
+        } else if (filters.capacidade === '26+') {
+            tags.push('Capacidade: 26+');
+        }
+
+        return tags;
+    }, [filters]);
+
+    const hoveredAssistenciaStatus = hoveredTerritory
+        ? getTerritoryAssistenciaStatus(hoveredTerritory, hoveredData?.assistenciaPublica?.existe)
+        : 'Não existente';
+    const selectedTerritoryColor = selectedTerritory
+        ? territoryColorMap[getTerritoryKey(selectedTerritory)] || '#0f766e'
+        : '#0f766e';
+
+    const overviewItems = selectedData ? [
+        {
+            label: 'CAPACIDADE TERRITORIAL EM CT&I',
+            value: formatCount(selectedData.capacidade?.entidadesTotal || 0),
+        },
+        {
+            label: 'QUANTIDADE CAMPI DE UNIVERSIDADES ESTADUAIS E FEDERAIS',
+            value: formatCount(selectedData.capacidade?.universidades || 0),
+        },
+        {
+            label: 'QUANTIDADE CAMPI DE INSTITUTOS FEDERAIS',
+            value: formatCount(selectedData.capacidade?.campiIFs || 0),
+        },
+        {
+            label: 'QUANTIDADE ESPAÇOS DINAMIZADORES',
+            value: formatCount(selectedData.capacidade?.espacosDinamizadores || 0),
+        },
+        {
+            label: 'QUANTIDADE INCUBADORAS',
+            value: formatCount(selectedData.capacidade?.incubadoras || 0),
+        },
+    ] : [];
+
+    const handleTerritorySelect = (territory) => {
+        setSelectedTerritory((currentTerritory) => (currentTerritory === territory ? null : territory));
+    };
+
+    const handleFilterChange = (field, value) => {
+        setFilters((currentFilters) => ({
+            ...currentFilters,
+            [field]: value,
+        }));
+    };
+
+    const clearSelection = () => {
+        setSelectedTerritory(null);
+    };
+
+    const clearFilters = () => {
+        setFilters(DEFAULT_MAP_FILTERS);
+    };
+
+    useEffect(() => {
+        if (selectedTerritory && !filteredTerritoryKeys.has(getTerritoryKey(selectedTerritory))) {
+            setSelectedTerritory(null);
+        }
+
+        if (hoveredTerritory && !filteredTerritoryKeys.has(getTerritoryKey(hoveredTerritory))) {
+            setHoveredTerritory(null);
+            setTooltip((currentTooltip) => ({ ...currentTooltip, visible: false }));
+        }
+    }, [filteredTerritoryKeys, hoveredTerritory, selectedTerritory]);
 
     const onTerritoryMouseMove = (e, territory) => {
         setHoveredTerritory(territory);
@@ -226,7 +526,11 @@ const ConectaGovDashboard = () => {
     };
 
     return (
-        <div className="w-full h-full p-4 sm:p-6 bg-slate-50/50 flex flex-col gap-6">
+        <div className="relative w-full h-full overflow-hidden rounded-[2rem] bg-slate-50/70 p-4 sm:p-6">
+            <div className="pointer-events-none absolute left-0 top-0 h-64 w-64 rounded-full bg-emerald-100/50 blur-3xl"></div>
+            <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-slate-200/70 blur-3xl"></div>
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0f766e]/20 to-transparent"></div>
+            <div className="relative flex h-full flex-col gap-6">
             
             {loading && (
                 <div className="flex items-center justify-center p-8 text-emerald-600 font-semibold">
@@ -247,131 +551,347 @@ const ConectaGovDashboard = () => {
             {!loading && !error && (
                 <>
                     {/* Linha de KPIs (Estilo Painel Corporativo) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
                         <StatCard 
-                            title="Capacidade Territorial" 
-                            value={selectedData ? (selectedData.capacidade?.entidadesTotal || 0) : '-'} 
+                            title="CAPACIDADE TERRITORIAL EM CT&I" 
+                            value={selectedData ? formatCount(selectedData.capacidade?.entidadesTotal || 0) : '-'} 
                             color="#0284c7" 
                             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>}
                         />
                         <StatCard 
-                            title="Universidades" 
-                            value={selectedData ? (selectedData.capacidade?.universidades || 0) : '-'} 
+                            title="QUANTIDADE CAMPI DE UNIVERSIDADES ESTADUAIS E FEDERAIS" 
+                            value={selectedData ? formatCount(selectedData.capacidade?.universidades || 0) : '-'} 
                             color="#d97706" 
                             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} /></svg>}
                         />
                         <StatCard 
-                            title="Empresas Dinamizadoras" 
-                            value={selectedData ? (selectedData.capacidade?.espacosDinamizadores || 0) : '-'} 
+                            title="QUANTIDADE CAMPI DE INSTITUTOS FEDERAIS" 
+                            value={selectedData ? formatCount(selectedData.capacidade?.campiIFs || 0) : '-'} 
                             color="#2563eb" 
+                            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0v6" /></svg>}
+                        />
+                        <StatCard 
+                            title="QUANTIDADE ESPAÇOS DINAMIZADORES" 
+                            value={selectedData ? formatCount(selectedData.capacidade?.espacosDinamizadores || 0) : '-'} 
+                            color="#0f766e" 
                             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m3-4h1m-1 4h1m-5 8h8" /></svg>}
                         />
                         <StatCard 
-                            title="Pontuação FDMI" 
-                            value={selectedData && selectedData.desenvolvimento?.ifdmTi != null ? selectedData.desenvolvimento.ifdmTi.toFixed(3) : '-'} 
+                            title="QUANTIDADE INCUBADORAS" 
+                            value={selectedData ? formatCount(selectedData.capacidade?.incubadoras || 0) : '-'} 
                             color="#16a34a" 
-                            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
+                            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a4 4 0 00-5.656 0L12 17.2l-1.772-1.772a4 4 0 10-5.656 5.656L12 28.512l7.428-7.428a4 4 0 000-5.656z" transform="scale(.75) translate(4 -2)" /></svg>}
                         />
                     </div>
 
                     {/* Área Central: Mapa e Detalhamento */}
-                    <div className="flex flex-col lg:flex-row gap-6">
+                    <div className="flex flex-col lg:flex-row gap-6 items-stretch">
                         
                         {/* MAPA (Lado Esquerdo) */}
-                        <div className="flex-[3] bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative flex flex-col min-h-[500px]">
-                            {/* Título Estilizado Igual à Imagem */}
-                            <div className="bg-[#0f766e] text-white px-5 py-3 shadow-md z-10 flex items-center justify-between">
-                                <span className="font-semibold tracking-wide text-sm sm:text-base">
-                                    DETALHAMENTO DO TERRITÓRIO: <span className="font-bold text-emerald-200">{selectedTerritory || 'Selecione no mapa'}</span>
-                                </span>
+                        <div className="flex-[3] bg-white/95 rounded-[1.75rem] shadow-[0_24px_55px_-32px_rgba(15,23,42,0.45)] border border-slate-200/80 overflow-hidden relative flex flex-col min-h-[560px]">
+                            <div className="bg-[#0f766e] text-white px-5 py-4 shadow-md z-10 flex flex-col gap-3 border-b border-black/10 sm:flex-row sm:items-center sm:justify-between">
+                                <div className="space-y-1">
+                                    <span className="block text-[10px] font-semibold uppercase tracking-[0.28em] text-emerald-100/80">Mapa interativo territorial</span>
+                                    <span className="font-semibold tracking-wide text-sm sm:text-base">
+                                        DETALHAMENTO DO TERRITÓRIO: <span className="font-bold text-emerald-200">{selectedTerritory || hoveredTerritory || 'Selecione no mapa'}</span>
+                                    </span>
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em]">
+                                    <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5">Passe o mouse para prévia</span>
+                                    <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5">Clique para fixar</span>
+                                    {selectedTerritory && (
+                                        <button
+                                            type="button"
+                                            onClick={clearSelection}
+                                            className="rounded-full border border-white/20 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-[#0f766e] transition-colors hover:bg-emerald-50"
+                                        >
+                                            Limpar seleção
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
-                            <div ref={mapContainerRef} className="flex-1 relative w-full h-full bg-[#f8fafc] flex items-center justify-center p-4">
-                                <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-auto max-h-[600px] bg-transparent cursor-pointer">
-                                    {mapFeatures.map((feat, index) => {
-                                        const isHovered = hoveredTerritory === feat.territory;
-                                        const isSelected = selectedTerritory === feat.territory;
-                                        const normalizedTerritory = normalizeName(feat.territory);
-                                        const territoryColor = territoryColorMap[normalizedTerritory] || '#E2E8F0';
-
-                                        let fillColor = territoryColor;
-                                        let strokeColor = '#ffffff';
-                                        let strokeWidth = 0.5;
-
-                                        if (isHovered) {
-                                            fillColor = '#F7AA16';
-                                            strokeColor = '#1f2937';
-                                            strokeWidth = 1.5;
-                                        } else if (isSelected) {
-                                            fillColor = territoryColor;
-                                            strokeColor = '#0f766e';
-                                            strokeWidth = 2;
-                                        }
-
-                                        return (
-                                            <path
-                                                key={`${feat.nome}-${index}`}
-                                                d={feat.d}
-                                                fill={fillColor}
-                                                stroke={strokeColor}
-                                                strokeWidth={strokeWidth}
-                                                className="transition-all duration-200"
-                                                opacity={isSelected ? 1 : 0.92}
-                                                onMouseEnter={(e) => onTerritoryMouseMove(e, feat.territory)}
-                                                onMouseMove={(e) => onTerritoryMouseMove(e, feat.territory)}
-                                                onMouseLeave={onMouseLeave}
-                                                onClick={() => setSelectedTerritory(feat.territory)}
+                            <div className="border-b border-slate-200/80 bg-white/80 px-5 py-4 backdrop-blur-md">
+                                <div className="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,0.95fr))_auto]">
+                                    <label className="block">
+                                        <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Buscar território</span>
+                                        <div className="relative">
+                                            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                value={filters.query}
+                                                onChange={(e) => handleFilterChange('query', e.target.value)}
+                                                placeholder="Digite o nome do território"
+                                                className="w-full rounded-2xl border border-slate-200 bg-white px-10 py-3 text-sm text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-[#0f766e] focus:ring-2 focus:ring-[#0f766e]/15"
                                             />
-                                        );
-                                    })}
-                                    {territoryPaths.map((territory) => {
-                                        const data = territoryDataMap[territory.territory];
-                                        if (!data || !data.capacidade) return null;
+                                        </div>
+                                    </label>
 
-                                        const iconSize = Math.min(12 + (data.capacidade.parquesTecnologicos || 0) * 1.6, 28);
-                                        return (
-                                            <circle
-                                                key={`park-icon-${territory.territory}`}
-                                                cx={territory.centroid[0] || 0}
-                                                cy={territory.centroid[1] || 0}
-                                                r={iconSize / 2}
-                                                fill="rgba(220, 38, 38, 0.85)"
-                                                stroke="#fff"
-                                                strokeWidth="1.5"
-                                                className="transition-transformcursor-pointer"
-                                                onMouseEnter={(e) => onTerritoryMouseMove(e, territory.territory)}
-                                                onMouseLeave={onMouseLeave}
-                                                onClick={() => setSelectedTerritory(territory.territory)}
-                                            />
-                                        );
-                                    })}
-                                </svg>
+                                    <label className="block">
+                                        <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Assistência pública</span>
+                                        <select
+                                            value={filters.assistencia}
+                                            onChange={(e) => handleFilterChange('assistencia', e.target.value)}
+                                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-all focus:border-[#0f766e] focus:ring-2 focus:ring-[#0f766e]/15"
+                                        >
+                                            <option value="todos">Todos</option>
+                                            <option value="existente">Existente</option>
+                                            <option value="nao-existente">Não existente</option>
+                                        </select>
+                                    </label>
 
-                                {/* Tooltip Original */}
+                                    <label className="block">
+                                        <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Parques tecnológicos</span>
+                                        <select
+                                            value={filters.parques}
+                                            onChange={(e) => handleFilterChange('parques', e.target.value)}
+                                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-all focus:border-[#0f766e] focus:ring-2 focus:ring-[#0f766e]/15"
+                                        >
+                                            <option value="todos">Todos</option>
+                                            <option value="com">Com parques</option>
+                                            <option value="sem">Sem parques</option>
+                                        </select>
+                                    </label>
+
+                                    <label className="block">
+                                        <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Capacidade CT&amp;I</span>
+                                        <select
+                                            value={filters.capacidade}
+                                            onChange={(e) => handleFilterChange('capacidade', e.target.value)}
+                                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-all focus:border-[#0f766e] focus:ring-2 focus:ring-[#0f766e]/15"
+                                        >
+                                            <option value="todas">Todas</option>
+                                            <option value="ate-10">Até 10 entidades</option>
+                                            <option value="11-25">11 a 25 entidades</option>
+                                            <option value="26+">26 ou mais</option>
+                                        </select>
+                                    </label>
+
+                                    <div className="flex items-end">
+                                        <button
+                                            type="button"
+                                            onClick={clearFilters}
+                                            disabled={!hasActiveFilters}
+                                            className="w-full rounded-2xl border border-slate-200 bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+                                        >
+                                            Limpar filtros
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                                    <div className="flex flex-wrap gap-2">
+                                        {hasActiveFilters ? activeFilterTags.map((tag) => (
+                                            <span key={tag} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600 shadow-sm">
+                                                {tag}
+                                            </span>
+                                        )) : (
+                                            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                                                Sem filtros ativos
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                                        Exibindo {formatCount(filteredTerritoryCount)} de {formatCount(territoryPaths.length)} territórios
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div ref={mapContainerRef} onMouseLeave={onMouseLeave} className="flex-1 relative isolate w-full overflow-hidden bg-[#f8fafc] p-4 sm:p-6">
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(15,118,110,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(15,23,42,0.08),transparent_30%)]"></div>
+                                <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(148,163,184,0.18)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.18)_1px,transparent_1px)] [background-size:34px_34px]"></div>
+
+                                <div className="absolute inset-x-4 top-4 z-20 flex flex-wrap items-start justify-between gap-3 sm:inset-x-6">
+                                    <div className="rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-lg backdrop-blur-md">
+                                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Leitura rápida</p>
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            <span className="rounded-full bg-slate-900 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">Visíveis: {formatCount(filteredTerritoryCount)}</span>
+                                            <span className="rounded-full bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-700 shadow-sm">Com parques: {formatCount(filteredTerritoriesWithParks)}</span>
+                                            {hasActiveFilters && (
+                                                <span className="rounded-full bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-700 shadow-sm">Filtros: {formatCount(activeFilterTags.length)}</span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-lg backdrop-blur-md">
+                                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Legenda</p>
+                                        <div className="mt-3 flex items-center gap-3 text-[11px] font-medium text-slate-600">
+                                            <span className="inline-flex h-3.5 w-3.5 rounded-full bg-red-600 shadow-[0_0_0_6px_rgba(220,38,38,0.16)]"></span>
+                                            <span>Parques tecnológicos</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="relative z-10 flex h-full w-full items-center justify-center rounded-[1.5rem] border border-white/70 bg-white/55 p-2 pb-24 pt-24 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] backdrop-blur-sm sm:p-4 sm:pb-28 sm:pt-24">
+                                    <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-auto max-h-[620px] bg-transparent cursor-pointer [filter:drop-shadow(0_26px_36px_rgba(15,23,42,0.12))]">
+                                        <defs>
+                                            <filter id="territoryGlow" x="-25%" y="-25%" width="150%" height="150%">
+                                                <feDropShadow dx="0" dy="10" stdDeviation="6" floodColor="#0f766e" floodOpacity="0.18" />
+                                            </filter>
+                                            <filter id="territoryFocus" x="-30%" y="-30%" width="160%" height="160%">
+                                                <feDropShadow dx="0" dy="14" stdDeviation="8" floodColor="#0f766e" floodOpacity="0.28" />
+                                            </filter>
+                                            <filter id="markerGlow" x="-60%" y="-60%" width="220%" height="220%">
+                                                <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="#dc2626" floodOpacity="0.35" />
+                                            </filter>
+                                        </defs>
+
+                                        {mapFeatures.map((feat, index) => {
+                                            const normalizedTerritory = getTerritoryKey(feat.territory);
+                                            const matchesFilters = filteredTerritoryKeys.has(normalizedTerritory);
+                                            const isHovered = matchesFilters && hoveredTerritory === feat.territory;
+                                            const isSelected = matchesFilters && selectedTerritory === feat.territory;
+                                            const hasHoverState = Boolean(hoveredTerritory) && filteredTerritoryKeys.has(getTerritoryKey(hoveredTerritory));
+                                            const hasSelectionState = Boolean(selectedTerritory) && filteredTerritoryKeys.has(getTerritoryKey(selectedTerritory));
+                                            const isRelatedToFocus = isHovered || isSelected;
+                                            const isMuted = matchesFilters && (hasHoverState
+                                                ? !isRelatedToFocus
+                                                : hasSelectionState
+                                                    ? !isSelected
+                                                    : false);
+                                            const territoryColor = territoryColorMap[normalizedTerritory] || '#E2E8F0';
+
+                                            return (
+                                                <path
+                                                    key={`${feat.nome}-${index}`}
+                                                    d={feat.d}
+                                                    fill={territoryColor}
+                                                    stroke={matchesFilters && (isSelected || isHovered) ? '#0f766e' : '#ffffff'}
+                                                    strokeWidth={!matchesFilters ? 0.5 : isSelected ? 2.6 : isHovered ? 1.8 : 0.7}
+                                                    strokeLinejoin="round"
+                                                    vectorEffect="non-scaling-stroke"
+                                                    filter={matchesFilters ? (isSelected ? 'url(#territoryFocus)' : isHovered ? 'url(#territoryGlow)' : undefined) : undefined}
+                                                    className="transition-all duration-200 ease-out"
+                                                    opacity={!matchesFilters ? 0.12 : isMuted ? 0.28 : isSelected ? 1 : isHovered ? 0.98 : 0.92}
+                                                    style={{ cursor: matchesFilters ? 'pointer' : 'default', pointerEvents: matchesFilters ? 'auto' : 'none' }}
+                                                    onMouseEnter={matchesFilters ? (e) => onTerritoryMouseMove(e, feat.territory) : undefined}
+                                                    onMouseMove={matchesFilters ? (e) => onTerritoryMouseMove(e, feat.territory) : undefined}
+                                                    onMouseLeave={matchesFilters ? onMouseLeave : undefined}
+                                                    onClick={matchesFilters ? () => handleTerritorySelect(feat.territory) : undefined}
+                                                />
+                                            );
+                                        })}
+
+                                        {territoryPaths.map((territory) => {
+                                            const normalizedTerritory = getTerritoryKey(territory.territory);
+                                            const matchesFilters = filteredTerritoryKeys.has(normalizedTerritory);
+                                            const data = territoryDataMap[normalizedTerritory];
+                                            const parkCount = data?.capacidade?.parquesTecnologicos || 0;
+                                            if (parkCount <= 0 || !matchesFilters) return null;
+
+                                            const isHovered = hoveredTerritory === territory.territory;
+                                            const isSelected = selectedTerritory === territory.territory;
+                                            const hasHoverState = Boolean(hoveredTerritory) && filteredTerritoryKeys.has(getTerritoryKey(hoveredTerritory));
+                                            const hasSelectionState = Boolean(selectedTerritory) && filteredTerritoryKeys.has(getTerritoryKey(selectedTerritory));
+                                            const isRelatedToFocus = isHovered || isSelected;
+                                            const isMuted = hasHoverState
+                                                ? !isRelatedToFocus
+                                                : hasSelectionState
+                                                    ? !isSelected
+                                                    : false;
+                                            const iconSize = Math.min(12 + parkCount * 1.8, 32);
+
+                                            return (
+                                                <g key={`park-icon-${territory.territory}`}>
+                                                    {(isSelected || isHovered) && (
+                                                        <circle
+                                                            cx={territory.centroid[0] || 0}
+                                                            cy={territory.centroid[1] || 0}
+                                                            r={iconSize / 2 + 8}
+                                                            fill="rgba(220, 38, 38, 0.10)"
+                                                            stroke="rgba(220, 38, 38, 0.28)"
+                                                            strokeWidth="1"
+                                                            className="animate-pulse"
+                                                            pointerEvents="none"
+                                                        />
+                                                    )}
+                                                    <circle
+                                                        cx={territory.centroid[0] || 0}
+                                                        cy={territory.centroid[1] || 0}
+                                                        r={iconSize / 2}
+                                                        fill="rgba(220, 38, 38, 0.85)"
+                                                        stroke="#fff"
+                                                        strokeWidth="1.5"
+                                                        filter={isSelected || isHovered ? 'url(#markerGlow)' : undefined}
+                                                        className="transition-all duration-200 ease-out"
+                                                        opacity={isMuted ? 0.38 : 0.96}
+                                                        style={{ cursor: 'pointer' }}
+                                                        onMouseEnter={(e) => onTerritoryMouseMove(e, territory.territory)}
+                                                        onMouseMove={(e) => onTerritoryMouseMove(e, territory.territory)}
+                                                        onMouseLeave={onMouseLeave}
+                                                        onClick={() => handleTerritorySelect(territory.territory)}
+                                                    />
+                                                    {parkCount > 1 && (
+                                                        <text
+                                                            x={territory.centroid[0] || 0}
+                                                            y={territory.centroid[1] || 0}
+                                                            textAnchor="middle"
+                                                            dominantBaseline="middle"
+                                                            fill="#fff"
+                                                            fontSize="10"
+                                                            fontWeight="700"
+                                                            className="pointer-events-none select-none"
+                                                        >
+                                                            {parkCount}
+                                                        </text>
+                                                    )}
+                                                </g>
+                                            );
+                                        })}
+                                    </svg>
+                                </div>
+
                                 {tooltip.visible && hoveredTerritory && hoveredData && (
                                     <div
-                                        className="absolute z-30 shadow-xl rounded-lg bg-white p-4 border border-slate-200 text-xs text-slate-700 pointer-events-none"
-                                        style={{ top: tooltip.y, left: tooltip.x, width: 280 }}
+                                        className="absolute z-30 overflow-hidden rounded-[1.25rem] border border-white/80 bg-white/95 text-xs text-slate-700 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.55)] pointer-events-none backdrop-blur-md"
+                                        style={{ top: tooltip.y, left: tooltip.x, width: 300 }}
                                     >
-                                        <h2 className="font-bold text-sm text-[#0f766e] mb-2 pb-1 border-b border-slate-100">{hoveredTerritory}</h2>
-                                        <div className="space-y-1">
-                                            <p>Capacidade Territorial em CT&I: <strong className="text-slate-900">{hoveredData.capacidade.entidadesTotal ?? 0}</strong></p>
-                                            <p>Universidades: {hoveredData.capacidade.universidades}</p>
-                                            <p>Campi Universitários: {hoveredData.capacidade.campiUniversitarios}</p>
-                                            <p>Campi de IFs: {hoveredData.capacidade.campiIFs}</p>
-                                            <p>Espaços Dinamizadores: {hoveredData.capacidade.espacosDinamizadores}</p>
-                                            <p>Incubadoras: {hoveredData.capacidade.incubadoras}</p>
-                                            <p>Parques Tecnológicos: {hoveredData.capacidade.parquesTecnologicos}</p>
-                                            <p className="pt-1">IFDMT: <strong className="text-slate-900">{hoveredData.desenvolvimento.ifdmTi != null ? hoveredData.desenvolvimento.ifdmTi.toFixed(3) : 'N/A'}</strong></p>
-                                            <p>Assistência Pública: <strong className="text-slate-900">{getAssistenciaStatusLabel(hoveredData.assistenciaPublica.existe)}</strong></p>
-                                            
-                                            <div className="pt-2">
-                                                <p className="font-semibold text-slate-800">Cadeias Produtivas:</p>
-                                                {(hoveredData.cadeiasProdutivas || []).length > 0 ? (
-                                                    (hoveredData.cadeiasProdutivas || []).map((cadeia, i) => (
-                                                        <p key={i} className="text-[10px] text-slate-600 truncate">- {cadeia.cadeia}</p>
-                                                    ))
-                                                ) : <p className="text-[10px] text-slate-500">Não identificada</p>}
+                                        <div className="h-1.5" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredTerritory)] || '#0f766e' }}></div>
+                                        <div className="p-4">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <h2 className="font-bold text-sm text-slate-900">{hoveredTerritory}</h2>
+                                                <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${hoveredAssistenciaStatus === 'Não existente' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'}`}>
+                                                    {hoveredAssistenciaStatus}
+                                                </span>
+                                            </div>
+
+                                            <div className="mt-3 grid grid-cols-2 gap-2">
+                                                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                                                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">CT&amp;I</p>
+                                                    <p className="mt-1 text-sm font-bold text-slate-900">{formatCount(hoveredData.capacidade?.entidadesTotal || 0)}</p>
+                                                </div>
+                                                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                                                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">IFDM</p>
+                                                    <p className="mt-1 text-sm font-bold text-slate-900">{hoveredData.desenvolvimento?.ifdmTi != null ? hoveredData.desenvolvimento.ifdmTi.toFixed(3) : 'N/A'}</p>
+                                                </div>
+                                                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                                                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Municípios</p>
+                                                    <p className="mt-1 text-sm font-bold text-slate-900">{formatCount(territoryMunicipalityCountMap[getTerritoryKey(hoveredTerritory)] || 0)}</p>
+                                                </div>
+                                                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                                                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Parques</p>
+                                                    <p className="mt-1 text-sm font-bold text-slate-900">{formatCount(hoveredData.capacidade?.parquesTecnologicos || 0)}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                                                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Principais cadeias</p>
+                                                {hoveredPriorityChains.length > 0 ? (
+                                                    <div className="mt-2 space-y-1.5">
+                                                        {hoveredPriorityChains.map((cadeia, index) => (
+                                                            <p key={`${cadeia.cadeia}-${index}`} className="text-[11px] text-slate-600">
+                                                                <strong className="text-slate-900">{cadeia.cadeia}</strong>
+                                                                {cadeia.municipioSede ? ` - ${cadeia.municipioSede}` : ''}
+                                                            </p>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <p className="mt-2 text-[11px] text-slate-500">Não identificadas.</p>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -380,111 +900,93 @@ const ConectaGovDashboard = () => {
                         </div>
 
                         {/* LISTA LATERAL (Lado Direito) */}
-                        <div className="flex-[1] bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-w-[280px]">
-                            <div className="p-4 border-b border-slate-100">
-                                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">Visão Geral</h3>
-                                <p className="text-xs text-slate-500 mt-1">Indicadores do território selecionado</p>
+                        <div className="flex-[1.02] bg-white/95 rounded-[1.75rem] shadow-[0_24px_55px_-32px_rgba(15,23,42,0.35)] border border-slate-200/80 flex flex-col min-w-[300px] overflow-hidden">
+                            <div className="p-5 border-b border-slate-100 bg-slate-50/80">
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Visão Geral</p>
+                                <div className="mt-2 flex items-start justify-between gap-3">
+                                    <div>
+                                        <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">Indicadores do território selecionado</h3>
+                                        <p className="text-xs text-slate-500 mt-1">{selectedTerritory || 'Selecione um território no mapa'}</p>
+                                    </div>
+                                    {selectedTerritory && (
+                                        <span className="mt-1 inline-flex h-3.5 w-3.5 rounded-full shadow-[0_0_0_6px_rgba(15,23,42,0.05)]" style={{ backgroundColor: selectedTerritoryColor }}></span>
+                                    )}
+                                </div>
                             </div>
                             
-                            <div className="p-4 flex-1">
+                            <div className="p-4 sm:p-5 flex-1">
                                 {selectedTerritory && selectedData ? (
-                                    <div className="space-y-4">
-                                        
-                                        {/* Item da Lista */}
-                                        <div className="flex justify-between items-end border-b border-slate-50 pb-2">
-                                            <span className="text-xs text-slate-600 font-medium">Universidades</span>
-                                            <span className="text-sm font-bold text-slate-800">{selectedData.capacidade.universidades || 0}</span>
-                                        </div>
-                                        
-                                        <div className="flex justify-between items-end border-b border-slate-50 pb-2">
-                                            <span className="text-xs text-slate-600 font-medium">Campi Universitários</span>
-                                            <span className="text-sm font-bold text-slate-800">{selectedData.capacidade.campiUniversitarios || 0}</span>
-                                        </div>
-                                        
-                                        <div className="flex justify-between items-end border-b border-slate-50 pb-2">
-                                            <span className="text-xs text-slate-600 font-medium">Campi de IFs</span>
-                                            <span className="text-sm font-bold text-slate-800">{selectedData.capacidade.campiIFs || 0}</span>
-                                        </div>
-                                        
-                                        <div className="flex justify-between items-end border-b border-slate-50 pb-2">
-                                            <span className="text-xs text-slate-600 font-medium">Incubadoras</span>
-                                            <span className="text-sm font-bold text-slate-800">{selectedData.capacidade.incubadoras || 0}</span>
-                                        </div>
-                                        
-                                        <div className="flex justify-between items-end border-b border-slate-50 pb-2">
-                                            <span className="text-xs text-slate-600 font-medium">Parques Tecnológicos</span>
-                                            <span className="text-sm font-bold text-slate-800">{selectedData.capacidade.parquesTecnologicos || 0}</span>
-                                        </div>
-
-                                        <div className="flex justify-between items-end border-b border-slate-50 pb-2">
-                                            <span className="text-xs text-slate-600 font-medium">Assistência Pública</span>
-                                            <span className={`text-xs font-bold px-2 py-1 rounded ${getAssistenciaStatusLabel(selectedData.assistenciaPublica.existe) === 'Não identificada' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'}`}>
-                                                {getAssistenciaStatusLabel(selectedData.assistenciaPublica.existe)}
-                                            </span>
-                                        </div>
-
-                                        <div className="bg-slate-50 p-3 rounded-lg mt-4 border border-slate-100">
-                                            <span className="text-xs text-slate-500 block mb-1">Pertencimento ao Semiárido</span>
-                                            <span className="text-lg font-bold text-[#0f766e]">
-                                                {selectedData.semiaridoPercentual != null ? `${selectedData.semiaridoPercentual.toFixed(1)}%` : 'N/A'}
-                                            </span>
-                                        </div>
-
-                                        <div className="mt-4 p-3 bg-white rounded-lg border border-slate-200 max-h-[160px] overflow-y-auto">
-                                            <h4 className="text-xs font-bold text-slate-700 mb-2">Capacidade Territorial - Itens</h4>
-                                            {selectedCapacidadeDetalhada && selectedCapacidadeDetalhada.length > 0 ? (
-                                                <ul className="space-y-1 text-[11px] text-slate-600">
-                                                    {selectedCapacidadeDetalhada.slice(0, 12).map((item, idx) => (
-                                                        <li key={`capacidade-item-${idx}`}>
-                                                            <strong>{item.entidade || item.tipo || '—'}</strong> {item.tipo && item.entidade ? `(${item.tipo})` : ''}
-                                                            <br />
-                                                            <small className="text-[10px] text-slate-400">Município: {item.municipio || 'N/D'} • Qtd: {item.valor ?? item.quantidade ?? '—'}</small>
-                                                        </li>
-                                                    ))}
-                                                    {selectedData.capacidadeDetalhada.length > 12 && <li className="text-[10px] text-slate-400">... e mais {selectedData.capacidadeDetalhada.length - 12} itens</li>}
-                                                </ul>
-                                            ) : (
-                                                <p className="text-[11px] text-slate-400">Não há dados detalhados de capacidade disponíveis.</p>
-                                            )}
-                                        </div>
-
-                                        <div className="mt-4 p-3 bg-white rounded-lg border border-slate-200">
-                                            <h4 className="text-xs font-bold text-slate-700 mb-2">Desenvolvimento Territorial</h4>
-                                            <p className="text-[11px] text-slate-600"><strong>IFDM Territorial:</strong> {selectedData.desenvolvimento.ifdmTi != null ? selectedData.desenvolvimento.ifdmTi.toFixed(3) : 'N/A'}</p>
-                                            <p className="text-[11px] text-slate-600"><strong>População estimada:</strong> {selectedData.desenvolvimento.populacaoTotal != null ? selectedData.desenvolvimento.populacaoTotal.toLocaleString() : 'N/A'}</p>
-                                            <p className="text-[10px] text-slate-400 mt-1">{selectedData.desenvolvimento.metodologia || 'Metodologia não disponível'}</p>
-                                        </div>
-
-                                        <div className="mt-4 p-3 bg-white rounded-lg border border-slate-200 max-h-[150px] overflow-y-auto">
-                                            <h4 className="text-xs font-bold text-slate-700 mb-2">Cadeias Produtivas</h4>
-                                            {selectedCadeiasDetalhado && selectedCadeiasDetalhado.length > 0 ? (
-                                                <ul className="space-y-1 text-[11px] text-slate-600">
-                                                    {selectedCadeiasDetalhado.slice(0, 8).map((item, idx) => (
-                                                        <li key={`cadeia-item-${idx}`}>
-                                                            <strong>{Array.isArray(item.cadeias) ? item.cadeias.join(', ') : item.cadeia}</strong>
-                                                            {item.municipio ? ` — município ${item.municipio}` : ''}
-                                                            {item.municipioSatelite ? ` — satélite ${item.municipioSatelite}` : ''}
-                                                        </li>
-                                                    ))}
-                                                    {selectedCadeiasDetalhado.length > 8 && <li className="text-[10px] text-slate-400">... e mais {selectedCadeiasDetalhado.length - 8} itens</li>}
-                                                </ul>
-                                            ) : selectedData.cadeiasProdutivas && selectedData.cadeiasProdutivas.length > 0 ? (
-                                                <ul className="space-y-1 text-[11px] text-slate-600">
-                                                    {selectedData.cadeiasProdutivas.map((item, idx) => (
-                                                        <li key={`cadeia-summary-${idx}`}><strong>{item.cadeia}</strong> ({item.municipiosEnvolvidos} municípios)</li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <p className="text-[11px] text-slate-400">Não há cadeias produtivas identificadas.</p>
-                                            )}
-                                        </div>
-
+                                    <div className="space-y-3">
+                                        {overviewItems.map((item) => (
+                                            <div key={item.label} className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                                                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-r-full" style={{ backgroundColor: selectedTerritoryColor }}></div>
+                                                <div className="pl-3">
+                                                    <span className="block text-[10px] text-slate-500 font-semibold uppercase tracking-[0.18em]">{item.label}</span>
+                                                    <span className="mt-2 block text-2xl font-extrabold text-slate-900">{item.value}</span>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
+                                ) : hasActiveFilters ? (
+                                    filteredTerritoryCount > 0 ? (
+                                        <div className="space-y-4">
+                                            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-4">
+                                                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Resultados do filtro</p>
+                                                <h4 className="mt-2 text-lg font-bold text-slate-900">{formatCount(filteredTerritoryCount)} territórios encontrados</h4>
+                                                <p className="mt-1 text-xs text-slate-500">Clique em um item para fixar o território no mapa e abrir os indicadores.</p>
+                                            </div>
+
+                                            <div className="space-y-2 max-h-[540px] overflow-y-auto pr-1">
+                                                {filteredTerritorySummaries.map((territory) => {
+                                                    const territoryColor = territoryColorMap[territory.normalizedTerritory] || '#0f766e';
+
+                                                    return (
+                                                        <button
+                                                            key={territory.territory}
+                                                            type="button"
+                                                            onClick={() => handleTerritorySelect(territory.territory)}
+                                                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                                                        >
+                                                            <div className="flex items-start justify-between gap-3">
+                                                                <div className="min-w-0">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="inline-flex h-3 w-3 rounded-full" style={{ backgroundColor: territoryColor }}></span>
+                                                                        <p className="truncate text-sm font-bold text-slate-900">{territory.territory}</p>
+                                                                    </div>
+                                                                    <p className="mt-2 text-[11px] text-slate-500">
+                                                                        {formatCount(territory.entitiesTotal)} entidades CT&amp;I • {formatCount(territory.municipalityCount)} municípios
+                                                                    </p>
+                                                                </div>
+                                                                <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${territory.assistenciaStatus === 'Existente' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+                                                                    {territory.assistenciaStatus}
+                                                                </span>
+                                                            </div>
+
+                                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                                                                    Parques: {formatCount(territory.parkCount)}
+                                                                </span>
+                                                                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                                                                    Capacidade: {formatCount(territory.entitiesTotal)}
+                                                                </span>
+                                                            </div>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="h-full flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50/80 px-6 py-10 text-center">
+                                            <svg className="w-12 h-12 text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                            <p className="text-sm font-medium text-slate-600">Nenhum território corresponde aos filtros.</p>
+                                            <p className="text-xs text-slate-400 mt-2 max-w-[230px]">Revise os critérios aplicados ou limpe os filtros para restaurar a visualização completa.</p>
+                                        </div>
+                                    )
                                 ) : (
-                                    <div className="h-full flex flex-col items-center justify-center text-center opacity-60 py-10">
+                                    <div className="h-full flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50/80 px-6 py-10 text-center">
                                         <svg className="w-12 h-12 text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
-                                        <p className="text-sm text-slate-500">Nenhum território selecionado.</p>
-                                        <p className="text-xs text-slate-400 mt-1">Clique no mapa para exibir as informações.</p>
+                                        <p className="text-sm font-medium text-slate-600">Nenhum território selecionado.</p>
+                                        <p className="text-xs text-slate-400 mt-2 max-w-[220px]">Use o mapa para abrir os indicadores detalhados e manter o foco no território desejado.</p>
                                     </div>
                                 )}
                             </div>
@@ -493,6 +995,7 @@ const ConectaGovDashboard = () => {
                     </div>
                 </>
             )}
+            </div>
         </div>
     );
 };
