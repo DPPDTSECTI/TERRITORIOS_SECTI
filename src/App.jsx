@@ -3,7 +3,9 @@ import ConectaMap from "../ConectaMap"; // Ajuste o caminho conforme sua estrutu
 import LandingHero from './components/hero';
 
 export default function App() {
-  const [page, setPage] = useState('overview');
+  const queryParams = new URLSearchParams(window.location.search);
+  const pageFromUrl = queryParams.get('tab') || 'overview';
+  const [page, setPage] = useState(pageFromUrl);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(new Date().toLocaleTimeString());
 
@@ -44,6 +46,7 @@ export default function App() {
     }
 
     const refreshUrl = new URL(window.location.href);
+    refreshUrl.searchParams.set('tab', page); 
     refreshUrl.searchParams.set('refresh', String(Date.now()));
     window.location.replace(refreshUrl.toString());
   };
