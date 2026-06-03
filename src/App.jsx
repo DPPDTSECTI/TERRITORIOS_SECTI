@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ConectaMap from '../ConectaMap'; // Ajuste o caminho conforme sua estrutura
+import ConectaMap from "../ConectaMap"; // Ajuste o caminho conforme sua estrutura
 import LandingHero from './components/hero';
 
 export default function App() {
