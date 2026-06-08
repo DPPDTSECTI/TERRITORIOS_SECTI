@@ -30,12 +30,31 @@ export default function App() {
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
     setIsLoadingPipeline(true);
     try {
-      const url = forcarRefresh ? '/api/sharepoint?nocache=true' : '/api/sharepoint';
-      const response = await fetch(url);
-      
-      if (!response.ok) throw new Error('Falha ao comunicar com o SharePoint');
-      
-      const data = await response.json();
+      // Em DEV: tenta proxy Vite
+      // Em PRODUÇÃO: fallback para arquivo estático
+      const isDev = import.meta.env.DEV;
+      let url;
+      let data;
+
+      if (isDev) {
+        url = forcarRefresh ? '/api/sharepoint?nocache=true' : '/api/sharepoint';
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Proxy falhou');
+        data = await response.json();
+      } else {
+        // Produção: tenta JSON estático com fallback
+        try {
+          const response = await fetch('/dados.json');
+          if (!response.ok) throw new Error('JSON não encontrado');
+          data = await response.json();
+        } catch (fallbackError) {
+          console.warn('[App] Arquivo estático não encontrado, tentando proxy...');
+          // Última tentativa: proxy mesmo em produção (se backend estiver configurado)
+          const response = await fetch('/api/sharepoint');
+          if (!response.ok) throw new Error('Nenhuma fonte de dados disponível');
+          data = await response.json();
+        }
+      }
 
       // Formatação da estrutura de dados para consumo dos cards e mapa
       const territoriosFormatados = data.territories.map((t, index) => {

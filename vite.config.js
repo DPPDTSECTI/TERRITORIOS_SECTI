@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import https from 'https'
 import * as XLSX from 'xlsx'
+import fs from 'fs'
+import path from 'path'
 
 let devCache = null;
 let devCacheExpiry = 0;
@@ -504,6 +506,19 @@ function parseSpreadsheet(buffer) {
 
   const parseTime = Date.now() - startTime;
   console.log(`[Dev Parser] ✓ Parseado em ${parseTime}ms: ${result.summary.territories} territórios`);
+
+  // SALVAR JSON EM /public PARA USO EM PRODUÇÃO (Netlify)
+  try {
+    const publicDir = path.join(process.cwd(), 'public');
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
+    const jsonPath = path.join(publicDir, 'dados.json');
+    fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2));
+    console.log(`[Dev Parser] 💾 JSON salvo em public/dados.json (${fs.statSync(jsonPath).size} bytes)`);
+  } catch (saveErr) {
+    console.warn(`[Dev Parser] ⚠ Não foi possível salvar JSON: ${saveErr.message}`);
+  }
 
   return result;
 }
