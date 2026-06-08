@@ -421,7 +421,9 @@ function parseSpreadsheet(buffer) {
 
   const territories = Array.from(territoryMap.values()).map((entry) => {
     // RECALCULA entidadesTotal usando COUNT DISTINCT (únicas combinações entidade + municipio)
-    entry.capacidade.entidadesTotal = entry.entidadesUnicas.size;
+    // IMPORTANTE: Converter Set.size para número ANTES de serializar com JSON.stringify
+    const totalEntidadesUnicas = entry.entidadesUnicas.size || 0;
+    entry.capacidade.entidadesTotal = totalEntidadesUnicas;
 
     if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.populacaoTotal > 0) {
       entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdmPop / entry.desenvolvimento.populacaoTotal;
@@ -485,6 +487,7 @@ function parseSpreadsheet(buffer) {
         gruposSubrepresentados: null,
       },
       parquesTecnologicosMunicipios: [],
+      // NOTE: entidadesUnicas (Set) não é serializado — usamos capacidade.entidadesTotal em vez disso
     };
   }).sort((a, b) => a.territory.localeCompare(b.territory));
 
