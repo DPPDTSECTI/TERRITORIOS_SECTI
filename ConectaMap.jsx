@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import * as topojson from 'topojson-client';
-import territoriosMunicipios from './utils/territorioMunicipios.json';
+import territoriosMunicipios from './utils/territorioMunicipios.json'; // Confirme se o caminho está correto no seu projeto
 
 const SVG_W = 800;
 const SVG_H = 800;
@@ -65,9 +65,9 @@ const getPathD = (geometry, project) => {
 };
 
 export default function ConectaMap({ 
-    // PROPS DE SINCRONIZAÇÃO COM O APP.JSX
     territoriosData = [], 
     searchTerm = '', 
+    filtroSemiarido = false, // RECEBENDO O NOVO FILTRO DO APP.JSX
     selectedTerritory = null, 
     onSelectTerritory = () => {} 
 }) {
@@ -79,7 +79,7 @@ export default function ConectaMap({
 
     const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
 
-    // Gera o Mapa Topográfico
+    // Busca a Topologia Cartográfica da Bahia
     useEffect(() => {
         setLoading(true);
         fetch('/BA_(1)9396399957704198.json')
@@ -117,12 +117,12 @@ export default function ConectaMap({
                 setLoading(false);
             })
             .catch((err) => {
-                console.error("Erro no mapa:", err);
+                console.error("Erro ao carregar o mapa:", err);
                 setLoading(false);
             });
     }, [municipioTerritoryMap]);
 
-    // Comportamento do Mouse
+    // Comportamento do rato (mouse) sobre o mapa
     const onTerritoryMouseMove = (e, territoryName) => {
         if (territoryName === 'Sem Território') return;
         setHoveredTerritory(territoryName);
@@ -138,7 +138,6 @@ export default function ConectaMap({
         let x = e.clientX - rect.left + offset;
         let y = e.clientY - rect.top + offset;
 
-        // Evita que a tooltip saia da tela
         if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
 
@@ -150,14 +149,13 @@ export default function ConectaMap({
         setHoveredTerritory(null);
     };
 
+    // Comunica de volta para o App.jsx
     const handleMapClick = (territoryName) => {
         if (territoryName === 'Sem Território') return;
         
-        // Encontra os dados completos do território clicado vindos do App.jsx
         const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(territoryName));
         
         if (foundData) {
-            // Se já estava selecionado, deseleciona. Senão, seleciona.
             if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(territoryName)) {
                 onSelectTerritory(null);
             } else {
@@ -166,7 +164,6 @@ export default function ConectaMap({
         }
     };
 
-    // Dados da Tooltip
     const hoveredData = hoveredTerritory 
         ? territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(hoveredTerritory)) 
         : null;
@@ -177,7 +174,7 @@ export default function ConectaMap({
             {loading ? (
                 <div className="flex flex-col items-center text-gov-blueDark-500">
                     <svg className="animate-spin h-8 w-8 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span className="text-sm font-semibold tracking-wider uppercase">Desenhando Malha Cartográfica...</span>
+                    <span className="text-sm font-semibold tracking-wider uppercase">A Desenhar Malha Cartográfica...</span>
                 </div>
             ) : (
                 <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-full max-h-[750px] drop-shadow-xl">
@@ -192,15 +189,34 @@ export default function ConectaMap({
                         const isHovered = hoveredTerritory === feat.territory;
                         const isSelected = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
                         
-                        // Lógica de Opacidade com a Busca do App.jsx
+                        // Obter a flag isSemiarido dos dados processados pelo Vite
+                        const featData = territoriosData.find(t => getTerritoryKey(t.nome) === normalizedFeatName);
+                        const isSemiarido = featData ? featData.isSemiarido : false;
+                        
                         const matchesSearch = !searchTerm || normalizedFeatName.includes(normalizeName(searchTerm));
-                        const opacity = !matchesSearch ? 0.15 : (isSelected ? 1 : isHovered ? 0.9 : 0.75);
+                        
+                        // Se o filtro do semiárido estiver ativo, só será visível se for do semiárido
+                        const isVisibleByFilter = filtroSemiarido ? isSemiarido : true;
+
+                        // Lógica avançada de Opacidade visual
+                        let opacity = 0.75;
+                        if (!matchesSearch) {
+                            opacity = 0.05; // Quase invisível se não corresponder à pesquisa
+                        } else if (!isVisibleByFilter) {
+                            opacity = 0.15; // Territórios fora do semiárido ficam esbatidos/cinzentos
+                        } else if (isSelected) {
+                            opacity = 1;
+                        } else if (isHovered) {
+                            opacity = 0.9;
+                        }
+
+                        const fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
                         return (
                             <path
                                 key={`${feat.nome}-${index}`}
                                 d={feat.d}
-                                fill={territoryColorMap[normalizedFeatName] || '#E2E8F0'}
+                                fill={fillColor}
                                 stroke={isSelected || isHovered ? '#ffffff' : '#f8fafc'}
                                 strokeWidth={isSelected ? 2.5 : isHovered ? 1.5 : 0.5}
                                 strokeLinejoin="round"
@@ -216,7 +232,7 @@ export default function ConectaMap({
                 </svg>
             )}
 
-            {/* TOOLTIP GLASSMORPHISM SINCRONIZADA COM AS 4 KPIS OFICIAIS */}
+            {/* TOOLTIP GLASSMORPHISM */}
             {tooltip.visible && hoveredData && (
                 <div 
                     className="absolute z-50 overflow-hidden rounded-2xl border border-white/60 bg-white/80 backdrop-blur-md shadow-glass pointer-events-none transition-opacity duration-200"
@@ -224,7 +240,16 @@ export default function ConectaMap({
                 >
                     <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredData.nome)] || '#0f766e' }}></div>
                     <div className="p-4">
-                        <h2 className="font-bold text-[15px] text-slate-800 uppercase tracking-tight mb-3">{hoveredData.nome}</h2>
+                        <div className="flex justify-between items-start mb-3">
+                            <h2 className="font-bold text-[15px] text-slate-800 uppercase tracking-tight leading-tight pr-2">{hoveredData.nome}</h2>
+                            
+                            {/* Mostra uma etiqueta no tooltip caso o território pertença ao semiárido */}
+                            {hoveredData.isSemiarido && (
+                                <span className="text-[8px] font-bold text-gov-red-500 bg-gov-red-50 px-2 py-0.5 rounded-full uppercase border border-gov-red-100 flex-shrink-0 mt-0.5">
+                                    Semiárido
+                                </span>
+                            )}
+                        </div>
                         
                         <div className="grid grid-cols-2 gap-2 mb-2">
                             <div className="bg-slate-100/50 rounded-lg p-2 border border-slate-200/50">
@@ -244,7 +269,9 @@ export default function ConectaMap({
 
                         <div className="bg-slate-100/50 rounded-lg p-2 border border-slate-200/50">
                             <span className="block text-[9px] font-bold uppercase text-slate-400">Cadeias & IGs</span>
-                            <span className="block text-xs font-semibold text-slate-700 truncate">{hoveredData.kpis.cadeiasIgs}</span>
+                            <span className="block text-xs font-semibold text-slate-700 truncate" title={hoveredData.kpis.cadeiasIgs}>
+                                {hoveredData.kpis.cadeiasIgs}
+                            </span>
                         </div>
                     </div>
                 </div>
