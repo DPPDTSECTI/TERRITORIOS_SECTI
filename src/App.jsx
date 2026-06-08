@@ -31,11 +31,21 @@ export default function App() {
     setIsLoadingPipeline(true);
     try {
       const url = forcarRefresh ? '/api/sharepoint?nocache=true' : '/api/sharepoint';
+      console.log('[Frontend] Requisitando:', url);
+      
       const response = await fetch(url);
       
-      if (!response.ok) throw new Error('Falha ao comunicar com o SharePoint');
+      console.log('[Frontend] Response status:', response.status);
+      console.log('[Frontend] Response headers:', response.headers);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[Frontend] Erro HTTP:', response.status, errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+      }
       
       const data = await response.json();
+      console.log('[Frontend] Dados recebidos:', data.summary);
 
       // Formatação da estrutura de dados para consumo dos cards e mapa
       const territoriosFormatados = data.territories.map((t, index) => {
@@ -88,10 +98,12 @@ export default function App() {
       
       const parsedDate = new Date(data.generatedAt);
       setLastUpdate(parsedDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+      console.log('[Frontend] ✓ Dados carregados com sucesso');
 
     } catch (error) {
-      console.error("[Painel] Erro fatal na pipeline:", error);
-      setLastUpdate("Erro na Sincronização");
+      console.error("[Frontend] Erro fatal na pipeline:", error);
+      console.error("[Frontend] Stack:", error.stack);
+      setLastUpdate(`Erro: ${error.message}`);
     } finally {
       setIsLoadingPipeline(false);
     }
