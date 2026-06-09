@@ -5,491 +5,243 @@ import * as XLSX from 'xlsx'
 import fs from 'fs'
 import path from 'path'
 
+const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
 let devCache = null;
 let devCacheExpiry = 0;
-const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v4'; 
 
-// ==================== PROCESSADOR DE EXCEL (DEV) ====================
-const FINANCIAL_PATTERNS = [
-  'recurso', 'inova cidade', 'investimento estadual',
-  'execução financeira', 'execucao financeira',
-  'execução física', 'execucao fisica',
-  'valor implantação', 'valor implantacao',
-  'nota fiscal', 'nº sei nota fiscal',
-  'pagamento efetuado', 'processo de pagamento',
-];
+// Função ultra-rigorosa para limpar cabeçalhos e transformá-los em chaves de objeto
+function safeKey(k) {
+  return String(k || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
 
-const MUNICIPIO_KEY_ALIASES = {
-  muquem_do_sao_francisco: 'muquem_de_sao_francisco',
+function normalize(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+const toNumber = (value) => {
+  if (value == null || value === '') return 0;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  const cleaned = String(value).replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
+  const parsed = Number(cleaned);
+  return Number.isFinite(parsed) ? parsed : 0;
 };
 
-function normalizeHeader(raw) {
-  if (raw == null) return '';
-  return String(raw).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-function headerToKey(header) {
-  return normalizeHeader(header)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_|_$/g, '');
-}
-
-function isFinancial(header) {
-  const h = normalizeHeader(header).toLowerCase();
-  return FINANCIAL_PATTERNS.some((p) => h.includes(p));
-}
-
-function normalizeMunicipioKey(nome) {
-  const normalized = normalizeHeader(nome)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/\s+/g, '_')
-    .trim();
-
-  return MUNICIPIO_KEY_ALIASES[normalized] || normalized;
-}
-
-function convertExcelDate(excelDate) {
-  if (typeof excelDate === 'string') {
-    if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/.test(excelDate) || /^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/.test(excelDate)) {
-      return excelDate;
-    }
-  }
-  const num = parseInt(excelDate, 10);
-  if (isNaN(num)) return excelDate;
-  const date = new Date((num - 25569) * 86400 * 1000);
-  const dia = String(date.getDate()).padStart(2, '0');
-  const mes = String(date.getMonth() + 1).padStart(2, '0');
-  const ano = date.getFullYear();
-  return `${dia}/${mes}/${ano}`;
-}
-
-function findColIndex(headers, patterns) {
-  const normed = headers.map((h) => normalizeHeader(h).toLowerCase());
-  for (const pat of patterns) {
-    const idx = normed.findIndex((h) => h.includes(pat.toLowerCase()));
-    if (idx !== -1) return idx;
-  }
-  return -1;
-}
+const splitList = (value) => String(value || '').split(/[;|]/).map((item) => item.trim()).filter(Boolean);
+const isTruthy = (value) => ['sim', 's', 'yes', 'true', '1', 'existente', 'conecta'].includes(normalize(value));
 
 function parseSpreadsheet(buffer) {
   const startTime = Date.now();
 
-  const workbook = XLSX.read(buffer, {
-    type: 'buffer',
-    cellFormula: false,
-    cellHTML: false,
-    cellStyles: false,
-    cellText: false,
-    sheetStubs: false,
-    bookVBA: false,
-    bookDeps: false,
-    bookSheets: false,
-  });
+  const textContent = buffer.toString('utf8', 0, 500).trim().toLowerCase();
+  if (textContent.startsWith('<html') || textContent.startsWith('<!doctype')) {
+    throw new Error("ACESSO NEGADO: O SharePoint retornou a página de Login (HTML). Verifique as permissões do ficheiro.");
+  }
 
-  // Lê TODAS as abas disponíveis em vez de limitar às 3 primeiras
+  const workbook = XLSX.read(buffer, { type: 'buffer' });
   const targetSheetNames = workbook.SheetNames;
   if (!targetSheetNames.length) throw new Error('Planilha vazia');
 
-  const normalize = (value) => String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-
-  // 1. CARREGAR A LISTA DO SEMIÁRIDO BAIANO
+  // 1. MAPEAMENTO DO SEMIÁRIDO BAIANO
   const semiaridoMunicipios = new Set();
-  const semiaridoSheetName = targetSheetNames.find(name => normalize(name).includes('semiarido'));
+  const semiaridoSheetName = targetSheetNames.find(name => safeKey(name).includes('semiarido'));
   
   if (semiaridoSheetName) {
     const sheet = workbook.Sheets[semiaridoSheetName];
-    const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-    rows.forEach(row => {
-      // Captura o município (geralmente a 2ª coluna em CSVs exportados ou coluna "Município")
-      const vals = Object.values(row);
-      let mun = row['Município'] || row['municipio'] || row['MUNICÍPIO'];
-      if (!mun && vals.length > 1) mun = vals[1]; 
-      else if (!mun && vals.length === 1) mun = vals[0];
-      
-      if (mun) {
-        semiaridoMunicipios.add(normalize(String(mun)));
-      }
+    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    rawRows.forEach(row => {
+      const munKey = Object.keys(row).find(k => safeKey(k).includes('municipio'));
+      const munVal = munKey ? row[munKey] : Object.values(row)[1] || Object.values(row)[0];
+      if (munVal) semiaridoMunicipios.add(normalize(munVal));
     });
-    console.log(`[Dev Parser] Semiárido: ${semiaridoMunicipios.size} municípios identificados.`);
-  } else {
-    console.warn('[Dev Parser] Aviso: Aba do Semiárido Baiano não encontrada na planilha.');
   }
-
-  const TERRITORY_NAME_ALIASES = {
-    [normalize('Rio Corrente')]: 'Bacia do Rio Corrente',
-  };
-
-  const normalizeTerritoryName = (value) => {
-    const normalizedValue = normalize(value);
-    if (!normalizedValue) return '';
-    return TERRITORY_NAME_ALIASES[normalizedValue] || String(value || '').trim();
-  };
-
-  const toNumber = (value) => {
-    if (value == null || value === '') return 0;
-    if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
-    const cleaned = String(value).replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
-    const parsed = Number(cleaned);
-    return Number.isFinite(parsed) ? parsed : 0;
-  };
-
-  const findIndex = (headers, patterns) => {
-    for (const pattern of patterns) {
-      const normPattern = normalize(pattern);
-
-      let idx = headers.findIndex((header) => normalize(header) === normPattern);
-      if (idx !== -1) return idx;
-
-      idx = headers.findIndex((header) => normalize(header).split(/\s+/).includes(normPattern));
-      if (idx !== -1) return idx;
-
-      const regex = new RegExp(`(^|\\s)${normPattern}($|\\s)`);
-      idx = headers.findIndex((header) => regex.test(normalize(header)));
-      if (idx !== -1) return idx;
-
-      idx = headers.findIndex((header) => normalize(header).includes(normPattern));
-      if (idx !== -1) return idx;
-    }
-    return -1;
-  };
-
-  const splitList = (value) => String(value || '').split(/[;,|]/).map((item) => item.trim()).filter(Boolean);
-  const isTruthy = (value) => ['sim', 's', 'yes', 'true', '1', 'existente', 'conecta'].includes(normalize(value));
 
   const territoryMap = new Map();
 
   const getTerritory = (name) => {
-    const canonicalName = normalizeTerritoryName(name);
+    const canonicalName = normalize(name);
     if (!canonicalName) return null;
 
     if (!territoryMap.has(canonicalName)) {
       territoryMap.set(canonicalName, {
-        territory: canonicalName,
-        capacidade: {
-          entidadesTotal: 0,
-          campiUniversitarios: 0,
-          campiIFs: 0,
-          espacosDinamizadores: 0,
-          incubadoras: 0,
-          universidades: 0,
-          icts: 0,
-          centrosPesquisa: 0,
-          parquesTecnologicos: 0,
-        },
+        territory: String(name).trim(),
         capacidadeRows: [],
-        desenvolvimentoRows: [],
         cadeiasRows: [],
         desenvolvimento: { ifdmTi: null, somaIfdmPop: 0, populacaoTotal: 0 },
         assistenciaPublica: { existe: false, iniciativas: new Set() },
-        cadeiasMap: new Map(),
         semiaridoAcumulado: 0,
-        semiaridoContador: 0,
-        entidadesUnicas: new Set(), // COUNT DISTINCT: (entidade, municipio)
+        semiaridoContador: 0
       });
     }
     return territoryMap.get(canonicalName);
   };
 
   const processSheet = (sheetName) => {
-    
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
 
-    const rows = XLSX.utils.sheet_to_json(sheet, {
-      header: 1,
-      defval: '',
-      raw: true,
-      blankrows: false,
-    });
+    // Converte a folha para JSON onde a PRIMEIRA linha vira as chaves do objeto.
+    // Isso evita completamente que os dados "escorreguem" de coluna.
+    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    if (rawRows.length === 0) return;
 
-    if (rows.length < 2) return;
-
-    let headerIdx = 0;
-    for (let i = 0; i < Math.min(15, rows.length); i++) {
-      const filled = (rows[i] || []).filter((c) => c != null && String(c).trim() !== '').length;
-      if (filled >= 4) { headerIdx = i; break; }
-    }
-
-    const rawHeaders = rows[headerIdx] || [];
-    const headers = rawHeaders.map(normalizeHeader);
-
-    const iTerritorio = findIndex(headers, ['territorio de identidade', 'territorio']);
-    if (iTerritorio === -1) {
-      console.log(`[Dev Parser] Aba ignorada (sem coluna de território): ${sheetName}`);
-      return;
-    }
-
-    const iMunicipio = findIndex(headers, ['municipio', 'local']);
-    const iPopulacao = findIndex(headers, ['populacao']);
-    const iIfdm = findIndex(headers, ['ifdm']);
-    const iIfdmTi = findIndex(headers, ['ifdm ti', 'ifdmt', 'ifdm territorial']);
-    const iEntidades = findIndex(headers, ['valor entidades', 'entidades total', 'capacidade territorial', 'qtd_enti', 'qtd ent', 'qtd entidades']);
-    let iEntidade = findIndex(headers, ['entidade', 'institui', 'nome da entidade']);
-    if (iEntidade === iTerritorio || normalize(headers[iEntidade]).includes('territorio')) iEntidade = -1;
-    let iTipo = findIndex(headers, ['tipo', 'natureza', 'categoria']);
-    if (iTipo === iTerritorio || normalize(headers[iTipo]).includes('territorio')) iTipo = -1;
-    const iCampiUniv = findIndex(headers, ['campi universit', 'campus universit']);
-    const iCampiIfs = findIndex(headers, ['campi de if', 'campus if', 'instituto federal']);
-    const iEspacos = findIndex(headers, ['espacos dinamizadores', 'espaco dinamizador']);
-    const iIncubadoras = findIndex(headers, ['incubadoras', 'incubadora']);
-    const iParques = findIndex(headers, ['parques tecnologicos', 'parque tecnologico']);
-    const iUniversidades = findIndex(headers, ['universidades']);
-    const iICTs = findIndex(headers, ['icts', 'ict']);
-    const iCentrosPesquisa = findIndex(headers, ['centros de pesquisa', 'centro de pesquisa']);
-    const iAssistencia = findIndex(headers, ['assistencia publica', 'presenca conecta', 'conecta']);
-    const iIniciativas = findIndex(headers, ['iniciativas', 'dispositivos estaduais']);
-    const iCadeias = findIndex(headers, ['cadeia produtiva', 'apl', 'arranjo produtivo']);
-    const iIGs = findIndex(headers, ['indicacao geografica', 'igs', 'ig']);
-    const iSatelite = findIndex(headers, ['municipio satelite', 'sede']);
-    const iSemiarido = findIndex(headers, ['semiarido', 'percentual semiarido']);
-
+    const sheetNorm = safeKey(sheetName);
     console.log(`[Dev Parser] Processando aba: ${sheetName}`);
 
-    for (let r = headerIdx + 1; r < rows.length; r++) {
-      const row = rows[r];
-      if (!row || row.length === 0) continue;
-
-      const territoryName = normalizeTerritoryName(row[iTerritorio]);
-      if (!territoryName) continue;
-
-      const territory = getTerritory(territoryName);
-      if (!territory) continue;
-      const municipio = iMunicipio !== -1 ? String(row[iMunicipio] || '').trim() : '';
-
-      let rowEntidades = 0;
-      if (iEntidades !== -1) {
-        rowEntidades = toNumber(row[iEntidades]);
-      }
-      if (rowEntidades <= 0 && iEntidade !== -1) {
-        rowEntidades = 1;
+    rawRows.forEach((rawRow, idx) => {
+      // Normaliza as chaves do objeto atual para garantir que as lemos sempre bem
+      const row = {};
+      for (const key in rawRow) {
+          row[safeKey(key)] = rawRow[key];
       }
 
-      const tipoText = iTipo !== -1 ? String(row[iTipo] || '').toLowerCase() : '';
-      const tipoNorm = normalize(tipoText);
-      const categoriasCapacidade = [
-        'universidade', 
-        'instituto federal', 
-        'ict', 
-        'centro de pesquisa', 
-        'espaco dinamizador', 
-        'parque tecnologico', 
-        'incubadora'
-      ];
+      const territorioRaw = row['territoriodeidentidade'] || row['territorio'];
+      if (!territorioRaw) return;
 
-      // Determinar categoria da entidade (ÚNICA VEZ POR ROW)
-      let categoriaEntidade = null;
-      let ehCapacidadeTerrritorial = false;
+      // Trata Territórios Compostos (Ex: "Recôncavo; Baixo Sul")
+      const territoryNamesList = splitList(territorioRaw);
       
-      if (categoriasCapacidade.some(cat => tipoNorm.includes(cat))) {
-        ehCapacidadeTerrritorial = true;
-        if (tipoNorm.includes('universidade')) {
-          categoriaEntidade = 'univs';
-          territory.capacidade.universidades += 1;
-        } else if (tipoNorm.includes('instituto federal')) {
-          categoriaEntidade = 'ifs';
-          territory.capacidade.campiIFs += 1;
-        } else if (tipoNorm.includes('ict')) {
-          categoriaEntidade = 'icts';
-          territory.capacidade.icts += 1;
-        } else if (tipoNorm.includes('centro de pesquisa')) {
-          categoriaEntidade = 'centrosPesquisa';
-          territory.capacidade.centrosPesquisa += 1;
-        } else if (tipoNorm.includes('espaco dinamizador')) {
-          categoriaEntidade = 'espacos';
-          territory.capacidade.espacosDinamizadores += 1;
-        } else if (tipoNorm.includes('parque tecnologico')) {
-          categoriaEntidade = 'parques';
-          territory.capacidade.parquesTecnologicos += 1;
-        } else if (tipoNorm.includes('incubadora')) {
-          categoriaEntidade = 'incubadoras';
-          territory.capacidade.incubadoras += 1;
-        }
-      }
+      // ID Único Matemático (Garante deduplicação no Frontend)
+      const uniqueRowId = `aba_${sheetNorm}_linha_${idx}`;
 
-      if (!territory.rows) territory.rows = [];
-      territory.rows.push({
-        municipio,
-        entidade: iEntidade !== -1 ? String(row[iEntidade] || '').trim() : '',
-        tipo: iTipo !== -1 ? String(row[iTipo] || '').trim() : '',
-        qtd_enti: iEntidades !== -1 ? toNumber(row[iEntidades]) : 0,
-        capacidade_area: rowEntidades,
+      territoryNamesList.forEach(tName => {
+         const territory = getTerritory(tName);
+         if (!territory) return;
+
+         const municipio = String(row['municipio'] || row['local'] || '').trim();
+         const entidade = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || '').trim();
+         const tipo = String(row['tipo'] || row['categoria'] || row['natureza'] || '').trim();
+         const tipoNorm = normalize(tipo);
+
+         // =================================================================
+         // ISOLAMENTO 1: CAPACIDADE TERRITORIAL
+         // =================================================================
+         if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti')) {
+             const qtd = toNumber(row['qtdenti'] || row['quantidade'] || row['valorentidades'] || 1);
+             let categoriaEntidade = null;
+             let isCTI = false;
+             
+             if (['universidade'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'univs'; isCTI = true; }
+             else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'ifs'; isCTI = true; }
+             else if (['ict'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'icts'; isCTI = true; }
+             else if (['centro de pesquisa', 'pesquisa'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; isCTI = true; }
+             else if (['espaco', 'dinamizador'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'espacos'; isCTI = true; }
+             else if (['parque'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'parques'; isCTI = true; }
+             else if (['incubadora'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'incubadoras'; isCTI = true; }
+
+             if (isCTI && entidade !== '') {
+                 territory.capacidadeRows.push({
+                     id: uniqueRowId,
+                     municipio,
+                     entidade,
+                     tipo,
+                     categoria: categoriaEntidade,
+                     quantidade: qtd
+                 });
+             }
+         }
+
+         // =================================================================
+         // ISOLAMENTO 2: CADEIAS PRODUTIVAS E IGs (Blindado)
+         // =================================================================
+         if (sheetNorm.includes('cadeia') || sheetNorm.includes('ig') || sheetNorm.includes('potencial')) {
+             // Lê estritamente o valor que está sob o cabeçalho 'Cadeia Produtiva' ou 'Cadeia' ou 'Segmento'
+             const cadeia = String(row['cadeiaprodutiva'] || row['cadeia'] || row['segmento'] || '').trim();
+             
+             if (cadeia !== '') {
+                 const sede = String(row['sede'] || row['municipiosatelite'] || '').trim();
+                 const abrangencia = String(row['municipiospertencentes'] || row['abrangencia'] || '').trim();
+                 const qtd = toNumber(row['quantidade'] || row['qtd'] || 1);
+                 const fonte = String(row['fontedodado'] || row['fonte'] || row['link'] || '').trim();
+
+                 territory.cadeiasRows.push({
+                     id: uniqueRowId,
+                     segmento: cadeia,
+                     sede: sede || abrangencia.split(/[;,]/)[0].trim() || municipio || 'N/A',
+                     municipiosPertencentes: abrangencia,
+                     entidade,
+                     tipo,
+                     quantidade: qtd,
+                     fonte
+                 });
+             }
+         }
+
+         // =================================================================
+         // ISOLAMENTO 3: DESENVOLVIMENTO (IFDM)
+         // =================================================================
+         if (sheetNorm.includes('desenvolvimento') || sheetNorm.includes('ifdm')) {
+             const ifdm = toNumber(row['ifdm']);
+             const pop = toNumber(row['populacao']);
+             const ifdmTi = toNumber(row['ifdmt'] || row['ifdmti']);
+
+             if (ifdm > 0 && pop > 0) {
+                 territory.desenvolvimento.somaIfdmPop += ifdm * pop;
+                 territory.desenvolvimento.populacaoTotal += pop;
+             }
+             if (ifdmTi > 0) {
+                 territory.desenvolvimento.ifdmTi = ifdmTi;
+             }
+         }
+
+         // =================================================================
+         // ISOLAMENTO 4: ASSISTÊNCIA PÚBLICA E SEMIÁRIDO
+         // =================================================================
+         const assistencia = String(row['assistenciapublica'] || row['conecta'] || '');
+         const iniciativas = String(row['iniciativas'] || row['dispositivosestaduais'] || '');
+         if (isTruthy(assistencia)) territory.assistenciaPublica.existe = true;
+         if (iniciativas !== '') splitList(iniciativas).forEach(i => territory.assistenciaPublica.iniciativas.add(i));
+
+         const semiaridoVal = toNumber(row['semiarido'] || row['percentualsemiarido']);
+         if (semiaridoVal > 0) {
+             territory.semiaridoAcumulado += semiaridoVal > 1 ? semiaridoVal : semiaridoVal * 100;
+             territory.semiaridoContador += 1;
+         }
       });
-
-      territory.capacidadeRows.push({
-        municipio,
-        entidade: iEntidade !== -1 ? String(row[iEntidade] || '').trim() : '',
-        tipo: iTipo !== -1 ? String(row[iTipo] || '').trim() : '',
-        valor: rowEntidades,
-        categoria: categoriaEntidade,
-      });
-
-      // COUNT DISTINCT: Se for Capacidade Territorial, adiciona combo (entidade, municipio) único
-      if (ehCapacidadeTerrritorial) {
-        const chaveUnica = `${municipio}|${iEntidade !== -1 ? String(row[iEntidade] || '').trim() : ''}`;
-        territory.entidadesUnicas.add(chaveUnica);
-      }
-
-      if (iIfdm !== -1 || iPopulacao !== -1 || iIfdmTi !== -1) {
-        territory.desenvolvimentoRows.push({
-          municipio,
-          ifdm: iIfdm !== -1 ? toNumber(row[iIfdm]) : null,
-          populacao: iPopulacao !== -1 ? toNumber(row[iPopulacao]) : null,
-          ifdmTi: iIfdmTi !== -1 ? toNumber(row[iIfdmTi]) : null,
-        });
-      }
-
-      if (iIfdm !== -1 && iPopulacao !== -1) {
-        const ifdm = toNumber(row[iIfdm]);
-        const populacao = toNumber(row[iPopulacao]);
-        if (ifdm > 0 && populacao > 0) {
-          territory.desenvolvimento.somaIfdmPop += ifdm * populacao;
-          territory.desenvolvimento.populacaoTotal += populacao;
-        }
-      }
-
-      if (iIfdmTi !== -1) {
-        const ifdmTiRaw = toNumber(row[iIfdmTi]);
-        if (ifdmTiRaw > 0) {
-          territory.desenvolvimento.ifdmTi = ifdmTiRaw;
-        }
-      }
-
-      if (iAssistencia !== -1 && isTruthy(row[iAssistencia])) {
-        territory.assistenciaPublica.existe = true;
-        territory.assistenciaPublica.iniciativas.add('Conecta');
-      }
-
-      if (iIniciativas !== -1) {
-        splitList(row[iIniciativas]).forEach((initiative) => territory.assistenciaPublica.iniciativas.add(initiative));
-      }
-
-      const chainNames = [
-        ...(iCadeias !== -1 ? splitList(row[iCadeias]) : []),
-        ...(iIGs !== -1 ? splitList(row[iIGs]) : []),
-      ];
-      const satelite = iSatelite !== -1 ? String(row[iSatelite] || municipio || '').trim() : String(municipio || '').trim();
-
-      if (chainNames.length > 0) {
-        territory.cadeiasRows.push({
-          municipio,
-          cadeias: chainNames,
-          municipioSatelite: satelite,
-        });
-      }
-
-      chainNames.forEach((chainName) => {
-        if (!territory.cadeiasMap.has(chainName)) {
-          territory.cadeiasMap.set(chainName, { cadeia: chainName, municipios: new Set(), satelites: new Map() });
-        }
-        const chain = territory.cadeiasMap.get(chainName);
-        if (municipio) chain.municipios.add(municipio);
-        if (satelite) chain.satelites.set(satelite, (chain.satelites.get(satelite) || 0) + 1);
-      });
-
-      if (iSemiarido !== -1) {
-        const semiarido = toNumber(row[iSemiarido]);
-        if (semiarido > 0) {
-          territory.semiaridoAcumulado += semiarido > 1 ? semiarido : semiarido * 100;
-          territory.semiaridoContador += 1;
-        }
-      }
-    }
+    });
   };
 
-  // Processa as abas utilizando um Try/Catch para não quebrar a pipeline se uma aba estiver mal formatada
   targetSheetNames.forEach(sheetName => {
-    try {
-      processSheet(sheetName);
-    } catch (e) {
-      console.error(`[Dev Parser] Erro na aba ${sheetName}:`, e.message);
-    }
+    try { processSheet(sheetName); } catch (e) { console.error(`[Dev Parser] Erro na aba ${sheetName}:`, e.message); }
   });
 
-  if (!territoryMap.size) {
-    throw new Error('Nenhuma linha territorial válida encontrada nas tabelas da planilha.');
-  }
+  if (!territoryMap.size) throw new Error('Nenhuma linha territorial válida encontrada.');
 
   const territories = Array.from(territoryMap.values()).map((entry) => {
-    // RECALCULA entidadesTotal usando COUNT DISTINCT (únicas combinações entidade + municipio)
-    // IMPORTANTE: Converter Set.size para número ANTES de serializar com JSON.stringify
-    const totalEntidadesUnicas = entry.entidadesUnicas.size || 0;
-    entry.capacidade.entidadesTotal = totalEntidadesUnicas;
-
     if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.populacaoTotal > 0) {
       entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdmPop / entry.desenvolvimento.populacaoTotal;
     }
 
-    const cadeiasProdutivas = Array.from(entry.cadeiasMap.values())
-      .map((chain) => {
-        const orderedSatelites = Array.from(chain.satelites.entries()).sort((a, b) => b[1] - a[1]);
-        return {
-          cadeia: chain.cadeia,
-          municipioSatelite: orderedSatelites[0]?.[0] || null,
-          municipiosEnvolvidos: chain.municipios.size,
-        };
-      })
-      .sort((a, b) => b.municipiosEnvolvidos - a.municipiosEnvolvidos)
-      .slice(0, 2);
-
-    // LÓGICA DE CRUZAMENTO COM O SEMIÁRIDO: Verifica se algum município do território pertence ao semiárido
+    // Validação Global de Semiárido para o Território
     let isSemiarido = false;
-    const allMunicipios = new Set();
-    
-    if (entry.rows) entry.rows.forEach(r => { if (r.municipio) allMunicipios.add(normalize(r.municipio)); });
-    entry.desenvolvimentoRows.forEach(r => { if (r.municipio) allMunicipios.add(normalize(r.municipio)); });
-    entry.cadeiasRows.forEach(r => { 
-        if (r.municipio) allMunicipios.add(normalize(r.municipio));
-        if (r.municipioSatelite) allMunicipios.add(normalize(r.municipioSatelite));
+    entry.capacidadeRows.forEach(e => { if (semiaridoMunicipios.has(normalize(e.municipio))) isSemiarido = true; });
+    entry.cadeiasRows.forEach(e => { 
+        if (semiaridoMunicipios.has(normalize(e.sede))) isSemiarido = true; 
+        splitList(e.municipiosPertencentes).forEach(m => { if (semiaridoMunicipios.has(normalize(m))) isSemiarido = true; });
     });
-
-    for (const mun of allMunicipios) {
-      if (semiaridoMunicipios.has(mun)) {
-        isSemiarido = true;
-        break;
-      }
-    }
-
-    // Se houver percentual na planilha marcando o semiárido, ele também valida a flag
-    if (entry.semiaridoContador > 0 && (entry.semiaridoAcumulado / entry.semiaridoContador) > 0) {
-        isSemiarido = true;
-    }
+    if (entry.semiaridoContador > 0 && (entry.semiaridoAcumulado / entry.semiaridoContador) > 0) isSemiarido = true;
 
     return {
       territory: entry.territory,
       isSemiarido: isSemiarido,
-      capacidade: entry.capacidade,
-      capacidadeDetalhada: entry.capacidadeRows || [],
+      capacidadeDetalhada: entry.capacidadeRows, // A nova array limpa com IDs
+      cadeiasProdutivasDetalhado: entry.cadeiasRows, // A nova array limpa com IDs e Cadeias Reais
       desenvolvimento: {
         ifdmTi: entry.desenvolvimento.ifdmTi,
         populacaoTotal: entry.desenvolvimento.populacaoTotal || null,
         metodologia: 'IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)',
       },
-      desenvolvimentoDetalhado: entry.desenvolvimentoRows || [],
       assistenciaPublica: {
         existe: entry.assistenciaPublica.existe,
         iniciativas: Array.from(entry.assistenciaPublica.iniciativas),
-      },
-      cadeiasProdutivas,
-      cadeiasProdutivasDetalhado: entry.cadeiasRows || [],
-      semiaridoPercentual: entry.semiaridoContador > 0 ? entry.semiaridoAcumulado / entry.semiaridoContador : null,
-      futureSignals: {
-        agriculturaFamiliar: null,
-        gruposSubrepresentados: null,
-      },
-      parquesTecnologicosMunicipios: [],
-      // NOTE: entidadesUnicas (Set) não é serializado — usamos capacidade.entidadesTotal em vez disso
+      }
     };
   }).sort((a, b) => a.territory.localeCompare(b.territory));
 
@@ -497,139 +249,76 @@ function parseSpreadsheet(buffer) {
     generatedAt: new Date().toISOString(),
     territories,
     summary: {
-      territories: territories.length,
-      totalEntidades: territories.reduce((acc, item) => acc + (item.capacidade.entidadesTotal || 0), 0),
-      territoriosComAssistencia: territories.filter((item) => item.assistenciaPublica.existe).length,
-      territoriosSemiarido: territories.filter((item) => item.isSemiarido).length, // Métrica Extra
+      territories: territories.length
     },
   };
 
   const parseTime = Date.now() - startTime;
   console.log(`[Dev Parser] ✓ Parseado em ${parseTime}ms: ${result.summary.territories} territórios`);
 
-  // SALVAR JSON EM /public PARA USO EM PRODUÇÃO (Netlify)
   try {
     const publicDir = path.join(process.cwd(), 'public');
-    if (!fs.existsSync(publicDir)) {
-      fs.mkdirSync(publicDir, { recursive: true });
-    }
-    const jsonPath = path.join(publicDir, 'dados.json');
-    fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2));
-    console.log(`[Dev Parser] 💾 JSON salvo em public/dados.json (${fs.statSync(jsonPath).size} bytes)`);
-  } catch (saveErr) {
-    console.warn(`[Dev Parser] ⚠ Não foi possível salvar JSON: ${saveErr.message}`);
-  }
+    if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
+    fs.writeFileSync(path.join(publicDir, 'dados.json'), JSON.stringify(result, null, 2));
+  } catch (err) { console.warn(`[Dev Parser] Falha ao salvar JSON local.`); }
 
   return result;
 }
-// ==================== FIM DO PROCESSADOR ====================
 
-// Plugin para criar proxy do SharePoint em DEV
 const sharepointProxyPlugin = () => ({
   name: 'sharepoint-proxy',
   configureServer(server) {
     server.middlewares.use('/api/sharepoint', async (req, res) => {
-      console.log('[Dev Proxy] ⚡ Requisição recebida em /api/sharepoint');
       const startTime = Date.now();
       const nocache = req.url.includes('nocache=true');
 
       if (!nocache && devCache && Date.now() < devCacheExpiry) {
-        const age = Math.round((Date.now() - (devCacheExpiry - DEV_CACHE_TTL)) / 1000);
-        console.log(`[Dev Proxy] ✓ Cache HIT (idade: ${age}s) - respondendo instantaneamente`);
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('X-Content-Source', 'dev-cache');
-        res.setHeader('X-Cache-Age', age.toString());
         res.end(devCache);
         return;
       }
 
-      // IMPORTANTE: Foi adicionado &action=default&web=0 para garantir o download binário forçado.
-      // Modifique o link original da sua planilha aqui abaixo (mantenha o final intacto):
       let downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1';
-      if (!downloadUrl.includes('web=0')) {
-        downloadUrl += '&action=default&web=0';
-      }
-
-      if (nocache) {
-        console.log('[Dev Proxy] 🚫 BYPASS DE CACHE SOLICITADO (nocache=true)');
-      }
-
-      console.log(`[Dev Proxy] Cache MISS - baixando Excel...`);
-
-      let clientDisconnected = false;
-      res.on('close', () => { clientDisconnected = true; });
+      if (!downloadUrl.includes('web=0')) downloadUrl += '&action=default&web=0';
 
       https.get(downloadUrl, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+          'User-Agent': 'Mozilla/5.0',
           'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           'Connection': 'keep-alive',
-          // Descomente e insira o seu Cookie abaixo caso o erro 302 / texto HTML continue a aparecer:
-          // 'Cookie': 'FedAuth=COLOQUE_SEU_COOKIE_AQUI',
         },
-        timeout: 60000 // Tempo estendido para evitar ECONNRESET
+        timeout: 60000 
       }, (response) => {
-        const contentType = response.headers['content-type'] || '';
-        console.log(`[Dev Proxy] Status: ${response.statusCode}, Content-Type: ${contentType}`);
-
-        if (response.statusCode === 301 || response.statusCode === 302 || response.statusCode === 307) {
+        if (response.statusCode >= 300 && response.statusCode < 400) {
           let redirectUrl = response.headers.location;
-          if (redirectUrl && redirectUrl.startsWith('/')) {
-            redirectUrl = `https://prodeboffice365-my.sharepoint.com${redirectUrl}`;
-          }
-          console.log(`[Dev Proxy] Redirecionando para: ${redirectUrl?.substring(0, 80)}...`);
-
+          if (redirectUrl && redirectUrl.startsWith('/')) redirectUrl = `https://prodeboffice365-my.sharepoint.com${redirectUrl}`;
           const cookies = response.headers['set-cookie'];
-          const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          };
-          if (cookies) {
-            headers['Cookie'] = cookies.map(c => c.split(';')[0]).join('; ');
-          }
+          const headers = { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' };
+          if (cookies) headers['Cookie'] = cookies.map(c => c.split(';')[0]).join('; ');
 
           https.get(redirectUrl, { headers }, (redirectResponse) => {
             handleResponse(redirectResponse, res, startTime);
-          }).on('error', (err) => {
-            sendError(res, 500, err.message);
-          });
+          }).on('error', (err) => sendError(res, 500, err.message));
           return;
         }
 
         handleResponse(response, res, startTime);
-      }).on('error', (err) => {
-        console.error('[Dev Proxy] Erro:', err.message);
-        sendError(res, 500, err.message);
-      });
+      }).on('error', (err) => sendError(res, 500, err.message));
     });
   }
 });
 
 function handleResponse(response, res, startTime) {
   const contentType = response.headers['content-type'] || '';
-
-  if (contentType.includes('spreadsheet') ||
-    contentType.includes('excel') ||
-    contentType.includes('application/vnd.openxmlformats') ||
-    contentType.includes('application/octet-stream')) {
-
+  if (contentType.includes('spreadsheet') || contentType.includes('excel') || contentType.includes('octet-stream')) {
     const chunks = [];
     response.on('data', (chunk) => chunks.push(chunk));
     response.on('end', () => {
-      const buffer = Buffer.concat(chunks);
-      const downloadTime = Date.now() - startTime;
-      console.log(`[Dev Proxy] ✓ Excel baixado em ${downloadTime}ms: ${buffer.length} bytes`);
-
       try {
-        console.log(`[Dev Proxy] 📊 Processando Excel...`);
-        const parseStart = Date.now();
+        const buffer = Buffer.concat(chunks);
         const jsonData = parseSpreadsheet(buffer);
-        const parseTime = Date.now() - parseStart;
-
         const jsonString = JSON.stringify(jsonData);
-        console.log(`[Dev Proxy] ✓ Parseamento finalizado em ${parseTime}ms`);
 
         devCache = jsonString;
         devCacheExpiry = Date.now() + DEV_CACHE_TTL;
@@ -637,21 +326,14 @@ function handleResponse(response, res, startTime) {
         if (!res.writableEnded) {
           res.setHeader('Content-Type', 'application/json');
           res.setHeader('Access-Control-Allow-Origin', '*');
-          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-          res.setHeader('X-Content-Source', 'dev-processed');
           res.end(jsonString);
         }
       } catch (parseError) {
-        console.error('[Dev Proxy] Erro ao processar Excel:', parseError);
-        sendError(res, 500, 'Erro ao processar planilha: ' + parseError.message);
+        sendError(res, 500, parseError.message);
       }
     });
-    response.on('error', (err) => {
-      sendError(res, 500, 'Erro ao ler dados do SharePoint: ' + err.message);
-    });
   } else {
-    console.error(`[Dev Proxy] Tipo inválido: ${contentType}`);
-    sendError(res, 401, 'SharePoint retornou página HTML em vez de Excel. O link pode precisar de autenticação ou a conexão foi recusada.');
+    sendError(res, 401, 'SharePoint retornou HTML (Link Exige Autenticação/Cookies).');
   }
 }
 
