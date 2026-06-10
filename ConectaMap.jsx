@@ -74,6 +74,7 @@ export default function ConectaMap({
     semiaridoMunicipios = [] 
 }) {
     const [mapFeatures, setMapFeatures] = useState([]);
+    const [territoryBounds, setTerritoryBounds] = useState({}); // Novo estado para as coordenadas de Zoom
     const [hoveredTerritory, setHoveredTerritory] = useState(null);
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
     const [loading, setLoading] = useState(true);
@@ -108,13 +109,35 @@ export default function ConectaMap({
 
                 const project = ([x, y]) => [PADDING + (x - minX) * scale + (width - (maxX - minX) * scale) / 2, PADDING + (maxY - y) * scale + (height - (maxY - minY) * scale) / 2];
 
+                const tBounds = {};
+
                 const features = geo.features.map((feat) => {
                     const municipio = feat.properties?.NOME || feat.properties?.nome || '';
                     const territoryName = municipioTerritoryMap[normalizeName(municipio)] || 'Sem Território';
+                    const tKey = getTerritoryKey(territoryName);
+
+                    // Mapeia os limites de cada território para usarmos na Câmera de Zoom
+                    if (!tBounds[tKey]) {
+                        tBounds[tKey] = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+                    }
+
+                    if (feat.geometry) {
+                        const coords = feat.geometry.type === 'Polygon' ? feat.geometry.coordinates.flat() : feat.geometry.coordinates.flat(2);
+                        coords.forEach(([x, y]) => {
+                            const [px, py] = project([x, y]);
+                            if (px < tBounds[tKey].minX) tBounds[tKey].minX = px;
+                            if (px > tBounds[tKey].maxX) tBounds[tKey].maxX = px;
+                            if (py < tBounds[tKey].minY) tBounds[tKey].minY = py;
+                            if (py > tBounds[tKey].maxY) tBounds[tKey].maxY = py;
+                        });
+                    }
+
                     const d = getPathD(feat.geometry, project);
                     return { nome: municipio, territory: territoryName, d };
                 });
+                
                 setMapFeatures(features);
+                setTerritoryBounds(tBounds); // Guarda as coordenadas para a Câmera
                 setLoading(false);
             })
             .catch((err) => {
@@ -122,6 +145,36 @@ export default function ConectaMap({
                 setLoading(false);
             });
     }, [municipioTerritoryMap]);
+
+    // O CÉREBRO DA CÂMERA DE ZOOM (Usa React useMemo para recalcular rápido)
+    const mapTransform = useMemo(() => {
+        if (!selectedTerritory || Object.keys(territoryBounds).length === 0) {
+            return 'translate(0px, 0px) scale(1)';
+        }
+        
+        const tKey = getTerritoryKey(selectedTerritory.nome);
+        const bounds = territoryBounds[tKey];
+        
+        if (!bounds || bounds.minX === Infinity) {
+            return 'translate(0px, 0px) scale(1)';
+        }
+
+        const w = bounds.maxX - bounds.minX;
+        const h = bounds.maxY - bounds.minY;
+        const cx = bounds.minX + w / 2;
+        const cy = bounds.minY + h / 2;
+
+        // Limita o zoom a 65% do tamanho do container para não ficar cortado
+        const scale = Math.min(SVG_W / w, SVG_H / h) * 0.65;
+        // Coloca um limite máximo (Zoom In) para territórios pequenos não ficarem estourados
+        const clampedScale = Math.min(scale, 3.5); 
+
+        const tx = (SVG_W / 2) - cx * clampedScale;
+        const ty = (SVG_H / 2) - cy * clampedScale;
+
+        return `translate(${tx}px, ${ty}px) scale(${clampedScale})`;
+    }, [selectedTerritory, territoryBounds]);
+
 
     const onTerritoryMouseMove = (e, territoryName) => {
         if (territoryName === 'Sem Território') return;
@@ -154,9 +207,9 @@ export default function ConectaMap({
         const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(territoryName));
         if (foundData) {
             if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(territoryName)) {
-                onSelectTerritory(null);
+                onSelectTerritory(null); // Tira o zoom
             } else {
-                onSelectTerritory(foundData);
+                onSelectTerritory(foundData); // Dá zoom
             }
         }
     };
@@ -176,69 +229,81 @@ export default function ConectaMap({
                     <span className="text-xs font-semibold tracking-wider uppercase">A Desenhar Malha Cartográfica...</span>
                 </div>
             ) : (
-                <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-full max-h-[750px] drop-shadow-xl">
+                <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full h-full drop-shadow-xl overflow-visible">
                     <defs>
                         <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="#0f766e" floodOpacity="0.25" />
+                            <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="#0f766e" floodOpacity="0.35" />
                         </filter>
                     </defs>
 
-                    {mapFeatures.map((feat, index) => {
-                        const normalizedFeatName = getTerritoryKey(feat.territory);
-                        
-                        const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
-                        const blockClickAndColor = filtroSemiarido && !isMunSemi;
+                    {/* Grupo da Câmera (Recebe o transform para fazer o Zoom in/out) */}
+                    <g 
+                        style={{ 
+                            transform: mapTransform, 
+                            transformOrigin: '0 0', 
+                            transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)' 
+                        }}
+                    >
+                        {mapFeatures.map((feat, index) => {
+                            const normalizedFeatName = getTerritoryKey(feat.territory);
+                            
+                            const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
+                            const blockClickAndColor = filtroSemiarido && !isMunSemi;
 
-                        const isHovered = !blockClickAndColor && hoveredTerritory === feat.territory;
-                        const isSelected = !blockClickAndColor && selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
-                        
-                        // LÊ A INSTRUÇÃO DO CÉREBRO (App.jsx)
-                        const curStat = territoriesDynamicStats[normalizedFeatName];
-                        let matchesSearch = curStat ? curStat.matchesSearch : true;
+                            const isHovered = !blockClickAndColor && hoveredTerritory === feat.territory;
+                            const isSelected = !blockClickAndColor && selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
+                            
+                            const curStat = territoriesDynamicStats[normalizedFeatName];
+                            let matchesSearch = curStat ? curStat.matchesSearch : true;
 
-                        let opacity = 0.75;
-                        let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
+                            let opacity = 0.90; // Default opacidade alta
+                            let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
-                        if (blockClickAndColor) {
-                            fillColor = '#cbd5e1'; 
-                            opacity = 0.35;        
-                        } else {
-                            if (!matchesSearch) {
-                                opacity = 0.08; 
-                            } else if (isSelected) {
-                                opacity = 1;
-                            } else if (isHovered) {
-                                opacity = 0.9;
+                            // LÓGICA DE OPACIDADE E VISIBILIDADE ATUALIZADA
+                            if (blockClickAndColor) {
+                                fillColor = '#cbd5e1'; 
+                                opacity = 0.35;        
+                            } else {
+                                if (!matchesSearch) {
+                                    opacity = 0.15; // Esconde os que não correspondem à pesquisa
+                                } else if (selectedTerritory) {
+                                    // Se existe um mapa selecionado, quem não é ele fica com 50% (Bem visível!)
+                                    opacity = isSelected ? 1 : 0.5;
+                                } else if (isHovered) {
+                                    opacity = 1;
+                                }
                             }
-                        }
 
-                        return (
-                            <path
-                                key={`${feat.nome}-${index}`}
-                                d={feat.d}
-                                fill={fillColor}
-                                stroke={isSelected || isHovered ? '#ffffff' : '#f8fafc'}
-                                strokeWidth={isSelected ? 2.5 : isHovered ? 1.5 : 0.5}
-                                strokeLinejoin="round"
-                                className="transition-all duration-300 ease-out"
-                                style={{ 
-                                    pointerEvents: blockClickAndColor ? 'none' : 'auto',
-                                    cursor: blockClickAndColor ? 'default' : 'pointer'
-                                }}
-                                opacity={opacity}
-                                filter={isSelected || isHovered ? 'url(#glow)' : undefined}
-                                onMouseEnter={(e) => {
-                                    if (!blockClickAndColor) onTerritoryMouseMove(e, feat.territory);
-                                }}
-                                onMouseMove={(e) => {
-                                    if (!blockClickAndColor) onTerritoryMouseMove(e, feat.territory);
-                                }}
-                                onClick={() => {
-                                    if (!blockClickAndColor) handleMapClick(feat.territory);
-                                }}
-                            />
-                        );
-                    })}
+                            return (
+                                <path
+                                    key={`${feat.nome}-${index}`}
+                                    d={feat.d}
+                                    fill={fillColor}
+                                    stroke={isSelected || isHovered ? '#ffffff' : '#f8fafc'}
+                                    strokeWidth={isSelected ? 3 : isHovered ? 2 : 0.8}
+                                    strokeLinejoin="round"
+                                    // Impede que a borda fique gigante ao dar zoom
+                                    vectorEffect="non-scaling-stroke" 
+                                    className="transition-all duration-300 ease-out outline-none"
+                                    style={{ 
+                                        pointerEvents: blockClickAndColor ? 'none' : 'auto',
+                                        cursor: blockClickAndColor ? 'default' : 'pointer'
+                                    }}
+                                    opacity={opacity}
+                                    filter={isSelected || isHovered ? 'url(#glow)' : undefined}
+                                    onMouseEnter={(e) => {
+                                        if (!blockClickAndColor) onTerritoryMouseMove(e, feat.territory);
+                                    }}
+                                    onMouseMove={(e) => {
+                                        if (!blockClickAndColor) onTerritoryMouseMove(e, feat.territory);
+                                    }}
+                                    onClick={() => {
+                                        if (!blockClickAndColor) handleMapClick(feat.territory);
+                                    }}
+                                />
+                            );
+                        })}
+                    </g>
                 </svg>
             )}
 
