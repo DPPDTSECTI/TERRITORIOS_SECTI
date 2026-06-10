@@ -431,10 +431,7 @@ export default function App() {
     <div className="relative flex flex-col h-screen font-sans text-slate-800 overflow-hidden text-sm bg-slate-100">
       
       {/* FUNDO FIXO EM DEGRADÊ */}
-      <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-100 via-white to-slate-200 pointer-events-none">
-         <div className="absolute -top-[15%] -right-[5%] w-[60%] h-[60%] rounded-full bg-gov-blueDark-500/35 blur-[120px]"></div>
-         <div className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gov-cyan-500/35 blur-[120px]"></div>
-         <div className="absolute top-[25%] left-[25%] w-[45%] h-[45%] rounded-full bg-gov-magenta-500/20 blur-[130px]"></div>
+      <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-100 via-zinc-50 to-gray-200 pointer-events-none">
       </div>
 
       {isLoadingPipeline && territoriosData.length === 0 && (

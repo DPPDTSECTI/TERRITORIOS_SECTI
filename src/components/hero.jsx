@@ -42,14 +42,6 @@ const LandingHero = ({ onAccessDashboard }) => {
                 </div>
             </main>
 
-            {/* Logo Institucional */}
-            <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 max-w-[180px] sm:max-w-[240px] z-20">
-                <img 
-                    src="/img/Secti_Vertical-removebg-preview.png" 
-                    alt="Governo do Estado da Bahia - Secretaria de Ciência, Tecnologia e Inovação" 
-                    className="w-full h-auto object-contain object-right-bottom drop-shadow-md"
-                />
-            </div>
         </div>
     );
 };
