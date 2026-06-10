@@ -3,7 +3,7 @@ import ConectaMap from "../ConectaMap";
 import LandingHero from './components/hero';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 
-// Função de normalização para cruzamento exato de textos
+// Função de normalização para cruzamento exato de textos (remove acentos e espaços)
 function normalize(value) {
     return String(value || '')
         .normalize('NFD')
@@ -32,7 +32,7 @@ export default function App() {
   const scrollMunsRef = useRef(null);
 
   // =======================================================================
-  // INGESTÃO DE DADOS
+  // INGESTÃO DE DADOS BLINDADA (Cruzamento com JSON Oficial)
   // =======================================================================
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
     setIsLoadingPipeline(true);
@@ -45,25 +45,51 @@ export default function App() {
       if (!response.ok) throw new Error('Falha ao comunicar com a base de dados');
       
       const data = await response.json();
+      const semiaridoNormList = (data.semiaridoMunicipiosList || []).map(m => normalize(m));
 
       const territoriosFormatados = data.territories.map((t, index) => {
+        const territorioBase = territoriosMunicipios.territorios_de_identidade.find(
+            (tb) => normalize(tb.nome) === normalize(t.territory)
+        );
+        
+        let trueQtdSemi = 0;
+        if (territorioBase) {
+            territorioBase.municipios.forEach(m => {
+                if (semiaridoNormList.includes(normalize(m))) trueQtdSemi++;
+            });
+        }
+        
+        const trueTotalMuns = territorioBase ? territorioBase.municipios.length : 0;
+        const truePctSemiarido = trueTotalMuns > 0 ? (trueQtdSemi / trueTotalMuns) * 100 : 0;
+        const trueIsSemiarido = trueQtdSemi > 0;
+
+        const entidadesCTI = Array.isArray(t.capacidadeDetalhada) ? t.capacidadeDetalhada : [];
+        const cadeiasAPL = Array.isArray(t.cadeiasProdutivasDetalhado) ? t.cadeiasProdutivasDetalhado : [];
+
         return {
           id: String(index + 1),
           nome: t.territory || "Desconhecido",
           tipo: 'Território',
           regiao: t.territory || "",
-          isSemiarido: !!t.isSemiarido,
-          pctSemiarido: t.pctSemiarido || 0,
-          entidadesDetalhadas: Array.isArray(t.capacidadeDetalhada) ? t.capacidadeDetalhada : [],
-          cadeiasProdutivasDetalhado: Array.isArray(t.cadeiasProdutivasDetalhado) ? t.cadeiasProdutivasDetalhado : [],
+          isSemiarido: trueIsSemiarido,   
+          pctSemiarido: truePctSemiarido, 
+          entidadesDetalhadas: entidadesCTI,
+          cadeiasProdutivasDetalhado: cadeiasAPL,
           desenvolvimentoDetalhado: Array.isArray(t.desenvolvimentoDetalhado) ? t.desenvolvimentoDetalhado : [],
           assistenciaPublica: t.assistenciaPublica || { iniciativas: [] },
-          desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 }
+          desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 },
+          kpis: {
+            capacidadeCti: String(entidadesCTI.length),
+            ifdm: t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi).toFixed(3) : "-",
+            conectaBahia: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado",
+            cadeiasIgs: String(cadeiasAPL.length),
+            coberturaSemiarido: trueIsSemiarido ? (truePctSemiarido >= 100 ? "Pertencente" : "Parcial") : "Exterior"
+          }
         };
       });
 
       setTerritoriosData(territoriosFormatados);
-      setSemiaridoMunicipios(data.semiaridoMunicipiosList || []); 
+      setSemiaridoMunicipios(semiaridoNormList); 
       setLastUpdate(new Date(data.generatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
     } catch (error) {
       console.error("[Painel] Erro fatal na pipeline:", error);
@@ -83,39 +109,103 @@ export default function App() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filteredOptions = territoriosData.filter(item => {
-    const matchesText = (item.nome || "").toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSemi = filtroSemiarido ? item.isSemiarido : true;
-    return matchesText && matchesSemi;
-  });
-
-  // =======================================================================
-  // MOTOR DE FILTRO PROFUNDO (O "Coração" Granular do Sistema)
-  // =======================================================================
-  // Esta função decide, num piscar de olhos, se um município passa nas regras atuais
   const isMunValid = (munName) => {
       if (!munName) return false;
       const normalizedMun = normalize(munName);
-      
-      // REGRA 1: Filtro do Semiárido
       if (filtroSemiarido && !semiaridoMunicipios.includes(normalizedMun)) return false;
-      
-      // (Futuros filtros de Bioma, IDH, etc, entram aqui)
-      
       return true;
   };
 
   // =======================================================================
-  // ESTATÍSTICAS DINÂMICAS PARA O MAPA (Tooltip Hover)
+  // MOTOR DE PESQUISA PROFUNDA RIGOROSO (Strict Deep Search)
+  // =======================================================================
+  const filteredOptions = useMemo(() => {
+    const term = normalize(searchTerm);
+    const results = [];
+
+    territoriosData.forEach(t => {
+        if (filtroSemiarido && !t.isSemiarido) return;
+
+        if (!term) {
+            results.push({ ...t, matchType: 'Território', matchText: t.regiao });
+            return;
+        }
+
+        let matched = false;
+        let foundMunMatch = null;
+        let foundEntMatch = null;
+        let foundCadeiaMatch = null;
+        let matchTerritoryName = false;
+
+        const territorioBase = territoriosMunicipios.territorios_de_identidade.find(
+            (tb) => normalize(tb.nome) === normalize(t.nome)
+        );
+
+        if (territorioBase) {
+            const foundMun = territorioBase.municipios.find(m => normalize(m).includes(term));
+            if (foundMun && isMunValid(foundMun)) {
+                matched = true;
+                foundMunMatch = foundMun;
+            }
+        }
+
+        if (!matched && t.entidadesDetalhadas) {
+            foundEntMatch = t.entidadesDetalhadas.find(ent => {
+                if (!isMunValid(ent.municipio)) return false; 
+                return normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term) || normalize(ent.categoria).includes(term);
+            });
+            if (foundEntMatch) matched = true;
+        }
+
+        if (!matched && t.cadeiasProdutivasDetalhado) {
+            foundCadeiaMatch = t.cadeiasProdutivasDetalhado.find(cad => {
+                const sedeStr = cad.sede || cad.municipioSatelite || '';
+                if (!isMunValid(sedeStr)) return false; 
+                return normalize(cad.segmento).includes(term) || normalize(sedeStr).includes(term);
+            });
+            if (foundCadeiaMatch) matched = true;
+        }
+
+        if (!matched && normalize(t.nome).includes(term)) {
+            matchTerritoryName = true;
+            if (filtroSemiarido && territorioBase) {
+                const isTypingNonSemiMun = territorioBase.municipios.some(m => 
+                    normalize(m).includes(term) && !semiaridoMunicipios.includes(normalize(m))
+                );
+                const isTypingActualTerritory = normalize(t.nome).includes(term) && !territorioBase.municipios.some(m => normalize(m) === normalize(t.nome));
+                if (isTypingNonSemiMun && !isTypingActualTerritory) matchTerritoryName = false;
+            }
+            if (matchTerritoryName) matched = true;
+        }
+
+        if (foundMunMatch) {
+            results.push({ ...t, matchType: 'Município', matchText: foundMunMatch });
+        } else if (foundEntMatch) {
+            const isType = normalize(foundEntMatch.tipo).includes(term);
+            results.push({ ...t, matchType: isType ? 'Tipo de Infraestrutura' : 'Entidade CT&I', matchText: isType ? foundEntMatch.tipo : foundEntMatch.entidade });
+        } else if (foundCadeiaMatch) {
+            const isSeg = normalize(foundCadeiaMatch.segmento).includes(term);
+            results.push({ ...t, matchType: isSeg ? 'Segmento Produtivo' : 'Sede da Cadeia', matchText: isSeg ? foundCadeiaMatch.segmento : (foundCadeiaMatch.sede || foundCadeiaMatch.municipioSatelite) });
+        } else if (matchTerritoryName) {
+            results.push({ ...t, matchType: 'Território', matchText: t.regiao });
+        }
+    });
+
+    return results.sort((a, b) => a.nome.localeCompare(b.nome));
+  }, [searchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios]);
+
+  // =======================================================================
+  // ESTATÍSTICAS DINÂMICAS PARA O MAPA (CORRIGIDO: Sem vazamento de variáveis)
   // =======================================================================
   const territoriesDynamicStats = useMemo(() => {
       const stats = {};
-      
+      const term = normalize(searchTerm);
+      const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
+
       territoriosData.forEach(t => {
           let somaIfdmPop = 0;
           let somaPop = 0;
           
-          // 1. IFDM Dinâmico (Soma apenas a População dos municípios válidos)
           if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
               t.desenvolvimentoDetalhado.forEach(m => {
                   if (isMunValid(m.municipio)) {
@@ -128,7 +218,6 @@ export default function App() {
                   }
               });
           } else {
-              // Fallback se os dados de IFDM por município estiverem ausentes no Vite
               if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
                   somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal;
                   somaPop = t.desenvolvimento.populacaoTotal;
@@ -137,15 +226,33 @@ export default function App() {
           
           const dynIfdm = somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-";
 
-          // 2. Contagens Dinâmicas de CT&I e Cadeias
-          const validCti = t.entidadesDetalhadas.filter(ent => isMunValid(ent.municipio));
-          const validCadeias = t.cadeiasProdutivasDetalhado.filter(cad => {
-              const sedeValid = isMunValid(cad.sede || cad.municipioSatelite);
-              const pertsValid = String(cad.municipiosPertencentes || cad.municipio || '').split(/[;,]/).some(m => isMunValid(m));
-              return sedeValid || pertsValid; // Se a Sede ou pelo menos 1 município pertencer, a cadeia entra
+          const validCti = t.entidadesDetalhadas.filter(ent => {
+              if (!isMunValid(ent.municipio)) return false;
+              if (term && !isSearchTermATerritory) {
+                  return normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term) || normalize(ent.categoria).includes(term);
+              }
+              return true;
           });
 
-          // 3. Assistência Pública Dinâmica
+          const validCadeias = t.cadeiasProdutivasDetalhado.filter(cad => {
+              const sedeStr = cad.sede || cad.municipioSatelite || '';
+              if (!isMunValid(sedeStr)) return false;
+              if (term && !isSearchTermATerritory) {
+                  return normalize(cad.segmento).includes(term) || normalize(sedeStr).includes(term);
+              }
+              return true;
+          });
+
+          let matchesSearch = true;
+          if (term) {
+              const matchTerritoryName = normalize(t.nome).includes(term);
+              const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
+              const matchMunicipioName = territorioBase ? territorioBase.municipios.some(m => normalize(m).includes(term)) : false;
+              let matchAssets = !isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0);
+
+              matchesSearch = matchTerritoryName || matchMunicipioName || matchAssets;
+          }
+
           const hasValidMuns = t.desenvolvimentoDetalhado ? t.desenvolvimentoDetalhado.some(m => isMunValid(m.municipio)) : !filtroSemiarido;
           const dynConecta = (t.assistenciaPublica?.existe && hasValidMuns) ? "Presente" : "Não mapeado";
 
@@ -154,24 +261,24 @@ export default function App() {
               capacidadeCti: String(validCti.length),
               cadeiasIgs: String(validCadeias.length),
               conectaBahia: dynConecta,
-              pctSemiarido: t.pctSemiarido
+              pctSemiarido: t.pctSemiarido,
+              matchesSearch: filtroSemiarido ? (t.isSemiarido && matchesSearch) : matchesSearch
           };
       });
-
       return stats;
-  }, [territoriosData, filtroSemiarido, semiaridoMunicipios]);
-
+  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios]);
 
   // =======================================================================
-  // PROCESSADOR CENTRAL DO DASHBOARD (Listas e KPIs Superiores)
+  // PROCESSADOR CENTRAL DO DASHBOARD (Listas Laterais e Cards)
   // =======================================================================
   const dashboardData = useMemo(() => {
     let targetList = selectedLocation ? [selectedLocation] : territoriosData;
+    const term = normalize(searchTerm);
+    const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
 
     const kpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const entidadesFlat = [];
     const aplIgsFlat = [];
-    const assistenciasFlat = [];
 
     const globalUniqueCtiIds = new Set();
     const globalUniqueCadeiasIds = new Set();
@@ -182,13 +289,18 @@ export default function App() {
     let totalTerritoriosComAssistencia = 0;
 
     targetList.forEach(t => {
+        if (filtroSemiarido && !t.isSemiarido) return;
         let territoryHasValidData = false;
 
-        // CT&I (Deep Filter)
         t.entidadesDetalhadas.forEach(ent => {
             if (!isMunValid(ent.municipio)) return;
-            territoryHasValidData = true;
+            if (term && !isSearchTermATerritory) {
+                const matchName = normalize(ent.entidade).includes(term);
+                const matchType = normalize(ent.tipo).includes(term) || normalize(ent.categoria).includes(term);
+                if (!matchName && !matchType) return;
+            }
 
+            territoryHasValidData = true;
             entidadesFlat.push({ ...ent, territorioRef: t.nome });
             if (ent.id && !globalUniqueCtiIds.has(ent.id)) {
                 globalUniqueCtiIds.add(ent.id);
@@ -196,18 +308,23 @@ export default function App() {
             }
         });
         
-        // CADEIAS PRODUTIVAS (Deep Filter)
         t.cadeiasProdutivasDetalhado.forEach(cadeia => {
             const sedeStr = cadeia.sede || cadeia.municipioSatelite || 'Não informada';
             const pertsStr = cadeia.municipiosPertencentes || cadeia.municipio || 'Não informados';
 
-            const isSedeValid = isMunValid(sedeStr);
-            const isAnyPertValid = String(pertsStr).split(/[;,]/).some(m => isMunValid(m));
-            
-            if (!isSedeValid && !isAnyPertValid) return;
-            territoryHasValidData = true;
+            const pertsArray = String(pertsStr).split(/[,;|\-/]/).map(m => m.trim()).filter(Boolean);
+            let cleanPertsArray = filtroSemiarido ? pertsArray.filter(m => isMunValid(m)) : pertsArray;
 
-            const segmentoStr = cadeia.segmento || (Array.isArray(cadeia.cadeias) ? cadeia.cadeias.join(', ') : cadeia.cadeias) || 'Sem Segmento';
+            if (filtroSemiarido && !isMunValid(sedeStr) && cleanPertsArray.length === 0) return;
+
+            if (term && !isSearchTermATerritory) {
+                const matchSeg = normalize(cadeia.segmento).includes(term);
+                const matchSede = normalize(sedeStr).includes(term);
+                if (!matchSeg && !matchSede) return;
+            }
+
+            territoryHasValidData = true;
+            const segmentoStr = cadeia.segmento || 'Sem Segmento';
             const tipoStr = cadeia.tipo && String(cadeia.tipo).trim() !== '' ? cadeia.tipo : 'Não Classificado';
             
             aplIgsFlat.push({
@@ -215,7 +332,7 @@ export default function App() {
                 segmento: segmentoStr, 
                 entidade: cadeia.entidade || null,
                 tipo: tipoStr,
-                municipiosPertencentes: pertsStr,
+                municipiosPertencentes: cleanPertsArray.join(', ') || sedeStr, 
                 fonte: cadeia.fonte || null,
                 sede: sedeStr, 
                 territorioRef: t.nome 
@@ -224,7 +341,6 @@ export default function App() {
             if (cadeia.id) globalUniqueCadeiasIds.add(cadeia.id);
         });
 
-        // ASSISTÊNCIA PÚBLICA
         if (t.assistenciaPublica?.existe && (!filtroSemiarido || territoryHasValidData)) {
             totalTerritoriosComAssistencia += 1;
             const iniArray = Array.isArray(t.assistenciaPublica?.iniciativas) ? t.assistenciaPublica.iniciativas : [];
@@ -236,7 +352,6 @@ export default function App() {
             });
         }
 
-        // IFDM MATEMÁTICA PURA (Ponderação População x Municípios Válidos)
         if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
             t.desenvolvimentoDetalhado.forEach(munData => {
                 if (isMunValid(munData.municipio)) {
@@ -263,14 +378,10 @@ export default function App() {
     const assistenciasList = Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
     const mediaIfdm = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao).toFixed(3) : "-";
     
-    let coberturaStr = "85,6% do Estado";
-    if (selectedLocation) {
-        if (selectedLocation.pctSemiarido >= 100) coberturaStr = "Pertencente (100%)";
-        else if (selectedLocation.pctSemiarido <= 0) coberturaStr = "Não pertencente";
-        else coberturaStr = `Parcial (${selectedLocation.pctSemiarido.toFixed(1)}%)`;
-    } else if (filtroSemiarido) {
-        coberturaStr = "100% (Filtro Ativo)";
-    }
+    const safePct = selectedLocation ? (Number(selectedLocation.pctSemiarido) || 0).toFixed(1) : "0.0";
+    const coberturaCalculada = selectedLocation 
+      ? (Number(selectedLocation.pctSemiarido) >= 100 ? "Pertencente (100%)" : Number(selectedLocation.pctSemiarido) <= 0 ? "Não pertencente" : `Parcial (${safePct}%)`) 
+      : (filtroSemiarido ? "100% (Filtro Ativo)" : "85,6% do Estado");
 
     return { 
         topKpis: {
@@ -278,16 +389,15 @@ export default function App() {
             ifdm: mediaIfdm,
             conectaBahia: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalTerritoriosComAssistencia} Territórios`,
             cadeiasIgs: String(globalUniqueCadeiasIds.size), 
-            coberturaSemiarido: coberturaStr
+            coberturaSemiarido: coberturaCalculada
         }, 
         subKpis: kpisPanel, 
         entidades: uniqueVisualEntidades, 
         aplIgs: uniqueVisualCadeias, 
         assistencias: assistenciasList 
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, searchTerm]);
 
-  // Lista Horizontal de Municípios filtrados
   const municipiosDoTerritorioSelecionado = useMemo(() => {
       if (!selectedLocation) return [];
       try {
@@ -295,7 +405,6 @@ export default function App() {
               (t) => normalize(t.nome) === normalize(selectedLocation.nome)
           );
           if (!territorioBase) return [];
-          
           let list = territorioBase.municipios;
           if (filtroSemiarido) list = list.filter(m => semiaridoMunicipios.includes(normalize(m)));
           return list.sort((a,b) => a.localeCompare(b));
@@ -312,7 +421,6 @@ export default function App() {
 
   const handleForceRefresh = () => carregarDadosDoSharePoint(true);
 
-  // Zera o visual do mapa ao ligar/desligar o filtro (A sua sugestão brilhante!)
   const handleToggleFilter = () => {
       setFiltroSemiarido(!filtroSemiarido);
       setSelectedLocation(null); 
@@ -370,7 +478,7 @@ export default function App() {
                     <div className="relative flex items-center">
                       <input
                         type="text"
-                        placeholder={isLoadingPipeline ? "Sincronizando dados..." : "Busque por Território de Identidade..."}
+                        placeholder={isLoadingPipeline ? "Sincronizando dados..." : "Pesquise por Município, Território, Tipo de Entidade ou Segmento..."}
                         value={searchTerm}
                         disabled={isLoadingPipeline}
                         onChange={(e) => {
@@ -404,19 +512,25 @@ export default function App() {
                   </div>
 
                   {isDropdownOpen && searchTerm && (
-                    <div className="absolute top-[100%] mt-1 w-full bg-white border border-slate-200/80 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50 divide-y divide-slate-100">
+                    <div className="absolute top-[100%] mt-1 w-full bg-white border border-slate-200/80 rounded-lg shadow-lg max-h-56 overflow-y-auto z-50 divide-y divide-slate-100">
                       {filteredOptions.length > 0 ? (
                         filteredOptions.map((item) => (
-                          <button key={item.id} onClick={() => { setSelectedLocation(item); setSearchTerm(item.nome); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center justify-between">
-                            <div>
-                              <span className="font-semibold text-xs text-slate-800 block">{item.nome}</span>
-                              <span className="text-[10px] text-slate-400">{item.regiao}</span>
+                          <button key={item.id} onClick={() => { setSelectedLocation(item); setSearchTerm(item.nome); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2.5 hover:bg-slate-50 flex items-center justify-between transition-colors">
+                            <div className="flex flex-col gap-0.5">
+                              <span className="font-bold text-xs text-slate-800 block">{item.nome}</span>
+                              {item.matchType === 'Território' ? (
+                                 <span className="text-[9px] text-slate-400 font-medium uppercase tracking-wider">{item.regiao}</span>
+                              ) : (
+                                 <span className="text-[10px] text-gov-blueDark-500 font-medium">
+                                     Correspondência em {item.matchType}: <span className="text-slate-700 font-bold">{item.matchText}</span>
+                                 </span>
+                              )}
                             </div>
-                            {item.isSemiarido && <span className="text-[8px] font-bold text-gov-red-500 bg-gov-red-50 px-1.5 py-0.5 rounded-full">Semiárido</span>}
+                            {item.isSemiarido && <span className="text-[8px] font-bold text-gov-red-500 bg-gov-red-50 px-1.5 py-0.5 rounded-full border border-gov-red-100">Semiárido</span>}
                           </button>
                         ))
                       ) : (
-                        <div className="px-3 py-2 text-xs text-slate-400 font-light italic">Nenhum território localizado.</div>
+                        <div className="px-3 py-3 text-xs text-slate-400 font-medium italic text-center">Nenhum resultado encontrado para esta busca profunda.</div>
                       )}
                     </div>
                   )}
@@ -467,7 +581,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* MUNICÍPIOS HORIZONTAL SCROLL (Responsivo ao Filtro) */}
+              {/* MUNICÍPIOS HORIZONTAL SCROLL */}
               {selectedLocation && municipiosDoTerritorioSelecionado.length > 0 && (
                 <div className="bg-white/85 border border-slate-200/60 p-3 rounded-xl shadow-sm">
                     <div className="flex items-center justify-between mb-2">
@@ -480,8 +594,6 @@ export default function App() {
                     </div>
                     
                     <div className="relative flex items-center group">
-                        
-                        {/* Botão Esquerda */}
                         <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: -180, behavior: 'smooth' })} className="absolute left-0 h-full bg-gradient-to-r from-white via-white/95 to-transparent pr-10 pl-0.5 flex items-center justify-start z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <div className="bg-slate-900/90 text-white p-1 rounded-full shadow-md hover:bg-slate-800 transition-colors cursor-pointer border border-white/20">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
@@ -499,7 +611,6 @@ export default function App() {
                             })}
                         </div>
 
-                        {/* Botão Direita */}
                         <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: 180, behavior: 'smooth' })} className="absolute right-0 h-full bg-gradient-to-l from-white via-white/95 to-transparent pl-10 pr-0.5 flex items-center justify-end z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <div className="bg-slate-900/90 text-white p-1 rounded-full shadow-md hover:bg-slate-800 transition-colors cursor-pointer border border-white/20">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
@@ -516,7 +627,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* AS 7 SUB-KPIS DE CT&I NA HORIZONTAL */}
+              {/* DETALHAMENTO HORIZONTAL */}
               <div className="mt-1 mb-1">
                  <div className="flex items-center justify-between mb-2">
                     <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Detalhamento da Infraestrutura de CT&I</h4>
@@ -553,7 +664,7 @@ export default function App() {
                  </div>
               </div>
 
-              {/* LAYOUT ESPACIAL: Mapa (50%) + Listas (50%) */}
+              {/* LAYOUT ESPACIAL: MAPA (50%) + LISTAS (50%) */}
               <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[700px] w-full mt-1">
                 
                 {/* MAPA */}
@@ -565,7 +676,7 @@ export default function App() {
                   <div className="w-full h-full flex-1 rounded-lg overflow-hidden bg-slate-50/50">
                     <ConectaMap 
                       territoriosData={territoriosData} 
-                      territoriesDynamicStats={territoriesDynamicStats} // NOVO: Passa as KPIs dinâmicas ao Mapa
+                      territoriesDynamicStats={territoriesDynamicStats} 
                       searchTerm={searchTerm} 
                       filtroSemiarido={filtroSemiarido} 
                       selectedTerritory={selectedLocation} 
@@ -607,7 +718,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma instituição válida neste recorte.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma instituição mapeada nesta pesquisa.</span>
                                </div>
                            )}
                         </div>
@@ -670,7 +781,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma cadeia válida neste recorte.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma cadeia localizada nesta pesquisa.</span>
                                </div>
                            )}
                         </div>
@@ -701,7 +812,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400 font-medium">Não mapeado neste recorte.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Em levantamento.</span>
                                </div>
                            )}
                         </div>

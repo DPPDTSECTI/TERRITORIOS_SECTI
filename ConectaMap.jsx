@@ -66,7 +66,7 @@ const getPathD = (geometry, project) => {
 
 export default function ConectaMap({ 
     territoriosData = [], 
-    territoriesDynamicStats = {}, // NOVO: Os dados matematicamente filtrados do App.jsx
+    territoriesDynamicStats = {}, 
     searchTerm = '', 
     filtroSemiarido = false, 
     selectedTerritory = null, 
@@ -81,7 +81,6 @@ export default function ConectaMap({
 
     const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
 
-    // Busca a Topologia Cartográfica da Bahia
     useEffect(() => {
         setLoading(true);
         fetch('/BA_(1)9396399957704198.json')
@@ -152,9 +151,7 @@ export default function ConectaMap({
 
     const handleMapClick = (territoryName) => {
         if (territoryName === 'Sem Território') return;
-        
         const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(territoryName));
-        
         if (foundData) {
             if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(territoryName)) {
                 onSelectTerritory(null);
@@ -168,7 +165,6 @@ export default function ConectaMap({
         ? territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(hoveredTerritory)) 
         : null;
 
-    // Recupera os dados dinâmicos recalculados pelo Deep Filter para o território hoverado
     const dynamicStats = hoveredTerritory ? territoriesDynamicStats[getTerritoryKey(hoveredTerritory)] : null;
 
     return (
@@ -189,7 +185,6 @@ export default function ConectaMap({
 
                     {mapFeatures.map((feat, index) => {
                         const normalizedFeatName = getTerritoryKey(feat.territory);
-                        const matchesSearch = !searchTerm || normalizedFeatName.includes(normalizeName(searchTerm));
                         
                         const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
                         const blockClickAndColor = filtroSemiarido && !isMunSemi;
@@ -197,6 +192,10 @@ export default function ConectaMap({
                         const isHovered = !blockClickAndColor && hoveredTerritory === feat.territory;
                         const isSelected = !blockClickAndColor && selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
                         
+                        // LÊ A INSTRUÇÃO DO CÉREBRO (App.jsx)
+                        const curStat = territoriesDynamicStats[normalizedFeatName];
+                        let matchesSearch = curStat ? curStat.matchesSearch : true;
+
                         let opacity = 0.75;
                         let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
@@ -205,7 +204,7 @@ export default function ConectaMap({
                             opacity = 0.35;        
                         } else {
                             if (!matchesSearch) {
-                                opacity = 0.05;
+                                opacity = 0.08; 
                             } else if (isSelected) {
                                 opacity = 1;
                             } else if (isHovered) {
@@ -243,7 +242,6 @@ export default function ConectaMap({
                 </svg>
             )}
 
-            {/* TOOLTIP GLASSMORPHISM (Usando os dados dinâmicos recalculados) */}
             {tooltip.visible && hoveredData && dynamicStats && (
                 <div 
                     className="absolute z-50 overflow-hidden rounded-2xl border border-white/60 bg-white/80 backdrop-blur-md shadow-glass pointer-events-none transition-opacity duration-200"
