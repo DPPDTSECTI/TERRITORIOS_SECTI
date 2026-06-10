@@ -8,12 +8,11 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v8'; 
+const CACHE_VERSION = 'v9'; 
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
 // Função ultra-rigorosa para limpar cabeçalhos e transformá-los em chaves de objeto seguras
-// Exemplo: "Cadeia Produtiva" -> "cadeiaprodutiva"
 function safeKey(k) {
   return String(k || '')
     .normalize('NFD')
@@ -212,7 +211,7 @@ function parseSpreadsheet(buffer) {
          }
 
          // =================================================================
-         // ISOLAMENTO 3: DESENVOLVIMENTO (IFDM)
+         // ISOLAMENTO 3: DESENVOLVIMENTO (IFDM) E POPULAÇÃO
          // =================================================================
          if (sheetNorm.includes('desenvolvimento') || sheetNorm.includes('ifdm')) {
              const ifdm = toNumber(row['ifdm']);
@@ -220,7 +219,12 @@ function parseSpreadsheet(buffer) {
              const ifdmTi = toNumber(row['ifdmt'] || row['ifdmti']);
 
              if (municipio) {
-                 territory.desenvolvimentoRows.push({ municipio });
+                 // CORREÇÃO APLICADA AQUI: Enviar o ifdm e a pop para o frontend!
+                 territory.desenvolvimentoRows.push({ 
+                     municipio: municipio,
+                     ifdm: ifdm,
+                     populacao: pop
+                 });
              }
 
              if (ifdm > 0 && pop > 0) {
@@ -289,6 +293,7 @@ function parseSpreadsheet(buffer) {
       pctSemiarido: pctSemiarido,
       capacidadeDetalhada: entry.capacidadeRows,
       cadeiasProdutivasDetalhado: entry.cadeiasRows, 
+      desenvolvimentoDetalhado: entry.desenvolvimentoRows, // ENVIANDO OS MUNICÍPIOS COM SEU IFDM E POPULAÇÃO
       desenvolvimento: {
         ifdmTi: entry.desenvolvimento.ifdmTi,
         populacaoTotal: entry.desenvolvimento.populacaoTotal || null,

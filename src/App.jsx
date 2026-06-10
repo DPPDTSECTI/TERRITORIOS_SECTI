@@ -1,6 +1,18 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
+import territoriosMunicipios from '../utils/territorioMunicipios.json';
+
+// Função de normalização para cruzamento exato de textos
+function normalize(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
 
 export default function App() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -8,7 +20,7 @@ export default function App() {
   const [page, setPage] = useState(pageFromUrl);
   
   const [territoriosData, setTerritoriosData] = useState([]);
-  const [semiaridoMunicipios, setSemiaridoMunicipios] = useState([]); // Lista para apagar os municípios cinzas
+  const [semiaridoMunicipios, setSemiaridoMunicipios] = useState([]); 
   const [isLoadingPipeline, setIsLoadingPipeline] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("Atualizando...");
 
@@ -17,9 +29,10 @@ export default function App() {
   const [filtroSemiarido, setFiltroSemiarido] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const scrollMunsRef = useRef(null);
 
   // =======================================================================
-  // INGESTÃO BLINDADA (Com a correção das KPIs do Mapa)
+  // INGESTÃO DE DADOS
   // =======================================================================
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
     setIsLoadingPipeline(true);
@@ -34,35 +47,24 @@ export default function App() {
       const data = await response.json();
 
       const territoriosFormatados = data.territories.map((t, index) => {
-        const entidadesCTI = Array.isArray(t.capacidadeDetalhada) ? t.capacidadeDetalhada : [];
-        const cadeiasAPL = Array.isArray(t.cadeiasProdutivasDetalhado) ? t.cadeiasProdutivasDetalhado : [];
-        
         return {
           id: String(index + 1),
           nome: t.territory || "Desconhecido",
           tipo: 'Território',
           regiao: t.territory || "",
           isSemiarido: !!t.isSemiarido,
-          pctSemiarido: t.pctSemiarido || 0, // % Exata calculada pelo Vite
-          entidadesDetalhadas: entidadesCTI,
-          cadeiasProdutivasDetalhado: cadeiasAPL,
+          pctSemiarido: t.pctSemiarido || 0,
+          entidadesDetalhadas: Array.isArray(t.capacidadeDetalhada) ? t.capacidadeDetalhada : [],
+          cadeiasProdutivasDetalhado: Array.isArray(t.cadeiasProdutivasDetalhado) ? t.cadeiasProdutivasDetalhado : [],
+          desenvolvimentoDetalhado: Array.isArray(t.desenvolvimentoDetalhado) ? t.desenvolvimentoDetalhado : [],
           assistenciaPublica: t.assistenciaPublica || { iniciativas: [] },
-          desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 },
-          // A CORREÇÃO: As KPIs evitam o ecrã branco ao passar o rato no mapa!
-          kpis: {
-            capacidadeCti: String(entidadesCTI.length),
-            ifdm: t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi).toFixed(3) : "-",
-            conectaBahia: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado",
-            cadeiasIgs: String(cadeiasAPL.length),
-            coberturaSemiarido: t.isSemiarido ? "Pertencente" : "Exterior"
-          }
+          desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 }
         };
       });
 
       setTerritoriosData(territoriosFormatados);
-      setSemiaridoMunicipios(data.semiaridoMunicipiosList || []); // Guarda a lista para o Mapa
+      setSemiaridoMunicipios(data.semiaridoMunicipiosList || []); 
       setLastUpdate(new Date(data.generatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
-
     } catch (error) {
       console.error("[Painel] Erro fatal na pipeline:", error);
       setLastUpdate("Erro na Sincronização");
@@ -88,15 +90,85 @@ export default function App() {
   });
 
   // =======================================================================
-  // PROCESSADOR CENTRAL DO DASHBOARD (Deduplicação)
+  // MOTOR DE FILTRO PROFUNDO (O "Coração" Granular do Sistema)
+  // =======================================================================
+  // Esta função decide, num piscar de olhos, se um município passa nas regras atuais
+  const isMunValid = (munName) => {
+      if (!munName) return false;
+      const normalizedMun = normalize(munName);
+      
+      // REGRA 1: Filtro do Semiárido
+      if (filtroSemiarido && !semiaridoMunicipios.includes(normalizedMun)) return false;
+      
+      // (Futuros filtros de Bioma, IDH, etc, entram aqui)
+      
+      return true;
+  };
+
+  // =======================================================================
+  // ESTATÍSTICAS DINÂMICAS PARA O MAPA (Tooltip Hover)
+  // =======================================================================
+  const territoriesDynamicStats = useMemo(() => {
+      const stats = {};
+      
+      territoriosData.forEach(t => {
+          let somaIfdmPop = 0;
+          let somaPop = 0;
+          
+          // 1. IFDM Dinâmico (Soma apenas a População dos municípios válidos)
+          if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
+              t.desenvolvimentoDetalhado.forEach(m => {
+                  if (isMunValid(m.municipio)) {
+                      const ifdm = Number(m.ifdm) || 0;
+                      const pop = Number(m.populacao) || 0;
+                      if (ifdm > 0 && pop > 0) {
+                          somaIfdmPop += (ifdm * pop);
+                          somaPop += pop;
+                      }
+                  }
+              });
+          } else {
+              // Fallback se os dados de IFDM por município estiverem ausentes no Vite
+              if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
+                  somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal;
+                  somaPop = t.desenvolvimento.populacaoTotal;
+              }
+          }
+          
+          const dynIfdm = somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-";
+
+          // 2. Contagens Dinâmicas de CT&I e Cadeias
+          const validCti = t.entidadesDetalhadas.filter(ent => isMunValid(ent.municipio));
+          const validCadeias = t.cadeiasProdutivasDetalhado.filter(cad => {
+              const sedeValid = isMunValid(cad.sede || cad.municipioSatelite);
+              const pertsValid = String(cad.municipiosPertencentes || cad.municipio || '').split(/[;,]/).some(m => isMunValid(m));
+              return sedeValid || pertsValid; // Se a Sede ou pelo menos 1 município pertencer, a cadeia entra
+          });
+
+          // 3. Assistência Pública Dinâmica
+          const hasValidMuns = t.desenvolvimentoDetalhado ? t.desenvolvimentoDetalhado.some(m => isMunValid(m.municipio)) : !filtroSemiarido;
+          const dynConecta = (t.assistenciaPublica?.existe && hasValidMuns) ? "Presente" : "Não mapeado";
+
+          stats[normalize(t.nome)] = {
+              ifdm: dynIfdm,
+              capacidadeCti: String(validCti.length),
+              cadeiasIgs: String(validCadeias.length),
+              conectaBahia: dynConecta,
+              pctSemiarido: t.pctSemiarido
+          };
+      });
+
+      return stats;
+  }, [territoriosData, filtroSemiarido, semiaridoMunicipios]);
+
+
+  // =======================================================================
+  // PROCESSADOR CENTRAL DO DASHBOARD (Listas e KPIs Superiores)
   // =======================================================================
   const dashboardData = useMemo(() => {
-    let targetList = selectedLocation 
-      ? [selectedLocation] 
-      : (filtroSemiarido ? territoriosData.filter(t => t.isSemiarido) : territoriosData);
+    let targetList = selectedLocation ? [selectedLocation] : territoriosData;
 
     const kpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
-    
     const entidadesFlat = [];
     const aplIgsFlat = [];
     const assistenciasFlat = [];
@@ -110,29 +182,40 @@ export default function App() {
     let totalTerritoriosComAssistencia = 0;
 
     targetList.forEach(t => {
-        // --- 1. ESTRUTURAS CT&I ---
-        t.entidadesDetalhadas.forEach(ent => {
-            entidadesFlat.push({ ...ent, territorioRef: t.nome });
+        let territoryHasValidData = false;
 
+        // CT&I (Deep Filter)
+        t.entidadesDetalhadas.forEach(ent => {
+            if (!isMunValid(ent.municipio)) return;
+            territoryHasValidData = true;
+
+            entidadesFlat.push({ ...ent, territorioRef: t.nome });
             if (ent.id && !globalUniqueCtiIds.has(ent.id)) {
                 globalUniqueCtiIds.add(ent.id);
                 if (ent.categoria && kpisPanel[ent.categoria] !== undefined) kpisPanel[ent.categoria] += 1;
             }
         });
         
-        // --- 2. CADEIAS PRODUTIVAS E IGS ---
+        // CADEIAS PRODUTIVAS (Deep Filter)
         t.cadeiasProdutivasDetalhado.forEach(cadeia => {
+            const sedeStr = cadeia.sede || cadeia.municipioSatelite || 'Não informada';
+            const pertsStr = cadeia.municipiosPertencentes || cadeia.municipio || 'Não informados';
+
+            const isSedeValid = isMunValid(sedeStr);
+            const isAnyPertValid = String(pertsStr).split(/[;,]/).some(m => isMunValid(m));
+            
+            if (!isSedeValid && !isAnyPertValid) return;
+            territoryHasValidData = true;
+
             const segmentoStr = cadeia.segmento || (Array.isArray(cadeia.cadeias) ? cadeia.cadeias.join(', ') : cadeia.cadeias) || 'Sem Segmento';
             const tipoStr = cadeia.tipo && String(cadeia.tipo).trim() !== '' ? cadeia.tipo : 'Não Classificado';
-            const municipiosStr = cadeia.municipiosPertencentes || cadeia.municipio || 'Não informados';
-            const sedeStr = cadeia.sede || cadeia.municipioSatelite || 'Não informada';
             
             aplIgsFlat.push({
                 id: cadeia.id || Math.random().toString(),
                 segmento: segmentoStr, 
                 entidade: cadeia.entidade || null,
                 tipo: tipoStr,
-                municipiosPertencentes: municipiosStr,
+                municipiosPertencentes: pertsStr,
                 fonte: cadeia.fonte || null,
                 sede: sedeStr, 
                 territorioRef: t.nome 
@@ -141,18 +224,31 @@ export default function App() {
             if (cadeia.id) globalUniqueCadeiasIds.add(cadeia.id);
         });
 
-        // --- 3. ASSISTÊNCIA PÚBLICA ---
-        if (t.assistenciaPublica?.existe) totalTerritoriosComAssistencia += 1;
-        const iniArray = Array.isArray(t.assistenciaPublica?.iniciativas) ? t.assistenciaPublica.iniciativas : [];
-        iniArray.forEach(ini => {
-            const chaveAsst = `${ini}|${t.nome}`;
-            if (!assistenciasSet.has(chaveAsst)) {
-                assistenciasSet.set(chaveAsst, { nome: ini, municipio: 'Abrangência Territorial', territorioRef: t.nome });
-            }
-        });
+        // ASSISTÊNCIA PÚBLICA
+        if (t.assistenciaPublica?.existe && (!filtroSemiarido || territoryHasValidData)) {
+            totalTerritoriosComAssistencia += 1;
+            const iniArray = Array.isArray(t.assistenciaPublica?.iniciativas) ? t.assistenciaPublica.iniciativas : [];
+            iniArray.forEach(ini => {
+                const chaveAsst = `${ini}|${t.nome}`;
+                if (!assistenciasSet.has(chaveAsst)) {
+                    assistenciasSet.set(chaveAsst, { nome: ini, municipio: 'Abrangência Territorial', territorioRef: t.nome });
+                }
+            });
+        }
 
-        // --- 4. IFDM ---
-        if (t.desenvolvimento?.ifdmTi && t.desenvolvimento?.populacaoTotal) {
+        // IFDM MATEMÁTICA PURA (Ponderação População x Municípios Válidos)
+        if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
+            t.desenvolvimentoDetalhado.forEach(munData => {
+                if (isMunValid(munData.municipio)) {
+                    const ifdm = Number(munData.ifdm) || 0;
+                    const pop = Number(munData.populacao) || 0;
+                    if (ifdm > 0 && pop > 0) {
+                        somaIfdmPop += (ifdm * pop);
+                        somaPopulacao += pop;
+                    }
+                }
+            });
+        } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
             somaIfdmPop += (t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal);
             somaPopulacao += t.desenvolvimento.populacaoTotal;
         }
@@ -167,16 +263,11 @@ export default function App() {
     const assistenciasList = Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
     const mediaIfdm = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao).toFixed(3) : "-";
     
-    // NOVA LÓGICA DE KPI DE COBERTURA DO SEMIÁRIDO
     let coberturaStr = "85,6% do Estado";
     if (selectedLocation) {
-        if (selectedLocation.pctSemiarido >= 100) {
-            coberturaStr = "Pertencente (100%)";
-        } else if (selectedLocation.pctSemiarido <= 0) {
-            coberturaStr = "Não pertencente";
-        } else {
-            coberturaStr = `Parcial (${selectedLocation.pctSemiarido.toFixed(1)}%)`;
-        }
+        if (selectedLocation.pctSemiarido >= 100) coberturaStr = "Pertencente (100%)";
+        else if (selectedLocation.pctSemiarido <= 0) coberturaStr = "Não pertencente";
+        else coberturaStr = `Parcial (${selectedLocation.pctSemiarido.toFixed(1)}%)`;
     } else if (filtroSemiarido) {
         coberturaStr = "100% (Filtro Ativo)";
     }
@@ -194,7 +285,22 @@ export default function App() {
         aplIgs: uniqueVisualCadeias, 
         assistencias: assistenciasList 
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios]);
+
+  // Lista Horizontal de Municípios filtrados
+  const municipiosDoTerritorioSelecionado = useMemo(() => {
+      if (!selectedLocation) return [];
+      try {
+          const territorioBase = territoriosMunicipios.territorios_de_identidade.find(
+              (t) => normalize(t.nome) === normalize(selectedLocation.nome)
+          );
+          if (!territorioBase) return [];
+          
+          let list = territorioBase.municipios;
+          if (filtroSemiarido) list = list.filter(m => semiaridoMunicipios.includes(normalize(m)));
+          return list.sort((a,b) => a.localeCompare(b));
+      } catch(e) { return []; }
+  }, [selectedLocation, filtroSemiarido, semiaridoMunicipios]);
 
   const getBadgeStyle = (tipo) => {
       const t = String(tipo).toLowerCase();
@@ -206,12 +312,17 @@ export default function App() {
 
   const handleForceRefresh = () => carregarDadosDoSharePoint(true);
 
+  // Zera o visual do mapa ao ligar/desligar o filtro (A sua sugestão brilhante!)
+  const handleToggleFilter = () => {
+      setFiltroSemiarido(!filtroSemiarido);
+      setSelectedLocation(null); 
+      setSearchTerm(''); 
+  };
+
   return (
     <div className="relative flex flex-col h-screen font-sans text-slate-800 overflow-hidden text-sm bg-slate-100">
       
-      {/* ========================================================================= */}
-      {/* FUNDO FIXO EM DEGRADÊ (Solução contra o branco do Scroll Bounce) */}
-      {/* ========================================================================= */}
+      {/* FUNDO FIXO EM DEGRADÊ */}
       <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-100 via-white to-slate-200 pointer-events-none">
          <div className="absolute -top-[15%] -right-[5%] w-[60%] h-[60%] rounded-full bg-gov-blueDark-500/35 blur-[120px]"></div>
          <div className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gov-cyan-500/35 blur-[120px]"></div>
@@ -243,18 +354,16 @@ export default function App() {
         </div>
       </header>
 
-      {/* ÁREA DE SCROLL PRINCIPAL */}
       <main className="flex-1 overflow-y-auto relative w-full pt-20 sm:pt-24 pb-8 z-10">
         {page === 'overview' ? (
           <LandingHero onAccessDashboard={() => setPage('territorios')} />
         ) : (
           <div className="relative p-3 sm:p-4 lg:p-5 max-w-[1600px] mx-auto w-full min-h-full flex flex-col justify-start">
-            
-            {/* CONTAINER PRINCIPAL GLASSMORPHISM */}
-            <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-glass p-4 sm:p-5 flex flex-col gap-4 transition-all duration-500">
+
+            <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-glass p-4 sm:p-5 flex flex-col gap-3 transition-all duration-500">
               
               {/* BARRA DE AÇÕES E FILTROS */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 items-center border-b border-slate-200/60 pb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 items-center border-b border-slate-200/60 pb-3">
                 <div className="lg:col-span-2 relative w-full flex flex-col sm:flex-row items-center gap-2" ref={dropdownRef}>
                   <div className="w-full relative flex-1">
                     <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Filtrar Análise Territorial</label>
@@ -283,7 +392,7 @@ export default function App() {
                   
                   <div className="w-full sm:w-auto pt-0 sm:pt-5">
                     <button 
-                        onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); }}
+                        onClick={handleToggleFilter}
                         className={`w-full sm:w-auto px-4 py-2 rounded-lg font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 ${filtroSemiarido ? 'bg-gov-red-500 text-white hover:bg-gov-red-600' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                     >
                         {filtroSemiarido ? (
@@ -322,7 +431,7 @@ export default function App() {
 
               {/* 5 KPIS GLOBAIS COMPACTAS */}
               <div>
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">
                     Indicadores Consolidados {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Recorte: Semiárido Baiano' : '— Estado da Bahia')}
                   </h3>
@@ -358,8 +467,57 @@ export default function App() {
                 </div>
               </div>
 
+              {/* MUNICÍPIOS HORIZONTAL SCROLL (Responsivo ao Filtro) */}
+              {selectedLocation && municipiosDoTerritorioSelecionado.length > 0 && (
+                <div className="bg-white/85 border border-slate-200/60 p-3 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">
+                            Municípios Pertencentes {filtroSemiarido && <span className="text-gov-red-500">(Filtro Semiárido Ativo)</span>}
+                        </span>
+                        <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                            {municipiosDoTerritorioSelecionado.length} Cidades
+                        </span>
+                    </div>
+                    
+                    <div className="relative flex items-center group">
+                        
+                        {/* Botão Esquerda */}
+                        <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: -180, behavior: 'smooth' })} className="absolute left-0 h-full bg-gradient-to-r from-white via-white/95 to-transparent pr-10 pl-0.5 flex items-center justify-start z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="bg-slate-900/90 text-white p-1 rounded-full shadow-md hover:bg-slate-800 transition-colors cursor-pointer border border-white/20">
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
+                            </div>
+                        </button>
+
+                        <div ref={scrollMunsRef} className="flex gap-2 overflow-x-auto pb-1 w-full scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                            {municipiosDoTerritorioSelecionado.map((m, idx) => {
+                                const isSemi = semiaridoMunicipios.includes(normalize(m));
+                                return (
+                                    <span key={idx} className={`whitespace-nowrap bg-white text-slate-700 px-2 py-1 rounded text-[10px] font-semibold shadow-sm cursor-default hover:bg-slate-50 transition-colors border ${isSemi ? 'border-orange-500 ring-1 ring-orange-500/20' : 'border-slate-200'}`}>
+                                        {m}
+                                    </span>
+                                );
+                            })}
+                        </div>
+
+                        {/* Botão Direita */}
+                        <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: 180, behavior: 'smooth' })} className="absolute right-0 h-full bg-gradient-to-l from-white via-white/95 to-transparent pl-10 pr-0.5 flex items-center justify-end z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="bg-slate-900/90 text-white p-1 rounded-full shadow-md hover:bg-slate-800 transition-colors cursor-pointer border border-white/20">
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+                            </div>
+                        </button>
+                    </div>
+
+                    {!filtroSemiarido && (
+                      <div className="text-[9px] text-slate-400 font-medium mt-1.5 flex items-center gap-1.5 select-none">
+                          <span className="inline-block w-2 h-2 rounded border border-orange-500 bg-white"></span>
+                          <span>Contorno laranja pertencente ao semiárido</span>
+                      </div>
+                    )}
+                </div>
+              )}
+
               {/* AS 7 SUB-KPIS DE CT&I NA HORIZONTAL */}
-              <div className="mt-3 mb-1">
+              <div className="mt-1 mb-1">
                  <div className="flex items-center justify-between mb-2">
                     <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Detalhamento da Infraestrutura de CT&I</h4>
                  </div>
@@ -395,8 +553,8 @@ export default function App() {
                  </div>
               </div>
 
-              {/* LAYOUT ESPACIAL: Mapa (50%) + Listas (50%) Balanceadas */}
-              <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[750px] w-full mt-1">
+              {/* LAYOUT ESPACIAL: Mapa (50%) + Listas (50%) */}
+              <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[700px] w-full mt-1">
                 
                 {/* MAPA */}
                 <div className="w-full lg:w-[50%] bg-white rounded-xl border border-slate-200/80 p-2 shadow-sm relative flex flex-col h-full">
@@ -407,6 +565,7 @@ export default function App() {
                   <div className="w-full h-full flex-1 rounded-lg overflow-hidden bg-slate-50/50">
                     <ConectaMap 
                       territoriosData={territoriosData} 
+                      territoriesDynamicStats={territoriesDynamicStats} // NOVO: Passa as KPIs dinâmicas ao Mapa
                       searchTerm={searchTerm} 
                       filtroSemiarido={filtroSemiarido} 
                       selectedTerritory={selectedLocation} 
@@ -448,7 +607,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma instituição mapeada.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma instituição válida neste recorte.</span>
                                </div>
                            )}
                         </div>
@@ -511,7 +670,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma cadeia localizada.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma cadeia válida neste recorte.</span>
                                </div>
                            )}
                         </div>
@@ -542,7 +701,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400 font-medium">Em levantamento.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Não mapeado neste recorte.</span>
                                </div>
                            )}
                         </div>

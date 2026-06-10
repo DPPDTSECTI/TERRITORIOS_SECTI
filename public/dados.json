@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T00:56:48.393Z",
+  "generatedAt": "2026-06-10T13:35:21.678Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
@@ -98,6 +98,83 @@
           "fonte": "https://doi.org/10.9771/cp.v12i5.31018"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Capim Grosso",
+          "ifdm": 0.558,
+          "populacao": 35437
+        },
+        {
+          "municipio": "Pintadas",
+          "ifdm": 0.5446,
+          "populacao": 10654
+        },
+        {
+          "municipio": "São José do Jacuípe",
+          "ifdm": 0.5415,
+          "populacao": 10576
+        },
+        {
+          "municipio": "Nova Fátima",
+          "ifdm": 0.5235,
+          "populacao": 8283
+        },
+        {
+          "municipio": "Quixabeira",
+          "ifdm": 0.5209,
+          "populacao": 9839
+        },
+        {
+          "municipio": "Várzea do Poço",
+          "ifdm": 0.5154,
+          "populacao": 8334
+        },
+        {
+          "municipio": "Baixa Grande",
+          "ifdm": 0.502,
+          "populacao": 18628
+        },
+        {
+          "municipio": "Mairi",
+          "ifdm": 0.4958,
+          "populacao": 18130
+        },
+        {
+          "municipio": "Ipirá",
+          "ifdm": 0.4899,
+          "populacao": 59222
+        },
+        {
+          "municipio": "Várzea da Roça",
+          "ifdm": 0.4856,
+          "populacao": 14294
+        },
+        {
+          "municipio": "Pé de Serra",
+          "ifdm": 0.4826,
+          "populacao": 13677
+        },
+        {
+          "municipio": "Gavião",
+          "ifdm": 0.4825,
+          "populacao": 4489
+        },
+        {
+          "municipio": "Capela do Alto Alegre",
+          "ifdm": 0.4659,
+          "populacao": 11035
+        },
+        {
+          "municipio": "Riachão do Jacuípe",
+          "ifdm": 0.4608,
+          "populacao": 35188
+        },
+        {
+          "municipio": "Serra Preta",
+          "ifdm": 0.4172,
+          "populacao": 18754
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.4964929131409561,
         "populacaoTotal": 276540,
@@ -114,6 +191,48 @@
       "pctSemiarido": 100,
       "capacidadeDetalhada": [],
       "cadeiasProdutivasDetalhado": [],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Ibipitanga",
+          "ifdm": 0.5461,
+          "populacao": 14317
+        },
+        {
+          "municipio": "Botuporã",
+          "ifdm": 0.5393,
+          "populacao": 11427
+        },
+        {
+          "municipio": "Caturama",
+          "ifdm": 0.5292,
+          "populacao": 9108
+        },
+        {
+          "municipio": "Érico Cardoso",
+          "ifdm": 0.5225,
+          "populacao": 10947
+        },
+        {
+          "municipio": "Paramirim",
+          "ifdm": 0.5047,
+          "populacao": 21025
+        },
+        {
+          "municipio": "Rio do Pires",
+          "ifdm": 0.5038,
+          "populacao": 10781
+        },
+        {
+          "municipio": "Macaúbas",
+          "ifdm": 0.4992,
+          "populacao": 43653
+        },
+        {
+          "municipio": "Boquira",
+          "ifdm": 0.4119,
+          "populacao": 19782
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.49970278753686376,
         "populacaoTotal": 141040,
@@ -158,6 +277,63 @@
           "tipo": "IG Potencial",
           "quantidade": 11,
           "fonte": "https://doi.org/10.9771/cp.v16i1.50700"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Jaborandi",
+          "ifdm": 0.633,
+          "populacao": 9600
+        },
+        {
+          "municipio": "Santa Maria da Vitória",
+          "ifdm": 0.5607,
+          "populacao": 40474
+        },
+        {
+          "municipio": "Correntina",
+          "ifdm": 0.5545,
+          "populacao": 34266
+        },
+        {
+          "municipio": "São Félix do Coribe",
+          "ifdm": 0.5501,
+          "populacao": 15780
+        },
+        {
+          "municipio": "Cocos",
+          "ifdm": 0.509,
+          "populacao": 19865
+        },
+        {
+          "municipio": "Santana",
+          "ifdm": 0.4538,
+          "populacao": 25521
+        },
+        {
+          "municipio": "Coribe",
+          "ifdm": 0.4423,
+          "populacao": 14463
+        },
+        {
+          "municipio": "Tabocas do Brejo Velho",
+          "ifdm": 0.4334,
+          "populacao": 12368
+        },
+        {
+          "municipio": "Canápolis",
+          "ifdm": 0.4198,
+          "populacao": 10641
+        },
+        {
+          "municipio": "Serra Dourada",
+          "ifdm": 0.393,
+          "populacao": 17574
+        },
+        {
+          "municipio": "Brejolândia",
+          "ifdm": 0.3839,
+          "populacao": 9363
         }
       ],
       "desenvolvimento": {
@@ -272,6 +448,78 @@
           "tipo": "IG Potencial",
           "quantidade": 11,
           "fonte": "https://doi.org/10.9771/cp.v16i1.50700"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Luís Eduardo Magalhães",
+          "ifdm": 0.6865,
+          "populacao": 118382
+        },
+        {
+          "municipio": "Barreiras",
+          "ifdm": 0.6603,
+          "populacao": 171634
+        },
+        {
+          "municipio": "São Desidério",
+          "ifdm": 0.5678,
+          "populacao": 34982
+        },
+        {
+          "municipio": "Formosa do Rio Preto",
+          "ifdm": 0.5494,
+          "populacao": 27567
+        },
+        {
+          "municipio": "Angical",
+          "ifdm": 0.5186,
+          "populacao": 14178
+        },
+        {
+          "municipio": "Wanderley",
+          "ifdm": 0.4936,
+          "populacao": 13460
+        },
+        {
+          "municipio": "Riachão das Neves",
+          "ifdm": 0.4858,
+          "populacao": 22329
+        },
+        {
+          "municipio": "Cristópolis",
+          "ifdm": 0.4696,
+          "populacao": 14549
+        },
+        {
+          "municipio": "Mansidão",
+          "ifdm": 0.4547,
+          "populacao": 14542
+        },
+        {
+          "municipio": "Catolândia",
+          "ifdm": 0.4417,
+          "populacao": 3567
+        },
+        {
+          "municipio": "Santa Rita de Cássia",
+          "ifdm": 0.4309,
+          "populacao": 28890
+        },
+        {
+          "municipio": "Cotegipe",
+          "ifdm": 0.4274,
+          "populacao": 13463
+        },
+        {
+          "municipio": "Baianópolis",
+          "ifdm": 0.4246,
+          "populacao": 14138
+        },
+        {
+          "municipio": "Buritirama",
+          "ifdm": 0.3731,
+          "populacao": 20221
         }
       ],
       "desenvolvimento": {
@@ -412,6 +660,83 @@
           "tipo": "IG Potencial",
           "quantidade": 1,
           "fonte": "https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/413/300"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Cairu",
+          "ifdm": 0.5784,
+          "populacao": 18578
+        },
+        {
+          "municipio": "Valença",
+          "ifdm": 0.5085,
+          "populacao": 90053
+        },
+        {
+          "municipio": "Aratuípe",
+          "ifdm": 0.5063,
+          "populacao": 8993
+        },
+        {
+          "municipio": "Gandu",
+          "ifdm": 0.5013,
+          "populacao": 34051
+        },
+        {
+          "municipio": "Ituberá",
+          "ifdm": 0.4889,
+          "populacao": 22154
+        },
+        {
+          "municipio": "Jaguaripe",
+          "ifdm": 0.4844,
+          "populacao": 18349
+        },
+        {
+          "municipio": "Teolândia",
+          "ifdm": 0.4822,
+          "populacao": 15978
+        },
+        {
+          "municipio": "Igrapiúna",
+          "ifdm": 0.457,
+          "populacao": 13501
+        },
+        {
+          "municipio": "Camamu",
+          "ifdm": 0.451,
+          "populacao": 31694
+        },
+        {
+          "municipio": "Presidente Tancredo Neves",
+          "ifdm": 0.4174,
+          "populacao": 29489
+        },
+        {
+          "municipio": "Ibirapitanga",
+          "ifdm": 0.4131,
+          "populacao": 26917
+        },
+        {
+          "municipio": "Nilo Peçanha",
+          "ifdm": 0.3823,
+          "populacao": 12399
+        },
+        {
+          "municipio": "Wenceslau Guimarães",
+          "ifdm": 0.3788,
+          "populacao": 25535
+        },
+        {
+          "municipio": "Piraí do Norte",
+          "ifdm": 0.3648,
+          "populacao": 11481
+        },
+        {
+          "municipio": "Taperoá",
+          "ifdm": 0.3534,
+          "populacao": 18556
         }
       ],
       "desenvolvimento": {
@@ -558,6 +883,128 @@
           "fonte": "https://ojs.revistagesec.org.br/secretariado/article/view/5056/3402"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Ibicoara",
+          "ifdm": 0.5952,
+          "populacao": 21827
+        },
+        {
+          "municipio": "Mucugê",
+          "ifdm": 0.5614,
+          "populacao": 12712
+        },
+        {
+          "municipio": "Jussiape",
+          "ifdm": 0.5354,
+          "populacao": 7567
+        },
+        {
+          "municipio": "Marcionílio Souza",
+          "ifdm": 0.5332,
+          "populacao": 9475
+        },
+        {
+          "municipio": "Rio de Contas",
+          "ifdm": 0.5329,
+          "populacao": 13634
+        },
+        {
+          "municipio": "Piatã",
+          "ifdm": 0.5328,
+          "populacao": 20938
+        },
+        {
+          "municipio": "Lençóis",
+          "ifdm": 0.5229,
+          "populacao": 11194
+        },
+        {
+          "municipio": "Seabra",
+          "ifdm": 0.5229,
+          "populacao": 48721
+        },
+        {
+          "municipio": "Abaíra",
+          "ifdm": 0.5216,
+          "populacao": 7407
+        },
+        {
+          "municipio": "Andaraí",
+          "ifdm": 0.5216,
+          "populacao": 13545
+        },
+        {
+          "municipio": "Novo Horizonte",
+          "ifdm": 0.5187,
+          "populacao": 11586
+        },
+        {
+          "municipio": "Barra da Estiva",
+          "ifdm": 0.5137,
+          "populacao": 27743
+        },
+        {
+          "municipio": "Morro do Chapéu",
+          "ifdm": 0.4886,
+          "populacao": 35235
+        },
+        {
+          "municipio": "Bonito",
+          "ifdm": 0.4801,
+          "populacao": 16425
+        },
+        {
+          "municipio": "Iraquara",
+          "ifdm": 0.4778,
+          "populacao": 24833
+        },
+        {
+          "municipio": "Boninal",
+          "ifdm": 0.4708,
+          "populacao": 14125
+        },
+        {
+          "municipio": "Ibitiara",
+          "ifdm": 0.4698,
+          "populacao": 15049
+        },
+        {
+          "municipio": "Utinga",
+          "ifdm": 0.4645,
+          "populacao": 16645
+        },
+        {
+          "municipio": "Itaeté",
+          "ifdm": 0.4547,
+          "populacao": 13775
+        },
+        {
+          "municipio": "Souto Soares",
+          "ifdm": 0.4521,
+          "populacao": 17724
+        },
+        {
+          "municipio": "Palmeiras",
+          "ifdm": 0.4367,
+          "populacao": 10894
+        },
+        {
+          "municipio": "Wagner",
+          "ifdm": 0.4344,
+          "populacao": 9866
+        },
+        {
+          "municipio": "Nova Redenção",
+          "ifdm": 0.414,
+          "populacao": 7670
+        },
+        {
+          "municipio": "Iramaia",
+          "ifdm": 0.3013,
+          "populacao": 11038
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.4964898708298718,
         "populacaoTotal": 399628,
@@ -648,6 +1095,48 @@
           "fonte": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Porto Seguro",
+          "ifdm": 0.5821,
+          "populacao": 182630
+        },
+        {
+          "municipio": "Eunápolis",
+          "ifdm": 0.5774,
+          "populacao": 121067
+        },
+        {
+          "municipio": "Santa Cruz Cabrália",
+          "ifdm": 0.5222,
+          "populacao": 31007
+        },
+        {
+          "municipio": "Itapebi",
+          "ifdm": 0.5069,
+          "populacao": 9464
+        },
+        {
+          "municipio": "Itagimirim",
+          "ifdm": 0.4831,
+          "populacao": 6490
+        },
+        {
+          "municipio": "Itabela",
+          "ifdm": 0.4265,
+          "populacao": 29588
+        },
+        {
+          "municipio": "Guaratinga",
+          "ifdm": 0.4213,
+          "populacao": 19413
+        },
+        {
+          "municipio": "Belmonte",
+          "ifdm": 0.3993,
+          "populacao": 20527
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5457866154512525,
         "populacaoTotal": 420186,
@@ -736,6 +1225,73 @@
           "tipo": "IG Potencial",
           "quantidade": 4,
           "fonte": "https://ingi.api.org.br/index.php?journal=INGI&page=article&op=viewFile&path[]=311&path[]=269"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Mucuri",
+          "ifdm": 0.6505,
+          "populacao": 40114
+        },
+        {
+          "municipio": "Teixeira de Freitas",
+          "ifdm": 0.5832,
+          "populacao": 153738
+        },
+        {
+          "municipio": "Medeiros Neto",
+          "ifdm": 0.5539,
+          "populacao": 22801
+        },
+        {
+          "municipio": "Lajedão",
+          "ifdm": 0.5462,
+          "populacao": 3994
+        },
+        {
+          "municipio": "Ibirapuã",
+          "ifdm": 0.5404,
+          "populacao": 9297
+        },
+        {
+          "municipio": "Nova Viçosa",
+          "ifdm": 0.5388,
+          "populacao": 41629
+        },
+        {
+          "municipio": "Vereda",
+          "ifdm": 0.5035,
+          "populacao": 6157
+        },
+        {
+          "municipio": "Itamaraju",
+          "ifdm": 0.4928,
+          "populacao": 61999
+        },
+        {
+          "municipio": "Caravelas",
+          "ifdm": 0.4752,
+          "populacao": 21384
+        },
+        {
+          "municipio": "Itanhém",
+          "ifdm": 0.4615,
+          "populacao": 18203
+        },
+        {
+          "municipio": "Prado",
+          "ifdm": 0.4325,
+          "populacao": 37533
+        },
+        {
+          "municipio": "Jucuruçu",
+          "ifdm": 0.414,
+          "populacao": 9930
+        },
+        {
+          "municipio": "Alcobaça",
+          "ifdm": 0.4014,
+          "populacao": 25601
         }
       ],
       "desenvolvimento": {
@@ -844,6 +1400,108 @@
           "fonte": "https://periodicos.newsciencepubl.com/arace/article/view/3163/3902"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Irecê",
+          "ifdm": 0.6731,
+          "populacao": 78781
+        },
+        {
+          "municipio": "Gentio do Ouro",
+          "ifdm": 0.5728,
+          "populacao": 11276
+        },
+        {
+          "municipio": "Lapão",
+          "ifdm": 0.5404,
+          "populacao": 27014
+        },
+        {
+          "municipio": "América Dourada",
+          "ifdm": 0.5356,
+          "populacao": 15572
+        },
+        {
+          "municipio": "Cafarnaum",
+          "ifdm": 0.5215,
+          "populacao": 18057
+        },
+        {
+          "municipio": "João Dourado",
+          "ifdm": 0.5072,
+          "populacao": 25892
+        },
+        {
+          "municipio": "Canarana",
+          "ifdm": 0.5027,
+          "populacao": 25007
+        },
+        {
+          "municipio": "Uibaí",
+          "ifdm": 0.4939,
+          "populacao": 13886
+        },
+        {
+          "municipio": "Barra do Mendes",
+          "ifdm": 0.4619,
+          "populacao": 14376
+        },
+        {
+          "municipio": "Central",
+          "ifdm": 0.4598,
+          "populacao": 16847
+        },
+        {
+          "municipio": "Mulungu do Morro",
+          "ifdm": 0.456,
+          "populacao": 13648
+        },
+        {
+          "municipio": "Presidente Dutra",
+          "ifdm": 0.4503,
+          "populacao": 15677
+        },
+        {
+          "municipio": "Ibipeba",
+          "ifdm": 0.4461,
+          "populacao": 17134
+        },
+        {
+          "municipio": "Xique-Xique",
+          "ifdm": 0.4384,
+          "populacao": 47019
+        },
+        {
+          "municipio": "Itaguaçu da Bahia",
+          "ifdm": 0.4269,
+          "populacao": 12669
+        },
+        {
+          "municipio": "Ipupiara",
+          "ifdm": 0.425,
+          "populacao": 10349
+        },
+        {
+          "municipio": "Ibititá",
+          "ifdm": 0.4222,
+          "populacao": 17517
+        },
+        {
+          "municipio": "São Gabriel",
+          "ifdm": 0.4162,
+          "populacao": 19229
+        },
+        {
+          "municipio": "Jussara",
+          "ifdm": 0.4014,
+          "populacao": 17007
+        },
+        {
+          "municipio": "Barro Alto",
+          "ifdm": 0.389,
+          "populacao": 13922
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5054257090737772,
         "populacaoTotal": 430879,
@@ -904,6 +1562,38 @@
           "tipo": "APL",
           "quantidade": 2,
           "fonte": ""
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Paulo Afonso",
+          "ifdm": 0.5233,
+          "populacao": 119418
+        },
+        {
+          "municipio": "Abaré",
+          "ifdm": 0.4978,
+          "populacao": 18269
+        },
+        {
+          "municipio": "Macururé",
+          "ifdm": 0.4707,
+          "populacao": 7435
+        },
+        {
+          "municipio": "Chorrochó",
+          "ifdm": 0.4696,
+          "populacao": 10933
+        },
+        {
+          "municipio": "Rodelas",
+          "ifdm": 0.463,
+          "populacao": 10884
+        },
+        {
+          "municipio": "Glória",
+          "ifdm": 0.4473,
+          "populacao": 16107
         }
       ],
       "desenvolvimento": {
@@ -984,6 +1674,108 @@
           "tipo": "IG Potencial",
           "quantidade": 1,
           "fonte": "https://doi.org/10.9771/cp.v15i2.47406"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Catu",
+          "ifdm": 0.617,
+          "populacao": 50109
+        },
+        {
+          "municipio": "Alagoinhas",
+          "ifdm": 0.5585,
+          "populacao": 161196
+        },
+        {
+          "municipio": "Itanagra",
+          "ifdm": 0.5389,
+          "populacao": 6078
+        },
+        {
+          "municipio": "Ouriçangas",
+          "ifdm": 0.5268,
+          "populacao": 7925
+        },
+        {
+          "municipio": "Crisópolis",
+          "ifdm": 0.4959,
+          "populacao": 20346
+        },
+        {
+          "municipio": "Entre Rios",
+          "ifdm": 0.4949,
+          "populacao": 39890
+        },
+        {
+          "municipio": "Acajutiba",
+          "ifdm": 0.4854,
+          "populacao": 14200
+        },
+        {
+          "municipio": "Aporá",
+          "ifdm": 0.4827,
+          "populacao": 16361
+        },
+        {
+          "municipio": "Rio Real",
+          "ifdm": 0.4811,
+          "populacao": 36966
+        },
+        {
+          "municipio": "Araçás",
+          "ifdm": 0.4795,
+          "populacao": 11953
+        },
+        {
+          "municipio": "Jandaíra",
+          "ifdm": 0.4779,
+          "populacao": 9508
+        },
+        {
+          "municipio": "Olindina",
+          "ifdm": 0.4768,
+          "populacao": 22956
+        },
+        {
+          "municipio": "Aramari",
+          "ifdm": 0.47,
+          "populacao": 10106
+        },
+        {
+          "municipio": "Cardeal da Silva",
+          "ifdm": 0.466,
+          "populacao": 8633
+        },
+        {
+          "municipio": "Itapicuru",
+          "ifdm": 0.4473,
+          "populacao": 33284
+        },
+        {
+          "municipio": "Sátiro Dias",
+          "ifdm": 0.4472,
+          "populacao": 16476
+        },
+        {
+          "municipio": "Conde",
+          "ifdm": 0.4435,
+          "populacao": 24460
+        },
+        {
+          "municipio": "Esplanada",
+          "ifdm": 0.4433,
+          "populacao": 34163
+        },
+        {
+          "municipio": "Inhambupe",
+          "ifdm": 0.4326,
+          "populacao": 35390
+        },
+        {
+          "municipio": "Pedrão",
+          "ifdm": 0.413,
+          "populacao": 6403
         }
       ],
       "desenvolvimento": {
@@ -1190,6 +1982,138 @@
           "fonte": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Itabuna",
+          "ifdm": 0.5703,
+          "populacao": 196344
+        },
+        {
+          "municipio": "Una",
+          "ifdm": 0.5309,
+          "populacao": 18254
+        },
+        {
+          "municipio": "Jussari",
+          "ifdm": 0.526,
+          "populacao": 6048
+        },
+        {
+          "municipio": "Ibicaraí",
+          "ifdm": 0.523,
+          "populacao": 22131
+        },
+        {
+          "municipio": "Floresta Azul",
+          "ifdm": 0.5193,
+          "populacao": 11455
+        },
+        {
+          "municipio": "Barro Preto",
+          "ifdm": 0.5175,
+          "populacao": 5936
+        },
+        {
+          "municipio": "Itapitanga",
+          "ifdm": 0.5105,
+          "populacao": 10640
+        },
+        {
+          "municipio": "Camacan",
+          "ifdm": 0.4857,
+          "populacao": 22485
+        },
+        {
+          "municipio": "Aurelino Leal",
+          "ifdm": 0.4781,
+          "populacao": 11339
+        },
+        {
+          "municipio": "Ilhéus",
+          "ifdm": 0.4756,
+          "populacao": 189149
+        },
+        {
+          "municipio": "Coaraci",
+          "ifdm": 0.4724,
+          "populacao": 17557
+        },
+        {
+          "municipio": "Itacaré",
+          "ifdm": 0.4667,
+          "populacao": 29496
+        },
+        {
+          "municipio": "Itapé",
+          "ifdm": 0.4585,
+          "populacao": 10649
+        },
+        {
+          "municipio": "Itaju do Colônia",
+          "ifdm": 0.4557,
+          "populacao": 6118
+        },
+        {
+          "municipio": "Mascote",
+          "ifdm": 0.4526,
+          "populacao": 13918
+        },
+        {
+          "municipio": "Arataca",
+          "ifdm": 0.4523,
+          "populacao": 10433
+        },
+        {
+          "municipio": "Itajuípe",
+          "ifdm": 0.4425,
+          "populacao": 19191
+        },
+        {
+          "municipio": "Almadina",
+          "ifdm": 0.437,
+          "populacao": 5296
+        },
+        {
+          "municipio": "Uruçuca",
+          "ifdm": 0.4368,
+          "populacao": 22155
+        },
+        {
+          "municipio": "Ubaitaba",
+          "ifdm": 0.4238,
+          "populacao": 17878
+        },
+        {
+          "municipio": "Maraú",
+          "ifdm": 0.4199,
+          "populacao": 25804
+        },
+        {
+          "municipio": "Canavieiras",
+          "ifdm": 0.418,
+          "populacao": 34392
+        },
+        {
+          "municipio": "Pau Brasil",
+          "ifdm": 0.4174,
+          "populacao": 9537
+        },
+        {
+          "municipio": "Buerarema",
+          "ifdm": 0.4026,
+          "populacao": 14950
+        },
+        {
+          "municipio": "São José da Vitória",
+          "ifdm": 0.3933,
+          "populacao": 5432
+        },
+        {
+          "municipio": "Santa Luzia",
+          "ifdm": 0.3779,
+          "populacao": 14392
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.49105213674417014,
         "populacaoTotal": 750979,
@@ -1280,6 +2204,88 @@
           "fonte": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Ipiaú",
+          "ifdm": 0.608,
+          "populacao": 42429
+        },
+        {
+          "municipio": "Itagibá",
+          "ifdm": 0.5846,
+          "populacao": 15796
+        },
+        {
+          "municipio": "Jequié",
+          "ifdm": 0.5419,
+          "populacao": 169201
+        },
+        {
+          "municipio": "Dário Meira",
+          "ifdm": 0.5233,
+          "populacao": 11054
+        },
+        {
+          "municipio": "Aiquara",
+          "ifdm": 0.503,
+          "populacao": 4583
+        },
+        {
+          "municipio": "Gongogi",
+          "ifdm": 0.5012,
+          "populacao": 5479
+        },
+        {
+          "municipio": "Ubatã",
+          "ifdm": 0.4931,
+          "populacao": 15839
+        },
+        {
+          "municipio": "Nova Ibiá",
+          "ifdm": 0.4892,
+          "populacao": 6696
+        },
+        {
+          "municipio": "Boa Nova",
+          "ifdm": 0.4877,
+          "populacao": 14008
+        },
+        {
+          "municipio": "Jitaúna",
+          "ifdm": 0.4693,
+          "populacao": 14824
+        },
+        {
+          "municipio": "Barra do Rocha",
+          "ifdm": 0.466,
+          "populacao": 5898
+        },
+        {
+          "municipio": "Itamari",
+          "ifdm": 0.4614,
+          "populacao": 7187
+        },
+        {
+          "municipio": "Apuarema",
+          "ifdm": 0.449,
+          "populacao": 7101
+        },
+        {
+          "municipio": "Manoel Vitorino",
+          "ifdm": 0.4484,
+          "populacao": 14287
+        },
+        {
+          "municipio": "Itagi",
+          "ifdm": 0.4035,
+          "populacao": 14347
+        },
+        {
+          "municipio": "Ibirataia",
+          "ifdm": 0.3915,
+          "populacao": 19377
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5201378841963998,
         "populacaoTotal": 368106,
@@ -1360,6 +2366,73 @@
           "tipo": "IG Potencial",
           "quantidade": 19,
           "fonte": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Itapetinga",
+          "ifdm": 0.5965,
+          "populacao": 68724
+        },
+        {
+          "municipio": "Firmino Alves",
+          "ifdm": 0.558,
+          "populacao": 4993
+        },
+        {
+          "municipio": "Caatiba",
+          "ifdm": 0.5422,
+          "populacao": 6128
+        },
+        {
+          "municipio": "Santa Cruz da Vitória",
+          "ifdm": 0.532,
+          "populacao": 4663
+        },
+        {
+          "municipio": "Nova Canaã",
+          "ifdm": 0.4959,
+          "populacao": 13970
+        },
+        {
+          "municipio": "Maiquinique",
+          "ifdm": 0.4761,
+          "populacao": 9009
+        },
+        {
+          "municipio": "Ibicuí",
+          "ifdm": 0.4667,
+          "populacao": 14264
+        },
+        {
+          "municipio": "Itororó",
+          "ifdm": 0.4648,
+          "populacao": 16849
+        },
+        {
+          "municipio": "Potiraguá",
+          "ifdm": 0.4505,
+          "populacao": 10651
+        },
+        {
+          "municipio": "Itarantim",
+          "ifdm": 0.438,
+          "populacao": 17485
+        },
+        {
+          "municipio": "Macarani",
+          "ifdm": 0.4259,
+          "populacao": 22768
+        },
+        {
+          "municipio": "Itambé",
+          "ifdm": 0.4163,
+          "populacao": 25088
+        },
+        {
+          "municipio": "Iguaí",
+          "ifdm": 0.397,
+          "populacao": 21763
         }
       ],
       "desenvolvimento": {
@@ -1660,6 +2733,73 @@
           "fonte": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Mata de São João",
+          "ifdm": 0.6585,
+          "populacao": 44962
+        },
+        {
+          "municipio": "Salvador",
+          "ifdm": 0.6442,
+          "populacao": 2564204
+        },
+        {
+          "municipio": "Pojuca",
+          "ifdm": 0.6417,
+          "populacao": 33573
+        },
+        {
+          "municipio": "Camaçari",
+          "ifdm": 0.638,
+          "populacao": 321636
+        },
+        {
+          "municipio": "Lauro de Freitas",
+          "ifdm": 0.6336,
+          "populacao": 219564
+        },
+        {
+          "municipio": "Madre de Deus",
+          "ifdm": 0.5955,
+          "populacao": 19224
+        },
+        {
+          "municipio": "Dias d'Ávila",
+          "ifdm": 0.5901,
+          "populacao": 75296
+        },
+        {
+          "municipio": "Candeias",
+          "ifdm": 0.5875,
+          "populacao": 74854
+        },
+        {
+          "municipio": "Simões Filho",
+          "ifdm": 0.5835,
+          "populacao": 120419
+        },
+        {
+          "municipio": "São Francisco do Conde",
+          "ifdm": 0.5723,
+          "populacao": 41110
+        },
+        {
+          "municipio": "São Sebastião do Passé",
+          "ifdm": 0.5415,
+          "populacao": 42944
+        },
+        {
+          "municipio": "Itaparica",
+          "ifdm": 0.4991,
+          "populacao": 20353
+        },
+        {
+          "municipio": "Vera Cruz",
+          "ifdm": 0.4817,
+          "populacao": 45191
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.6337155035285221,
         "populacaoTotal": 3623330,
@@ -1762,6 +2902,53 @@
           "fonte": ""
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Jacobina",
+          "ifdm": 0.5476,
+          "populacao": 86896
+        },
+        {
+          "municipio": "Serrolândia",
+          "ifdm": 0.5015,
+          "populacao": 13863
+        },
+        {
+          "municipio": "Umburanas",
+          "ifdm": 0.4974,
+          "populacao": 13785
+        },
+        {
+          "municipio": "Várzea Nova",
+          "ifdm": 0.4923,
+          "populacao": 13866
+        },
+        {
+          "municipio": "Miguel Calmon",
+          "ifdm": 0.4906,
+          "populacao": 25263
+        },
+        {
+          "municipio": "Caém",
+          "ifdm": 0.4895,
+          "populacao": 10733
+        },
+        {
+          "municipio": "Ourolândia",
+          "ifdm": 0.4876,
+          "populacao": 20141
+        },
+        {
+          "municipio": "Mirangaba",
+          "ifdm": 0.4672,
+          "populacao": 16167
+        },
+        {
+          "municipio": "Saúde",
+          "ifdm": 0.444,
+          "populacao": 10661
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5108206940272028,
         "populacaoTotal": 211375,
@@ -1844,6 +3031,73 @@
           "fonte": "https://periodicos.newsciencepubl.com/arace/article/view/4122/5434"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Itatim",
+          "ifdm": 0.5862,
+          "populacao": 16454
+        },
+        {
+          "municipio": "Itaberaba",
+          "ifdm": 0.5713,
+          "populacao": 68425
+        },
+        {
+          "municipio": "Iaçu",
+          "ifdm": 0.5607,
+          "populacao": 25315
+        },
+        {
+          "municipio": "Mundo Novo",
+          "ifdm": 0.5509,
+          "populacao": 17197
+        },
+        {
+          "municipio": "Tapiramutá",
+          "ifdm": 0.5221,
+          "populacao": 16226
+        },
+        {
+          "municipio": "Santa Terezinha",
+          "ifdm": 0.5008,
+          "populacao": 10882
+        },
+        {
+          "municipio": "Ruy Barbosa",
+          "ifdm": 0.4999,
+          "populacao": 29590
+        },
+        {
+          "municipio": "Macajuba",
+          "ifdm": 0.4691,
+          "populacao": 10740
+        },
+        {
+          "municipio": "Ibiquera",
+          "ifdm": 0.4615,
+          "populacao": 3833
+        },
+        {
+          "municipio": "Boa Vista do Tupim",
+          "ifdm": 0.4533,
+          "populacao": 17262
+        },
+        {
+          "municipio": "Piritiba",
+          "ifdm": 0.4475,
+          "populacao": 17697
+        },
+        {
+          "municipio": "Rafael Jambeiro",
+          "ifdm": 0.4348,
+          "populacao": 20081
+        },
+        {
+          "municipio": "Lajedinho",
+          "ifdm": 0.4209,
+          "populacao": 3610
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5204569926781494,
         "populacaoTotal": 257312,
@@ -1912,6 +3166,53 @@
           "tipo": "IG",
           "quantidade": 2,
           "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Andorinha",
+          "ifdm": 0.5849,
+          "populacao": 15491
+        },
+        {
+          "municipio": "Jaguarari",
+          "ifdm": 0.5597,
+          "populacao": 34528
+        },
+        {
+          "municipio": "Senhor do Bonfim",
+          "ifdm": 0.537,
+          "populacao": 78090
+        },
+        {
+          "municipio": "Antônio Gonçalves",
+          "ifdm": 0.5011,
+          "populacao": 11248
+        },
+        {
+          "municipio": "Pindobaçu",
+          "ifdm": 0.4855,
+          "populacao": 19601
+        },
+        {
+          "municipio": "Campo Formoso",
+          "ifdm": 0.4758,
+          "populacao": 75112
+        },
+        {
+          "municipio": "Filadélfia",
+          "ifdm": 0.4619,
+          "populacao": 18637
+        },
+        {
+          "municipio": "Ponto Novo",
+          "ifdm": 0.4449,
+          "populacao": 18763
+        },
+        {
+          "municipio": "Caldeirão Grande",
+          "ifdm": 0.4349,
+          "populacao": 13597
         }
       ],
       "desenvolvimento": {
@@ -2022,6 +3323,93 @@
           "fonte": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Conceição do Jacuípe",
+          "ifdm": 0.638,
+          "populacao": 37622
+        },
+        {
+          "municipio": "Feira de Santana",
+          "ifdm": 0.5696,
+          "populacao": 660806
+        },
+        {
+          "municipio": "Anguera",
+          "ifdm": 0.559,
+          "populacao": 11490
+        },
+        {
+          "municipio": "Conceição da Feira",
+          "ifdm": 0.5536,
+          "populacao": 21529
+        },
+        {
+          "municipio": "Santo Estêvão",
+          "ifdm": 0.5435,
+          "populacao": 55146
+        },
+        {
+          "municipio": "Amélia Rodrigues",
+          "ifdm": 0.5375,
+          "populacao": 24830
+        },
+        {
+          "municipio": "Teodoro Sampaio",
+          "ifdm": 0.5293,
+          "populacao": 7280
+        },
+        {
+          "municipio": "São Gonçalo dos Campos",
+          "ifdm": 0.518,
+          "populacao": 42171
+        },
+        {
+          "municipio": "Terra Nova",
+          "ifdm": 0.5147,
+          "populacao": 10976
+        },
+        {
+          "municipio": "Irará",
+          "ifdm": 0.5139,
+          "populacao": 29572
+        },
+        {
+          "municipio": "Coração de Maria",
+          "ifdm": 0.4738,
+          "populacao": 28408
+        },
+        {
+          "municipio": "Ipecaetá",
+          "ifdm": 0.4671,
+          "populacao": 14016
+        },
+        {
+          "municipio": "Tanquinho",
+          "ifdm": 0.4583,
+          "populacao": 7991
+        },
+        {
+          "municipio": "Água Fria",
+          "ifdm": 0.448,
+          "populacao": 14833
+        },
+        {
+          "municipio": "Santanópolis",
+          "ifdm": 0.4427,
+          "populacao": 9035
+        },
+        {
+          "municipio": "Antônio Cardoso",
+          "ifdm": 0.4252,
+          "populacao": 11498
+        },
+        {
+          "municipio": "Santa Bárbara",
+          "ifdm": 0.4187,
+          "populacao": 21787
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5519643983587549,
         "populacaoTotal": 1008990,
@@ -2049,6 +3437,7 @@
           "fonte": "https://ojs.revistagesec.org.br/secretariado/article/view/2973/1887"
         }
       ],
+      "desenvolvimentoDetalhado": [],
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
@@ -2277,6 +3666,103 @@
           "fonte": "https://ingi.api.org.br/index.php?journal=INGI&page=article&op=view&path%5B%5D=270"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Santo Antônio de Jesus",
+          "ifdm": 0.6261,
+          "populacao": 109791
+        },
+        {
+          "municipio": "Cruz das Almas",
+          "ifdm": 0.5964,
+          "populacao": 63326
+        },
+        {
+          "municipio": "Governador Mangabeira",
+          "ifdm": 0.5933,
+          "populacao": 21353
+        },
+        {
+          "municipio": "Nazaré",
+          "ifdm": 0.5536,
+          "populacao": 28427
+        },
+        {
+          "municipio": "Muniz Ferreira",
+          "ifdm": 0.5374,
+          "populacao": 7453
+        },
+        {
+          "municipio": "São Félix",
+          "ifdm": 0.5365,
+          "populacao": 11102
+        },
+        {
+          "municipio": "Castro Alves",
+          "ifdm": 0.5326,
+          "populacao": 25470
+        },
+        {
+          "municipio": "Muritiba",
+          "ifdm": 0.5308,
+          "populacao": 30180
+        },
+        {
+          "municipio": "Sapeaçu",
+          "ifdm": 0.5302,
+          "populacao": 18656
+        },
+        {
+          "municipio": "Saubara",
+          "ifdm": 0.5301,
+          "populacao": 11859
+        },
+        {
+          "municipio": "Dom Macedo Costa",
+          "ifdm": 0.5263,
+          "populacao": 4608
+        },
+        {
+          "municipio": "Cabaceiras do Paraguaçu",
+          "ifdm": 0.5179,
+          "populacao": 17024
+        },
+        {
+          "municipio": "Varzedo",
+          "ifdm": 0.4903,
+          "populacao": 10328
+        },
+        {
+          "municipio": "Maragogipe",
+          "ifdm": 0.4897,
+          "populacao": 37041
+        },
+        {
+          "municipio": "Conceição do Almeida",
+          "ifdm": 0.485,
+          "populacao": 16134
+        },
+        {
+          "municipio": "São Felipe",
+          "ifdm": 0.4845,
+          "populacao": 20923
+        },
+        {
+          "municipio": "Santo Amaro",
+          "ifdm": 0.4819,
+          "populacao": 58398
+        },
+        {
+          "municipio": "Cachoeira",
+          "ifdm": 0.4519,
+          "populacao": 30498
+        },
+        {
+          "municipio": "Salinas da Margarida",
+          "ifdm": 0.4498,
+          "populacao": 15629
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5425469306949088,
         "populacaoTotal": 538200,
@@ -2357,6 +3843,98 @@
           "tipo": "IG",
           "quantidade": 1,
           "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Ribeira do Pombal",
+          "ifdm": 0.5502,
+          "populacao": 56316
+        },
+        {
+          "municipio": "Cícero Dantas",
+          "ifdm": 0.5425,
+          "populacao": 32292
+        },
+        {
+          "municipio": "Ribeira do Amparo",
+          "ifdm": 0.5221,
+          "populacao": 14528
+        },
+        {
+          "municipio": "Heliópolis",
+          "ifdm": 0.5184,
+          "populacao": 13055
+        },
+        {
+          "municipio": "Novo Triunfo",
+          "ifdm": 0.5086,
+          "populacao": 11060
+        },
+        {
+          "municipio": "Adustina",
+          "ifdm": 0.4997,
+          "populacao": 14510
+        },
+        {
+          "municipio": "Coronel João Sá",
+          "ifdm": 0.4975,
+          "populacao": 17598
+        },
+        {
+          "municipio": "Paripiranga",
+          "ifdm": 0.4955,
+          "populacao": 27860
+        },
+        {
+          "municipio": "Euclides da Cunha",
+          "ifdm": 0.4954,
+          "populacao": 64768
+        },
+        {
+          "municipio": "Banzaê",
+          "ifdm": 0.494,
+          "populacao": 12288
+        },
+        {
+          "municipio": "Jeremoabo",
+          "ifdm": 0.4772,
+          "populacao": 39539
+        },
+        {
+          "municipio": "Fátima",
+          "ifdm": 0.4632,
+          "populacao": 18480
+        },
+        {
+          "municipio": "Cipó",
+          "ifdm": 0.4464,
+          "populacao": 17875
+        },
+        {
+          "municipio": "Sítio do Quinto",
+          "ifdm": 0.4414,
+          "populacao": 14435
+        },
+        {
+          "municipio": "Nova Soure",
+          "ifdm": 0.4327,
+          "populacao": 24865
+        },
+        {
+          "municipio": "Pedro Alexandre",
+          "ifdm": 0.4157,
+          "populacao": 14226
+        },
+        {
+          "municipio": "Santa Brígida",
+          "ifdm": 0.4118,
+          "populacao": 15417
+        },
+        {
+          "municipio": "Antas",
+          "ifdm": 0.3955,
+          "populacao": 14984
         }
       ],
       "desenvolvimento": {
@@ -2523,6 +4101,58 @@
           "fonte": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Juazeiro",
+          "ifdm": 0.5975,
+          "populacao": 256122
+        },
+        {
+          "municipio": "Sobradinho",
+          "ifdm": 0.5059,
+          "populacao": 27097
+        },
+        {
+          "municipio": "Canudos",
+          "ifdm": 0.489,
+          "populacao": 16693
+        },
+        {
+          "municipio": "Curaçá",
+          "ifdm": 0.4553,
+          "populacao": 36127
+        },
+        {
+          "municipio": "Uauá",
+          "ifdm": 0.4511,
+          "populacao": 25449
+        },
+        {
+          "municipio": "Sento Sé",
+          "ifdm": 0.4428,
+          "populacao": 40232
+        },
+        {
+          "municipio": "Remanso",
+          "ifdm": 0.4327,
+          "populacao": 42855
+        },
+        {
+          "municipio": "Casa Nova",
+          "ifdm": 0.4258,
+          "populacao": 76131
+        },
+        {
+          "municipio": "Campo Alegre de Lourdes",
+          "ifdm": 0.3339,
+          "populacao": 32500
+        },
+        {
+          "municipio": "Pilão Arcado",
+          "ifdm": 0.2986,
+          "populacao": 37388
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.4971660497736178,
         "populacaoTotal": 590594,
@@ -2615,6 +4245,108 @@
           "tipo": "APL",
           "quantidade": 3,
           "fonte": ""
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Brumado",
+          "ifdm": 0.6631,
+          "populacao": 74368
+        },
+        {
+          "municipio": "Caculé",
+          "ifdm": 0.6194,
+          "populacao": 23293
+        },
+        {
+          "municipio": "Malhada de Pedras",
+          "ifdm": 0.6175,
+          "populacao": 8982
+        },
+        {
+          "municipio": "Guanambi",
+          "ifdm": 0.603,
+          "populacao": 93488
+        },
+        {
+          "municipio": "Caetité",
+          "ifdm": 0.5768,
+          "populacao": 54730
+        },
+        {
+          "municipio": "Urandi",
+          "ifdm": 0.5694,
+          "populacao": 15776
+        },
+        {
+          "municipio": "Dom Basílio",
+          "ifdm": 0.5689,
+          "populacao": 12329
+        },
+        {
+          "municipio": "Ibiassucê",
+          "ifdm": 0.556,
+          "populacao": 10746
+        },
+        {
+          "municipio": "Livramento de Nossa Senhora",
+          "ifdm": 0.5259,
+          "populacao": 46376
+        },
+        {
+          "municipio": "Candiba",
+          "ifdm": 0.5147,
+          "populacao": 13417
+        },
+        {
+          "municipio": "Tanhaçu",
+          "ifdm": 0.5106,
+          "populacao": 21787
+        },
+        {
+          "municipio": "Tanque Novo",
+          "ifdm": 0.5077,
+          "populacao": 17812
+        },
+        {
+          "municipio": "Iuiu",
+          "ifdm": 0.5049,
+          "populacao": 11559
+        },
+        {
+          "municipio": "Sebastião Laranjeiras",
+          "ifdm": 0.4978,
+          "populacao": 9581
+        },
+        {
+          "municipio": "Ituaçu",
+          "ifdm": 0.4913,
+          "populacao": 18506
+        },
+        {
+          "municipio": "Rio do Antônio",
+          "ifdm": 0.4864,
+          "populacao": 13495
+        },
+        {
+          "municipio": "Pindaí",
+          "ifdm": 0.4814,
+          "populacao": 15125
+        },
+        {
+          "municipio": "Palmas de Monte Alto",
+          "ifdm": 0.4669,
+          "populacao": 20666
+        },
+        {
+          "municipio": "Contendas do Sincorá",
+          "ifdm": 0.4302,
+          "populacao": 4499
+        },
+        {
+          "municipio": "Lagoa Real",
+          "ifdm": 0.414,
+          "populacao": 14550
         }
       ],
       "desenvolvimento": {
@@ -2725,6 +4457,108 @@
           "tipo": "IG Potencial",
           "quantidade": 14,
           "fonte": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Valente",
+          "ifdm": 0.5825,
+          "populacao": 25132
+        },
+        {
+          "municipio": "Barrocas",
+          "ifdm": 0.5796,
+          "populacao": 15780
+        },
+        {
+          "municipio": "Ichu",
+          "ifdm": 0.5527,
+          "populacao": 6428
+        },
+        {
+          "municipio": "Retirolândia",
+          "ifdm": 0.5295,
+          "populacao": 14174
+        },
+        {
+          "municipio": "Teofilândia",
+          "ifdm": 0.525,
+          "populacao": 21825
+        },
+        {
+          "municipio": "Serrinha",
+          "ifdm": 0.5247,
+          "populacao": 84690
+        },
+        {
+          "municipio": "São Domingos",
+          "ifdm": 0.5203,
+          "populacao": 8690
+        },
+        {
+          "municipio": "Santaluz",
+          "ifdm": 0.512,
+          "populacao": 40066
+        },
+        {
+          "municipio": "Conceição do Coité",
+          "ifdm": 0.4861,
+          "populacao": 71601
+        },
+        {
+          "municipio": "Itiúba",
+          "ifdm": 0.4772,
+          "populacao": 35490
+        },
+        {
+          "municipio": "Araci",
+          "ifdm": 0.466,
+          "populacao": 50308
+        },
+        {
+          "municipio": "Lamarão",
+          "ifdm": 0.4614,
+          "populacao": 9303
+        },
+        {
+          "municipio": "Tucano",
+          "ifdm": 0.4547,
+          "populacao": 51016
+        },
+        {
+          "municipio": "Quijingue",
+          "ifdm": 0.4431,
+          "populacao": 26443
+        },
+        {
+          "municipio": "Candeal",
+          "ifdm": 0.4403,
+          "populacao": 7940
+        },
+        {
+          "municipio": "Monte Santo",
+          "ifdm": 0.4195,
+          "populacao": 49807
+        },
+        {
+          "municipio": "Biritinga",
+          "ifdm": 0.4089,
+          "populacao": 15603
+        },
+        {
+          "municipio": "Queimadas",
+          "ifdm": 0.4089,
+          "populacao": 27429
+        },
+        {
+          "municipio": "Cansanção",
+          "ifdm": 0.4086,
+          "populacao": 39725
+        },
+        {
+          "municipio": "Nordestina",
+          "ifdm": 0.406,
+          "populacao": 19711
         }
       ],
       "desenvolvimento": {
@@ -2843,6 +4677,128 @@
           "fonte": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Vitória da Conquista",
+          "ifdm": 0.6268,
+          "populacao": 396613
+        },
+        {
+          "municipio": "Licínio de Almeida",
+          "ifdm": 0.5927,
+          "populacao": 12202
+        },
+        {
+          "municipio": "Mortugaba",
+          "ifdm": 0.5697,
+          "populacao": 11477
+        },
+        {
+          "municipio": "Piripá",
+          "ifdm": 0.5594,
+          "populacao": 9143
+        },
+        {
+          "municipio": "Aracatu",
+          "ifdm": 0.5541,
+          "populacao": 14440
+        },
+        {
+          "municipio": "Presidente Jânio Quadros",
+          "ifdm": 0.5476,
+          "populacao": 12963
+        },
+        {
+          "municipio": "Condeúba",
+          "ifdm": 0.5414,
+          "populacao": 17567
+        },
+        {
+          "municipio": "Caetanos",
+          "ifdm": 0.5408,
+          "populacao": 11432
+        },
+        {
+          "municipio": "Cordeiros",
+          "ifdm": 0.5348,
+          "populacao": 7748
+        },
+        {
+          "municipio": "Caraíbas",
+          "ifdm": 0.5339,
+          "populacao": 10259
+        },
+        {
+          "municipio": "Maetinga",
+          "ifdm": 0.5331,
+          "populacao": 7218
+        },
+        {
+          "municipio": "Barra do Choça",
+          "ifdm": 0.5228,
+          "populacao": 38581
+        },
+        {
+          "municipio": "Tremedal",
+          "ifdm": 0.5097,
+          "populacao": 16646
+        },
+        {
+          "municipio": "Anagé",
+          "ifdm": 0.5055,
+          "populacao": 26745
+        },
+        {
+          "municipio": "Poções",
+          "ifdm": 0.5025,
+          "populacao": 50773
+        },
+        {
+          "municipio": "Guajeru",
+          "ifdm": 0.5009,
+          "populacao": 8177
+        },
+        {
+          "municipio": "Planalto",
+          "ifdm": 0.5003,
+          "populacao": 24026
+        },
+        {
+          "municipio": "Jacaraci",
+          "ifdm": 0.4971,
+          "populacao": 14910
+        },
+        {
+          "municipio": "Bom Jesus da Serra",
+          "ifdm": 0.4785,
+          "populacao": 10018
+        },
+        {
+          "municipio": "Mirante",
+          "ifdm": 0.4716,
+          "populacao": 10526
+        },
+        {
+          "municipio": "Encruzilhada",
+          "ifdm": 0.4631,
+          "populacao": 19450
+        },
+        {
+          "municipio": "Cândido Sales",
+          "ifdm": 0.4579,
+          "populacao": 26469
+        },
+        {
+          "municipio": "Ribeirão do Largo",
+          "ifdm": 0.444,
+          "populacao": 10029
+        },
+        {
+          "municipio": "Belo Campo",
+          "ifdm": 0.4312,
+          "populacao": 19074
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.5677432834150894,
         "populacaoTotal": 786486,
@@ -2933,6 +4889,108 @@
           "fonte": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Amargosa",
+          "ifdm": 0.5908,
+          "populacao": 38585
+        },
+        {
+          "municipio": "Lafaiete Coutinho",
+          "ifdm": 0.5607,
+          "populacao": 4228
+        },
+        {
+          "municipio": "Ubaíra",
+          "ifdm": 0.5363,
+          "populacao": 19142
+        },
+        {
+          "municipio": "Maracás",
+          "ifdm": 0.5303,
+          "populacao": 29330
+        },
+        {
+          "municipio": "Mutuípe",
+          "ifdm": 0.5141,
+          "populacao": 20590
+        },
+        {
+          "municipio": "Nova Itarana",
+          "ifdm": 0.5088,
+          "populacao": 8073
+        },
+        {
+          "municipio": "Santa Inês",
+          "ifdm": 0.505,
+          "populacao": 10625
+        },
+        {
+          "municipio": "Laje",
+          "ifdm": 0.4956,
+          "populacao": 21705
+        },
+        {
+          "municipio": "Elísio Medrado",
+          "ifdm": 0.4917,
+          "populacao": 8069
+        },
+        {
+          "municipio": "Planaltino",
+          "ifdm": 0.4879,
+          "populacao": 8239
+        },
+        {
+          "municipio": "Jaguaquara",
+          "ifdm": 0.4846,
+          "populacao": 47624
+        },
+        {
+          "municipio": "Milagres",
+          "ifdm": 0.4588,
+          "populacao": 11436
+        },
+        {
+          "municipio": "Itiruçu",
+          "ifdm": 0.4563,
+          "populacao": 11211
+        },
+        {
+          "municipio": "Brejões",
+          "ifdm": 0.4457,
+          "populacao": 13224
+        },
+        {
+          "municipio": "São Miguel das Matas",
+          "ifdm": 0.4373,
+          "populacao": 10615
+        },
+        {
+          "municipio": "Lajedo do Tabocal",
+          "ifdm": 0.4236,
+          "populacao": 7683
+        },
+        {
+          "municipio": "Cravolândia",
+          "ifdm": 0.4202,
+          "populacao": 4491
+        },
+        {
+          "municipio": "Jiquiriçá",
+          "ifdm": 0.417,
+          "populacao": 14063
+        },
+        {
+          "municipio": "Irajuba",
+          "ifdm": 0.392,
+          "populacao": 6232
+        },
+        {
+          "municipio": "Itaquara",
+          "ifdm": 0.3634,
+          "populacao": 8464
+        }
+      ],
       "desenvolvimento": {
         "ifdmTi": 0.4949809912755369,
         "populacaoTotal": 303629,
@@ -3021,6 +5079,88 @@
           "tipo": "IG Potencial",
           "quantidade": 1,
           "fonte": "https://ingi.api.org.br/index.php?journal=INGI&page=article&op=viewFile&path[]=124&path[]=111"
+        }
+      ],
+      "desenvolvimentoDetalhado": [
+        {
+          "municipio": "Bom Jesus da Lapa",
+          "ifdm": 0.5693,
+          "populacao": 68866
+        },
+        {
+          "municipio": "Ibotirama",
+          "ifdm": 0.5262,
+          "populacao": 27723
+        },
+        {
+          "municipio": "Matina",
+          "ifdm": 0.52,
+          "populacao": 10611
+        },
+        {
+          "municipio": "Riacho de Santana",
+          "ifdm": 0.4953,
+          "populacao": 32060
+        },
+        {
+          "municipio": "Oliveira dos Brejinhos",
+          "ifdm": 0.4862,
+          "populacao": 21323
+        },
+        {
+          "municipio": "Igaporã",
+          "ifdm": 0.4807,
+          "populacao": 16069
+        },
+        {
+          "municipio": "Feira da Mata",
+          "ifdm": 0.4664,
+          "populacao": 5831
+        },
+        {
+          "municipio": "Brotas de Macaúbas",
+          "ifdm": 0.4629,
+          "populacao": 12180
+        },
+        {
+          "municipio": "Muquém do São Francisco",
+          "ifdm": 0.4561,
+          "populacao": 10803
+        },
+        {
+          "municipio": "Serra do Ramalho",
+          "ifdm": 0.4358,
+          "populacao": 36252
+        },
+        {
+          "municipio": "Morpará",
+          "ifdm": 0.42,
+          "populacao": 8220
+        },
+        {
+          "municipio": "Carinhanha",
+          "ifdm": 0.4167,
+          "populacao": 30439
+        },
+        {
+          "municipio": "Malhada",
+          "ifdm": 0.4166,
+          "populacao": 15814
+        },
+        {
+          "municipio": "Barra",
+          "ifdm": 0.4112,
+          "populacao": 53642
+        },
+        {
+          "municipio": "Sítio do Mato",
+          "ifdm": 0.3515,
+          "populacao": 13982
+        },
+        {
+          "municipio": "Paratinga",
+          "ifdm": 0.325,
+          "populacao": 30680
         }
       ],
       "desenvolvimento": {
