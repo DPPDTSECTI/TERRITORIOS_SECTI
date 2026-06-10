@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
-import territoriosMunicipios from '..xMunicipios';
+import territoriosMunicipios from '..Municipios';
 
 function normalize(value) {
     return String(value || '')
