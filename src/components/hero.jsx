@@ -3,14 +3,7 @@ import React from 'react';
 const LandingHero = ({ onAccessDashboard }) => {
     return (
         // O fundo base agora é um cinza ultra claro (slate-50)
-        <div className="relative w-full h-full min-h-[calc(100vh-4rem)] bg-slate-50 font-sans flex flex-col justify-between overflow-hidden">
-
-            <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gov-blueDark-500/20 blur-[120px] pointer-events-none z-0"></div>
-
-            <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gov-cyan-500/25 blur-[120px] pointer-events-none z-0"></div>
-
-            <div className="absolute top-[30%] left-[40%] w-[40%] h-[40%] rounded-full bg-gov-magenta-500/10 blur-[100px] pointer-events-none z-0"></div>
-
+        <div className="relative w-full h-full min-h-[calc(100vh-4rem)] background-color: rgba(0, 0, 0, 0.5); font-sans flex flex-col justify-between overflow-hidden">
 
             {/* Conteúdo Principal */}
             <main className="flex-1 flex flex-col justify-center items-start max-w-4xl z-10 my-auto px-8 sm:px-12 lg:px-16">

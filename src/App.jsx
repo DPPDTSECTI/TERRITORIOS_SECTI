@@ -84,7 +84,7 @@ export default function App() {
   });
 
   // =======================================================================
-  // PROCESSADOR CENTRAL DO DASHBOARD (A Deduplicação Matemática do ID)
+  // PROCESSADOR CENTRAL DO DASHBOARD
   // =======================================================================
   const dashboardData = useMemo(() => {
     let targetList = selectedLocation 
@@ -118,23 +118,28 @@ export default function App() {
             }
         });
         
-        // --- 2. CADEIAS PRODUTIVAS E IGS (Listagem Pura) ---
+        // --- 2. CADEIAS PRODUTIVAS E IGS ---
         t.cadeiasProdutivasDetalhado.forEach(cadeia => {
+            const segmentoStr = cadeia.segmento || (Array.isArray(cadeia.cadeias) ? cadeia.cadeias.join(', ') : cadeia.cadeias) || 'Sem Segmento';
+            const tipoStr = cadeia.tipo && String(cadeia.tipo).trim() !== '' ? cadeia.tipo : 'Não Classificado';
+            const municipiosStr = cadeia.municipiosPertencentes || cadeia.municipio || 'Não informados';
+            const sedeStr = cadeia.sede || cadeia.municipioSatelite || 'Não informada';
+
             aplIgsFlat.push({
-                id: cadeia.id,
-                segmento: cadeia.segmento || 'Sem Segmento', 
+                id: cadeia.id || Math.random().toString(),
+                segmento: segmentoStr, 
                 entidade: cadeia.entidade || null,
-                tipo: cadeia.tipo || null,
-                quantidade: cadeia.quantidade || 1,
+                tipo: tipoStr,
+                municipiosPertencentes: municipiosStr,
                 fonte: cadeia.fonte || null,
-                sede: cadeia.sede || 'Não informada', 
+                sede: sedeStr, 
                 territorioRef: t.nome 
             });
 
             if (cadeia.id) globalUniqueCadeiasIds.add(cadeia.id);
         });
 
-        // --- 3. ASSISTÊNCIA PÚBLICA E IFDM ---
+        // --- 3. ASSISTÊNCIA PÚBLICA ---
         if (t.assistenciaPublica?.existe) totalTerritoriosComAssistencia += 1;
         const iniArray = Array.isArray(t.assistenciaPublica?.iniciativas) ? t.assistenciaPublica.iniciativas : [];
         iniArray.forEach(ini => {
@@ -144,6 +149,7 @@ export default function App() {
             }
         });
 
+        // --- 4. IFDM ---
         if (t.desenvolvimento?.ifdmTi && t.desenvolvimento?.populacaoTotal) {
             somaIfdmPop += (t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal);
             somaPopulacao += t.desenvolvimento.populacaoTotal;
@@ -167,7 +173,7 @@ export default function App() {
     } else {
         const totalSemi = territoriosData.filter(t => t.isSemiarido).length;
         const ttl = territoriosData.length || 27; 
-        coberturaStr = ttl > 0 ? `${((totalSemi / 27) * 100).toFixed(1)}% do Estado` : "0%";
+        coberturaStr = ttl > 0 ? `${((totalSemi / ttl) * 100).toFixed(1)}% do Estado` : "0%";
     }
 
     return { 
@@ -185,52 +191,70 @@ export default function App() {
     };
   }, [selectedLocation, filtroSemiarido, territoriosData]);
 
+  // Design das Etiquetas
+  const getBadgeStyle = (tipo) => {
+      const t = String(tipo).toLowerCase();
+      if (t.includes('potencial')) return 'bg-orange-100 text-orange-800 border-orange-300 shadow-sm';
+      if (t.includes('ig') || t.includes('indicação')) return 'bg-purple-100 text-purple-800 border-purple-300 shadow-sm';
+      if (t.includes('apl') || t.includes('arranjo')) return 'bg-blue-100 text-blue-800 border-blue-300 shadow-sm';
+      return 'bg-slate-100 text-slate-700 border-slate-300 shadow-sm';
+  };
+
   const handleForceRefresh = () => carregarDadosDoSharePoint(true);
 
   return (
-    <div className="relative flex flex-col h-screen bg-slate-50 font-sans text-slate-800 overflow-hidden">
+    <div className="relative flex flex-col h-screen font-sans text-slate-800 overflow-hidden text-sm bg-slate-100">
       
+      {/* ========================================================================= */}
+      {/* FUNDO FIXO EM DEGRADÊ (Solução contra o branco do Scroll Bounce) */}
+      {/* ========================================================================= */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-100 via-white to-slate-200 pointer-events-none">
+         {/* Manchas vibrantes ampliadas para maior destaque no Glassmorphism */}
+         <div className="absolute -top-[15%] -right-[5%] w-[60%] h-[60%] rounded-full bg-gov-blueDark-500/35 blur-[120px]"></div>
+         <div className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gov-cyan-500/35 blur-[120px]"></div>
+         <div className="absolute top-[25%] left-[25%] w-[45%] h-[45%] rounded-full bg-gov-magenta-500/20 blur-[130px]"></div>
+      </div>
+
       {isLoadingPipeline && territoriosData.length === 0 && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-white/70 backdrop-blur-xl">
-          <div className="w-16 h-16 border-4 border-gov-blueDark-100 border-t-gov-blueDark-500 rounded-full animate-spin mb-4 shadow-lg"></div>
-          <h2 className="text-xl font-bold text-gov-blueDark-500 tracking-wide font-display">Sincronizando Base de Dados</h2>
-          <p className="text-sm font-medium text-slate-500 mt-2">Conectando ao SharePoint SECTI...</p>
+          <div className="w-12 h-12 border-4 border-gov-blueDark-100 border-t-gov-blueDark-500 rounded-full animate-spin mb-4 shadow-lg"></div>
+          <h2 className="text-lg font-bold text-gov-blueDark-500 tracking-wide font-display">Sincronizando Base de Dados</h2>
+          <p className="text-xs font-medium text-slate-500 mt-2">Conectando ao SharePoint SECTI...</p>
         </div>
       )}
 
-      <header className="absolute top-0 w-full bg-white/80 backdrop-blur-md h-16 sm:h-20 flex items-center justify-between px-6 sm:px-12 lg:px-16 shadow-sm border-b border-surface-border/40 z-50">
-        <div className="flex items-center gap-8 lg:gap-12 h-full">
-          <h1 className="text-lg sm:text-xl font-light text-slate-800 tracking-tight uppercase flex items-center gap-2">
+      {/* DYNAMIC ISLAND NAVBAR */}
+      <header className="fixed top-3 left-0 right-0 mx-auto w-[96%] max-w-[1600px] bg-white/65 backdrop-blur-lg border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.06)] h-14 rounded-2xl flex items-center justify-between px-6 lg:px-8 z-[100] transition-all duration-500">
+        <div className="flex items-center gap-6 lg:gap-10 h-full">
+          <h1 className="text-sm sm:text-base font-bold text-slate-800 tracking-tight uppercase flex items-center gap-1.5 drop-shadow-sm">
             <span className="text-gov-blueDark-500">Painel</span>
             <span className="text-gov-red-500">Territorial</span>
           </h1>
-          <nav className="flex items-center gap-6 sm:gap-8 h-full pt-1">
-            <button onClick={() => setPage('overview')} className={`h-full flex items-center text-sm sm:text-base font-extralight transition-all border-b-[3px] ${page === 'overview' ? 'text-gov-blueDark-500 border-gov-blueDark-500 font-medium' : 'text-slate-500 border-transparent hover:text-slate-800 hover:border-slate-300'}`}>Início</button>
-            <button onClick={() => setPage('territorios')} className={`h-full flex items-center text-sm sm:text-base font-extralight transition-all border-b-[3px] ${page === 'territorios' ? 'text-gov-blueDark-500 border-gov-blueDark-500 font-medium' : 'text-slate-500 border-transparent hover:text-slate-800 hover:border-slate-300'}`}>Territórios</button>
+          <nav className="flex items-center gap-4 sm:gap-6 h-full pt-0.5">
+            <button onClick={() => setPage('overview')} className={`h-full flex items-center text-xs font-semibold transition-all border-b-[2px] ${page === 'overview' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Início</button>
+            <button onClick={() => setPage('territorios')} className={`h-full flex items-center text-xs font-semibold transition-all border-b-[2px] ${page === 'territorios' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Territórios</button>
           </nav>
         </div>
         <div className="hidden md:flex items-center">
-            <img src="/img/SECTI - SECRETARIA DE CIENCIA, TECNOLOGIA E INOVACAO - GOVBA 0126__H.png" alt="Logo SECTI" className="h-16 lg:h-16 object-contain" />
+            <img src="/img/SECTI - SECRETARIA DE CIENCIA, TECNOLOGIA E INOVACAO - GOVBA 0126__H.png" alt="Logo SECTI" className="h-8 lg:h-9 object-contain drop-shadow-sm" />
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto relative w-full pt-16 sm:pt-20">
+      {/* ÁREA DE SCROLL PRINCIPAL (O z-10 mantém o conteúdo por cima do fundo fixo) */}
+      <main className="flex-1 overflow-y-auto relative w-full pt-20 sm:pt-24 pb-8 z-10">
         {page === 'overview' ? (
           <LandingHero onAccessDashboard={() => setPage('territorios')} />
         ) : (
-          <div className="relative p-4 sm:p-6 lg:p-8 max-w-[1800px] mx-auto w-full min-h-full flex flex-col justify-start">
+          <div className="relative p-3 sm:p-4 lg:p-5 max-w-[1600px] mx-auto w-full min-h-full flex flex-col justify-start">
             
-            <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gov-blueDark-500/20 blur-[120px] pointer-events-none z-0"></div>
-            <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gov-cyan-500/25 blur-[120px] pointer-events-none z-0"></div>
-            <div className="absolute top-[30%] left-[40%] w-[40%] h-[40%] rounded-full bg-gov-magenta-500/10 blur-[100px] pointer-events-none z-0"></div>
-
-            <div className="relative w-full bg-white/70 backdrop-blur-md rounded-2xl border border-white/45 shadow-glass p-5 sm:p-7 z-10 flex flex-col gap-6 transition-all duration-500">
+            {/* CONTAINER PRINCIPAL GLASSMORPHISM (Mais opaco para leitura perfeita) */}
+            <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-glass p-4 sm:p-5 flex flex-col gap-4 transition-all duration-500">
               
-              {/* Barra de Ações e Filtros */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center border-b border-slate-200/60 pb-5">
-                <div className="lg:col-span-2 relative w-full flex flex-col sm:flex-row items-center gap-3" ref={dropdownRef}>
+              {/* BARRA DE AÇÕES E FILTROS COMPACTA */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 items-center border-b border-slate-200/60 pb-4">
+                <div className="lg:col-span-2 relative w-full flex flex-col sm:flex-row items-center gap-2" ref={dropdownRef}>
                   <div className="w-full relative flex-1">
-                    <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Filtrar Análise Territorial</label>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Filtrar Análise Territorial</label>
                     <div className="relative flex items-center">
                       <input
                         type="text"
@@ -243,139 +267,139 @@ export default function App() {
                           if (!e.target.value) setSelectedLocation(null);
                         }}
                         onFocus={() => setIsDropdownOpen(true)}
-                        className="w-full bg-white/90 border border-slate-200 rounded-xl pl-11 pr-10 py-3 text-sm font-normal focus:outline-none focus:border-gov-blueDark-500 shadow-sm transition-all text-slate-800 placeholder-slate-400"
+                        className="w-full bg-white/90 border border-slate-200 rounded-lg pl-9 pr-8 py-2 text-xs font-normal focus:outline-none focus:border-gov-blueDark-500 shadow-sm transition-all text-slate-800 placeholder-slate-400"
                       />
-                      <svg className="w-5 h-5 text-slate-400 absolute left-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                      <svg className="w-4 h-4 text-slate-400 absolute left-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                       {searchTerm && (
-                        <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} className="absolute right-4 text-slate-400 hover:text-slate-600">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} className="absolute right-3 text-slate-400 hover:text-slate-600">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                       )}
                     </div>
                   </div>
                   
-                  <div className="w-full sm:w-auto pt-0 sm:pt-6">
+                  <div className="w-full sm:w-auto pt-0 sm:pt-5">
                     <button 
                         onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); }}
-                        className={`w-full sm:w-auto px-5 py-3 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center justify-center gap-2 ${filtroSemiarido ? 'bg-gov-red-500 text-white hover:bg-gov-red-600' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        className={`w-full sm:w-auto px-4 py-2 rounded-lg font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 ${filtroSemiarido ? 'bg-gov-red-500 text-white hover:bg-gov-red-600' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                     >
                         {filtroSemiarido ? (
-                          <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>Recorte: Semiárido</>
+                          <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>Recorte: Semiárido</>
                         ) : (
-                          <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>Apenas Semiárido</>
+                          <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>Apenas Semiárido</>
                         )}
                     </button>
                   </div>
 
                   {isDropdownOpen && searchTerm && (
-                    <div className="absolute top-[100%] mt-1.5 w-full bg-white border border-slate-200/80 rounded-xl shadow-lg max-h-60 overflow-y-auto z-50 divide-y divide-slate-100">
+                    <div className="absolute top-[100%] mt-1 w-full bg-white border border-slate-200/80 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50 divide-y divide-slate-100">
                       {filteredOptions.length > 0 ? (
                         filteredOptions.map((item) => (
-                          <button key={item.id} onClick={() => { setSelectedLocation(item); setSearchTerm(item.nome); setIsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center justify-between">
+                          <button key={item.id} onClick={() => { setSelectedLocation(item); setSearchTerm(item.nome); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center justify-between">
                             <div>
-                              <span className="font-semibold text-sm text-slate-800 block">{item.nome}</span>
-                              <span className="text-xs text-slate-400">{item.regiao}</span>
+                              <span className="font-semibold text-xs text-slate-800 block">{item.nome}</span>
+                              <span className="text-[10px] text-slate-400">{item.regiao}</span>
                             </div>
-                            {item.isSemiarido && <span className="text-[9px] font-bold text-gov-red-500 bg-gov-red-50 px-2 py-0.5 rounded-full">Semiárido</span>}
+                            {item.isSemiarido && <span className="text-[8px] font-bold text-gov-red-500 bg-gov-red-50 px-1.5 py-0.5 rounded-full">Semiárido</span>}
                           </button>
                         ))
                       ) : (
-                        <div className="px-4 py-3 text-sm text-slate-400 font-light italic">Nenhum território localizado.</div>
+                        <div className="px-3 py-2 text-xs text-slate-400 font-light italic">Nenhum território localizado.</div>
                       )}
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center lg:justify-end gap-3 lg:pt-5 w-full">
-                  <button type="button" onClick={handleForceRefresh} disabled={isLoadingPipeline} className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-slate-700 disabled:opacity-70 shadow-sm w-full lg:w-auto">
+                <div className="flex items-center lg:justify-end gap-2 lg:pt-5 w-full">
+                  <button type="button" onClick={handleForceRefresh} disabled={isLoadingPipeline} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-slate-700 disabled:opacity-70 shadow-sm w-full lg:w-auto">
                     {isLoadingPipeline ? 'Sincronizando...' : 'Atualizar Dados'}
                   </button>
                 </div>
               </div>
 
-              {/* 5 KPIS GLOBAIS */}
+              {/* 5 KPIS GLOBAIS COMPACTAS */}
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">
                     Indicadores Consolidados {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Recorte: Semiárido Baiano' : '— Estado da Bahia')}
                   </h3>
-                  <span className="text-xs text-slate-500 font-medium hidden sm:block">Última sincronização: {lastUpdate}</span>
+                  <span className="text-[10px] text-slate-500 font-medium hidden sm:block">Última sincronização: {lastUpdate}</span>
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                  <div className="bg-white/80 border border-slate-200/60 p-4 rounded-xl shadow-sm">
-                    <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Capacidade Territorial</p>
-                    <p className="text-3xl font-black text-gov-blueDark-500 mt-2">{dashboardData.topKpis.capacidadeCti}</p>
-                    <div className="text-xs text-slate-500 mt-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-blueDark-500 mr-1.5"></span> Entidades em CT&I</div>
+                  <div className="bg-white/85 border border-slate-200/60 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Capacidade Territorial</p>
+                    <p className="text-2xl font-black text-gov-blueDark-500 mt-1">{dashboardData.topKpis.capacidadeCti}</p>
+                    <div className="text-[10px] text-slate-500 mt-1.5"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-blueDark-500 mr-1.5"></span> Entidades em CT&I</div>
                   </div>
-                  <div className="bg-white/80 border border-slate-200/60 p-4 rounded-xl shadow-sm">
-                    <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">D. Territorial (IFDM)</p>
-                    <p className="text-3xl font-black text-gov-red-500 mt-2">{dashboardData.topKpis.ifdm}</p>
-                    <div className="text-xs text-slate-500 mt-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-red-500 mr-1.5"></span> Média Ponderada</div>
+                  <div className="bg-white/85 border border-slate-200/60 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">D. Territorial (IFDM)</p>
+                    <p className="text-2xl font-black text-gov-red-500 mt-1">{dashboardData.topKpis.ifdm}</p>
+                    <div className="text-[10px] text-slate-500 mt-1.5"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-red-500 mr-1.5"></span> Média Ponderada</div>
                   </div>
-                  <div className="bg-white/80 border border-slate-200/60 p-4 rounded-xl shadow-sm">
-                    <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Delimitação Semiárido</p>
-                    <p className="text-2xl font-black text-slate-700 mt-2 truncate" title={dashboardData.topKpis.coberturaSemiarido}>{dashboardData.topKpis.coberturaSemiarido}</p>
-                    <div className="text-xs text-slate-500 mt-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Proporção no Estado</div>
+                  <div className="bg-white/85 border border-slate-200/60 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Delimitação Semiárido</p>
+                    <p className="text-xl font-black text-slate-700 mt-1 truncate" title={dashboardData.topKpis.coberturaSemiarido}>{dashboardData.topKpis.coberturaSemiarido}</p>
+                    <div className="text-[10px] text-slate-500 mt-1.5"><span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Proporção no Estado</div>
                   </div>
-                  <div className="bg-white/80 border border-slate-200/60 p-4 rounded-xl shadow-sm">
-                    <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Assistência Pública</p>
-                    <p className="text-2xl font-black text-gov-cyan-700 mt-2 truncate">{dashboardData.topKpis.conectaBahia}</p>
-                    <div className="text-xs text-slate-500 mt-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-cyan-500 mr-1.5"></span> Monitoramento Ativo</div>
+                  <div className="bg-white/85 border border-slate-200/60 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Assistência Pública</p>
+                    <p className="text-xl font-black text-gov-cyan-700 mt-1 truncate">{dashboardData.topKpis.conectaBahia}</p>
+                    <div className="text-[10px] text-slate-500 mt-1.5"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-cyan-500 mr-1.5"></span> Monitoramento Ativo</div>
                   </div>
-                  <div className="bg-white/80 border border-slate-200/60 p-4 rounded-xl shadow-sm">
-                    <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Cadeias Produtivas</p>
-                    <p className="text-3xl font-black text-slate-800 mt-2 truncate">{dashboardData.topKpis.cadeiasIgs}</p>
-                    <div className="text-xs text-slate-500 mt-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-green-500 mr-1.5"></span> APLs e IGs Mapeadas</div>
+                  <div className="bg-white/85 border border-slate-200/60 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Cadeias Produtivas</p>
+                    <p className="text-2xl font-black text-slate-800 mt-1 truncate">{dashboardData.topKpis.cadeiasIgs}</p>
+                    <div className="text-[10px] text-slate-500 mt-1.5"><span className="inline-block w-1.5 h-1.5 rounded-full bg-gov-green-500 mr-1.5"></span> APLs e IGs Mapeadas</div>
                   </div>
                 </div>
               </div>
 
-              {/* AS 7 SUB-KPIS DE CT&I NA HORIZONTAL */}
-              <div className="mt-2 mb-2">
-                 <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Detalhamento da Infraestrutura de CT&I</h4>
+              {/* AS 7 SUB-KPIS DE CT&I NA HORIZONTAL (Extremamente compactas para libertar espaço) */}
+              <div className="mt-3 mb-1">
+                 <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Detalhamento da Infraestrutura de CT&I</h4>
                  </div>
-                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-                    <div className="bg-white/90 border border-slate-200/80 p-3 rounded-xl shadow-sm flex flex-col justify-center items-center text-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Universidades</span>
-                        <span className="text-2xl font-black text-gov-blueDark-500">{dashboardData.subKpis.univs}</span>
+                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                    <div className="bg-white/90 border border-slate-200/60 p-2.5 rounded-xl shadow-sm flex flex-col justify-center items-center text-center hover:shadow-md transition-all">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Universidades</span>
+                        <span className="text-xl font-black text-gov-blueDark-500">{dashboardData.subKpis.univs}</span>
                     </div>
-                    <div className="bg-white/90 border border-slate-200/80 p-3 rounded-xl shadow-sm flex flex-col justify-center items-center text-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Inst. Federais</span>
-                        <span className="text-2xl font-black text-gov-red-500">{dashboardData.subKpis.ifs}</span>
+                    <div className="bg-white/90 border border-slate-200/60 p-2.5 rounded-xl shadow-sm flex flex-col justify-center items-center text-center hover:shadow-md transition-all">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Inst. Federais</span>
+                        <span className="text-xl font-black text-gov-red-500">{dashboardData.subKpis.ifs}</span>
                     </div>
-                    <div className="bg-white/90 border border-slate-200/80 p-3 rounded-xl shadow-sm flex flex-col justify-center items-center text-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">ICTs</span>
-                        <span className="text-2xl font-black text-gov-cyan-500">{dashboardData.subKpis.icts}</span>
+                    <div className="bg-white/90 border border-slate-200/60 p-2.5 rounded-xl shadow-sm flex flex-col justify-center items-center text-center hover:shadow-md transition-all">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">ICTs</span>
+                        <span className="text-xl font-black text-gov-cyan-500">{dashboardData.subKpis.icts}</span>
                     </div>
-                    <div className="bg-white/90 border border-slate-200/80 p-3 rounded-xl shadow-sm flex flex-col justify-center items-center text-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Centros Pesq.</span>
-                        <span className="text-2xl font-black text-gov-green-500">{dashboardData.subKpis.centrosPesquisa}</span>
+                    <div className="bg-white/90 border border-slate-200/60 p-2.5 rounded-xl shadow-sm flex flex-col justify-center items-center text-center hover:shadow-md transition-all">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">C. Pesquisa</span>
+                        <span className="text-xl font-black text-gov-green-500">{dashboardData.subKpis.centrosPesquisa}</span>
                     </div>
-                    <div className="bg-white/90 border border-slate-200/80 p-3 rounded-xl shadow-sm flex flex-col justify-center items-center text-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Espaços Dinam.</span>
-                        <span className="text-2xl font-black text-gov-cyan-700">{dashboardData.subKpis.espacos}</span>
+                    <div className="bg-white/90 border border-slate-200/60 p-2.5 rounded-xl shadow-sm flex flex-col justify-center items-center text-center hover:shadow-md transition-all">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Espaços Dinam.</span>
+                        <span className="text-xl font-black text-gov-cyan-700">{dashboardData.subKpis.espacos}</span>
                     </div>
-                    <div className="bg-white/90 border border-slate-200/80 p-3 rounded-xl shadow-sm flex flex-col justify-center items-center text-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Parques Tecn.</span>
-                        <span className="text-2xl font-black text-gov-magenta-500">{dashboardData.subKpis.parques}</span>
+                    <div className="bg-white/90 border border-slate-200/60 p-2.5 rounded-xl shadow-sm flex flex-col justify-center items-center text-center hover:shadow-md transition-all">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Parques Tecn.</span>
+                        <span className="text-xl font-black text-gov-magenta-500">{dashboardData.subKpis.parques}</span>
                     </div>
-                    <div className="bg-white/90 border border-slate-200/80 p-3 rounded-xl shadow-sm flex flex-col justify-center items-center text-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Incubadoras</span>
-                        <span className="text-2xl font-black text-gov-cyan-600">{dashboardData.subKpis.incubadoras}</span>
+                    <div className="bg-white/90 border border-slate-200/60 p-2.5 rounded-xl shadow-sm flex flex-col justify-center items-center text-center hover:shadow-md transition-all">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Incubadoras</span>
+                        <span className="text-xl font-black text-gov-cyan-600">{dashboardData.subKpis.incubadoras}</span>
                     </div>
                  </div>
               </div>
 
-              {/* LAYOUT ESPACIAL: Mapa à Esquerda + 3 Listas à Direita */}
-              <div className="flex flex-col lg:flex-row gap-5 items-stretch h-[800px] w-full mt-2">
+              {/* LAYOUT ESPACIAL: Mapa (50%) + Listas (50%) Balanceadas */}
+              <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[750px] w-full mt-1">
                 
                 {/* MAPA */}
-                <div className="flex-[2.5] bg-white rounded-xl border border-slate-200/80 p-2 shadow-inner relative overflow-hidden flex flex-col h-full">
-                  <div className="absolute top-4 left-4 bg-slate-900/85 text-white backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-semibold z-10 flex items-center gap-2 shadow-sm">
-                    <span className="w-2.5 h-2.5 rounded-full bg-gov-green-500 animate-pulse"></span>
-                    Malha Cartográfica Interativa
+                <div className="w-full lg:w-[50%] bg-white rounded-xl border border-slate-200/80 p-2 shadow-sm relative flex flex-col h-full">
+                  <div className="absolute top-4 left-4 bg-slate-900/85 text-white backdrop-blur-sm px-3 py-2 rounded-lg text-xs font-semibold z-10 flex items-center gap-1.5 shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-gov-green-500 animate-pulse"></span>
+                    Malha Cartográfica
                   </div>
                   <div className="w-full h-full flex-1 rounded-lg overflow-hidden bg-slate-50/50">
                     <ConectaMap 
@@ -392,22 +416,22 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 3 LISTAS LATERAIS EMPILHADAS */}
-                <div className="flex-[1.2] flex flex-col gap-4 h-full overflow-hidden">
+                {/* 3 LISTAS LATERAIS EMPILHADAS (Agora com espaço justo para rolagem) */}
+                <div className="w-full lg:w-[50%] flex flex-col gap-4 h-full overflow-hidden">
                   
                   {/* Lista 1: Instituições CT&I */}
                   <div className="flex-1 min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
                      <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-                        <h4 className="text-[13px] font-bold text-slate-800 uppercase tracking-wide">Estruturas Mapeadas</h4>
+                        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide">Estruturas CT&I Mapeadas</h4>
                         <span className="bg-gov-blueDark-100 text-gov-blueDark-700 px-2 py-0.5 rounded-full text-[10px] font-bold">{dashboardData.entidades.length}</span>
                      </div>
                      <div className="flex-1 overflow-y-auto p-3 bg-slate-50/40">
                         <div className="flex flex-col gap-2">
                            {dashboardData.entidades.length > 0 ? (
                                dashboardData.entidades.map((ent, idx) => (
-                                  <div key={idx} className="p-2.5 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-1 transition-all hover:border-slate-300">
+                                  <div key={idx} className="p-2.5 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-1 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300">
                                       <span className="text-xs font-bold text-slate-800 leading-tight">{ent.entidade}</span>
-                                      <div className="flex justify-between items-end mt-1.5">
+                                      <div className="flex justify-between items-end mt-1">
                                          <span className="text-[9px] font-bold uppercase text-gov-blueDark-500 bg-gov-blueDark-50 px-1.5 py-0.5 rounded border border-gov-blueDark-100">
                                              {ent.tipo || "Instituição"}
                                          </span>
@@ -420,48 +444,61 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[11px] text-slate-400 font-medium">Nenhuma instituição mapeada.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma instituição mapeada.</span>
                                </div>
                            )}
                         </div>
                      </div>
                   </div>
 
-                  {/* Lista 2: Cadeias Produtivas */}
-                  <div className="flex-1 min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
+                  {/* Lista 2: Cadeias Produtivas e IGs */}
+                  <div className="flex-[1.2] min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
                      <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-                        <h4 className="text-[13px] font-bold text-slate-800 uppercase tracking-wide">Cadeias Produtivas</h4>
+                        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide">Cadeias Produtivas e IGs</h4>
                         <span className="bg-gov-green-100 text-gov-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold">{dashboardData.aplIgs.length}</span>
                      </div>
                      <div className="flex-1 overflow-y-auto p-3 bg-slate-50/40">
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2.5">
                            {dashboardData.aplIgs.length > 0 ? (
                                dashboardData.aplIgs.map((apl, idx) => (
-                                  <div key={idx} className="p-2.5 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-1 transition-all hover:border-slate-300">
-                                      <div className="flex items-center justify-between mb-1">
-                                         <span className="text-[10px] font-bold uppercase text-gov-green-700 bg-gov-green-50 px-1.5 py-0.5 rounded border border-gov-green-200">
-                                             {apl.segmento}
+                                  <div key={idx} className="p-3 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-2 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300">
+                                      
+                                      <div className="flex items-start justify-between gap-1.5 mb-0.5">
+                                         <span className="text-[10px] font-bold uppercase text-gov-green-800 bg-gov-green-100 px-2 py-1 rounded border border-gov-green-300 flex-1">
+                                             Cadeia: {apl.segmento}
                                          </span>
-                                         {apl.quantidade > 1 && (
-                                            <span className="text-[9px] font-bold text-slate-400">Qtd: {apl.quantidade}</span>
-                                         )}
+                                      </div>
+                                      
+                                      <div className="flex items-center">
+                                         <span className={`text-[9px] font-bold px-2 py-1 rounded-full whitespace-nowrap border ${getBadgeStyle(apl.tipo)}`}>
+                                             Tipo: {apl.tipo}
+                                         </span>
                                       </div>
                                       
                                       {apl.entidade && (
-                                          <span className="text-[11px] font-bold text-slate-700 leading-tight block mt-1">{apl.entidade}</span>
+                                          <span className="text-xs font-black text-slate-800 leading-tight mt-1 px-0.5">
+                                              {apl.entidade}
+                                          </span>
                                       )}
                                       
-                                      <div className="flex justify-between items-end mt-1.5">
+                                      <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 mt-1 shadow-inner">
+                                          <span className="block text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wider">Municípios Pertencentes:</span>
+                                          <p className="text-[10px] text-slate-700 font-medium leading-relaxed break-words whitespace-normal">
+                                              {apl.municipiosPertencentes}
+                                          </p>
+                                      </div>
+                                      
+                                      <div className="flex justify-between items-end mt-1.5 pt-1.5 border-t border-slate-100/80 px-0.5">
                                          <div className="text-left">
-                                             <span className="block text-[10px] text-slate-600 font-semibold">{apl.sede}</span>
+                                             <span className="block text-[9px] text-slate-500 italic mb-0.5">Sede/Satélite: <span className="font-bold text-slate-700">{apl.sede}</span></span>
                                              {apl.fonte && (
-                                                <a href={apl.fonte} target="_blank" rel="noopener noreferrer" className="text-[9px] text-blue-500 hover:text-blue-700 underline mt-1 block">
-                                                    Ver Fonte
+                                                <a href={apl.fonte} target="_blank" rel="noopener noreferrer" className="text-[9px] text-blue-600 hover:text-blue-800 underline font-bold tracking-wide transition-colors">
+                                                    ACESSAR FONTE
                                                 </a>
                                              )}
                                          </div>
                                          {!selectedLocation && !filtroSemiarido && (
-                                             <span className="text-right text-[9px] text-slate-400 font-medium">
+                                             <span className="text-right text-[9px] text-slate-400 font-bold">
                                                  {apl.territorioRef}
                                              </span>
                                          )}
@@ -470,7 +507,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[11px] text-slate-400 font-medium">Nenhuma cadeia localizada.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Nenhuma cadeia localizada.</span>
                                </div>
                            )}
                         </div>
@@ -480,16 +517,16 @@ export default function App() {
                   {/* Lista 3: Assistência Pública */}
                   <div className="flex-[0.8] min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
                      <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-                        <h4 className="text-[13px] font-bold text-slate-800 uppercase tracking-wide">Assistência Pública</h4>
+                        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide">Assistência Pública</h4>
                         <span className="bg-gov-cyan-100 text-gov-cyan-700 px-2 py-0.5 rounded-full text-[10px] font-bold">{dashboardData.assistencias.length}</span>
                      </div>
                      <div className="flex-1 overflow-y-auto p-3 bg-slate-50/40">
                         <div className="flex flex-col gap-2">
                            {dashboardData.assistencias.length > 0 ? (
                                dashboardData.assistencias.map((ast, idx) => (
-                                  <div key={idx} className="p-2.5 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-1 transition-all hover:border-slate-300">
+                                  <div key={idx} className="p-2.5 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-1 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300">
                                       <span className="text-[11px] font-bold text-slate-800 leading-snug">{ast.nome}</span>
-                                      <div className="flex justify-between items-end mt-1.5">
+                                      <div className="flex justify-between items-end mt-1">
                                          <div className="text-left">
                                              <span className="block text-[10px] text-slate-600 font-semibold">{ast.municipio}</span>
                                          </div>
@@ -501,7 +538,7 @@ export default function App() {
                                ))
                            ) : (
                                <div className="flex flex-col items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[11px] text-slate-400 font-medium">Em levantamento.</span>
+                                   <span className="text-[10px] text-slate-400 font-medium">Em levantamento.</span>
                                </div>
                            )}
                         </div>

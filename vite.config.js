@@ -5,11 +5,11 @@ import * as XLSX from 'xlsx'
 import fs from 'fs'
 import path from 'path'
 
-const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
 let devCache = null;
 let devCacheExpiry = 0;
+const DEV_CACHE_TTL = 30 * 60 * 1000; 
 
-// Função ultra-rigorosa para limpar cabeçalhos e transformá-los em chaves de objeto
+// Função ultra-rigorosa para limpar cabeçalhos e transformá-los em chaves de objeto seguras
 function safeKey(k) {
   return String(k || '')
     .normalize('NFD')
@@ -23,6 +23,7 @@ function normalize(value) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 }
 
@@ -59,14 +60,24 @@ function parseSpreadsheet(buffer) {
     rawRows.forEach(row => {
       const munKey = Object.keys(row).find(k => safeKey(k).includes('municipio'));
       const munVal = munKey ? row[munKey] : Object.values(row)[1] || Object.values(row)[0];
-      if (munVal) semiaridoMunicipios.add(normalize(munVal));
+      if (munVal) semiaridoMunicipios.add(normalize(String(munVal)));
     });
   }
+
+  const TERRITORY_NAME_ALIASES = {
+    [normalize('Rio Corrente')]: 'Bacia do Rio Corrente',
+  };
+
+  const normalizeTerritoryName = (value) => {
+    const normalizedValue = normalize(value);
+    if (!normalizedValue) return '';
+    return TERRITORY_NAME_ALIASES[normalizedValue] || String(value || '').trim();
+  };
 
   const territoryMap = new Map();
 
   const getTerritory = (name) => {
-    const canonicalName = normalize(name);
+    const canonicalName = normalizeTerritoryName(name);
     if (!canonicalName) return null;
 
     if (!territoryMap.has(canonicalName)) {
@@ -87,16 +98,13 @@ function parseSpreadsheet(buffer) {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
 
-    // Converte a folha para JSON onde a PRIMEIRA linha vira as chaves do objeto.
-    // Isso evita completamente que os dados "escorreguem" de coluna.
     const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
     if (rawRows.length === 0) return;
 
     const sheetNorm = safeKey(sheetName);
-    console.log(`[Dev Parser] Processando aba: ${sheetName}`);
 
     rawRows.forEach((rawRow, idx) => {
-      // Normaliza as chaves do objeto atual para garantir que as lemos sempre bem
+      // Normaliza as chaves da linha atual
       const row = {};
       for (const key in rawRow) {
           row[safeKey(key)] = rawRow[key];
@@ -105,28 +113,27 @@ function parseSpreadsheet(buffer) {
       const territorioRaw = row['territoriodeidentidade'] || row['territorio'];
       if (!territorioRaw) return;
 
-      // Trata Territórios Compostos (Ex: "Recôncavo; Baixo Sul")
       const territoryNamesList = splitList(territorioRaw);
-      
-      // ID Único Matemático (Garante deduplicação no Frontend)
       const uniqueRowId = `aba_${sheetNorm}_linha_${idx}`;
+
+      const municipio = String(row['municipio'] || row['local'] || '').trim();
+      
+      // Rede de Segurança (Fallbacks) para garantir que puxa o valor independentemente do cabeçalho
+      const entidade = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || '').trim();
+      const tipo = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || row['categoria'] || '').trim();
+      const qtd = toNumber(row['quantidade'] || row['qtd'] || row['qtdenti'] || row['valorentidades'] || 1);
 
       territoryNamesList.forEach(tName => {
          const territory = getTerritory(tName);
          if (!territory) return;
 
-         const municipio = String(row['municipio'] || row['local'] || '').trim();
-         const entidade = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || '').trim();
-         const tipo = String(row['tipo'] || row['categoria'] || row['natureza'] || '').trim();
-         const tipoNorm = normalize(tipo);
-
          // =================================================================
          // ISOLAMENTO 1: CAPACIDADE TERRITORIAL
          // =================================================================
          if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti')) {
-             const qtd = toNumber(row['qtdenti'] || row['quantidade'] || row['valorentidades'] || 1);
              let categoriaEntidade = null;
              let isCTI = false;
+             const tipoNorm = normalize(tipo);
              
              if (['universidade'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'univs'; isCTI = true; }
              else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'ifs'; isCTI = true; }
@@ -149,16 +156,14 @@ function parseSpreadsheet(buffer) {
          }
 
          // =================================================================
-         // ISOLAMENTO 2: CADEIAS PRODUTIVAS E IGs (Blindado)
+         // ISOLAMENTO 2: CADEIAS PRODUTIVAS E IGs POTENCIAIS
          // =================================================================
          if (sheetNorm.includes('cadeia') || sheetNorm.includes('ig') || sheetNorm.includes('potencial')) {
-             // Lê estritamente o valor que está sob o cabeçalho 'Cadeia Produtiva' ou 'Cadeia' ou 'Segmento'
-             const cadeia = String(row['cadeiaprodutiva'] || row['cadeia'] || row['segmento'] || '').trim();
+             const cadeia = String(row['cadeiaprodutiva'] || row['cadeiasprodutivas'] || row['cadeia'] || row['segmento'] || '').trim();
              
              if (cadeia !== '') {
                  const sede = String(row['sede'] || row['municipiosatelite'] || '').trim();
                  const abrangencia = String(row['municipiospertencentes'] || row['abrangencia'] || '').trim();
-                 const qtd = toNumber(row['quantidade'] || row['qtd'] || 1);
                  const fonte = String(row['fontedodado'] || row['fonte'] || row['link'] || '').trim();
 
                  territory.cadeiasRows.push({
@@ -219,7 +224,6 @@ function parseSpreadsheet(buffer) {
       entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdmPop / entry.desenvolvimento.populacaoTotal;
     }
 
-    // Validação Global de Semiárido para o Território
     let isSemiarido = false;
     entry.capacidadeRows.forEach(e => { if (semiaridoMunicipios.has(normalize(e.municipio))) isSemiarido = true; });
     entry.cadeiasRows.forEach(e => { 
@@ -231,8 +235,8 @@ function parseSpreadsheet(buffer) {
     return {
       territory: entry.territory,
       isSemiarido: isSemiarido,
-      capacidadeDetalhada: entry.capacidadeRows, // A nova array limpa com IDs
-      cadeiasProdutivasDetalhado: entry.cadeiasRows, // A nova array limpa com IDs e Cadeias Reais
+      capacidadeDetalhada: entry.capacidadeRows,
+      cadeiasProdutivasDetalhado: entry.cadeiasRows, 
       desenvolvimento: {
         ifdmTi: entry.desenvolvimento.ifdmTi,
         populacaoTotal: entry.desenvolvimento.populacaoTotal || null,
@@ -248,9 +252,7 @@ function parseSpreadsheet(buffer) {
   const result = {
     generatedAt: new Date().toISOString(),
     territories,
-    summary: {
-      territories: territories.length
-    },
+    summary: { territories: territories.length },
   };
 
   const parseTime = Date.now() - startTime;
