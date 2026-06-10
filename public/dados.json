@@ -1,9 +1,10 @@
 {
-  "generatedAt": "2026-06-09T23:51:38.100Z",
+  "generatedAt": "2026-06-10T00:38:43.497Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
       "isSemiarido": true,
+      "pctSemiarido": 85.71428571428571,
       "capacidadeDetalhada": [],
       "cadeiasProdutivasDetalhado": [
         {
@@ -109,7 +110,8 @@
     },
     {
       "territory": "Bacia do Paramirim",
-      "isSemiarido": false,
+      "isSemiarido": true,
+      "pctSemiarido": 100,
       "capacidadeDetalhada": [],
       "cadeiasProdutivasDetalhado": [],
       "desenvolvimento": {
@@ -125,6 +127,7 @@
     {
       "territory": "Bacia do Rio Corrente",
       "isSemiarido": true,
+      "pctSemiarido": 90,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_0",
@@ -170,6 +173,7 @@
     {
       "territory": "Bacia do Rio Grande",
       "isSemiarido": true,
+      "pctSemiarido": 89.47368421052632,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_1",
@@ -283,6 +287,7 @@
     {
       "territory": "Baixo Sul",
       "isSemiarido": true,
+      "pctSemiarido": 5.769230769230769,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_8",
@@ -422,6 +427,7 @@
     {
       "territory": "Chapada Diamantina",
       "isSemiarido": true,
+      "pctSemiarido": 86.66666666666667,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_12",
@@ -565,6 +571,7 @@
     {
       "territory": "Costa do Descobrimento",
       "isSemiarido": true,
+      "pctSemiarido": 3.225806451612903,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_14",
@@ -654,6 +661,7 @@
     {
       "territory": "Extremo Sul",
       "isSemiarido": false,
+      "pctSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_18",
@@ -743,6 +751,7 @@
     {
       "territory": "Irecê",
       "isSemiarido": true,
+      "pctSemiarido": 95.23809523809523,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_22",
@@ -848,6 +857,7 @@
     {
       "territory": "Itaparica",
       "isSemiarido": true,
+      "pctSemiarido": 75,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_28",
@@ -909,6 +919,7 @@
     {
       "territory": "Litoral Norte e Agreste Baiano",
       "isSemiarido": true,
+      "pctSemiarido": 26.08695652173913,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_31",
@@ -988,6 +999,7 @@
     {
       "territory": "Litoral Sul",
       "isSemiarido": true,
+      "pctSemiarido": 4.081632653061225,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_35",
@@ -1191,6 +1203,7 @@
     {
       "territory": "Médio Rio de Contas",
       "isSemiarido": true,
+      "pctSemiarido": 54.761904761904766,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_47",
@@ -1280,6 +1293,7 @@
     {
       "territory": "Médio Sudoeste da Bahia",
       "isSemiarido": true,
+      "pctSemiarido": 78.125,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_51",
@@ -1361,6 +1375,7 @@
     {
       "territory": "Metropolitano de Salvador",
       "isSemiarido": true,
+      "pctSemiarido": 7.5,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_54",
@@ -1658,6 +1673,7 @@
     {
       "territory": "Piemonte da Diamantina",
       "isSemiarido": true,
+      "pctSemiarido": 71.42857142857143,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_84",
@@ -1759,6 +1775,7 @@
     {
       "territory": "Piemonte do Paraguaçu",
       "isSemiarido": true,
+      "pctSemiarido": 93.33333333333333,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_87",
@@ -1840,6 +1857,7 @@
     {
       "territory": "Piemonte Norte do Itapicuru",
       "isSemiarido": true,
+      "pctSemiarido": 76.92307692307693,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_90",
@@ -1909,6 +1927,7 @@
     {
       "territory": "Portal do Sertão",
       "isSemiarido": true,
+      "pctSemiarido": 47.05882352941176,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_94",
@@ -2016,6 +2035,7 @@
     {
       "territory": "Portão do Sertão",
       "isSemiarido": true,
+      "pctSemiarido": 100,
       "capacidadeDetalhada": [],
       "cadeiasProdutivasDetalhado": [
         {
@@ -2042,6 +2062,7 @@
     {
       "territory": "Recôncavo",
       "isSemiarido": true,
+      "pctSemiarido": 11.538461538461538,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_99",
@@ -2269,6 +2290,7 @@
     {
       "territory": "Semiárido Nordeste II",
       "isSemiarido": true,
+      "pctSemiarido": 90,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_114",
@@ -2350,6 +2372,7 @@
     {
       "territory": "Sertão do São Francisco",
       "isSemiarido": true,
+      "pctSemiarido": 73.33333333333333,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_117",
@@ -2513,6 +2536,7 @@
     {
       "territory": "Sertão Produtivo",
       "isSemiarido": true,
+      "pctSemiarido": 91.30434782608695,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_124",
@@ -2606,6 +2630,7 @@
     {
       "territory": "Sisal",
       "isSemiarido": true,
+      "pctSemiarido": 85.18518518518519,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_131",
@@ -2715,6 +2740,7 @@
     {
       "territory": "Sudoeste Baiano",
       "isSemiarido": true,
+      "pctSemiarido": 93.75,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_135",
@@ -2830,6 +2856,7 @@
     {
       "territory": "Vale do Jiquiriçá",
       "isSemiarido": true,
+      "pctSemiarido": 39.62264150943396,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_141",
@@ -2919,6 +2946,7 @@
     {
       "territory": "Velho Chico",
       "isSemiarido": true,
+      "pctSemiarido": 96.15384615384616,
       "capacidadeDetalhada": [
         {
           "id": "aba_capacidadeterritorial_linha_145",
@@ -3005,6 +3033,295 @@
         "iniciativas": []
       }
     }
+  ],
+  "semiaridoMunicipiosList": [
+    "abaira",
+    "abare",
+    "adustina",
+    "agua fria",
+    "erico cardoso",
+    "amargosa",
+    "america dourada",
+    "anage",
+    "andarai",
+    "andorinha",
+    "angical",
+    "anguera",
+    "antas",
+    "antonio cardoso",
+    "antonio goncalves",
+    "aracatu",
+    "araci",
+    "baianopolis",
+    "baixa grande",
+    "banzae",
+    "barra",
+    "barra da estiva",
+    "barra do choca",
+    "barra do mendes",
+    "barreiras",
+    "barro alto",
+    "barrocas",
+    "belo campo",
+    "biritinga",
+    "boa nova",
+    "boa vista do tupim",
+    "bom jesus da lapa",
+    "bom jesus da serra",
+    "boninal",
+    "bonito",
+    "boquira",
+    "botupora",
+    "brejoes",
+    "brejolandia",
+    "brotas de macaubas",
+    "brumado",
+    "buritirama",
+    "caatiba",
+    "cabaceiras do paraguacu",
+    "cacule",
+    "caem",
+    "caetanos",
+    "caetite",
+    "cafarnaum",
+    "caldeirao grande",
+    "campo alegre de lourdes",
+    "campo formoso",
+    "canapolis",
+    "canarana",
+    "candeal",
+    "candiba",
+    "candido sales",
+    "cansancao",
+    "canudos",
+    "capela do alto alegre",
+    "capim grosso",
+    "caraibas",
+    "carinhanha",
+    "casa nova",
+    "castro alves",
+    "catolandia",
+    "caturama",
+    "central",
+    "chorrocho",
+    "cicero dantas",
+    "cipo",
+    "cocos",
+    "conceicao do coite",
+    "condeuba",
+    "contendas do sincora",
+    "coracao de maria",
+    "cordeiros",
+    "coribe",
+    "coronel joao sa",
+    "correntina",
+    "cotegipe",
+    "cravolandia",
+    "crisopolis",
+    "cristopolis",
+    "curaca",
+    "dario meira",
+    "dom basilio",
+    "elisio medrado",
+    "encruzilhada",
+    "euclides da cunha",
+    "fatima",
+    "feira da mata",
+    "feira de santana",
+    "filadelfia",
+    "formosa do rio preto",
+    "gaviao",
+    "gentio do ouro",
+    "gloria",
+    "guajeru",
+    "guanambi",
+    "heliopolis",
+    "iacu",
+    "ibiassuce",
+    "ibicoara",
+    "ibipeba",
+    "ibipitanga",
+    "ibiquera",
+    "ibitiara",
+    "ibitita",
+    "ibotirama",
+    "ichu",
+    "igapora",
+    "iguai",
+    "inhambupe",
+    "ipecaeta",
+    "ipira",
+    "ipupiara",
+    "irajuba",
+    "iramaia",
+    "iraquara",
+    "irara",
+    "irece",
+    "itaberaba",
+    "itaete",
+    "itagi",
+    "itaguacu da bahia",
+    "itambe",
+    "itapetinga",
+    "itapicuru",
+    "itaquara",
+    "itarantim",
+    "itatim",
+    "itirucu",
+    "itiuba",
+    "itororo",
+    "ituacu",
+    "iuiu",
+    "jaborandi",
+    "jacaraci",
+    "jacobina",
+    "jaguaquara",
+    "jaguarari",
+    "jequie",
+    "jeremoabo",
+    "jitauna",
+    "joao dourado",
+    "juazeiro",
+    "jussara",
+    "jussiape",
+    "lafaiete coutinho",
+    "lagoa real",
+    "lajedinho",
+    "lajedo do tabocal",
+    "lamarao",
+    "lapao",
+    "lencois",
+    "licinio de almeida",
+    "livramento de nossa senhora",
+    "macajuba",
+    "macarani",
+    "macaubas",
+    "macurure",
+    "maetinga",
+    "maiquinique",
+    "mairi",
+    "malhada",
+    "malhada de pedras",
+    "manoel vitorino",
+    "mansidao",
+    "maracas",
+    "marcionilio souza",
+    "matina",
+    "miguel calmon",
+    "milagres",
+    "mirangaba",
+    "mirante",
+    "monte santo",
+    "morpara",
+    "morro do chapeu",
+    "mortugaba",
+    "mucuge",
+    "mulungu do morro",
+    "mundo novo",
+    "muquem do sao francisco",
+    "nordestina",
+    "nova canaa",
+    "nova fatima",
+    "nova itarana",
+    "nova redencao",
+    "nova soure",
+    "novo horizonte",
+    "novo triunfo",
+    "olindina",
+    "oliveira dos brejinhos",
+    "ourolandia",
+    "palmas de monte alto",
+    "palmeiras",
+    "paramirim",
+    "paratinga",
+    "paripiranga",
+    "paulo afonso",
+    "pe de serra",
+    "pedro alexandre",
+    "piata",
+    "pilao arcado",
+    "pindai",
+    "pindobacu",
+    "pintadas",
+    "piripa",
+    "piritiba",
+    "planaltino",
+    "planalto",
+    "pocoes",
+    "ponto novo",
+    "potiragua",
+    "presidente dutra",
+    "presidente janio quadros",
+    "queimadas",
+    "quijingue",
+    "quixabeira",
+    "rafael jambeiro",
+    "remanso",
+    "retirolandia",
+    "riachao das neves",
+    "riachao do jacuipe",
+    "riacho de santana",
+    "ribeira do amparo",
+    "ribeira do pombal",
+    "ribeirao do largo",
+    "rio de contas",
+    "rio do antonio",
+    "rio do pires",
+    "rodelas",
+    "ruy barbosa",
+    "santa barbara",
+    "santa brigida",
+    "santa ines",
+    "santaluz",
+    "santa maria da vitoria",
+    "santana",
+    "santanopolis",
+    "santa rita de cassia",
+    "santa terezinha",
+    "santo estevao",
+    "sao desiderio",
+    "sao domingos",
+    "sao felix do coribe",
+    "sao gabriel",
+    "sao goncalo dos campos",
+    "sao jose do jacuipe",
+    "satiro dias",
+    "saude",
+    "seabra",
+    "sebastiao laranjeiras",
+    "senhor do bonfim",
+    "serra do ramalho",
+    "sento se",
+    "serra dourada",
+    "serra preta",
+    "serrinha",
+    "serrolandia",
+    "sitio do mato",
+    "sitio do quinto",
+    "sobradinho",
+    "souto soares",
+    "tabocas do brejo velho",
+    "tanhacu",
+    "tanque novo",
+    "tanquinho",
+    "tapiramuta",
+    "teofilandia",
+    "tremedal",
+    "tucano",
+    "uaua",
+    "ubaira",
+    "uibai",
+    "umburanas",
+    "urandi",
+    "utinga",
+    "valente",
+    "varzea da roca",
+    "varzea do poco",
+    "varzea nova",
+    "vitoria da conquista",
+    "wagner",
+    "wanderley",
+    "xique xique"
   ],
   "summary": {
     "territories": 28

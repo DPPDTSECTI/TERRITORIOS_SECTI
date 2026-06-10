@@ -7,9 +7,13 @@ import path from 'path'
 
 let devCache = null;
 let devCacheExpiry = 0;
-const DEV_CACHE_TTL = 30 * 60 * 1000; 
+const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
+const CACHE_VERSION = 'v8'; 
+
+// ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
 // Função ultra-rigorosa para limpar cabeçalhos e transformá-los em chaves de objeto seguras
+// Exemplo: "Cadeia Produtiva" -> "cadeiaprodutiva"
 function safeKey(k) {
   return String(k || '')
     .normalize('NFD')
@@ -18,6 +22,7 @@ function safeKey(k) {
     .replace(/[^a-z0-9]/g, '');
 }
 
+// Limpeza de valores normais (nomes de municípios, territórios, etc)
 function normalize(value) {
   return String(value || '')
     .normalize('NFD')
@@ -35,22 +40,35 @@ const toNumber = (value) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+// Separador estrito para a coluna de Territórios Compostos (Ex: "Recôncavo; Baixo Sul")
 const splitList = (value) => String(value || '').split(/[;|]/).map((item) => item.trim()).filter(Boolean);
 const isTruthy = (value) => ['sim', 's', 'yes', 'true', '1', 'existente', 'conecta'].includes(normalize(value));
 
 function parseSpreadsheet(buffer) {
   const startTime = Date.now();
 
+  // 1. TRAVA DE SEGURANÇA (Evita crash com página de Login/HTML)
   const textContent = buffer.toString('utf8', 0, 500).trim().toLowerCase();
   if (textContent.startsWith('<html') || textContent.startsWith('<!doctype')) {
-    throw new Error("ACESSO NEGADO: O SharePoint retornou a página de Login (HTML). Verifique as permissões do ficheiro.");
+    throw new Error("ACESSO NEGADO: O SharePoint retornou a página de Login (HTML). Verifique as permissões do ficheiro ou atualize os Cookies.");
   }
 
-  const workbook = XLSX.read(buffer, { type: 'buffer' });
+  const workbook = XLSX.read(buffer, {
+    type: 'buffer',
+    cellFormula: false,
+    cellHTML: false,
+    cellStyles: false,
+    cellText: false,
+    sheetStubs: false,
+    bookVBA: false,
+    bookDeps: false,
+    bookSheets: false,
+  });
+
   const targetSheetNames = workbook.SheetNames;
   if (!targetSheetNames.length) throw new Error('Planilha vazia');
 
-  // 1. MAPEAMENTO DO SEMIÁRIDO BAIANO
+  // 2. CARREGAR A LISTA DO SEMIÁRIDO BAIANO
   const semiaridoMunicipios = new Set();
   const semiaridoSheetName = targetSheetNames.find(name => safeKey(name).includes('semiarido'));
   
@@ -58,10 +76,14 @@ function parseSpreadsheet(buffer) {
     const sheet = workbook.Sheets[semiaridoSheetName];
     const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
     rawRows.forEach(row => {
+      // Captura o município
       const munKey = Object.keys(row).find(k => safeKey(k).includes('municipio'));
       const munVal = munKey ? row[munKey] : Object.values(row)[1] || Object.values(row)[0];
       if (munVal) semiaridoMunicipios.add(normalize(String(munVal)));
     });
+    console.log(`[Dev Parser] Semiárido: ${semiaridoMunicipios.size} municípios identificados.`);
+  } else {
+    console.warn('[Dev Parser] Aviso: Aba do Semiárido Baiano não encontrada na planilha.');
   }
 
   const TERRITORY_NAME_ALIASES = {
@@ -79,12 +101,16 @@ function parseSpreadsheet(buffer) {
   const getTerritory = (name) => {
     const canonicalName = normalizeTerritoryName(name);
     if (!canonicalName) return null;
+    
+    // Preserva a capitalização original (Ex: "Baixo Sul")
+    const displayName = String(name).trim();
 
     if (!territoryMap.has(canonicalName)) {
       territoryMap.set(canonicalName, {
-        territory: String(name).trim(),
+        territory: displayName,
         capacidadeRows: [],
         cadeiasRows: [],
+        desenvolvimentoRows: [],
         desenvolvimento: { ifdmTi: null, somaIfdmPop: 0, populacaoTotal: 0 },
         assistenciaPublica: { existe: false, iniciativas: new Set() },
         semiaridoAcumulado: 0,
@@ -98,29 +124,34 @@ function parseSpreadsheet(buffer) {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
 
+    // Converte a folha para JSON baseando-se nos cabeçalhos exatos da linha 1
     const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
     if (rawRows.length === 0) return;
 
     const sheetNorm = safeKey(sheetName);
+    console.log(`[Dev Parser] Processando aba: ${sheetName}`);
 
     rawRows.forEach((rawRow, idx) => {
-      // Normaliza as chaves da linha atual
+      // Normaliza as chaves da linha para garantir a leitura correta independentemente de acentos ou espaços
       const row = {};
       for (const key in rawRow) {
           row[safeKey(key)] = rawRow[key];
       }
 
+      // Coluna Mestra: Território
       const territorioRaw = row['territoriodeidentidade'] || row['territorio'];
       if (!territorioRaw) return;
 
+      // Trata Territórios Compostos (Ex: "Recôncavo; Baixo Sul")
       const territoryNamesList = splitList(territorioRaw);
+      
+      // ID Único Matemático (Para deduplicar no Frontend)
       const uniqueRowId = `aba_${sheetNorm}_linha_${idx}`;
 
+      // Extrações base partilhadas
       const municipio = String(row['municipio'] || row['local'] || '').trim();
-      
-      // Rede de Segurança (Fallbacks) para garantir que puxa o valor independentemente do cabeçalho
       const entidade = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || '').trim();
-      const tipo = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || row['categoria'] || '').trim();
+      const tipo = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || row['categoria'] || row['natureza'] || '').trim();
       const qtd = toNumber(row['quantidade'] || row['qtd'] || row['qtdenti'] || row['valorentidades'] || 1);
 
       territoryNamesList.forEach(tName => {
@@ -128,7 +159,7 @@ function parseSpreadsheet(buffer) {
          if (!territory) return;
 
          // =================================================================
-         // ISOLAMENTO 1: CAPACIDADE TERRITORIAL
+         // ISOLAMENTO 1: CAPACIDADE TERRITORIAL (CT&I)
          // =================================================================
          if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti')) {
              let categoriaEntidade = null;
@@ -159,6 +190,7 @@ function parseSpreadsheet(buffer) {
          // ISOLAMENTO 2: CADEIAS PRODUTIVAS E IGs POTENCIAIS
          // =================================================================
          if (sheetNorm.includes('cadeia') || sheetNorm.includes('ig') || sheetNorm.includes('potencial')) {
+             // Lê a coluna "Cadeia Produtiva" / "Segmento"
              const cadeia = String(row['cadeiaprodutiva'] || row['cadeiasprodutivas'] || row['cadeia'] || row['segmento'] || '').trim();
              
              if (cadeia !== '') {
@@ -187,6 +219,10 @@ function parseSpreadsheet(buffer) {
              const pop = toNumber(row['populacao']);
              const ifdmTi = toNumber(row['ifdmt'] || row['ifdmti']);
 
+             if (municipio) {
+                 territory.desenvolvimentoRows.push({ municipio });
+             }
+
              if (ifdm > 0 && pop > 0) {
                  territory.desenvolvimento.somaIfdmPop += ifdm * pop;
                  territory.desenvolvimento.populacaoTotal += pop;
@@ -197,18 +233,13 @@ function parseSpreadsheet(buffer) {
          }
 
          // =================================================================
-         // ISOLAMENTO 4: ASSISTÊNCIA PÚBLICA E SEMIÁRIDO
+         // ISOLAMENTO 4: ASSISTÊNCIA PÚBLICA
          // =================================================================
          const assistencia = String(row['assistenciapublica'] || row['conecta'] || '');
          const iniciativas = String(row['iniciativas'] || row['dispositivosestaduais'] || '');
          if (isTruthy(assistencia)) territory.assistenciaPublica.existe = true;
          if (iniciativas !== '') splitList(iniciativas).forEach(i => territory.assistenciaPublica.iniciativas.add(i));
 
-         const semiaridoVal = toNumber(row['semiarido'] || row['percentualsemiarido']);
-         if (semiaridoVal > 0) {
-             territory.semiaridoAcumulado += semiaridoVal > 1 ? semiaridoVal : semiaridoVal * 100;
-             territory.semiaridoContador += 1;
-         }
       });
     });
   };
@@ -220,21 +251,42 @@ function parseSpreadsheet(buffer) {
   if (!territoryMap.size) throw new Error('Nenhuma linha territorial válida encontrada.');
 
   const territories = Array.from(territoryMap.values()).map((entry) => {
+    
+    // Calcula o IFDM
     if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.populacaoTotal > 0) {
       entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdmPop / entry.desenvolvimento.populacaoTotal;
     }
 
-    let isSemiarido = false;
-    entry.capacidadeRows.forEach(e => { if (semiaridoMunicipios.has(normalize(e.municipio))) isSemiarido = true; });
+    // =================================================================
+    // LÓGICA MESTRE DE CÁLCULO DE % DO SEMIÁRIDO
+    // =================================================================
+    const allMunicipios = new Set();
+    
+    entry.capacidadeRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
+    entry.desenvolvimentoRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
+    
     entry.cadeiasRows.forEach(e => { 
-        if (semiaridoMunicipios.has(normalize(e.sede))) isSemiarido = true; 
-        splitList(e.municipiosPertencentes).forEach(m => { if (semiaridoMunicipios.has(normalize(m))) isSemiarido = true; });
+        if (e.sede && e.sede !== 'N/A') allMunicipios.add(normalize(e.sede)); 
+        splitList(e.municipiosPertencentes).forEach(m => { if (m) allMunicipios.add(normalize(m)); });
     });
-    if (entry.semiaridoContador > 0 && (entry.semiaridoAcumulado / entry.semiaridoContador) > 0) isSemiarido = true;
+
+    let isSemiarido = false;
+    let qtdSemi = 0;
+    
+    allMunicipios.forEach(m => {
+        if (semiaridoMunicipios.has(m)) {
+            isSemiarido = true;
+            qtdSemi++;
+        }
+    });
+
+    // Percentagem exata baseada nas linhas da planilha
+    const pctSemiarido = allMunicipios.size > 0 ? (qtdSemi / allMunicipios.size) * 100 : 0;
 
     return {
       territory: entry.territory,
       isSemiarido: isSemiarido,
+      pctSemiarido: pctSemiarido,
       capacidadeDetalhada: entry.capacidadeRows,
       cadeiasProdutivasDetalhado: entry.cadeiasRows, 
       desenvolvimento: {
@@ -252,21 +304,30 @@ function parseSpreadsheet(buffer) {
   const result = {
     generatedAt: new Date().toISOString(),
     territories,
-    summary: { territories: territories.length },
+    semiaridoMunicipiosList: Array.from(semiaridoMunicipios), // Exporta a lista para pintar o Mapa de Cinza
+    summary: {
+      territories: territories.length
+    },
   };
 
   const parseTime = Date.now() - startTime;
   console.log(`[Dev Parser] ✓ Parseado em ${parseTime}ms: ${result.summary.territories} territórios`);
 
+  // Guardar JSON físico para uso em Produção (Netlify/Vercel)
   try {
     const publicDir = path.join(process.cwd(), 'public');
     if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
     fs.writeFileSync(path.join(publicDir, 'dados.json'), JSON.stringify(result, null, 2));
-  } catch (err) { console.warn(`[Dev Parser] Falha ao salvar JSON local.`); }
+    console.log(`[Dev Parser] 💾 JSON Salvo Localmente com Sucesso.`);
+  } catch (err) { 
+    console.warn(`[Dev Parser] Falha ao salvar JSON local: ${err.message}`); 
+  }
 
   return result;
 }
+// ==================== FIM DO PROCESSADOR ====================
 
+// Plugin para criar proxy do SharePoint em DEV
 const sharepointProxyPlugin = () => ({
   name: 'sharepoint-proxy',
   configureServer(server) {
@@ -277,6 +338,7 @@ const sharepointProxyPlugin = () => ({
       if (!nocache && devCache && Date.now() < devCacheExpiry) {
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         res.end(devCache);
         return;
       }
@@ -286,12 +348,13 @@ const sharepointProxyPlugin = () => ({
 
       https.get(downloadUrl, {
         headers: {
-          'User-Agent': 'Mozilla/5.0',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           'Connection': 'keep-alive',
         },
         timeout: 60000 
       }, (response) => {
+        // Redirecionamento (302) comum no SharePoint
         if (response.statusCode >= 300 && response.statusCode < 400) {
           let redirectUrl = response.headers.location;
           if (redirectUrl && redirectUrl.startsWith('/')) redirectUrl = `https://prodeboffice365-my.sharepoint.com${redirectUrl}`;
@@ -361,12 +424,9 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 1000,
-    cssCodeSplit: true,
-    sourcemap: false,
   },
   server: { hmr: { overlay: true } },
   optimizeDeps: {
     include: ['react', 'react-dom', 'xlsx', 'topojson-client'],
-    exclude: [],
   },
 });

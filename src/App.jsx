@@ -8,6 +8,7 @@ export default function App() {
   const [page, setPage] = useState(pageFromUrl);
   
   const [territoriosData, setTerritoriosData] = useState([]);
+  const [semiaridoMunicipios, setSemiaridoMunicipios] = useState([]); // Lista para apagar os municípios cinzas
   const [isLoadingPipeline, setIsLoadingPipeline] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("Atualizando...");
 
@@ -18,7 +19,7 @@ export default function App() {
   const dropdownRef = useRef(null);
 
   // =======================================================================
-  // INGESTÃO SEGURA E BLINDADA
+  // INGESTÃO BLINDADA (Com a correção das KPIs do Mapa)
   // =======================================================================
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
     setIsLoadingPipeline(true);
@@ -42,10 +43,12 @@ export default function App() {
           tipo: 'Território',
           regiao: t.territory || "",
           isSemiarido: !!t.isSemiarido,
+          pctSemiarido: t.pctSemiarido || 0, // % Exata calculada pelo Vite
           entidadesDetalhadas: entidadesCTI,
           cadeiasProdutivasDetalhado: cadeiasAPL,
           assistenciaPublica: t.assistenciaPublica || { iniciativas: [] },
           desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 },
+          // A CORREÇÃO: As KPIs evitam o ecrã branco ao passar o rato no mapa!
           kpis: {
             capacidadeCti: String(entidadesCTI.length),
             ifdm: t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi).toFixed(3) : "-",
@@ -57,6 +60,7 @@ export default function App() {
       });
 
       setTerritoriosData(territoriosFormatados);
+      setSemiaridoMunicipios(data.semiaridoMunicipiosList || []); // Guarda a lista para o Mapa
       setLastUpdate(new Date(data.generatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
 
     } catch (error) {
@@ -84,7 +88,7 @@ export default function App() {
   });
 
   // =======================================================================
-  // PROCESSADOR CENTRAL DO DASHBOARD
+  // PROCESSADOR CENTRAL DO DASHBOARD (Deduplicação)
   // =======================================================================
   const dashboardData = useMemo(() => {
     let targetList = selectedLocation 
@@ -112,9 +116,7 @@ export default function App() {
 
             if (ent.id && !globalUniqueCtiIds.has(ent.id)) {
                 globalUniqueCtiIds.add(ent.id);
-                if (ent.categoria && kpisPanel[ent.categoria] !== undefined) {
-                    kpisPanel[ent.categoria] += 1;
-                }
+                if (ent.categoria && kpisPanel[ent.categoria] !== undefined) kpisPanel[ent.categoria] += 1;
             }
         });
         
@@ -124,7 +126,7 @@ export default function App() {
             const tipoStr = cadeia.tipo && String(cadeia.tipo).trim() !== '' ? cadeia.tipo : 'Não Classificado';
             const municipiosStr = cadeia.municipiosPertencentes || cadeia.municipio || 'Não informados';
             const sedeStr = cadeia.sede || cadeia.municipioSatelite || 'Não informada';
-
+            
             aplIgsFlat.push({
                 id: cadeia.id || Math.random().toString(),
                 segmento: segmentoStr, 
@@ -165,15 +167,18 @@ export default function App() {
     const assistenciasList = Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
     const mediaIfdm = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao).toFixed(3) : "-";
     
-    let coberturaStr = "0%";
+    // NOVA LÓGICA DE KPI DE COBERTURA DO SEMIÁRIDO
+    let coberturaStr = "85,6% do Estado";
     if (selectedLocation) {
-        coberturaStr = selectedLocation.isSemiarido ? "Pertencente" : "Exterior";
+        if (selectedLocation.pctSemiarido >= 100) {
+            coberturaStr = "Pertencente (100%)";
+        } else if (selectedLocation.pctSemiarido <= 0) {
+            coberturaStr = "Não pertencente";
+        } else {
+            coberturaStr = `Parcial (${selectedLocation.pctSemiarido.toFixed(1)}%)`;
+        }
     } else if (filtroSemiarido) {
         coberturaStr = "100% (Filtro Ativo)";
-    } else {
-        const totalSemi = territoriosData.filter(t => t.isSemiarido).length;
-        const ttl = territoriosData.length || 27; 
-        coberturaStr = ttl > 0 ? `${((totalSemi / ttl) * 100).toFixed(1)}% do Estado` : "0%";
     }
 
     return { 
@@ -191,7 +196,6 @@ export default function App() {
     };
   }, [selectedLocation, filtroSemiarido, territoriosData]);
 
-  // Design das Etiquetas
   const getBadgeStyle = (tipo) => {
       const t = String(tipo).toLowerCase();
       if (t.includes('potencial')) return 'bg-orange-100 text-orange-800 border-orange-300 shadow-sm';
@@ -209,7 +213,6 @@ export default function App() {
       {/* FUNDO FIXO EM DEGRADÊ (Solução contra o branco do Scroll Bounce) */}
       {/* ========================================================================= */}
       <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-100 via-white to-slate-200 pointer-events-none">
-         {/* Manchas vibrantes ampliadas para maior destaque no Glassmorphism */}
          <div className="absolute -top-[15%] -right-[5%] w-[60%] h-[60%] rounded-full bg-gov-blueDark-500/35 blur-[120px]"></div>
          <div className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gov-cyan-500/35 blur-[120px]"></div>
          <div className="absolute top-[25%] left-[25%] w-[45%] h-[45%] rounded-full bg-gov-magenta-500/20 blur-[130px]"></div>
@@ -240,17 +243,17 @@ export default function App() {
         </div>
       </header>
 
-      {/* ÁREA DE SCROLL PRINCIPAL (O z-10 mantém o conteúdo por cima do fundo fixo) */}
+      {/* ÁREA DE SCROLL PRINCIPAL */}
       <main className="flex-1 overflow-y-auto relative w-full pt-20 sm:pt-24 pb-8 z-10">
         {page === 'overview' ? (
           <LandingHero onAccessDashboard={() => setPage('territorios')} />
         ) : (
           <div className="relative p-3 sm:p-4 lg:p-5 max-w-[1600px] mx-auto w-full min-h-full flex flex-col justify-start">
             
-            {/* CONTAINER PRINCIPAL GLASSMORPHISM (Mais opaco para leitura perfeita) */}
+            {/* CONTAINER PRINCIPAL GLASSMORPHISM */}
             <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-glass p-4 sm:p-5 flex flex-col gap-4 transition-all duration-500">
               
-              {/* BARRA DE AÇÕES E FILTROS COMPACTA */}
+              {/* BARRA DE AÇÕES E FILTROS */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 items-center border-b border-slate-200/60 pb-4">
                 <div className="lg:col-span-2 relative w-full flex flex-col sm:flex-row items-center gap-2" ref={dropdownRef}>
                   <div className="w-full relative flex-1">
@@ -340,7 +343,7 @@ export default function App() {
                   <div className="bg-white/85 border border-slate-200/60 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all">
                     <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Delimitação Semiárido</p>
                     <p className="text-xl font-black text-slate-700 mt-1 truncate" title={dashboardData.topKpis.coberturaSemiarido}>{dashboardData.topKpis.coberturaSemiarido}</p>
-                    <div className="text-[10px] text-slate-500 mt-1.5"><span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Proporção no Estado</div>
+                    <div className="text-[10px] text-slate-500 mt-1.5"><span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Abrangência Municipal</div>
                   </div>
                   <div className="bg-white/85 border border-slate-200/60 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all">
                     <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Assistência Pública</p>
@@ -355,7 +358,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* AS 7 SUB-KPIS DE CT&I NA HORIZONTAL (Extremamente compactas para libertar espaço) */}
+              {/* AS 7 SUB-KPIS DE CT&I NA HORIZONTAL */}
               <div className="mt-3 mb-1">
                  <div className="flex items-center justify-between mb-2">
                     <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Detalhamento da Infraestrutura de CT&I</h4>
@@ -407,6 +410,7 @@ export default function App() {
                       searchTerm={searchTerm} 
                       filtroSemiarido={filtroSemiarido} 
                       selectedTerritory={selectedLocation} 
+                      semiaridoMunicipios={semiaridoMunicipios} 
                       onSelectTerritory={(loc) => {
                           setSelectedLocation(loc);
                           if(loc) setSearchTerm(loc.nome);
@@ -416,7 +420,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 3 LISTAS LATERAIS EMPILHADAS (Agora com espaço justo para rolagem) */}
+                {/* 3 LISTAS LATERAIS EMPILHADAS */}
                 <div className="w-full lg:w-[50%] flex flex-col gap-4 h-full overflow-hidden">
                   
                   {/* Lista 1: Instituições CT&I */}

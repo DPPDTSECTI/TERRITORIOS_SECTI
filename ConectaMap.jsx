@@ -67,9 +67,10 @@ const getPathD = (geometry, project) => {
 export default function ConectaMap({ 
     territoriosData = [], 
     searchTerm = '', 
-    filtroSemiarido = false, // RECEBENDO O NOVO FILTRO DO APP.JSX
+    filtroSemiarido = false, 
     selectedTerritory = null, 
-    onSelectTerritory = () => {} 
+    onSelectTerritory = () => {},
+    semiaridoMunicipios = [] // A Lista Mestra enviada pelo App.jsx
 }) {
     const [mapFeatures, setMapFeatures] = useState([]);
     const [hoveredTerritory, setHoveredTerritory] = useState(null);
@@ -186,31 +187,34 @@ export default function ConectaMap({
 
                     {mapFeatures.map((feat, index) => {
                         const normalizedFeatName = getTerritoryKey(feat.territory);
-                        const isHovered = hoveredTerritory === feat.territory;
-                        const isSelected = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
-                        
-                        // Obter a flag isSemiarido dos dados processados pelo Vite
-                        const featData = territoriosData.find(t => getTerritoryKey(t.nome) === normalizedFeatName);
-                        const isSemiarido = featData ? featData.isSemiarido : false;
-                        
                         const matchesSearch = !searchTerm || normalizedFeatName.includes(normalizeName(searchTerm));
                         
-                        // Se o filtro do semiárido estiver ativo, só será visível se for do semiárido
-                        const isVisibleByFilter = filtroSemiarido ? isSemiarido : true;
+                        // Verifica se este município ESPECÍFICO pertence ao Semiárido
+                        const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
+                        
+                        // Trava de Isolamento Visual: 
+                        // Se o filtro do semiárido está ativo e o município NÃO for, bloqueia-o.
+                        const blockClickAndColor = filtroSemiarido && !isMunSemi;
 
-                        // Lógica avançada de Opacidade visual
+                        const isHovered = !blockClickAndColor && hoveredTerritory === feat.territory;
+                        const isSelected = !blockClickAndColor && selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
+                        
                         let opacity = 0.75;
-                        if (!matchesSearch) {
-                            opacity = 0.05; // Quase invisível se não corresponder à pesquisa
-                        } else if (!isVisibleByFilter) {
-                            opacity = 0.15; // Territórios fora do semiárido ficam esbatidos/cinzentos
-                        } else if (isSelected) {
-                            opacity = 1;
-                        } else if (isHovered) {
-                            opacity = 0.9;
-                        }
+                        let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
-                        const fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
+                        // Lógica Dinâmica de Cores e Opacidade
+                        if (blockClickAndColor) {
+                            fillColor = '#cbd5e1'; // Cinza neutro e sem vida para indicar bloqueio
+                            opacity = 0.35;        // Esbatido para ficar no fundo
+                        } else {
+                            if (!matchesSearch) {
+                                opacity = 0.05;
+                            } else if (isSelected) {
+                                opacity = 1;
+                            } else if (isHovered) {
+                                opacity = 0.9;
+                            }
+                        }
 
                         return (
                             <path
@@ -220,12 +224,23 @@ export default function ConectaMap({
                                 stroke={isSelected || isHovered ? '#ffffff' : '#f8fafc'}
                                 strokeWidth={isSelected ? 2.5 : isHovered ? 1.5 : 0.5}
                                 strokeLinejoin="round"
-                                className="transition-all duration-300 ease-out cursor-pointer"
+                                className="transition-all duration-300 ease-out"
+                                // Impede os eventos do rato (pointer-events) se estiver bloqueado
+                                style={{ 
+                                    pointerEvents: blockClickAndColor ? 'none' : 'auto',
+                                    cursor: blockClickAndColor ? 'default' : 'pointer'
+                                }}
                                 opacity={opacity}
                                 filter={isSelected || isHovered ? 'url(#glow)' : undefined}
-                                onMouseEnter={(e) => onTerritoryMouseMove(e, feat.territory)}
-                                onMouseMove={(e) => onTerritoryMouseMove(e, feat.territory)}
-                                onClick={() => handleMapClick(feat.territory)}
+                                onMouseEnter={(e) => {
+                                    if (!blockClickAndColor) onTerritoryMouseMove(e, feat.territory);
+                                }}
+                                onMouseMove={(e) => {
+                                    if (!blockClickAndColor) onTerritoryMouseMove(e, feat.territory);
+                                }}
+                                onClick={() => {
+                                    if (!blockClickAndColor) handleMapClick(feat.territory);
+                                }}
                             />
                         );
                     })}
@@ -243,10 +258,10 @@ export default function ConectaMap({
                         <div className="flex justify-between items-start mb-3">
                             <h2 className="font-bold text-[15px] text-slate-800 uppercase tracking-tight leading-tight pr-2">{hoveredData.nome}</h2>
                             
-                            {/* Mostra uma etiqueta no tooltip caso o território pertença ao semiárido */}
-                            {hoveredData.isSemiarido && (
-                                <span className="text-[8px] font-bold text-gov-red-500 bg-gov-red-50 px-2 py-0.5 rounded-full uppercase border border-gov-red-100 flex-shrink-0 mt-0.5">
-                                    Semiárido
+                            {/* Etiqueta dinâmica de Cobertura do Semiárido */}
+                            {hoveredData.pctSemiarido > 0 && (
+                                <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full uppercase flex-shrink-0 mt-0.5 ${hoveredData.pctSemiarido >= 100 ? 'text-gov-red-500 bg-gov-red-50 border border-gov-red-100' : 'text-orange-600 bg-orange-50 border border-orange-100'}`}>
+                                    {hoveredData.pctSemiarido >= 100 ? 'Semiárido' : `Semiárido: ${hoveredData.pctSemiarido.toFixed(0)}%`}
                                 </span>
                             )}
                         </div>
