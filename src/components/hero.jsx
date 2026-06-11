@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import ExcelExportButton from './ExcelExportButton';
 
-const LandingHero = ({ onAccessDashboard }) => {
+const LandingHero = ({ onAccessDashboard, territoriosData }) => {
     const images = [
         "/img/hero/55177617481_a2f52dd9f0_o.jpg",
         "/img/hero/55193881827_608169f0ec_o.jpg",
@@ -57,9 +58,12 @@ const LandingHero = ({ onAccessDashboard }) => {
                         Acessar
                     </button>
 
-                    <button className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center shadow-sm border border-slate-200 hover:border-slate-300 transform-gpu">
-                        Baixar relatório
-                    </button>
+                    {/* 2. Passe os dados com o nome correto: territoriosData */}
+                    <ExcelExportButton 
+                        territoriosData={territoriosData} 
+                        variant="outline" 
+                        className="w-full sm:w-auto" 
+                    />
                 </div>
 
                 {/* Indicadores do Carrossel */}

@@ -77,7 +77,7 @@ export default function App() {
           kpis: {
             capacidadeCti: String(entidadesCTI.length),
             ifdm: t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi).toFixed(3) : "-",
-            conectaBahia: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado",
+            assistenciaemcti: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado",
             cadeiasIgs: String(cadeiasAPL.length),
             coberturaSemiarido: trueIsSemiarido ? (truePctSemiarido >= 100 ? "Pertencente" : "Parcial") : "Exterior"
           }
@@ -250,7 +250,7 @@ export default function App() {
               ifdm: dynIfdm,
               capacidadeCti: String(validCti.length),
               cadeiasIgs: String(validCadeias.length),
-              conectaBahia: dynConecta,
+              assistenciaemcti: dynConecta,
               pctSemiarido: t.pctSemiarido,
               matchesSearch: filtroSemiarido ? (t.isSemiarido && matchesSearch) : matchesSearch
           };
@@ -374,7 +374,7 @@ export default function App() {
         topKpis: {
             capacidadeCti: String(globalUniqueCtiIds.size), 
             ifdm: mediaIfdm,
-            conectaBahia: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalTerritoriosComAssistencia} Territórios`,
+            assistenciaemcti: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalTerritoriosComAssistencia} Territórios`,
             cadeiasIgs: String(globalUniqueCadeiasIds.size), 
             coberturaSemiarido: coberturaCalculada
         }, 
@@ -457,7 +457,10 @@ export default function App() {
         
         {page === 'overview' ? (
           <div key="overview" className="animate-soft-fade h-full">
-            <LandingHero onAccessDashboard={() => setPage('territorios')} />
+            <LandingHero 
+                onAccessDashboard={() => setPage('territorios')} 
+                territoriosData={territoriosData}
+            />
           </div>
         ) : (
           // CONTAINER PRINCIPAL: Largura reduzida para 90% (max-w 1350px) para criar uma "Ilha Flutuante"
@@ -564,8 +567,8 @@ export default function App() {
                     <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Abrangência</div>
                   </div>
                   <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Conecta Bahia</p>
-                    <p className="text-lg font-black text-gov-cyan-700 leading-none truncate">{dashboardData.topKpis.conectaBahia}</p>
+                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Assistência em CT&I</p>
+                    <p className="text-lg font-black text-gov-cyan-700 leading-none truncate">{dashboardData.topKpis.assistenciaemcti}</p>
                     <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-cyan-500 mr-1.5"></span> Assistência</div>
                   </div>
                   <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
