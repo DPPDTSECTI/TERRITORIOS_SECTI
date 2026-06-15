@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://secti-territorios.netlify.app/sitemap.xml

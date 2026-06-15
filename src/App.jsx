@@ -1,3 +1,4 @@
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
@@ -415,463 +416,487 @@ export default function App() {
   };
 
   return (
-    <div className="relative flex flex-col h-screen font-sans text-slate-800 overflow-hidden text-sm bg-slate-100">
-      
-      <style>{`
-        @keyframes softFadeInUp {
-          0% { opacity: 0; transform: translateY(12px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-soft-fade {
-          animation: softFadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-      `}</style>
-
-      <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-100 via-zinc-50 to-gray-200 pointer-events-none"></div>
-
-      {isLoadingPipeline && territoriosData.length === 0 && (
-        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-white/70 backdrop-blur-xl">
-          <div className="w-12 h-12 border-4 border-gov-blueDark-100 border-t-gov-blueDark-500 rounded-full animate-spin mb-4 shadow-lg"></div>
-          <h2 className="text-[14px] font-bold text-gov-blueDark-500 tracking-wide font-display">Sincronizando Base de Dados</h2>
-          <p className="text-[10px] font-medium text-slate-500 mt-2">Conectando ao SharePoint SECTI...</p>
-        </div>
-      )}
-
-      <header className="fixed top-2 left-0 right-0 mx-auto w-[98%] max-w-[1600px] bg-white/65 backdrop-blur-lg border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.06)] h-12 rounded-xl flex items-center justify-between px-5 lg:px-6 z-[100] transition-all duration-500">
-        <div className="flex items-center gap-5 lg:gap-8 h-full">
-          <h1 className="text-[11px] sm:text-xs font-bold text-slate-800 tracking-tight uppercase flex items-center gap-1 drop-shadow-sm">
-            <span className="text-gov-blueDark-500">Painel</span>
-            <span className="text-gov-red-500">Territorial</span>
-          </h1>
-          <nav className="flex items-center gap-3 sm:gap-4 h-full pt-0.5">
-            <button onClick={() => setPage('overview')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'overview' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Início</button>
-            <button onClick={() => setPage('territorios')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'territorios' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Territórios</button>
-            <button onClick={() => setPage('sobre')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'sobre' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Sobre</button>
-          </nav>
-        </div>
-        <a href="https://www.ba.gov.br/" target="_blank" rel="noopener noreferrer" className="hidden md:flex items-center">
-          <img src="/img/Brasa╠âo-Horizontal_Preto.png" alt="GOV BA" className="h-6 lg:h-7 object-contain drop-shadow-sm" />
-        </a>
-      </header>
-
-      <main className={`flex-1 overflow-y-auto relative w-full z-10 ${page === 'overview' ? '' : 'pt-20 sm:pt-24 pb-8'}`}>
+    <HelmetProvider>
+        <Helmet>
+            <title>Painel Territorial CT&I | Governo da Bahia</title>
+            <meta name="description" content="Plataforma interativa da SECTI com indicadores de Ciência, Tecnologia, Inovação e Cadeias Produtivas dos 27 Territórios de Identidade da Bahia." />
+            <meta name="keywords" content="SECTI, Bahia, Ciência, Tecnologia, Inovação, IFDM, Territórios de Identidade, APL, Semiárido" />
+            
+            {/* Open Graph para partilhas no WhatsApp/LinkedIn ficarem bonitas com imagem */}
+            <meta property="og:title" content="Painel Territorial CT&I | Governo da Bahia" />
+            <meta property="og:description" content="Descubra as capacidades institucionais e o desenvolvimento socioeconómico dos territórios baianos." />
+            <meta property="og:image" content="https://seusite.ba.gov.br/img/sua-imagem-de-capa.jpg" />
+            <meta property="og:type" content="website" />
+        </Helmet>
+        <div className="relative flex flex-col h-screen font-sans text-slate-800 overflow-hidden text-sm bg-slate-100">
         
-        {page === 'overview' ? (
-          <div key="overview" className="animate-soft-fade h-full">
-            <LandingHero onAccessDashboard={() => setPage('territorios')} territoriosData={territoriosData} />
-          </div>
-        ) : page === 'sobre' ? (
-          
-          /* ========================================================
-             PÁGINA SOBRE O PAINEL
-             ======================================================== */
-          <div key="sobre" className="animate-soft-fade relative p-1 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 shadow-md p-6 lg:p-10 mb-8">
-              <h2 className="text-2xl lg:text-3xl font-black text-slate-900 mb-6 tracking-tight">Sobre o Painel SECTI Territórios</h2>
-              
-              <div className="prose prose-sm sm:prose-base prose-slate max-w-none">
-                
-                <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-3 mt-6 border-b border-slate-200 pb-2">1. Visão Geral do Sistema</h3>
-                <p className="text-slate-600 leading-relaxed mb-4">
-                  O Painel SECTI Territórios é uma plataforma de inteligência geográfica concebida para subsidiar a formulação e o acompanhamento de políticas públicas de Ciência, Tecnologia e Inovação (CT&I) no Estado da Bahia.
-                </p>
-                <p className="text-slate-600 leading-relaxed mb-8">
-                  Através da consolidação de dados territorializados, o sistema integra informações referentes a capacidades institucionais, desenvolvimento socioeconômico, cadeias produtivas e assistência pública. A plataforma proporciona aos gestores e investigadores uma base analítica sobre as vocações e características dos 27 Territórios de Identidade da Bahia.
-                </p>
+        <style>{`
+            @keyframes softFadeInUp {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+            }
+            .animate-soft-fade {
+            animation: softFadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+        `}</style>
 
-                <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-4 mt-8 border-b border-slate-200 pb-2">2. Definições e Indicadores (KPIs)</h3>
-                <p className="text-slate-600 leading-relaxed mb-4">Para garantir o rigor analítico, a plataforma opera com os seguintes conceitos e métricas, calculados em tempo real:</p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
-                    <span className="block font-bold text-slate-800 mb-1">Capacidade em CT&I</span>
-                    <span className="text-[11px] text-slate-600 leading-relaxed">Quantitativo de infraestruturas mapeadas, englobando Universidades (Federais e Estaduais), Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.</span>
-                  </div>
-                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
-                    <span className="block font-bold text-slate-800 mb-1">Desenvolvimento Territorial</span>
-                    <span className="text-[11px] text-slate-600 leading-relaxed">Baseado no Índice FIRJAN (IFDM) de 2023. O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem os respectivos territórios de identidade da Bahia. O índice é composto por variáveis relacionadas às condições de Emprego e Renda, Saúde e Educação dos municípios.</span>
-                  </div>
-                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
-                    <span className="block font-bold text-slate-800 mb-1">Assistência Pública em CT&I</span>
-                    <span className="text-[11px] text-slate-600 leading-relaxed">Identifica a presença de ações de suporte estatal à população, contando este piloto com a infraestrutura relativa ao Programa Conecta Bahia que tem como finalidade ampliar o acesso à internet em áreas rurais do estado.</span>
-                  </div>
-                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
-                    <span className="block font-bold text-slate-800 mb-1">APLs e IGs</span>
-                    <span className="text-[11px] text-slate-600 leading-relaxed">Mapeamento de <strong>Arranjos Produtivos Locais</strong> (aglomerações de cooperação económica) e <strong>Indicações Geográficas</strong> (certificações de produtos inerentes à sua origem territorial).</span>
-                  </div>
-                </div>
+        <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-100 via-zinc-50 to-gray-200 pointer-events-none"></div>
 
-                <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-4 mt-8 border-b border-slate-200 pb-2">3. Guia de Funcionalidades</h3>
-                <p className="text-slate-600 leading-relaxed mb-4">O painel foi desenvolvido com foco em alta densidade de informação e interatividade espacial. Descubra como extrair o máximo potencial do sistema:</p>
-
-                <ul className="space-y-4 mb-6">
-                
-                  <li className="flex gap-3 items-start">
-                    <div className="bg-orange-100 text-orange-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
-                    <div>
-                      <strong className="text-slate-800 block text-sm">Filtro do Semiárido Baiano</strong>
-                      <span className="text-[11px] text-slate-600">A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido. Municípios e entidades localizadas no litoral são omitidos, e os indicadores são recalculados com precisão matemática.</span>
-                    </div>
-                  </li>
-                  <li className="flex gap-3 items-start">
-                    <div className="bg-gov-cyan-100 text-gov-cyan-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>
-                    <div>
-                      <strong className="text-slate-800 block text-sm">Exportação para Business Intelligence</strong>
-                      <span className="text-[11px] text-slate-600">A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em quatro abas relacionais, preparado para análises estatísticas externas.</span>
-                    </div>
-                  </li>
-                </ul>
-
-              </div>
+        {isLoadingPipeline && territoriosData.length === 0 && (
+            <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-white/70 backdrop-blur-xl">
+            <div className="w-12 h-12 border-4 border-gov-blueDark-100 border-t-gov-blueDark-500 rounded-full animate-spin mb-4 shadow-lg"></div>
+            <h2 className="text-[14px] font-bold text-gov-blueDark-500 tracking-wide font-display">Sincronizando Base de Dados</h2>
+            <p className="text-[10px] font-medium text-slate-500 mt-2">Conectando ao SharePoint SECTI...</p>
             </div>
-          </div>
+        )}
 
-        ) : (
-          // ========================================================
-          // PÁGINA TERRITÓRIOS (DASHBOARD PRINCIPAL)
-          // ========================================================
-          <div key="territorios" className="animate-soft-fade relative p-2 sm:p-4 lg:p-1 max-w-[100%] lg:max-w-[95%] 2xl:max-w-[1350px] mx-auto w-full min-h-full flex flex-col justify-start">
+        <header className="fixed top-2 left-0 right-0 mx-auto w-[98%] max-w-[1600px] bg-white/65 backdrop-blur-lg border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.06)] h-12 rounded-xl flex items-center justify-between px-5 lg:px-6 z-[100] transition-all duration-500">
+            <div className="flex items-center gap-5 lg:gap-8 h-full">
+            <h1 className="text-[11px] sm:text-xs font-bold text-slate-800 tracking-tight uppercase flex items-center gap-1 drop-shadow-sm">
+                <span className="text-gov-blueDark-500">Painel</span>
+                <span className="text-gov-red-500">Territorial</span>
+            </h1>
+            <nav className="flex items-center gap-3 sm:gap-4 h-full pt-0.5">
+                <button onClick={() => setPage('overview')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'overview' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Início</button>
+                <button onClick={() => setPage('territorios')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'territorios' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Territórios</button>
+                <button onClick={() => setPage('sobre')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'sobre' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Sobre</button>
+            </nav>
+            </div>
+            <a href="https://www.ba.gov.br/" target="_blank" rel="noopener noreferrer" className="hidden md:flex items-center">
+            <img src="/img/Brasa╠âo-Horizontal_Preto.png" alt="GOV BA" className="h-6 lg:h-7 object-contain drop-shadow-sm" />
+            </a>
+        </header>
 
-            <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-lg p- lg:p-6 flex flex-col gap-3 transition-all duration-500">
-              
-              {/* BARRA DE AÇÕES COMPACTA */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 items-center border-b border-slate-200/60 pb-2.5">
-                <div className="lg:col-span-2 relative w-full flex flex-col sm:flex-row items-center gap-2" ref={dropdownRef}>
-                  <div className="w-full relative flex-1">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Filtrar Análise Territorial</label>
-                    <div className="relative flex items-center">
-                      <input
-                        type="text"
-                        placeholder={isLoadingPipeline ? "Sincronizando..." : "Pesquise por Município, Território ou Entidade..."}
-                        value={searchTerm}
-                        disabled={isLoadingPipeline}
-                        onChange={(e) => {
-                          setSearchTerm(e.target.value);
-                          setIsDropdownOpen(true);
-                          if (!e.target.value) setSelectedLocation(null);
-                        }}
-                        onFocus={() => setIsDropdownOpen(true)}
-                        className="w-full bg-white border border-slate-200 rounded-lg pl-8 pr-8 py-1.5 text-xs font-normal focus:outline-none focus:border-gov-blueDark-500 shadow-sm transition-all text-slate-800 placeholder-slate-400"
-                      />
-                      <svg className="w-3.5 h-3.5 text-slate-400 absolute left-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                      {searchTerm && (
-                        <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} className="absolute right-2.5 text-slate-400 hover:text-slate-600">
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="w-full sm:w-auto pt-0 sm:pt-4">
-                    <button 
-                        onClick={handleToggleFilter}
-                        className={`w-full sm:w-auto px-3 py-1.5 rounded-lg font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 border ${filtroSemiarido ? 'bg-gov-red-500 border-gov-red-600 text-white hover:bg-gov-red-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
-                    >
-                        {filtroSemiarido ? (
-                          <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>Recorte: Semiárido</>
-                        ) : (
-                          <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>Apenas Semiárido</>
-                        )}
-                    </button>
-                  </div>
+        <main className={`flex-1 overflow-y-auto relative w-full z-10 ${page === 'overview' ? '' : 'pt-20 sm:pt-24 pb-8'}`}>
+            
+            {page === 'overview' ? (
+            <div key="overview" className="animate-soft-fade h-full">
+                <LandingHero onAccessDashboard={() => setPage('territorios')} territoriosData={territoriosData} />
+            </div>
+            ) : page === 'sobre' ? (
+            
+            /* ========================================================
+                PÁGINA SOBRE O PAINEL
+                ======================================================== */
+            <div key="sobre" className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
+                <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 shadow-md p-6 lg:p-10 mb-8">
+                    <h2 className="text-2xl lg:text-3xl font-black text-slate-900 mb-6 tracking-tight">Sobre o Painel SECTI Territórios</h2>
 
-                  {isDropdownOpen && searchTerm && (
-                    <div className="absolute top-[100%] mt-1 w-full bg-white border border-slate-200/80 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50 divide-y divide-slate-100">
-                      {filteredOptions.length > 0 ? (
-                        filteredOptions.map((item) => (
-                          <button key={item.id} onClick={() => { setSelectedLocation(item); setSearchTerm(item.nome); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center justify-between transition-colors">
-                            <div className="flex flex-col">
-                              <span className="font-bold text-[11px] text-slate-800 block">{item.nome}</span>
-                              {item.matchType === 'Território' ? (
-                                 <span className="text-[9px] text-slate-400 font-medium uppercase tracking-wider">{item.regiao}</span>
-                              ) : (
-                                 <span className="text-[9px] text-gov-blueDark-500 font-medium">
-                                     Correspondência em {item.matchType}: <span className="text-slate-700 font-bold">{item.matchText}</span>
-                                 </span>
-                              )}
+                    <div className="prose prose-sm sm:prose-base prose-slate max-w-none">
+                        <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-3 mt-6 border-b border-slate-200 pb-2">1. Visão Geral do Sistema</h3>
+                        <p className="text-slate-600 leading-relaxed mb-4">
+                            O Painel SECTI Territórios é uma plataforma de inteligência geográfica concebida para subsidiar a formulação e o acompanhamento de políticas públicas de Ciência, Tecnologia e Inovação (CT&I) no Estado da Bahia.
+                        </p>
+                        <p className="text-slate-600 leading-relaxed mb-8">
+                            Através da consolidação de dados territorializados, o sistema integra informações referentes a capacidades institucionais, desenvolvimento socioeconómico, cadeias produtivas e assistência pública. A plataforma proporciona aos gestores e investigadores uma base analítica rigorosa sobre as vocações e características dos 27 Territórios de Identidade da Bahia.
+                        </p>
+
+                        <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-4 mt-8 border-b border-slate-200 pb-2">2. Definições e Indicadores</h3>
+                        <p className="text-slate-600 leading-relaxed mb-4">Para garantir o rigor analítico, a plataforma opera com os seguintes conceitos e métricas:</p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                                <span className="block font-bold text-slate-800 mb-1">Capacidade Territorial em CT&I</span>
+                                <span className="text-[11px] text-slate-600 leading-relaxed">Corresponde ao quantitativo de infraestruturas mapeadas, englobando Universidades (Federais e Estaduais), Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.</span>
                             </div>
-                            {item.isSemiarido && <span className="text-[8px] font-bold text-gov-red-500 bg-gov-red-50 px-1.5 py-0.5 rounded-full border border-gov-red-100">Semiárido</span>}
-                          </button>
-                        ))
-                      ) : (
-                        <div className="px-2 py-2 text-xs text-slate-400 font-medium italic text-center">Nenhum resultado.</div>
-                      )}
+                            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                                <span className="block font-bold text-slate-800 mb-1">Desenvolvimento Territorial</span>
+                                <span className="text-[11px] text-slate-600 leading-relaxed">Baseado no Índice FIRJAN de Desenvolvimento Municipal (IFDM) de 2023. O valor territorial é calculado através de uma média ponderada, multiplicando o IFDM de cada município pela sua população e dividindo pela população total do território.</span>
+                            </div>
+                            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                                <span className="block font-bold text-slate-800 mb-1">Assistência Pública em CT&I</span>
+                                <span className="text-[11px] text-slate-600 leading-relaxed">Identifica a presença de ações de suporte estatal à população, como as infraestruturas do Programa Conecta Bahia e iniciativas complementares.</span>
+                            </div>
+                            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                                <span className="block font-bold text-slate-800 mb-1">APLs e IGs</span>
+                                <span className="text-[11px] text-slate-600 leading-relaxed"><strong>Arranjos Produtivos Locais (APLs):</strong> Aglomerações em torno de uma atividade principal num mesmo espaço geográfico. <strong>Indicações Geográficas (IGs):</strong> Certificação de produtos ou serviços originários de uma área delimitada, atestando qualidades ou reputação.</span>
+                            </div>
+                        </div>
+
+                        <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-4 mt-8 border-b border-slate-200 pb-2">3. Guia de Funcionalidades</h3>
+                        <p className="text-slate-600 leading-relaxed mb-4">O painel foi desenvolvido com foco em alta densidade de informação e interatividade espacial. As suas principais funcionalidades incluem:</p>
+
+                        <ul className="space-y-4 mb-6">
+                            <li className="flex gap-3 items-start">
+                                <div className="bg-slate-100 text-slate-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div>
+                                <div>
+                                    <strong className="text-slate-800 block text-sm">Pesquisa de Dados (Deep Search)</strong>
+                                    <span className="text-[11px] text-slate-600">O campo de pesquisa permite localizar simultaneamente Municípios, Territórios, Instituições ou Segmentos Produtivos. O painel isola imediatamente os resultados relevantes e recalcula a sua visibilidade na interface.</span>
+                                </div>
+                            </li>
+                            <li className="flex gap-3 items-start">
+                                <div className="bg-slate-100 text-slate-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg></div>
+                                <div>
+                                    <strong className="text-slate-800 block text-sm">Navegação Cartográfica Dinâmica</strong>
+                                    <span className="text-[11px] text-slate-600">A malha do mapa responde semanticamente aos dados. A seleção de um território no mapa ou nas listas laterais aciona uma aproximação automática, focando a área geográfica e detalhando as suas infraestruturas e municípios constituintes.</span>
+                                </div>
+                            </li>
+                            <li className="flex gap-3 items-start">
+                                <div className="bg-slate-100 text-slate-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                                <div>
+                                    <strong className="text-slate-800 block text-sm">Filtro do Semiárido</strong>
+                                    <span className="text-[11px] text-slate-600">A ativação deste recorte isola estritamente os dados do polígono correspondente ao semiárido. Municípios, universidades ou cadeias localizadas no litoral são omitidos, e todos os indicadores são recalculados com precisão matemática para a região delimitada.</span>
+                                </div>
+                            </li>
+                            <li className="flex gap-3 items-start">
+                                <div className="bg-slate-100 text-slate-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>
+                                <div>
+                                    <strong className="text-slate-800 block text-sm">Exportação para Business Intelligence</strong>
+                                    <span className="text-[11px] text-slate-600">A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado de forma relacional em quatro abas, preparado para a elaboração de tabelas dinâmicas e análises estatísticas externas.</span>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                  )}
                 </div>
+            </div>
 
-                <div className="flex items-center lg:justify-end gap-1.5 lg:pt-4 w-full">
-                  <button type="button" onClick={handleForceRefresh} disabled={isLoadingPipeline} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 border border-slate-800 px-3 py-1.5 text-[11px] font-semibold text-white transition-all hover:bg-slate-700 disabled:opacity-70 shadow-sm w-full lg:w-auto">
-                    {isLoadingPipeline ? 'Sincronizando...' : 'Atualizar Dados'}
-                  </button>
-                </div>
-              </div>
+            ) : (
+            // ========================================================
+            // PÁGINA TERRITÓRIOS (DASHBOARD PRINCIPAL)
+            // ========================================================
+            <div key="territorios" className="animate-soft-fade relative p-2 sm:p-4 lg:p-1 max-w-[100%] lg:max-w-[95%] 2xl:max-w-[1350px] mx-auto w-full min-h-full flex flex-col justify-start">
 
-              {/* KPIS GLOBAIS MAIS COMPACTAS */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">
-                    Visão Geral {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Semiárido' : '— Bahia')}
-                  </h3>
-                  <span className="text-[9px] text-slate-400 font-medium hidden sm:block">Atualizado às {lastUpdate}</span>
-                </div>
+                <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-lg p-3 lg:p-6 flex flex-col gap-3 transition-all duration-500">
                 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-                  <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Capacidade CTI</p>
-                    <p className="text-xl font-black text-gov-blueDark-500 leading-none">{dashboardData.topKpis.capacidadeCti}</p>
-                    <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-blueDark-500 mr-1.5"></span> Entidades</div>
-                  </div>
-                  <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">D. Territ. (IFDM)</p>
-                    <p className="text-xl font-black text-gov-red-500 leading-none">{dashboardData.topKpis.ifdm}</p>
-                    <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-red-500 mr-1.5"></span> Média Ponderada</div>
-                  </div>
-                  <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Semiárido</p>
-                    <p className="text-lg font-black text-slate-700 leading-none truncate" title={dashboardData.topKpis.coberturaSemiarido}>{dashboardData.topKpis.coberturaSemiarido}</p>
-                    <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Abrangência</div>
-                  </div>
-                  <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Conecta Bahia</p>
-                    <p className="text-lg font-black text-gov-cyan-700 leading-none truncate">{dashboardData.topKpis.conectaBahia}</p>
-                    <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-cyan-500 mr-1.5"></span> Assistência</div>
-                  </div>
-                  <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Cadeias Produtivas</p>
-                    <p className="text-xl font-black text-slate-800 leading-none truncate">{dashboardData.topKpis.cadeiasIgs}</p>
-                    <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-green-500 mr-1.5"></span> APLs & IGs</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* SCROLL MUNICÍPIOS */}
-              {selectedLocation && municipiosDoTerritorioSelecionado.length > 0 && (
-                <div className="bg-white/80 border border-slate-200/50 px-3 py-2 rounded-lg shadow-sm mt-0.5">
-                    <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
-                            Municípios {filtroSemiarido && <span className="text-gov-red-500">(Filtro Ativo)</span>}
-                        </span>
-                        <span className="text-[8px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                            {municipiosDoTerritorioSelecionado.length}
-                        </span>
+                {/* BARRA DE AÇÕES COMPACTA */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 items-center border-b border-slate-200/60 pb-2.5">
+                    <div className="lg:col-span-2 relative w-full flex flex-col sm:flex-row items-center gap-2" ref={dropdownRef}>
+                    <div className="w-full relative flex-1">
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Filtrar Análise Territorial</label>
+                        <div className="relative flex items-center">
+                        <input
+                            type="text"
+                            placeholder={isLoadingPipeline ? "Sincronizando..." : "Pesquise por Município, Território ou Entidade..."}
+                            value={searchTerm}
+                            disabled={isLoadingPipeline}
+                            onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setIsDropdownOpen(true);
+                            if (!e.target.value) setSelectedLocation(null);
+                            }}
+                            onFocus={() => setIsDropdownOpen(true)}
+                            className="w-full bg-white border border-slate-200 rounded-lg pl-8 pr-8 py-1.5 text-xs font-normal focus:outline-none focus:border-gov-blueDark-500 shadow-sm transition-all text-slate-800 placeholder-slate-400"
+                        />
+                        <svg className="w-3.5 h-3.5 text-slate-400 absolute left-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        {searchTerm && (
+                            <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} className="absolute right-2.5 text-slate-400 hover:text-slate-600">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        )}
+                        </div>
                     </div>
                     
-                    <div className="relative flex items-center group">
-                        <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: -150, behavior: 'smooth' })} className="absolute left-0 h-full bg-gradient-to-r from-white via-white/90 to-transparent pr-8 pl-0.5 flex items-center justify-start z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="bg-slate-800 text-white p-0.5 rounded-full shadow hover:bg-slate-700 cursor-pointer">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
-                            </div>
+                    <div className="w-full sm:w-auto pt-0 sm:pt-4">
+                        <button 
+                            onClick={handleToggleFilter}
+                            className={`w-full sm:w-auto px-3 py-1.5 rounded-lg font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 border ${filtroSemiarido ? 'bg-gov-red-500 border-gov-red-600 text-white hover:bg-gov-red-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        >
+                            {filtroSemiarido ? (
+                            <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>Recorte: Semiárido</>
+                            ) : (
+                            <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>Apenas Semiárido</>
+                            )}
                         </button>
+                    </div>
 
-                        <div ref={scrollMunsRef} className="flex gap-1.5 overflow-x-auto pb-0.5 w-full scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                            {municipiosDoTerritorioSelecionado.map((m, idx) => {
-                                const isSemi = semiaridoMunicipios.includes(normalize(m));
-                                return (
-                                    <span key={idx} className={`whitespace-nowrap bg-white text-slate-600 px-1.5 py-0.5 rounded text-[9px] font-semibold shadow-sm cursor-default hover:bg-slate-50 transition-colors border ${isSemi ? 'border-orange-400 ring-1 ring-orange-400/20' : 'border-slate-200'}`}>
-                                        {m}
+                    {isDropdownOpen && searchTerm && (
+                        <div className="absolute top-[100%] mt-1 w-full bg-white border border-slate-200/80 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50 divide-y divide-slate-100">
+                        {filteredOptions.length > 0 ? (
+                            filteredOptions.map((item) => (
+                            <button key={item.id} onClick={() => { setSelectedLocation(item); setSearchTerm(item.nome); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center justify-between transition-colors">
+                                <div className="flex flex-col">
+                                <span className="font-bold text-[11px] text-slate-800 block">{item.nome}</span>
+                                {item.matchType === 'Território' ? (
+                                    <span className="text-[9px] text-slate-400 font-medium uppercase tracking-wider">{item.regiao}</span>
+                                ) : (
+                                    <span className="text-[9px] text-gov-blueDark-500 font-medium">
+                                        Correspondência em {item.matchType}: <span className="text-slate-700 font-bold">{item.matchText}</span>
                                     </span>
-                                );
-                            })}
+                                )}
+                                </div>
+                                {item.isSemiarido && <span className="text-[8px] font-bold text-gov-red-500 bg-gov-red-50 px-1.5 py-0.5 rounded-full border border-gov-red-100">Semiárido</span>}
+                            </button>
+                            ))
+                        ) : (
+                            <div className="px-2 py-2 text-xs text-slate-400 font-medium italic text-center">Nenhum resultado.</div>
+                        )}
                         </div>
-
-                        <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: 150, behavior: 'smooth' })} className="absolute right-0 h-full bg-gradient-to-l from-white via-white/90 to-transparent pl-8 pr-0.5 flex items-center justify-end z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="bg-slate-800 text-white p-0.5 rounded-full shadow hover:bg-slate-700 cursor-pointer">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-                            </div>
-                        </button>
-                    </div>
-
-                    {!filtroSemiarido && (
-                      <div className="text-[8px] text-slate-400 mt-1 flex items-center gap-1 select-none">
-                          <span className="w-1.5 h-1.5 rounded border border-orange-400 bg-white"></span>
-                          <span>Pertencente ao semiárido</span>
-                      </div>
                     )}
-                </div>
-              )}
+                    </div>
 
-              {/* DETALHAMENTO HORIZONTAL CTI ULTRA-COMPACTO */}
-              <div className="mt-0.5 mb-0.5">
-                 <div className="grid grid-cols-4 lg:grid-cols-7 gap-2">
-                    <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
-                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Univs.</span>
-                        <span className="text-lg font-black text-gov-blueDark-500 leading-none">{dashboardData.subKpis.univs}</span>
+                    <div className="flex items-center lg:justify-end gap-1.5 lg:pt-4 w-full">
+                    <button type="button" onClick={handleForceRefresh} disabled={isLoadingPipeline} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 border border-slate-800 px-3 py-1.5 text-[11px] font-semibold text-white transition-all hover:bg-slate-700 disabled:opacity-70 shadow-sm w-full lg:w-auto">
+                        {isLoadingPipeline ? 'Sincronizando...' : 'Atualizar Dados'}
+                    </button>
                     </div>
-                    <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
-                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Inst. Fed.</span>
-                        <span className="text-lg font-black text-gov-red-500 leading-none">{dashboardData.subKpis.ifs}</span>
-                    </div>
-                    <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
-                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">ICTs</span>
-                        <span className="text-lg font-black text-gov-cyan-500 leading-none">{dashboardData.subKpis.icts}</span>
-                    </div>
-                    <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
-                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">C. Pesquisa</span>
-                        <span className="text-lg font-black text-gov-green-500 leading-none">{dashboardData.subKpis.centrosPesquisa}</span>
-                    </div>
-                    <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
-                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Espaços</span>
-                        <span className="text-lg font-black text-gov-cyan-700 leading-none">{dashboardData.subKpis.espacos}</span>
-                    </div>
-                    <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
-                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Parques</span>
-                        <span className="text-lg font-black text-gov-magenta-500 leading-none">{dashboardData.subKpis.parques}</span>
-                    </div>
-                    <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
-                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Incub.</span>
-                        <span className="text-lg font-black text-gov-cyan-600 leading-none">{dashboardData.subKpis.incubadoras}</span>
-                    </div>
-                 </div>
-              </div>
-
-              {/* EXPANSÃO VERTICAL: MAPA E LISTAS */}
-              <div className="flex flex-col lg:flex-row gap-3 items-stretch h-[800px] 2xl:h-[90vh] w-full mt-1">
-                
-                {/* MAPA */}
-                <div className="w-full lg:w-[50%] bg-white rounded-xl border border-slate-200/80 p-2.5 shadow-sm relative flex flex-col h-full">
-                  <div className="absolute top-3.5 left-3.5 bg-slate-800/90 text-white backdrop-blur-sm px-2.5 py-1.5 rounded-lg text-[10px] font-semibold z-10 flex items-center gap-1.5 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-gov-green-500 animate-pulse"></span>
-                    Malha Cartográfica
-                  </div>
-                  <div className="w-full h-full flex-1 rounded-lg overflow-hidden bg-slate-50/50">
-                    <ConectaMap 
-                      territoriosData={territoriosData} 
-                      territoriesDynamicStats={territoriesDynamicStats} 
-                      searchTerm={searchTerm} 
-                      filtroSemiarido={filtroSemiarido} 
-                      selectedTerritory={selectedLocation} 
-                      semiaridoMunicipios={semiaridoMunicipios} 
-                      onSelectTerritory={(loc) => {
-                          setSelectedLocation(loc);
-                          if(loc) setSearchTerm(loc.nome);
-                          else setSearchTerm('');
-                      }} 
-                    />
-                  </div>
                 </div>
 
-                {/* LISTAS LATERAIS */}
-                <div className="w-full lg:w-[50%] flex flex-col gap-3 h-full overflow-hidden">
-                  
-                  {/* Lista 1: Instituições CT&I */}
-                  <div className="flex-1 min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
-                     <div className="p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-                        <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Estruturas CT&I</h4>
-                        <span className="bg-gov-blueDark-100 text-gov-blueDark-700 px-2 py-0.5 rounded text-[9px] font-bold">{dashboardData.entidades.length}</span>
-                     </div>
-                     <div className="flex-1 overflow-y-auto p-2.5 bg-slate-50/30">
-                        <div className="flex flex-col gap-1.5">
-                           {dashboardData.entidades.length > 0 ? (
-                               dashboardData.entidades.map((ent, idx) => (
-                                  <div key={idx} className="p-2 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-1 transition-all hover:border-slate-300">
-                                      <span className="text-[11px] font-bold text-slate-800 leading-tight">{ent.entidade}</span>
-                                      <div className="flex justify-between items-end mt-0.5">
-                                         <span className="text-[8px] font-bold uppercase text-gov-blueDark-500 bg-gov-blueDark-50 px-1.5 py-0.5 rounded border border-gov-blueDark-100">
-                                             {ent.tipo || "Instituição"}
-                                         </span>
-                                         <div className="text-right">
-                                             <span className="block text-[9px] text-slate-600 font-semibold">{ent.municipio}</span>
-                                             {!selectedLocation && <span className="block text-[8px] text-slate-400">{ent.territorioRef}</span>}
-                                         </div>
-                                      </div>
-                                  </div>
-                               ))
-                           ) : (
-                               <div className="flex items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400">Nenhuma estrutura encontrada.</span>
-                               </div>
-                           )}
-                        </div>
-                     </div>
-                  </div>
+                {/* KPIS GLOBAIS MAIS COMPACTAS */}
+                <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                    <h3 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">
+                        Visão Geral {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Semiárido' : '— Bahia')}
+                    </h3>
+                    <span className="text-[9px] text-slate-400 font-medium hidden sm:block">Atualizado às {lastUpdate}</span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                    <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Capacidade CTI</p>
+                        <p className="text-xl font-black text-gov-blueDark-500 leading-none">{dashboardData.topKpis.capacidadeCti}</p>
+                        <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-blueDark-500 mr-1.5"></span> Entidades</div>
+                    </div>
+                    <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">D. Territ. (IFDM)</p>
+                        <p className="text-xl font-black text-gov-red-500 leading-none">{dashboardData.topKpis.ifdm}</p>
+                        <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-red-500 mr-1.5"></span> Média Ponderada</div>
+                    </div>
+                    <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Semiárido</p>
+                        <p className="text-lg font-black text-slate-700 leading-none truncate" title={dashboardData.topKpis.coberturaSemiarido}>{dashboardData.topKpis.coberturaSemiarido}</p>
+                        <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Abrangência</div>
+                    </div>
+                    <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Conecta Bahia</p>
+                        <p className="text-lg font-black text-gov-cyan-700 leading-none truncate">{dashboardData.topKpis.conectaBahia}</p>
+                        <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-cyan-500 mr-1.5"></span> Assistência</div>
+                    </div>
+                    <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Cadeias Produtivas</p>
+                        <p className="text-xl font-black text-slate-800 leading-none truncate">{dashboardData.topKpis.cadeiasIgs}</p>
+                        <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-green-500 mr-1.5"></span> APLs & IGs</div>
+                    </div>
+                    </div>
+                </div>
 
-                  {/* Lista 2: Cadeias Produtivas */}
-                  <div className="flex-[1.2] min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
-                     <div className="p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-                        <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Cadeias & IGs</h4>
-                        <span className="bg-gov-green-100 text-gov-green-700 px-2 py-0.5 rounded text-[9px] font-bold">{dashboardData.aplIgs.length}</span>
-                     </div>
-                     <div className="flex-1 overflow-y-auto p-2.5 bg-slate-50/30">
-                        <div className="flex flex-col gap-2">
-                           {dashboardData.aplIgs.length > 0 ? (
-                               dashboardData.aplIgs.map((apl, idx) => (
-                                  <div key={idx} className="p-2 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col transition-all hover:border-slate-300">
-                                      <div className="flex items-start justify-between mb-0.5">
-                                         <span className="text-[9px] font-bold uppercase text-gov-green-800 bg-gov-green-50 px-1.5 py-0.5 rounded border border-gov-green-200">
-                                             {apl.segmento}
-                                         </span>
-                                         <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded border ${getBadgeStyle(apl.tipo)}`}>
-                                             {apl.tipo}
-                                         </span>
-                                      </div>
-                                      
-                                      {apl.entidade && (
-                                          <span className="text-[11px] font-bold text-slate-700 leading-tight mt-1">
-                                              {apl.entidade}
-                                          </span>
-                                      )}
-                                      
-                                      <div className="bg-slate-50 p-1.5 rounded border border-slate-100 mt-1.5">
-                                          <span className="block text-[8px] font-bold text-slate-400 uppercase mb-0.5">Municípios:</span>
-                                          <p className="text-[9px] text-slate-600 font-medium leading-tight">
-                                              {apl.municipiosPertencentes}
-                                          </p>
-                                      </div>
-                                      
-                                      <div className="flex justify-between items-end mt-1.5 pt-1 border-t border-slate-100/80">
-                                         <div className="text-left">
-                                             <span className="block text-[8px] text-slate-500 italic">Sede: <span className="font-bold text-slate-700">{apl.sede}</span></span>
-                                         </div>
-                                         {!selectedLocation && !filtroSemiarido && (
-                                             <span className="text-right text-[8px] text-slate-400 font-bold">{apl.territorioRef}</span>
-                                         )}
-                                      </div>
-                                  </div>
-                               ))
-                           ) : (
-                               <div className="flex items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400">Nenhuma cadeia encontrada.</span>
-                               </div>
-                           )}
+                {/* SCROLL MUNICÍPIOS */}
+                {selectedLocation && municipiosDoTerritorioSelecionado.length > 0 && (
+                    <div className="bg-white/80 border border-slate-200/50 px-3 py-2 rounded-lg shadow-sm mt-0.5">
+                        <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+                                Municípios {filtroSemiarido && <span className="text-gov-red-500">(Filtro Ativo)</span>}
+                            </span>
+                            <span className="text-[8px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                                {municipiosDoTerritorioSelecionado.length}
+                            </span>
                         </div>
-                     </div>
-                  </div>
+                        
+                        <div className="relative flex items-center group">
+                            <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: -150, behavior: 'smooth' })} className="absolute left-0 h-full bg-gradient-to-r from-white via-white/90 to-transparent pr-8 pl-0.5 flex items-center justify-start z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="bg-slate-800 text-white p-0.5 rounded-full shadow hover:bg-slate-700 cursor-pointer">
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
+                                </div>
+                            </button>
 
-                  {/* Lista 3: Assistência */}
-                  <div className="flex-[0.8] min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
-                     <div className="p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-                        <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Assistência</h4>
-                        <span className="bg-gov-cyan-100 text-gov-cyan-700 px-2 py-0.5 rounded text-[9px] font-bold">{dashboardData.assistencias.length}</span>
-                     </div>
-                     <div className="flex-1 overflow-y-auto p-2.5 bg-slate-50/30">
-                        <div className="flex flex-col gap-1.5">
-                           {dashboardData.assistencias.length > 0 ? (
-                               dashboardData.assistencias.map((ast, idx) => (
-                                  <div key={idx} className="p-2 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-0.5 transition-all hover:border-slate-300">
-                                      <span className="text-[10px] font-bold text-slate-700 leading-snug">{ast.nome}</span>
-                                      <div className="flex justify-between items-end">
-                                         <span className="text-[9px] text-slate-500 font-semibold">{ast.municipio}</span>
-                                         {!selectedLocation && <span className="text-[8px] text-slate-400">{ast.territorioRef}</span>}
-                                      </div>
-                                  </div>
-                               ))
-                           ) : (
-                               <div className="flex items-center justify-center p-4 text-center h-full">
-                                   <span className="text-[10px] text-slate-400">Em levantamento.</span>
-                               </div>
-                           )}
+                            <div ref={scrollMunsRef} className="flex gap-1.5 overflow-x-auto pb-0.5 w-full scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                                {municipiosDoTerritorioSelecionado.map((m, idx) => {
+                                    const isSemi = semiaridoMunicipios.includes(normalize(m));
+                                    return (
+                                        <span key={idx} className={`whitespace-nowrap bg-white text-slate-600 px-1.5 py-0.5 rounded text-[9px] font-semibold shadow-sm cursor-default hover:bg-slate-50 transition-colors border ${isSemi ? 'border-orange-400 ring-1 ring-orange-400/20' : 'border-slate-200'}`}>
+                                            {m}
+                                        </span>
+                                    );
+                                })}
+                            </div>
+
+                            <button type="button" onClick={() => scrollMunsRef.current?.scrollBy({ left: 150, behavior: 'smooth' })} className="absolute right-0 h-full bg-gradient-to-l from-white via-white/90 to-transparent pl-8 pr-0.5 flex items-center justify-end z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="bg-slate-800 text-white p-0.5 rounded-full shadow hover:bg-slate-700 cursor-pointer">
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+                                </div>
+                            </button>
                         </div>
-                     </div>
-                  </div>
+
+                        {!filtroSemiarido && (
+                        <div className="text-[8px] text-slate-400 mt-1 flex items-center gap-1 select-none">
+                            <span className="w-1.5 h-1.5 rounded border border-orange-400 bg-white"></span>
+                            <span>Pertencente ao semiárido</span>
+                        </div>
+                        )}
+                    </div>
+                )}
+
+                {/* DETALHAMENTO HORIZONTAL CTI ULTRA-COMPACTO */}
+                <div className="mt-0.5 mb-0.5">
+                    <div className="grid grid-cols-4 lg:grid-cols-7 gap-2">
+                        <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
+                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Univs.</span>
+                            <span className="text-lg font-black text-gov-blueDark-500 leading-none">{dashboardData.subKpis.univs}</span>
+                        </div>
+                        <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
+                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Inst. Fed.</span>
+                            <span className="text-lg font-black text-gov-red-500 leading-none">{dashboardData.subKpis.ifs}</span>
+                        </div>
+                        <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
+                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">ICTs</span>
+                            <span className="text-lg font-black text-gov-cyan-500 leading-none">{dashboardData.subKpis.icts}</span>
+                        </div>
+                        <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
+                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">C. Pesquisa</span>
+                            <span className="text-lg font-black text-gov-green-500 leading-none">{dashboardData.subKpis.centrosPesquisa}</span>
+                        </div>
+                        <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
+                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Espaços</span>
+                            <span className="text-lg font-black text-gov-cyan-700 leading-none">{dashboardData.subKpis.espacos}</span>
+                        </div>
+                        <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
+                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Parques</span>
+                            <span className="text-lg font-black text-gov-magenta-500 leading-none">{dashboardData.subKpis.parques}</span>
+                        </div>
+                        <div className="bg-white/80 border border-slate-200/50 py-1.5 px-1 rounded-lg shadow-sm flex flex-col justify-center items-center text-center hover:shadow">
+                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Incub.</span>
+                            <span className="text-lg font-black text-gov-cyan-600 leading-none">{dashboardData.subKpis.incubadoras}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* EXPANSÃO VERTICAL: MAPA E LISTAS */}
+                <div className="flex flex-col lg:flex-row gap-3 items-stretch h-[800px] 2xl:h-[90vh] w-full mt-1">
+                    
+                    {/* MAPA */}
+                    <div className="w-full lg:w-[50%] bg-white rounded-xl border border-slate-200/80 p-2.5 shadow-sm relative flex flex-col h-full">
+                    <div className="absolute top-3.5 left-3.5 bg-slate-800/90 text-white backdrop-blur-sm px-2.5 py-1.5 rounded-lg text-[10px] font-semibold z-10 flex items-center gap-1.5 shadow-sm">
+                        <span className="w-2 h-2 rounded-full bg-gov-green-500 animate-pulse"></span>
+                        Malha Cartográfica
+                    </div>
+                    <div className="w-full h-full flex-1 rounded-lg overflow-hidden bg-slate-50/50">
+                        <ConectaMap 
+                        territoriosData={territoriosData} 
+                        territoriesDynamicStats={territoriesDynamicStats} 
+                        searchTerm={searchTerm} 
+                        filtroSemiarido={filtroSemiarido} 
+                        selectedTerritory={selectedLocation} 
+                        semiaridoMunicipios={semiaridoMunicipios} 
+                        onSelectTerritory={(loc) => {
+                            setSelectedLocation(loc);
+                            if(loc) setSearchTerm(loc.nome);
+                            else setSearchTerm('');
+                        }} 
+                        />
+                    </div>
+                    </div>
+
+                    {/* LISTAS LATERAIS */}
+                    <div className="w-full lg:w-[50%] flex flex-col gap-3 h-full overflow-hidden">
+                    
+                    {/* Lista 1: Instituições CT&I */}
+                    <div className="flex-1 min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
+                        <div className="p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+                            <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Estruturas CT&I</h4>
+                            <span className="bg-gov-blueDark-100 text-gov-blueDark-700 px-2 py-0.5 rounded text-[9px] font-bold">{dashboardData.entidades.length}</span>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-2.5 bg-slate-50/30">
+                            <div className="flex flex-col gap-1.5">
+                            {dashboardData.entidades.length > 0 ? (
+                                dashboardData.entidades.map((ent, idx) => (
+                                    <div key={idx} className="p-2 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-1 transition-all hover:border-slate-300">
+                                        <span className="text-[11px] font-bold text-slate-800 leading-tight">{ent.entidade}</span>
+                                        <div className="flex justify-between items-end mt-0.5">
+                                            <span className="text-[8px] font-bold uppercase text-gov-blueDark-500 bg-gov-blueDark-50 px-1.5 py-0.5 rounded border border-gov-blueDark-100">
+                                                {ent.tipo || "Instituição"}
+                                            </span>
+                                            <div className="text-right">
+                                                <span className="block text-[9px] text-slate-600 font-semibold">{ent.municipio}</span>
+                                                {!selectedLocation && <span className="block text-[8px] text-slate-400">{ent.territorioRef}</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="flex items-center justify-center p-4 text-center h-full">
+                                    <span className="text-[10px] text-slate-400">Nenhuma estrutura encontrada.</span>
+                                </div>
+                            )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Lista 2: Cadeias Produtivas */}
+                    <div className="flex-[1.2] min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
+                        <div className="p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+                            <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Cadeias & IGs</h4>
+                            <span className="bg-gov-green-100 text-gov-green-700 px-2 py-0.5 rounded text-[9px] font-bold">{dashboardData.aplIgs.length}</span>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-2.5 bg-slate-50/30">
+                            <div className="flex flex-col gap-2">
+                            {dashboardData.aplIgs.length > 0 ? (
+                                dashboardData.aplIgs.map((apl, idx) => (
+                                    <div key={idx} className="p-2 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col transition-all hover:border-slate-300">
+                                        <div className="flex items-start justify-between mb-0.5">
+                                            <span className="text-[9px] font-bold uppercase text-gov-green-800 bg-gov-green-50 px-1.5 py-0.5 rounded border border-gov-green-200">
+                                                {apl.segmento}
+                                            </span>
+                                            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded border ${getBadgeStyle(apl.tipo)}`}>
+                                                {apl.tipo}
+                                            </span>
+                                        </div>
+                                        
+                                        {apl.entidade && (
+                                            <span className="text-[11px] font-bold text-slate-700 leading-tight mt-1">
+                                                {apl.entidade}
+                                            </span>
+                                        )}
+                                        
+                                        <div className="bg-slate-50 p-1.5 rounded border border-slate-100 mt-1.5">
+                                            <span className="block text-[8px] font-bold text-slate-400 uppercase mb-0.5">Municípios:</span>
+                                            <p className="text-[9px] text-slate-600 font-medium leading-tight">
+                                                {apl.municipiosPertencentes}
+                                            </p>
+                                        </div>
+                                        
+                                        <div className="flex justify-between items-end mt-1.5 pt-1 border-t border-slate-100/80">
+                                            <div className="text-left">
+                                                <span className="block text-[8px] text-slate-500 italic">Sede: <span className="font-bold text-slate-700">{apl.sede}</span></span>
+                                            </div>
+                                            {!selectedLocation && !filtroSemiarido && (
+                                                <span className="text-right text-[8px] text-slate-400 font-bold">{apl.territorioRef}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="flex items-center justify-center p-4 text-center h-full">
+                                    <span className="text-[10px] text-slate-400">Nenhuma cadeia encontrada.</span>
+                                </div>
+                            )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Lista 3: Assistência */}
+                    <div className="flex-[0.8] min-h-0 bg-white rounded-xl border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
+                        <div className="p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+                            <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Assistência</h4>
+                            <span className="bg-gov-cyan-100 text-gov-cyan-700 px-2 py-0.5 rounded text-[9px] font-bold">{dashboardData.assistencias.length}</span>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-2.5 bg-slate-50/30">
+                            <div className="flex flex-col gap-1.5">
+                            {dashboardData.assistencias.length > 0 ? (
+                                dashboardData.assistencias.map((ast, idx) => (
+                                    <div key={idx} className="p-2 rounded-lg border border-slate-200/60 bg-white shadow-sm flex flex-col gap-0.5 transition-all hover:border-slate-300">
+                                        <span className="text-[10px] font-bold text-slate-700 leading-snug">{ast.nome}</span>
+                                        <div className="flex justify-between items-end">
+                                            <span className="text-[9px] text-slate-500 font-semibold">{ast.municipio}</span>
+                                            {!selectedLocation && <span className="text-[8px] text-slate-400">{ast.territorioRef}</span>}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="flex items-center justify-center p-4 text-center h-full">
+                                    <span className="text-[10px] text-slate-400">Em levantamento.</span>
+                                </div>
+                            )}
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
 
                 </div>
-              </div>
-
             </div>
-          </div>
-        )}
-      </main>
-    </div>
+            )}
+        </main>
+        </div>
+    </HelmetProvider>
   );
 }
