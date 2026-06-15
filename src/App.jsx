@@ -77,7 +77,7 @@ export default function App() {
           kpis: {
             capacidadeCti: String(entidadesCTI.length),
             ifdm: t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi).toFixed(3) : "-",
-            assistenciaemcti: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado",
+            conectaBahia: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado",
             cadeiasIgs: String(cadeiasAPL.length),
             coberturaSemiarido: trueIsSemiarido ? (truePctSemiarido >= 100 ? "Pertencente" : "Parcial") : "Exterior"
           }
@@ -250,7 +250,7 @@ export default function App() {
               ifdm: dynIfdm,
               capacidadeCti: String(validCti.length),
               cadeiasIgs: String(validCadeias.length),
-              assistenciaemcti: dynConecta,
+              conectaBahia: dynConecta,
               pctSemiarido: t.pctSemiarido,
               matchesSearch: filtroSemiarido ? (t.isSemiarido && matchesSearch) : matchesSearch
           };
@@ -374,7 +374,7 @@ export default function App() {
         topKpis: {
             capacidadeCti: String(globalUniqueCtiIds.size), 
             ifdm: mediaIfdm,
-            assistenciaemcti: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalTerritoriosComAssistencia} Territórios`,
+            conectaBahia: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalTerritoriosComAssistencia} Territórios`,
             cadeiasIgs: String(globalUniqueCadeiasIds.size), 
             coberturaSemiarido: coberturaCalculada
         }, 
@@ -446,6 +446,7 @@ export default function App() {
           <nav className="flex items-center gap-3 sm:gap-4 h-full pt-0.5">
             <button onClick={() => setPage('overview')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'overview' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Início</button>
             <button onClick={() => setPage('territorios')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'territorios' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Territórios</button>
+            <button onClick={() => setPage('sobre')} className={`h-full flex items-center text-[10px] font-semibold transition-all border-b-[2px] ${page === 'sobre' ? 'text-gov-blueDark-500 border-gov-blueDark-500' : 'text-slate-400 border-transparent hover:text-slate-700'}`}>Sobre</button>
           </nav>
         </div>
         <a href="https://www.ba.gov.br/" target="_blank" rel="noopener noreferrer" className="hidden md:flex items-center">
@@ -457,16 +458,81 @@ export default function App() {
         
         {page === 'overview' ? (
           <div key="overview" className="animate-soft-fade h-full">
-            <LandingHero 
-                onAccessDashboard={() => setPage('territorios')} 
-                territoriosData={territoriosData}
-            />
+            <LandingHero onAccessDashboard={() => setPage('territorios')} territoriosData={territoriosData} />
           </div>
-        ) : (
-          // CONTAINER PRINCIPAL: Largura reduzida para 90% (max-w 1350px) para criar uma "Ilha Flutuante"
-          <div key="territorios" className="animate-soft-fade relative p-2 sm:p-4 lg:p-6 max-w-[94%] lg:max-w-[90%] 2xl:max-w-[1350px] mx-auto w-full min-h-full flex flex-col justify-start">
+        ) : page === 'sobre' ? (
+          
+          /* ========================================================
+             PÁGINA SOBRE O PAINEL
+             ======================================================== */
+          <div key="sobre" className="animate-soft-fade relative p-1 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 shadow-md p-6 lg:p-10 mb-8">
+              <h2 className="text-2xl lg:text-3xl font-black text-slate-900 mb-6 tracking-tight">Sobre o Painel SECTI Territórios</h2>
+              
+              <div className="prose prose-sm sm:prose-base prose-slate max-w-none">
+                
+                <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-3 mt-6 border-b border-slate-200 pb-2">1. Visão Geral do Sistema</h3>
+                <p className="text-slate-600 leading-relaxed mb-4">
+                  O Painel SECTI Territórios é uma plataforma de inteligência geográfica concebida para subsidiar a formulação e o acompanhamento de políticas públicas de Ciência, Tecnologia e Inovação (CT&I) no Estado da Bahia.
+                </p>
+                <p className="text-slate-600 leading-relaxed mb-8">
+                  Através da consolidação de dados territorializados, o sistema integra informações referentes a capacidades institucionais, desenvolvimento socioeconômico, cadeias produtivas e assistência pública. A plataforma proporciona aos gestores e investigadores uma base analítica sobre as vocações e características dos 27 Territórios de Identidade da Bahia.
+                </p>
 
-            <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-lg p-4 lg:p-5 flex flex-col gap-3 transition-all duration-500">
+                <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-4 mt-8 border-b border-slate-200 pb-2">2. Definições e Indicadores (KPIs)</h3>
+                <p className="text-slate-600 leading-relaxed mb-4">Para garantir o rigor analítico, a plataforma opera com os seguintes conceitos e métricas, calculados em tempo real:</p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                    <span className="block font-bold text-slate-800 mb-1">Capacidade em CT&I</span>
+                    <span className="text-[11px] text-slate-600 leading-relaxed">Quantitativo de infraestruturas mapeadas, englobando Universidades (Federais e Estaduais), Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.</span>
+                  </div>
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                    <span className="block font-bold text-slate-800 mb-1">Desenvolvimento Territorial</span>
+                    <span className="text-[11px] text-slate-600 leading-relaxed">Baseado no Índice FIRJAN (IFDM) de 2023. O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem os respectivos territórios de identidade da Bahia. O índice é composto por variáveis relacionadas às condições de Emprego e Renda, Saúde e Educação dos municípios.</span>
+                  </div>
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                    <span className="block font-bold text-slate-800 mb-1">Assistência Pública em CT&I</span>
+                    <span className="text-[11px] text-slate-600 leading-relaxed">Identifica a presença de ações de suporte estatal à população, contando este piloto com a infraestrutura relativa ao Programa Conecta Bahia que tem como finalidade ampliar o acesso à internet em áreas rurais do estado.</span>
+                  </div>
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-sm">
+                    <span className="block font-bold text-slate-800 mb-1">APLs e IGs</span>
+                    <span className="text-[11px] text-slate-600 leading-relaxed">Mapeamento de <strong>Arranjos Produtivos Locais</strong> (aglomerações de cooperação económica) e <strong>Indicações Geográficas</strong> (certificações de produtos inerentes à sua origem territorial).</span>
+                  </div>
+                </div>
+
+                <h3 className="text-gov-blueDark-500 font-bold uppercase tracking-wider text-xs mb-4 mt-8 border-b border-slate-200 pb-2">3. Guia de Funcionalidades</h3>
+                <p className="text-slate-600 leading-relaxed mb-4">O painel foi desenvolvido com foco em alta densidade de informação e interatividade espacial. Descubra como extrair o máximo potencial do sistema:</p>
+
+                <ul className="space-y-4 mb-6">
+                
+                  <li className="flex gap-3 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                    <div>
+                      <strong className="text-slate-800 block text-sm">Filtro do Semiárido Baiano</strong>
+                      <span className="text-[11px] text-slate-600">A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido. Municípios e entidades localizadas no litoral são omitidos, e os indicadores são recalculados com precisão matemática.</span>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <div className="bg-gov-cyan-100 text-gov-cyan-600 p-1.5 rounded-lg mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>
+                    <div>
+                      <strong className="text-slate-800 block text-sm">Exportação para Business Intelligence</strong>
+                      <span className="text-[11px] text-slate-600">A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em quatro abas relacionais, preparado para análises estatísticas externas.</span>
+                    </div>
+                  </li>
+                </ul>
+
+              </div>
+            </div>
+          </div>
+
+        ) : (
+          // ========================================================
+          // PÁGINA TERRITÓRIOS (DASHBOARD PRINCIPAL)
+          // ========================================================
+          <div key="territorios" className="animate-soft-fade relative p-2 sm:p-4 lg:p-1 max-w-[100%] lg:max-w-[95%] 2xl:max-w-[1350px] mx-auto w-full min-h-full flex flex-col justify-start">
+
+            <div className="relative w-full bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-lg p- lg:p-6 flex flex-col gap-3 transition-all duration-500">
               
               {/* BARRA DE AÇÕES COMPACTA */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 items-center border-b border-slate-200/60 pb-2.5">
@@ -567,8 +633,8 @@ export default function App() {
                     <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span> Abrangência</div>
                   </div>
                   <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Assistência em CT&I</p>
-                    <p className="text-lg font-black text-gov-cyan-700 leading-none truncate">{dashboardData.topKpis.assistenciaemcti}</p>
+                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Conecta Bahia</p>
+                    <p className="text-lg font-black text-gov-cyan-700 leading-none truncate">{dashboardData.topKpis.conectaBahia}</p>
                     <div className="text-[9px] text-slate-400 mt-1 flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-gov-cyan-500 mr-1.5"></span> Assistência</div>
                   </div>
                   <div className="bg-white/80 border border-slate-200/60 px-3 py-2 rounded-lg shadow-sm hover:shadow flex flex-col justify-between">
