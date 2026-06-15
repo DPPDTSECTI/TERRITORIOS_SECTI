@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ExcelExportButton from './ExcelExportButton';
 
-const LandingHero = ({ onAccessDashboard, territoriosData }) => {
+const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
     const images = [
         "/img/hero/55177617481_a2f52dd9f0_o.jpg",
         "/img/hero/55193881827_608169f0ec_o.jpg",
@@ -26,78 +26,95 @@ const LandingHero = ({ onAccessDashboard, territoriosData }) => {
     }, [images.length]);
 
     return (
-        <div className="relative w-full h-screen font-sans flex flex-col lg:flex-row overflow-hidden bg-slate-50 touch-none pt-20 lg:pt-28 pb-6">
+        <div className="relative w-full h-[90vh] font-sans flex flex-col lg:flex-row overflow-hidden touch-none pt-20 lg:pt-28 pb-6 bg-transparent">
             
-            {/* EFEITO DEGRADÊ DE FUNDO */}
-            <div className="absolute top-0 right-0 w-full lg:w-1/2 h-full bg-gradient-to-bl from-gov-blueDark-500/10 via-transparent to-transparent z-0 pointer-events-none" />
+            {/* CSS Animado para o Título */}
+            <style>{`
+                @keyframes textShimmer {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+                .animate-text-gradient {
+                    background-size: 200% auto;
+                    animation: textShimmer 4s ease-in-out infinite;
+                }
+            `}</style>
 
             {/* COLUNA ESQUERDA: Conteúdo Principal */}
             <main className="relative z-30 w-full lg:w-[55%] h-full flex flex-col justify-center items-start px-8 sm:px-12 lg:pl-24 lg:pr-8 py-4 lg:py-0">
                 
-                <h2 className="text-lg sm:text-xl tracking-wide uppercase font-display mb-2 drop-shadow-sm">
-                    <span className="text-gov-blueDark-500">Painel </span>
-                    <span className="text-gov-red-500">Territorial</span>
+                <h2 className="text-lg sm:text-xl tracking-widest uppercase font-black mb-3 drop-shadow-sm flex gap-2">
+                    <span className={darkMode ? 'text-blue-400' : 'text-gov-blueDark-500'}>Painel</span>
+                    <span className={darkMode ? 'text-gov-red-400' : 'text-gov-red-500'}>Territorial</span>
                 </h2>
                 
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.5rem] font-black text-slate-900 tracking-tight mb-5 leading-[1.1] drop-shadow-sm">                    
-                    Ciência, Tecnologia e <br />
-                    Inovação
+                <h1 className={`text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-black tracking-tighter mb-6 leading-[1.05] drop-shadow-sm bg-clip-text text-transparent animate-text-gradient ${
+                    darkMode 
+                        ? 'bg-gradient-to-r from-blue-400 via-indigo-400 to-red-400' 
+                        : 'bg-gradient-to-r from-gov-blueDark-500 via-purple-600 to-gov-red-500'
+                }`}>
+                    Ciência, Tecnologia <br /> e Inovação
                 </h1>
 
-                <p className="text-sm sm:text-base text-slate-600 font-light max-w-lg mb-8 leading-relaxed antialiased">
+                <p className={`text-sm sm:text-base font-medium max-w-lg mb-10 leading-relaxed antialiased ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                     Uma plataforma interativa desenvolvida pela SECTI para a visualização das 
                     características inerentes à ciência, tecnologia e inovação nos territórios de 
                     identidade do Estado da Bahia.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
                     <button
                         onClick={onAccessDashboard}
-                        className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gov-blueDark-500 hover:bg-gov-blueDark-600 text-white font-black tracking-wider uppercase text-xs sm:text-sm transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center transform-gpu"
+                        className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-black tracking-wider uppercase text-xs sm:text-sm transition-all duration-300 transform-gpu hover:-translate-y-1 ${
+                            darkMode 
+                                ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]' 
+                                : 'bg-gov-blueDark-500 hover:bg-gov-blueDark-600 text-white shadow-xl hover:shadow-2xl'
+                        }`}
                     >
-                        Acessar
+                        Acessar o Painel
                     </button>
 
-                    {/* 2. Passe os dados com o nome correto: territoriosData */}
                     <ExcelExportButton 
                         territoriosData={territoriosData} 
-                        variant="outline" 
+                        variant={darkMode ? 'solid' : 'outline'} 
                         className="w-full sm:w-auto" 
                     />
                 </div>
 
-                {/* Indicadores do Carrossel */}
-                <div className="flex gap-2 mt-8">
+                <div className="flex gap-2.5 mt-12">
                     {images.map((_, index) => (
                         <button
                             key={index}
                             onClick={() => setCurrentImage(index)}
                             aria-label={`Ir para a imagem ${index + 1}`}
                             className={`h-1.5 transition-all duration-500 rounded-full ${
-                                index === currentImage ? 'w-8 bg-gov-blueDark-500 shadow-sm' : 'w-2 bg-slate-300 hover:bg-slate-400'
+                                index === currentImage 
+                                    ? (darkMode ? 'w-10 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]' : 'w-10 bg-gov-blueDark-500 shadow-md') 
+                                    : (darkMode ? 'w-2.5 bg-slate-700 hover:bg-slate-500' : 'w-2.5 bg-slate-300 hover:bg-slate-400')
                             }`}
                         />
                     ))}
                 </div>
             </main>
 
-            {/* COLUNA DIREITA: Carrossel Vertical (Aceleração de Hardware ativada) */}
+            {/* COLUNA DIREITA: Carrossel Vertical */}
             <aside className="relative z-10 hidden md:flex w-full lg:w-[45%] h-full items-center justify-center pr-8 lg:pr-24 perspective-1000">
-                
                 <div className="relative w-full max-w-sm xl:max-w-md h-full max-h-[70vh] aspect-[4/5] flex items-center justify-center">
-                    
                     {images.map((img, index) => {
                         const prevIndex = (currentImage - 1 + images.length) % images.length;
                         const nextIndex = (currentImage + 1) % images.length;
                         
                         let positionClasses = '';
+                        const activeBorder = darkMode ? 'border-slate-800' : 'border-white';
+                        const inactiveBorder = darkMode ? 'border-slate-800/50' : 'border-white/50';
                         
                         if (index === currentImage) {
-                            positionClasses = 'translate-x-0 scale-100 opacity-100 z-30 shadow-[0_15px_40px_rgba(0,0,0,0.15)] border-[5px] border-white cursor-default';
+                            positionClasses = `translate-x-0 scale-100 opacity-100 z-30 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[6px] ${activeBorder} cursor-default`;
                         } else if (index === prevIndex) {
-                            positionClasses = '-translate-x-[25%] xl:-translate-x-[30%] scale-90 opacity-20 z-20 border-[3px] border-white/50 cursor-pointer hover:opacity-40';
+                            positionClasses = `-translate-x-[25%] xl:-translate-x-[30%] scale-90 opacity-20 z-20 border-[3px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:-translate-x-[28%]`;
                         } else if (index === nextIndex) {
-                            positionClasses = 'translate-x-[25%] xl:translate-x-[30%] scale-90 opacity-20 z-20 border-[3px] border-white/50 cursor-pointer hover:opacity-40';
+                            positionClasses = `translate-x-[25%] xl:translate-x-[30%] scale-90 opacity-20 z-20 border-[3px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:translate-x-[28%]`;
                         } else {
                             positionClasses = 'translate-x-0 scale-75 opacity-0 z-10 pointer-events-none';
                         }
@@ -105,8 +122,8 @@ const LandingHero = ({ onAccessDashboard, territoriosData }) => {
                         return (
                             <div
                                 key={index}
-                                /* transform-gpu, will-change-transform e backface-hidden forçam a renderização suave via placa de vídeo */
-                                className={`absolute w-full h-full transition-all duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] origin-center rounded-[2rem] overflow-hidden transform-gpu will-change-transform backface-hidden antialiased ${positionClasses}`}
+                                /* A CORREÇÃO ESTÁ AQUI: bg-white ou bg-slate-800 impede o vazamento de sub-pixel da sombra */
+                                className={`absolute w-full h-full transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)] origin-center rounded-[2.5rem] overflow-hidden transform-gpu will-change-transform backface-hidden antialiased ${darkMode ? 'bg-slate-800' : 'bg-white'} ${positionClasses}`}
                                 style={{ WebkitBackfaceVisibility: 'hidden' }}
                                 onClick={() => {
                                     if (index === prevIndex) setCurrentImage(prevIndex);
@@ -115,19 +132,16 @@ const LandingHero = ({ onAccessDashboard, territoriosData }) => {
                             >
                                 <img 
                                     src={img} 
-                                    alt={`Belezas da Bahia ${index + 1}`} 
+                                    alt={`Paisagem da Bahia ${index + 1}`} 
                                     className="w-full h-full object-cover transform-gpu antialiased"
-                                    style={{ imageRendering: 'high-quality' }} // Força algoritmo de alta qualidade
+                                    style={{ imageRendering: 'high-quality' }}
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                             </div>
                         );
                     })}
                 </div>
-
-                <div className="absolute top-[20%] right-[15%] w-56 h-56 bg-gov-red-500/10 rounded-full blur-[70px] -z-10" />
             </aside>
-
         </div>
     );
 };
