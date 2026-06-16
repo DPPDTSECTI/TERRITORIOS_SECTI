@@ -78,6 +78,9 @@ function MainApp() {
   const [filtroSemiarido, setFiltroSemiarido] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [areaGeralFilter, setAreaGeralFilter] = useState([]);
+  const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
+  const [cursoSearchTerm, setCursoSearchTerm] = useState('');
 
   // Estados dos Filtros Avançados Flutuantes
   const [isFilterPanelOpen, setIsFilterOpen] = useState(false);
@@ -93,6 +96,8 @@ function MainApp() {
 
   const dropdownRef = useRef(null);
   const filterPanelRef = useRef(null);
+  const scrollMunsRef = useRef(null);
+  const areaGeralRef = useRef(null);
 
   // Pipeline de Dados
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
@@ -118,12 +123,14 @@ function MainApp() {
         const trueIsSemiarido = trueQtdSemi > 0;
         const entidadesCTI = Array.isArray(t.capacidadeDetalhada) ? t.capacidadeDetalhada : [];
         const cadeiasAPL = Array.isArray(t.cadeiasProdutivasDetalhado) ? t.cadeiasProdutivasDetalhado : [];
+        const cursosEnsino = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
 
         return {
           id: String(index + 1), nome: t.territory || "Desconhecido", tipo: 'Território', regiao: t.territory || "",
           isSemiarido: trueIsSemiarido, pctSemiarido: truePctSemiarido, qtdSemiarido: trueQtdSemi,
           entidadesDetalhadas: entidadesCTI, cadeiasProdutivasDetalhado: cadeiasAPL,
           desenvolvimentoDetalhado: Array.isArray(t.desenvolvimentoDetalhado) ? t.desenvolvimentoDetalhado : [],
+          cursosDetalhado: cursosEnsino,
           assistenciaPublica: t.assistenciaPublica || { iniciativas: [] },
           desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 },
           kpis: {
@@ -147,6 +154,7 @@ function MainApp() {
     function handleClickOutside(event) { 
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsDropdownOpen(false); 
         if (filterPanelRef.current && !filterPanelRef.current.contains(event.target)) setIsFilterOpen(false);
+        if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) setIsAreaGeralOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -174,7 +182,7 @@ function MainApp() {
 
         if (!term) { results.push({ ...t, matchType: 'Território', matchText: t.regiao }); return; }
         
-        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null;
+        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null; let foundCursoMatch = null;
         const territorioBase = territoriosMunicipios.territorios_de_identidade.find((tb) => normalize(tb.nome) === normalize(t.nome));
 
         if (territorioBase) {
@@ -189,10 +197,15 @@ function MainApp() {
             foundCadeiaMatch = t.cadeiasProdutivasDetalhado.find(cad => isMunValid(cad.sede || cad.municipioSatelite) && (normalize(cad.segmento).includes(term) || normalize(cad.sede || '').includes(term)));
             if (foundCadeiaMatch) matched = true;
         }
+        if (!matched && t.cursosDetalhado) {
+            foundCursoMatch = t.cursosDetalhado.find(curso => isMunValid(curso.municipio) && (normalize(curso.curso).includes(term) || normalize(curso.entidade).includes(term) || normalize(curso.areaGeral).includes(term)));
+            if (foundCursoMatch) matched = true;
+        }
 
         if (foundMunMatch) results.push({ ...t, matchType: 'Município', matchText: foundMunMatch });
         else if (foundEntMatch) results.push({ ...t, matchType: normalize(foundEntMatch.tipo).includes(term) ? 'Tipo de Infraestrutura' : 'Entidade CT&I', matchText: foundEntMatch.entidade });
         else if (foundCadeiaMatch) results.push({ ...t, matchType: 'Cadeia Produtiva', matchText: foundCadeiaMatch.segmento });
+        else if (foundCursoMatch) results.push({ ...t, matchType: 'Curso Superior', matchText: foundCursoMatch.curso });
         else if (normalize(t.nome).includes(term)) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
     });
     return results.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -234,11 +247,12 @@ function MainApp() {
               (term && !isSearchTermATerritory ? (normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term)) : true)
           );
           const validCadeias = t.cadeiasProdutivasDetalhado.filter(cad => isMunValid(cad.sede || cad.municipioSatelite) && (term && !isSearchTermATerritory ? normalize(cad.segmento).includes(term) : true));
+          const validCursos = (t.cursosDetalhado || []).filter(curso => isMunValid(curso.municipio) && (term && !isSearchTermATerritory ? (normalize(curso.curso).includes(term) || normalize(curso.entidade).includes(term) || normalize(curso.areaGeral).includes(term)) : true));
           
           let matchesSearch = true;
           if (term) {
               const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
-              matchesSearch = normalize(t.nome).includes(term) || (territorioBase && territorioBase.municipios.some(m => normalize(m).includes(term))) || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0));
+              matchesSearch = normalize(t.nome).includes(term) || (territorioBase && territorioBase.municipios.some(m => normalize(m).includes(term))) || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
           }
 
           // NOVO: Lógica restrita para o Mapa. 
@@ -266,7 +280,7 @@ function MainApp() {
     const term = normalize(searchTerm); const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
     
     const kpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
-    const entidadesFlat = []; const aplIgsFlat = []; const assistenciasSet = new Map();
+    const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = []; const assistenciasSet = new Map();
     const globalIds = new Set(); const globalCadeiasIds = new Set();
     let somaIfdmPop = 0; let somaPopulacao = 0; let totalAssistencia = 0;
 
@@ -341,6 +355,13 @@ function MainApp() {
             if (cad.id) globalCadeiasIds.add(cad.id);
         });
 
+        (t.cursosDetalhado || []).forEach(curso => {
+            if (!isMunValid(curso.municipio)) return;
+            if (term && !isSearchTermATerritory && !normalize(curso.curso).includes(term) && !normalize(curso.entidade).includes(term) && !normalize(curso.areaGeral).includes(term)) return;
+            validData = true;
+            cursosFlat.push({ ...curso, territorioRef: t.nome });
+        });
+
         if (t.assistenciaPublica?.existe && (!filtroSemiarido || validData)) {
             totalAssistencia++;
             (t.assistenciaPublica.iniciativas || []).forEach(ini => assistenciasSet.set(`${ini}|${t.nome}`, { nome: ini, municipio: 'Território', territorioRef: t.nome }));
@@ -402,12 +423,31 @@ function MainApp() {
         topKpisPct, subKpis: kpisPanel, unfiltSubKpis: unfiltKpisPanel,
         entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
+        cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || "")),
         assistencias: Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || "")) 
     };
   }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, searchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
   const toggleCtiFilter = (key) => {
       setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleAreaGeralToggle = (areaName) => {
+    setAreaGeralFilter(prev => {
+        const newFilters = new Set(prev);
+        if (newFilters.has(areaName)) {
+            newFilters.delete(areaName);
+        } else {
+            newFilters.add(areaName);
+        }
+        return Array.from(newFilters);
+    });
+  };
+
+  const getAreaFilterButtonText = () => {
+    if (areaGeralFilter.length === 0) return 'Filtrar Área';
+    if (areaGeralFilter.length === 1) return `Área: ${areaGeralFilter[0]}`;
+    return `${areaGeralFilter.length} Áreas Selecionadas`;
   };
 
   const resetAllFilters = () => {
@@ -441,6 +481,63 @@ function MainApp() {
       return darkMode ? 'bg-slate-700 text-slate-300 border-slate-600' : 'bg-slate-100 text-slate-600 border-slate-200';
   };
 
+  const getAreaStyles = (areaName, darkMode) => {
+      const norm = normalize(areaName);
+      let theme = 'default';
+      
+      if (norm.includes('agraria') || norm.includes('natureza')) theme = 'green';
+      else if (norm.includes('biologica') || norm.includes('saude')) theme = 'cyan';
+      else if (norm.includes('exata') || norm.includes('tecnologia')) theme = 'blueDark';
+      else if (norm.includes('humana')) theme = 'orange';
+      else if (norm.includes('sociai') || norm.includes('aplicada')) theme = 'magenta';
+      else if (norm.includes('engenharia')) theme = 'red';
+      else if (norm.includes('letra') || norm.includes('arte') || norm.includes('linguistica')) theme = 'yellow';
+
+      const styles = {
+          green: {
+              dot: 'bg-gov-green-500', text: darkMode ? 'text-gov-green-400' : 'text-gov-green-700',
+              activeBg: darkMode ? 'bg-gov-green-500/20 border-gov-green-500/50' : 'bg-gov-green-100 border-gov-green-200',
+              countBg: darkMode ? 'bg-gov-green-500/30 text-gov-green-400' : 'bg-white text-gov-green-800'
+          },
+          cyan: {
+              dot: 'bg-gov-cyan-500', text: darkMode ? 'text-gov-cyan-400' : 'text-gov-cyan-700',
+              activeBg: darkMode ? 'bg-gov-cyan-500/20 border-gov-cyan-500/50' : 'bg-gov-cyan-100 border-gov-cyan-200',
+              countBg: darkMode ? 'bg-gov-cyan-500/30 text-gov-cyan-400' : 'bg-white text-gov-cyan-800'
+          },
+          blueDark: {
+              dot: 'bg-gov-blueDark-500', text: darkMode ? 'text-blue-400' : 'text-gov-blueDark-700',
+              activeBg: darkMode ? 'bg-blue-500/20 border-blue-500/50' : 'bg-gov-blueDark-100 border-gov-blueDark-200',
+              countBg: darkMode ? 'bg-blue-500/30 text-blue-400' : 'bg-white text-gov-blueDark-800'
+          },
+          orange: {
+              dot: 'bg-gov-orange-500', text: darkMode ? 'text-gov-orange-400' : 'text-gov-orange-700',
+              activeBg: darkMode ? 'bg-gov-orange-500/20 border-gov-orange-500/50' : 'bg-gov-orange-100 border-gov-orange-200',
+              countBg: darkMode ? 'bg-gov-orange-500/30 text-gov-orange-400' : 'bg-white text-gov-orange-800'
+          },
+          magenta: {
+              dot: 'bg-gov-magenta-500', text: darkMode ? 'text-gov-magenta-400' : 'text-gov-magenta-700',
+              activeBg: darkMode ? 'bg-gov-magenta-500/20 border-gov-magenta-500/50' : 'bg-gov-magenta-100 border-gov-magenta-200',
+              countBg: darkMode ? 'bg-gov-magenta-500/30 text-gov-magenta-400' : 'bg-white text-gov-magenta-800'
+          },
+          red: {
+              dot: 'bg-gov-red-500', text: darkMode ? 'text-gov-red-400' : 'text-gov-red-700',
+              activeBg: darkMode ? 'bg-gov-red-500/20 border-gov-red-500/50' : 'bg-gov-red-100 border-gov-red-200',
+              countBg: darkMode ? 'bg-gov-red-500/30 text-gov-red-400' : 'bg-white text-gov-red-800'
+          },
+          yellow: {
+              dot: 'bg-gov-yellow-500', text: darkMode ? 'text-gov-yellow-400' : 'text-gov-yellow-700',
+              activeBg: darkMode ? 'bg-gov-yellow-500/20 border-gov-yellow-500/50' : 'bg-gov-yellow-100 border-gov-yellow-200',
+              countBg: darkMode ? 'bg-gov-yellow-500/30 text-gov-yellow-400' : 'bg-white text-gov-yellow-800'
+          },
+          default: {
+              dot: 'bg-emerald-500', text: darkMode ? 'text-emerald-400' : 'text-emerald-700',
+              activeBg: darkMode ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-50 border-emerald-200',
+              countBg: darkMode ? 'bg-emerald-500/30 text-emerald-400' : 'bg-white text-emerald-800'
+          }
+      };
+      return styles[theme] || styles.default;
+  };
+
   const isActive = (path) => location.pathname === path;
 
   const themeClasses = {
@@ -450,6 +547,27 @@ function MainApp() {
       textMuted: darkMode ? 'text-slate-400' : 'text-slate-500',
       cardHover: darkMode ? 'hover:bg-slate-800/50 hover:border-slate-600' : 'hover:bg-white hover:border-slate-300'
   };
+
+  const areaGeralSummary = useMemo(() => {
+      const counts = {};
+      dashboardData.cursos.forEach(c => {
+          const area = c.areaGeral || 'Não Informada';
+          counts[area] = (counts[area] || 0) + 1;
+      });
+      return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  }, [dashboardData.cursos]);
+
+  const cursosFiltrados = useMemo(() => {
+      let result = dashboardData.cursos;
+      if (areaGeralFilter.length > 0) {
+          result = result.filter(c => areaGeralFilter.includes(c.areaGeral || 'Não Informada'));
+      }
+      if (cursoSearchTerm) {
+          const term = normalize(cursoSearchTerm);
+          result = result.filter(c => normalize(c.curso).includes(term) || normalize(c.entidade).includes(term) || normalize(c.municipio).includes(term));
+      }
+      return result;
+  }, [dashboardData.cursos, areaGeralFilter, cursoSearchTerm]);
 
   return (
     <div className={`relative flex flex-col font-sans overflow-hidden transition-colors duration-500 ${themeClasses.app}`} style={{ zoom: "0.95", width: "105.26vw", height: "105.26vh" }}>
@@ -729,6 +847,122 @@ function MainApp() {
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                {/* NOVA SESSÃO: CURSOS SUPERIORES */}
+                <div className={`mt-4 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                    <div className={`p-4 border-b flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
+                        <div className="flex items-center gap-3">
+                            <h4 className={`text-xs font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cursos em CT&I (Ensino Superior)</h4>
+                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-black hidden lg:inline-block ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{cursosFiltrados.length} Cursos</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            {/* BARRA DE PESQUISA LOCAL */}
+                            <div className="relative flex-1 sm:w-48 lg:w-64">
+                                <input 
+                                    type="text" 
+                                    placeholder="Buscar curso, inst. ou cidade..." 
+                                    value={cursoSearchTerm} 
+                                    onChange={(e) => setCursoSearchTerm(e.target.value)} 
+                                    className={`w-full h-9 pl-8 pr-8 rounded-xl text-[10px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
+                                />
+                                <svg className={`w-3.5 h-3.5 absolute left-3 top-2.5 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                {cursoSearchTerm && (
+                                    <button onClick={() => setCursoSearchTerm('')} className="absolute right-2.5 top-2.5 hover:text-red-500 text-slate-400">
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                )}
+                            </div>
+
+                        {/* DROPDOWN DE FILTRO (Estilo Filtros Avançados) */}
+                        {areaGeralSummary.length > 0 && (
+                            <div className="relative" ref={areaGeralRef}>
+                                <button
+                                    onClick={() => setIsAreaGeralOpen(!isAreaGeralOpen)}
+                                    className={`h-9 px-4 rounded-xl font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? 'bg-emerald-600 border-emerald-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                    <span className="max-w-[100px] sm:max-w-[200px] truncate">{getAreaFilterButtonText()}</span>
+                                </button>
+
+                                {isAreaGeralOpen && (
+                                    <div className={`absolute right-0 top-[100%] mt-2 w-64 max-h-80 overflow-y-auto hide-scroll rounded-2xl p-3 shadow-2xl border z-[150] flex flex-col gap-1.5 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
+                                        <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
+                                        {areaGeralSummary.map(area => {
+                                            const styles = getAreaStyles(area.name, darkMode);
+                                            const isSelected = areaGeralFilter.includes(area.name);
+                                            return (
+                                                <button
+                                                    key={area.name}
+                                                    onClick={() => handleAreaGeralToggle(area.name)}
+                                                    className={`w-full text-left px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-between border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}
+                                                >
+                                                    <div className="flex items-center gap-2 truncate pr-2">
+                                                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${styles.dot}`}></span>
+                                                        <span className={isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}>{area.name}</span>
+                                                    </div>
+                                                    <span className={`px-1.5 py-0.5 rounded-md text-[9px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span>
+                                                </button>
+                                            );
+                                        })}
+                                        {areaGeralFilter.length > 0 && (
+                                            <button onClick={() => { setAreaGeralFilter([]); setIsAreaGeralOpen(false); }} className={`mt-2 w-full h-8 rounded-xl font-bold text-[9px] uppercase tracking-wider border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors`}>Limpar Filtros</button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        </div>
+                    </div>
+
+                    <div className="p-4 max-h-[400px] overflow-y-auto hide-scroll">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                            {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => (
+                                <div key={curso.id || idx} className={`p-4 rounded-xl border flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                                    
+                                    {/* CABEÇALHO */}
+                                    <div className="flex flex-col">
+                                        <h5 className={`text-xs font-bold leading-snug mb-1 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{curso.curso}</h5>
+                                        {curso.areaGeral && (
+                                            <div className="flex items-center gap-1.5">
+                                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${getAreaStyles(curso.areaGeral, darkMode).dot}`}></span>
+                                                <span className={`text-[9px] font-bold uppercase tracking-wider opacity-90 ${getAreaStyles(curso.areaGeral, darkMode).text}`}>{curso.areaGeral}</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* CORPO: Info Institucional */}
+                                    <div className={`p-2.5 rounded-lg border ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
+                                        <span className={`block text-[10px] font-bold mb-1.5 leading-tight ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>{curso.entidade}</span>
+                                        {(curso.categoriaAdm || curso.orgAcademica) && (
+                                            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[8px] font-medium uppercase tracking-wider opacity-80">
+                                                {[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (
+                                                    <React.Fragment key={i}>
+                                                        <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>{tag}</span>
+                                                        {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* RODAPÉ */}
+                                    <div className="flex justify-between items-end mt-auto pt-1 gap-2">
+                                        <span className={`text-[9px] font-semibold flex items-center gap-1.5 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}>
+                                            <svg className="w-3 h-3 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                            <span className="truncate">{curso.municipio} • {curso.territorioRef}</span>
+                                        </span>
+                                        
+                                        <div className="flex items-center gap-1.5 shrink-0">
+                                            {curso.nivel && <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.nivel}</span>}
+                                            {curso.modalidade && <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.modalidade}</span>}
+                                        </div>
+                                    </div>
+                                </div>
+                            )) : (<div className={`col-span-full flex items-center justify-center py-8 text-[11px] font-medium italic ${themeClasses.textMuted}`}>{areaGeralFilter.length > 0 || cursoSearchTerm ? `Nenhum curso encontrado para a pesquisa e/ou filtros aplicados.` : 'Nenhum curso superior mapeado ou isolado.'}</div>)}
+                        </div>
                     </div>
                 </div>
 

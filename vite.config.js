@@ -110,6 +110,7 @@ function parseSpreadsheet(buffer) {
         capacidadeRows: [],
         cadeiasRows: [],
         desenvolvimentoRows: [],
+        cursosRows: [],
         desenvolvimento: { ifdmTi: null, somaIfdmPop: 0, populacaoTotal: 0 },
         assistenciaPublica: { existe: false, iniciativas: new Set() },
         semiaridoAcumulado: 0,
@@ -138,7 +139,7 @@ function parseSpreadsheet(buffer) {
       }
 
       // Coluna Mestra: Território
-      const territorioRaw = row['territoriodeidentidade'] || row['territorio'];
+      const territorioRaw = row['territoriodeidentidade'] || row['territorioidentidade'] || row['territoriosdeidentidade'] || row['territorio'] || row['territorios'];
       if (!territorioRaw) return;
 
       // Trata Territórios Compostos (Ex: "Recôncavo; Baixo Sul")
@@ -148,8 +149,8 @@ function parseSpreadsheet(buffer) {
       const uniqueRowId = `aba_${sheetNorm}_linha_${idx}`;
 
       // Extrações base partilhadas
-      const municipio = String(row['municipio'] || row['local'] || '').trim();
-      const entidade = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || '').trim();
+      const municipio = String(row['municipio'] || row['cidade'] || row['local'] || '').trim();
+      const entidade = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || row['ies'] || '').trim();
       const tipo = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || row['categoria'] || row['natureza'] || '').trim();
       const qtd = toNumber(row['quantidade'] || row['qtd'] || row['qtdenti'] || row['valorentidades'] || 1);
 
@@ -244,6 +245,28 @@ function parseSpreadsheet(buffer) {
          if (isTruthy(assistencia)) territory.assistenciaPublica.existe = true;
          if (iniciativas !== '') splitList(iniciativas).forEach(i => territory.assistenciaPublica.iniciativas.add(i));
 
+         // =================================================================
+         // ISOLAMENTO 5: CURSOS EM CT&I (ENSINO SUPERIOR)
+         // =================================================================
+         if (sheetNorm.includes('curso') || sheetNorm.includes('ensino')) {
+             // Leitura Estrita pelas Colunas Oficiais (Sem mesclar com CT&I)
+             const nomeCurso = String(row['curso'] || '').trim();
+             
+             if (nomeCurso !== '') {
+                 territory.cursosRows.push({
+                     id: uniqueRowId,
+                     municipio: String(row['municipio'] || '').trim(),
+                     entidade: String(row['universidade'] || row['sigla'] || '').trim(),
+                     curso: nomeCurso,
+                     areaGeral: String(row['areageral'] || row['area'] || '').trim(),
+                     nivel: String(row['grauacademico'] || '').trim(),
+                     modalidade: String(row['modalidade'] || '').trim(),
+                     orgAcademica: String(row['orgacademica'] || '').trim(),
+                     categoriaAdm: String(row['categoriaadm'] || '').trim(),
+                     quantidade: qtd
+                 });
+             }
+         }
       });
     });
   };
@@ -268,6 +291,7 @@ function parseSpreadsheet(buffer) {
     
     entry.capacidadeRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
     entry.desenvolvimentoRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
+    entry.cursosRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
     
     entry.cadeiasRows.forEach(e => { 
         if (e.sede && e.sede !== 'N/A') allMunicipios.add(normalize(e.sede)); 
@@ -294,6 +318,7 @@ function parseSpreadsheet(buffer) {
       capacidadeDetalhada: entry.capacidadeRows,
       cadeiasProdutivasDetalhado: entry.cadeiasRows, 
       desenvolvimentoDetalhado: entry.desenvolvimentoRows, // ENVIANDO OS MUNICÍPIOS COM SEU IFDM E POPULAÇÃO
+      cursosDetalhado: entry.cursosRows,
       desenvolvimento: {
         ifdmTi: entry.desenvolvimento.ifdmTi,
         populacaoTotal: entry.desenvolvimento.populacaoTotal || null,

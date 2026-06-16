@@ -12,11 +12,12 @@ export default function ExcelExportButton({
     setIsLoading(true);
 
     try {
-      // 1. INICIALIZAR AS 4 MATRIZES DE DADOS (Tabelas)
+      // 1. INICIALIZAR AS MATRIZES DE DADOS (Tabelas)
       const dataTerritorios = [];
       const dataCTI = [];
       const dataCadeias = [];
       const dataMunicipios = [];
+      const dataCursos = [];
 
       territoriosData.forEach(t => {
         // ABA 1: RESUMO DO TERRITÓRIO (Atualizado com Assistência Pública em CT&I)
@@ -26,7 +27,8 @@ export default function ExcelExportButton({
           "IFDM Territorial (Média)": t.kpis?.ifdm !== "-" ? Number(t.kpis.ifdm) : "-",
           "Total Entidades CT&I": Number(t.kpis?.capacidadeCti || 0),
           "Total Cadeias/IGs": Number(t.kpis?.cadeiasIgs || 0),
-          "Assistência Pública em CT&I": t.kpis?.conectaBahia || "Não Mapeado"
+          "Assistência Pública em CT&I": t.kpis?.conectaBahia || "Não Mapeado",
+          "Total Cursos Superiores": t.cursosDetalhado ? t.cursosDetalhado.length : 0
         });
 
         // ABA 2: ENTIDADES DE CT&I
@@ -67,6 +69,24 @@ export default function ExcelExportButton({
                 });
             });
         }
+
+        // ABA 5: CURSOS EM CT&I (ENSINO SUPERIOR)
+        if (t.cursosDetalhado && t.cursosDetalhado.length > 0) {
+          t.cursosDetalhado.forEach(curso => {
+            dataCursos.push({
+              "Território de Identidade": t.nome,
+              "Município": curso.municipio || "-",
+              "Instituição / Entidade": curso.entidade || "-",
+              "Nome do Curso": curso.curso || "-",
+              "Área Geral": curso.areaGeral || "-",
+              "Nível / Grau": curso.nivel || "-",
+              "Modalidade": curso.modalidade || "-",
+              "Org. Acadêmica": curso.orgAcademica || "-",
+              "Categoria Adm.": curso.categoriaAdm || "-",
+              "Quantidade": curso.quantidade ? Number(curso.quantidade) : 1
+            });
+          });
+        }
       });
 
       if (dataTerritorios.length === 0) {
@@ -80,13 +100,15 @@ export default function ExcelExportButton({
       const wsCTI = XLSX.utils.json_to_sheet(dataCTI);
       const wsCadeias = XLSX.utils.json_to_sheet(dataCadeias);
       const wsMunicipios = XLSX.utils.json_to_sheet(dataMunicipios);
+      const wsCursos = XLSX.utils.json_to_sheet(dataCursos);
 
       // 3. AJUSTAR LARGURAS DAS COLUNAS PARA FICAR PROFISSIONAL
       // Coluna 6 (wch: 32) garante espaço para "Assistência Pública em CT&I"
-      wsTerritorios['!cols'] = [{ wch: 30 }, { wch: 18 }, { wch: 22 }, { wch: 20 }, { wch: 20 }, { wch: 32 }];
+      wsTerritorios['!cols'] = [{ wch: 30 }, { wch: 18 }, { wch: 22 }, { wch: 20 }, { wch: 20 }, { wch: 32 }, { wch: 25 }];
       wsCTI['!cols'] = [{ wch: 30 }, { wch: 25 }, { wch: 25 }, { wch: 55 }];
       wsCadeias['!cols'] = [{ wch: 30 }, { wch: 35 }, { wch: 20 }, { wch: 45 }, { wch: 25 }, { wch: 50 }, { wch: 30 }];
       wsMunicipios['!cols'] = [{ wch: 30 }, { wch: 30 }, { wch: 18 }, { wch: 22 }];
+      wsCursos['!cols'] = [{ wch: 30 }, { wch: 25 }, { wch: 40 }, { wch: 40 }, { wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 12 }];
 
       // 4. MONTAR O LIVRO EXCEL (Workbook)
       const workbook = XLSX.utils.book_new();
@@ -94,6 +116,7 @@ export default function ExcelExportButton({
       XLSX.utils.book_append_sheet(workbook, wsCTI, "Infraestrutura CT&I");
       XLSX.utils.book_append_sheet(workbook, wsCadeias, "Cadeias Produtivas");
       XLSX.utils.book_append_sheet(workbook, wsMunicipios, "Municípios e IFDM");
+      XLSX.utils.book_append_sheet(workbook, wsCursos, "Cursos Ensino Superior");
 
       // 5. EXPORTAR FICHEIRO
       XLSX.writeFile(workbook, "Dados_Consolidados_CT&I_DPPDT.xlsx");
