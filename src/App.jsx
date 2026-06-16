@@ -13,7 +13,7 @@ function normalize(value) {
 }
 
 // ==========================================
-// COMPONENTE: PÁGINA SOBRE (Isolado para organização)
+// COMPONENTE: PÁGINA SOBRE
 // ==========================================
 const SobrePage = ({ darkMode }) => (
   <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
@@ -22,12 +22,8 @@ const SobrePage = ({ darkMode }) => (
       <div className={`prose prose-sm sm:prose-base max-w-none ${darkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-600'}`}>
         
         <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 mt-8 border-b border-slate-200/20 pb-2">1. Visão Geral do Sistema</h3>
-        <p className="leading-relaxed mb-4">
-          O Painel SECTI Territórios é uma plataforma de inteligência geográfica concebida para subsidiar a formulação e o acompanhamento de políticas públicas de Ciência, Tecnologia e Inovação (CT&I) no Estado da Bahia.
-        </p>
-        <p className="leading-relaxed mb-8">
-          Através da consolidação de dados territorializados, o sistema integra informações referentes a capacidades institucionais, desenvolvimento socioeconómico, cadeias produtivas e assistência pública. A plataforma proporciona aos gestores e investigadores uma base analítica rigorosa sobre as vocações e características dos 27 Territórios de Identidade da Bahia.
-        </p>
+        <p className="leading-relaxed mb-4">O Painel SECTI Territórios é uma plataforma de inteligência geográfica concebida para subsidiar a formulação e o acompanhamento de políticas públicas de Ciência, Tecnologia e Inovação (CT&I) no Estado da Bahia.</p>
+        <p className="leading-relaxed mb-8">Através da consolidação de dados territorializados, o sistema integra informações referentes a capacidades institucionais, desenvolvimento socioeconómico, cadeias produtivas e assistência pública. A plataforma proporciona aos gestores e investigadores uma base analítica rigorosa sobre as vocações e características dos 27 Territórios de Identidade da Bahia.</p>
 
         <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-6 mt-10 border-b border-slate-200/20 pb-2">2. Definições e Indicadores (KPIs)</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
@@ -74,7 +70,7 @@ function MainApp() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Estados
+  // Estados Básicos
   const [territoriosData, setTerritoriosData] = useState([]);
   const [semiaridoMunicipios, setSemiaridoMunicipios] = useState([]); 
   const [isLoadingPipeline, setIsLoadingPipeline] = useState(true);
@@ -83,9 +79,22 @@ function MainApp() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [filtroSemiarido, setFiltroSemiarido] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false); // Tema Escuro
+  const [darkMode, setDarkMode] = useState(false);
+
+  // NOVOS ESTADOS: Controle de Filtros Avançados Flutuantes
+  const [isFilterPanelOpen, setIsFilterOpen] = useState(false);
+  const [ifdmMin, setIfdmMin] = useState('');
+  const [ifdmMax, setIfdmMax] = useState('');
+  const [semiMunsMin, setSemiMunsMin] = useState('');
+  const [semiMunsMax, setSemiMunsMax] = useState('');
+
+  // Filtros Interativos das KPIs de CTI (Iniciam todos como ativos)
+  const [ctiFilters, setCtiFilters] = useState({
+      univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+  });
 
   const dropdownRef = useRef(null);
+  const filterPanelRef = useRef(null);
   const scrollMunsRef = useRef(null);
 
   // Pipeline de Dados
@@ -118,7 +127,7 @@ function MainApp() {
           isSemiarido: trueIsSemiarido, pctSemiarido: truePctSemiarido, qtdSemiarido: trueQtdSemi,
           entidadesDetalhadas: entidadesCTI, cadeiasProdutivasDetalhado: cadeiasAPL,
           desenvolvimentoDetalhado: Array.isArray(t.desenvolvimentoDetalhado) ? t.desenvolvimentoDetalhado : [],
-          assistenciaPublica: t.assistenciaPublica || { initiatives: [] },
+          assistenciaPublica: t.assistenciaPublica || { iniciativas: [] },
           desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 },
           kpis: {
             capacidadeCti: String(entidadesCTI.length), ifdm: t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi).toFixed(3) : "-",
@@ -138,7 +147,10 @@ function MainApp() {
 
   useEffect(() => { carregarDadosDoSharePoint(); }, []);
   useEffect(() => {
-    function handleClickOutside(event) { if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsDropdownOpen(false); }
+    function handleClickOutside(event) { 
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsDropdownOpen(false); 
+        if (filterPanelRef.current && !filterPanelRef.current.contains(event.target)) setIsFilterOpen(false);
+    }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -149,11 +161,20 @@ function MainApp() {
       return true;
   };
 
-  // Motor de Busca
+  // Motor de Busca com suporte aos filtros de intervalo
   const filteredOptions = useMemo(() => {
     const term = normalize(searchTerm); const results = [];
     territoriosData.forEach(t => {
         if (filtroSemiarido && !t.isSemiarido) return;
+        
+        // Aplicação dos filtros de intervalo de IFDM e Semiárido na Busca
+        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
+        const qtdSemiVal = t.qtdSemiarido || 0;
+        if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
+        if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
+        if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
+        if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
+
         if (!term) { results.push({ ...t, matchType: 'Território', matchText: t.regiao }); return; }
         
         let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null;
@@ -178,14 +199,22 @@ function MainApp() {
         else if (normalize(t.nome).includes(term)) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
     });
     return results.sort((a, b) => a.nome.localeCompare(b.nome));
-  }, [searchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios]);
+  }, [searchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax]);
 
-  // Cálculos Dinâmicos do Mapa
+  // Cálculos Dinâmicos do Mapa com suporte aos filtros de intervalo
   const territoriesDynamicStats = useMemo(() => {
       const stats = {}; const term = normalize(searchTerm);
       const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
 
       territoriosData.forEach(t => {
+          // Filtros de intervalo
+          const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
+          const qtdSemiVal = t.qtdSemiarido || 0;
+          if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
+          if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
+          if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
+          if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
+
           let somaIfdmPop = 0; let somaPop = 0;
           if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
               t.desenvolvimentoDetalhado.forEach(m => {
@@ -213,37 +242,83 @@ function MainApp() {
           };
       });
       return stats;
-  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios]);
+  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax]);
 
-  // Consumo de Dados das Listas
+  // Consumo de Dados das Listas e Progresso dos KPIs
   const dashboardData = useMemo(() => {
     let targetList = selectedLocation ? [selectedLocation] : territoriosData;
     const term = normalize(searchTerm); const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
+    
     const kpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const entidadesFlat = []; const aplIgsFlat = []; const assistenciasSet = new Map();
     const globalIds = new Set(); const globalCadeiasIds = new Set();
     let somaIfdmPop = 0; let somaPopulacao = 0; let totalAssistencia = 0;
 
+    const unfiltKpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
+    const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
+    let unfiltAsst = 0;
+
+    const extrairSatelite = (cad) => {
+        const val = cad.municipioSatelite || cad.municipiosSatelites || cad.satelite || cad.municipio_satelite || cad.municipios_satelites || cad.Satelite || cad.Satelites;
+        if (!val || val === 'undefined' || val === 'null') return '';
+        if (Array.isArray(val)) {
+            return val.map(item => typeof item === 'object' ? (item.Title || item.nome || item.NOME || item.value || '') : item).filter(Boolean).join(', ').trim();
+        }
+        if (typeof val === 'object') return val.Title || val.nome || val.NOME || val.value || '';
+        return String(val).trim();
+    };
+
     targetList.forEach(t => {
+        // Filtros de intervalo aplicados de forma relacional
+        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
+        const qtdSemiVal = t.qtdSemiarido || 0;
+        if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
+        if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
+        if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
+        if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
+
+        t.entidadesDetalhadas.forEach(ent => {
+            if (!ent.municipio) return;
+            if (term && !isSearchTermATerritory && !normalize(ent.entidade).includes(term) && !normalize(ent.tipo).includes(term)) return;
+            if (ent.id) {
+                unfiltIds.add(ent.id);
+                if (ent.categoria && unfiltKpisPanel[ent.categoria] !== undefined) unfiltKpisPanel[ent.categoria]++;
+            }
+        });
+        
+        t.cadeiasProdutivasDetalhado.forEach(cad => {
+            const sateliteRobusto = extrairSatelite(cad);
+            const sede = cad.sede || sateliteRobusto || 'Não informada';
+            if (term && !isSearchTermATerritory && !normalize(cad.segmento).includes(term) && !normalize(sede).includes(term)) return;
+            if (cad.id) unfiltCadeiasIds.add(cad.id);
+        });
+        
+        if (t.assistenciaPublica?.existe) unfiltAsst++;
+
         if (filtroSemiarido && !t.isSemiarido) return;
         let validData = false;
 
         t.entidadesDetalhadas.forEach(ent => {
             if (!isMunValid(ent.municipio)) return;
             if (term && !isSearchTermATerritory && !normalize(ent.entidade).includes(term) && !normalize(ent.tipo).includes(term)) return;
-            validData = true; entidadesFlat.push({ ...ent, territorioRef: t.nome });
+            validData = true; 
+            entidadesFlat.push({ ...ent, territorioRef: t.nome });
             if (ent.id && !globalIds.has(ent.id)) {
                 globalIds.add(ent.id); if (ent.categoria && kpisPanel[ent.categoria] !== undefined) kpisPanel[ent.categoria]++;
             }
         });
         
         t.cadeiasProdutivasDetalhado.forEach(cad => {
-            const sede = cad.sede || cad.municipioSatelite || 'Não informada';
+            const sateliteRobusto = extrairSatelite(cad);
+            const sede = cad.sede || sateliteRobusto || 'Não informada';
             const perts = filtroSemiarido ? String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(m => isMunValid(m)) : String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(Boolean);
             if (filtroSemiarido && !isMunValid(sede) && perts.length === 0) return;
             if (term && !isSearchTermATerritory && !normalize(cad.segmento).includes(term) && !normalize(sede).includes(term)) return;
             validData = true;
-            aplIgsFlat.push({ id: cad.id || Math.random(), segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A', municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome });
+            aplIgsFlat.push({ 
+                id: cad.id || Math.random(), segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A', 
+                municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto 
+            });
             if (cad.id) globalCadeiasIds.add(cad.id);
         });
 
@@ -261,32 +336,88 @@ function MainApp() {
         }
     });
 
-    const safePct = selectedLocation ? (Number(selectedLocation.pctSemiarido) || 0).toFixed(1) : "0.0";
-    const qtdSemi = selectedLocation ? selectedLocation.qtdSemiarido : 0;
-    
-    // Atualizado a string para mostrar a % e a quantidade de munícipios
-    const coberturaCalculada = selectedLocation 
-      ? (Number(selectedLocation.pctSemiarido) >= 100 ? "Pertencente (100%)" : Number(selectedLocation.pctSemiarido) <= 0 ? "Não pertencente" : `Parcial ${safePct}% (${qtdSemi} mun.)`) 
-      : (filtroSemiarido ? "100% (Filtro Ativo)" : "85,6% do Estado");
+    const totalMunsEstado = territoriosMunicipios.territorios_de_identidade.reduce((acc, curr) => acc + curr.municipios.length, 0);
+    const totalSemiEstado = semiaridoMunicipios.length;
+    const ifdmValue = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao) : 0;
+
+    let coberturaCalculada = "";
+    let pctBarraSemi = 100;
+
+    if (selectedLocation) {
+        const tb = territoriosMunicipios.territorios_de_identidade.find(x => normalize(x.nome) === normalize(selectedLocation.nome));
+        const totalMunTerr = tb ? tb.municipios.length : 0;
+        const qtdSemiTerr = selectedLocation.qtdSemiarido || 0;
+        const pctTerr = totalMunTerr > 0 ? (qtdSemiTerr / totalMunTerr) * 100 : 0;
+        pctBarraSemi = pctTerr;
+
+        if (filtroSemiarido) {
+            coberturaCalculada = `${qtdSemiTerr}/${totalMunTerr} mun.`;
+        } else {
+            if (pctTerr >= 100) coberturaCalculada = `100% (${qtdSemiTerr} mun.)`;
+            else if (pctTerr <= 0) coberturaCalculada = `0%`;
+            else coberturaCalculada = `${pctTerr.toFixed(1)}% (${qtdSemiTerr} mun.)`;
+        }
+    } else {
+        pctBarraSemi = 85.6; 
+        if (filtroSemiarido) {
+            coberturaCalculada = `${totalSemiEstado}/${totalMunsEstado} mun.`;
+        } else {
+            coberturaCalculada = `85.6% (${totalSemiEstado} mun.)`;
+        }
+    }
+
+    const topKpisPct = {
+        cti: unfiltIds.size > 0 ? (globalIds.size / unfiltIds.size) * 100 : 0,
+        ifdm: ifdmValue * 100, 
+        semiarido: pctBarraSemi,
+        assistencia: unfiltAsst > 0 ? (totalAssistencia / unfiltAsst) * 100 : 0,
+        cadeias: unfiltCadeiasIds.size > 0 ? (globalCadeiasIds.size / unfiltCadeiasIds.size) * 100 : 0
+    };
 
     return { 
         topKpis: {
-            capacidadeCti: String(globalIds.size), ifdm: somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao).toFixed(3) : "-",
+            capacidadeCti: String(globalIds.size), ifdm: somaPopulacao > 0 ? ifdmValue.toFixed(3) : "-",
             conectaBahia: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalAssistencia} Territórios`, cadeiasIgs: String(globalCadeiasIds.size), 
             coberturaSemiarido: coberturaCalculada
         }, 
-        subKpis: kpisPanel, 
+        topKpisPct, subKpis: kpisPanel, unfiltSubKpis: unfiltKpisPanel,
         entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         assistencias: Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || "")) 
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, searchTerm]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, searchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax]);
 
   const municipiosSelecionados = useMemo(() => {
       if (!selectedLocation) return [];
       const tb = territoriosMunicipios.territorios_de_identidade.find((t) => normalize(t.nome) === normalize(selectedLocation.nome));
       return tb ? (filtroSemiarido ? tb.municipios.filter(m => semiaridoMunicipios.includes(normalize(m))) : tb.municipios).sort() : [];
   }, [selectedLocation, filtroSemiarido, semiaridoMunicipios]);
+
+  const toggleCtiFilter = (key) => {
+      setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const resetAllFilters = () => {
+      setIfdmMin(''); setIfdmMax('');
+      setSemiMunsMin(''); setSemiMunsMax('');
+      setFiltroSemiarido(false);
+      setCtiFilters({
+          univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+      });
+  };
+
+  const getCtiBadgeStyle = (cat, isDark) => {
+      const styles = {
+          univs: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-100',
+          ifs: isDark ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-red-50 text-red-600 border-red-100',
+          icts: isDark ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' : 'bg-cyan-50 text-cyan-600 border-cyan-100',
+          centrosPesquisa: isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-600 border-emerald-100',
+          espacos: isDark ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-indigo-50 text-indigo-600 border-indigo-100',
+          parques: isDark ? 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20' : 'bg-fuchsia-50 text-fuchsia-600 border-fuchsia-100',
+          incubadoras: isDark ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-amber-50 text-amber-600 border-amber-100',
+      };
+      return styles[cat] || (isDark ? 'bg-slate-700 text-slate-300 border-slate-600' : 'bg-slate-100 text-slate-600 border-slate-200');
+  };
 
   const getBadgeStyle = (tipo) => {
       const t = String(tipo).toLowerCase();
@@ -298,7 +429,6 @@ function MainApp() {
 
   const isActive = (path) => location.pathname === path;
 
-  // Estilos Condicionais Baseados no Tema
   const themeClasses = {
       app: darkMode ? 'bg-[#0a0f1c] text-slate-200' : 'bg-slate-50 text-slate-800',
       glass: darkMode ? 'bg-slate-900/60 border-slate-700/50 shadow-2xl backdrop-blur-xl' : 'bg-white/80 border-white/60 shadow-xl backdrop-blur-xl',
@@ -308,13 +438,12 @@ function MainApp() {
   };
 
   return (
-    <div className={`relative flex flex-col h-screen font-sans overflow-hidden transition-colors duration-500 ${themeClasses.app}`}>
+    <div className={`relative flex flex-col font-sans overflow-hidden transition-colors duration-500 ${themeClasses.app}`} style={{ zoom: "0.95", width: "105.26vw", height: "105.26vh" }}>
       <Helmet>
         <title>Painel Territorial CT&I | Governo da Bahia</title>
         <meta name="description" content="Plataforma interativa da SECTI com indicadores de Ciência, Tecnologia, Inovação e Cadeias Produtivas dos 27 Territórios de Identidade da Bahia." />
       </Helmet>
 
-      {/* CSS Animado & Estilos Globais */}
       <style>{`
           @keyframes softFade { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
           .animate-soft-fade { animation: softFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -325,7 +454,6 @@ function MainApp() {
           .animate-progress-slide { animation: progress-slide 1.5s infinite ease-in-out; }
       `}</style>
 
-      {/* Efeitos de Fundo Orgânicos (Blobs) */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className={`absolute -top-[10%] -left-[10%] w-[40vw] h-[40vw] rounded-full blur-[120px] opacity-[0.15] transition-colors duration-1000 ${darkMode ? 'bg-blue-600' : 'bg-blue-400'}`}></div>
         <div className={`absolute top-[40%] -right-[5%] w-[30vw] h-[30vw] rounded-full blur-[100px] opacity-[0.1] transition-colors duration-1000 ${darkMode ? 'bg-gov-red-500' : 'bg-gov-red-400'}`}></div>
@@ -349,8 +477,7 @@ function MainApp() {
           </div>
       )}
 
-      {/* NAVBAR PREMIUM */}
-      <header className={`fixed top-4 left-0 right-0 mx-auto w-[96%] max-w-[1600px] ${themeClasses.glass} h-14 rounded-2xl flex items-center justify-between px-6 z-[100]`}>
+      <header className={`fixed top-4 left-0 right-0 mx-auto w-[96%] max-w-[1600px] ${themeClasses.glass} h-16 rounded-2xl flex items-center justify-between px-6 z-[100]`}>
           <div className="flex items-center gap-8">
             <h1 className="text-[11px] sm:text-xs font-black tracking-widest uppercase flex items-center gap-1.5 drop-shadow-sm">
                 <span className={darkMode ? 'text-blue-400' : 'text-gov-blueDark-500'}>Painel</span>
@@ -381,7 +508,7 @@ function MainApp() {
           <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
 
           <Route path="/territorios" element={
-            <div className="animate-soft-fade relative p-2 lg:p-0 max-w-[98%] 2xl:max-w-[1550px] mx-auto w-full min-h-full">
+            <div className="animate-soft-fade relative p-2 lg:p-0 w-[94%] max-w-[1450px] mx-auto min-h-full">
                 <div className={`${themeClasses.glass} rounded-[2rem] p-4 lg:p-6 flex flex-col gap-4`}>
                 
                 <div className={`grid grid-cols-1 lg:grid-cols-3 gap-3 items-center border-b pb-4 ${darkMode ? 'border-slate-700/50' : 'border-slate-200/60'}`}>
@@ -394,12 +521,68 @@ function MainApp() {
                                 {searchTerm && ( <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} className={`absolute right-3.5 top-3.5 hover:text-red-500 ${themeClasses.textMuted}`}><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button> )}
                             </div>
                         </div>
-                        <div className="w-full sm:w-auto pt-0 sm:pt-4">
-                            <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-orange-500 border-orange-600 text-white hover:bg-orange-600' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">{filtroSemiarido ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />}</svg>
-                                {filtroSemiarido ? 'Recorte: Semiárido Ativo' : 'Aplicar Semiárido'}
+
+                        {/* BOTÃO E FILTRO FLUTUANTE AVANÇADO */}
+                        <div className="w-full sm:w-auto pt-0 sm:pt-4 relative" ref={filterPanelRef}>
+                            <button 
+                                onClick={() => setIsFilterOpen(!isFilterPanelOpen)} 
+                                className={`w-full h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isFilterPanelOpen ? 'bg-blue-600 border-blue-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                Filtros Avançados
                             </button>
+
+                            {isFilterPanelOpen && (
+                                <div className={`absolute left-0 lg:left-auto lg:right-0 top-[100%] mt-2 w-72 rounded-2xl p-4 shadow-2xl border z-[150] flex flex-col gap-4 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
+                                    <div>
+                                        <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-2">Recorte Geográfico</span>
+                                        <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-9 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-orange-500 border-orange-600 text-white hover:bg-orange-600' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
+                                            {filtroSemiarido ? 'Semiárido: Ativo' : 'Ativar Semiárido'}
+                                        </button>
+                                    </div>
+
+                                    <div>
+                                        <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Intervalo D. Territ. (IFDM)</span>
+                                        <div className="flex gap-2 items-center">
+                                            <input type="number" step="0.001" placeholder="Mín" value={ifdmMin} onChange={(e) => setIfdmMin(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
+                                            <span className="text-[10px] opacity-40">até</span>
+                                            <input type="number" step="0.001" placeholder="Máx" value={ifdmMax} onChange={(e) => setIfdmMax(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Muns. no Semiárido (Qtd)</span>
+                                        <div className="flex gap-2 items-center">
+                                            <input type="number" placeholder="Mín" value={semiMunsMin} onChange={(e) => setSemiMunsMin(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
+                                            <span className="text-[10px] opacity-40">até</span>
+                                            <input type="number" placeholder="Máx" value={semiMunsMax} onChange={(e) => setSemiMunsMax(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Filtrar Ativos de CTI</span>
+                                        <div className="max-h-24 overflow-y-auto hide-scroll flex flex-col gap-1.5 border p-2 rounded-xl border-slate-500/20">
+                                            {[
+                                                { id: 'univs', label: 'Universidades' }, { id: 'ifs', label: 'Institutos Federais' },
+                                                { id: 'icts', label: 'ICTs' }, { id: 'centrosPesquisa', label: 'Centros de Pesquisa' },
+                                                { id: 'espacos', label: 'Espaços Dinamizadores' }, { id: 'parques', label: 'Parques Tecnológicos' },
+                                                { id: 'incubadoras', label: 'Incubadoras' }
+                                            ].map((f) => (
+                                                <label key={f.id} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer">
+                                                    <input type="checkbox" checked={ctiFilters[f.id]} onChange={() => toggleCtiFilter(f.id)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" />
+                                                    <span className={ctiFilters[f.id] ? 'opacity-100' : 'opacity-40'}>{f.label}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <button onClick={resetAllFilters} className="w-full h-8 rounded-xl font-bold text-[9px] uppercase tracking-wider border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors">
+                                        Resetar Filtros
+                                    </button>
+                                </div>
+                            )}
                         </div>
+
                         {isDropdownOpen && searchTerm && (
                             <div className={`absolute top-[100%] mt-2 w-full rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto border overflow-hidden ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
                             {filteredOptions.length > 0 ? filteredOptions.map((item) => (
@@ -418,7 +601,6 @@ function MainApp() {
                     </div>
                 </div>
 
-                {/* BLOCO DE KPIS GLOBAIS COM NOMES ORIGINAIS DA V1 */}
                 <div>
                     <div className="flex items-center justify-between mb-2 px-1">
                         <h3 className={`text-[10px] font-black uppercase tracking-widest ${themeClasses.textMuted}`}>Cenário Global {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Semiárido Baiano' : '— Estado da Bahia')}</h3>
@@ -426,21 +608,23 @@ function MainApp() {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {[
-                            { l: 'Capacidade CTI', v: dashboardData.topKpis.capacidadeCti, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500' },
-                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500' },
-                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, c: darkMode ? 'text-slate-300' : 'text-slate-700', b: 'bg-slate-400', tr: true },
-                            { l: 'Assist. Pública CT&I', v: dashboardData.topKpis.conectaBahia, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true },
-                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', tr: true },
+                            { l: 'Capacidade CTI', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500' },
+                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500' },
+                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-slate-300' : 'text-slate-700', b: 'bg-slate-400', tr: true },
+                            { l: 'Assist. Pública CT&I', v: dashboardData.topKpis.conectaBahia, pct: dashboardData.topKpisPct.assistencia, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true },
+                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', tr: true },
                         ].map((k, idx) => (
-                            <div key={idx} className={`p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
+                            <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
                                 <p className={`text-[9px] font-black uppercase tracking-widest mb-1 opacity-60 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{k.l}</p>
-                                <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{k.v}</p>
+                                <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1.5 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{k.v}</p>
+                                <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50">
+                                    <div className={`h-full ${k.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, k.pct))}%` }}></div>
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* SCROLL MUNICÍPIOS */}
                 {selectedLocation && municipiosSelecionados.length > 0 && (
                     <div className={`p-3 rounded-2xl border shadow-inner ${darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-50 border-slate-200/60'}`}>
                         <div className="flex items-center justify-between mb-2 px-1">
@@ -455,7 +639,6 @@ function MainApp() {
                                     const isSemi = semiaridoMunicipios.includes(normalize(m));
                                     return (
                                         <span key={idx} className={`whitespace-nowrap flex items-center gap-2 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-colors shadow-sm ${isSemi ? 'bg-orange-500/10 text-orange-600 border-orange-500/30' : (darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-700 border-slate-200')}`}>
-                                            {/* CORREÇÃO: Removidos asteriscos e adicionada a bolinha estilizada correspondente ao semiárido */}
                                             {isSemi && <span className="w-1.5 h-1.5 rounded-full border border-orange-500 bg-orange-500/40"></span>}
                                             {m}
                                         </span>
@@ -465,7 +648,6 @@ function MainApp() {
                             <button onClick={() => scrollMunsRef.current?.scrollBy({ left: 200, behavior: 'smooth' })} className={`absolute right-0 h-full w-12 bg-gradient-to-l ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'} z-10 flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity`}><div className="bg-slate-800 text-white p-1 rounded-full shadow"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></div></button>
                         </div>
                         
-                        {/* CORREÇÃO: Título da legenda substituído por indicador circular e texto limpo */}
                         {!filtroSemiarido && selectedLocation && selectedLocation.qtdSemiarido > 0 && (
                             <div className={`text-[9px] font-bold mt-2 flex items-center gap-1.5 px-1 opacity-90 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                                 <span className="w-2 h-2 rounded-full border-[1.5px] border-orange-500 bg-orange-500/20"></span>
@@ -477,25 +659,32 @@ function MainApp() {
 
                 <div className="grid grid-cols-4 lg:grid-cols-7 gap-2 lg:gap-3">
                     {[
-                        { l: 'Univs.', v: dashboardData.subKpis.univs, c: darkMode ? 'text-blue-400' : 'text-blue-600' },
-                        { l: 'Inst. Fed.', v: dashboardData.subKpis.ifs, c: darkMode ? 'text-red-400' : 'text-red-600' },
-                        { l: 'ICTs', v: dashboardData.subKpis.icts, c: darkMode ? 'text-cyan-400' : 'text-cyan-600' },
-                        { l: 'C. Pesquisa', v: dashboardData.subKpis.centrosPesquisa, c: darkMode ? 'text-emerald-400' : 'text-emerald-600' },
-                        { l: 'Espaços', v: dashboardData.subKpis.espacos, c: darkMode ? 'text-indigo-400' : 'text-indigo-600' },
-                        { l: 'Parques', v: dashboardData.subKpis.parques, c: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600' },
-                        { l: 'Incub.', v: dashboardData.subKpis.incubadoras, c: darkMode ? 'text-amber-400' : 'text-amber-600' }
-                    ].map((sK, idx) => (
-                        <div key={idx} className={`py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center transition-transform hover:-translate-y-1 ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}>
+                        { id: 'univs', l: 'Univs.', v: dashboardData.subKpis.univs, pct: dashboardData.unfiltSubKpis.univs > 0 ? (dashboardData.subKpis.univs / dashboardData.unfiltSubKpis.univs)*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500' },
+                        { id: 'ifs', l: 'Inst. Fed.', v: dashboardData.subKpis.ifs, pct: dashboardData.unfiltSubKpis.ifs > 0 ? (dashboardData.subKpis.ifs / dashboardData.unfiltSubKpis.ifs)*100 : 0, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500' },
+                        { id: 'icts', l: 'ICTs', v: dashboardData.subKpis.icts, pct: dashboardData.unfiltSubKpis.icts > 0 ? (dashboardData.subKpis.icts / dashboardData.unfiltSubKpis.icts)*100 : 0, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500' },
+                        { id: 'centrosPesquisa', l: 'C. Pesquisa', v: dashboardData.subKpis.centrosPesquisa, pct: dashboardData.unfiltSubKpis.centrosPesquisa > 0 ? (dashboardData.subKpis.centrosPesquisa / dashboardData.unfiltSubKpis.centrosPesquisa)*100 : 0, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500' },
+                        { id: 'espacos', l: 'Espaços', v: dashboardData.subKpis.espacos, pct: dashboardData.unfiltSubKpis.espacos > 0 ? (dashboardData.subKpis.espacos / dashboardData.unfiltSubKpis.espacos)*100 : 0, c: darkMode ? 'text-indigo-400' : 'text-indigo-600', b: 'bg-indigo-500' },
+                        { id: 'parques', l: 'Parques', v: dashboardData.subKpis.parques, pct: dashboardData.unfiltSubKpis.parques > 0 ? (dashboardData.subKpis.parques / dashboardData.unfiltSubKpis.parques)*100 : 0, c: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', b: 'bg-fuchsia-500' },
+                        { id: 'incubadoras', l: 'Incub.', v: dashboardData.subKpis.incubadoras, pct: dashboardData.unfiltSubKpis.incubadoras > 0 ? (dashboardData.subKpis.incubadoras / dashboardData.unfiltSubKpis.incubadoras)*100 : 0, c: darkMode ? 'text-amber-400' : 'text-amber-600', b: 'bg-amber-500' }
+                    ].map((sK) => (
+                        <button 
+                            key={sK.id} 
+                            onClick={() => toggleCtiFilter(sK.id)}
+                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center transition-all hover:-translate-y-1 overflow-hidden 
+                            ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'} 
+                            ${ctiFilters[sK.id] ? 'opacity-100' : 'opacity-40 grayscale'}`}
+                        >
                             <span className={`text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{sK.l}</span>
-                            <span className={`text-xl font-black leading-none drop-shadow-sm ${sK.c}`}>{sK.v || 0}</span>
-                        </div>
+                            <span className={`text-xl font-black leading-none pb-1 drop-shadow-sm ${sK.c}`}>{sK.v || 0}</span>
+                            <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50">
+                                <div className={`h-full ${sK.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, sK.pct))}%` }}></div>
+                            </div>
+                        </button>
                     ))}
                 </div>
 
-                {/* ALTURA E ZOOM REDUZIDOS (h-[600px] / lg:w-[45%]) */}
                 <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[600px] 2xl:h-[70vh] w-full mt-2">
                     
-                    {/* MAPA INTERATIVO - LARGURA REDUZIDA */}
                     <div className={`w-full lg:w-[45%] xl:w-[50%] rounded-[2rem] border p-3 shadow-inner relative flex flex-col h-full overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
                         <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Motor Cartográfico
@@ -511,31 +700,34 @@ function MainApp() {
                         </div>
                     </div>
 
-                    {/* LISTAS LATERAIS - LARGURA ADAPTADA */}
                     <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col gap-4 h-full overflow-hidden">
                     
-                        {/* Lista 1: Instituições CT&I */}
                         <div className={`flex-1 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                             <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
-                                <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{dashboardData.entidades.length}</span>
+                                <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
+                                    {dashboardData.entidades.filter(ent => !ent.categoria || ctiFilters[ent.categoria]).length}
+                                </span>
                             </div>
                             <div className="flex-1 overflow-y-auto p-3 hide-scroll">
                                 <div className="flex flex-col gap-2">
-                                {dashboardData.entidades.length > 0 ? dashboardData.entidades.map((ent, idx) => (
+                                {dashboardData.entidades.filter(ent => !ent.categoria || ctiFilters[ent.categoria]).length > 0 ? (
+                                    dashboardData.entidades.filter(ent => !ent.categoria || ctiFilters[ent.categoria]).map((ent, idx) => (
                                     <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 hover:pl-4 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
                                         <span className="text-[11px] font-bold leading-tight">{ent.entidade}</span>
                                         <div className="flex justify-between items-end mt-1">
-                                            <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${darkMode ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>{ent.tipo || "Instituição"}</span>
+                                            <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
+                                                <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
+                                                {ent.tipo || "Instituição"}
+                                            </span>
                                             <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{ent.municipio}</span></div>
                                         </div>
                                     </div>
-                                )) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma estrutura isolada.</div>)}
+                                ))) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Use os botões acima para selecionar os filtros.</div>)}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Lista 2: Cadeias Produtivas */}
                         <div className={`flex-[1.2] min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                             <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cadeias Produtivas</h4>
@@ -553,6 +745,13 @@ function MainApp() {
                                         <div className={`p-2 rounded-lg border mt-1 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
                                             <span className="block text-[8px] font-black uppercase opacity-50 mb-1">Abrangência Municipal:</span>
                                             <p className="text-[9px] font-medium leading-relaxed opacity-90">{apl.municipiosPertencentes}</p>
+                                            
+                                            {apl.municipioSatelite && apl.municipioSatelite !== '' && (
+                                                <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
+                                                    <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Município(s) Satélite(s):</span>
+                                                    <p className="text-[9px] font-medium leading-relaxed opacity-90">{apl.municipioSatelite}</p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma cadeia isolada.</div>)}
@@ -574,7 +773,7 @@ function MainApp() {
 }
 
 // ==========================================
-// EXPORTAÇÃO (APP WRAPPER COM ROUTER E HELMET)
+// EXPORTAÇÃO
 // ==========================================
 export default function AppWrapper() {
   return (
