@@ -43,8 +43,6 @@ const SobrePage = ({ darkMode }) => (
         <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-6 mt-10 border-b border-slate-200/20 pb-2">3. Guia de Funcionalidades</h3>
         <ul className="space-y-6">
           {[
-            { t: 'Pesquisa de Dados (Deep Search)', d: 'O campo de pesquisa permite localizar simultaneamente Municípios, Territórios, Instituições ou Segmentos Produtivos. O painel isola imediatamente os resultados relevantes.', i: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', c: 'text-blue-500 bg-blue-500/10' },
-            { t: 'Navegação Cartográfica Dinâmica', d: 'A malha do mapa responde semanticamente aos dados. A seleção de um território no mapa aciona uma aproximação automática focando a área geográfica.', i: 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7', c: 'text-emerald-500 bg-emerald-500/10' },
             { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z', c: 'text-orange-500 bg-orange-500/10' },
             { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em quatro abas relacionais, preparado para análises estatísticas externas.', i: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', c: 'text-purple-500 bg-purple-500/10' }
           ].map((func, idx) => (
@@ -101,24 +99,6 @@ function MainApp() {
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
     setIsLoadingPipeline(true);
     try {
-<<<<<<< HEAD
-      const url = forcarRefresh ? '/api/sharepoint?nocache=true' : '/api/sharepoint';
-      console.log('[Frontend] Requisitando:', url);
-      
-      const response = await fetch(url);
-      
-      console.log('[Frontend] Response status:', response.status);
-      console.log('[Frontend] Response headers:', response.headers);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[Frontend] Erro HTTP:', response.status, errorText);
-        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
-      }
-      
-      const data = await response.json();
-      console.log('[Frontend] Dados recebidos:', data.summary);
-=======
       const isDev = import.meta.env.DEV;
       let url = isDev ? (forcarRefresh ? '/api/sharepoint?nocache=true' : '/api/sharepoint') : '/dados.json';
       let response = await fetch(url);
@@ -127,7 +107,6 @@ function MainApp() {
       
       const data = await response.json();
       const semiaridoNormList = (data.semiaridoMunicipiosList || []).map(m => normalize(m));
->>>>>>> 74edb415f83b0f236bdae7f02fc89021ec3e3dcf
 
       const territoriosFormatados = data.territories.map((t, index) => {
         const territorioBase = territoriosMunicipios.territorios_de_identidade.find((tb) => normalize(tb.nome) === normalize(t.territory));
@@ -157,26 +136,11 @@ function MainApp() {
       });
 
       setTerritoriosData(territoriosFormatados);
-<<<<<<< HEAD
-      
-      const parsedDate = new Date(data.generatedAt);
-      setLastUpdate(parsedDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
-      console.log('[Frontend] ✓ Dados carregados com sucesso');
-
-    } catch (error) {
-      console.error("[Frontend] Erro fatal na pipeline:", error);
-      console.error("[Frontend] Stack:", error.stack);
-      setLastUpdate(`Erro: ${error.message}`);
-    } finally {
-      setIsLoadingPipeline(false);
-    }
-=======
       setSemiaridoMunicipios(semiaridoNormList); 
       setLastUpdate(new Date(data.generatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
     } catch (error) {
       console.error("[Painel] Erro fatal:", error); setLastUpdate("Erro na Sincronização");
     } finally { setIsLoadingPipeline(false); }
->>>>>>> 74edb415f83b0f236bdae7f02fc89021ec3e3dcf
   };
 
   useEffect(() => { carregarDadosDoSharePoint(); }, []);
@@ -518,7 +482,7 @@ function MainApp() {
                 <span className="text-gov-red-500">Territorial</span>
             </h1>
             <nav className="hidden sm:flex items-center gap-2">
-                {[ {p: '/', l: 'Início'}, {p: '/territorios', l: 'Territórios'}, {p: '/sobre', l: 'Sobre'} ].map((tab) => (
+                {[ {p: '/', l: 'Início'}, {p: '/sobre', l: 'Sobre'}, {p: '/territorios', l: 'Territórios'}  ].map((tab) => (
                   <Link key={tab.p} to={tab.p} className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${isActive(tab.p) ? (darkMode ? 'bg-blue-500 text-white' : 'bg-gov-blueDark-500 text-white') : (darkMode ? 'text-slate-400 hover:text-white hover:bg-white/5' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')}`}>
                     {tab.l}
                   </Link>
