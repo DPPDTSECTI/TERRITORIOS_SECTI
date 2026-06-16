@@ -13,6 +13,7 @@ dist-ssr
 
 .env
 .env.*
+.cache
 
 .vscode/*
 !.vscode/extensions.json
