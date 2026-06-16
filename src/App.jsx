@@ -168,7 +168,8 @@ function MainApp() {
 
   // Motor de Busca Avançado com cruzamento total de intervalos e CTI
   const filteredOptions = useMemo(() => {
-    const term = normalize(searchTerm); const results = [];
+    const rawTerm = normalize(searchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+    const results = [];
     territoriosData.forEach(t => {
         if (filtroSemiarido && !t.isSemiarido) return;
         
@@ -180,44 +181,52 @@ function MainApp() {
         if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
         if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
 
-        if (!term) { results.push({ ...t, matchType: 'Território', matchText: t.regiao }); return; }
+        if (!rawTerm) { results.push({ ...t, matchType: 'Território', matchText: t.regiao }); return; }
         
-        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null; let foundCursoMatch = null;
+        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null;
         const territorioBase = territoriosMunicipios.territorios_de_identidade.find((tb) => normalize(tb.nome) === normalize(t.nome));
 
         if (territorioBase) {
-            const foundMun = territorioBase.municipios.find(m => normalize(m).includes(term));
+            const foundMun = territorioBase.municipios.find(m => {
+                const searchString = normalize(m);
+                return terms.every(term => searchString.includes(term));
+            });
             if (foundMun && isMunValid(foundMun)) { matched = true; foundMunMatch = foundMun; }
         }
         if (!matched && t.entidadesDetalhadas) {
-            foundEntMatch = t.entidadesDetalhadas.find(ent => isMunValid(ent.municipio) && (!ent.categoria || ctiFilters[ent.categoria]) && (normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term)));
+            foundEntMatch = t.entidadesDetalhadas.find(ent => {
+                 if (!isMunValid(ent.municipio) || (ent.categoria && !ctiFilters[ent.categoria])) return false;
+                 const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)}`;
+                 return terms.every(term => searchString.includes(term));
+            });
             if (foundEntMatch) matched = true;
         }
         if (!matched && t.cadeiasProdutivasDetalhado) {
-            foundCadeiaMatch = t.cadeiasProdutivasDetalhado.find(cad => isMunValid(cad.sede || cad.municipioSatelite) && (normalize(cad.segmento).includes(term) || normalize(cad.sede || '').includes(term)));
+            foundCadeiaMatch = t.cadeiasProdutivasDetalhado.find(cad => {
+                 if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
+                 const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')}`;
+                 return terms.every(term => searchString.includes(term));
+            });
             if (foundCadeiaMatch) matched = true;
-        }
-        if (!matched && t.cursosDetalhado) {
-            foundCursoMatch = t.cursosDetalhado.find(curso => isMunValid(curso.municipio) && (normalize(curso.curso).includes(term) || normalize(curso.entidade).includes(term) || normalize(curso.areaGeral).includes(term)));
-            if (foundCursoMatch) matched = true;
         }
 
         if (foundMunMatch) results.push({ ...t, matchType: 'Município', matchText: foundMunMatch });
-        else if (foundEntMatch) results.push({ ...t, matchType: normalize(foundEntMatch.tipo).includes(term) ? 'Tipo de Infraestrutura' : 'Entidade CT&I', matchText: foundEntMatch.entidade });
+        else if (foundEntMatch) results.push({ ...t, matchType: terms.some(term => normalize(foundEntMatch.tipo).includes(term)) ? 'Tipo de Infraestrutura' : 'Entidade CT&I', matchText: foundEntMatch.entidade });
         else if (foundCadeiaMatch) results.push({ ...t, matchType: 'Cadeia Produtiva', matchText: foundCadeiaMatch.segmento });
-        else if (foundCursoMatch) results.push({ ...t, matchType: 'Curso Superior', matchText: foundCursoMatch.curso });
-        else if (normalize(t.nome).includes(term)) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
+        else if (terms.every(term => normalize(t.nome).includes(term))) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
     });
     return results.sort((a, b) => a.nome.localeCompare(b.nome));
   }, [searchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
   // Cálculos Dinâmicos do Mapa com suporte e cruzamento de CTI + Intervalos
   const territoriesDynamicStats = useMemo(() => {
-      const stats = {}; const term = normalize(searchTerm);
-      const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
+      const stats = {}; const rawTerm = normalize(searchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+      const cursoTerm = normalize(cursoSearchTerm);
+      const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
-      // NOVO: Verifica se o utilizador está ativamente a filtrar CTI
+      // NOVO: Verifica se o utilizador está ativamente a filtrar CTI ou Cursos
       const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
+      const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
 
       territoriosData.forEach(t => {
           const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
@@ -241,25 +250,44 @@ function MainApp() {
           }
           
           // Filtragem cruzada de CTI aplicada ao mapa em tempo real
-          const validCti = t.entidadesDetalhadas.filter(ent => 
-              isMunValid(ent.municipio) && 
-              (!ent.categoria || ctiFilters[ent.categoria]) && 
-              (term && !isSearchTermATerritory ? (normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term)) : true)
-          );
-          const validCadeias = t.cadeiasProdutivasDetalhado.filter(cad => isMunValid(cad.sede || cad.municipioSatelite) && (term && !isSearchTermATerritory ? normalize(cad.segmento).includes(term) : true));
-          const validCursos = (t.cursosDetalhado || []).filter(curso => isMunValid(curso.municipio) && (term && !isSearchTermATerritory ? (normalize(curso.curso).includes(term) || normalize(curso.entidade).includes(term) || normalize(curso.areaGeral).includes(term)) : true));
+          const validCti = t.entidadesDetalhadas.filter(ent => {
+              if (!isMunValid(ent.municipio) || (ent.categoria && !ctiFilters[ent.categoria])) return false;
+              if (rawTerm && !isSearchTermATerritory) {
+                  const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)}`;
+                  if (!terms.every(term => searchString.includes(term))) return false;
+              }
+              return true;
+          });
+          const validCadeias = t.cadeiasProdutivasDetalhado.filter(cad => {
+              if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
+              if (rawTerm && !isSearchTermATerritory) {
+                  const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')}`;
+                  if (!terms.every(term => searchString.includes(term))) return false;
+              }
+              return true;
+          });
+          const validCursos = (t.cursosDetalhado || []).filter(curso => {
+              if (!isMunValid(curso.municipio)) return false;
+              if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
+              if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
+              return true;
+          });
           
           let matchesSearch = true;
-          if (term) {
+          if (rawTerm) {
               const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
-              matchesSearch = normalize(t.nome).includes(term) || (territorioBase && territorioBase.municipios.some(m => normalize(m).includes(term))) || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
+              const tMatches = terms.every(term => normalize(t.nome).includes(term));
+              const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
+              matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0));
           }
 
-          // NOVO: Lógica restrita para o Mapa. 
-          // Se o CTI Filter está ativo, APAGA as regiões sem CTI.
           let hasDataForFilters = true;
-          if (isCtiFiltered) {
+          if (isCtiFiltered && isCursoFiltered) {
+              hasDataForFilters = validCti.length > 0 || validCursos.length > 0;
+          } else if (isCtiFiltered) {
               hasDataForFilters = validCti.length > 0;
+          } else if (isCursoFiltered) {
+              hasDataForFilters = validCursos.length > 0;
           }
 
           const matchesFilters = passesIntervals && matchesSearch && hasDataForFilters;
@@ -272,12 +300,13 @@ function MainApp() {
           };
       });
       return stats;
-  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
+  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, cursoSearchTerm]);
 
   // Consumo de Dados das Listas e KPIs de Painel com Cruzamento Total
   const dashboardData = useMemo(() => {
     let targetList = selectedLocation ? [selectedLocation] : territoriosData;
-    const term = normalize(searchTerm); const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
+    const rawTerm = normalize(searchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+    const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
     const kpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = []; const assistenciasSet = new Map();
@@ -308,7 +337,10 @@ function MainApp() {
 
         t.entidadesDetalhadas.forEach(ent => {
             if (!ent.municipio) return;
-            if (term && !isSearchTermATerritory && !normalize(ent.entidade).includes(term) && !normalize(ent.tipo).includes(term)) return;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
             if (ent.id) {
                 unfiltIds.add(ent.id);
                 if (ent.categoria && unfiltKpisPanel[ent.categoria] !== undefined) unfiltKpisPanel[ent.categoria]++;
@@ -318,7 +350,10 @@ function MainApp() {
         t.cadeiasProdutivasDetalhado.forEach(cad => {
             const sateliteRobusto = extrairSatelite(cad);
             const sede = cad.sede || sateliteRobusto || 'Não informada';
-            if (term && !isSearchTermATerritory && !normalize(cad.segmento).includes(term) && !normalize(sede).includes(term)) return;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
             if (cad.id) unfiltCadeiasIds.add(cad.id);
         });
         
@@ -329,7 +364,10 @@ function MainApp() {
 
         t.entidadesDetalhadas.forEach(ent => {
             if (!isMunValid(ent.municipio)) return;
-            if (term && !isSearchTermATerritory && !normalize(ent.entidade).includes(term) && !normalize(ent.tipo).includes(term)) return;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
             
             // FILTRAGEM CRUZADA DE ATIVOS CTI
             if (ent.categoria && !ctiFilters[ent.categoria]) return;
@@ -346,7 +384,10 @@ function MainApp() {
             const sede = cad.sede || sateliteRobusto || 'Não informada';
             const perts = filtroSemiarido ? String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(m => isMunValid(m)) : String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(Boolean);
             if (filtroSemiarido && !isMunValid(sede) && perts.length === 0) return;
-            if (term && !isSearchTermATerritory && !normalize(cad.segmento).includes(term) && !normalize(sede).includes(term)) return;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
             validData = true;
             aplIgsFlat.push({ 
                 id: cad.id || Math.random(), segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A', 
@@ -357,8 +398,7 @@ function MainApp() {
 
         (t.cursosDetalhado || []).forEach(curso => {
             if (!isMunValid(curso.municipio)) return;
-            if (term && !isSearchTermATerritory && !normalize(curso.curso).includes(term) && !normalize(curso.entidade).includes(term) && !normalize(curso.areaGeral).includes(term)) return;
-            validData = true;
+            if (!rawTerm || isSearchTermATerritory) validData = true;
             cursosFlat.push({ ...curso, territorioRef: t.nome });
         });
 
@@ -564,7 +604,7 @@ function MainApp() {
       }
       if (cursoSearchTerm) {
           const term = normalize(cursoSearchTerm);
-          result = result.filter(c => normalize(c.curso).includes(term));
+          result = result.filter(curso => normalize(curso.curso).includes(term));
       }
       return result;
   }, [dashboardData.cursos, areaGeralFilter, cursoSearchTerm]);
@@ -651,6 +691,40 @@ function MainApp() {
                                 <input type="text" placeholder={isLoadingPipeline ? "Sincronizando..." : "Pesquise por município, território, segmento ou infraestrutura..."} value={searchTerm} disabled={isLoadingPipeline} onChange={(e) => { setSearchTerm(e.target.value); setIsDropdownOpen(true); if (!e.target.value) setSelectedLocation(null); }} onFocus={() => setIsDropdownOpen(true)} className={`w-full h-11 pl-10 pr-10 rounded-xl text-xs transition-all outline-none border ${themeClasses.input}`} />
                                 <svg className={`w-4 h-4 absolute left-3.5 top-3.5 ${themeClasses.textMuted}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 {searchTerm && ( <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} className={`absolute right-3.5 top-3.5 hover:text-red-500 ${themeClasses.textMuted}`}><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button> )}
+
+                                {/* DROPDOWN DE SUGESTÕES DA PESQUISA */}
+                                {isDropdownOpen && searchTerm && (
+                                    <div className={`absolute top-[100%] left-0 right-0 mt-2 max-h-64 overflow-y-auto hide-scroll rounded-xl border shadow-2xl z-[200] backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700' : 'bg-white/95 border-slate-200'}`}>
+                                        {filteredOptions.length > 0 ? (
+                                            <div className="flex flex-col p-1.5 gap-0.5">
+                                                {filteredOptions.map((opt, i) => (
+                                                    <button
+                                                        key={i}
+                                                        onClick={() => {
+                                                            setSearchTerm(opt.matchText);
+                                                            setIsDropdownOpen(false);
+                                                            if (opt.matchType === 'Território') {
+                                                                setSelectedLocation(opt);
+                                                            } else {
+                                                                setSelectedLocation(null);
+                                                            }
+                                                        }}
+                                                        className={`w-full text-left px-3 py-2 rounded-lg text-[11px] transition-colors flex flex-col ${darkMode ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'}`}
+                                                    >
+                                                        <span className="font-bold truncate">{opt.matchText}</span>
+                                                        <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${darkMode ? 'text-blue-400' : 'text-gov-blueDark-500'}`}>
+                                                            {opt.matchType} <span className="opacity-50 text-slate-500 ml-1">em {opt.nome}</span>
+                                                        </span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className={`p-4 text-center text-[10px] font-medium italic ${themeClasses.textMuted}`}>
+                                                Nenhum resultado encontrado para "{searchTerm}"
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -859,22 +933,22 @@ function MainApp() {
                         </div>
 
                         <div className="flex items-center gap-2 w-full sm:w-auto">
-                            {/* BARRA DE PESQUISA LOCAL */}
-                            <div className="relative flex-1 sm:w-48 lg:w-64">
-                                <input 
-                                    type="text" 
-                                    placeholder="Buscar curso..." 
-                                    value={cursoSearchTerm} 
-                                    onChange={(e) => setCursoSearchTerm(e.target.value)} 
-                                    className={`w-full h-9 pl-8 pr-8 rounded-xl text-[10px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
-                                />
-                                <svg className={`w-3.5 h-3.5 absolute left-3 top-2.5 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                {cursoSearchTerm && (
-                                    <button onClick={() => setCursoSearchTerm('')} className="absolute right-2.5 top-2.5 hover:text-red-500 text-slate-400">
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                    </button>
-                                )}
-                            </div>
+                        {/* BARRA DE PESQUISA LOCAL */}
+                        <div className="relative flex-1 sm:w-48 lg:w-64">
+                            <input 
+                                type="text" 
+                                placeholder="Buscar curso..." 
+                                value={cursoSearchTerm} 
+                                onChange={(e) => setCursoSearchTerm(e.target.value)} 
+                                className={`w-full h-9 pl-8 pr-8 rounded-xl text-[10px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
+                            />
+                            <svg className={`w-3.5 h-3.5 absolute left-3 top-2.5 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            {cursoSearchTerm && (
+                                <button onClick={() => setCursoSearchTerm('')} className="absolute right-2.5 top-2.5 hover:text-red-500 text-slate-400">
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            )}
+                        </div>
 
                         {/* DROPDOWN DE FILTRO (Estilo Filtros Avançados) */}
                         {areaGeralSummary.length > 0 && (
