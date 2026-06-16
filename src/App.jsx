@@ -564,7 +564,7 @@ function MainApp() {
       }
       if (cursoSearchTerm) {
           const term = normalize(cursoSearchTerm);
-          result = result.filter(c => normalize(c.curso).includes(term) || normalize(c.entidade).includes(term) || normalize(c.municipio).includes(term));
+          result = result.filter(c => normalize(c.curso).includes(term));
       }
       return result;
   }, [dashboardData.cursos, areaGeralFilter, cursoSearchTerm]);
@@ -863,7 +863,7 @@ function MainApp() {
                             <div className="relative flex-1 sm:w-48 lg:w-64">
                                 <input 
                                     type="text" 
-                                    placeholder="Buscar curso, inst. ou cidade..." 
+                                    placeholder="Buscar curso..." 
                                     value={cursoSearchTerm} 
                                     onChange={(e) => setCursoSearchTerm(e.target.value)} 
                                     className={`w-full h-9 pl-8 pr-8 rounded-xl text-[10px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
