@@ -387,60 +387,68 @@ export default function ConectaMap({
                             })}
 
                             {/* 2. TEXTOS DOS TERRITÓRIOS (Sem seleção) */}
-                            {!selectedTerritory && territoryLabels.map((lbl, i) => {
-                                // Oculta o texto também se a região estiver bloqueada pelos filtros cruzados
-                                const dStats = territoriesDynamicStats[getTerritoryKey(lbl.name)];
-                                if (dStats && !dStats.matchesFilters) return null;
+                            {!selectedTerritory && (
+                                <g style={{ opacity: userScale > 1.05 ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
+                                    {territoryLabels.map((lbl, i) => {
+                                        // Oculta o texto também se a região estiver bloqueada pelos filtros cruzados
+                                        const dStats = territoriesDynamicStats[getTerritoryKey(lbl.name)];
+                                        if (dStats && !dStats.matchesFilters) return null;
 
-                                const lines = wrapText(lbl.name);
-                                const fontSize = 16 / effectiveScale; 
-                                const strokeW = 4 / effectiveScale;
-                                const lineHeight = fontSize * 1.1;
-                                const startY = lbl.y - ((lines.length - 1) * lineHeight) / 2;
+                                        const lines = wrapText(lbl.name);
+                                        const fontSize = 16 / effectiveScale; 
+                                        const strokeW = 4 / effectiveScale;
+                                        const lineHeight = fontSize * 1.1;
+                                        const startY = lbl.y - ((lines.length - 1) * lineHeight) / 2;
 
-                                return (
-                                    <text 
-                                        key={`t-lbl-${i}`} x={lbl.x} y={lbl.y} textAnchor="middle" alignmentBaseline="middle" 
-                                        style={{ 
-                                            paintOrder: 'stroke', stroke: 'rgba(0, 0, 0, 0.65)', strokeWidth: `${strokeW * 0.8}px`, 
-                                            fill: 'rgba(255, 255, 255, 0.95)', fontSize: `${fontSize}px`, fontWeight: '600', pointerEvents: 'none',
-                                        }}
-                                    >
-                                        {lines.map((line, idx) => (
-                                            <tspan key={idx} x={lbl.x} y={startY + (idx * lineHeight)}>{line}</tspan>
-                                        ))}
-                                    </text>
-                                );
-                            })}
+                                        return (
+                                            <text 
+                                                key={`t-lbl-${i}`} x={lbl.x} y={lbl.y} textAnchor="middle" alignmentBaseline="middle" 
+                                                style={{ 
+                                                    paintOrder: 'stroke', stroke: 'rgba(0, 0, 0, 0.65)', strokeWidth: `${strokeW * 0.8}px`, 
+                                                    fill: 'rgba(255, 255, 255, 0.95)', fontSize: `${fontSize}px`, fontWeight: '600', pointerEvents: 'none',
+                                                }}
+                                            >
+                                                {lines.map((line, idx) => (
+                                                    <tspan key={idx} x={lbl.x} y={startY + (idx * lineHeight)}>{line}</tspan>
+                                                ))}
+                                            </text>
+                                        );
+                                    })}
+                                </g>
+                            )}
 
                             {/* 3. TEXTOS DOS MUNICÍPIOS (Com seleção) */}
-                            {selectedTerritory && mapFeatures.filter(f => {
-                                const isSameTerritory = getTerritoryKey(f.territory) === getTerritoryKey(selectedTerritory.nome);
-                                if (!isSameTerritory) return false;
-                                const isMunSemi = semiaridoMunicipios.includes(normalizeName(f.nome));
-                                if (filtroSemiarido && !isMunSemi) return false;
-                                return true;
-                            }).map((feat, i) => {
-                                const lines = wrapText(feat.nome);
-                                const fontSize = 14 / effectiveScale; 
-                                const strokeW = 3.5 / effectiveScale;
-                                const lineHeight = fontSize * 1.1;
-                                const startY = feat.cy - ((lines.length - 1) * lineHeight) / 2;
+                            {selectedTerritory && (
+                                <g style={{ opacity: userScale > 1.05 ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
+                                    {mapFeatures.filter(f => {
+                                        const isSameTerritory = getTerritoryKey(f.territory) === getTerritoryKey(selectedTerritory.nome);
+                                        if (!isSameTerritory) return false;
+                                        const isMunSemi = semiaridoMunicipios.includes(normalizeName(f.nome));
+                                        if (filtroSemiarido && !isMunSemi) return false;
+                                        return true;
+                                    }).map((feat, i) => {
+                                        const lines = wrapText(feat.nome);
+                                        const fontSize = 14 / effectiveScale; 
+                                        const strokeW = 3.5 / effectiveScale;
+                                        const lineHeight = fontSize * 1.1;
+                                        const startY = feat.cy - ((lines.length - 1) * lineHeight) / 2;
 
-                                return (
-                                    <text 
-                                        key={`m-lbl-${i}`} x={feat.cx} y={feat.cy} textAnchor="middle" alignmentBaseline="middle" 
-                                        style={{ 
-                                            paintOrder: 'stroke', stroke: 'rgba(0, 0, 0, 0.65)', strokeWidth: `${strokeW * 0.7}px`, 
-                                            fill: 'rgba(255, 255, 255, 0.9)', fontSize: `${fontSize}px`, fontWeight: '500', pointerEvents: 'none',
-                                        }}
-                                    >
-                                        {lines.map((line, idx) => (
-                                            <tspan key={idx} x={feat.cx} y={startY + (idx * lineHeight)}>{line}</tspan>
-                                        ))}
-                                    </text>
-                                );
-                            })}
+                                        return (
+                                            <text 
+                                                key={`m-lbl-${i}`} x={feat.cx} y={feat.cy} textAnchor="middle" alignmentBaseline="middle" 
+                                                style={{ 
+                                                    paintOrder: 'stroke', stroke: 'rgba(0, 0, 0, 0.65)', strokeWidth: `${strokeW * 0.7}px`, 
+                                                    fill: 'rgba(255, 255, 255, 0.9)', fontSize: `${fontSize}px`, fontWeight: '500', pointerEvents: 'none',
+                                                }}
+                                            >
+                                                {lines.map((line, idx) => (
+                                                    <tspan key={idx} x={feat.cx} y={startY + (idx * lineHeight)}>{line}</tspan>
+                                                ))}
+                                            </text>
+                                        );
+                                    })}
+                                </g>
+                            )}
                         </g>
                     </g>
                 </svg>
@@ -467,11 +475,19 @@ export default function ConectaMap({
             )}
 
             {/* LEGENDA DO MAPA */}
-            <div className={`absolute bottom-5 left-5 z-20 px-3 py-2 rounded-xl border shadow-lg backdrop-blur-md flex items-center gap-2 pointer-events-none ${darkMode ? 'bg-slate-900/80 border-slate-700' : 'bg-white/90 border-slate-200'}`}>
-                <span className="w-3 h-3 rounded-full border-[2px] shadow-sm" style={{ backgroundColor: '#F97316', borderColor: darkMode ? '#1e293b' : '#ffffff' }}></span>
-                <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                    Pertencente ao Semiárido
-                </span>
+            <div className={`absolute bottom-6 left-6 z-20 px-4 py-3.5 rounded-2xl border shadow-xl backdrop-blur-xl flex flex-col gap-2.5 pointer-events-none transition-colors duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/70 border-white/60'}`}>
+                <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-orange-500 shadow-sm"></span>
+                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                        Pertencente ao Semiárido
+                    </span>
+                </div>
+                <div className="flex items-center gap-2.5 opacity-80">
+                    <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></span>
+                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                        Oculto ou Sem Dados
+                    </span>
+                </div>
             </div>
 
             {/* CONTROLES MANUAIS FLUTUANTES */}
