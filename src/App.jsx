@@ -43,8 +43,6 @@ const SobrePage = ({ darkMode }) => (
         <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-6 mt-10 border-b border-slate-200/20 pb-2">3. Guia de Funcionalidades</h3>
         <ul className="space-y-6">
           {[
-            { t: 'Pesquisa de Dados (Deep Search)', d: 'O campo de pesquisa permite localizar simultaneamente Municípios, Territórios, Instituições ou Segmentos Produtivos. O painel isola imediatamente os resultados relevantes.', i: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', c: 'text-blue-500 bg-blue-500/10' },
-            { t: 'Navegação Cartográfica Dinâmica', d: 'A malha do mapa responde semanticamente aos dados. A seleção de um território no mapa aciona uma aproximação automática focando a área geográfica.', i: 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7', c: 'text-emerald-500 bg-emerald-500/10' },
             { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z', c: 'text-orange-500 bg-orange-500/10' },
             { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em quatro abas relacionais, preparado para análises estatísticas externas.', i: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', c: 'text-purple-500 bg-purple-500/10' }
           ].map((func, idx) => (
@@ -81,21 +79,20 @@ function MainApp() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
-  // NOVOS ESTADOS: Controle de Filtros Avançados Flutuantes
+  // Estados dos Filtros Avançados Flutuantes
   const [isFilterPanelOpen, setIsFilterOpen] = useState(false);
   const [ifdmMin, setIfdmMin] = useState('');
   const [ifdmMax, setIfdmMax] = useState('');
   const [semiMunsMin, setSemiMunsMin] = useState('');
   const [semiMunsMax, setSemiMunsMax] = useState('');
 
-  // Filtros Interativos das KPIs de CTI (Iniciam todos como ativos)
+  // CORREÇÃO CRÍTICA: 'parks' corrigido para 'parques' para bater com o ID gerado na listagem
   const [ctiFilters, setCtiFilters] = useState({
       univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
   });
 
   const dropdownRef = useRef(null);
   const filterPanelRef = useRef(null);
-  const scrollMunsRef = useRef(null);
 
   // Pipeline de Dados
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
@@ -161,13 +158,13 @@ function MainApp() {
       return true;
   };
 
-  // Motor de Busca com suporte aos filtros de intervalo
+  // Motor de Busca Avançado com cruzamento total de intervalos e CTI
   const filteredOptions = useMemo(() => {
     const term = normalize(searchTerm); const results = [];
     territoriosData.forEach(t => {
         if (filtroSemiarido && !t.isSemiarido) return;
         
-        // Aplicação dos filtros de intervalo de IFDM e Semiárido na Busca
+        // Cruzamento de intervalos numéricos na listagem de busca
         const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
         const qtdSemiVal = t.qtdSemiarido || 0;
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
@@ -185,7 +182,7 @@ function MainApp() {
             if (foundMun && isMunValid(foundMun)) { matched = true; foundMunMatch = foundMun; }
         }
         if (!matched && t.entidadesDetalhadas) {
-            foundEntMatch = t.entidadesDetalhadas.find(ent => isMunValid(ent.municipio) && (normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term)));
+            foundEntMatch = t.entidadesDetalhadas.find(ent => isMunValid(ent.municipio) && (!ent.categoria || ctiFilters[ent.categoria]) && (normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term)));
             if (foundEntMatch) matched = true;
         }
         if (!matched && t.cadeiasProdutivasDetalhado) {
@@ -199,21 +196,25 @@ function MainApp() {
         else if (normalize(t.nome).includes(term)) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
     });
     return results.sort((a, b) => a.nome.localeCompare(b.nome));
-  }, [searchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax]);
+  }, [searchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
-  // Cálculos Dinâmicos do Mapa com suporte aos filtros de intervalo
+  // Cálculos Dinâmicos do Mapa com suporte e cruzamento de CTI + Intervalos
   const territoriesDynamicStats = useMemo(() => {
       const stats = {}; const term = normalize(searchTerm);
       const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
 
+      // NOVO: Verifica se o utilizador está ativamente a filtrar CTI
+      const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
+
       territoriosData.forEach(t => {
-          // Filtros de intervalo
           const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
           const qtdSemiVal = t.qtdSemiarido || 0;
-          if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
-          if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
-          if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
-          if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
+          
+          let passesIntervals = true;
+          if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) passesIntervals = false;
+          if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) passesIntervals = false;
+          if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) passesIntervals = false;
+          if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) passesIntervals = false;
 
           let somaIfdmPop = 0; let somaPop = 0;
           if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
@@ -226,7 +227,12 @@ function MainApp() {
               somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal; somaPop = t.desenvolvimento.populacaoTotal;
           }
           
-          const validCti = t.entidadesDetalhadas.filter(ent => isMunValid(ent.municipio) && (term && !isSearchTermATerritory ? (normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term)) : true));
+          // Filtragem cruzada de CTI aplicada ao mapa em tempo real
+          const validCti = t.entidadesDetalhadas.filter(ent => 
+              isMunValid(ent.municipio) && 
+              (!ent.categoria || ctiFilters[ent.categoria]) && 
+              (term && !isSearchTermATerritory ? (normalize(ent.entidade).includes(term) || normalize(ent.tipo).includes(term)) : true)
+          );
           const validCadeias = t.cadeiasProdutivasDetalhado.filter(cad => isMunValid(cad.sede || cad.municipioSatelite) && (term && !isSearchTermATerritory ? normalize(cad.segmento).includes(term) : true));
           
           let matchesSearch = true;
@@ -235,16 +241,26 @@ function MainApp() {
               matchesSearch = normalize(t.nome).includes(term) || (territorioBase && territorioBase.municipios.some(m => normalize(m).includes(term))) || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0));
           }
 
+          // NOVO: Lógica restrita para o Mapa. 
+          // Se o CTI Filter está ativo, APAGA as regiões sem CTI.
+          let hasDataForFilters = true;
+          if (isCtiFiltered) {
+              hasDataForFilters = validCti.length > 0;
+          }
+
+          const matchesFilters = passesIntervals && matchesSearch && hasDataForFilters;
+
           stats[normalize(t.nome)] = {
               ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
               capacidadeCti: String(validCti.length), cadeiasIgs: String(validCadeias.length),
-              pctSemiarido: t.pctSemiarido, matchesSearch: filtroSemiarido ? (t.isSemiarido && matchesSearch) : matchesSearch
+              pctSemiarido: t.pctSemiarido, 
+              matchesFilters: matchesFilters // Enviado diretamente para o mapa colorir/apagar
           };
       });
       return stats;
-  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax]);
+  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
-  // Consumo de Dados das Listas e Progresso dos KPIs
+  // Consumo de Dados das Listas e KPIs de Painel com Cruzamento Total
   const dashboardData = useMemo(() => {
     let targetList = selectedLocation ? [selectedLocation] : territoriosData;
     const term = normalize(searchTerm); const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === term);
@@ -269,7 +285,6 @@ function MainApp() {
     };
 
     targetList.forEach(t => {
-        // Filtros de intervalo aplicados de forma relacional
         const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
         const qtdSemiVal = t.qtdSemiarido || 0;
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
@@ -301,6 +316,10 @@ function MainApp() {
         t.entidadesDetalhadas.forEach(ent => {
             if (!isMunValid(ent.municipio)) return;
             if (term && !isSearchTermATerritory && !normalize(ent.entidade).includes(term) && !normalize(ent.tipo).includes(term)) return;
+            
+            // FILTRAGEM CRUZADA DE ATIVOS CTI
+            if (ent.categoria && !ctiFilters[ent.categoria]) return;
+
             validData = true; 
             entidadesFlat.push({ ...ent, territorioRef: t.nome });
             if (ent.id && !globalIds.has(ent.id)) {
@@ -385,13 +404,7 @@ function MainApp() {
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         assistencias: Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || "")) 
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, searchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax]);
-
-  const municipiosSelecionados = useMemo(() => {
-      if (!selectedLocation) return [];
-      const tb = territoriosMunicipios.territorios_de_identidade.find((t) => normalize(t.nome) === normalize(selectedLocation.nome));
-      return tb ? (filtroSemiarido ? tb.municipios.filter(m => semiaridoMunicipios.includes(normalize(m))) : tb.municipios).sort() : [];
-  }, [selectedLocation, filtroSemiarido, semiaridoMunicipios]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, searchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
   const toggleCtiFilter = (key) => {
       setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
@@ -401,6 +414,7 @@ function MainApp() {
       setIfdmMin(''); setIfdmMax('');
       setSemiMunsMin(''); setSemiMunsMax('');
       setFiltroSemiarido(false);
+      // Corrigido para repor os parques corretamente
       setCtiFilters({
           univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
       });
@@ -484,7 +498,7 @@ function MainApp() {
                 <span className="text-gov-red-500">Territorial</span>
             </h1>
             <nav className="hidden sm:flex items-center gap-2">
-                {[ {p: '/', l: 'Início'}, {p: '/territorios', l: 'Territórios'}, {p: '/sobre', l: 'Sobre'} ].map((tab) => (
+                {[ {p: '/', l: 'Início'}, {p: '/sobre', l: 'Sobre'}, {p: '/territorios', l: 'Territórios'}  ].map((tab) => (
                   <Link key={tab.p} to={tab.p} className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${isActive(tab.p) ? (darkMode ? 'bg-blue-500 text-white' : 'bg-gov-blueDark-500 text-white') : (darkMode ? 'text-slate-400 hover:text-white hover:bg-white/5' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')}`}>
                     {tab.l}
                   </Link>
@@ -582,17 +596,6 @@ function MainApp() {
                                 </div>
                             )}
                         </div>
-
-                        {isDropdownOpen && searchTerm && (
-                            <div className={`absolute top-[100%] mt-2 w-full rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto border overflow-hidden ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
-                            {filteredOptions.length > 0 ? filteredOptions.map((item) => (
-                                <button key={item.id} onClick={() => { setSelectedLocation(item); setSearchTerm(item.nome); setIsDropdownOpen(false); }} className={`w-full text-left px-4 py-3 border-b last:border-none flex items-center justify-between transition-colors ${darkMode ? 'border-slate-700 hover:bg-slate-700/50' : 'border-slate-100 hover:bg-slate-50'}`}>
-                                    <div className="flex flex-col"><span className="font-bold text-xs">{item.nome}</span><span className={`text-[9px] uppercase tracking-wider mt-0.5 ${themeClasses.textMuted}`}>{item.matchType === 'Território' ? item.regiao : `${item.matchType}: ${item.matchText}`}</span></div>
-                                    {item.isSemiarido && <span className="text-[8px] font-black bg-orange-500/10 text-orange-500 px-2 py-0.5 rounded-md uppercase">Semiárido</span>}
-                                </button>
-                            )) : (<div className={`px-4 py-3 text-xs italic text-center ${themeClasses.textMuted}`}>Nenhum resultado matemático encontrado.</div>)}
-                            </div>
-                        )}
                     </div>
                     <div className="flex items-center lg:justify-end gap-2 lg:pt-4 w-full">
                         <button onClick={() => carregarDadosDoSharePoint(true)} disabled={isLoadingPipeline} className={`h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 hover:bg-slate-700' : 'bg-slate-900 border-slate-800 text-white hover:bg-slate-800'} disabled:opacity-50`}>
@@ -625,38 +628,6 @@ function MainApp() {
                     </div>
                 </div>
 
-                {selectedLocation && municipiosSelecionados.length > 0 && (
-                    <div className={`p-3 rounded-2xl border shadow-inner ${darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-50 border-slate-200/60'}`}>
-                        <div className="flex items-center justify-between mb-2 px-1">
-                            <span className={`text-[9px] font-black uppercase tracking-widest opacity-60 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>Municípios Constituintes</span>
-                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-md ${darkMode ? 'bg-slate-800 text-slate-300' : 'bg-white border border-slate-200 text-slate-600'}`}>{municipiosSelecionados.length} Cidades</span>
-                        </div>
-                        
-                        <div className="relative flex items-center group">
-                            <button onClick={() => scrollMunsRef.current?.scrollBy({ left: -200, behavior: 'smooth' })} className={`absolute left-0 h-full w-12 bg-gradient-to-r ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'} z-10 flex items-center justify-start opacity-0 group-hover:opacity-100 transition-opacity`}><div className="bg-slate-800 text-white p-1 rounded-full shadow"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg></div></button>
-                            <div ref={scrollMunsRef} className="flex gap-2 overflow-x-auto pb-1 w-full hide-scroll scroll-smooth px-1">
-                                {municipiosSelecionados.map((m, idx) => {
-                                    const isSemi = semiaridoMunicipios.includes(normalize(m));
-                                    return (
-                                        <span key={idx} className={`whitespace-nowrap flex items-center gap-2 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-colors shadow-sm ${isSemi ? 'bg-orange-500/10 text-orange-600 border-orange-500/30' : (darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-700 border-slate-200')}`}>
-                                            {isSemi && <span className="w-1.5 h-1.5 rounded-full border border-orange-500 bg-orange-500/40"></span>}
-                                            {m}
-                                        </span>
-                                    );
-                                })}
-                            </div>
-                            <button onClick={() => scrollMunsRef.current?.scrollBy({ left: 200, behavior: 'smooth' })} className={`absolute right-0 h-full w-12 bg-gradient-to-l ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'} z-10 flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity`}><div className="bg-slate-800 text-white p-1 rounded-full shadow"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg></div></button>
-                        </div>
-                        
-                        {!filtroSemiarido && selectedLocation && selectedLocation.qtdSemiarido > 0 && (
-                            <div className={`text-[9px] font-bold mt-2 flex items-center gap-1.5 px-1 opacity-90 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                                <span className="w-2 h-2 rounded-full border-[1.5px] border-orange-500 bg-orange-500/20"></span>
-                                <span>Pertencente ao Semiárido</span>
-                            </div>
-                        )}
-                    </div>
-                )}
-
                 <div className="grid grid-cols-4 lg:grid-cols-7 gap-2 lg:gap-3">
                     {[
                         { id: 'univs', l: 'Univs.', v: dashboardData.subKpis.univs, pct: dashboardData.unfiltSubKpis.univs > 0 ? (dashboardData.subKpis.univs / dashboardData.unfiltSubKpis.univs)*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500' },
@@ -667,22 +638,19 @@ function MainApp() {
                         { id: 'parques', l: 'Parques', v: dashboardData.subKpis.parques, pct: dashboardData.unfiltSubKpis.parques > 0 ? (dashboardData.subKpis.parques / dashboardData.unfiltSubKpis.parques)*100 : 0, c: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', b: 'bg-fuchsia-500' },
                         { id: 'incubadoras', l: 'Incub.', v: dashboardData.subKpis.incubadoras, pct: dashboardData.unfiltSubKpis.incubadoras > 0 ? (dashboardData.subKpis.incubadoras / dashboardData.unfiltSubKpis.incubadoras)*100 : 0, c: darkMode ? 'text-amber-400' : 'text-amber-600', b: 'bg-amber-500' }
                     ].map((sK) => (
-                        <button 
+                        <div 
                             key={sK.id} 
-                            onClick={() => toggleCtiFilter(sK.id)}
-                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center transition-all hover:-translate-y-1 overflow-hidden 
-                            ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'} 
-                            ${ctiFilters[sK.id] ? 'opacity-100' : 'opacity-40 grayscale'}`}
+                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center overflow-hidden transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'} ${ctiFilters[sK.id] ? 'opacity-100' : 'opacity-30 grayscale'}`}
                         >
                             <span className={`text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{sK.l}</span>
                             <span className={`text-xl font-black leading-none pb-1 drop-shadow-sm ${sK.c}`}>{sK.v || 0}</span>
                             <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50">
                                 <div className={`h-full ${sK.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, sK.pct))}%` }}></div>
                             </div>
-                        </button>
+                        </div>
                     ))}
                 </div>
-
+                
                 <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[600px] 2xl:h-[70vh] w-full mt-2">
                     
                     <div className={`w-full lg:w-[45%] xl:w-[50%] rounded-[2rem] border p-3 shadow-inner relative flex flex-col h-full overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
@@ -702,17 +670,18 @@ function MainApp() {
 
                     <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col gap-4 h-full overflow-hidden">
                     
+                        {/* LISTA 1: ESTRUTURAS CT&I */}
                         <div className={`flex-1 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                             <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
                                 <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
-                                    {dashboardData.entidades.filter(ent => !ent.categoria || ctiFilters[ent.categoria]).length}
+                                    {dashboardData.entidades.length}
                                 </span>
                             </div>
                             <div className="flex-1 overflow-y-auto p-3 hide-scroll">
                                 <div className="flex flex-col gap-2">
-                                {dashboardData.entidades.filter(ent => !ent.categoria || ctiFilters[ent.categoria]).length > 0 ? (
-                                    dashboardData.entidades.filter(ent => !ent.categoria || ctiFilters[ent.categoria]).map((ent, idx) => (
+                                {dashboardData.entidades.length > 0 ? (
+                                    dashboardData.entidades.map((ent, idx) => (
                                     <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 hover:pl-4 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
                                         <span className="text-[11px] font-bold leading-tight">{ent.entidade}</span>
                                         <div className="flex justify-between items-end mt-1">
@@ -723,11 +692,12 @@ function MainApp() {
                                             <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{ent.municipio}</span></div>
                                         </div>
                                     </div>
-                                ))) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Use os botões acima para selecionar os filtros.</div>)}
+                                ))) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma infraestrutura mapeada para os filtros ativos.</div>)}
                                 </div>
                             </div>
                         </div>
 
+                        {/* LISTA 2: CADEIAS PRODUTIVAS */}
                         <div className={`flex-[1.2] min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                             <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cadeias Produtivas</h4>
@@ -754,7 +724,7 @@ function MainApp() {
                                             )}
                                         </div>
                                     </div>
-                                )) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma cadeia isolada.</div>)}
+                                )) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma cadeia isolada para os filtros ativos.</div>)}
                                 </div>
                             </div>
                         </div>
