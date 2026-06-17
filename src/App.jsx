@@ -112,6 +112,7 @@ function MainApp() {
   const filterPanelRef = useRef(null);
   const scrollMunsRef = useRef(null);
   const areaGeralRef = useRef(null);
+  const mapSectionRef = useRef(null);
 
   // Pipeline de Dados
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
@@ -173,6 +174,19 @@ function MainApp() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Efeito para rolar a tela e focar no mapa quando uma região é selecionada
+  useEffect(() => {
+    if (selectedLocation && mapSectionRef.current) {
+      // Pequeno delay para garantir que a animação de zoom do mapa já iniciou
+      setTimeout(() => {
+        mapSectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 150);
+    }
+  }, [selectedLocation]);
 
   const isMunValid = (munName) => {
       if (!munName) return false;
@@ -889,9 +903,9 @@ function MainApp() {
                     ))}
                 </div>
                 
-                <div className="flex flex-col lg:flex-row gap-4 items-stretch min-h-[550px] lg:h-[650px] xl:h-[700px] 2xl:h-[78vh] w-full mt-2">
+                <div className="flex flex-col lg:flex-row gap-4 items-stretch min-h-[550px] lg:h-[650px] xl:h-[700px] 2xl:h-[78vh] w-full mt-2 mb-3">
                     
-                    <div className="w-full lg:w-[50%] xl:w-[55%] flex flex-col">
+                    <div ref={mapSectionRef} className="w-full lg:w-[50%] xl:w-[55%] flex flex-col relative">
                         <div className={`rounded-[2rem] border p-3 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
                             <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
                                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Motor Cartográfico
@@ -906,7 +920,7 @@ function MainApp() {
                                 />
                             </div>
                         </div>
-                        <span className={`text-left text-[13px] mt-3 ml-3 opacity-70 ${themeClasses.textMuted}`}>
+                        <span className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 ${themeClasses.textMuted}`}>
                          Fonte: IBGE, 2022
                         </span>
                     </div>
