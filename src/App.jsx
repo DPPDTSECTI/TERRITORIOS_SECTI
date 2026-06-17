@@ -78,6 +78,7 @@ function MainApp() {
   const [filtroSemiarido, setFiltroSemiarido] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  
   const [areaGeralFilter, setAreaGeralFilter] = useState([]);
   const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
@@ -89,7 +90,6 @@ function MainApp() {
   const [semiMunsMin, setSemiMunsMin] = useState('');
   const [semiMunsMax, setSemiMunsMax] = useState('');
 
-  // CORREÇÃO CRÍTICA: 'parks' corrigido para 'parques' para bater com o ID gerado na listagem
   const [ctiFilters, setCtiFilters] = useState({
       univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
   });
@@ -98,6 +98,20 @@ function MainApp() {
   const filterPanelRef = useRef(null);
   const scrollMunsRef = useRef(null);
   const areaGeralRef = useRef(null);
+
+  // NOVO: Função Global de Limpeza (Reset Total)
+  const resetGlobalFilters = () => {
+      setSearchTerm('');
+      setSelectedLocation(null);
+      setIfdmMin(''); setIfdmMax('');
+      setSemiMunsMin(''); setSemiMunsMax('');
+      setFiltroSemiarido(false);
+      setAreaGeralFilter([]);
+      setCursoSearchTerm('');
+      setCtiFilters({
+          univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+      });
+  };
 
   // Pipeline de Dados
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
@@ -183,7 +197,7 @@ function MainApp() {
 
         if (!rawTerm) { results.push({ ...t, matchType: 'Território', matchText: t.regiao }); return; }
         
-        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null;
+        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null; let foundCursoMatch = null;
         const territorioBase = territoriosMunicipios.territorios_de_identidade.find((tb) => normalize(tb.nome) === normalize(t.nome));
 
         if (territorioBase) {
@@ -209,10 +223,19 @@ function MainApp() {
             });
             if (foundCadeiaMatch) matched = true;
         }
+        if (!matched && t.cursosDetalhado) {
+            foundCursoMatch = t.cursosDetalhado.find(curso => {
+                if (!isMunValid(curso.municipio)) return false;
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)}`;
+                return terms.every(term => searchString.includes(term));
+            });
+            if (foundCursoMatch) matched = true;
+        }
 
         if (foundMunMatch) results.push({ ...t, matchType: 'Município', matchText: foundMunMatch });
         else if (foundEntMatch) results.push({ ...t, matchType: terms.some(term => normalize(foundEntMatch.tipo).includes(term)) ? 'Tipo de Infraestrutura' : 'Entidade CT&I', matchText: foundEntMatch.entidade });
         else if (foundCadeiaMatch) results.push({ ...t, matchType: 'Cadeia Produtiva', matchText: foundCadeiaMatch.segmento });
+        else if (foundCursoMatch) results.push({ ...t, matchType: 'Curso Superior', matchText: foundCursoMatch.curso });
         else if (terms.every(term => normalize(t.nome).includes(term))) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
     });
     return results.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -224,7 +247,6 @@ function MainApp() {
       const cursoTerm = normalize(cursoSearchTerm);
       const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
-      // NOVO: Verifica se o utilizador está ativamente a filtrar CTI ou Cursos
       const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
       const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
 
@@ -268,8 +290,22 @@ function MainApp() {
           });
           const validCursos = (t.cursosDetalhado || []).filter(curso => {
               if (!isMunValid(curso.municipio)) return false;
+              // Cursos precisam responder ao deep search global E ao filtro de cursos
+              if (rawTerm && !isSearchTermATerritory) {
+                  const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)}`;
+                  if (!terms.every(term => searchString.includes(term))) return false;
+              }
               if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
               if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
+              
+              // NOVO: Cruzamento com as caixas de Filtros Avançados de CTI (Univs, IFs, etc)
+              const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
+              let catCurso = null;
+              if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) catCurso = 'ifs';
+              else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) catCurso = 'univs';
+              
+              if (catCurso && !ctiFilters[catCurso]) return false;
+
               return true;
           });
           
@@ -278,7 +314,7 @@ function MainApp() {
               const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
               const tMatches = terms.every(term => normalize(t.nome).includes(term));
               const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
-              matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0));
+              matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
           }
 
           let hasDataForFilters = true;
@@ -296,7 +332,7 @@ function MainApp() {
               ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
               capacidadeCti: String(validCti.length), cadeiasIgs: String(validCadeias.length),
               pctSemiarido: t.pctSemiarido, 
-              matchesFilters: matchesFilters // Enviado diretamente para o mapa colorir/apagar
+              matchesFilters: matchesFilters 
           };
       });
       return stats;
@@ -369,7 +405,6 @@ function MainApp() {
                 if (!terms.every(term => searchString.includes(term))) return;
             }
             
-            // FILTRAGEM CRUZADA DE ATIVOS CTI
             if (ent.categoria && !ctiFilters[ent.categoria]) return;
 
             validData = true; 
@@ -398,7 +433,22 @@ function MainApp() {
 
         (t.cursosDetalhado || []).forEach(curso => {
             if (!isMunValid(curso.municipio)) return;
-            if (!rawTerm || isSearchTermATerritory) validData = true;
+            
+            // Busca Global
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
+
+            // NOVO: Cruzamento com as caixas de Filtros Avançados de CTI (Univs, IFs, etc)
+            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
+            let catCurso = null;
+            if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) catCurso = 'ifs';
+            else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) catCurso = 'univs';
+            
+            if (catCurso && !ctiFilters[catCurso]) return;
+            
+            validData = true;
             cursosFlat.push({ ...curso, territorioRef: t.nome });
         });
 
@@ -488,16 +538,6 @@ function MainApp() {
     if (areaGeralFilter.length === 0) return 'Filtrar Área';
     if (areaGeralFilter.length === 1) return `Área: ${areaGeralFilter[0]}`;
     return `${areaGeralFilter.length} Áreas Selecionadas`;
-  };
-
-  const resetAllFilters = () => {
-      setIfdmMin(''); setIfdmMax('');
-      setSemiMunsMin(''); setSemiMunsMax('');
-      setFiltroSemiarido(false);
-      // Corrigido para repor os parques corretamente
-      setCtiFilters({
-          univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
-      });
   };
 
   const getCtiBadgeStyle = (cat, isDark) => {
@@ -604,7 +644,7 @@ function MainApp() {
       }
       if (cursoSearchTerm) {
           const term = normalize(cursoSearchTerm);
-          result = result.filter(curso => normalize(curso.curso).includes(term));
+          result = result.filter(c => normalize(c.curso).includes(term) || normalize(c.entidade).includes(term) || normalize(c.municipio).includes(term));
       }
       return result;
   }, [dashboardData.cursos, areaGeralFilter, cursoSearchTerm]);
@@ -728,14 +768,22 @@ function MainApp() {
                             </div>
                         </div>
 
-                        {/* BOTÃO E FILTRO FLUTUANTE AVANÇADO */}
-                        <div className="w-full sm:w-auto pt-0 sm:pt-4 relative" ref={filterPanelRef}>
+                        {/* BOTÕES: FILTRO FLUTUANTE E RESET */}
+                        <div className="w-full sm:w-auto pt-0 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 relative" ref={filterPanelRef}>
                             <button 
                                 onClick={() => setIsFilterOpen(!isFilterPanelOpen)} 
-                                className={`w-full h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isFilterPanelOpen ? 'bg-blue-600 border-blue-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
+                                className={`w-full sm:w-auto h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isFilterPanelOpen ? 'bg-blue-600 border-blue-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                                 Filtros Avançados
+                            </button>
+
+                            <button 
+                                onClick={resetGlobalFilters} 
+                                className={`h-11 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 text-red-400 hover:bg-red-900/30 hover:border-red-500/50' : 'bg-white border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
+                                title="Limpar todos os filtros e pesquisas ativos"
+                            >
+                                Limpar
                             </button>
 
                             {isFilterPanelOpen && (
@@ -781,10 +829,6 @@ function MainApp() {
                                             ))}
                                         </div>
                                     </div>
-
-                                    <button onClick={resetAllFilters} className="w-full h-8 rounded-xl font-bold text-[9px] uppercase tracking-wider border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors">
-                                        Resetar Filtros
-                                    </button>
                                 </div>
                             )}
                         </div>
@@ -950,7 +994,7 @@ function MainApp() {
                             )}
                         </div>
 
-                        {/* DROPDOWN DE FILTRO (Estilo Filtros Avançados) */}
+                        {/* DROPDOWN DE FILTRO DE ÁREA GERAL */}
                         {areaGeralSummary.length > 0 && (
                             <div className="relative" ref={areaGeralRef}>
                                 <button
