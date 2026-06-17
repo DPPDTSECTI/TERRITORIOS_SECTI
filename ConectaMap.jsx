@@ -373,6 +373,11 @@ export default function ConectaMap({
                                         filter={isSelectedMap || isHovered ? 'url(#glow)' : undefined}
                                         onMouseEnter={(e) => onMapHover(e, feat)}
                                         onMouseMove={(e) => onMapHover(e, feat)}
+                                        onMouseLeave={() => {
+                                            setTooltip({ visible: false, x: 0, y: 0 });
+                                            setHoveredTerritory(null);
+                                            setHoveredMunicipality(null);
+                                        }}
                                         onClick={(e) => {
                                             e.stopPropagation(); 
                                             if (dragTotal.current > 10) return; 
