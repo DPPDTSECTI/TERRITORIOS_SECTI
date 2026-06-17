@@ -78,7 +78,6 @@ function MainApp() {
   const [filtroSemiarido, setFiltroSemiarido] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  
   const [areaGeralFilter, setAreaGeralFilter] = useState([]);
   const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
@@ -90,6 +89,7 @@ function MainApp() {
   const [semiMunsMin, setSemiMunsMin] = useState('');
   const [semiMunsMax, setSemiMunsMax] = useState('');
 
+  // CORREÇÃO CRÍTICA: 'parks' corrigido para 'parques' para bater com o ID gerado na listagem
   const [ctiFilters, setCtiFilters] = useState({
       univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
   });
@@ -98,20 +98,6 @@ function MainApp() {
   const filterPanelRef = useRef(null);
   const scrollMunsRef = useRef(null);
   const areaGeralRef = useRef(null);
-
-  // NOVO: Função Global de Limpeza (Reset Total)
-  const resetGlobalFilters = () => {
-      setSearchTerm('');
-      setSelectedLocation(null);
-      setIfdmMin(''); setIfdmMax('');
-      setSemiMunsMin(''); setSemiMunsMax('');
-      setFiltroSemiarido(false);
-      setAreaGeralFilter([]);
-      setCursoSearchTerm('');
-      setCtiFilters({
-          univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
-      });
-  };
 
   // Pipeline de Dados
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
@@ -225,9 +211,9 @@ function MainApp() {
         }
         if (!matched && t.cursosDetalhado) {
             foundCursoMatch = t.cursosDetalhado.find(curso => {
-                if (!isMunValid(curso.municipio)) return false;
-                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)}`;
-                return terms.every(term => searchString.includes(term));
+                 if (!isMunValid(curso.municipio)) return false;
+                 const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
+                 return terms.every(term => searchString.includes(term));
             });
             if (foundCursoMatch) matched = true;
         }
@@ -247,6 +233,7 @@ function MainApp() {
       const cursoTerm = normalize(cursoSearchTerm);
       const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
+      // NOVO: Verifica se o utilizador está ativamente a filtrar CTI ou Cursos
       const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
       const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
 
@@ -290,22 +277,12 @@ function MainApp() {
           });
           const validCursos = (t.cursosDetalhado || []).filter(curso => {
               if (!isMunValid(curso.municipio)) return false;
-              // Cursos precisam responder ao deep search global E ao filtro de cursos
               if (rawTerm && !isSearchTermATerritory) {
-                  const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)}`;
+                  const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
                   if (!terms.every(term => searchString.includes(term))) return false;
               }
               if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
               if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
-              
-              // NOVO: Cruzamento com as caixas de Filtros Avançados de CTI (Univs, IFs, etc)
-              const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-              let catCurso = null;
-              if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) catCurso = 'ifs';
-              else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) catCurso = 'univs';
-              
-              if (catCurso && !ctiFilters[catCurso]) return false;
-
               return true;
           });
           
@@ -332,7 +309,7 @@ function MainApp() {
               ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
               capacidadeCti: String(validCti.length), cadeiasIgs: String(validCadeias.length),
               pctSemiarido: t.pctSemiarido, 
-              matchesFilters: matchesFilters 
+              matchesFilters: matchesFilters // Enviado diretamente para o mapa colorir/apagar
           };
       });
       return stats;
@@ -405,6 +382,7 @@ function MainApp() {
                 if (!terms.every(term => searchString.includes(term))) return;
             }
             
+            // FILTRAGEM CRUZADA DE ATIVOS CTI
             if (ent.categoria && !ctiFilters[ent.categoria]) return;
 
             validData = true; 
@@ -433,21 +411,10 @@ function MainApp() {
 
         (t.cursosDetalhado || []).forEach(curso => {
             if (!isMunValid(curso.municipio)) return;
-            
-            // Busca Global
             if (rawTerm && !isSearchTermATerritory) {
-                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)}`;
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
                 if (!terms.every(term => searchString.includes(term))) return;
             }
-
-            // NOVO: Cruzamento com as caixas de Filtros Avançados de CTI (Univs, IFs, etc)
-            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-            let catCurso = null;
-            if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) catCurso = 'ifs';
-            else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) catCurso = 'univs';
-            
-            if (catCurso && !ctiFilters[catCurso]) return;
-            
             validData = true;
             cursosFlat.push({ ...curso, territorioRef: t.nome });
         });
@@ -538,6 +505,16 @@ function MainApp() {
     if (areaGeralFilter.length === 0) return 'Filtrar Área';
     if (areaGeralFilter.length === 1) return `Área: ${areaGeralFilter[0]}`;
     return `${areaGeralFilter.length} Áreas Selecionadas`;
+  };
+
+  const resetAllFilters = () => {
+      setIfdmMin(''); setIfdmMax('');
+      setSemiMunsMin(''); setSemiMunsMax('');
+      setFiltroSemiarido(false);
+      // Corrigido para repor os parques corretamente
+      setCtiFilters({
+          univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+      });
   };
 
   const getCtiBadgeStyle = (cat, isDark) => {
@@ -644,7 +621,7 @@ function MainApp() {
       }
       if (cursoSearchTerm) {
           const term = normalize(cursoSearchTerm);
-          result = result.filter(c => normalize(c.curso).includes(term) || normalize(c.entidade).includes(term) || normalize(c.municipio).includes(term));
+          result = result.filter(curso => normalize(curso.curso).includes(term));
       }
       return result;
   }, [dashboardData.cursos, areaGeralFilter, cursoSearchTerm]);
@@ -768,22 +745,14 @@ function MainApp() {
                             </div>
                         </div>
 
-                        {/* BOTÕES: FILTRO FLUTUANTE E RESET */}
-                        <div className="w-full sm:w-auto pt-0 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 relative" ref={filterPanelRef}>
+                        {/* BOTÃO E FILTRO FLUTUANTE AVANÇADO */}
+                        <div className="w-full sm:w-auto pt-0 sm:pt-4 relative" ref={filterPanelRef}>
                             <button 
                                 onClick={() => setIsFilterOpen(!isFilterPanelOpen)} 
-                                className={`w-full sm:w-auto h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isFilterPanelOpen ? 'bg-blue-600 border-blue-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
+                                className={`w-full h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isFilterPanelOpen ? 'bg-blue-600 border-blue-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                                 Filtros Avançados
-                            </button>
-
-                            <button 
-                                onClick={resetGlobalFilters} 
-                                className={`h-11 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 text-red-400 hover:bg-red-900/30 hover:border-red-500/50' : 'bg-white border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
-                                title="Limpar todos os filtros e pesquisas ativos"
-                            >
-                                Limpar
                             </button>
 
                             {isFilterPanelOpen && (
@@ -829,6 +798,10 @@ function MainApp() {
                                             ))}
                                         </div>
                                     </div>
+
+                                    <button onClick={resetAllFilters} className="w-full h-8 rounded-xl font-bold text-[9px] uppercase tracking-wider border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors">
+                                        Resetar Filtros
+                                    </button>
                                 </div>
                             )}
                         </div>
@@ -889,19 +862,24 @@ function MainApp() {
                 
                 <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[600px] 2xl:h-[70vh] w-full mt-2">
                     
-                    <div className={`w-full lg:w-[45%] xl:w-[50%] rounded-[2rem] border p-3 shadow-inner relative flex flex-col h-full overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
-                        <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Motor Cartográfico
+                    <div className="w-full lg:w-[45%] xl:w-[50%] flex flex-col">
+                        <div className={`rounded-[2rem] border p-3 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
+                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Motor Cartográfico
+                            </div>
+                            <div className="w-full h-full flex-1 rounded-xl overflow-hidden">
+                                <ConectaMap 
+                                    territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats} 
+                                    searchTerm={searchTerm} filtroSemiarido={filtroSemiarido} 
+                                    selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios} 
+                                    onSelectTerritory={(loc) => { setSelectedLocation(loc); setSearchTerm(loc ? loc.nome : ''); }} 
+                                    darkMode={darkMode} 
+                                />
+                            </div>
                         </div>
-                        <div className="w-full h-full flex-1 rounded-xl overflow-hidden">
-                            <ConectaMap 
-                                territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats} 
-                                searchTerm={searchTerm} filtroSemiarido={filtroSemiarido} 
-                                selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios} 
-                                onSelectTerritory={(loc) => { setSelectedLocation(loc); setSearchTerm(loc ? loc.nome : ''); }} 
-                                darkMode={darkMode} 
-                            />
-                        </div>
+                        <span className={`text-left text-[13px] mt-3 ml-3 opacity-70 ${themeClasses.textMuted}`}>
+                         Fonte: IBGE, 2022
+                        </span>
                     </div>
 
                     <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col gap-4 h-full overflow-hidden">
@@ -994,7 +972,7 @@ function MainApp() {
                             )}
                         </div>
 
-                        {/* DROPDOWN DE FILTRO DE ÁREA GERAL */}
+                        {/* DROPDOWN DE FILTRO (Estilo Filtros Avançados) */}
                         {areaGeralSummary.length > 0 && (
                             <div className="relative" ref={areaGeralRef}>
                                 <button
@@ -1002,11 +980,11 @@ function MainApp() {
                                     className={`h-9 px-4 rounded-xl font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? 'bg-emerald-600 border-emerald-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
                                 >
                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                                    <span className="max-w-[100px] sm:max-w-[200px] truncate">{getAreaFilterButtonText()}</span>
+                                    <span className="whitespace-nowrap">{getAreaFilterButtonText()}</span>
                                 </button>
 
                                 {isAreaGeralOpen && (
-                                    <div className={`absolute right-0 top-[100%] mt-2 w-64 max-h-80 overflow-y-auto hide-scroll rounded-2xl p-3 shadow-2xl border z-[150] flex flex-col gap-1.5 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
+                                    <div className={`absolute right-0 top-[100%] mt-2 w-72 sm:w-80 max-w-[90vw] max-h-80 overflow-y-auto hide-scroll rounded-2xl p-3 shadow-2xl border z-[150] flex flex-col gap-1.5 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
                                         <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
                                         {areaGeralSummary.map(area => {
                                             const styles = getAreaStyles(area.name, darkMode);
@@ -1015,11 +993,11 @@ function MainApp() {
                                                 <button
                                                     key={area.name}
                                                     onClick={() => handleAreaGeralToggle(area.name)}
-                                                    className={`w-full text-left px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-between border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}
+                                                    className={`w-full text-left px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}
                                                 >
-                                                    <div className="flex items-center gap-2 truncate pr-2">
-                                                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${styles.dot}`}></span>
-                                                        <span className={isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}>{area.name}</span>
+                                                    <div className="flex items-center gap-2 pr-2">
+                                                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
+                                                        <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span>
                                                     </div>
                                                     <span className={`px-1.5 py-0.5 rounded-md text-[9px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span>
                                                 </button>
