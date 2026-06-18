@@ -42,13 +42,6 @@ export default function ChatBot({ context }) {
     setIsLoading(true);
 
     try {
-      // Lendo a chave da API do OpenRouter do arquivo .env
-      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY; 
-      
-      if (!apiKey) {
-        throw new Error("A chave VITE_OPENROUTER_API_KEY não foi encontrada. Verifique o arquivo .env");
-      }
-
       // Comprime a base de dados em texto puro (muito mais leve e rápido para a IA ler do que JSON)
       const baseDeDados = context?.todosTerritorios ? context.todosTerritorios.map(t => 
         `[Território: ${t.nome}] IFDM: ${t.kpis?.ifdm || 0} | Infraestruturas: ` + 
@@ -64,8 +57,8 @@ export default function ChatBot({ context }) {
       ${baseDeDados}
 
       Regras IMPORTANTES:
-      1. PRIORIDADE MÁXIMA: Responda SEMPRE com base na 'BASE DE DADOS INTERNA COMPLETA' acima.
-      2. Se perguntarem sobre números, universidades, infraestruturas ou cidades da Bahia, use EXCLUSIVAMENTE os dados internos.
+      1. LÓGICA E INTERPRETAÇÃO: Use todo o seu conhecimento geral de mundo e raciocínio lógico para compreender o que o usuário quer saber e para formular explicações claras.
+      2. DADOS E FATOS (PRIORIDADE MÁXIMA): Apesar de usar sua lógica geral, para responder fatos, estatísticas, cidades, infraestruturas ou qualquer dado do Conecta Bahia, use EXCLUSIVAMENTE a 'BASE DE DADOS INTERNA COMPLETA' acima. Nunca invente números ou traga métricas de fora. Se a base não tiver a resposta exata, diga que não encontrou nos registros do sistema.
       3. Formate listas e textos em negrito para ficar visualmente agradável.`;
 
       // Prepara o histórico de mensagens no formato exigido pelo OpenRouter (padrão OpenAI)
@@ -75,19 +68,14 @@ export default function ChatBot({ context }) {
         { role: "user", content: input } // Adiciona a mensagem atual do usuário
       ];
 
-      // Requisição HTTP nativa para o OpenRouter
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      // Requisição invisível chamando a sua própria Função Backend Segura
+      const response = await fetch("/.netlify/functions/chat", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": window.location.href, // Recomendado pelo OpenRouter
-          "X-Title": "Conecta Bahia ChatBot", // Recomendado pelo OpenRouter
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "nvidia/nemotron-3-ultra-550b-a55b:free",
           messages: apiMessages
-          // Removido o plugin "web" pois provedores gratuitos costumam travar ao tentar usá-lo
         })
       });
       
