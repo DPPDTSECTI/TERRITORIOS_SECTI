@@ -75,29 +75,51 @@ export default function ChatBot({ context }) {
         { role: "user", content: input } // Adiciona a mensagem atual do usuário
       ];
 
-      // Requisição HTTP nativa para o OpenRouter
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": window.location.href, // Recomendado pelo OpenRouter
-          "X-Title": "Conecta Bahia ChatBot", // Recomendado pelo OpenRouter
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "nvidia/nemotron-3-ultra-550b-a55b:free",
-          messages: apiMessages
-          // Removido o plugin "web" pois provedores gratuitos costumam travar ao tentar usá-lo
-        })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || `Erro do servidor: ${response.status}`);
+      // Array de modelos gratuitos para tentar em sequência caso algum falhe
+      const fallbackModels = [
+        "liquid/lfm-2.5-1.2b-thinking:free"
+      ];
+
+      let responseText = "";
+      let sucesso = false;
+      let ultimoErro = "";
+
+      for (const modelo of fallbackModels) {
+        try {
+          // Requisição HTTP nativa para o OpenRouter
+          const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${apiKey}`,
+              "HTTP-Referer": window.location.href, // Recomendado pelo OpenRouter
+              "X-Title": "Conecta Bahia ChatBot", // Recomendado pelo OpenRouter
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              model: modelo,
+              messages: apiMessages
+            })
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error?.message || `Erro do servidor: ${response.status}`);
+          }
+
+          const data = await response.json();
+          responseText = data.choices[0].message.content;
+          sucesso = true;
+          break; // Sai do loop assim que a requisição for bem-sucedida
+        } catch (err) {
+          console.warn(`[ChatBot] O modelo ${modelo} falhou, tentando o próximo. Erro:`, err.message);
+          ultimoErro = err.message;
+          // O loop continuará para a próxima iteração
+        }
       }
 
-      const data = await response.json();
-      const responseText = data.choices[0].message.content;
+      if (!sucesso) {
+        throw new Error(`Provedores gratuitos instáveis no momento. Tente novamente em alguns segundos. (Detalhe: ${ultimoErro})`);
+      }
 
       setMessages(prev => [...prev, { role: 'assistant', content: responseText }]);
     } catch (error) {
