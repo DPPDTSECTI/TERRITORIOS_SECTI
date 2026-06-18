@@ -376,6 +376,7 @@ function MainApp() {
     const unfiltKpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
     let unfiltAsst = 0; let unfiltCursos = 0;
+    let totalAssistencia = 0;
 
     const extrairSatelite = (cad) => {
         const val = cad.municipioSatelite || cad.municipiosSatelites || cad.satelite || cad.municipio_satelite || cad.municipios_satelites || cad.Satelite || cad.Satelites;
@@ -428,6 +429,8 @@ function MainApp() {
         if (t.assistenciaPublica?.existe) unfiltAsst++;
 
         if (filtroSemiarido && !t.isSemiarido) return;
+        
+        if (t.assistenciaPublica?.existe) totalAssistencia++;
 
         t.entidadesDetalhadas.forEach(ent => {
             if (!isMunValid(ent.municipio)) return;
