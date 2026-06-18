@@ -14,6 +14,18 @@ function normalize(value) {
 }
 
 // ==========================================
+// HOOKS CUSTOMIZADOS
+// ==========================================
+function useDebounce(value, delay) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+    useEffect(() => {
+        const handler = setTimeout(() => { setDebouncedValue(value); }, delay);
+        return () => { clearTimeout(handler); };
+    }, [value, delay]);
+    return debouncedValue;
+}
+
+// ==========================================
 // COMPONENTE: PÁGINA SOBRE
 // ==========================================
 const SobrePage = ({ darkMode }) => (
@@ -75,6 +87,7 @@ function MainApp() {
   const [isLoadingPipeline, setIsLoadingPipeline] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("Atualizando...");
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [filtroSemiarido, setFiltroSemiarido] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -82,6 +95,7 @@ function MainApp() {
   const [areaGeralFilter, setAreaGeralFilter] = useState([]);
   const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
+  const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
 
   // Estados dos Filtros Avançados Flutuantes
   const [isFilterPanelOpen, setIsFilterOpen] = useState(false);
@@ -99,6 +113,7 @@ function MainApp() {
   const filterPanelRef = useRef(null);
   const scrollMunsRef = useRef(null);
   const areaGeralRef = useRef(null);
+  const mapSectionRef = useRef(null);
 
   // Pipeline de Dados
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
@@ -161,6 +176,19 @@ function MainApp() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Efeito para rolar a tela e focar no mapa quando uma região é selecionada
+  useEffect(() => {
+    if (selectedLocation && mapSectionRef.current) {
+      // Pequeno delay para garantir que a animação de zoom do mapa já iniciou
+      setTimeout(() => {
+        mapSectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 150);
+    }
+  }, [selectedLocation]);
+
   const isMunValid = (munName) => {
       if (!munName) return false;
       if (filtroSemiarido && !semiaridoMunicipios.includes(normalize(munName))) return false;
@@ -169,7 +197,7 @@ function MainApp() {
 
   // Motor de Busca Avançado com cruzamento total de intervalos e CTI
   const filteredOptions = useMemo(() => {
-    const rawTerm = normalize(searchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+    const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
     const results = [];
     territoriosData.forEach(t => {
         if (filtroSemiarido && !t.isSemiarido) return;
@@ -184,7 +212,7 @@ function MainApp() {
 
         if (!rawTerm) { results.push({ ...t, matchType: 'Território', matchText: t.regiao }); return; }
         
-        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null;
+        let matched = false; let foundMunMatch = null; let foundEntMatch = null; let foundCadeiaMatch = null; let foundCursoMatch = null;
         const territorioBase = territoriosMunicipios.territorios_de_identidade.find((tb) => normalize(tb.nome) === normalize(t.nome));
 
         if (territorioBase) {
@@ -210,19 +238,28 @@ function MainApp() {
             });
             if (foundCadeiaMatch) matched = true;
         }
+        if (!matched && t.cursosDetalhado) {
+            foundCursoMatch = t.cursosDetalhado.find(curso => {
+                 if (!isMunValid(curso.municipio)) return false;
+                 const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
+                 return terms.every(term => searchString.includes(term));
+            });
+            if (foundCursoMatch) matched = true;
+        }
 
         if (foundMunMatch) results.push({ ...t, matchType: 'Município', matchText: foundMunMatch });
         else if (foundEntMatch) results.push({ ...t, matchType: terms.some(term => normalize(foundEntMatch.tipo).includes(term)) ? 'Tipo de Infraestrutura' : 'Entidade CT&I', matchText: foundEntMatch.entidade });
         else if (foundCadeiaMatch) results.push({ ...t, matchType: 'Cadeia Produtiva', matchText: foundCadeiaMatch.segmento });
+        else if (foundCursoMatch) results.push({ ...t, matchType: 'Curso Superior', matchText: foundCursoMatch.curso });
         else if (terms.every(term => normalize(t.nome).includes(term))) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
     });
     return results.sort((a, b) => a.nome.localeCompare(b.nome));
-  }, [searchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
+  }, [debouncedSearchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
   // Cálculos Dinâmicos do Mapa com suporte e cruzamento de CTI + Intervalos
   const territoriesDynamicStats = useMemo(() => {
-      const stats = {}; const rawTerm = normalize(searchTerm); const terms = rawTerm.split(' ').filter(Boolean);
-      const cursoTerm = normalize(cursoSearchTerm);
+      const stats = {}; const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+      const cursoTerm = normalize(debouncedCursoSearchTerm);
       const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
       // NOVO: Verifica se o utilizador está ativamente a filtrar CTI ou Cursos
@@ -269,6 +306,10 @@ function MainApp() {
           });
           const validCursos = (t.cursosDetalhado || []).filter(curso => {
               if (!isMunValid(curso.municipio)) return false;
+              if (rawTerm && !isSearchTermATerritory) {
+                  const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
+                  if (!terms.every(term => searchString.includes(term))) return false;
+              }
               if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
               if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
               return true;
@@ -279,7 +320,7 @@ function MainApp() {
               const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
               const tMatches = terms.every(term => normalize(t.nome).includes(term));
               const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
-              matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0));
+              matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
           }
 
           let hasDataForFilters = true;
@@ -301,12 +342,12 @@ function MainApp() {
           };
       });
       return stats;
-  }, [territoriosData, filtroSemiarido, searchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, cursoSearchTerm]);
+  }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm]);
 
   // Consumo de Dados das Listas e KPIs de Painel com Cruzamento Total
   const dashboardData = useMemo(() => {
     let targetList = selectedLocation ? [selectedLocation] : territoriosData;
-    const rawTerm = normalize(searchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+    const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
     const kpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
@@ -399,7 +440,11 @@ function MainApp() {
 
         (t.cursosDetalhado || []).forEach(curso => {
             if (!isMunValid(curso.municipio)) return;
-            if (!rawTerm || isSearchTermATerritory) validData = true;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
+            validData = true;
             cursosFlat.push({ ...curso, territorioRef: t.nome });
         });
 
@@ -467,7 +512,7 @@ function MainApp() {
         cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || "")),
         assistencias: Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || "")) 
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, searchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
   const toggleCtiFilter = (key) => {
       setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
@@ -603,26 +648,41 @@ function MainApp() {
       if (areaGeralFilter.length > 0) {
           result = result.filter(c => areaGeralFilter.includes(c.areaGeral || 'Não Informada'));
       }
-      if (cursoSearchTerm) {
-          const term = normalize(cursoSearchTerm);
+      if (debouncedCursoSearchTerm) {
+          const term = normalize(debouncedCursoSearchTerm);
           result = result.filter(curso => normalize(curso.curso).includes(term));
       }
       return result;
-  }, [dashboardData.cursos, areaGeralFilter, cursoSearchTerm]);
+  }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
   return (
-    <div className={`relative flex flex-col font-sans overflow-hidden transition-colors duration-500 ${themeClasses.app}`} style={{ zoom: "0.95", width: "105.26vw", height: "105.26vh" }}>
+    <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
       <Helmet>
         <title>Painel Territorial CT&I | Governo da Bahia</title>
         <meta name="description" content="Plataforma interativa da SECTI com indicadores de Ciência, Tecnologia, Inovação e Cadeias Produtivas dos 27 Territórios de Identidade da Bahia." />
       </Helmet>
 
       <style>{`
+          :root { color-scheme: ${darkMode ? 'dark' : 'light'}; }
           @keyframes softFade { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
           .animate-soft-fade { animation: softFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
           .hide-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
+          
+          /* Scrollbar Global da Página */
+          ::-webkit-scrollbar { width: 10px; height: 10px; }
+          ::-webkit-scrollbar-track { background: ${darkMode ? '#0B1120' : '#F8FAFC'}; }
+          ::-webkit-scrollbar-thumb { background-color: ${darkMode ? '#334155' : '#cbd5e1'}; border-radius: 10px; border: 2px solid ${darkMode ? '#0B1120' : '#F8FAFC'}; }
+          ::-webkit-scrollbar-thumb:hover { background-color: ${darkMode ? '#475569' : '#94a3b8'}; }
+
+          /* Scrollbar Fina para Painéis Internos */
+          .hide-scroll { scrollbar-width: thin; scrollbar-color: ${darkMode ? '#475569 transparent' : '#cbd5e1 transparent'}; }
+          .hide-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
           .hide-scroll::-webkit-scrollbar-track { background: transparent; }
           .hide-scroll::-webkit-scrollbar-thumb { background: ${darkMode ? '#334155' : '#cbd5e1'}; border-radius: 4px; }
+          .hide-scroll::-webkit-scrollbar-thumb { background-color: ${darkMode ? '#334155' : '#cbd5e1'}; border-radius: 10px; border: none; }
+          .hide-scroll::-webkit-scrollbar-thumb { background-color: ${darkMode ? '#475569' : '#cbd5e1'}; border-radius: 10px; border: none; }
+          .hide-scroll::-webkit-scrollbar-thumb:hover { background-color: ${darkMode ? '#64748b' : '#94a3b8'}; }
+          
           @keyframes progress-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
           .animate-progress-slide { animation: progress-slide 1.5s infinite ease-in-out; }
       `}</style>
@@ -666,7 +726,7 @@ function MainApp() {
           </div>
           
           <div className="flex items-center gap-4">
-            <button onClick={() => setDarkMode(!darkMode)} className={`p-2 rounded-xl transition-all border ${darkMode ? 'bg-slate-800 border-slate-700 text-yellow-400 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
+            <button onClick={() => setDarkMode(!darkMode)} aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"} className={`p-2 rounded-xl transition-all border ${darkMode ? 'bg-slate-800 border-slate-700 text-yellow-400 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
               {darkMode ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg> 
                         : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>}
             </button>
@@ -681,7 +741,7 @@ function MainApp() {
           <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
 
           <Route path="/territorios" element={
-            <div className="animate-soft-fade relative p-2 lg:p-0 w-[94%] max-w-[1450px] mx-auto min-h-full">
+            <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
                 <div className={`${themeClasses.glass} rounded-[2rem] p-4 lg:p-6 flex flex-col gap-4`}>
                 
                 <div className={`grid grid-cols-1 lg:grid-cols-3 gap-3 items-center border-b pb-4 ${darkMode ? 'border-slate-700/50' : 'border-slate-200/60'}`}>
@@ -691,7 +751,7 @@ function MainApp() {
                             <div className="relative">
                                 <input type="text" placeholder={isLoadingPipeline ? "Sincronizando..." : "Pesquise por município, território, segmento ou infraestrutura..."} value={searchTerm} disabled={isLoadingPipeline} onChange={(e) => { setSearchTerm(e.target.value); setIsDropdownOpen(true); if (!e.target.value) setSelectedLocation(null); }} onFocus={() => setIsDropdownOpen(true)} className={`w-full h-11 pl-10 pr-10 rounded-xl text-xs transition-all outline-none border ${themeClasses.input}`} />
                                 <svg className={`w-4 h-4 absolute left-3.5 top-3.5 ${themeClasses.textMuted}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                {searchTerm && ( <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} className={`absolute right-3.5 top-3.5 hover:text-red-500 ${themeClasses.textMuted}`}><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button> )}
+                                {searchTerm && ( <button onClick={() => { setSearchTerm(''); setSelectedLocation(null); setIsDropdownOpen(false); }} aria-label="Limpar pesquisa principal" className={`absolute right-3.5 top-3.5 hover:text-red-500 ${themeClasses.textMuted}`}><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button> )}
 
                                 {/* DROPDOWN DE SUGESTÕES DA PESQUISA */}
                                 {isDropdownOpen && searchTerm && (
@@ -844,24 +904,29 @@ function MainApp() {
                     ))}
                 </div>
                 
-                <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[600px] 2xl:h-[70vh] w-full mt-2">
+                <div className="flex flex-col lg:flex-row gap-4 items-stretch min-h-[550px] lg:h-[650px] xl:h-[700px] 2xl:h-[78vh] w-full mt-2 mb-3">
                     
-                    <div className={`w-full lg:w-[45%] xl:w-[50%] rounded-[2rem] border p-3 shadow-inner relative flex flex-col h-full overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
-                        <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Motor Cartográfico
+                    <div ref={mapSectionRef} className="w-full lg:w-[50%] xl:w-[55%] flex flex-col relative">
+                        <div className={`rounded-[2rem] border p-3 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
+                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Motor Cartográfico
+                            </div>
+                            <div className="w-full h-full flex-1 rounded-xl overflow-hidden">
+                                <ConectaMap 
+                                    territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats} 
+                                    searchTerm={searchTerm} filtroSemiarido={filtroSemiarido} 
+                                    selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios} 
+                                    onSelectTerritory={(loc) => { setSelectedLocation(loc); setSearchTerm(loc ? loc.nome : ''); }} 
+                                    darkMode={darkMode} 
+                                />
+                            </div>
                         </div>
-                        <div className="w-full h-full flex-1 rounded-xl overflow-hidden">
-                            <ConectaMap 
-                                territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats} 
-                                searchTerm={searchTerm} filtroSemiarido={filtroSemiarido} 
-                                selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios} 
-                                onSelectTerritory={(loc) => { setSelectedLocation(loc); setSearchTerm(loc ? loc.nome : ''); }} 
-                                darkMode={darkMode} 
-                            />
-                        </div>
+                        <span className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 ${themeClasses.textMuted}`}>
+                         Fonte: IBGE, 2022
+                        </span>
                     </div>
 
-                    <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col gap-4 h-full overflow-hidden">
+                    <div className="w-full lg:w-[50%] xl:w-[45%] flex flex-col gap-4 h-full overflow-hidden">
                     
                         {/* LISTA 1: ESTRUTURAS CT&I */}
                         <div className={`flex-1 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
@@ -926,8 +991,8 @@ function MainApp() {
                 </div>
 
                 {/* NOVA SESSÃO: CURSOS SUPERIORES */}
-                <div className={`mt-4 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
-                    <div className={`p-4 border-b flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
+                <div className={`mt-4 rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                    <div className={`p-4 rounded-t-[1.5rem] border-b flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                         <div className="flex items-center gap-3">
                             <h4 className={`text-xs font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cursos em CT&I (Ensino Superior)</h4>
                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-black hidden lg:inline-block ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{cursosFiltrados.length} Cursos</span>
@@ -945,7 +1010,7 @@ function MainApp() {
                             />
                             <svg className={`w-3.5 h-3.5 absolute left-3 top-2.5 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             {cursoSearchTerm && (
-                                <button onClick={() => setCursoSearchTerm('')} className="absolute right-2.5 top-2.5 hover:text-red-500 text-slate-400">
+                                <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa de curso" className="absolute right-2.5 top-2.5 hover:text-red-500 text-slate-400">
                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             )}
@@ -959,29 +1024,31 @@ function MainApp() {
                                     className={`h-9 px-4 rounded-xl font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? 'bg-emerald-600 border-emerald-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
                                 >
                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                                    <span className="max-w-[100px] sm:max-w-[200px] truncate">{getAreaFilterButtonText()}</span>
+                                    <span className="whitespace-nowrap">{getAreaFilterButtonText()}</span>
                                 </button>
 
                                 {isAreaGeralOpen && (
-                                    <div className={`absolute right-0 top-[100%] mt-2 w-64 max-h-80 overflow-y-auto hide-scroll rounded-2xl p-3 shadow-2xl border z-[150] flex flex-col gap-1.5 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
+                                    <div className={`absolute right-0 top-[100%] mt-2 w-72 sm:w-80 max-w-[90vw] rounded-2xl p-3 shadow-2xl border z-[150] flex flex-col gap-1.5 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
                                         <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
-                                        {areaGeralSummary.map(area => {
+                                        <div className="max-h-64 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1">
+                                            {areaGeralSummary.map(area => {
                                             const styles = getAreaStyles(area.name, darkMode);
                                             const isSelected = areaGeralFilter.includes(area.name);
                                             return (
                                                 <button
                                                     key={area.name}
                                                     onClick={() => handleAreaGeralToggle(area.name)}
-                                                    className={`w-full text-left px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-between border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}
+                                                    className={`w-full text-left px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}
                                                 >
-                                                    <div className="flex items-center gap-2 truncate pr-2">
-                                                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${styles.dot}`}></span>
-                                                        <span className={isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}>{area.name}</span>
+                                                    <div className="flex items-center gap-2 pr-2">
+                                                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
+                                                        <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span>
                                                     </div>
                                                     <span className={`px-1.5 py-0.5 rounded-md text-[9px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span>
                                                 </button>
                                             );
                                         })}
+                                        </div>
                                         {areaGeralFilter.length > 0 && (
                                             <button onClick={() => { setAreaGeralFilter([]); setIsAreaGeralOpen(false); }} className={`mt-2 w-full h-8 rounded-xl font-bold text-[9px] uppercase tracking-wider border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors`}>Limpar Filtros</button>
                                         )}
@@ -992,7 +1059,7 @@ function MainApp() {
                         </div>
                     </div>
 
-                    <div className="p-4 max-h-[400px] overflow-y-auto hide-scroll">
+                    <div className="p-4 max-h-[400px] overflow-y-auto hide-scroll rounded-b-[1.5rem]">
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                             {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => (
                                 <div key={curso.id || idx} className={`p-4 rounded-xl border flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>

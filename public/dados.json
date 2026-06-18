@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T13:35:53.570Z",
+  "generatedAt": "2026-06-18T14:33:00.128Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
@@ -15,9 +15,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadedecienciaseducacionaisdecapimgrosso_capimgrosso",
+          "id": "ent_faculdadecapimgrossofcg_capimgrosso",
           "municipio": "Capim Grosso",
-          "entidade": "Faculdade de Ciências Educacionais de Capim Grosso",
+          "entidade": "Faculdade Capim Grosso (FCG)",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -206,9 +206,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedecienciaseducacionaisdecapimgrosso_capimgrosso_1",
+          "id": "curso_ent_faculdadecapimgrossofcg_capimgrosso_1",
           "municipio": "Capim Grosso",
-          "entidade": "Faculdade de Ciências Educacionais de Capim Grosso",
+          "entidade": "Faculdade Capim Grosso (FCG)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -218,9 +218,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedecienciaseducacionaisdecapimgrosso_capimgrosso_2",
+          "id": "curso_ent_faculdadecapimgrossofcg_capimgrosso_2",
           "municipio": "Capim Grosso",
-          "entidade": "Faculdade de Ciências Educacionais de Capim Grosso",
+          "entidade": "Faculdade Capim Grosso (FCG)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -230,9 +230,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedecienciaseducacionaisdecapimgrosso_capimgrosso_3",
+          "id": "curso_ent_faculdadecapimgrossofcg_capimgrosso_3",
           "municipio": "Capim Grosso",
-          "entidade": "Faculdade de Ciências Educacionais de Capim Grosso",
+          "entidade": "Faculdade Capim Grosso (FCG)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -317,9 +317,9 @@
       "pctSemiarido": 90,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadefederaldooestedabahiacampussantamariadavitoria_santamariadavitoria",
+          "id": "ent_universidadefederaldooestedabahiaufob_santamariadavitoria",
           "municipio": "Santa Maria da Vitória",
-          "entidade": "Universidade Federal do Oeste da Bahia - Campus Santa Maria da Vitória",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -421,33 +421,33 @@
       "pctSemiarido": 89.47368421052632,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadefederaldooestedabahia_barreiras",
+          "id": "ent_universidadefederaldooestedabahiaufob_barreiras",
           "municipio": "Barreiras",
-          "entidade": "Universidade Federal do Oeste da Bahia",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 7
         },
         {
-          "id": "ent_universidadedoestadodabahiacampusbarreiras_barreiras",
+          "id": "ent_universidadedoestadodabahiauneb_barreiras",
           "municipio": "Barreiras",
-          "entidade": "Universidade do Estado da Bahia - Campus Barreiras",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldooestedabahiacampusluiseduardomagalhaes_luiseduardomagalhaes",
+          "id": "ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes",
           "municipio": "Luís Eduardo Magalhães",
-          "entidade": "Universidade Federal do Oeste da Bahia - Campus Luís Eduardo Magalhães",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusbarreiras_barreiras",
+          "id": "ent_institutofederaldabahiaifba_barreiras",
           "municipio": "Barreiras",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Barreiras",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -485,9 +485,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_centrouniversitariomauriciodenassaudebarreiras_barreiras",
+          "id": "ent_centrouniversitariomauriciodenassauuninassau_barreiras",
           "municipio": "Barreiras",
-          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -505,30 +505,6 @@
           "municipio": "Luís Eduardo Magalhães",
           "entidade": "Faculdades Sulamérica Bahia",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_barreiras",
-          "municipio": "Barreiras",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_barreiras",
-          "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldooestedabahia_luiseduardomagalhaes",
-          "municipio": "Luís Eduardo Magalhães",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -673,9 +649,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_6",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_6",
           "municipio": "Barreiras",
-          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -685,9 +661,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_7",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_7",
           "municipio": "Barreiras",
-          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -697,9 +673,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_8",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_8",
           "municipio": "Barreiras",
-          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -709,9 +685,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_9",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_9",
           "municipio": "Barreiras",
-          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -721,9 +697,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_10",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_10",
           "municipio": "Barreiras",
-          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -817,9 +793,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_barreiras_18",
+          "id": "curso_ent_institutofederaldabahiaifba_barreiras_18",
           "municipio": "Barreiras",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia De Alimentos",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -829,9 +805,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_barreiras_19",
+          "id": "curso_ent_universidadedoestadodabahiauneb_barreiras_19",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -841,9 +817,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_barreiras_20",
+          "id": "curso_ent_universidadedoestadodabahiauneb_barreiras_20",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -853,9 +829,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_21",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_21",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -865,9 +841,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_22",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_22",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -877,9 +853,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_23",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_23",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Engenharia Sanitaria E Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -889,9 +865,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_24",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_24",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -901,9 +877,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_25",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_25",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Física",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -913,9 +889,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_26",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_26",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Geologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -925,9 +901,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_27",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_27",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Interdisciplinar Em Ciência E Tecnologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -937,9 +913,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_28",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_28",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Matemática",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -949,9 +925,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barreiras_29",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_29",
           "municipio": "Barreiras",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Química",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -961,9 +937,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_luiseduardomagalhaes_30",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes_30",
           "municipio": "Luís Eduardo Magalhães",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Engenharia De Biotecnologia",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -973,9 +949,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_luiseduardomagalhaes_31",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes_31",
           "municipio": "Luís Eduardo Magalhães",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -1001,9 +977,9 @@
       "pctSemiarido": 5.769230769230769,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusvalenca_valenca",
+          "id": "ent_universidadedoestadodabahiauneb_valenca",
           "municipio": "Valença",
-          "entidade": "Universidade do Estado da Bahia - Campus Valença",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
@@ -1017,9 +993,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusvalenca_valenca",
+          "id": "ent_institutofederaldabahiaifba_valenca",
           "municipio": "Valença",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Valença",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -1046,14 +1022,6 @@
           "entidade": "FACULDADE ZACARIAS DE GÓES",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_valenca",
-          "municipio": "Valença",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
           "quantidade": 1
         }
       ],
@@ -1288,9 +1256,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_valenca_37",
+          "id": "curso_ent_institutofederaldabahiaifba_valenca_37",
           "municipio": "Valença",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -1316,17 +1284,17 @@
       "pctSemiarido": 86.66666666666667,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusseabra_seabra",
+          "id": "ent_universidadedoestadodabahiauneb_seabra",
           "municipio": "Seabra",
-          "entidade": "Universidade do Estado da Bahia - Campus Seabra",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 2
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusseabra_seabra",
+          "id": "ent_institutofederaldabahiaifba_seabra",
           "municipio": "Seabra",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Seabra",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -1583,33 +1551,33 @@
       "pctSemiarido": 3.225806451612903,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampuseunapolis_eunapolis",
+          "id": "ent_universidadedoestadodabahiauneb_eunapolis",
           "municipio": "Eunápolis",
-          "entidade": "Universidade do Estado da Bahia - Campus Eunápolis",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
         },
         {
-          "id": "ent_universidadefederaldosuldabahiacampussosigenescosta_portoseguro",
+          "id": "ent_universidadefederaldosuldabahiaufsb_portoseguro",
           "municipio": "Porto Seguro",
-          "entidade": "Universidade Federal do Sul da Bahia - Campus Sosígenes Costa",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampuseunapolis_eunapolis",
+          "id": "ent_institutofederaldabahiaifba_eunapolis",
           "municipio": "Eunápolis",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Eunápolis",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusportoseguro_portoseguro",
+          "id": "ent_institutofederaldabahiaifba_portoseguro",
           "municipio": "Porto Seguro",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Porto Seguro",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -1619,30 +1587,6 @@
           "municipio": "Eunápolis",
           "entidade": "FACULDADES INTEGRADAS DO EXTREMO SUL DA BAHIA",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_eunapolis",
-          "municipio": "Eunápolis",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_portoseguro",
-          "municipio": "Porto Seguro",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldosuldabahia_portoseguro",
-          "municipio": "Porto Seguro",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -1757,9 +1701,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_eunapolis_40",
+          "id": "curso_ent_institutofederaldabahiaifba_eunapolis_40",
           "municipio": "Eunápolis",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -1769,9 +1713,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_eunapolis_41",
+          "id": "curso_ent_institutofederaldabahiaifba_eunapolis_41",
           "municipio": "Eunápolis",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -1781,9 +1725,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_portoseguro_42",
+          "id": "curso_ent_institutofederaldabahiaifba_portoseguro_42",
           "municipio": "Porto Seguro",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Agroindústria",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Tecnológico",
@@ -1793,9 +1737,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_portoseguro_43",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_portoseguro_43",
           "municipio": "Porto Seguro",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -1805,9 +1749,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_portoseguro_44",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_portoseguro_44",
           "municipio": "Porto Seguro",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia Sanitaria E Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -1817,9 +1761,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_portoseguro_45",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_portoseguro_45",
           "municipio": "Porto Seguro",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Interdisciplinar Em Ciências",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -1829,9 +1773,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_portoseguro_46",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_portoseguro_46",
           "municipio": "Porto Seguro",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Interdisciplinar Em Saúde",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -1841,9 +1785,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_portoseguro_47",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_portoseguro_47",
           "municipio": "Porto Seguro",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Oceanologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -1869,17 +1813,17 @@
       "pctSemiarido": 0,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusteixeiradefreitas_teixeiradefreitas",
+          "id": "ent_universidadedoestadodabahiauneb_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
-          "entidade": "Universidade do Estado da Bahia - Campus Teixeira de Freitas",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
         },
         {
-          "id": "ent_universidadefederaldosuldabahiacampuspaulofreire_teixeiradefreitas",
+          "id": "ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
-          "entidade": "Universidade Federal do Sul da Bahia - Campus Paulo Freire",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -1930,14 +1874,6 @@
           "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldosuldabahia_teixeiradefreitas",
-          "municipio": "Teixeira de Freitas",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
-          "categoria": "univs",
           "quantidade": 1
         }
       ],
@@ -2268,9 +2204,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_teixeiradefreitas_66",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas_66",
           "municipio": "Teixeira de Freitas",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -2280,9 +2216,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_teixeiradefreitas_67",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas_67",
           "municipio": "Teixeira de Freitas",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -2292,9 +2228,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_teixeiradefreitas_68",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas_68",
           "municipio": "Teixeira de Freitas",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Gestão Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -2304,9 +2240,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_teixeiradefreitas_69",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas_69",
           "municipio": "Teixeira de Freitas",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Interdisciplinar Em Ciências",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -2316,9 +2252,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_teixeiradefreitas_70",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas_70",
           "municipio": "Teixeira de Freitas",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Interdisciplinar Em Saúde",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -2344,17 +2280,17 @@
       "pctSemiarido": 95.23809523809523,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusirece_irece",
+          "id": "ent_universidadedoestadodabahiauneb_irece",
           "municipio": "Irecê",
-          "entidade": "Universidade do Estado da Bahia - Campus Irecê",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 6
         },
         {
-          "id": "ent_universidadedoestadodabahiacampusxiquexique_xiquexique",
+          "id": "ent_universidadedoestadodabahiauneb_xiquexique",
           "municipio": "Xique-Xique",
-          "entidade": "Universidade do Estado da Bahia - Campus Xique-Xique",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -2368,9 +2304,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusirece_irece",
+          "id": "ent_institutofederaldabahiaifba_irece",
           "municipio": "Irecê",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Irecê",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -2404,22 +2340,6 @@
           "municipio": "Irecê",
           "entidade": "Faculdade AGES de Medicina de Irecê",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_irece",
-          "municipio": "Irecê",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_xiquexique",
-          "municipio": "Xique-Xique",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -2630,9 +2550,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_irece_76",
+          "id": "curso_ent_institutofederaldabahiaifba_irece_76",
           "municipio": "Irecê",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -2642,9 +2562,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_irece_77",
+          "id": "curso_ent_institutofederaldabahiaifba_irece_77",
           "municipio": "Irecê",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Manutenção Industrial",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Tecnológico",
@@ -2654,9 +2574,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_xiquexique_78",
+          "id": "curso_ent_universidadedoestadodabahiauneb_xiquexique_78",
           "municipio": "Xique-Xique",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia De Pesca",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -2666,9 +2586,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_xiquexique_79",
+          "id": "curso_ent_universidadedoestadodabahiauneb_xiquexique_79",
           "municipio": "Xique-Xique",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia Sanitária E Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -2694,25 +2614,25 @@
       "pctSemiarido": 75,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampuspauloafonso_pauloafonso",
+          "id": "ent_universidadedoestadodabahiauneb_pauloafonso",
           "municipio": "Paulo Afonso",
-          "entidade": "Universidade do Estado da Bahia - Campus Paulo Afonso",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 3
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampuspauloafonso_pauloafonso",
+          "id": "ent_institutofederaldabahiaifba_pauloafonso",
           "municipio": "Paulo Afonso",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Paulo Afonso",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldovaledosaofranciscocampuspauloafonso_pauloafonso",
+          "id": "ent_universidadefederaldovaledosaofranciscounivasf_pauloafonso",
           "municipio": "Paulo Afonso",
-          "entidade": "Universidade Federal do Vale do São Francisco - Campus Paulo Afonso",
+          "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -2722,22 +2642,6 @@
           "municipio": "Paulo Afonso",
           "entidade": "Centro Universitário do Rio São Francisco Unirios",
           "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_pauloafonso",
-          "municipio": "Paulo Afonso",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_pauloafonso",
-          "municipio": "Paulo Afonso",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -2834,9 +2738,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_pauloafonso_83",
+          "id": "curso_ent_institutofederaldabahiaifba_pauloafonso_83",
           "municipio": "Paulo Afonso",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -2846,9 +2750,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_pauloafonso_84",
+          "id": "curso_ent_universidadedoestadodabahiauneb_pauloafonso_84",
           "municipio": "Paulo Afonso",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia De Pesca",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -2950,9 +2854,9 @@
       "pctSemiarido": 26.08695652173913,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusalagoinhas_alagoinhas",
+          "id": "ent_universidadedoestadodabahiauneb_alagoinhas",
           "municipio": "Alagoinhas",
-          "entidade": "Universidade do Estado da Bahia - Campus Alagoinhas",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
@@ -3019,14 +2923,6 @@
           "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_alagoinhas",
-          "municipio": "Alagoinhas",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
-          "categoria": "univs",
           "quantidade": 1
         }
       ],
@@ -3394,9 +3290,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_alagoinhas_108",
+          "id": "curso_ent_universidadedoestadodabahiauneb_alagoinhas_108",
           "municipio": "Alagoinhas",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia De Software",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -3406,9 +3302,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_alagoinhas_109",
+          "id": "curso_ent_universidadedoestadodabahiauneb_alagoinhas_109",
           "municipio": "Alagoinhas",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia Sanitária E Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3434,9 +3330,9 @@
       "pctSemiarido": 4.081632653061225,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadeestadualdesantacruz_ilheus",
+          "id": "ent_universidadeestadualdesantacruzuesc_ilheus",
           "municipio": "Ilhéus",
-          "entidade": "Universidade Estadual de Santa Cruz",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 12
@@ -3458,17 +3354,17 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusilheus_ilheus",
+          "id": "ent_institutofederaldabahiaifba_ilheus",
           "municipio": "Ilhéus",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Ilhéus",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusavancadoubaitaba_ubaitaba",
+          "id": "ent_institutofederaldabahiaifba_ubaitaba",
           "municipio": "Ubaitaba",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Avançado Ubaitaba",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -3570,9 +3466,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldosuldabahia_itabuna",
+          "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Universidade - Pública Federal",
           "categoria": "univs",
           "quantidade": 1
@@ -4056,9 +3952,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_131",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_131",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -4068,9 +3964,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_132",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_132",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -4080,9 +3976,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_133",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_133",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -4092,9 +3988,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_134",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_134",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4104,9 +4000,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_135",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_135",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4116,9 +4012,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_136",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_136",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4128,9 +4024,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_137",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_137",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4140,9 +4036,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_138",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_138",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4152,9 +4048,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_139",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_139",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4164,9 +4060,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_140",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_140",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Física",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4176,9 +4072,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_141",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_141",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Matemática",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4188,9 +4084,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_142",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_142",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -4200,9 +4096,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdesantacruz_ilheus_143",
+          "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_143",
           "municipio": "Ilhéus",
-          "entidade": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+          "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "curso": "Química",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4212,9 +4108,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_144",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_144",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia Agrícola E Ambiental",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -4224,9 +4120,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_145",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_145",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia Ambiental E Da Sustentabilidade",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4236,9 +4132,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_146",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_146",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia De Aquicultura",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -4248,9 +4144,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_147",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_147",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia De Transportes E Logística",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4260,9 +4156,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_148",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_148",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia Florestal",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -4272,9 +4168,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_149",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_149",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Engenharia Sanitaria E Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4284,9 +4180,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_150",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_150",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Interdisciplinar Em Ciências",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4296,9 +4192,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_151",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_151",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Interdisciplinar Em Saúde",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -4308,9 +4204,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldosuldabahia_itabuna_152",
+          "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_152",
           "municipio": "Itabuna",
-          "entidade": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "curso": "Produção De Cacau E Chocolate",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Tecnológico",
@@ -4336,25 +4232,25 @@
       "pctSemiarido": 54.761904761904766,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusipiau_ipiau",
+          "id": "ent_universidadedoestadodabahiauneb_ipiau",
           "municipio": "Ipiaú",
-          "entidade": "Universidade do Estado da Bahia - Campus Ipiaú",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
         },
         {
-          "id": "ent_universidadeestadualdosudoestedabahiacampusjequie_jequie",
+          "id": "ent_universidadeestadualdosudoestedabahiauesb_jequie",
           "municipio": "Jequié",
-          "entidade": "Universidade Estadual do Sudoeste da Bahia - Campus Jequié",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusjequie_jequie",
+          "id": "ent_institutofederaldabahiaifba_jequie",
           "municipio": "Jequié",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jequié",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -4380,30 +4276,6 @@
           "municipio": "Jequié",
           "entidade": "Faculdade de Excelência UNEX de Jequié",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_jequie",
-          "municipio": "Jequié",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_ipiau",
-          "municipio": "Ipiaú",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadeestadualdosudoestedabahia_jequie",
-          "municipio": "Jequié",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -4606,9 +4478,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_jequie_411",
+          "id": "curso_ent_institutofederaldabahiaifba_jequie_411",
           "municipio": "Jequié",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4618,9 +4490,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_ipiau_412",
+          "id": "curso_ent_universidadedoestadodabahiauneb_ipiau_412",
           "municipio": "Ipiaú",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia Agroindustrial",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4630,9 +4502,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_jequie_413",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_413",
           "municipio": "Jequié",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4642,9 +4514,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_jequie_414",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_414",
           "municipio": "Jequié",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -4654,9 +4526,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_jequie_415",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_415",
           "municipio": "Jequié",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Química",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4666,9 +4538,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_jequie_416",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_416",
           "municipio": "Jequié",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Sistema De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -4694,9 +4566,9 @@
       "pctSemiarido": 78.125,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadeestadualdosudoestedabahiacampusitapetinga_itapetinga",
+          "id": "ent_universidadeestadualdosudoestedabahiauesb_itapetinga",
           "municipio": "Itapetinga",
-          "entidade": "Universidade Estadual do Sudoeste da Bahia - Campus Itapetinga",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 3
@@ -4723,14 +4595,6 @@
           "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadeestadualdosudoestedabahia_itapetinga",
-          "municipio": "Itapetinga",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
-          "categoria": "univs",
           "quantidade": 1
         }
       ],
@@ -4857,9 +4721,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_itapetinga_418",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_itapetinga_418",
           "municipio": "Itapetinga",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4869,9 +4733,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_itapetinga_419",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_itapetinga_419",
           "municipio": "Itapetinga",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Engenharia Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4881,9 +4745,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_itapetinga_420",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_itapetinga_420",
           "municipio": "Itapetinga",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Engenharia De Alimentos",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4893,9 +4757,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_itapetinga_421",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_itapetinga_421",
           "municipio": "Itapetinga",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Química",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -4905,9 +4769,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_itapetinga_422",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_itapetinga_422",
           "municipio": "Itapetinga",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Zootecnia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -4933,17 +4797,17 @@
       "pctSemiarido": 7.5,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahia_salvador",
+          "id": "ent_universidadedoestadodabahiauneb_salvador",
           "municipio": "Salvador",
-          "entidade": "Universidade do Estado da Bahia",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 29
         },
         {
-          "id": "ent_universidadefederaldabahia_salvador",
+          "id": "ent_universidadefederaldabahiaufba_salvador",
           "municipio": "Salvador",
-          "entidade": "Universidade Federal da Bahia",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -4957,9 +4821,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvador",
+          "id": "ent_institutofederaldabahiaifba_salvador",
           "municipio": "Salvador",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -4973,49 +4837,49 @@
           "quantidade": 1
         },
         {
-          "id": "ent_universidadedoestadodabahiacampuscamacari_camacari",
+          "id": "ent_universidadedoestadodabahiauneb_camacari",
           "municipio": "Camaçari",
-          "entidade": "Universidade do Estado da Bahia - Campus Camaçari",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadedoestadodabahiacampuslaurodefreitas_laurodefreitas",
+          "id": "ent_universidadedoestadodabahiauneb_laurodefreitas",
           "municipio": "Lauro de Freitas",
-          "entidade": "Universidade do Estado da Bahia - Campus Lauro de Freitas",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampuscamacari_camacari",
+          "id": "ent_institutofederaldabahiaifba_camacari",
           "municipio": "Camaçari",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Camaçari",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampuslaurodefreitas_laurodefreitas",
+          "id": "ent_institutofederaldabahiaifba_laurodefreitas",
           "municipio": "Lauro de Freitas",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Lauro de Freitas",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampussimoesfilho_simoesfilho",
+          "id": "ent_institutofederaldabahiaifba_simoesfilho",
           "municipio": "Simões Filho",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Simões Filho",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldabahiacampuscarlosmarighella_camacari",
+          "id": "ent_universidadefederaldabahiaufba_camacari",
           "municipio": "Camaçari",
-          "entidade": "Universidade Federal da Bahia - Campus Carlos Marighella",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -5229,9 +5093,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_centrouniversitariomauriciodenassaudesalvador_salvador",
+          "id": "ent_centrouniversitariomauriciodenassauuninassau_salvador",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -5349,30 +5213,6 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_camacari",
-          "municipio": "Camaçari",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_laurodefreitas",
-          "municipio": "Lauro de Freitas",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_simoesfilho",
-          "municipio": "Simões Filho",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
           "id": "ent_institutosalvadordeensinoecultura_salvador",
           "municipio": "Salvador",
           "entidade": "Instituto SALVADOR DE ENSINO E CULTURA",
@@ -5381,25 +5221,17 @@
           "quantidade": 1
         },
         {
-          "id": "ent_universidadecatolicadosalvador_salvador",
+          "id": "ent_universidadecatolicadosalvadorucsal_salvador",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "tipo": "Universidade - Particular",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldabahia_camacari",
-          "municipio": "Camaçari",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadesalvador_salvador",
+          "id": "ent_universidadesalvadorunifacs_salvador",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "tipo": "Universidade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -6160,9 +5992,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_206",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_206",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6172,9 +6004,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_207",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_207",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -6184,9 +6016,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_208",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_208",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6196,9 +6028,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_209",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_209",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6208,9 +6040,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_210",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_210",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -6220,9 +6052,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_211",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_211",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -6892,9 +6724,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_camacari_267",
+          "id": "curso_ent_institutofederaldabahiaifba_camacari_267",
           "municipio": "Camaçari",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -6904,9 +6736,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_laurodefreitas_268",
+          "id": "curso_ent_institutofederaldabahiaifba_laurodefreitas_268",
           "municipio": "Lauro de Freitas",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia De Energia",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -6916,9 +6748,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_laurodefreitas_269",
+          "id": "curso_ent_institutofederaldabahiaifba_laurodefreitas_269",
           "municipio": "Lauro de Freitas",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Jogos Digitais",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -6928,9 +6760,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvador_270",
+          "id": "curso_ent_institutofederaldabahiaifba_salvador_270",
           "municipio": "Salvador",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -6940,9 +6772,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvador_271",
+          "id": "curso_ent_institutofederaldabahiaifba_salvador_271",
           "municipio": "Salvador",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Industrial Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -6952,9 +6784,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvador_272",
+          "id": "curso_ent_institutofederaldabahiaifba_salvador_272",
           "municipio": "Salvador",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -6964,9 +6796,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvador_273",
+          "id": "curso_ent_institutofederaldabahiaifba_salvador_273",
           "municipio": "Salvador",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -6976,9 +6808,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvador_274",
+          "id": "curso_ent_institutofederaldabahiaifba_salvador_274",
           "municipio": "Salvador",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -6988,9 +6820,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_simoesfilho_275",
+          "id": "curso_ent_institutofederaldabahiaifba_simoesfilho_275",
           "municipio": "Simões Filho",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7012,9 +6844,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_277",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_277",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7024,9 +6856,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_278",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_278",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -7036,9 +6868,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_279",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_279",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7048,9 +6880,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_280",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_280",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7060,9 +6892,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_281",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_281",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Engenharia De Software",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7072,9 +6904,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_282",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_282",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7084,9 +6916,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_283",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_283",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7096,9 +6928,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvador_284",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvador_284",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7108,9 +6940,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_salvador_285",
+          "id": "curso_ent_universidadedoestadodabahiauneb_salvador_285",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia De Produção Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7120,9 +6952,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_salvador_286",
+          "id": "curso_ent_universidadedoestadodabahiauneb_salvador_286",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -7132,9 +6964,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_salvador_287",
+          "id": "curso_ent_universidadedoestadodabahiauneb_salvador_287",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7144,9 +6976,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_camacari_288",
+          "id": "curso_ent_universidadefederaldabahiaufba_camacari_288",
           "municipio": "Camaçari",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7156,9 +6988,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_camacari_289",
+          "id": "curso_ent_universidadefederaldabahiaufba_camacari_289",
           "municipio": "Camaçari",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Interdisciplinar Em Ciência, Tecnologia E Inovação",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7168,9 +7000,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_290",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_290",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Biotecnologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7180,9 +7012,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_291",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_291",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7192,9 +7024,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_292",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_292",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7204,9 +7036,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_293",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_293",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7216,9 +7048,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_294",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_294",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia Da Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7228,9 +7060,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_295",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_295",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia De Controle E Automação De Processos",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7240,9 +7072,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_296",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_296",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia De Minas",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7252,9 +7084,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_297",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_297",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia De Petróleo",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7264,9 +7096,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_298",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_298",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7276,9 +7108,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_299",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_299",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7288,9 +7120,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_300",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_300",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7300,9 +7132,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_301",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_301",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7312,9 +7144,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_302",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_302",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Engenharia Sanitaria E Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7324,9 +7156,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_303",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_303",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Estatística",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7336,9 +7168,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_304",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_304",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -7348,9 +7180,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_305",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_305",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Física",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7360,9 +7192,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_306",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_306",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Geofisica",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7372,9 +7204,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_307",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_307",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Geologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7384,9 +7216,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_308",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_308",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Interdisciplinar Em Ciência E Tecnologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7396,9 +7228,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_309",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_309",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Interdisciplinar Em Saúde",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -7408,9 +7240,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_310",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_310",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Matemática",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7420,9 +7252,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_311",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_311",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -7432,9 +7264,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_312",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_312",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Oceanografia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7444,9 +7276,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_313",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_313",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Química",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -7456,9 +7288,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_314",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_314",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7468,9 +7300,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_salvador_315",
+          "id": "curso_ent_universidadefederaldabahiaufba_salvador_315",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Zootecnia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -7480,9 +7312,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_316",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_316",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7492,9 +7324,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_317",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_317",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7504,9 +7336,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_318",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_318",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Banco De Dados",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7516,9 +7348,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_319",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_319",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -7528,9 +7360,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_320",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_320",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7540,9 +7372,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_321",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_321",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7552,9 +7384,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_322",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_322",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Ambiental E Sanitária",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7564,9 +7396,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_323",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_323",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7576,9 +7408,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_324",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_324",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7588,9 +7420,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_325",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_325",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Controle E Automação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7600,9 +7432,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_326",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_326",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Petróleo",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7612,9 +7444,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_327",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_327",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7624,9 +7456,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_328",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_328",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Software",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7636,9 +7468,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_329",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_329",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7648,9 +7480,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_330",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_330",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Mecatrônica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7660,9 +7492,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_331",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_331",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7672,9 +7504,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_332",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_332",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7684,9 +7516,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_333",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_333",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -7696,9 +7528,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_334",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_334",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Gestão Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Tecnológico",
@@ -7708,9 +7540,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_335",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_335",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Gestão Da Tecnologia Da Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7720,9 +7552,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_336",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_336",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Gestão Da Tecnologia Da Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7732,9 +7564,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_337",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_337",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -7744,9 +7576,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_338",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_338",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Redes De Computadores",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7756,9 +7588,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_339",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_339",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7768,9 +7600,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_340",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_340",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -7780,9 +7612,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvador_341",
+          "id": "curso_ent_universidadesalvadorunifacs_salvador_341",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Sistemas Para Internet",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7956,25 +7788,25 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvadorsededaiesead",
+          "id": "ent_institutofederaldabahiaifba_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadecatolicadosalvador_salvadorsededaiesead",
+          "id": "ent_universidadecatolicadosalvadorucsal_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "tipo": "Universidade - Particular",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadesalvador_salvadorsededaiesead",
+          "id": "ent_universidadesalvadorunifacs_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "tipo": "Universidade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -8340,9 +8172,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_salvadorsededaiesead_380",
+          "id": "curso_ent_institutofederaldabahiaifba_salvadorsededaiesead_380",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Jogos Digitais",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8352,9 +8184,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvadorsededaiesead_381",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvadorsededaiesead_381",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8364,9 +8196,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadecatolicadosalvador_salvadorsededaiesead_382",
+          "id": "curso_ent_universidadecatolicadosalvadorucsal_salvadorsededaiesead_382",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "curso": "Gestão Da Tecnologia Da Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8376,9 +8208,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_383",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_383",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8388,9 +8220,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_384",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_384",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Big Data E Inteligência Analítica",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8400,9 +8232,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_385",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_385",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Blockchain E Criptografia Digital",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8412,9 +8244,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_386",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_386",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -8424,9 +8256,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_387",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_387",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8436,9 +8268,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_388",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_388",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8448,9 +8280,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_389",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_389",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Controle E Automação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8460,9 +8292,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_390",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_390",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8472,9 +8304,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_391",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_391",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8484,9 +8316,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_392",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_392",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8496,9 +8328,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_393",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_393",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Estatística",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -8508,9 +8340,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_394",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_394",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -8520,9 +8352,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_395",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_395",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Gestão Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Tecnológico",
@@ -8532,9 +8364,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_396",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_396",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Gestão Da Tecnologia Da Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8544,9 +8376,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_397",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_397",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Jogos Digitais",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8556,9 +8388,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_398",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_398",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Matemática",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -8568,9 +8400,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_399",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_399",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Redes De Computadores",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8580,9 +8412,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_400",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_400",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Segurança Da Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8592,9 +8424,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_401",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_401",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -8604,9 +8436,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_salvadorsededaiesead_402",
+          "id": "curso_ent_universidadesalvadorunifacs_salvadorsededaiesead_402",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Sistemas Para Internet",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8656,17 +8488,17 @@
       "pctSemiarido": 71.42857142857143,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusjacobina_jacobina",
+          "id": "ent_universidadedoestadodabahiauneb_jacobina",
           "municipio": "Jacobina",
-          "entidade": "Universidade do Estado da Bahia - Campus Jacobina",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 3
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusjacobina_jacobina",
+          "id": "ent_institutofederaldabahiaifba_jacobina",
           "municipio": "Jacobina",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jacobina",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -8863,9 +8695,9 @@
       "pctSemiarido": 93.33333333333333,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusitaberaba_itaberaba",
+          "id": "ent_universidadedoestadodabahiauneb_itaberaba",
           "municipio": "Itaberaba",
-          "entidade": "Universidade do Estado da Bahia - Campus Itaberaba",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 3
@@ -9013,9 +8845,9 @@
       "pctSemiarido": 76.92307692307693,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampussenhordobonfim_senhordobonfim",
+          "id": "ent_universidadedoestadodabahiauneb_senhordobonfim",
           "municipio": "Senhor do Bonfim",
-          "entidade": "Universidade do Estado da Bahia - Campus Senhor do Bonfim",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
@@ -9029,17 +8861,17 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampuscampoformoso_campoformoso",
+          "id": "ent_institutofederaldabahiaifba_campoformoso",
           "municipio": "Campo Formoso",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Campo Formoso",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldovaledosaofranciscocampussenhordobonfim_senhordobonfim",
+          "id": "ent_universidadefederaldovaledosaofranciscounivasf_senhordobonfim",
           "municipio": "Senhor do Bonfim",
-          "entidade": "Universidade Federal do Vale do São Francisco - Campus Senhor do Bonfim",
+          "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -9049,14 +8881,6 @@
           "municipio": "Senhor do Bonfim",
           "entidade": "Faculdade AGES de Senhor do Bonfim",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_senhordobonfim",
-          "municipio": "Senhor do Bonfim",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -9168,9 +8992,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_senhordobonfim_426",
+          "id": "curso_ent_universidadedoestadodabahiauneb_senhordobonfim_426",
           "municipio": "Senhor do Bonfim",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -9196,25 +9020,25 @@
       "pctSemiarido": 47.05882352941176,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadeestadualdefeiradesantana_feiradesantana",
+          "id": "ent_universidadeestadualdefeiradesantanauefs_feiradesantana",
           "municipio": "Feira de Santana",
-          "entidade": "Universidade Estadual de Feira de Santana",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 5
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusfeiradesantana_feiradesantana",
+          "id": "ent_institutofederaldabahiaifba_feiradesantana",
           "municipio": "Feira de Santana",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Feira de Santana",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldoreconcavodabahiacampusfeiradesantana_feiradesantana",
+          "id": "ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana",
           "municipio": "Feira de Santana",
-          "entidade": "Universidade Federal do Recôncavo da Bahia - Campus Feira de Santana",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -9300,25 +9124,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_feiradesantana",
+          "id": "ent_universidadesalvadorunifacs_feiradesantana",
           "municipio": "Feira de Santana",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldoreconcavodabahia_feiradesantana",
-          "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadesalvador_feiradesantana",
-          "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "tipo": "Universidade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -9885,9 +9693,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_feiradesantana_466",
+          "id": "curso_ent_institutofederaldabahiaifba_feiradesantana_466",
           "municipio": "Feira de Santana",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -9897,9 +9705,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdefeiradesantana_feiradesantana_467",
+          "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_467",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -9909,9 +9717,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdefeiradesantana_feiradesantana_468",
+          "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_468",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -9921,9 +9729,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdefeiradesantana_feiradesantana_469",
+          "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_469",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -9933,9 +9741,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdefeiradesantana_feiradesantana_470",
+          "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_470",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "curso": "Engenharia De Alimentos",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -9945,9 +9753,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdefeiradesantana_feiradesantana_471",
+          "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_471",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -9957,9 +9765,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdefeiradesantana_feiradesantana_472",
+          "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_472",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -9969,9 +9777,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdefeiradesantana_feiradesantana_473",
+          "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_473",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "curso": "Física",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -9981,9 +9789,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_feiradesantana_474",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_474",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Alimentos",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Tecnológico",
@@ -9993,9 +9801,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_feiradesantana_475",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_475",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia De Energias",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10005,9 +9813,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_feiradesantana_476",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_476",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia De Materiais",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10017,9 +9825,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_feiradesantana_477",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_477",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10029,9 +9837,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_feiradesantana_478",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_478",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia De Tecnologia Assistiva E Acessibilidade",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10041,9 +9849,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_feiradesantana_479",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_479",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Interdisciplinar Em Energia E Sustentabilidade",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -10053,9 +9861,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_480",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_480",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -10065,9 +9873,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_481",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_481",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -10077,9 +9885,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_482",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_482",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -10089,9 +9897,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_483",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_483",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10101,9 +9909,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_484",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_484",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10113,9 +9921,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_485",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_485",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10125,9 +9933,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_486",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_486",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10137,9 +9945,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_487",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_487",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Mecatrônica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10149,9 +9957,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_488",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_488",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -10161,9 +9969,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_489",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_489",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -10173,9 +9981,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_490",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_490",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Gestão Da Tecnologia Da Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -10185,9 +9993,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_491",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_491",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -10197,9 +10005,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesalvador_feiradesantana_492",
+          "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_492",
           "municipio": "Feira de Santana",
-          "entidade": "UNIVERSIDADE SALVADOR",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -10514,17 +10322,17 @@
       "pctSemiarido": 11.538461538461538,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadefederaldoreconcavodabahia_cruzdasalmas",
+          "id": "ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas",
           "municipio": "Cruz das Almas",
-          "entidade": "Universidade Federal do Recôncavo da Bahia",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 15
         },
         {
-          "id": "ent_universidadedoestadodabahiacampussantoantoniodejesus_santoantoniodejesus",
+          "id": "ent_universidadedoestadodabahiauneb_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
-          "entidade": "Universidade do Estado da Bahia - Campus Santo Antônio de Jesus",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -10538,41 +10346,41 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampussantoamaro_santoamaro",
+          "id": "ent_institutofederaldabahiaifba_santoamaro",
           "municipio": "Santo Amaro",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Amaro",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampussantoantoniodejesus_santoantoniodejesus",
+          "id": "ent_institutofederaldabahiaifba_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Antônio de Jesus",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldoreconcavodabahiacampuscachoeira_cachoeira",
+          "id": "ent_universidadefederaldoreconcavodabahiaufrb_cachoeira",
           "municipio": "Cachoeira",
-          "entidade": "Universidade Federal do Recôncavo da Bahia - Campus Cachoeira",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldoreconcavodabahiacampussantoamaro_santoamaro",
+          "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoamaro",
           "municipio": "Santo Amaro",
-          "entidade": "Universidade Federal do Recôncavo da Bahia - Campus Santo Amaro",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldoreconcavodabahiacampussantoantoniodejesus_santoantoniodejesus",
+          "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
-          "entidade": "Universidade Federal do Recôncavo da Bahia - Campus Santo Antônio de Jesus",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -10670,22 +10478,6 @@
           "municipio": "Cruz das Almas",
           "entidade": "FACULDADE BRASILEIRA DO RECÔNCAVO",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_santoantoniodejesus",
-          "municipio": "Santo Antônio de Jesus",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldoreconcavodabahia_santoantoniodejesus",
-          "municipio": "Santo Antônio de Jesus",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -11049,9 +10841,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_santoantoniodejesus_525",
+          "id": "curso_ent_institutofederaldabahiaifba_santoantoniodejesus_525",
           "municipio": "Santo Antônio de Jesus",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -11061,9 +10853,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_santoantoniodejesus_526",
+          "id": "curso_ent_institutofederaldabahiaifba_santoantoniodejesus_526",
           "municipio": "Santo Antônio de Jesus",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Redes De Computadores",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -11073,9 +10865,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_527",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_527",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Agroecologia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Tecnológico",
@@ -11085,9 +10877,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_528",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_528",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -11097,9 +10889,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_529",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_529",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Biologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -11109,9 +10901,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_530",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_530",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Ciências Exatas E Tecnológicas - Bi/Li",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -11121,9 +10913,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_531",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_531",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -11133,9 +10925,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_532",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_532",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -11145,9 +10937,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_533",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_533",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia De Pesca",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -11157,9 +10949,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_534",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_534",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -11169,9 +10961,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_535",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_535",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia Florestal",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -11181,9 +10973,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_536",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_536",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -11193,9 +10985,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_537",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_537",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Engenharia Sanitária E Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -11205,9 +10997,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_538",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_538",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Física",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -11217,9 +11009,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_539",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_539",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Gestão Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -11229,9 +11021,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_540",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_540",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Interdisciplinar Em Ciências Ambientais",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -11241,9 +11033,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_541",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_541",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Matemática",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -11253,9 +11045,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_542",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_542",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -11265,9 +11057,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_cruzdasalmas_543",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_543",
           "municipio": "Cruz das Almas",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Zootecnia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -11277,9 +11069,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_santoantoniodejesus_544",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_santoantoniodejesus_544",
           "municipio": "Santo Antônio de Jesus",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Interdisciplinar Em Saúde",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -11381,25 +11173,25 @@
       "pctSemiarido": 90,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampuseuclidesdacunha_euclidesdacunha",
+          "id": "ent_universidadedoestadodabahiauneb_euclidesdacunha",
           "municipio": "Euclides da Cunha",
-          "entidade": "Universidade do Estado da Bahia - Campus Euclides da Cunha",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 3
         },
         {
-          "id": "ent_universidadedoestadodabahiacampusjeremoabo_jeremoabo",
+          "id": "ent_universidadedoestadodabahiauneb_jeremoabo",
           "municipio": "Jeremoabo",
-          "entidade": "Universidade do Estado da Bahia - Campus Jeremoabo",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampuseuclidesdacunha_euclidesdacunha",
+          "id": "ent_institutofederaldabahiaifba_euclidesdacunha",
           "municipio": "Euclides da Cunha",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Euclides da Cunha",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -11425,14 +11217,6 @@
           "municipio": "Ribeira do Pombal",
           "entidade": "Faculdade Dom Pedro II AFYA",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_euclidesdacunha",
-          "municipio": "Euclides da Cunha",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -11705,9 +11489,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_euclidesdacunha_560",
+          "id": "curso_ent_universidadedoestadodabahiauneb_euclidesdacunha_560",
           "municipio": "Euclides da Cunha",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -11905,33 +11689,33 @@
       "pctSemiarido": 73.33333333333333,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusjuazeiro_juazeiro",
+          "id": "ent_universidadedoestadodabahiauneb_juazeiro",
           "municipio": "Juazeiro",
-          "entidade": "Universidade do Estado da Bahia - Campus Juazeiro",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 7
         },
         {
-          "id": "ent_universidadedoestadodabahiacampuscanudos_canudos",
+          "id": "ent_universidadedoestadodabahiauneb_canudos",
           "municipio": "Canudos",
-          "entidade": "Universidade do Estado da Bahia - Campus Canudos",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusjuazeiro_juazeiro",
+          "id": "ent_institutofederaldabahiaifba_juazeiro",
           "municipio": "Juazeiro",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Juazeiro",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldovaledosaofranciscocampusjuazeiro_juazeiro",
+          "id": "ent_universidadefederaldovaledosaofranciscounivasf_juazeiro",
           "municipio": "Juazeiro",
-          "entidade": "Universidade Federal do Vale do São Francisco - Campus Juazeiro",
+          "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -11981,14 +11765,6 @@
           "municipio": "Juazeiro",
           "entidade": "Faculdade de Tecnologia e Ciências",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_juazeiro",
-          "municipio": "Juazeiro",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -12211,9 +11987,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_juazeiro_595",
+          "id": "curso_ent_universidadedoestadodabahiauneb_juazeiro_595",
           "municipio": "Juazeiro",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -12223,9 +11999,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_juazeiro_596",
+          "id": "curso_ent_universidadedoestadodabahiauneb_juazeiro_596",
           "municipio": "Juazeiro",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia De Bioprocessos E Biotecnologia",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -12251,25 +12027,25 @@
       "pctSemiarido": 91.30434782608695,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampuscaetite_caetite",
+          "id": "ent_universidadedoestadodabahiauneb_caetite",
           "municipio": "Caetité",
-          "entidade": "Universidade do Estado da Bahia - Campus Caetité",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 7
         },
         {
-          "id": "ent_universidadedoestadodabahiacampusguanambi_guanambi",
+          "id": "ent_universidadedoestadodabahiauneb_guanambi",
           "municipio": "Guanambi",
-          "entidade": "Universidade do Estado da Bahia - Campus Guanambi",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadedoestadodabahiacampusbrumado_brumado",
+          "id": "ent_universidadedoestadodabahiauneb_brumado",
           "municipio": "Brumado",
-          "entidade": "Universidade do Estado da Bahia - Campus Brumado",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -12283,9 +12059,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusbrumado_brumado",
+          "id": "ent_institutofederaldabahiaifba_brumado",
           "municipio": "Brumado",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Brumado",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -12320,22 +12096,6 @@
           "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_brumado",
-          "municipio": "Brumado",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadedoestadodabahia_caetite",
-          "municipio": "Caetité",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
-          "tipo": "Universidade - Pública Estadual",
-          "categoria": "univs",
           "quantidade": 1
         }
       ],
@@ -12633,9 +12393,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_brumado_587",
+          "id": "curso_ent_institutofederaldabahiaifba_brumado_587",
           "municipio": "Brumado",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia De Minas",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -12645,9 +12405,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadedoestadodabahia_caetite_588",
+          "id": "curso_ent_universidadedoestadodabahiauneb_caetite_588",
           "municipio": "Caetité",
-          "entidade": "UNIVERSIDADE DO ESTADO DA BAHIA",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "curso": "Engenharia De Minas",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -12673,17 +12433,17 @@
       "pctSemiarido": 85.18518518518519,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusserrinha_serrinha",
+          "id": "ent_universidadedoestadodabahiauneb_serrinha",
           "municipio": "Serrinha",
-          "entidade": "Universidade do Estado da Bahia - Campus Serrinha",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
         },
         {
-          "id": "ent_universidadedoestadodabahiacampusconceicaodocoite_conceicaodocoite",
+          "id": "ent_universidadedoestadodabahiauneb_conceicaodocoite",
           "municipio": "Conceição do Coité",
-          "entidade": "Universidade do Estado da Bahia - Campus Conceição do Coité",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -12983,25 +12743,25 @@
       "pctSemiarido": 93.75,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadeestadualdosudoestedabahia_vitoriadaconquista",
+          "id": "ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
-          "entidade": "Universidade Estadual do Sudoeste da Bahia",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 6
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusvitoriadaconquista_vitoriadaconquista",
+          "id": "ent_institutofederaldabahiaifba_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Vitória da Conquista",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldabahiacampusanisioteixeiras_vitoriadaconquista",
+          "id": "ent_universidadefederaldabahiaufba_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
-          "entidade": "Universidade Federal da Bahia - Campus Anísio Teixeiras",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -13059,22 +12819,6 @@
           "municipio": "Vitória da Conquista",
           "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahia_vitoriadaconquista",
-          "municipio": "Vitória da Conquista",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldabahia_vitoriadaconquista",
-          "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -13495,9 +13239,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_vitoriadaconquista_623",
+          "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_623",
           "municipio": "Vitória da Conquista",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Ambiental",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -13507,9 +13251,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_vitoriadaconquista_624",
+          "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_624",
           "municipio": "Vitória da Conquista",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -13519,9 +13263,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_vitoriadaconquista_625",
+          "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_625",
           "municipio": "Vitória da Conquista",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -13531,9 +13275,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiadabahia_vitoriadaconquista_626",
+          "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_626",
           "municipio": "Vitória da Conquista",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -13543,9 +13287,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_vitoriadaconquista_627",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_627",
           "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -13555,9 +13299,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_vitoriadaconquista_628",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_628",
           "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Ciência Da Computação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -13567,9 +13311,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_vitoriadaconquista_629",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_629",
           "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -13579,9 +13323,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestadualdosudoestedabahia_vitoriadaconquista_630",
+          "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_630",
           "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+          "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "curso": "Engenharia Florestal",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -13591,9 +13335,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_vitoriadaconquista_631",
+          "id": "curso_ent_universidadefederaldabahiaufba_vitoriadaconquista_631",
           "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Biotecnologia",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -13603,9 +13347,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_vitoriadaconquista_632",
+          "id": "curso_ent_universidadefederaldabahiaufba_vitoriadaconquista_632",
           "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Ciências Biológicas",
           "areaGeral": "Ciências naturais, matemática e estatística",
           "nivel": "Bacharelado",
@@ -13615,9 +13359,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldabahia_vitoriadaconquista_633",
+          "id": "curso_ent_universidadefederaldabahiaufba_vitoriadaconquista_633",
           "municipio": "Vitória da Conquista",
-          "entidade": "UNIVERSIDADE FEDERAL DA BAHIA",
+          "entidade": "Universidade Federal da Bahia (UFBA)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -13651,17 +13395,17 @@
           "quantidade": 4
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiadabahiacampusjaguaquara_jaguaquara",
+          "id": "ent_institutofederaldabahiaifba_jaguaquara",
           "municipio": "Jaguaquara",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jaguaquara",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldoreconcavodabahiacampusamargosa_amargosa",
+          "id": "ent_universidadefederaldoreconcavodabahiaufrb_amargosa",
           "municipio": "Amargosa",
-          "entidade": "Universidade Federal do Recôncavo da Bahia - Campus Amargosa",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -13680,14 +13424,6 @@
           "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldoreconcavodabahia_amargosa",
-          "municipio": "Amargosa",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
-          "categoria": "univs",
           "quantidade": 1
         }
       ],
@@ -13849,9 +13585,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldoreconcavodabahia_amargosa_635",
+          "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_amargosa_635",
           "municipio": "Amargosa",
-          "entidade": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+          "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "curso": "Agroecologia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Tecnológico",
@@ -13877,25 +13613,25 @@
       "pctSemiarido": 96.15384615384616,
       "capacidadeDetalhada": [
         {
-          "id": "ent_universidadedoestadodabahiacampusbomjesusdalapa_bomjesusdalapa",
+          "id": "ent_universidadedoestadodabahiauneb_bomjesusdalapa",
           "municipio": "Bom Jesus da Lapa",
-          "entidade": "Universidade do Estado da Bahia - Campus Bom Jesus da Lapa",
+          "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
         },
         {
-          "id": "ent_universidadefederaldooestedabahiacampusbarra_barra",
+          "id": "ent_universidadefederaldooestedabahiaufob_barra",
           "municipio": "Barra",
-          "entidade": "Universidade Federal do Oeste da Bahia - Campus Barra",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldooestedabahiacampusbomjesusdalapa_bomjesusdalapa",
+          "id": "ent_universidadefederaldooestedabahiaufob_bomjesusdalapa",
           "municipio": "Bom Jesus da Lapa",
-          "entidade": "Universidade Federal do Oeste da Bahia - Campus Bom Jesus da Lapa",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -13914,22 +13650,6 @@
           "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldooestedabahia_barra",
-          "municipio": "Barra",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldooestedabahia_bomjesusdalapa",
-          "municipio": "Bom Jesus da Lapa",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
-          "tipo": "Universidade - Pública Federal",
-          "categoria": "univs",
           "quantidade": 1
         }
       ],
@@ -14083,9 +13803,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barra_638",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barra_638",
           "municipio": "Barra",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -14095,9 +13815,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_barra_639",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_barra_639",
           "municipio": "Barra",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -14107,9 +13827,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_bomjesusdalapa_640",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_bomjesusdalapa_640",
           "municipio": "Bom Jesus da Lapa",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -14119,9 +13839,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadefederaldooestedabahia_bomjesusdalapa_641",
+          "id": "curso_ent_universidadefederaldooestedabahiaufob_bomjesusdalapa_641",
           "municipio": "Bom Jesus da Lapa",
-          "entidade": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+          "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",

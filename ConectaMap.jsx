@@ -242,6 +242,7 @@ export default function ConectaMap({
         let x = e.clientX - rect.left + offset; let y = e.clientY - rect.top + offset;
         if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
+        
         setTooltip({ visible: true, x, y });
     };
 
@@ -307,16 +308,11 @@ export default function ConectaMap({
                     onMouseUp={handleMouseUp} 
                     onMouseLeave={() => { 
                         handleMouseUp(); 
-                        setTooltip({visible: false}); 
+                        setTooltip({ visible: false, x: 0, y: 0 }); 
                         setHoveredTerritory(null);
                         setHoveredMunicipality(null);
                     }}
                 >
-                    <defs>
-                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor={darkMode ? '#3b82f6' : '#0f766e'} floodOpacity="0.4" />
-                        </filter>
-                    </defs>
 
                     <g style={{ transform: `translate(${userPan.x}px, ${userPan.y}px) scale(${userScale})`, transformOrigin: 'center', transition: isDragging ? 'none' : 'transform 0.1s ease-out' }}>
                         <g style={{ transform: `translate(${baseTransform.tx}px, ${baseTransform.ty}px) scale(${baseTransform.scale})`, transformOrigin: '0 0', transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)' }}>
@@ -364,15 +360,19 @@ export default function ConectaMap({
                                         strokeWidth={isSelectedMap ? 2 : isHovered ? 2 : 0.8}
                                         strokeLinejoin="round"
                                         vectorEffect="non-scaling-stroke" 
-                                        className="transition-all duration-300 ease-out outline-none"
+                                        className="outline-none"
                                         style={{ 
                                             pointerEvents: blockClickAndColor ? 'none' : 'auto',
                                             cursor: blockClickAndColor ? 'default' : 'pointer'
                                         }}
                                         opacity={opacity}
-                                        filter={isSelectedMap || isHovered ? 'url(#glow)' : undefined}
                                         onMouseEnter={(e) => onMapHover(e, feat)}
                                         onMouseMove={(e) => onMapHover(e, feat)}
+                                        onMouseLeave={() => {
+                                            setTooltip({ visible: false, x: 0, y: 0 });
+                                            setHoveredTerritory(null);
+                                            setHoveredMunicipality(null);
+                                        }}
                                         onClick={(e) => {
                                             e.stopPropagation(); 
                                             if (dragTotal.current > 10) return; 
@@ -498,8 +498,11 @@ export default function ConectaMap({
             </div>
 
             {/* TOOLTIP DO MOUSE DINÂMICO (Território OU Município) */}
-            {tooltip.visible && !isDragging && (
-                <div className={`absolute z-50 overflow-hidden rounded-2xl border backdrop-blur-md shadow-2xl pointer-events-none transition-opacity duration-200 ${darkMode ? 'bg-slate-900/90 border-slate-700' : 'bg-white/90 border-white/60'}`} style={{ top: tooltip.y, left: tooltip.x, width: 280 }}>
+            {tooltip.visible && !isDragging && (hoveredTerritory || hoveredMunicipality) && (
+                <div 
+                    className={`absolute z-50 overflow-hidden rounded-2xl border backdrop-blur-md shadow-2xl pointer-events-none transition-opacity duration-200 ${darkMode ? 'bg-slate-900/90 border-slate-700' : 'bg-white/90 border-white/60'}`} 
+                    style={{ top: tooltip.y, left: tooltip.x, width: 280 }}
+                >
                     
                     {/* CASO 1: HOVER NUM TERRITÓRIO GERAL */}
                     {hoveredTerritory && hoveredData && dynamicStats && (
