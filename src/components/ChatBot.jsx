@@ -64,8 +64,8 @@ export default function ChatBot({ context }) {
       ${baseDeDados}
 
       Regras IMPORTANTES:
-      1. PRIORIDADE MÁXIMA: Responda SEMPRE com base na 'BASE DE DADOS INTERNA COMPLETA' acima.
-      2. Se perguntarem sobre números, universidades, infraestruturas ou cidades da Bahia, use EXCLUSIVAMENTE os dados internos.
+      1. LÓGICA E INTERPRETAÇÃO: Use todo o seu conhecimento geral de mundo e raciocínio lógico para compreender o que o usuário quer saber e para formular explicações claras.
+      2. DADOS E FATOS (PRIORIDADE MÁXIMA): Apesar de usar sua lógica geral, para responder fatos, estatísticas, cidades, infraestruturas ou qualquer dado do Conecta Bahia, use EXCLUSIVAMENTE a 'BASE DE DADOS INTERNA COMPLETA' acima. Nunca invente números ou traga métricas de fora. Se a base não tiver a resposta exata, diga que não encontrou nos registros do sistema.
       3. Formate listas e textos em negrito para ficar visualmente agradável.`;
 
       // Prepara o histórico de mensagens no formato exigido pelo OpenRouter (padrão OpenAI)
