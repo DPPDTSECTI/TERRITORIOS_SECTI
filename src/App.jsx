@@ -184,6 +184,14 @@ function MainApp() {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsDropdownOpen(false); 
         if (filterPanelRef.current && !filterPanelRef.current.contains(event.target)) setIsFilterOpen(false);
         if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) setIsAreaGeralOpen(false);
+
+        // Lógica para resetar o mapa ao clicar fora
+        if (selectedLocation && mapSectionRef.current && !mapSectionRef.current.contains(event.target)) {
+            // Evita resetar se o clique for no dropdown de busca, pois ele pode definir uma nova localização
+            if (!dropdownRef.current || !dropdownRef.current.contains(event.target)) {
+                setSelectedLocation(null);
+            }
+        }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);

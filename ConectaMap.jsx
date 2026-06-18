@@ -419,7 +419,7 @@ export default function ConectaMap({
 
                             {/* 3. TEXTOS DOS MUNICÍPIOS (Com seleção) */}
                             {selectedTerritory && (
-                                <g style={{ opacity: userScale > 1.05 ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
+                                <g style={{ opacity: 1, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
                                     {mapFeatures.filter(f => {
                                         const isSameTerritory = getTerritoryKey(f.territory) === getTerritoryKey(selectedTerritory.nome);
                                         if (!isSameTerritory) return false;
