@@ -1165,11 +1165,11 @@ function MainApp() {
 
                     <a 
                         className={`absolute -bottom-6 left-4 text-left text-[11px] font-medium opacity-70 transition-opacity hover:opacity-100 ${themeClasses.textMuted}`} 
-                        href="https://emec.mec.gov.br/" 
+                        href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" 
                         target="_blank" 
                         rel="noreferrer"
                     >
-                        Fonte: Ministério da Educação (MEC) / Cadastro e-MEC
+                        Fonte: INEP/Censo da Educação Superior (2024)
                     </a>
                 </div>
 
