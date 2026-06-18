@@ -42,8 +42,8 @@ const SobrePage = ({ darkMode }) => (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
           {[
             { t: 'Capacidade em CT&I', d: 'Quantitativo de infraestruturas mapeadas, englobando Universidades (Federais e Estaduais), Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.' },
-            { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM) de 2023. O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem os respectivos territórios de identidade da Bahia. O índice é composto por variáveis relacionadas às condições de Emprego e Renda, Saúde e Educação dos municípios.' },
-            { t: 'Assistência Pública em CT&I', d: 'Identifica a presença de ações de suporte estatal à população, contando este piloto com a infraestrutura relativa ao Programa Conecta Bahia que tem como finalidade ampliar o acesso à internet em áreas rurais do estado.' },
+            { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM) de 2023. O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem os respectivos Territórios de Identidade da Bahia. O índice é composto por variáveis relacionadas às condições de Emprego e Renda, Saúde e Educação dos municípios.' },
+            { t: 'Cursos Superiores em CT&I', d: 'Levantamento da capacidade de formação de talentos. Consolida as informações sobre cursos de nível superior ofertados pelas entidades de ensino em Ciência, Tecnologia e Inovação na Bahia.' },
             { t: 'APLs e IGs', d: 'Mapeamento de Arranjos Produtivos Locais (aglomerações de cooperação económica) e Indicações Geográficas (certificações de produtos inerentes à sua origem territorial).' }
           ].map((item, idx) => (
             <div key={idx} className={`p-5 rounded-2xl border transition-transform hover:-translate-y-1 duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200/60'}`}>
@@ -104,7 +104,6 @@ function MainApp() {
   const [semiMunsMin, setSemiMunsMin] = useState('');
   const [semiMunsMax, setSemiMunsMax] = useState('');
 
-  // CORREÇÃO CRÍTICA: 'parks' corrigido para 'parques' para bater com o ID gerado na listagem
   const [ctiFilters, setCtiFilters] = useState({
       univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
   });
@@ -114,6 +113,20 @@ function MainApp() {
   const scrollMunsRef = useRef(null);
   const areaGeralRef = useRef(null);
   const mapSectionRef = useRef(null);
+
+  // Função Global de Limpeza (Reset Total)
+  const resetGlobalFilters = () => {
+      setSearchTerm('');
+      setSelectedLocation(null);
+      setIfdmMin(''); setIfdmMax('');
+      setSemiMunsMin(''); setSemiMunsMax('');
+      setFiltroSemiarido(false);
+      setAreaGeralFilter([]);
+      setCursoSearchTerm('');
+      setCtiFilters({
+          univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+      });
+  };
 
   // Pipeline de Dados
   const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
@@ -176,10 +189,8 @@ function MainApp() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Efeito para rolar a tela e focar no mapa quando uma região é selecionada
   useEffect(() => {
     if (selectedLocation && mapSectionRef.current) {
-      // Pequeno delay para garantir que a animação de zoom do mapa já iniciou
       setTimeout(() => {
         mapSectionRef.current.scrollIntoView({
           behavior: 'smooth',
@@ -240,9 +251,9 @@ function MainApp() {
         }
         if (!matched && t.cursosDetalhado) {
             foundCursoMatch = t.cursosDetalhado.find(curso => {
-                 if (!isMunValid(curso.municipio)) return false;
-                 const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
-                 return terms.every(term => searchString.includes(term));
+                if (!isMunValid(curso.municipio)) return false;
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
+                return terms.every(term => searchString.includes(term));
             });
             if (foundCursoMatch) matched = true;
         }
@@ -262,7 +273,6 @@ function MainApp() {
       const cursoTerm = normalize(debouncedCursoSearchTerm);
       const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
-      // NOVO: Verifica se o utilizador está ativamente a filtrar CTI ou Cursos
       const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
       const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
 
@@ -287,7 +297,6 @@ function MainApp() {
               somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal; somaPop = t.desenvolvimento.populacaoTotal;
           }
           
-          // Filtragem cruzada de CTI aplicada ao mapa em tempo real
           const validCti = t.entidadesDetalhadas.filter(ent => {
               if (!isMunValid(ent.municipio) || (ent.categoria && !ctiFilters[ent.categoria])) return false;
               if (rawTerm && !isSearchTermATerritory) {
@@ -307,11 +316,18 @@ function MainApp() {
           const validCursos = (t.cursosDetalhado || []).filter(curso => {
               if (!isMunValid(curso.municipio)) return false;
               if (rawTerm && !isSearchTermATerritory) {
-                  const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
+                  const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)}`;
                   if (!terms.every(term => searchString.includes(term))) return false;
               }
               if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
               if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
+              
+              const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
+              let catCurso = null;
+              if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) catCurso = 'ifs';
+              else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) catCurso = 'univs';
+              if (catCurso && !ctiFilters[catCurso]) return false;
+
               return true;
           });
           
@@ -338,7 +354,7 @@ function MainApp() {
               ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
               capacidadeCti: String(validCti.length), cadeiasIgs: String(validCadeias.length),
               pctSemiarido: t.pctSemiarido, 
-              matchesFilters: matchesFilters // Enviado diretamente para o mapa colorir/apagar
+              matchesFilters: matchesFilters 
           };
       });
       return stats;
@@ -351,9 +367,11 @@ function MainApp() {
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
     const kpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
-    const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = []; const assistenciasSet = new Map();
+    const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = [];
     const globalIds = new Set(); const globalCadeiasIds = new Set();
-    let somaIfdmPop = 0; let somaPopulacao = 0; let totalAssistencia = 0;
+    let somaIfdmPop = 0; let somaPopulacao = 0;
+    
+    let unfiltCursosCount = 0;
 
     const unfiltKpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
@@ -410,7 +428,6 @@ function MainApp() {
         if (t.assistenciaPublica?.existe) unfiltAsst++;
 
         if (filtroSemiarido && !t.isSemiarido) return;
-        let validData = false;
 
         t.entidadesDetalhadas.forEach(ent => {
             if (!isMunValid(ent.municipio)) return;
@@ -419,10 +436,8 @@ function MainApp() {
                 if (!terms.every(term => searchString.includes(term))) return;
             }
             
-            // FILTRAGEM CRUZADA DE ATIVOS CTI
             if (ent.categoria && !ctiFilters[ent.categoria]) return;
 
-            validData = true; 
             entidadesFlat.push({ ...ent, territorioRef: t.nome });
             if (ent.id && !globalIds.has(ent.id)) {
                 globalIds.add(ent.id); if (ent.categoria && kpisPanel[ent.categoria] !== undefined) kpisPanel[ent.categoria]++;
@@ -438,7 +453,6 @@ function MainApp() {
                 const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')}`;
                 if (!terms.every(term => searchString.includes(term))) return;
             }
-            validData = true;
             aplIgsFlat.push({ 
                 id: cad.id || Math.random(), segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A', 
                 municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto 
@@ -452,14 +466,16 @@ function MainApp() {
                 const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
                 if (!terms.every(term => searchString.includes(term))) return;
             }
-            validData = true;
+            
+            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
+            let catCurso = null;
+            if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) catCurso = 'ifs';
+            else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) catCurso = 'univs';
+            
+            if (catCurso && !ctiFilters[catCurso]) return;
+            
             cursosFlat.push({ ...curso, territorioRef: t.nome });
         });
-
-        if (t.assistenciaPublica?.existe && (!filtroSemiarido || validData)) {
-            totalAssistencia++;
-            (t.assistenciaPublica.iniciativas || []).forEach(ini => assistenciasSet.set(`${ini}|${t.nome}`, { nome: ini, municipio: 'Território', territorioRef: t.nome }));
-        }
 
         if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
             t.desenvolvimentoDetalhado.forEach(m => {
@@ -520,8 +536,7 @@ function MainApp() {
         topKpisPct, subKpis: kpisPanel, unfiltSubKpis: unfiltKpisPanel,
         entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
-        cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || "")),
-        assistencias: Array.from(assistenciasSet.values()).sort((a, b) => (a.nome || "").localeCompare(b.nome || "")) 
+        cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };
   }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
 
@@ -551,7 +566,6 @@ function MainApp() {
       setIfdmMin(''); setIfdmMax('');
       setSemiMunsMin(''); setSemiMunsMax('');
       setFiltroSemiarido(false);
-      // Corrigido para repor os parques corretamente
       setCtiFilters({
           univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
       });
@@ -713,9 +727,7 @@ function MainApp() {
           .hide-scroll { scrollbar-width: thin; scrollbar-color: ${darkMode ? '#475569 transparent' : '#cbd5e1 transparent'}; }
           .hide-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
           .hide-scroll::-webkit-scrollbar-track { background: transparent; }
-          .hide-scroll::-webkit-scrollbar-thumb { background: ${darkMode ? '#334155' : '#cbd5e1'}; border-radius: 4px; }
           .hide-scroll::-webkit-scrollbar-thumb { background-color: ${darkMode ? '#334155' : '#cbd5e1'}; border-radius: 10px; border: none; }
-          .hide-scroll::-webkit-scrollbar-thumb { background-color: ${darkMode ? '#475569' : '#cbd5e1'}; border-radius: 10px; border: none; }
           .hide-scroll::-webkit-scrollbar-thumb:hover { background-color: ${darkMode ? '#64748b' : '#94a3b8'}; }
           
           @keyframes progress-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
@@ -824,14 +836,22 @@ function MainApp() {
                             </div>
                         </div>
 
-                        {/* BOTÃO E FILTRO FLUTUANTE AVANÇADO */}
-                        <div className="w-full sm:w-auto pt-0 sm:pt-4 relative" ref={filterPanelRef}>
+                        {/* BOTÕES: FILTRO FLUTUANTE E RESET */}
+                        <div className="w-full sm:w-auto pt-0 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 relative" ref={filterPanelRef}>
                             <button 
                                 onClick={() => setIsFilterOpen(!isFilterPanelOpen)} 
-                                className={`w-full h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isFilterPanelOpen ? 'bg-blue-600 border-blue-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
+                                className={`w-full sm:w-auto h-11 px-5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${isFilterPanelOpen ? 'bg-blue-600 border-blue-700 text-white' : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                                 Filtros Avançados
+                            </button>
+
+                            <button 
+                                onClick={resetGlobalFilters} 
+                                className={`h-11 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 text-red-400 hover:bg-red-900/30 hover:border-red-500/50' : 'bg-white border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
+                                title="Limpar todos os filtros e pesquisas ativos"
+                            >
+                                Limpar
                             </button>
 
                             {isFilterPanelOpen && (
@@ -877,10 +897,6 @@ function MainApp() {
                                             ))}
                                         </div>
                                     </div>
-
-                                    <button onClick={resetAllFilters} className="w-full h-8 rounded-xl font-bold text-[9px] uppercase tracking-wider border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors">
-                                        Resetar Filtros
-                                    </button>
                                 </div>
                             )}
                         </div>
@@ -956,9 +972,9 @@ function MainApp() {
                                 />
                             </div>
                         </div>
-                        <span className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 ${themeClasses.textMuted}`}>
-                         Fonte: IBGE, 2022
-                        </span>
+                        <a className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 href ${themeClasses.textMuted}`} href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer">
+                         Fonte: IBGE/Semiárido Brasileiro (2022)
+                        </a>
                     </div>
 
                     <div className="w-full lg:w-[50%] xl:w-[45%] flex flex-col gap-4 h-full overflow-hidden">
@@ -1025,8 +1041,9 @@ function MainApp() {
                     </div>
                 </div>
 
+                
                 {/* NOVA SESSÃO: CURSOS SUPERIORES */}
-                <div className={`mt-4 rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                <div className={`mt-4 relative mb-8 rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                     <div className={`p-4 rounded-t-[1.5rem] border-b flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                         <div className="flex items-center gap-3">
                             <h4 className={`text-xs font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cursos em CT&I (Ensino Superior)</h4>
@@ -1051,7 +1068,7 @@ function MainApp() {
                             )}
                         </div>
 
-                        {/* DROPDOWN DE FILTRO (Estilo Filtros Avançados) */}
+                        {/* DROPDOWN DE FILTRO DE ÁREA GERAL */}
                         {areaGeralSummary.length > 0 && (
                             <div className="relative" ref={areaGeralRef}>
                                 <button
@@ -1142,6 +1159,15 @@ function MainApp() {
                             )) : (<div className={`col-span-full flex items-center justify-center py-8 text-[11px] font-medium italic ${themeClasses.textMuted}`}>{areaGeralFilter.length > 0 || cursoSearchTerm ? `Nenhum curso encontrado para a pesquisa e/ou filtros aplicados.` : 'Nenhum curso superior mapeado ou isolado.'}</div>)}
                         </div>
                     </div>
+
+                    <a 
+                        className={`absolute -bottom-6 left-4 text-left text-[11px] font-medium opacity-70 transition-opacity hover:opacity-100 ${themeClasses.textMuted}`} 
+                        href="https://emec.mec.gov.br/" 
+                        target="_blank" 
+                        rel="noreferrer"
+                    >
+                        Fonte: Ministério da Educação (MEC) / Cadastro e-MEC
+                    </a>
                 </div>
 
                 </div>
