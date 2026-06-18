@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate 
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
+import ChatBot from './components/ChatBot';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -1046,6 +1047,12 @@ function MainApp() {
 
         </Routes>
       </main>
+      <ChatBot context={{
+        kpis: dashboardData.topKpis,
+        subKpis: dashboardData.subKpis,
+        ultimaAtualizacao: lastUpdate,
+        todosTerritorios: territoriosData
+      }} />
     </div>
   );
 }

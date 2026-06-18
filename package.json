@@ -11,6 +11,7 @@
     "generate-json:file": "node scripts/generateJson.mjs"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@netlify/blobs": "^8.1.0",
     "axios": "^1.13.6",
     "firebase": "^12.10.0",
@@ -21,6 +22,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^3.0.0",
+    "react-markdown": "^9.1.0",
     "react-router-dom": "^7.17.0",
     "topojson-client": "^3.1.0",
     "xlsx": "^0.18.5"
