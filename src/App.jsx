@@ -101,8 +101,6 @@ function MainApp() {
   const [isFilterPanelOpen, setIsFilterOpen] = useState(false);
   const [ifdmMin, setIfdmMin] = useState('');
   const [ifdmMax, setIfdmMax] = useState('');
-  const [semiMunsMin, setSemiMunsMin] = useState('');
-  const [semiMunsMax, setSemiMunsMax] = useState('');
 
   const [ctiFilters, setCtiFilters] = useState({
       univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
@@ -119,7 +117,6 @@ function MainApp() {
       setSearchTerm('');
       setSelectedLocation(null);
       setIfdmMin(''); setIfdmMax('');
-      setSemiMunsMin(''); setSemiMunsMax('');
       setFiltroSemiarido(false);
       setAreaGeralFilter([]);
       setCursoSearchTerm('');
@@ -226,8 +223,6 @@ function MainApp() {
         const qtdSemiVal = t.qtdSemiarido || 0;
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
         if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
-        if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
-        if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
 
         if (!rawTerm) { results.push({ ...t, matchType: 'Território', matchText: t.regiao }); return; }
         
@@ -273,7 +268,7 @@ function MainApp() {
         else if (terms.every(term => normalize(t.nome).includes(term))) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
     });
     return results.sort((a, b) => a.nome.localeCompare(b.nome));
-  }, [debouncedSearchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
+  }, [debouncedSearchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters]);
 
   // Cálculos Dinâmicos do Mapa com suporte e cruzamento de CTI + Intervalos
   const territoriesDynamicStats = useMemo(() => {
@@ -291,8 +286,6 @@ function MainApp() {
           let passesIntervals = true;
           if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) passesIntervals = false;
           if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) passesIntervals = false;
-          if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) passesIntervals = false;
-          if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) passesIntervals = false;
 
           let somaIfdmPop = 0; let somaPop = 0;
           if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
@@ -366,7 +359,7 @@ function MainApp() {
           };
       });
       return stats;
-  }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm]);
+  }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm]);
 
   // Consumo de Dados das Listas e KPIs de Painel com Cruzamento Total
   const dashboardData = useMemo(() => {
@@ -401,8 +394,6 @@ function MainApp() {
         const qtdSemiVal = t.qtdSemiarido || 0;
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
         if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
-        if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
-        if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
 
         t.entidadesDetalhadas.forEach(ent => {
             if (!ent.municipio) return;
@@ -549,7 +540,7 @@ function MainApp() {
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, ctiFilters]);
 
   const toggleCtiFilter = (key) => {
       setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
@@ -575,7 +566,6 @@ function MainApp() {
 
   const resetAllFilters = () => {
       setIfdmMin(''); setIfdmMax('');
-      setSemiMunsMin(''); setSemiMunsMax('');
       setFiltroSemiarido(false);
       setCtiFilters({
           univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
@@ -880,15 +870,6 @@ function MainApp() {
                                             <input type="number" step="0.001" placeholder="Mín" value={ifdmMin} onChange={(e) => setIfdmMin(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
                                             <span className="text-[10px] opacity-40">até</span>
                                             <input type="number" step="0.001" placeholder="Máx" value={ifdmMax} onChange={(e) => setIfdmMax(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Muns. no Semiárido (Qtd)</span>
-                                        <div className="flex gap-2 items-center">
-                                            <input type="number" placeholder="Mín" value={semiMunsMin} onChange={(e) => setSemiMunsMin(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
-                                            <span className="text-[10px] opacity-40">até</span>
-                                            <input type="number" placeholder="Máx" value={semiMunsMax} onChange={(e) => setSemiMunsMax(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'}`} />
                                         </div>
                                     </div>
 
