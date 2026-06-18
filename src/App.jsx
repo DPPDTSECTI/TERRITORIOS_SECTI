@@ -203,7 +203,7 @@ function MainApp() {
         if (filtroSemiarido && !t.isSemiarido) return;
         
         // Cruzamento de intervalos numéricos na listagem de busca
-        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
+        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
         const qtdSemiVal = t.qtdSemiarido || 0;
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
         if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
@@ -267,7 +267,7 @@ function MainApp() {
       const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
 
       territoriosData.forEach(t => {
-          const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
+          const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
           const qtdSemiVal = t.qtdSemiarido || 0;
           
           let passesIntervals = true;
@@ -357,7 +357,7 @@ function MainApp() {
 
     const unfiltKpisPanel = { univs: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
-    let unfiltAsst = 0;
+    let unfiltAsst = 0; let unfiltCursos = 0;
 
     const extrairSatelite = (cad) => {
         const val = cad.municipioSatelite || cad.municipiosSatelites || cad.satelite || cad.municipio_satelite || cad.municipios_satelites || cad.Satelite || cad.Satelites;
@@ -370,7 +370,7 @@ function MainApp() {
     };
 
     targetList.forEach(t => {
-        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi) : 0;
+        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
         const qtdSemiVal = t.qtdSemiarido || 0;
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
         if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
@@ -399,6 +399,14 @@ function MainApp() {
             if (cad.id) unfiltCadeiasIds.add(cad.id);
         });
         
+        (t.cursosDetalhado || []).forEach(curso => {
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
+            unfiltCursos++;
+        });
+
         if (t.assistenciaPublica?.existe) unfiltAsst++;
 
         if (filtroSemiarido && !t.isSemiarido) return;
@@ -497,14 +505,17 @@ function MainApp() {
         ifdm: ifdmValue * 100, 
         semiarido: pctBarraSemi,
         assistencia: unfiltAsst > 0 ? (totalAssistencia / unfiltAsst) * 100 : 0,
-        cadeias: unfiltCadeiasIds.size > 0 ? (globalCadeiasIds.size / unfiltCadeiasIds.size) * 100 : 0
+        cadeias: unfiltCadeiasIds.size > 0 ? (globalCadeiasIds.size / unfiltCadeiasIds.size) * 100 : 0,
+        cursos: unfiltCursos > 0 ? (cursosFlat.length / unfiltCursos) * 100 : 0
     };
 
     return { 
         topKpis: {
             capacidadeCti: String(globalIds.size), ifdm: somaPopulacao > 0 ? ifdmValue.toFixed(3) : "-",
-            conectaBahia: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalAssistencia} Territórios`, cadeiasIgs: String(globalCadeiasIds.size), 
-            coberturaSemiarido: coberturaCalculada
+            conectaBahia: (selectedLocation || filtroSemiarido) ? "Em levantamento" : `${totalAssistencia} Territórios`, 
+            cadeiasIgs: String(globalCadeiasIds.size), 
+            coberturaSemiarido: coberturaCalculada,
+            cursos: String(cursosFlat.length)
         }, 
         topKpisPct, subKpis: kpisPanel, unfiltSubKpis: unfiltKpisPanel,
         entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
@@ -571,19 +582,22 @@ function MainApp() {
       const norm = normalize(areaName);
       let theme = 'default';
       
-      if (norm.includes('agraria') || norm.includes('natureza')) theme = 'green';
-      else if (norm.includes('biologica') || norm.includes('saude')) theme = 'cyan';
-      else if (norm.includes('exata') || norm.includes('tecnologia')) theme = 'blueDark';
-      else if (norm.includes('humana')) theme = 'orange';
-      else if (norm.includes('sociai') || norm.includes('aplicada')) theme = 'magenta';
+      if (norm.includes('agraria') || norm.includes('agricultura') || norm.includes('veterinaria')) theme = 'green';
+      else if (norm.includes('saude')) theme = 'cyan'; // Saúde e Bem-estar
+      else if (norm.includes('biologica')) theme = 'teal'; // Ciências Biológicas
+      else if (norm.includes('exata') || norm.includes('tecnologia') || norm.includes('computacao')) theme = 'blueDark'; // Exatas e TIC
+      else if (norm.includes('naturais') || norm.includes('natureza') || norm.includes('matematica') || norm.includes('estatistica')) theme = 'orange'; // Ciências Naturais e Matemática
+      else if (norm.includes('humana')) theme = 'indigo'; // Humanidades
+      else if (norm.includes('sociai') || norm.includes('aplicada')) theme = 'fuchsia'; // Sociais Aplicadas
       else if (norm.includes('engenharia')) theme = 'red';
       else if (norm.includes('letra') || norm.includes('arte') || norm.includes('linguistica')) theme = 'yellow';
+      else if (norm.includes('multidisciplinar')) theme = 'purple';
 
       const styles = {
           green: {
-              dot: 'bg-gov-green-500', text: darkMode ? 'text-gov-green-400' : 'text-gov-green-700',
-              activeBg: darkMode ? 'bg-gov-green-500/20 border-gov-green-500/50' : 'bg-gov-green-100 border-gov-green-200',
-              countBg: darkMode ? 'bg-gov-green-500/30 text-gov-green-400' : 'bg-white text-gov-green-800'
+              dot: 'bg-emerald-500', text: darkMode ? 'text-emerald-400' : 'text-emerald-600',
+              activeBg: darkMode ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-100 border-emerald-200',
+              countBg: darkMode ? 'bg-emerald-500/30 text-emerald-400' : 'bg-white text-emerald-800'
           },
           cyan: {
               dot: 'bg-gov-cyan-500', text: darkMode ? 'text-gov-cyan-400' : 'text-gov-cyan-700',
@@ -594,11 +608,6 @@ function MainApp() {
               dot: 'bg-gov-blueDark-500', text: darkMode ? 'text-blue-400' : 'text-gov-blueDark-700',
               activeBg: darkMode ? 'bg-blue-500/20 border-blue-500/50' : 'bg-gov-blueDark-100 border-gov-blueDark-200',
               countBg: darkMode ? 'bg-blue-500/30 text-blue-400' : 'bg-white text-gov-blueDark-800'
-          },
-          orange: {
-              dot: 'bg-gov-orange-500', text: darkMode ? 'text-gov-orange-400' : 'text-gov-orange-700',
-              activeBg: darkMode ? 'bg-gov-orange-500/20 border-gov-orange-500/50' : 'bg-gov-orange-100 border-gov-orange-200',
-              countBg: darkMode ? 'bg-gov-orange-500/30 text-gov-orange-400' : 'bg-white text-gov-orange-800'
           },
           magenta: {
               dot: 'bg-gov-magenta-500', text: darkMode ? 'text-gov-magenta-400' : 'text-gov-magenta-700',
@@ -615,10 +624,36 @@ function MainApp() {
               activeBg: darkMode ? 'bg-gov-yellow-500/20 border-gov-yellow-500/50' : 'bg-gov-yellow-100 border-gov-yellow-200',
               countBg: darkMode ? 'bg-gov-yellow-500/30 text-gov-yellow-400' : 'bg-white text-gov-yellow-800'
           },
+          teal: {
+              dot: 'bg-teal-500', text: darkMode ? 'text-teal-400' : 'text-teal-700',
+              activeBg: darkMode ? 'bg-teal-500/20 border-teal-500/50' : 'bg-teal-100 border-teal-200',
+              countBg: darkMode ? 'bg-teal-500/30 text-teal-400' : 'bg-white text-teal-800'
+          },
+          purple: {
+              dot: 'bg-purple-500', text: darkMode ? 'text-purple-400' : 'text-purple-700',
+              activeBg: darkMode ? 'bg-purple-500/20 border-purple-500/50' : 'bg-purple-100 border-purple-200',
+              countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-white text-purple-800'
+          },
+          // Novas cores vibrantes baseadas nos KPIs
+          indigo: {
+              dot: 'bg-indigo-500', text: darkMode ? 'text-indigo-400' : 'text-indigo-600',
+              activeBg: darkMode ? 'bg-indigo-500/20 border-indigo-500/50' : 'bg-indigo-100 border-indigo-200',
+              countBg: darkMode ? 'bg-indigo-500/30 text-indigo-400' : 'bg-white text-indigo-800'
+          },
+          fuchsia: {
+              dot: 'bg-fuchsia-500', text: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600',
+              activeBg: darkMode ? 'bg-fuchsia-500/20 border-fuchsia-500/50' : 'bg-fuchsia-100 border-fuchsia-200',
+              countBg: darkMode ? 'bg-fuchsia-500/30 text-fuchsia-400' : 'bg-white text-fuchsia-800'
+          },
+          orange: {
+              dot: 'bg-amber-500', text: darkMode ? 'text-amber-400' : 'text-amber-600',
+              activeBg: darkMode ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-100 border-amber-200',
+              countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-white text-purple-800'
+          },
           default: {
-              dot: 'bg-emerald-500', text: darkMode ? 'text-emerald-400' : 'text-emerald-700',
-              activeBg: darkMode ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-50 border-emerald-200',
-              countBg: darkMode ? 'bg-emerald-500/30 text-emerald-400' : 'bg-white text-emerald-800'
+              dot: 'bg-slate-500', text: darkMode ? 'text-slate-400' : 'text-slate-600',
+              activeBg: darkMode ? 'bg-slate-500/20 border-slate-500/50' : 'bg-slate-100 border-slate-200',
+              countBg: darkMode ? 'bg-slate-500/30 text-slate-400' : 'bg-white text-slate-800'
           }
       };
       return styles[theme] || styles.default;
@@ -867,7 +902,7 @@ function MainApp() {
                             { l: 'Capacidade CTI', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500' },
                             { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500' },
                             { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-slate-300' : 'text-slate-700', b: 'bg-slate-400', tr: true },
-                            { l: 'Assist. Pública CT&I', v: dashboardData.topKpis.conectaBahia, pct: dashboardData.topKpisPct.assistencia, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true },
+                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true },
                             { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', tr: true },
                         ].map((k, idx) => (
                             <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
@@ -1065,13 +1100,14 @@ function MainApp() {
                                 <div key={curso.id || idx} className={`p-4 rounded-xl border flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
                                     
                                     {/* CABEÇALHO */}
-                                    <div className="flex flex-col">
-                                        <h5 className={`text-xs font-bold leading-snug mb-1 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{curso.curso}</h5>
+                                    <div className="flex flex-col items-start gap-1.5 mb-2">
+                                        <h5 className={`text-[13px] font-bold leading-snug ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{curso.curso}</h5>
                                         {curso.areaGeral && (
-                                            <div className="flex items-center gap-1.5">
-                                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${getAreaStyles(curso.areaGeral, darkMode).dot}`}></span>
-                                                <span className={`text-[9px] font-bold uppercase tracking-wider opacity-90 ${getAreaStyles(curso.areaGeral, darkMode).text}`}>{curso.areaGeral}</span>
-                                            </div>
+                                            <span 
+                                                className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}
+                                            >
+                                                {curso.areaGeral}
+                                            </span>
                                         )}
                                     </div>
 
