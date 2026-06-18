@@ -50,33 +50,57 @@ export default function ChatBot({ context }) {
       }
 
       // Comprime a base de dados em texto puro (muito mais leve e rápido para a IA ler do que JSON)
-      const baseDeDados = context?.todosTerritorios ? context.todosTerritorios.map(t => 
-        `[Território: ${t.nome}] IFDM: ${t.kpis?.ifdm || 0} | Infraestruturas: ` + 
-        (t.entidadesDetalhadas.length > 0 
-          ? t.entidadesDetalhadas.map(e => `${e.entidade} (${e.municipio})`).join(', ') 
-          : 'Nenhuma')
-      ).join('\n') : 'Carregando banco de dados...';
+      const baseDeDados = context?.todosTerritorios ? context.todosTerritorios.map(t => {
+        const infra = t.entidadesDetalhadas?.length > 0 
+            ? t.entidadesDetalhadas.map(e => `- ${e.entidade} [${e.tipo}] (${e.municipio})`).join('\n') 
+            : 'Nenhuma';
+        const cadeias = t.cadeiasProdutivasDetalhado?.length > 0 
+            ? t.cadeiasProdutivasDetalhado.map(c => `- ${c.segmento} [${c.tipo}] (Sede: ${c.sede || 'N/A'})`).join('\n') 
+            : 'Nenhuma';
+        const cursos = t.cursosDetalhado?.length > 0 
+            ? t.cursosDetalhado.map(c => `- ${c.curso} [${c.nivel || 'N/I'}] - ${c.entidade} (${c.municipio})`).join('\n') 
+            : 'Nenhum';
+        const desenvolvimentoMuns = t.desenvolvimentoDetalhado?.length > 0
+            ? t.desenvolvimentoDetalhado.map(m => `- ${m.municipio}: IFDM ${Number(m.ifdm).toFixed(3)}, Pop. ${m.populacao}`).join('\n')
+            : 'Dados consolidados no território.';
+        const semi = t.isSemiarido ? `Sim (${t.qtdSemiarido} municípios)` : 'Não';
+        const conecta = t.assistenciaPublica?.existe ? 'Presente' : 'Não mapeado';
+        
+        return `## Território: ${t.nome}\n- **IFDM Médio (Territorial):** ${t.kpis?.ifdm || 'N/A'}\n- **Pertence ao Semiárido:** ${semi}\n- **Programa Conecta Bahia:** ${conecta}\n\n### Infraestruturas CT&I\n${infra}\n\n### Cadeias Produtivas e IGs\n${cadeias}\n\n### Cursos Superiores\n${cursos}\n\n### Dados de Desenvolvimento Municipal\n${desenvolvimentoMuns}`;
+      }).join('\n\n') : 'Carregando banco de dados...';
 
       // "Ensinando" o robô injetando os dados reais do painel na instrução dele
-      const instrucaoSistema = `Você é o assistente inteligente do Painel SECTI Territórios (Conecta Bahia). 
-      
-      BASE DE DADOS INTERNA COMPLETA (Infraestruturas e Municípios mapeados):
-      ${baseDeDados}
+      const instrucaoSistema = `# MISSÃO
+Você é o assistente de IA do "Painel SECTI Territórios". Sua única função é responder perguntas usando EXCLUSIVAMENTE a base de dados fornecida abaixo.
 
-      Regras IMPORTANTES:
-      1. LÓGICA E INTERPRETAÇÃO: Use todo o seu conhecimento geral de mundo e raciocínio lógico para compreender o que o usuário quer saber e para formular explicações claras.
-      2. DADOS E FATOS (PRIORIDADE MÁXIMA): Apesar de usar sua lógica geral, para responder fatos, estatísticas, cidades, infraestruturas ou qualquer dado do Conecta Bahia, use EXCLUSIVAMENTE a 'BASE DE DADOS INTERNA COMPLETA' acima. Nunca invente números ou traga métricas de fora. Se a base não tiver a resposta exata, diga que não encontrou nos registros do sistema.
-      3. Formate listas e textos em negrito para ficar visualmente agradável.`;
+# PERSONA
+- Você é um especialista nos dados do painel, preciso e objetivo.
+- Você se comunica de forma clara e profissional, usando Markdown (listas, negrito) para formatar as respostas.
+- Você NUNCA inventa informações. Se a resposta não está na base de dados, você deve dizer "Esta informação não está disponível nos registros do painel.".
+
+# BASE DE DADOS DO PAINEL (Referência principal para CT&I)
+Esta é sua única fonte de verdade. Use SOMENTE estes dados para responder.
+
+${baseDeDados}
+
+# REGRAS DE OURO
+1.  **PROIBIDO CONHECIMENTO EXTERNO**: Você está estritamente proibido de usar qualquer informação que não esteja na "BASE DE DADOS DO PAINEL" acima. Não use a web e não use seu conhecimento geral sobre a Bahia ou outros assuntos.
+2.  **RECUSA EDUCADA**: Se a pergunta for sobre algo que não está nos dados (ex: "Qual o PIB de Barreiras?" ou "Fale sobre a história da Bahia"), responda educadamente que você só tem acesso aos dados de CT&I, desenvolvimento e educação mapeados no painel.
+3.  **CÁLCULOS SIMPLES**: Você pode fazer contagens e somas simples a partir dos dados fornecidos.`;
 
       // Prepara o histórico de mensagens no formato exigido pelo OpenRouter (padrão OpenAI)
       const apiMessages = [
         { role: "system", content: instrucaoSistema },
-        ...messages.filter((_, index) => index > 0), // Mantém histórico, mas ignora a primeira saudação inicial
+        // Envia apenas as últimas 10 mensagens para não estourar o limite de tokens com o histórico
+        ...messages.slice(-10),
         { role: "user", content: input } // Adiciona a mensagem atual do usuário
       ];
 
       // Array de modelos gratuitos para tentar em sequência caso algum falhe
+      // Retornando os modelos de "peso-pesado" para o bot ter maior capacidade de raciocínio
       const fallbackModels = [
+        "google/gemini-2.0-flash-lite-preview-02-05:free",
+        "meta-llama/llama-3.3-70b-instruct:free",
         "liquid/lfm-2.5-1.2b-thinking:free"
       ];
 
@@ -97,7 +121,8 @@ export default function ChatBot({ context }) {
             },
             body: JSON.stringify({
               model: modelo,
-              messages: apiMessages
+              messages: apiMessages,
+              plugins: [{ id: "context-compression" }] // Apenas compressão, sem acesso à web
             })
           });
           
@@ -168,7 +193,7 @@ export default function ChatBot({ context }) {
           {/* Área de mensagens */}
           <div className="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-3">
             {messages.map((msg, idx) => (
-              <div key={idx} className={`max-w-[90%] sm:max-w-[85%] rounded-2xl p-4 text-sm shadow-sm ${msg.role === 'user' ? 'bg-blue-600 text-white self-end rounded-tr-sm' : 'bg-white text-gray-800 self-start rounded-tl-sm border border-gray-100 ring-1 ring-black/5'}`}>
+              <div key={idx} className={`max-w-[90%] sm:max-w-[85%] rounded-2xl p-4 text-sm shadow-sm break-words ${msg.role === 'user' ? 'bg-blue-600 text-white self-end rounded-tr-sm' : 'bg-white text-gray-800 self-start rounded-tl-sm border border-gray-100 ring-1 ring-black/5'}`}>
                 {msg.role === 'user' ? (
                   <div className="whitespace-pre-wrap">{msg.content}</div>
                 ) : (

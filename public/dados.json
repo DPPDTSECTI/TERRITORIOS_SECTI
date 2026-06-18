@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T18:35:11.286Z",
+  "generatedAt": "2026-06-18T19:19:32.019Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
@@ -453,22 +453,6 @@
           "quantidade": 1
         },
         {
-          "id": "ent_espacocolaborarparceirodoifbabarreiras_barreiras",
-          "municipio": "Barreiras",
-          "entidade": "Espaço Colaborar Parceiro do IFBA Barreiras",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoradebasetecnologicadaufob_barreiras",
-          "municipio": "Barreiras",
-          "entidade": "Incubadora de Base Tecnológica da UFOB",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
           "id": "ent_institutodaassociacaodeagricultoreseirrigantesdabahia_barreiras",
           "municipio": "Barreiras",
           "entidade": "Instituto da Associação de Agricultores e Irrigantes da Bahia",
@@ -493,9 +477,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadeunirbbarreiras_barreiras",
+          "id": "ent_centrouniversitariounirb_barreiras",
           "municipio": "Barreiras",
-          "entidade": "Faculdade Unirb - Barreiras",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -709,9 +693,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbbarreiras_barreiras_11",
+          "id": "curso_ent_centrouniversitariounirb_barreiras_11",
           "municipio": "Barreiras",
-          "entidade": "Faculdade Unirb - Barreiras",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -721,9 +705,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbbarreiras_barreiras_12",
+          "id": "curso_ent_centrouniversitariounirb_barreiras_12",
           "municipio": "Barreiras",
-          "entidade": "Faculdade Unirb - Barreiras",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -733,9 +717,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbbarreiras_barreiras_13",
+          "id": "curso_ent_centrouniversitariounirb_barreiras_13",
           "municipio": "Barreiras",
-          "entidade": "Faculdade Unirb - Barreiras",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -745,9 +729,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbbarreiras_barreiras_14",
+          "id": "curso_ent_centrouniversitariounirb_barreiras_14",
           "municipio": "Barreiras",
-          "entidade": "Faculdade Unirb - Barreiras",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -757,9 +741,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbbarreiras_barreiras_15",
+          "id": "curso_ent_centrouniversitariounirb_barreiras_15",
           "municipio": "Barreiras",
-          "entidade": "Faculdade Unirb - Barreiras",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -983,14 +967,6 @@
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 4
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusvalenca_valenca",
-          "municipio": "Valença",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Valença",
-          "tipo": "Instituto Federal",
-          "categoria": "ifs",
-          "quantidade": 1
         },
         {
           "id": "ent_institutofederaldabahiaifba_valenca",
@@ -1829,19 +1805,11 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusteixeiradefreitas_teixeiradefreitas",
+          "id": "ent_institutofederaldabahiaifba_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Teixeira de Freitas",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_espacocolaborarparceirodaufsbteixeiradefreitas_teixeiradefreitas",
-          "municipio": "Teixeira de Freitas",
-          "entidade": "Espaço Colaborar Parceiro da UFSB Teixeira de Freitas",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
           "quantidade": 1
         },
         {
@@ -1866,14 +1834,6 @@
           "entidade": "FACULDADE DO SUL DA BAHIA",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_teixeiradefreitas",
-          "municipio": "Teixeira de Freitas",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
           "quantidade": 1
         }
       ],
@@ -2192,9 +2152,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_teixeiradefreitas_65",
+          "id": "curso_ent_institutofederaldabahiaifba_teixeiradefreitas_65",
           "municipio": "Teixeira de Freitas",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -2296,9 +2256,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusxiquexique_xiquexique",
+          "id": "ent_institutofederaldabahiaifba_xiquexique",
           "municipio": "Xique-Xique",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Xique-Xique",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -2862,17 +2822,17 @@
           "quantidade": 4
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusalagoinhas_alagoinhas",
+          "id": "ent_institutofederaldabahiaifba_alagoinhas",
           "municipio": "Alagoinhas",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Alagoinhas",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampuscatu_catu",
+          "id": "ent_institutofederaldabahiaifba_catu",
           "municipio": "Catu",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Catu",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -2886,17 +2846,17 @@
           "quantidade": 1
         },
         {
-          "id": "ent_centrouniversitariounirbalagoinhas_alagoinhas",
+          "id": "ent_centrouniversitariounirb_alagoinhas",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadedetecnologiaecienciasdabahia_alagoinhas",
+          "id": "ent_centrouniversitariouniftc_alagoinhas",
           "municipio": "Alagoinhas",
-          "entidade": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+          "entidade": "Centro Universitário UniFTC",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -2915,14 +2875,6 @@
           "entidade": "FACULDADE SANTÍSSIMO SACRAMENTO",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_catu",
-          "municipio": "Catu",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
           "quantidade": 1
         }
       ],
@@ -3062,9 +3014,9 @@
       ],
       "cursosDetalhado": [
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_89",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_89",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -3074,9 +3026,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_90",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_90",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -3086,9 +3038,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_91",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_91",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3098,9 +3050,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_92",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_92",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Petróleo",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3110,9 +3062,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_93",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_93",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3122,9 +3074,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_94",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_94",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3134,9 +3086,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_95",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_95",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -3146,9 +3098,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_96",
+          "id": "curso_ent_centrouniversitariounirb_alagoinhas_96",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -3158,9 +3110,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedetecnologiaecienciasdabahia_alagoinhas_97",
+          "id": "curso_ent_centrouniversitariouniftc_alagoinhas_97",
           "municipio": "Alagoinhas",
-          "entidade": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3170,9 +3122,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedetecnologiaecienciasdabahia_alagoinhas_98",
+          "id": "curso_ent_centrouniversitariouniftc_alagoinhas_98",
           "municipio": "Alagoinhas",
-          "entidade": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3182,9 +3134,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedetecnologiaecienciasdabahia_alagoinhas_99",
+          "id": "curso_ent_centrouniversitariouniftc_alagoinhas_99",
           "municipio": "Alagoinhas",
-          "entidade": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3194,9 +3146,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedetecnologiaecienciasdabahia_alagoinhas_100",
+          "id": "curso_ent_centrouniversitariouniftc_alagoinhas_100",
           "municipio": "Alagoinhas",
-          "entidade": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3278,9 +3230,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_catu_107",
+          "id": "curso_ent_institutofederaldabahiaifba_catu_107",
           "municipio": "Catu",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -3338,17 +3290,17 @@
           "quantidade": 12
         },
         {
-          "id": "ent_universidadefederaldosuldobahiacampusjorgeamado_itabuna",
+          "id": "ent_universidadefederaldosuldobahia_itabuna",
           "municipio": "Itabuna",
-          "entidade": "Universidade Federal do Sul do Bahia - Campus Jorge Amado",
+          "entidade": "Universidade Federal do Sul do Bahia",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusurucuca_urucuca",
+          "id": "ent_institutofederaldabahiaifba_urucuca",
           "municipio": "Uruçuca",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Uruçuca",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -3370,41 +3322,17 @@
           "quantidade": 1
         },
         {
-          "id": "ent_espacocolaborarparceirodauesc_ilheus",
-          "municipio": "Ilhéus",
-          "entidade": "Espaço Colaborar Parceiro da UESC",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_brotoincubadoradebiotecnologiadauesc_ilheus",
-          "municipio": "Ilhéus",
-          "entidade": "Broto Incubadora de Biotecnologia da UESC",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoradeempresasdebasecientificaetecnologicadaufsb_itabuna",
+          "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
           "municipio": "Itabuna",
-          "entidade": "Incubadora de Empresas de Base Científica e Tecnológica da UFSB",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
         },
         {
-          "id": "ent_incubadoradetecnologiassociaiseeconomiasolidariadosuleextremosuldabahiadaufsb_itabuna",
-          "municipio": "Itabuna",
-          "entidade": "Incubadora de Tecnologias Sociais e Economia Solidária do Sul e Extremo Sul da Bahia da UFSB",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_preincubadoratecnologicadoifbaiano_urucuca",
+          "id": "ent_institutofederalbaianoifbaiano_urucuca",
           "municipio": "Uruçuca",
-          "entidade": "Pré-Incubadora Tecnológica do IFBaiano",
+          "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
@@ -3454,22 +3382,6 @@
           "municipio": "Itabuna",
           "entidade": "Faculdade de Excelência UNEX de Itabuna",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_urucuca",
-          "municipio": "Uruçuca",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
-          "municipio": "Itabuna",
-          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
-          "tipo": "Universidade - Pública Federal",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -3928,9 +3840,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_urucuca_129",
+          "id": "curso_ent_institutofederaldabahiaifba_urucuca_129",
           "municipio": "Uruçuca",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Agroecologia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Tecnológico",
@@ -3940,9 +3852,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_urucuca_130",
+          "id": "curso_ent_institutofederaldabahiaifba_urucuca_130",
           "municipio": "Uruçuca",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia De Alimentos",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -4256,14 +4168,6 @@
           "quantidade": 1
         },
         {
-          "id": "ent_espacocolaborarparceirodauesbjequie_jequie",
-          "municipio": "Jequié",
-          "entidade": "Espaço Colaborar Parceiro da UESB Jequié",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
           "id": "ent_faculdadeanhangueradejequie_jequie",
           "municipio": "Jequié",
           "entidade": "FACULDADE ANHANGUERA DE JEQUIÉ",
@@ -4574,9 +4478,9 @@
           "quantidade": 3
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusitapetinga_itapetinga",
+          "id": "ent_institutofederaldabahiaifba_itapetinga",
           "municipio": "Itapetinga",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itapetinga",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -4587,14 +4491,6 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Itapetinga",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_itapetinga",
-          "municipio": "Itapetinga",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
           "quantidade": 1
         }
       ],
@@ -4709,9 +4605,9 @@
       ],
       "cursosDetalhado": [
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_itapetinga_417",
+          "id": "curso_ent_institutofederaldabahiaifba_itapetinga_417",
           "municipio": "Itapetinga",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -4813,9 +4709,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_universidadedaintegracaointernacionaldalusofoniaafrobrasileiracampusdosmales_saofranciscodoconde",
+          "id": "ent_universidadedaintegracaointernacionaldalusofoniaafrobrasileira_saofranciscodoconde",
           "municipio": "São Francisco do Conde",
-          "entidade": "Universidade da Integração Internacional da Lusofonia Afro-Brasileira - Campus dos Malês",
+          "entidade": "Universidade da Integração Internacional da Lusofonia Afro-Brasileira",
           "tipo": "Universidade",
           "categoria": "univs",
           "quantidade": 1
@@ -4824,14 +4720,6 @@
           "id": "ent_institutofederaldabahiaifba_salvador",
           "municipio": "Salvador",
           "entidade": "Instituto Federal da Bahia (IFBA)",
-          "tipo": "Instituto Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_salvador",
-          "municipio": "Salvador",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -4909,14 +4797,6 @@
           "quantidade": 1
         },
         {
-          "id": "ent_espacofazerparceirodoifbacamacari_camacari",
-          "municipio": "Camaçari",
-          "entidade": "Espaço Fazer Parceiro do IFBA Camaçari",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
           "id": "ent_espacofazerparceirodaprefeituramunicipaldecamacari_camacari",
           "municipio": "Camaçari",
           "entidade": "Espaço Fazer Parceiro da Prefeitura Municipal de Camaçari",
@@ -4965,46 +4845,6 @@
           "quantidade": 1
         },
         {
-          "id": "ent_incubadoradeempresasdebasetecnologicadaescolapolitecnicadaufba_salvador",
-          "municipio": "Salvador",
-          "entidade": "Incubadora de Empresas de Base Tecnológica da Escola Politécnica da UFBA",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoratecnologicadeeconomiasolidariaegestaododesenvolvimentoterritorialdaufba_salvador",
-          "municipio": "Salvador",
-          "entidade": "Incubadora Tecnológica de Economia Solidária e Gestão do Desenvolvimento Territorial da UFBA",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoratecnologicadecooperativaspopularesdauneb_salvador",
-          "municipio": "Salvador",
-          "entidade": "Incubadora Tecnológica de Cooperativas Populares da UNEB",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoratecnologicadecooperativaspopularesdoifba_salvador",
-          "municipio": "Salvador",
-          "entidade": "Incubadora Tecnológica de Cooperativas Populares do IFBA",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_preincubadoratecnologicadoifba_salvador",
-          "municipio": "Salvador",
-          "entidade": "Pré-Incubadora Tecnológica do IFBA",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
           "id": "ent_incubadoradeempreendimentoseredesdeeconomiasolidaria_salvador",
           "municipio": "Salvador",
           "entidade": "Incubadora de Empreendimentos e Redes de Economia Solidária",
@@ -5013,25 +4853,25 @@
           "quantidade": 1
         },
         {
-          "id": "ent_centrodeempreendedorismoeinovacaodaunifacs_salvador",
+          "id": "ent_universidadesalvadorunifacs_salvador",
           "municipio": "Salvador",
-          "entidade": "Centro de Empreendedorismo e Inovação da UNIFACS",
+          "entidade": "Universidade Salvador (UNIFACS)",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
         },
         {
-          "id": "ent_incubadoratecnologicadecooperativaspopularesdaucsal_salvador",
+          "id": "ent_universidadecatolicadosalvadorucsal_salvador",
           "municipio": "Salvador",
-          "entidade": "Incubadora Tecnológica de Cooperativas Populares da UCSal",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
         },
         {
-          "id": "ent_incubadoradebasetecnologicadosenaicimatec_salvador",
+          "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvador",
           "municipio": "Salvador",
-          "entidade": "Incubadora de Base Tecnológica do SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
@@ -5071,15 +4911,15 @@
         {
           "id": "ent_centrouniversitariounirb_salvador",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_centrouniversitarioestaciodabahia_salvador",
+          "id": "ent_universidadeestaciodesa_salvador",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -5111,7 +4951,7 @@
         {
           "id": "ent_centrouniversitariouniftc_salvador",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIFTC",
+          "entidade": "Centro Universitário UniFTC",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -5165,17 +5005,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadeunirbcamacari_camacari",
+          "id": "ent_centrouniversitariounirb_camacari",
           "municipio": "Camaçari",
-          "entidade": "FACULDADE UNIRB - CAMAÇARI",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_faculdadeunirbsalvador_salvador",
-          "municipio": "Salvador",
-          "entidade": "FACULDADE UNIRB - SALVADOR",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -5217,30 +5049,6 @@
           "municipio": "Salvador",
           "entidade": "Instituto SALVADOR DE ENSINO E CULTURA",
           "tipo": "Faculdade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadecatolicadosalvadorucsal_salvador",
-          "municipio": "Salvador",
-          "entidade": "Universidade Católica do Salvador (UCSAL)",
-          "tipo": "Universidade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadesalvadorunifacs_salvador",
-          "municipio": "Salvador",
-          "entidade": "Universidade Salvador (UNIFACS)",
-          "tipo": "Universidade - Particular",
-          "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_universidadesenaicimatec_salvador",
-          "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
-          "tipo": "Universidade - Particular",
           "categoria": "univs",
           "quantidade": 1
         }
@@ -5670,7 +5478,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_179",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5682,7 +5490,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_180",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5694,7 +5502,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_181",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -5706,7 +5514,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_182",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Ambiental E Sanitária",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5718,7 +5526,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_183",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5730,7 +5538,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_184",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5742,7 +5550,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_185",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5754,7 +5562,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_186",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Software",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -5766,7 +5574,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_187",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5778,7 +5586,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_188",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5790,7 +5598,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_189",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5802,7 +5610,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_190",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5814,7 +5622,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_191",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -5826,7 +5634,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_192",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -5838,7 +5646,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_193",
           "municipio": "Salvador",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Redes De Computadores",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5848,9 +5656,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_194",
+          "id": "curso_ent_universidadeestaciodesa_salvador_194",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5860,9 +5668,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_195",
+          "id": "curso_ent_universidadeestaciodesa_salvador_195",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5872,9 +5680,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_196",
+          "id": "curso_ent_universidadeestaciodesa_salvador_196",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5884,9 +5692,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_197",
+          "id": "curso_ent_universidadeestaciodesa_salvador_197",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5896,9 +5704,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_198",
+          "id": "curso_ent_universidadeestaciodesa_salvador_198",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5908,9 +5716,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_199",
+          "id": "curso_ent_universidadeestaciodesa_salvador_199",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5920,9 +5728,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_200",
+          "id": "curso_ent_universidadeestaciodesa_salvador_200",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -5932,9 +5740,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_201",
+          "id": "curso_ent_universidadeestaciodesa_salvador_201",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Redes De Computadores",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5944,9 +5752,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_202",
+          "id": "curso_ent_universidadeestaciodesa_salvador_202",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Estácio da Bahia",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Sistema De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -6342,7 +6150,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_235",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIFTC",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6354,7 +6162,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_236",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIFTC",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -6366,7 +6174,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_237",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIFTC",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6378,7 +6186,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_238",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIFTC",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6390,7 +6198,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_239",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIFTC",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -6402,7 +6210,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_240",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIFTC",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -6580,9 +6388,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbcamacari_camacari_255",
+          "id": "curso_ent_centrouniversitariounirb_camacari_255",
           "municipio": "Camaçari",
-          "entidade": "FACULDADE UNIRB - CAMAÇARI",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6592,9 +6400,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbsalvador_salvador_256",
+          "id": "curso_ent_centrouniversitariounirb_salvador_256",
           "municipio": "Salvador",
-          "entidade": "FACULDADE UNIRB - SALVADOR",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Petróleo E Gás",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7624,9 +7432,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_342",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_342",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia Automotiva",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7636,9 +7444,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_343",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_343",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7648,9 +7456,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_344",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_344",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7660,9 +7468,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_345",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_345",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia De Controle E Automação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7672,9 +7480,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_346",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_346",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia De Materiais",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7684,9 +7492,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_347",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_347",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7696,9 +7504,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_348",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_348",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7708,9 +7516,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_349",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_349",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7720,9 +7528,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvador_350",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvador_350",
           "municipio": "Salvador",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7766,7 +7574,7 @@
         {
           "id": "ent_centrouniversitariounirb_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -7812,9 +7620,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_universidadesenaicimatec_salvadorsededaiesead",
+          "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "tipo": "Universidade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -8078,7 +7886,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_372",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -8090,7 +7898,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_373",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -8102,7 +7910,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_374",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8114,7 +7922,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_375",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8126,7 +7934,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_376",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -8138,7 +7946,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_377",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -8448,9 +8256,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvadorsededaiesead_403",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvadorsededaiesead_403",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Ciência De Dados E Inteligência Artificial",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -8460,9 +8268,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadesenaicimatec_salvadorsededaiesead_404",
+          "id": "curso_ent_serviconacionaldeaprendizagemindustrialsenai_salvadorsededaiesead_404",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "UNIVERSIDADE SENAI CIMATEC",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -8703,9 +8511,9 @@
           "quantidade": 3
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusitaberaba_itaberaba",
+          "id": "ent_institutofederaldabahiaifba_itaberaba",
           "municipio": "Itaberaba",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itaberaba",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -8853,9 +8661,9 @@
           "quantidade": 4
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampussenhordobonfim_senhordobonfim",
+          "id": "ent_institutofederaldabahiaifba_senhordobonfim",
           "municipio": "Senhor do Bonfim",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Senhor do Bonfim",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -9044,22 +8852,6 @@
           "quantidade": 1
         },
         {
-          "id": "ent_espacocolaborarparceirodaufrbfeiradesantana_feiradesantana",
-          "municipio": "Feira de Santana",
-          "entidade": "Espaço Colaborar Parceiro da UFRB Feira de Santana",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoradeempresasdebasetecnologicadasengenhariasdauefs_feiradesantana",
-          "municipio": "Feira de Santana",
-          "entidade": "Incubadora de Empresas de Base Tecnológica das Engenharias da UEFS",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
           "id": "ent_centrouniversitarionobredefeiradesantana_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
@@ -9108,17 +8900,17 @@
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadeestaciodefeiradesantana_feiradesantana",
+          "id": "ent_universidadeestaciodesa_feiradesantana",
           "municipio": "Feira de Santana",
-          "entidade": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estácio de Sá",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadeunirbfeiradesantana_feiradesantana",
+          "id": "ent_centrouniversitariounirb_feiradesantana",
           "municipio": "Feira de Santana",
-          "entidade": "Faculdade Unirb - Feira de Santana",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -9609,9 +9401,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeestaciodefeiradesantana_feiradesantana_459",
+          "id": "curso_ent_universidadeestaciodesa_feiradesantana_459",
           "municipio": "Feira de Santana",
-          "entidade": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -9621,9 +9413,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeestaciodefeiradesantana_feiradesantana_460",
+          "id": "curso_ent_universidadeestaciodesa_feiradesantana_460",
           "municipio": "Feira de Santana",
-          "entidade": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA",
+          "entidade": "Universidade Estácio de Sá",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -9633,9 +9425,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbfeiradesantana_feiradesantana_461",
+          "id": "curso_ent_centrouniversitariounirb_feiradesantana_461",
           "municipio": "Feira de Santana",
-          "entidade": "Faculdade Unirb - Feira de Santana",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -9645,9 +9437,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbfeiradesantana_feiradesantana_462",
+          "id": "curso_ent_centrouniversitariounirb_feiradesantana_462",
           "municipio": "Feira de Santana",
-          "entidade": "Faculdade Unirb - Feira de Santana",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -9657,9 +9449,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbfeiradesantana_feiradesantana_463",
+          "id": "curso_ent_centrouniversitariounirb_feiradesantana_463",
           "municipio": "Feira de Santana",
-          "entidade": "Faculdade Unirb - Feira de Santana",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -9669,9 +9461,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbfeiradesantana_feiradesantana_464",
+          "id": "curso_ent_centrouniversitariounirb_feiradesantana_464",
           "municipio": "Feira de Santana",
-          "entidade": "Faculdade Unirb - Feira de Santana",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -9681,9 +9473,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbfeiradesantana_feiradesantana_465",
+          "id": "curso_ent_centrouniversitariounirb_feiradesantana_465",
           "municipio": "Feira de Santana",
-          "entidade": "Faculdade Unirb - Feira de Santana",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -10338,9 +10130,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusgovernadormangabeira_governadormangabeira",
+          "id": "ent_institutofederaldabahiaifba_governadormangabeira",
           "municipio": "Governador Mangabeira",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Governador Mangabeira",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -10423,22 +10215,6 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Santo Antônio de Jesus",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoradeempresasdebasetecnologicadoreconcavodaufrb_cruzdasalmas",
-          "municipio": "Cruz das Almas",
-          "entidade": "Incubadora de Empresas de Base Tecnológica do Recôncavo da UFRB",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoradeempreendimentoseconomicossolidariosdaufrb_cruzdasalmas",
-          "municipio": "Cruz das Almas",
-          "entidade": "Incubadora de Empreendimentos Econômicos Solidários da UFRB",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
           "quantidade": 1
         },
         {
@@ -11729,25 +11505,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_espacocolaborarparceirodaunebjuazeiro_juazeiro",
+          "id": "ent_centrouniversitariounirb_juazeiro",
           "municipio": "Juazeiro",
-          "entidade": "Espaço Colaborar Parceiro da UNEB Juazeiro",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_incubadoratecnologicadaunivasf_juazeiro",
-          "municipio": "Juazeiro",
-          "entidade": "Incubadora Tecnológica da UNIVASF",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_faculdadeunirbjuazeiro_juazeiro",
-          "municipio": "Juazeiro",
-          "entidade": "FACULDADE UNIRB - JUAZEIRO",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -11761,9 +11521,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadedetecnologiaeciencias_juazeiro",
+          "id": "ent_centrouniversitariouniftc_juazeiro",
           "municipio": "Juazeiro",
-          "entidade": "Faculdade de Tecnologia e Ciências",
+          "entidade": "Centro Universitário UniFTC",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -11915,9 +11675,9 @@
       ],
       "cursosDetalhado": [
         {
-          "id": "curso_ent_faculdadeunirbjuazeiro_juazeiro_589",
+          "id": "curso_ent_centrouniversitariounirb_juazeiro_589",
           "municipio": "Juazeiro",
-          "entidade": "FACULDADE UNIRB - JUAZEIRO",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -11927,9 +11687,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbjuazeiro_juazeiro_590",
+          "id": "curso_ent_centrouniversitariounirb_juazeiro_590",
           "municipio": "Juazeiro",
-          "entidade": "FACULDADE UNIRB - JUAZEIRO",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -11975,9 +11735,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadedetecnologiaeciencias_juazeiro_594",
+          "id": "curso_ent_centrouniversitariouniftc_juazeiro_594",
           "municipio": "Juazeiro",
-          "entidade": "Faculdade de Tecnologia e Ciências",
+          "entidade": "Centro Universitário UniFTC",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -12051,9 +11811,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusguanambi_guanambi",
+          "id": "ent_institutofederaldabahiaifba_guanambi",
           "municipio": "Guanambi",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Guanambi",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -12088,14 +11848,6 @@
           "entidade": "Centro Universitário FG",
           "tipo": "Centro Universitario - Particular",
           "categoria": "univs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_guanambi",
-          "municipio": "Guanambi",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
           "quantidade": 1
         }
       ],
@@ -12357,9 +12109,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_guanambi_584",
+          "id": "curso_ent_institutofederaldabahiaifba_guanambi_584",
           "municipio": "Guanambi",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Agroindústria",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Tecnológico",
@@ -12369,9 +12121,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_guanambi_585",
+          "id": "curso_ent_institutofederaldabahiaifba_guanambi_585",
           "municipio": "Guanambi",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -12381,9 +12133,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_guanambi_586",
+          "id": "curso_ent_institutofederaldabahiaifba_guanambi_586",
           "municipio": "Guanambi",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -12449,9 +12201,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusserrinha_serrinha",
+          "id": "ent_institutofederaldabahiaifba_serrinha",
           "municipio": "Serrinha",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Serrinha",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 1
@@ -12473,9 +12225,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadeunirbserrinha_serrinha",
+          "id": "ent_centrouniversitariounirb_serrinha",
           "municipio": "Serrinha",
-          "entidade": "FACULDADE UNIRB - SERRINHA",
+          "entidade": "Centro Universitário UNIRB",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -12667,9 +12419,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeunirbserrinha_serrinha_598",
+          "id": "curso_ent_centrouniversitariounirb_serrinha_598",
           "municipio": "Serrinha",
-          "entidade": "FACULDADE UNIRB - SERRINHA",
+          "entidade": "Centro Universitário UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -12775,22 +12527,6 @@
           "quantidade": 1
         },
         {
-          "id": "ent_espacocolaborarparceirodoifbavitoriadaconquista_vitoriadaconquista",
-          "municipio": "Vitória da Conquista",
-          "entidade": "Espaço Colaborar Parceiro do IFBA Vitória da Conquista",
-          "tipo": "Espaço Dinamizador",
-          "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_iincubadoradeempresasdauesb_vitoriadaconquista",
-          "municipio": "Vitória da Conquista",
-          "entidade": "IIncubadora de Empresas da UESB",
-          "tipo": "Incubadora",
-          "categoria": "incubadoras",
-          "quantidade": 1
-        },
-        {
           "id": "ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
@@ -12807,9 +12543,9 @@
           "quantidade": 1
         },
         {
-          "id": "ent_faculdadeuninassauvitoriadaconquista_vitoriadaconquista",
+          "id": "ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
-          "entidade": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "tipo": "Faculdade - Particular",
           "categoria": "univs",
           "quantidade": 1
@@ -13119,9 +12855,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeuninassauvitoriadaconquista_vitoriadaconquista_613",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_613",
           "municipio": "Vitória da Conquista",
-          "entidade": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -13131,9 +12867,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeuninassauvitoriadaconquista_vitoriadaconquista_614",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_614",
           "municipio": "Vitória da Conquista",
-          "entidade": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -13143,9 +12879,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeuninassauvitoriadaconquista_vitoriadaconquista_615",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_615",
           "municipio": "Vitória da Conquista",
-          "entidade": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -13155,9 +12891,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeuninassauvitoriadaconquista_vitoriadaconquista_616",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_616",
           "municipio": "Vitória da Conquista",
-          "entidade": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -13167,9 +12903,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeuninassauvitoriadaconquista_vitoriadaconquista_617",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_617",
           "municipio": "Vitória da Conquista",
-          "entidade": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -13179,9 +12915,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_faculdadeuninassauvitoriadaconquista_vitoriadaconquista_618",
+          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_618",
           "municipio": "Vitória da Conquista",
-          "entidade": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -13387,9 +13123,9 @@
       "pctSemiarido": 39.62264150943396,
       "capacidadeDetalhada": [
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampussantaines_santaines",
+          "id": "ent_institutofederaldabahiaifba_santaines",
           "municipio": "Santa Inês",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Santa Inês",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "ifs",
           "quantidade": 4
@@ -13416,14 +13152,6 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Amargosa",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacos",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_santaines",
-          "municipio": "Santa Inês",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
           "quantidade": 1
         }
       ],
@@ -13573,9 +13301,9 @@
       ],
       "cursosDetalhado": [
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_santaines_634",
+          "id": "curso_ent_institutofederaldabahiaifba_santaines_634",
           "municipio": "Santa Inês",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Zootecnia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -13637,18 +13365,10 @@
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaianocampusbomjesusdalapa_bomjesusdalapa",
+          "id": "ent_institutofederaldabahiaifba_bomjesusdalapa",
           "municipio": "Bom Jesus da Lapa",
-          "entidade": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Bom Jesus da Lapa",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
-          "categoria": "ifs",
-          "quantidade": 1
-        },
-        {
-          "id": "ent_institutofederaldeeducacaocienciaetecnologiabaiano_bomjesusdalapa",
-          "municipio": "Bom Jesus da Lapa",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
-          "tipo": "Instituto Federal - Pública Federal",
           "categoria": "ifs",
           "quantidade": 1
         }
@@ -13779,9 +13499,9 @@
       ],
       "cursosDetalhado": [
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_bomjesusdalapa_636",
+          "id": "curso_ent_institutofederaldabahiaifba_bomjesusdalapa_636",
           "municipio": "Bom Jesus da Lapa",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -13791,9 +13511,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_institutofederaldeeducacaocienciaetecnologiabaiano_bomjesusdalapa_637",
+          "id": "curso_ent_institutofederaldabahiaifba_bomjesusdalapa_637",
           "municipio": "Bom Jesus da Lapa",
-          "entidade": "Instituto FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+          "entidade": "Instituto Federal da Bahia (IFBA)",
           "curso": "Gestão Da Tecnologia Da Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
