@@ -8,11 +8,10 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v14'; 
+const CACHE_VERSION = 'v15'; 
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
-// Limpeza de valores normais (usada internamente para matching robusto)
 function normalize(value) {
   return String(value || '')
     .normalize('NFD')
@@ -22,44 +21,54 @@ function normalize(value) {
     .trim();
 }
 
-// O DICIONÁRIO SUPREMO: Interceta variações bizarras e unifica tudo na mesma string
+// O DICIONÁRIO SUPREMO: Interceta siglas escondidas e variações de texto
 function expandirNomeEntidade(nomeRaw) {
     let nome = String(nomeRaw || '').trim();
     let nomeNorm = normalize(nome);
 
-    if (nomeNorm.includes('universidade federal da bahia') || nomeNorm === 'ufba') return 'Universidade Federal da Bahia (UFBA)';
-    if (nomeNorm.includes('universidade do estado da bahia') || nomeNorm === 'uneb') return 'Universidade do Estado da Bahia (UNEB)';
-    if (nomeNorm.includes('universidade federal do oeste da bahia') || nomeNorm === 'ufob') return 'Universidade Federal do Oeste da Bahia (UFOB)';
-    if (nomeNorm.includes('universidade federal do reconcavo') || nomeNorm === 'ufrb') return 'Universidade Federal do Recôncavo da Bahia (UFRB)';
-    if (nomeNorm.includes('universidade federal do sul da bahia') || nomeNorm === 'ufsb') return 'Universidade Federal do Sul da Bahia (UFSB)';
-    if (nomeNorm.includes('universidade federal do vale do sao francisco') || nomeNorm === 'univasf') return 'Universidade Federal do Vale do São Francisco (UNIVASF)';
-    if (nomeNorm.includes('universidade estadual de santa cruz') || nomeNorm === 'uesc') return 'Universidade Estadual de Santa Cruz (UESC)';
-    if (nomeNorm.includes('universidade estadual do sudoeste') || nomeNorm === 'uesb') return 'Universidade Estadual do Sudoeste da Bahia (UESB)';
-    if (nomeNorm.includes('universidade estadual de feira') || nomeNorm === 'uefs') return 'Universidade Estadual de Feira de Santana (UEFS)';
-    
-    // CORREÇÃO DOS INSTITUTOS: Apanha o nome gigante e reduz para o padrão
-    if (nomeNorm.includes('instituto federal baiano') || nomeNorm === 'ifbaiano') return 'Instituto Federal Baiano (IF BAIANO)';
-    if (nomeNorm.includes('instituto federal de educacao ciencia e tecnologia da bahia') || nomeNorm.includes('instituto federal da bahia') || nomeNorm === 'ifba') return 'Instituto Federal da Bahia (IFBA)';
-    
-    if (nomeNorm.includes('servico nacional de aprendizagem industrial') || nomeNorm === 'senai') return 'Serviço Nacional de Aprendizagem Industrial (SENAI)';
-    if (nomeNorm.includes('servico nacional de aprendizagem comercial') || nomeNorm === 'senac') return 'Serviço Nacional de Aprendizagem Comercial (SENAC)';
-    if (nomeNorm.includes('mauricio de nassau') || nomeNorm === 'uninassau') return 'Centro Universitário Maurício de Nassau (UNINASSAU)';
-    if (nomeNorm === 'unirb') return 'Centro Universitário UNIRB';
-    if (nomeNorm.includes('catolica do salvador') || nomeNorm === 'ucsal') return 'Universidade Católica do Salvador (UCSAL)';
-    if (nomeNorm.includes('universidade salvador') || nomeNorm === 'unifacs') return 'Universidade Salvador (UNIFACS)';
-    if (nomeNorm.includes('capim grosso') || nomeNorm === 'fcg') return 'Faculdade Capim Grosso (FCG)';
+    // Motor de busca flexível: procura termos parciais ou siglas exatas dentro da string
+    const check = (keywords, exacts = []) => {
+        return keywords.some(k => nomeNorm.includes(k)) || exacts.some(e => new RegExp(`\\b${e}\\b`, 'i').test(nomeNorm));
+    };
 
-    // Fallback limpando erros de corte comuns caso não bata com nenhuma conhecida
+    if (check(['universidade federal da bahia'], ['ufba'])) return 'Universidade Federal da Bahia (UFBA)';
+    if (check(['universidade do estado da bahia', 'universidade estadual da bahia'], ['uneb'])) return 'Universidade do Estado da Bahia (UNEB)';
+    if (check(['universidade federal do oeste da bahia'], ['ufob'])) return 'Universidade Federal do Oeste da Bahia (UFOB)';
+    if (check(['universidade federal do reconcavo'], ['ufrb'])) return 'Universidade Federal do Recôncavo da Bahia (UFRB)';
+    if (check(['universidade federal do sul da bahia'], ['ufsb'])) return 'Universidade Federal do Sul da Bahia (UFSB)';
+    if (check(['universidade federal do vale do sao francisco'], ['univasf'])) return 'Universidade Federal do Vale do São Francisco (UNIVASF)';
+    if (check(['universidade estadual de santa cruz'], ['uesc'])) return 'Universidade Estadual de Santa Cruz (UESC)';
+    if (check(['universidade estadual do sudoeste'], ['uesb'])) return 'Universidade Estadual do Sudoeste da Bahia (UESB)';
+    if (check(['universidade estadual de feira'], ['uefs'])) return 'Universidade Estadual de Feira de Santana (UEFS)';
+    
+    if (check(['instituto federal baiano'], ['ifbaiano', 'if baiano'])) return 'Instituto Federal Baiano (IF BAIANO)';
+    if (check(['instituto federal de educacao ciencia', 'instituto federal da bahia'], ['ifba'])) return 'Instituto Federal da Bahia (IFBA)';
+    
+    if (check(['servico nacional de aprendizagem industrial', 'senai cimatec'], ['senai'])) return 'Serviço Nacional de Aprendizagem Industrial (SENAI)';
+    if (check(['servico nacional de aprendizagem comercial'], ['senac'])) return 'Serviço Nacional de Aprendizagem Comercial (SENAC)';
+    if (check(['mauricio de nassau'], ['uninassau'])) return 'Centro Universitário Maurício de Nassau (UNINASSAU)';
+    if (check(['unirb'], ['unirb'])) return 'Centro Universitário UNIRB';
+    if (check(['catolica do salvador'], ['ucsal'])) return 'Universidade Católica do Salvador (UCSAL)';
+    if (check(['universidade salvador'], ['unifacs'])) return 'Universidade Salvador (UNIFACS)';
+    if (check(['capim grosso'], ['fcg'])) return 'Faculdade Capim Grosso (FCG)';
+    if (check(['tecnologia e ciencias', 'ftc'], ['uniftc', 'ftc'])) return 'Centro Universitário UniFTC';
+    if (check(['estacio'], ['estacio'])) return 'Universidade Estácio de Sá';
+
+    // Limpezas de erros de digitação (cabeçalhos cortados)
     nome = nome.replace(/^UNIVERSI\s/gi, 'Universidade '); 
     nome = nome.replace(/^INSTITUTO\s/gi, 'Instituto ');
     nome = nome.replace(/^CENTRO U\s/gi, 'Centro Universitário ');
     nome = nome.replace(/^FACULDAE\s/gi, 'Faculdade ');
     nome = nome.replace(/^FACULDA\s/gi, 'Faculdade ');
     
-    return nome;
+    // A TESOURA: Remove sufixos que causam duplicidades em faculdades desconhecidas
+    // Ex: "Faculdade X - Campus Y" vira apenas "Faculdade X"
+    nome = nome.replace(/\s*[-–]\s*(Campus|Polo|Unidade|Centro).*$/i, '');
+    nome = nome.replace(/\s+(Campus|Polo|Unidade)\s+.*$/i, '');
+    
+    return nome.trim();
 }
 
-// Função ultra-rigorosa para limpar cabeçalhos
 function safeKey(k) {
   return String(k || '')
     .normalize('NFD')
@@ -102,7 +111,6 @@ function parseSpreadsheet(buffer) {
   const targetSheetNames = workbook.SheetNames;
   if (!targetSheetNames.length) throw new Error('Planilha vazia');
 
-  // 1. CARREGAR A LISTA DO SEMIÁRIDO BAIANO
   const semiaridoMunicipios = new Set();
   const semiaridoSheetName = targetSheetNames.find(name => safeKey(name).includes('semiarido'));
   
@@ -173,7 +181,6 @@ function parseSpreadsheet(buffer) {
       const orgAcademica = String(row['orgacademica'] || '').trim();
       const categoriaAdm = String(row['categoriaadm'] || '').trim();
       
-      // EXTRATOR IMPLACÁVEL DA COLUNA A
       const cabeçalhoColunaA = Object.keys(rawRow)[0]; 
       const valorColunaA = String(rawRow[cabeçalhoColunaA] || '').trim(); 
       
@@ -185,7 +192,6 @@ function parseSpreadsheet(buffer) {
           entidadeRaw = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || row['ies'] || row['sigla'] || valorColunaA).trim();
       }
 
-      // Passamos o valor extraído pelo tradutor/limpador super estrito
       const entidadesExpandida = expandirNomeEntidade(entidadeRaw);
       
       const tipoOriginal = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || row['categoria'] || row['natureza'] || '').trim();
@@ -205,7 +211,6 @@ function parseSpreadsheet(buffer) {
           tipoFinal = tipoParts.join(' - '); 
       }
 
-      // Determinar a Categoria para os KPIs
       const tipoNorm = normalize(tipoOriginal + ' ' + orgAcademica + ' ' + categoriaAdm);
       let categoriaEntidade = null;
       let isCTI = false;
@@ -218,7 +223,7 @@ function parseSpreadsheet(buffer) {
       else if (['parque'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'parques'; isCTI = true; }
       else if (['incubadora'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'incubadoras'; isCTI = true; }
 
-      // ID Único perfeitamente alinhado: Instituição Normalizada + Cidade
+      // ID Único blindado pelo motor de expansão de nomes e município
       const uniqueRowId = (entidadesExpandida && municipio) 
           ? `ent_${safeKey(entidadesExpandida)}_${safeKey(municipio)}` 
           : `aba_${sheetNorm}_linha_${idx}`;
@@ -227,10 +232,9 @@ function parseSpreadsheet(buffer) {
          const territory = getTerritory(tName);
          if (!territory) return;
 
-         // ISOLAMENTO 1: CAPACIDADE TERRITORIAL (CT&I) E ENSINO SUPERIOR
+         // CAPACIDADE TERRITORIAL E ENSINO
          if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('ensino') || orgAcademica !== '') {
              if (isCTI && entidadesExpandida !== '') {
-                 // A trava bloqueia duplicados porque a planilha antiga (com os dados bons) roda PRIMEIRO
                  const alreadyExists = territory.capacidadeRows.some(e => e.id === uniqueRowId);
                  if (!alreadyExists) {
                      territory.capacidadeRows.push({
@@ -245,7 +249,7 @@ function parseSpreadsheet(buffer) {
              }
          }
 
-         // ISOLAMENTO 2: CADEIAS PRODUTIVAS E IGs POTENCIAIS
+         // CADEIAS PRODUTIVAS
          if (sheetNorm.includes('cadeia') || sheetNorm.includes('ig') || sheetNorm.includes('potencial')) {
              const cadeia = String(row['cadeiaprodutiva'] || row['cadeiasprodutivas'] || row['cadeia'] || row['segmento'] || '').trim();
              if (cadeia !== '') {
@@ -266,7 +270,7 @@ function parseSpreadsheet(buffer) {
              }
          }
 
-         // ISOLAMENTO 3: DESENVOLVIMENTO (IFDM)
+         // DESENVOLVIMENTO (IFDM)
          if (sheetNorm.includes('desenvolvimento') || sheetNorm.includes('ifdm')) {
              const ifdm = toNumber(row['ifdm']);
              const pop = toNumber(row['populacao']);
@@ -283,13 +287,13 @@ function parseSpreadsheet(buffer) {
              if (ifdmTi > 0) territory.desenvolvimento.ifdmTi = ifdmTi;
          }
 
-         // ISOLAMENTO 4: ASSISTÊNCIA PÚBLICA
+         // ASSISTÊNCIA PÚBLICA
          const assistencia = String(row['assistenciapublica'] || row['conecta'] || '');
          const iniciativas = String(row['iniciativas'] || row['dispositivosestaduais'] || '');
          if (isTruthy(assistencia)) territory.assistenciaPublica.existe = true;
          if (iniciativas !== '') splitList(iniciativas).forEach(i => territory.assistenciaPublica.iniciativas.add(i));
 
-         // ISOLAMENTO 5: CURSOS EM CT&I
+         // CURSOS EM CT&I
          if (sheetNorm.includes('curso') || sheetNorm.includes('ensino')) {
              const nomeCurso = String(row['curso'] || '').trim();
              if (nomeCurso !== '') {
@@ -311,7 +315,7 @@ function parseSpreadsheet(buffer) {
     });
   };
 
-  // ORDENAÇÃO DE ABAS: Garante que a planilha Principal (Capacidade/CTI) corre primeiro!
+  // ORDENAÇÃO DE ABAS
   const ordenadasSheetNames = [...targetSheetNames].sort((a, b) => {
       const aKey = safeKey(a);
       const bKey = safeKey(b);
@@ -393,6 +397,7 @@ function parseSpreadsheet(buffer) {
 
   return result;
 }
+
 // ==================== FIM DO PROCESSADOR ====================
 
 const sharepointProxyPlugin = () => ({
