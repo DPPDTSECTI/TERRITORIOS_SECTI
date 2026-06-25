@@ -705,6 +705,15 @@ function MainApp() {
       return result;
   }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
+  const hasActiveFilters = searchTerm !== '' || 
+                         selectedLocation !== null || 
+                         ifdmMin !== '' || 
+                         ifdmMax !== '' || 
+                         filtroSemiarido !== false || 
+                         areaGeralFilter.length > 0 || 
+                         cursoSearchTerm !== '' || 
+                         !Object.values(ctiFilters).every(val => val === true);
+
   return (
     <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
       <Helmet>
@@ -847,13 +856,15 @@ function MainApp() {
                                 Filtros Avançados
                             </button>
 
-                            <button 
-                                onClick={resetGlobalFilters} 
-                                className={`h-11 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 text-red-400 hover:bg-red-900/30 hover:border-red-500/50' : 'bg-white border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
-                                title="Limpar todos os filtros e pesquisas ativos"
-                            >
-                                Limpar
-                            </button>
+                            {hasActiveFilters && (
+                                <button 
+                                    onClick={resetGlobalFilters} 
+                                    className={`h-11 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 text-red-400 hover:bg-red-900/30 hover:border-red-500/50' : 'bg-white border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
+                                    title="Limpar todos os filtros e pesquisas ativos"
+                                >
+                                    Limpar
+                                </button>
+                            )}
 
                             {isFilterPanelOpen && (
                                 <div className={`absolute left-0 lg:left-auto lg:right-0 top-[100%] mt-2 w-72 rounded-2xl p-4 shadow-2xl border z-[150] flex flex-col gap-4 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
