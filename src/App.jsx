@@ -958,13 +958,14 @@ function MainApp() {
                                 <ConectaMap 
                                     territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats} 
                                     searchTerm={searchTerm} filtroSemiarido={filtroSemiarido} 
-                                    selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios} 
+                                    selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios}
                                     onSelectTerritory={(loc) => { setSelectedLocation(loc); setSearchTerm(loc ? loc.nome : ''); }} 
                                     darkMode={darkMode} 
                                 />
                             </div>
                         </div>
-                        <a className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 href ${themeClasses.textMuted}`} href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer">
+                       
+                        <a className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer">
                          Fonte: IBGE/Semiárido Brasileiro (2022)
                         </a>
                     </div>
@@ -1010,7 +1011,7 @@ function MainApp() {
                                         <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                                             <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                                 <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                                <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 hover:underline transition-opacity">
+                                                <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                     DataSebrae / Indicações Geográficas
                                                 </a>
                                             </div>
@@ -1168,7 +1169,7 @@ function MainApp() {
                     </div>
 
                     <a 
-                        className={`absolute -bottom-6 left-4 text-left text-[11px] font-medium opacity-70 transition-opacity hover:opacity-100 ${themeClasses.textMuted}`} 
+                        className={`absolute -bottom-6 left-4 text-left text-[12px] font-medium opacity-70 transition-opacity hover:opacity-100 ${themeClasses.textMuted}`} 
                         href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" 
                         target="_blank" 
                         rel="noreferrer"
