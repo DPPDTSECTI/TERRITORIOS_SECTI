@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { MessageCircle, X, Send, Loader2, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
@@ -49,47 +49,49 @@ export default function ChatBot({ context }) {
         throw new Error("A chave VITE_OPENROUTER_API_KEY não foi encontrada. Verifique o arquivo .env");
       }
 
-      // Comprime a base de dados em texto puro focado em contexto semântico
-      const baseDeDados = context?.todosTerritorios ? context.todosTerritorios.map(t => {
-        const infra = t.entidadesDetalhadas?.length > 0 
-            ? t.entidadesDetalhadas.map(e => `  - ${e.entidade} (Tipo: ${e.tipo}, Município: ${e.municipio})`).join('\n') 
-            : '  - Nenhuma infraestrutura registrada.';
-            
-        const cadeias = t.cadeiasProdutivasDetalhado?.length > 0 
-            ? t.cadeiasProdutivasDetalhado.map(c => `  - ${c.segmento} (Classificação: ${c.tipo}, Sede: ${c.sede || 'N/A'})`).join('\n') 
-            : '  - Nenhuma cadeia produtiva ou IG registrada.';
-            
-        const cursos = t.cursosDetalhado?.length > 0 
-            ? t.cursosDetalhado.map(c => `  - ${c.curso} (Nível: ${c.nivel || 'N/I'}, Instituição: ${c.entidade}, Município: ${c.municipio})`).join('\n') 
-            : '  - Nenhum curso superior registrado.';
-            
-        const desenvolvimentoMuns = t.desenvolvimentoDetalhado?.length > 0
-            ? t.desenvolvimentoDetalhado.map(m => `  - ${m.municipio}: IFDM de ${Number(m.ifdm).toFixed(3)} e População de ${m.populacao} habitantes.`).join('\n')
-            : '  - Dados municipais não consolidados.';
-            
-        const semi = t.isSemiarido ? `Sim (abrange ${t.qtdSemiarido} municípios no Semiárido)` : 'Não pertence ao Semiárido';
-        const conecta = t.assistenciaPublica?.existe ? 'Projeto Presente' : 'Não mapeado neste território';
-        
-        return `### Território de Identidade: ${t.nome}\n* Resumo: IFDM Médio de ${t.kpis?.ifdm || 'N/A'}, Pertence ao Semiárido: ${semi}, Conecta Bahia: ${conecta}\n* Infraestruturas de CT&I mapeadas:\n${infra}\n* Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs):\n${cadeias}\n* Lista Completa de Cursos Ofertados (Registrados no Painel):\n${cursos}\n* Perfil de Desenvolvimento dos Municípios (IFDM e População):\n${desenvolvimentoMuns}`;
-      }).join('\n\n---\n\n') : 'Carregando banco de dados...';
+      // Performance: Memoiza a construção da base de dados para não reprocessar a cada mensagem.
+      const baseDeDados = useMemo(() => {
+        return context?.todosTerritorios ? context.todosTerritorios.map(t => {
+          const infra = t.entidadesDetalhadas?.length > 0 
+              ? t.entidadesDetalhadas.map(e => `- ${e.entidade} [${e.tipo}] (${e.municipio})`).join('\n') 
+              : 'Nenhuma infraestrutura de CT&I registrada.';
+          
+          const cadeias = t.cadeiasProdutivasDetalhado?.length > 0 
+              ? t.cadeiasProdutivasDetalhado.map(c => `- ${c.segmento} [${c.tipo}] (Sede: ${c.sede || 'N/A'})`).join('\n') 
+              : 'Nenhuma cadeia produtiva ou IG registrada.';
+              
+          const cursos = t.cursosDetalhado?.length > 0 
+              ? t.cursosDetalhado.map(c => `- ${c.curso} [${c.nivel || 'N/I'}] - ${c.entidade} (${c.municipio})`).join('\n') 
+              : 'Nenhum curso superior registrado.';
+              
+          const desenvolvimentoMuns = t.desenvolvimentoDetalhado?.length > 0
+              ? t.desenvolvimentoDetalhado.map(m => `- ${m.municipio}: IFDM ${Number(m.ifdm).toFixed(3)}, Pop. ${m.populacao}`).join('\n')
+              : 'Dados municipais não disponíveis.';
+              
+          const semi = t.isSemiarido ? `Sim (${t.qtdSemiarido} municípios)` : 'Não';
+          const conecta = t.assistenciaPublica?.existe ? 'Presente' : 'Não mapeado';
+          
+          return `## Território: ${t.nome}\n- **IFDM Médio (Territorial):** ${t.kpis?.ifdm || 'N/A'}\n- **Pertence ao Semiárido:** ${semi}\n- **Programa Conecta Bahia:** ${conecta}\n\n### Infraestruturas CT&I\n${infra}\n\n### Cadeias Produtivas e IGs\n${cadeias}\n\n### Cursos Superiores\n${cursos}\n\n### Dados de Desenvolvimento Municipal\n${desenvolvimentoMuns}`;
+        }).join('\n\n---\n\n') : 'Base de dados não disponível.';
+      }, [context]);
 
       // "Ensinando" o robô injetando os dados reais do painel na instrução dele com técnicas avançadas
       const instrucaoSistema = `Você é a "Assistente Virtual do Painel Territorial de CT&I", a inteligência artificial oficial da SECTI (Secretaria de Ciência, Tecnologia e Inovação do Estado da Bahia).
 
 # SEU OBJETIVO E PERSONA
-1. **Tom e Estilo**: Institucional, prestativo, claro e acolhedor. Use emojis com moderação para organizar as ideias (ex: 🎓 para cursos, 🏭 para cadeias produtivas, 📊 para indicadores).
-2. **Formatação**: Responda SEMPRE utilizando Markdown (listas com bullet points, negrito para destacar nomes de municípios e instituições, e quebras de linha para facilitar a leitura).
-3. **Foco**: Você é especialista nos 27 Territórios de Identidade da Bahia, com foco absoluto em Ciência, Tecnologia e Inovação, Cadeias Produtivas e Índices de Desenvolvimento.
+1.  **Tom e Estilo**: Institucional, prestativo, claro e acolhedor. Use emojis com moderação para organizar as ideias (ex: 🎓 para cursos, 🏭 para cadeias produtivas, 📊 para indicadores).
+2.  **Formatação**: Responda SEMPRE utilizando Markdown (listas com bullet points, negrito para destacar nomes de municípios e instituições, e quebras de linha para facilitar a leitura).
+3.  **Foco**: Você é especialista nos 27 Territórios de Identidade da Bahia, com foco absoluto em Ciência, Tecnologia e Inovação, Cadeias Produtivas e Índices de Desenvolvimento.
 
 # REGRAS DE OURO (DIRETRIZES RESTRITAS)
-- **Zero Alucinação**: Você está ESTRITAMENTE PROIBIDA de inventar dados, instituições, IFDMs ou municípios que não estejam listados na BASE DE DADOS fornecida abaixo.
-- **Cursos Mapeados**: Se o usuário perguntar sobre os cursos de uma instituição (ex: UFBA, UNEB), você DEVE listar os cursos EXATAMENTE como aparecem na seção "Lista Completa de Cursos Ofertados" da Base de Dados. Não diga que não tem acesso a todos os cursos; trate os cursos fornecidos como a lista total disponível para você.
-- **Limites do Conhecimento**: Se o usuário perguntar algo fora do escopo da Base de Dados (ex: "Qual é o PIB do Brasil?", "Quem é o governador?", "Me dê uma receita de bolo"), você deve recusar educadamente dizendo que o seu escopo é exclusivo para os dados do Painel de CT&I da Bahia.
-- **Raciocínio Analítico**: Se o usuário perguntar "Quais territórios têm IFDM maior que 0.7?", você deve analisar os IFDMs na Base de Dados e listar apenas os correspondentes. Faça somas e contagens simples quando necessário.
-- **Linguagem Natural**: Nunca mostre ao usuário a estrutura dos dados ou diga "no meu banco de dados diz". Aja naturalmente como se você tivesse essa sabedoria sobre a Bahia.
+-   **Zero Alucinação**: Você está ESTRITAMENTE PROIBIDA de inventar dados, instituições, IFDMs ou municípios que não estejam listados na BASE DE DADOS fornecida abaixo.
+-   **Cursos Mapeados**: Se o usuário perguntar sobre os cursos de uma instituição (ex: UFBA, UNEB), você DEVE listar os cursos EXATAMENTE como aparecem na seção "Cursos Superiores" da Base de Dados. Não diga que não tem acesso a todos os cursos; trate os cursos fornecidos como a lista total disponível para você.
+-   **Limites do Conhecimento**: Se o usuário perguntar algo fora do escopo da Base de Dados (ex: "Qual é o PIB do Brasil?", "Quem é o governador?", "Me dê uma receita de bolo"), você deve recusar educadamente dizendo que o seu escopo é exclusivo para os dados do Painel de CT&I da Bahia.
+-   **Raciocínio Analítico**: Se o usuário perguntar "Quais territórios têm IFDM maior que 0.55?", você deve analisar os IFDMs na Base de Dados e listar apenas os correspondentes. Faça somas e contagens simples quando necessário.
+-   **Linguagem Natural**: Nunca mostre ao usuário a estrutura dos dados ou diga "no meu banco de dados diz". Aja naturalmente como se você tivesse essa sabedoria sobre a Bahia.
 
 # BASE DE DADOS DO PAINEL (Fonte da Verdade)
-Abaixo estão os dados reais do painel. Utilize-os para formular suas respostas:
+Abaixo estão os dados reais do painel. Utilize-os para formular suas respostas.
 
 ${baseDeDados}`;
 
@@ -104,10 +106,9 @@ ${baseDeDados}`;
       // Array de modelos gratuitos para tentar em sequência caso algum falhe
       // Retornando os modelos de "peso-pesado" para o bot ter maior capacidade de raciocínio
       const fallbackModels = [
-        "google/gemini-2.0-flash-exp:free",
-        "google/gemini-2.0-pro-exp-02-05:free",
-        "google/gemini-2.0-flash-thinking-exp:free",
-        "openrouter/auto"
+        "google/gemini-flash-1.5",
+        "meta-llama/llama-3-8b-instruct:free",
+        "mistralai/mistral-7b-instruct:free",
       ];
 
       let responseText = "";
@@ -121,6 +122,8 @@ ${baseDeDados}`;
             method: "POST",
             headers: {
               "Authorization": `Bearer ${apiKey}`,
+              "HTTP-Referer": `${window.location.origin}`, // Boa prática recomendada pelo OpenRouter
+              "X-Title": "Painel SECTI Territórios", // Boa prática recomendada pelo OpenRouter
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -146,7 +149,7 @@ ${baseDeDados}`;
       }
 
       if (!sucesso) {
-        throw new Error(`Servidores sobrecarregados ou a pergunta foi bloqueada pelo filtro de segurança. Tente reformular a pergunta. (Detalhe: ${ultimoErro})`);
+        throw new Error(`Os provedores de IA gratuitos estão instáveis no momento. Por favor, tente novamente em alguns segundos. (Detalhe: ${ultimoErro})`);
       }
 
       setMessages(prev => [...prev, { role: 'assistant', content: responseText }]);

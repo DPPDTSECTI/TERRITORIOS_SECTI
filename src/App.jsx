@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
+import { Target, BarChart3, Database, Settings, Map as MapIcon, Bot, Code, Info, Download, Sun } from 'lucide-react';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
 import ChatBot from './components/ChatBot';
 
@@ -28,51 +29,88 @@ function useDebounce(value, delay) {
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
 // ==========================================
-const SobrePage = ({ darkMode }) => (
-  <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
-    <div className={`backdrop-blur-2xl rounded-[2rem] border shadow-2xl p-8 lg:p-12 mb-8 transition-all duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-white/60'}`}>
-      <h2 className="text-3xl lg:text-4xl font-black mb-8 tracking-tighter">Sobre o Painel SECTI Territórios</h2>
-      <div className={`prose prose-sm sm:prose-base max-w-none ${darkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-600'}`}>
-        
-        <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 mt-8 border-b border-slate-200/20 pb-2">1. Visão Geral do Sistema</h3>
-        <p className="leading-relaxed mb-4">O Painel SECTI Territórios é uma plataforma de inteligência geográfica concebida para subsidiar a formulação e o acompanhamento de políticas públicas de Ciência, Tecnologia e Inovação (CT&I) no Estado da Bahia.</p>
-        <p className="leading-relaxed mb-8">Através da consolidação de dados territorializados, o sistema integra informações referentes a capacidades institucionais, desenvolvimento socioeconómico, cadeias produtivas e assistência pública. A plataforma proporciona aos gestores e investigadores uma base analítica rigorosa sobre as vocações e características dos 27 Territórios de Identidade da Bahia.</p>
+const SobrePage = ({ darkMode }) => {
+  const SectionTitle = ({ number, title }) => (
+    <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 mt-8 border-b border-slate-200/20 pb-2">
+      {number}. {title}
+    </h3>
+  );
 
-        <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-6 mt-10 border-b border-slate-200/20 pb-2">2. Definições e Indicadores (KPIs)</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-          {[
-            { t: 'Capacidade em CT&I', d: 'Quantitativo de infraestruturas mapeadas, englobando Universidades (Federais e Estaduais), Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.' },
-            { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM) de 2023. O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem os respectivos Territórios de Identidade da Bahia. O índice é composto por variáveis relacionadas às condições de Emprego e Renda, Saúde e Educação dos municípios.' },
-            { t: 'Cursos Superiores em CT&I', d: 'Levantamento da capacidade de formação de talentos. Consolida as informações sobre cursos de nível superior ofertados pelas entidades de ensino em Ciência, Tecnologia e Inovação na Bahia.' },
-            { t: 'APLs e IGs', d: 'Mapeamento de Arranjos Produtivos Locais (aglomerações de cooperação económica) e Indicações Geográficas (certificações de produtos inerentes à sua origem territorial).' }
-          ].map((item, idx) => (
-            <div key={idx} className={`p-5 rounded-2xl border transition-transform hover:-translate-y-1 duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200/60'}`}>
-              <span className={`block font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{item.t}</span>
-              <span className="text-[11px] leading-relaxed opacity-80">{item.d}</span>
-            </div>
-          ))}
-        </div>
+  return (
+    <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
+      <div className={`backdrop-blur-2xl rounded-[2rem] border shadow-2xl p-8 lg:p-12 mb-8 transition-all duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-white/60'}`}>
+        <h2 className="text-3xl lg:text-4xl font-black mb-8 tracking-tighter">Sobre o Painel SECTI Territórios</h2>
+        <div className={`prose prose-sm sm:prose-base max-w-none ${darkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-600'}`}>
+          
+          <SectionTitle number="1" title="O Projeto" />
+          <p className="leading-relaxed">O <strong>Painel Territorial de CT&I da Bahia</strong> é uma plataforma digital interativa, desenvolvida pela Secretaria de Ciência, Tecnologia e Inovação (SECTI), para consolidar, analisar e dar transparência aos principais dados do ecossistema de CT&I nos 27 Territórios de Identidade do estado.</p>
+          <p className="leading-relaxed">A ferramenta foi concebida como um instrumento estratégico para mapear as capacidades, vocações e desafios de cada região, oferecendo uma visão integrada e georreferenciada de ativos cruciais para o desenvolvimento socioeconômico.</p>
 
-        <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-6 mt-10 border-b border-slate-200/20 pb-2">3. Guia de Funcionalidades</h3>
-        <ul className="space-y-6">
-          {[
-            { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z', c: 'text-orange-500 bg-orange-500/10' },
-            { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em quatro abas relacionais, preparado para análises estatísticas externas.', i: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', c: 'text-purple-500 bg-purple-500/10' }
-          ].map((func, idx) => (
-            <li key={idx} className="flex gap-4 items-start">
-              <div className={`p-2.5 rounded-xl shrink-0 ${func.c}`}><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={func.i}/></svg></div>
-              <div>
-                <strong className={`block text-sm mb-1 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{func.t}</strong>
-                <span className="text-[11px] opacity-80 leading-relaxed">{func.d}</span>
+          <SectionTitle number="2" title="Nossos Objetivos" />
+          <ul className="list-disc pl-5 space-y-2">
+            <li><strong>Apoiar a Tomada de Decisão:</strong> Fornecer dados qualificados para subsidiar o planejamento e a formulação de políticas públicas.</li>
+            <li><strong>Promover a Transparência:</strong> Disponibilizar de forma aberta informações sobre investimentos, infraestrutura e indicadores de CT&I.</li>
+            <li><strong>Fomentar a Articulação:</strong> Facilitar a identificação de sinergias entre governo, setor produtivo, academia e sociedade civil.</li>
+            <li><strong>Democratizar a Informação:</strong> Servir como fonte de consulta para pesquisadores, estudantes, gestores e investidores.</li>
+          </ul>
+
+          <SectionTitle number="3" title="Definições e Indicadores (KPIs)" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { t: 'Capacidade em CT&I', d: 'Quantitativo de infraestruturas mapeadas, englobando Universidades, Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.' },
+              { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM). O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem cada Território.' },
+              { t: 'Cursos Superiores em CT&I', d: 'Levantamento da capacidade de formação de talentos, consolidando informações sobre cursos de nível superior ofertados pelas entidades de ensino em CT&I na Bahia.' },
+              { t: 'APLs e IGs', d: 'Mapeamento de Arranjos Produtivos Locais (aglomerações de cooperação económica) e Indicações Geográficas (certificações de produtos inerentes à sua origem territorial).' }
+            ].map((item, idx) => (
+              <div key={idx} className={`p-5 rounded-2xl border transition-transform hover:-translate-y-1 duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200/60'}`}>
+                <span className={`block font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{item.t}</span>
+                <span className="text-[11px] leading-relaxed opacity-80">{item.d}</span>
               </div>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
 
+          <SectionTitle number="4" title="Fontes dos Dados" />
+          <p>A riqueza de informações é resultado da consolidação de múltiplas fontes, garantindo abrangência e confiabilidade:</p>
+          <ul className="list-disc pl-5 space-y-2 text-sm">
+            <li><strong>SECTI/SharePoint:</strong> Mapeamento de entidades, programas e infraestruturas de CT&I.</li>
+            <li><strong>SEPLAN-BA:</strong> Dados geográficos e demográficos, incluindo a delimitação dos Territórios de Identidade.</li>
+            <li><strong>IBGE:</strong> Dados populacionais e malhas territoriais dos municípios.</li>
+            <li><strong>FIRJAN:</strong> Índice FIRJAN de Desenvolvimento Municipal (IFDM).</li>
+            <li><strong>INEP/MEC:</strong> Dados do Censo da Educação Superior.</li>
+            <li><strong>Fontes Setoriais e Acadêmicas:</strong> Informações sobre Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs).</li>
+          </ul>
+
+          <SectionTitle number="5" title="Metodologia e Tratamento dos Dados" />
+          <ol className="list-decimal pl-5 space-y-2">
+            <li><strong>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
+            <li><strong>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
+            <li><strong>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong>média ponderada pela população</strong> de cada município.</li>
+            <li><strong>Geração de Relatórios:</strong> A funcionalidade de exportação de relatórios em PDF segue as normas da <strong>ABNT (NBR 14724 e 6023)</strong>.</li>
+          </ol>
+
+          <SectionTitle number="6" title="Guia de Funcionalidades" />
+          <ul className="space-y-6">
+            {[
+              { t: 'Mapa Interativo', d: 'Explore os 27 Territórios, visualize a distribuição de ativos e acesse dados detalhados por município com funções de zoom e pan.', i: <MapIcon size={20} />, c: 'text-blue-500 bg-blue-500/10' },
+              { t: 'Filtros Avançados', d: 'Refine sua busca por Território, Indicadores (IFDM), Cursos Superiores, Cadeias Produtivas e tipos de Entidades de CT&I.', i: <Settings size={20} />, c: 'text-emerald-500 bg-emerald-500/10' },
+              { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: <Sun size={20} />, c: 'text-orange-500 bg-orange-500/10' },
+              { t: 'Assistente Virtual (Chatbot)', d: 'Converse com nossa IA para obter, via processamento de linguagem natural, respostas rápidas e análises sobre os dados da plataforma.', i: <Bot size={20} />, c: 'text-cyan-500 bg-cyan-500/10' },
+              { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em abas relacionais.', i: <Download size={20} />, c: 'text-purple-500 bg-purple-500/10' }
+            ].map((func, idx) => (
+              <li key={idx} className="flex gap-4 items-start">
+                <div className={`p-2.5 rounded-xl shrink-0 ${func.c}`}>{func.i}</div>
+                <div>
+                  <strong className={`block text-sm mb-1 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{func.t}</strong>
+                  <span className="text-[11px] opacity-80 leading-relaxed">{func.d}</span>
+                </div>
+              </li>
+            ))}
+          </ul> 
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ==========================================
 // COMPONENTE PRINCIPAL DO APP
