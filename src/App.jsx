@@ -5,7 +5,6 @@ import ConectaMap from "../ConectaMap";
 import LandingHero from './components/hero';
 import { Target, BarChart3, Database, Settings, Map as MapIcon, Bot, Code, Info, Download, Sun } from 'lucide-react';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
-import SobrePage from './components/SobrePage';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -26,7 +25,6 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
-<<<<<<< HEAD
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
 // ==========================================
@@ -95,7 +93,6 @@ const SobrePage = ({ darkMode }) => {
               { t: 'Mapa Interativo', d: 'Explore os 27 Territórios, visualize a distribuição de ativos e acesse dados detalhados por município com funções de zoom e pan.', i: <MapIcon size={20} />, c: 'text-blue-500 bg-blue-500/10' },
               { t: 'Filtros Avançados', d: 'Refine sua busca por Território, Indicadores (IFDM), Cursos Superiores, Cadeias Produtivas e tipos de Entidades de CT&I.', i: <Settings size={20} />, c: 'text-emerald-500 bg-emerald-500/10' },
               { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: <Sun size={20} />, c: 'text-orange-500 bg-orange-500/10' },
-              { t: 'Assistente Virtual (Chatbot)', d: 'Converse com nossa IA para obter, via processamento de linguagem natural, respostas rápidas e análises sobre os dados da plataforma.', i: <Bot size={20} />, c: 'text-cyan-500 bg-cyan-500/10' },
               { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em abas relacionais.', i: <Download size={20} />, c: 'text-purple-500 bg-purple-500/10' }
             ].map((func, idx) => (
               <li key={idx} className="flex gap-4 items-start">
@@ -112,8 +109,6 @@ const SobrePage = ({ darkMode }) => {
     </div>
   );
 };
-=======
->>>>>>> e4ae3bdd3a8660d8f00395d0095e9b5d3566afa7
 
 // ==========================================
 // COMPONENTE PRINCIPAL DO APP
