@@ -1,25 +1,30 @@
 {
+<<<<<<< HEAD
   "generatedAt": "2026-06-26T19:03:20.510Z",
+=======
+  "generatedAt": "2026-06-30T15:12:36.714Z",
+>>>>>>> e4ae3bdd3a8660d8f00395d0095e9b5d3566afa7
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
-      "isSemiarido": true,
-      "pctSemiarido": 85.71428571428571,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_faculdaderegionaldojacuipe_capimgrosso",
           "municipio": "Capim Grosso",
           "entidade": "Faculdade Regional do Jacuípe",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadecapimgrossofcg_capimgrosso",
           "municipio": "Capim Grosso",
           "entidade": "Faculdade Capim Grosso (FCG)",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -254,8 +259,9 @@
     },
     {
       "territory": "Bacia do Paramirim",
-      "isSemiarido": true,
-      "pctSemiarido": 100,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [],
       "cadeiasProdutivasDetalhado": [],
       "desenvolvimentoDetalhado": [
@@ -313,8 +319,9 @@
     },
     {
       "territory": "Bacia do Rio Corrente",
-      "isSemiarido": true,
-      "pctSemiarido": 90,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadefederaldooestedabahiaufob_santamariadavitoria",
@@ -417,8 +424,9 @@
     },
     {
       "territory": "Bacia do Rio Grande",
-      "isSemiarido": true,
-      "pctSemiarido": 89.47368421052632,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadefederaldooestedabahiaufob_barreiras",
@@ -453,6 +461,22 @@
           "quantidade": 1
         },
         {
+          "id": "ent_espacocolaborarparceirodoifbabarreiras_barreiras",
+          "municipio": "Barreiras",
+          "entidade": "Espaço Colaborar Parceiro do IFBA Barreiras",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoradebasetecnologicadaufob_barreiras",
+          "municipio": "Barreiras",
+          "entidade": "Incubadora de Base Tecnológica da UFOB",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
           "id": "ent_institutodaassociacaodeagricultoreseirrigantesdabahia_barreiras",
           "municipio": "Barreiras",
           "entidade": "Instituto da Associação de Agricultores e Irrigantes da Bahia",
@@ -464,32 +488,32 @@
           "id": "ent_centrouniversitarioarnaldohoracioferreira_luiseduardomagalhaes",
           "municipio": "Luís Eduardo Magalhães",
           "entidade": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
-          "id": "ent_centrouniversitariomauriciodenassauuninassau_barreiras",
+          "id": "ent_centrouniversitariomauriciodenassaudebarreiras_barreiras",
           "municipio": "Barreiras",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariounirb_barreiras",
           "municipio": "Barreiras",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadessulamericabahia_luiseduardomagalhaes",
           "municipio": "Luís Eduardo Magalhães",
           "entidade": "Faculdades Sulamérica Bahia",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -633,9 +657,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_6",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_6",
           "municipio": "Barreiras",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
           "curso": "Agronomia",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -645,9 +669,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_7",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_7",
           "municipio": "Barreiras",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -657,9 +681,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_8",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_8",
           "municipio": "Barreiras",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -669,9 +693,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_9",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_9",
           "municipio": "Barreiras",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -681,9 +705,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_10",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudebarreiras_barreiras_10",
           "municipio": "Barreiras",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -957,8 +981,9 @@
     },
     {
       "territory": "Baixo Sul",
-      "isSemiarido": true,
-      "pctSemiarido": 5.769230769230769,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_valenca",
@@ -988,16 +1013,16 @@
           "id": "ent_faculdadedafraternidadedevalenca_valenca",
           "municipio": "Valença",
           "entidade": "FACULDADE DA FRATERNIDADE DE VALENÇA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadezacariasdegoes_valenca",
           "municipio": "Valença",
           "entidade": "FACULDADE ZACARIAS DE GÓES",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -1256,8 +1281,9 @@
     },
     {
       "territory": "Chapada Diamantina",
-      "isSemiarido": true,
-      "pctSemiarido": 86.66666666666667,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_seabra",
@@ -1523,8 +1549,9 @@
     },
     {
       "territory": "Costa do Descobrimento",
-      "isSemiarido": true,
-      "pctSemiarido": 3.225806451612903,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_eunapolis",
@@ -1562,8 +1589,8 @@
           "id": "ent_faculdadesintegradasdoextremosuldabahia_eunapolis",
           "municipio": "Eunápolis",
           "entidade": "FACULDADES INTEGRADAS DO EXTREMO SUL DA BAHIA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -1787,6 +1814,7 @@
       "territory": "Extremo Sul",
       "isSemiarido": false,
       "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_teixeiradefreitas",
@@ -1813,27 +1841,35 @@
           "quantidade": 1
         },
         {
+          "id": "ent_espacocolaborarparceirodaufsbteixeiradefreitas_teixeiradefreitas",
+          "municipio": "Teixeira de Freitas",
+          "entidade": "Espaço Colaborar Parceiro da UFSB Teixeira de Freitas",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
           "id": "ent_faculdadeanhangueradeteixeiradefreitas_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
           "entidade": "FACULDADE ANHANGUERA DE TEIXEIRA DE FREITAS",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedecienciassociaisaplicadas_itamaraju",
           "municipio": "Itamaraju",
           "entidade": "FACULDADE DE CIÊNCIAS SOCIAIS APLICADAS",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedosuldabahia_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
           "entidade": "FACULDADE DO SUL DA BAHIA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -2236,8 +2272,9 @@
     },
     {
       "territory": "Irecê",
-      "isSemiarido": true,
-      "pctSemiarido": 95.23809523809523,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_irece",
@@ -2291,16 +2328,16 @@
           "id": "ent_faculdadeirece_irece",
           "municipio": "Irecê",
           "entidade": "FACULDADE IRECÊ",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeagesdemedicinadeirece_irece",
           "municipio": "Irecê",
           "entidade": "Faculdade AGES de Medicina de Irecê",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -2570,8 +2607,9 @@
     },
     {
       "territory": "Itaparica",
-      "isSemiarido": true,
-      "pctSemiarido": 75,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_pauloafonso",
@@ -2601,8 +2639,8 @@
           "id": "ent_centrouniversitariodoriosaofranciscounirios_pauloafonso",
           "municipio": "Paulo Afonso",
           "entidade": "Centro Universitário do Rio São Francisco Unirios",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -2736,13 +2774,14 @@
       "territory": "Itaparica (sede da IES)",
       "isSemiarido": false,
       "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_centrouniversitariodoriosaofranciscounirios_pauloafonsosededaiesead",
           "municipio": "Paulo Afonso (sede da IES - EAD)",
           "entidade": "Centro Universitário do Rio São Francisco Unirios",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -2810,8 +2849,9 @@
     },
     {
       "territory": "Litoral Norte e Agreste Baiano",
-      "isSemiarido": true,
-      "pctSemiarido": 26.08695652173913,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_alagoinhas",
@@ -2846,35 +2886,35 @@
           "quantidade": 1
         },
         {
-          "id": "ent_centrouniversitariounirb_alagoinhas",
+          "id": "ent_centrouniversitariounirbalagoinhas_alagoinhas",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariouniftc_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "Centro Universitário UniFTC",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadesantoantonio_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "FACULDADE SANTO ANTONIO",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadesantissimosacramento_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "FACULDADE SANTÍSSIMO SACRAMENTO",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -3014,9 +3054,9 @@
       ],
       "cursosDetalhado": [
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_89",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_89",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -3026,9 +3066,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_90",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_90",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -3038,9 +3078,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_91",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_91",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3050,9 +3090,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_92",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_92",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Engenharia De Petróleo",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3062,9 +3102,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_93",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_93",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3074,9 +3114,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_94",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_94",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -3086,9 +3126,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_95",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_95",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -3098,9 +3138,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariounirb_alagoinhas_96",
+          "id": "curso_ent_centrouniversitariounirbalagoinhas_alagoinhas_96",
           "municipio": "Alagoinhas",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "Centro Universitário UNIRB - Alagoinhas",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -3278,8 +3318,9 @@
     },
     {
       "territory": "Litoral Sul",
-      "isSemiarido": true,
-      "pctSemiarido": 4.081632653061225,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadeestadualdesantacruzuesc_ilheus",
@@ -3322,17 +3363,41 @@
           "quantidade": 1
         },
         {
-          "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
-          "municipio": "Itabuna",
-          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+          "id": "ent_espacocolaborarparceirodauesc_ilheus",
+          "municipio": "Ilhéus",
+          "entidade": "Espaço Colaborar Parceiro da UESC",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_brotoincubadoradebiotecnologiadauesc_ilheus",
+          "municipio": "Ilhéus",
+          "entidade": "Broto Incubadora de Biotecnologia da UESC",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
         },
         {
-          "id": "ent_institutofederalbaianoifbaiano_urucuca",
+          "id": "ent_incubadoradeempresasdebasecientificaetecnologicadaufsb_itabuna",
+          "municipio": "Itabuna",
+          "entidade": "Incubadora de Empresas de Base Científica e Tecnológica da UFSB",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoradetecnologiassociaiseeconomiasolidariadosuleextremosuldabahiadaufsb_itabuna",
+          "municipio": "Itabuna",
+          "entidade": "Incubadora de Tecnologias Sociais e Economia Solidária do Sul e Extremo Sul da Bahia da UFSB",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_preincubadoratecnologicadoifbaiano_urucuca",
           "municipio": "Uruçuca",
-          "entidade": "Instituto Federal Baiano (IF BAIANO)",
+          "entidade": "Pré-Incubadora Tecnológica do IFBaiano",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
@@ -3357,32 +3422,40 @@
           "id": "ent_centrodeensinosuperiordeilheus_ilheus",
           "municipio": "Ilhéus",
           "entidade": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeanhangueradeitabuna_itabuna",
           "municipio": "Itabuna",
           "entidade": "FACULDADE ANHANGUERA DE ITABUNA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdademadrethais_ilheus",
           "municipio": "Ilhéus",
           "entidade": "FACULDADE MADRE THAIS",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedeexcelenciaunexdeitabuna_itabuna",
           "municipio": "Itabuna",
           "entidade": "Faculdade de Excelência UNEX de Itabuna",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
+          "municipio": "Itabuna",
+          "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -4140,8 +4213,9 @@
     },
     {
       "territory": "Médio Rio de Contas",
-      "isSemiarido": true,
-      "pctSemiarido": 54.761904761904766,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_ipiau",
@@ -4168,19 +4242,27 @@
           "quantidade": 1
         },
         {
+          "id": "ent_espacocolaborarparceirodauesbjequie_jequie",
+          "municipio": "Jequié",
+          "entidade": "Espaço Colaborar Parceiro da UESB Jequié",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
           "id": "ent_faculdadeanhangueradejequie_jequie",
           "municipio": "Jequié",
           "entidade": "FACULDADE ANHANGUERA DE JEQUIÉ",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedeexcelenciaunexdejequie_jequie",
           "municipio": "Jequié",
           "entidade": "Faculdade de Excelência UNEX de Jequié",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -4466,8 +4548,9 @@
     },
     {
       "territory": "Médio Sudoeste da Bahia",
-      "isSemiarido": true,
-      "pctSemiarido": 78.125,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadeestadualdosudoestedabahiauesb_itapetinga",
@@ -4689,8 +4772,9 @@
     },
     {
       "territory": "Metropolitano de Salvador",
-      "isSemiarido": true,
-      "pctSemiarido": 7.5,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_salvador",
@@ -4797,6 +4881,14 @@
           "quantidade": 1
         },
         {
+          "id": "ent_espacofazerparceirodoifbacamacari_camacari",
+          "municipio": "Camaçari",
+          "entidade": "Espaço Fazer Parceiro do IFBA Camaçari",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
           "id": "ent_espacofazerparceirodaprefeituramunicipaldecamacari_camacari",
           "municipio": "Camaçari",
           "entidade": "Espaço Fazer Parceiro da Prefeitura Municipal de Camaçari",
@@ -4845,6 +4937,46 @@
           "quantidade": 1
         },
         {
+          "id": "ent_incubadoradeempresasdebasetecnologicadaescolapolitecnicadaufba_salvador",
+          "municipio": "Salvador",
+          "entidade": "Incubadora de Empresas de Base Tecnológica da Escola Politécnica da UFBA",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoratecnologicadeeconomiasolidariaegestaododesenvolvimentoterritorialdaufba_salvador",
+          "municipio": "Salvador",
+          "entidade": "Incubadora Tecnológica de Economia Solidária e Gestão do Desenvolvimento Territorial da UFBA",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoratecnologicadecooperativaspopularesdauneb_salvador",
+          "municipio": "Salvador",
+          "entidade": "Incubadora Tecnológica de Cooperativas Populares da UNEB",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoratecnologicadecooperativaspopularesdoifba_salvador",
+          "municipio": "Salvador",
+          "entidade": "Incubadora Tecnológica de Cooperativas Populares do IFBA",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_preincubadoratecnologicadoifba_salvador",
+          "municipio": "Salvador",
+          "entidade": "Pré-Incubadora Tecnológica do IFBA",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
           "id": "ent_incubadoradeempreendimentoseredesdeeconomiasolidaria_salvador",
           "municipio": "Salvador",
           "entidade": "Incubadora de Empreendimentos e Redes de Economia Solidária",
@@ -4853,25 +4985,25 @@
           "quantidade": 1
         },
         {
-          "id": "ent_universidadesalvadorunifacs_salvador",
+          "id": "ent_centrodeempreendedorismoeinovacaodaunifacs_salvador",
           "municipio": "Salvador",
-          "entidade": "Universidade Salvador (UNIFACS)",
+          "entidade": "Centro de Empreendedorismo e Inovação da UNIFACS",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadecatolicadosalvadorucsal_salvador",
+          "id": "ent_incubadoratecnologicadecooperativaspopularesdaucsal_salvador",
           "municipio": "Salvador",
-          "entidade": "Universidade Católica do Salvador (UCSAL)",
+          "entidade": "Incubadora Tecnológica de Cooperativas Populares da UCSal",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
         },
         {
-          "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvador",
+          "id": "ent_incubadoradebasetecnologicadosenaicimatec_salvador",
           "municipio": "Salvador",
-          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
+          "entidade": "Incubadora de Base Tecnológica do SENAI CIMATEC",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
           "quantidade": 1
@@ -4880,176 +5012,200 @@
           "id": "ent_centrouniversitariodesalvador_salvador",
           "municipio": "Salvador",
           "entidade": "CENTRO UNIVERSITÁRIO DE SALVADOR",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariodompedroii_salvador",
           "municipio": "Salvador",
           "entidade": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariojorgeamado_salvador",
           "municipio": "Salvador",
           "entidade": "CENTRO UNIVERSITÁRIO JORGE AMADO",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariounime_laurodefreitas",
           "municipio": "Lauro de Freitas",
           "entidade": "CENTRO UNIVERSITÁRIO UNIME",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariounirb_salvador",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
-          "id": "ent_universidadeestaciodesa_salvador",
+          "id": "ent_centrouniversitarioestaciodabahia_salvador",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "entidade": "Centro Universitário Estácio da Bahia",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariofamec_camacari",
           "municipio": "Camaçari",
           "entidade": "Centro Universitário FAMEC",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
-          "id": "ent_centrouniversitariomauriciodenassauuninassau_salvador",
+          "id": "ent_centrouniversitariomauriciodenassaudesalvador_salvador",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitarioruybarbosawyden_salvador",
           "municipio": "Salvador",
           "entidade": "Centro Universitário Ruy Barbosa Wyden",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariouniftc_salvador",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UniFTC",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "entidade": "Centro Universitário UNIFTC",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_escolabahianademedicinaesaudepublica_salvador",
           "municipio": "Salvador",
           "entidade": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadecastroalves_salvador",
           "municipio": "Salvador",
           "entidade": "FACULDADE CASTRO ALVES",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadediplomata_salvador",
           "municipio": "Salvador",
           "entidade": "FACULDADE DIPLOMATA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedoisdejulho_salvador",
           "municipio": "Salvador",
           "entidade": "FACULDADE DOIS DE JULHO",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeheliorocha_salvador",
           "municipio": "Salvador",
           "entidade": "FACULDADE HÉLIO ROCHA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadesaosalvador_salvador",
           "municipio": "Salvador",
           "entidade": "FACULDADE SÃO SALVADOR",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariounirb_camacari",
           "municipio": "Camaçari",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeviscondedecairu_salvador",
           "municipio": "Salvador",
           "entidade": "FACULDADE VISCONDE DE CAIRÚ",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadesintegradasipitanga_laurodefreitas",
           "municipio": "Lauro de Freitas",
           "entidade": "FACULDADES INTEGRADAS IPITANGA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeanhangueraunimedesalvador_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade Anhanguera Unime de Salvador",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeedufordesalvador_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade Edufor de Salvador",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_institutosalvadordeensinoecultura_salvador",
           "municipio": "Salvador",
           "entidade": "Instituto SALVADOR DE ENSINO E CULTURA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_universidadecatolicadosalvadorucsal_salvador",
+          "municipio": "Salvador",
+          "entidade": "Universidade Católica do Salvador (UCSAL)",
+          "tipo": "Instituição",
+          "categoria": "outros",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_universidadesalvadorunifacs_salvador",
+          "municipio": "Salvador",
+          "entidade": "Universidade Salvador (UNIFACS)",
+          "tipo": "Instituição",
+          "categoria": "outros",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvador",
+          "municipio": "Salvador",
+          "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -5478,7 +5634,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_179",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5490,7 +5646,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_180",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5502,7 +5658,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_181",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -5514,7 +5670,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_182",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Ambiental E Sanitária",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5526,7 +5682,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_183",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5538,7 +5694,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_184",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia De Computação",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5550,7 +5706,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_185",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5562,7 +5718,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_186",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia De Software",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -5574,7 +5730,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_187",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5586,7 +5742,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_188",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5598,7 +5754,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_189",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Química",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5610,7 +5766,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_190",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5622,7 +5778,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_191",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -5634,7 +5790,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_192",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -5646,7 +5802,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvador_193",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Redes De Computadores",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5656,9 +5812,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_194",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_194",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5668,9 +5824,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_195",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_195",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5680,9 +5836,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_196",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_196",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5692,9 +5848,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_197",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_197",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Engenharia Elétrica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5704,9 +5860,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_198",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_198",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Engenharia Mecânica",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5716,9 +5872,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_199",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_199",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5728,9 +5884,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_200",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_200",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -5740,9 +5896,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_201",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_201",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Redes De Computadores",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -5752,9 +5908,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_universidadeestaciodesa_salvador_202",
+          "id": "curso_ent_centrouniversitarioestaciodabahia_salvador_202",
           "municipio": "Salvador",
-          "entidade": "Universidade Estácio de Sá",
+          "entidade": "Centro Universitário Estácio da Bahia",
           "curso": "Sistema De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -5800,9 +5956,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_206",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_206",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5812,9 +5968,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_207",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_207",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -5824,9 +5980,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_208",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_208",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5836,9 +5992,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_209",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_209",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -5848,9 +6004,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_210",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_210",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -5860,9 +6016,9 @@
           "quantidade": 1
         },
         {
-          "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_salvador_211",
+          "id": "curso_ent_centrouniversitariomauriciodenassaudesalvador_salvador_211",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+          "entidade": "Centro Universitário Maurício de Nassau de Salvador",
           "curso": "Sistemas De Informação",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Bacharelado",
@@ -6150,7 +6306,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_235",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UniFTC",
+          "entidade": "Centro Universitário UNIFTC",
           "curso": "Biomedicina",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6162,7 +6318,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_236",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UniFTC",
+          "entidade": "Centro Universitário UNIFTC",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -6174,7 +6330,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_237",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UniFTC",
+          "entidade": "Centro Universitário UNIFTC",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6186,7 +6342,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_238",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UniFTC",
+          "entidade": "Centro Universitário UNIFTC",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -6198,7 +6354,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_239",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UniFTC",
+          "entidade": "Centro Universitário UNIFTC",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -6210,7 +6366,7 @@
         {
           "id": "curso_ent_centrouniversitariouniftc_salvador_240",
           "municipio": "Salvador",
-          "entidade": "Centro Universitário UniFTC",
+          "entidade": "Centro Universitário UNIFTC",
           "curso": "Radiologia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Tecnológico",
@@ -7554,77 +7710,78 @@
       "territory": "Metropolitano de Salvador (sede da IES)",
       "isSemiarido": false,
       "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_centrouniversitariodompedroii_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariojorgeamado_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "CENTRO UNIVERSITÁRIO JORGE AMADO",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariounirb_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Centro Universitário UNIRB",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_escolabahianademedicinaesaudepublica_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeviscondedecairu_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "FACULDADE VISCONDE DE CAIRÚ",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_institutofederaldabahiaifba_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Instituto Federal da Bahia (IFBA)",
-          "tipo": "Instituto Federal - Pública Federal",
-          "categoria": "ifs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_universidadecatolicadosalvadorucsal_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Universidade Católica do Salvador (UCSAL)",
-          "tipo": "Universidade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_universidadesalvadorunifacs_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Universidade Salvador (UNIFACS)",
-          "tipo": "Universidade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
-          "tipo": "Universidade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -7886,7 +8043,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_372",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Análise E Desenvolvimento De Sistemas",
           "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
           "nivel": "Tecnológico",
@@ -7898,7 +8055,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_373",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Agronômica",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -7910,7 +8067,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_374",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia Civil",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7922,7 +8079,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_375",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Engenharia De Produção",
           "areaGeral": "Engenharia, produção e construção",
           "nivel": "Bacharelado",
@@ -7934,7 +8091,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_376",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Farmácia",
           "areaGeral": "Saúde e bem-estar",
           "nivel": "Bacharelado",
@@ -7946,7 +8103,7 @@
         {
           "id": "curso_ent_centrouniversitariounirb_salvadorsededaiesead_377",
           "municipio": "Salvador (sede da IES - EAD)",
-          "entidade": "Centro Universitário UNIRB",
+          "entidade": "CENTRO UNIVERSITÁRIO UNIRB",
           "curso": "Medicina Veterinária",
           "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
           "nivel": "Bacharelado",
@@ -8292,8 +8449,9 @@
     },
     {
       "territory": "Piemonte da Diamantina",
-      "isSemiarido": true,
-      "pctSemiarido": 71.42857142857143,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_jacobina",
@@ -8323,8 +8481,8 @@
           "id": "ent_faculdadeagesdejacobina_jacobina",
           "municipio": "Jacobina",
           "entidade": "Faculdade AGES de Jacobina",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -8499,8 +8657,9 @@
     },
     {
       "territory": "Piemonte do Paraguaçu",
-      "isSemiarido": true,
-      "pctSemiarido": 93.33333333333333,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_itaberaba",
@@ -8649,8 +8808,9 @@
     },
     {
       "territory": "Piemonte Norte do Itapicuru",
-      "isSemiarido": true,
-      "pctSemiarido": 76.92307692307693,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_senhordobonfim",
@@ -8688,8 +8848,8 @@
           "id": "ent_faculdadeagesdesenhordobonfim_senhordobonfim",
           "municipio": "Senhor do Bonfim",
           "entidade": "Faculdade AGES de Senhor do Bonfim",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -8824,8 +8984,9 @@
     },
     {
       "territory": "Portal do Sertão",
-      "isSemiarido": true,
-      "pctSemiarido": 47.05882352941176,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadeestadualdefeiradesantanauefs_feiradesantana",
@@ -8852,75 +9013,91 @@
           "quantidade": 1
         },
         {
+          "id": "ent_espacocolaborarparceirodaufrbfeiradesantana_feiradesantana",
+          "municipio": "Feira de Santana",
+          "entidade": "Espaço Colaborar Parceiro da UFRB Feira de Santana",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoradeempresasdebasetecnologicadasengenhariasdauefs_feiradesantana",
+          "municipio": "Feira de Santana",
+          "entidade": "Incubadora de Empresas de Base Tecnológica das Engenharias da UEFS",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
           "id": "ent_centrouniversitarionobredefeiradesantana_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariodeexcelencia_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Centro Universitário de Excelência",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeanhangueradefeiradesantana_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "FACULDADE ANHANGUERA DE FEIRA DE SANTANA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeanisioteixeiradefeiradesantana_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "FACULDADE ANÍSIO TEIXEIRA DE FEIRA DE SANTANA",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadebrasileiradetecnologia_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "FACULDADE BRASILEIRA DE TECNOLOGIA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedeensinosuperiordacidadedefeiradesantana_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "FACULDADE DE ENSINO SUPERIOR DA CIDADE DE FEIRA DE SANTANA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_universidadeestaciodesa_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Universidade Estácio de Sá",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariounirb_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_universidadesalvadorunifacs_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Universidade Salvador (UNIFACS)",
-          "tipo": "Universidade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -9823,29 +10000,30 @@
       "territory": "Portal do Sertão (sede da IES)",
       "isSemiarido": false,
       "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_centrouniversitarionobredefeiradesantana_feiradesantanasededaiesead",
           "municipio": "Feira de Santana (sede da IES - EAD)",
           "entidade": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariodeexcelencia_feiradesantanasededaiesead",
           "municipio": "Feira de Santana (sede da IES - EAD)",
           "entidade": "Centro Universitário de Excelência",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedeensinosuperiordacidadedefeiradesantana_feiradesantanasededaiesead",
           "municipio": "Feira de Santana (sede da IES - EAD)",
           "entidade": "FACULDADE DE ENSINO SUPERIOR DA CIDADE DE FEIRA DE SANTANA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -10081,8 +10259,9 @@
     },
     {
       "territory": "Portão do Sertão",
-      "isSemiarido": true,
-      "pctSemiarido": 100,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [],
       "cadeiasProdutivasDetalhado": [
         {
@@ -10110,8 +10289,9 @@
     },
     {
       "territory": "Recôncavo",
-      "isSemiarido": true,
-      "pctSemiarido": 11.538461538461538,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas",
@@ -10218,43 +10398,59 @@
           "quantidade": 1
         },
         {
+          "id": "ent_incubadoradeempresasdebasetecnologicadoreconcavodaufrb_cruzdasalmas",
+          "municipio": "Cruz das Almas",
+          "entidade": "Incubadora de Empresas de Base Tecnológica do Recôncavo da UFRB",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoradeempreendimentoseconomicossolidariosdaufrb_cruzdasalmas",
+          "municipio": "Cruz das Almas",
+          "entidade": "Incubadora de Empreendimentos Econômicos Solidários da UFRB",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
           "id": "ent_centrouniversitariomariamilza_cruzdasalmas",
           "municipio": "Cruz das Almas",
           "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitarioadventistadeensinodonordeste_cachoeira",
           "municipio": "Cachoeira",
           "entidade": "Centro Universitário Adventista de Ensino do Nordeste",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
           "entidade": "Centro Universitário de Ciências e Empreendedorismo",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeanhangueradesantoantoniodejesus_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
           "entidade": "FACULDADE ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadebrasileiradoreconcavo_cruzdasalmas",
           "municipio": "Cruz das Almas",
           "entidade": "FACULDADE BRASILEIRA DO RECÔNCAVO",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -10871,13 +11067,14 @@
       "territory": "Recôncavo (sede da IES)",
       "isSemiarido": false,
       "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesussededaiesead",
           "municipio": "Santo Antônio de Jesus (sede da IES - EAD)",
           "entidade": "Centro Universitário de Ciências e Empreendedorismo",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -10945,8 +11142,9 @@
     },
     {
       "territory": "Semiárido Nordeste II",
-      "isSemiarido": true,
-      "pctSemiarido": 90,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_euclidesdacunha",
@@ -10976,24 +11174,24 @@
           "id": "ent_centrouniversitarioages_paripiranga",
           "municipio": "Paripiranga",
           "entidade": "CENTRO UNIVERSITÁRIO AGES",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedonordestedabahia_coroneljoaosa",
           "municipio": "Coronel João Sá",
           "entidade": "FACULDADE DO NORDESTE DA BAHIA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedompedroiiafya_ribeiradopombal",
           "municipio": "Ribeira do Pombal",
           "entidade": "Faculdade Dom Pedro II AFYA",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -11291,13 +11489,14 @@
       "territory": "Semiárido Nordeste II (sede da IES)",
       "isSemiarido": false,
       "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_centrouniversitarioages_paripirangasededaiesead",
           "municipio": "Paripiranga (sede da IES - EAD)",
           "entidade": "CENTRO UNIVERSITÁRIO AGES",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -11461,8 +11660,9 @@
     },
     {
       "territory": "Sertão do São Francisco",
-      "isSemiarido": true,
-      "pctSemiarido": 73.33333333333333,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_juazeiro",
@@ -11505,27 +11705,43 @@
           "quantidade": 1
         },
         {
+          "id": "ent_espacocolaborarparceirodaunebjuazeiro_juazeiro",
+          "municipio": "Juazeiro",
+          "entidade": "Espaço Colaborar Parceiro da UNEB Juazeiro",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_incubadoratecnologicadaunivasf_juazeiro",
+          "municipio": "Juazeiro",
+          "entidade": "Incubadora Tecnológica da UNIVASF",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
           "id": "ent_centrouniversitariounirb_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeunibrasjuazeiro_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Faculdade UniBRAS Juazeiro",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariouniftc_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Centro Universitário UniFTC",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -11783,8 +11999,9 @@
     },
     {
       "territory": "Sertão Produtivo",
-      "isSemiarido": true,
-      "pctSemiarido": 91.30434782608695,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_caetite",
@@ -11846,8 +12063,8 @@
           "id": "ent_centrouniversitariofg_guanambi",
           "municipio": "Guanambi",
           "entidade": "Centro Universitário FG",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -12181,8 +12398,9 @@
     },
     {
       "territory": "Sisal",
-      "isSemiarido": true,
-      "pctSemiarido": 85.18518518518519,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_serrinha",
@@ -12220,24 +12438,24 @@
           "id": "ent_faculdadesantoantoniodequeimadas_queimadas",
           "municipio": "Queimadas",
           "entidade": "FACULDADE SANTO ANTONIO DE QUEIMADAS",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariounirb_serrinha",
           "municipio": "Serrinha",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadedaregiaosisaleira_conceicaodocoite",
           "municipio": "Conceição do Coité",
           "entidade": "Faculdade da Região Sisaleira",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -12491,8 +12709,9 @@
     },
     {
       "territory": "Sudoeste Baiano",
-      "isSemiarido": true,
-      "pctSemiarido": 93.75,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista",
@@ -12527,35 +12746,51 @@
           "quantidade": 1
         },
         {
+          "id": "ent_espacocolaborarparceirodoifbavitoriadaconquista_vitoriadaconquista",
+          "municipio": "Vitória da Conquista",
+          "entidade": "Espaço Colaborar Parceiro do IFBA Vitória da Conquista",
+          "tipo": "Espaço Dinamizador",
+          "categoria": "espacos",
+          "quantidade": 1
+        },
+        {
+          "id": "ent_iincubadoradeempresasdauesb_vitoriadaconquista",
+          "municipio": "Vitória da Conquista",
+          "entidade": "IIncubadora de Empresas da UESB",
+          "tipo": "Incubadora",
+          "categoria": "incubadoras",
+          "quantidade": 1
+        },
+        {
           "id": "ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
-          "tipo": "Centro Universitario - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeindependentedonordeste_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "FACULDADE INDEPENDENTE DO NORDESTE",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         },
         {
           "id": "ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
-          "tipo": "Faculdade - Particular",
-          "categoria": "univs",
+          "tipo": "Instituição",
+          "categoria": "outros",
           "quantidade": 1
         }
       ],
@@ -13119,8 +13354,9 @@
     },
     {
       "territory": "Vale do Jiquiriçá",
-      "isSemiarido": true,
-      "pctSemiarido": 39.62264150943396,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_institutofederaldabahiaifba_santaines",
@@ -13337,8 +13573,9 @@
     },
     {
       "territory": "Velho Chico",
-      "isSemiarido": true,
-      "pctSemiarido": 96.15384615384616,
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "qtdSemiarido": 0,
       "capacidadeDetalhada": [
         {
           "id": "ent_universidadedoestadodabahiauneb_bomjesusdalapa",
@@ -13871,6 +14108,11 @@
     "wanderley",
     "xique xique"
   ],
+  "globalStats": {
+    "totalBahia": 417,
+    "totalSemiarido": 287,
+    "pctGlobalSemiarido": 68.82494004796163
+  },
   "summary": {
     "territories": 33
   }

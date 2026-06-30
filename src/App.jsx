@@ -5,7 +5,7 @@ import ConectaMap from "../ConectaMap";
 import LandingHero from './components/hero';
 import { Target, BarChart3, Database, Settings, Map as MapIcon, Bot, Code, Info, Download, Sun } from 'lucide-react';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
-import ChatBot from './components/ChatBot';
+import SobrePage from './components/SobrePage';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -26,6 +26,7 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
+<<<<<<< HEAD
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
 // ==========================================
@@ -111,6 +112,8 @@ const SobrePage = ({ darkMode }) => {
     </div>
   );
 };
+=======
+>>>>>>> e4ae3bdd3a8660d8f00395d0095e9b5d3566afa7
 
 // ==========================================
 // COMPONENTE PRINCIPAL DO APP
@@ -121,6 +124,7 @@ function MainApp() {
   
   // Estados Básicos
   const [territoriosData, setTerritoriosData] = useState([]);
+  const [globalStats, setGlobalStats] = useState({ totalBahia: 417, totalSemiarido: 0, pctGlobalSemiarido: 0 });
   const [semiaridoMunicipios, setSemiaridoMunicipios] = useState([]); 
   const [isLoadingPipeline, setIsLoadingPipeline] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("Atualizando...");
@@ -206,6 +210,9 @@ function MainApp() {
       });
 
       setTerritoriosData(territoriosFormatados);
+      setTerritoriosData(territoriosFormatados);
+      setGlobalStats(data.globalStats || { totalBahia: 417, totalSemiarido: 0, pctGlobalSemiarido: 0 });
+      setSemiaridoMunicipios(semiaridoNormList);
       setSemiaridoMunicipios(semiaridoNormList); 
       setLastUpdate(new Date(data.generatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
     } catch (error) {
@@ -531,7 +538,7 @@ function MainApp() {
     const ifdmValue = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao) : 0;
 
     let coberturaCalculada = "";
-    let pctBarraSemi = 100;
+    let pctBarraSemi = 0;
 
     if (selectedLocation) {
         const tb = territoriosMunicipios.territorios_de_identidade.find(x => normalize(x.nome) === normalize(selectedLocation.nome));
@@ -543,17 +550,14 @@ function MainApp() {
         if (filtroSemiarido) {
             coberturaCalculada = `${qtdSemiTerr}/${totalMunTerr} mun.`;
         } else {
-            if (pctTerr >= 100) coberturaCalculada = `100% (${qtdSemiTerr} mun.)`;
-            else if (pctTerr <= 0) coberturaCalculada = `0%`;
-            else coberturaCalculada = `${pctTerr.toFixed(1)}% (${qtdSemiTerr} mun.)`;
+            coberturaCalculada = pctTerr >= 100 ? `100% (${qtdSemiTerr} mun.)` : `${pctTerr.toFixed(1)}% (${qtdSemiTerr} mun.)`;
         }
     } else {
-        pctBarraSemi = 85.6; 
-        if (filtroSemiarido) {
-            coberturaCalculada = `${totalSemiEstado}/${totalMunsEstado} mun.`;
-        } else {
-            coberturaCalculada = `85.6% (${totalSemiEstado} mun.)`;
-        }
+        // Usa os dados globais calculados pelo Vite
+        pctBarraSemi = globalStats.pctGlobalSemiarido;
+        coberturaCalculada = filtroSemiarido 
+            ? `${globalStats.totalSemiarido}/${globalStats.totalBahia} mun.` 
+            : `${globalStats.pctGlobalSemiarido.toFixed(1)}% (${globalStats.totalSemiarido} mun.)`;
     }
 
     const topKpisPct = {
@@ -578,7 +582,7 @@ function MainApp() {
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, ctiFilters]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, ctiFilters, globalStats]);
 
   const toggleCtiFilter = (key) => {
       setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
@@ -834,7 +838,7 @@ function MainApp() {
           <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
           
           <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
-
+            
           <Route path="/territorios" element={
             <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
                 <div className={`${themeClasses.glass} rounded-[2rem] p-4 lg:p-6 flex flex-col gap-4`}>
@@ -1014,9 +1018,24 @@ function MainApp() {
                             </div>
                         </div>
                        
-                        <a className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer">
-                         Fonte: IBGE/Semiárido Brasileiro (2022)
-                        </a>
+                        <div className="absolute -bottom-10 left-4 flex flex-col">
+                            <a 
+                                className={`text-[11px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} 
+                                href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                IBGE/Semiárido Brasileiro (2022)
+                            </a>
+                            <a 
+                                className={`text-[11px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} 
+                                href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                SECULT/Divisão Territorial da Bahia (2024)
+                            </a>
+                        </div>
                     </div>
 
                     <div className="w-full lg:w-[50%] xl:w-[45%] flex flex-col gap-4 h-full overflow-hidden">
@@ -1233,12 +1252,6 @@ function MainApp() {
 
         </Routes>
       </main>
-      <ChatBot context={{
-        kpis: dashboardData.topKpis,
-        subKpis: dashboardData.subKpis,
-        ultimaAtualizacao: lastUpdate,
-        todosTerritorios: territoriosData
-      }} />
     </div>
   );
 }
