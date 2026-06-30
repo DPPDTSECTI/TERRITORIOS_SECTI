@@ -8,7 +8,7 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v15'; 
+const CACHE_VERSION = 'v17'; 
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
@@ -21,48 +21,50 @@ function normalize(value) {
     .trim();
 }
 
-// O DICIONÁRIO SUPREMO: Interceta siglas escondidas e variações de texto
-function expandirNomeEntidade(nomeRaw) {
+function expandirNomeEntidade(nomeRaw, tipoRaw) {
     let nome = String(nomeRaw || '').trim();
     let nomeNorm = normalize(nome);
+    let tipoNorm = normalize(String(tipoRaw || ''));
 
-    // Motor de busca flexível: procura termos parciais ou siglas exatas dentro da string
-    const check = (keywords, exacts = []) => {
-        return keywords.some(k => nomeNorm.includes(k)) || exacts.some(e => new RegExp(`\\b${e}\\b`, 'i').test(nomeNorm));
-    };
+    // PROTEÇÃO CRÍTICA: Se a entidade for uma Incubadora, Parque, Espaço, etc.,
+    // não podemos forçar o nome da universidade por cima, senão a incubadora é apagada na deduplicação!
+    const isEstruturaEspecial = ['incubadora', 'parque', 'espaco', 'dinamizador', 'centro', 'nucleo', 'polo'].some(k => tipoNorm.includes(k) || nomeNorm.includes(k));
 
-    if (check(['universidade federal da bahia'], ['ufba'])) return 'Universidade Federal da Bahia (UFBA)';
-    if (check(['universidade do estado da bahia', 'universidade estadual da bahia'], ['uneb'])) return 'Universidade do Estado da Bahia (UNEB)';
-    if (check(['universidade federal do oeste da bahia'], ['ufob'])) return 'Universidade Federal do Oeste da Bahia (UFOB)';
-    if (check(['universidade federal do reconcavo'], ['ufrb'])) return 'Universidade Federal do Recôncavo da Bahia (UFRB)';
-    if (check(['universidade federal do sul da bahia'], ['ufsb'])) return 'Universidade Federal do Sul da Bahia (UFSB)';
-    if (check(['universidade federal do vale do sao francisco'], ['univasf'])) return 'Universidade Federal do Vale do São Francisco (UNIVASF)';
-    if (check(['universidade estadual de santa cruz'], ['uesc'])) return 'Universidade Estadual de Santa Cruz (UESC)';
-    if (check(['universidade estadual do sudoeste'], ['uesb'])) return 'Universidade Estadual do Sudoeste da Bahia (UESB)';
-    if (check(['universidade estadual de feira'], ['uefs'])) return 'Universidade Estadual de Feira de Santana (UEFS)';
-    
-    if (check(['instituto federal baiano'], ['ifbaiano', 'if baiano'])) return 'Instituto Federal Baiano (IF BAIANO)';
-    if (check(['instituto federal de educacao ciencia', 'instituto federal da bahia'], ['ifba'])) return 'Instituto Federal da Bahia (IFBA)';
-    
-    if (check(['servico nacional de aprendizagem industrial', 'senai cimatec'], ['senai'])) return 'Serviço Nacional de Aprendizagem Industrial (SENAI)';
-    if (check(['servico nacional de aprendizagem comercial'], ['senac'])) return 'Serviço Nacional de Aprendizagem Comercial (SENAC)';
-    if (check(['mauricio de nassau'], ['uninassau'])) return 'Centro Universitário Maurício de Nassau (UNINASSAU)';
-    if (check(['unirb'], ['unirb'])) return 'Centro Universitário UNIRB';
-    if (check(['catolica do salvador'], ['ucsal'])) return 'Universidade Católica do Salvador (UCSAL)';
-    if (check(['universidade salvador'], ['unifacs'])) return 'Universidade Salvador (UNIFACS)';
-    if (check(['capim grosso'], ['fcg'])) return 'Faculdade Capim Grosso (FCG)';
-    if (check(['tecnologia e ciencias', 'ftc'], ['uniftc', 'ftc'])) return 'Centro Universitário UniFTC';
-    if (check(['estacio'], ['estacio'])) return 'Universidade Estácio de Sá';
+    if (!isEstruturaEspecial) {
+        const check = (keywords, exacts = []) => {
+            return keywords.some(k => nomeNorm.includes(k)) || exacts.some(e => new RegExp(`\\b${e}\\b`, 'i').test(nomeNorm));
+        };
 
-    // Limpezas de erros de digitação (cabeçalhos cortados)
+        if (check(['universidade federal da bahia'], ['ufba'])) return 'Universidade Federal da Bahia (UFBA)';
+        if (check(['universidade do estado da bahia', 'universidade estadual da bahia'], ['uneb'])) return 'Universidade do Estado da Bahia (UNEB)';
+        if (check(['universidade federal do oeste da bahia'], ['ufob'])) return 'Universidade Federal do Oeste da Bahia (UFOB)';
+        if (check(['universidade federal do reconcavo'], ['ufrb'])) return 'Universidade Federal do Recôncavo da Bahia (UFRB)';
+        if (check(['universidade federal do sul da bahia'], ['ufsb'])) return 'Universidade Federal do Sul da Bahia (UFSB)';
+        if (check(['universidade federal do vale do sao francisco'], ['univasf'])) return 'Universidade Federal do Vale do São Francisco (UNIVASF)';
+        if (check(['universidade estadual de santa cruz'], ['uesc'])) return 'Universidade Estadual de Santa Cruz (UESC)';
+        if (check(['universidade estadual do sudoeste'], ['uesb'])) return 'Universidade Estadual do Sudoeste da Bahia (UESB)';
+        if (check(['universidade estadual de feira'], ['uefs'])) return 'Universidade Estadual de Feira de Santana (UEFS)';
+        
+        if (check(['instituto federal baiano'], ['ifbaiano', 'if baiano'])) return 'Instituto Federal Baiano (IF BAIANO)';
+        if (check(['instituto federal de educacao ciencia', 'instituto federal da bahia'], ['ifba'])) return 'Instituto Federal da Bahia (IFBA)';
+        
+        if (check(['servico nacional de aprendizagem industrial', 'senai cimatec'], ['senai'])) return 'Serviço Nacional de Aprendizagem Industrial (SENAI)';
+        if (check(['servico nacional de aprendizagem comercial'], ['senac'])) return 'Serviço Nacional de Aprendizagem Comercial (SENAC)';
+        if (check(['mauricio de nassau'], ['uninassau'])) return 'Centro Universitário Maurício de Nassau (UNINASSAU)';
+        if (check(['unirb'], ['unirb'])) return 'Centro Universitário UNIRB';
+        if (check(['catolica do salvador'], ['ucsal'])) return 'Universidade Católica do Salvador (UCSAL)';
+        if (check(['universidade salvador'], ['unifacs'])) return 'Universidade Salvador (UNIFACS)';
+        if (check(['capim grosso'], ['fcg'])) return 'Faculdade Capim Grosso (FCG)';
+        if (check(['tecnologia e ciencias', 'ftc'], ['uniftc', 'ftc'])) return 'Centro Universitário UniFTC';
+        if (check(['estacio'], ['estacio'])) return 'Universidade Estácio de Sá';
+    }
+
     nome = nome.replace(/^UNIVERSI\s/gi, 'Universidade '); 
     nome = nome.replace(/^INSTITUTO\s/gi, 'Instituto ');
     nome = nome.replace(/^CENTRO U\s/gi, 'Centro Universitário ');
     nome = nome.replace(/^FACULDAE\s/gi, 'Faculdade ');
     nome = nome.replace(/^FACULDA\s/gi, 'Faculdade ');
     
-    // A TESOURA: Remove sufixos que causam duplicidades em faculdades desconhecidas
-    // Ex: "Faculdade X - Campus Y" vira apenas "Faculdade X"
     nome = nome.replace(/\s*[-–]\s*(Campus|Polo|Unidade|Centro).*$/i, '');
     nome = nome.replace(/\s+(Campus|Polo|Unidade)\s+.*$/i, '');
     
@@ -198,32 +200,51 @@ function parseSpreadsheet(buffer) {
       const qtd = toNumber(row['quantidade'] || row['qtd'] || row['qtdenti'] || row['valorentidades'] || 1);
 
       let tipoFinal = tipoOriginal;
-      if (orgAcademica || categoriaAdm) {
-          let tipoParts = [];
-          if (orgAcademica) tipoParts.push(orgAcademica); 
-          
-          const catNorm = categoriaAdm.toLowerCase();
-          if (catNorm.includes('privada')) tipoParts.push('Particular');
-          else if (catNorm.includes('estadual')) tipoParts.push('Pública Estadual');
-          else if (catNorm.includes('federal')) tipoParts.push('Pública Federal');
-          else if (categoriaAdm) tipoParts.push(categoriaAdm);
-
-          tipoFinal = tipoParts.join(' - '); 
-      }
-
-      const tipoNorm = normalize(tipoOriginal + ' ' + orgAcademica + ' ' + categoriaAdm);
       let categoriaEntidade = null;
       let isCTI = false;
-      
-      if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'univs'; isCTI = true; }
-      else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'ifs'; isCTI = true; }
-      else if (['ict'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'icts'; isCTI = true; }
-      else if (['centro de pesquisa', 'pesquisa'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; isCTI = true; }
-      else if (['espaco', 'dinamizador'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'espacos'; isCTI = true; }
-      else if (['parque'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'parques'; isCTI = true; }
-      else if (['incubadora'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'incubadoras'; isCTI = true; }
 
-      // ID Único blindado pelo motor de expansão de nomes e município
+      // ==================== NOVO MOTOR DE CLASSIFICAÇÃO ATRIBUÍDO POR TIPO ====================
+      if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti')) {
+          // Na aba Capacidade Territorial, todas as linhas pertencem ao ecossistema de CT&I
+          isCTI = true; 
+          tipoFinal = tipoOriginal; // Preserva o Tipo exato da planilha: Incubadora, Parque Tecnológico, etc.
+
+          const tNorm = normalize(tipoOriginal);
+          if (tNorm.includes('universidade') || tNorm.includes('faculdade') || tNorm.includes('centro universitario')) categoriaEntidade = 'univs';
+          else if (tNorm.includes('instituto federal')) categoriaEntidade = 'ifs';
+          else if (tNorm.includes('ict')) categoriaEntidade = 'icts';
+          else if (tNorm.includes('pesquisa')) categoriaEntidade = 'centrosPesquisa';
+          else if (tNorm.includes('incubadora')) categoriaEntidade = 'incubadoras';
+          else if (tNorm.includes('dinamizador') || tNorm.includes('espaco')) categoriaEntidade = 'espacos';
+          else if (tNorm.includes('parque')) categoriaEntidade = 'parques';
+          else categoriaEntidade = 'outros';
+
+      } else {
+          // Lógica de fallback para as outras abas (como Cursos) onde o Tipo precisa de ser construído
+          if (orgAcademica || categoriaAdm) {
+              let tipoParts = [];
+              if (orgAcademica) tipoParts.push(orgAcademica); 
+              
+              const catNorm = categoriaAdm.toLowerCase();
+              if (catNorm.includes('privada')) tipoParts.push('Particular');
+              else if (catNorm.includes('estadual')) tipoParts.push('Pública Estadual');
+              else if (catNorm.includes('federal')) tipoParts.push('Pública Federal');
+              else if (categoriaAdm) tipoParts.push(categoriaAdm);
+
+              tipoFinal = tipoParts.join(' - '); 
+          }
+
+          const tipoNorm = normalize(tipoOriginal + ' ' + orgAcademica + ' ' + categoriaAdm);
+          if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'univs'; isCTI = true; }
+          else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'ifs'; isCTI = true; }
+          else if (['ict'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'icts'; isCTI = true; }
+          else if (['centro de pesquisa', 'pesquisa'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; isCTI = true; }
+          else if (['espaco', 'dinamizador'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'espacos'; isCTI = true; }
+          else if (['parque'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'parques'; isCTI = true; }
+          else if (['incubadora'].some(c => tipoNorm.includes(c))) { categoriaEntidade = 'incubadoras'; isCTI = true; }
+      }
+      // =========================================================================================
+
       const uniqueRowId = (entidadesExpandida && municipio) 
           ? `ent_${safeKey(entidadesExpandida)}_${safeKey(municipio)}` 
           : `aba_${sheetNorm}_linha_${idx}`;
@@ -232,7 +253,6 @@ function parseSpreadsheet(buffer) {
          const territory = getTerritory(tName);
          if (!territory) return;
 
-         // CAPACIDADE TERRITORIAL E ENSINO
          if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('ensino') || orgAcademica !== '') {
              if (isCTI && entidadesExpandida !== '') {
                  const alreadyExists = territory.capacidadeRows.some(e => e.id === uniqueRowId);
@@ -249,7 +269,6 @@ function parseSpreadsheet(buffer) {
              }
          }
 
-         // CADEIAS PRODUTIVAS
          if (sheetNorm.includes('cadeia') || sheetNorm.includes('ig') || sheetNorm.includes('potencial')) {
              const cadeia = String(row['cadeiaprodutiva'] || row['cadeiasprodutivas'] || row['cadeia'] || row['segmento'] || '').trim();
              if (cadeia !== '') {
@@ -270,7 +289,6 @@ function parseSpreadsheet(buffer) {
              }
          }
 
-         // DESENVOLVIMENTO (IFDM)
          if (sheetNorm.includes('desenvolvimento') || sheetNorm.includes('ifdm')) {
              const ifdm = toNumber(row['ifdm']);
              const pop = toNumber(row['populacao']);
@@ -287,13 +305,11 @@ function parseSpreadsheet(buffer) {
              if (ifdmTi > 0) territory.desenvolvimento.ifdmTi = ifdmTi;
          }
 
-         // ASSISTÊNCIA PÚBLICA
          const assistencia = String(row['assistenciapublica'] || row['conecta'] || '');
          const iniciativas = String(row['iniciativas'] || row['dispositivosestaduais'] || '');
          if (isTruthy(assistencia)) territory.assistenciaPublica.existe = true;
          if (iniciativas !== '') splitList(iniciativas).forEach(i => territory.assistenciaPublica.iniciativas.add(i));
 
-         // CURSOS EM CT&I
          if (sheetNorm.includes('curso') || sheetNorm.includes('ensino')) {
              const nomeCurso = String(row['curso'] || '').trim();
              if (nomeCurso !== '') {
@@ -315,7 +331,6 @@ function parseSpreadsheet(buffer) {
     });
   };
 
-  // ORDENAÇÃO DE ABAS
   const ordenadasSheetNames = [...targetSheetNames].sort((a, b) => {
       const aKey = safeKey(a);
       const bKey = safeKey(b);
@@ -332,33 +347,43 @@ function parseSpreadsheet(buffer) {
 
   if (!territoryMap.size) throw new Error('Nenhuma linha territorial válida encontrada.');
 
+  const territoriosJsonPath = path.resolve(process.cwd(), 'src/utils/territorioMunicipios.json');
+  let territoriosBaseGeografica = [];
+  try {
+      if (fs.existsSync(territoriosJsonPath)) {
+          territoriosBaseGeografica = JSON.parse(fs.readFileSync(territoriosJsonPath, 'utf8')).territorios_de_identidade;
+      }
+  } catch (e) {
+      console.warn('[Dev Parser] Aviso: Não foi possível carregar territorioMunicipios.json para cálculos geográficos precisos.');
+  }
+
   const territories = Array.from(territoryMap.values()).map((entry) => {
     if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.populacaoTotal > 0) {
       entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdmPop / entry.desenvolvimento.populacaoTotal;
     }
 
-    const allMunicipios = new Set();
-    entry.capacidadeRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
-    entry.desenvolvimentoRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
-    entry.cursosRows.forEach(e => { if (e.municipio) allMunicipios.add(normalize(e.municipio)); });
-    entry.cadeiasRows.forEach(e => { 
-        if (e.sede && e.sede !== 'N/A') allMunicipios.add(normalize(e.sede)); 
-        splitList(e.municipiosPertencentes).forEach(m => { if (m) allMunicipios.add(normalize(m)); });
-    });
+    let totalMunicipiosTerritorio = 0;
+    let totalSemiTerritorio = 0;
 
-    let isSemiarido = false;
-    let qtdSemi = 0;
+    const baseGeo = territoriosBaseGeografica.find(tb => normalize(tb.nome) === normalize(entry.territory));
     
-    allMunicipios.forEach(m => {
-        if (semiaridoMunicipios.has(m)) { isSemiarido = true; qtdSemi++; }
-    });
+    if (baseGeo) {
+        totalMunicipiosTerritorio = baseGeo.municipios.length;
+        baseGeo.municipios.forEach(m => {
+            if (semiaridoMunicipios.has(normalize(m))) {
+                totalSemiTerritorio++;
+            }
+        });
+    }
 
-    const pctSemiarido = allMunicipios.size > 0 ? (qtdSemi / allMunicipios.size) * 100 : 0;
+    const isSemiarido = totalSemiTerritorio > 0;
+    const pctSemiarido = totalMunicipiosTerritorio > 0 ? (totalSemiTerritorio / totalMunicipiosTerritorio) * 100 : 0;
 
     return {
       territory: entry.territory,
       isSemiarido: isSemiarido,
       pctSemiarido: pctSemiarido,
+      qtdSemiarido: totalSemiTerritorio,
       capacidadeDetalhada: entry.capacidadeRows,
       cadeiasProdutivasDetalhado: entry.cadeiasRows, 
       desenvolvimentoDetalhado: entry.desenvolvimentoRows,
@@ -375,10 +400,19 @@ function parseSpreadsheet(buffer) {
     };
   }).sort((a, b) => a.territory.localeCompare(b.territory));
 
+  const TOTAL_MUNICIPIOS_BAHIA = 417; 
+  const qtdGlobalSemiarido = semiaridoMunicipios.size;
+  const pctGlobalSemiarido = (qtdGlobalSemiarido / TOTAL_MUNICIPIOS_BAHIA) * 100;
+
   const result = {
     generatedAt: new Date().toISOString(),
     territories,
     semiaridoMunicipiosList: Array.from(semiaridoMunicipios),
+    globalStats: {
+        totalBahia: TOTAL_MUNICIPIOS_BAHIA,
+        totalSemiarido: qtdGlobalSemiarido,
+        pctGlobalSemiarido: pctGlobalSemiarido
+    },
     summary: {
       territories: territories.length
     },

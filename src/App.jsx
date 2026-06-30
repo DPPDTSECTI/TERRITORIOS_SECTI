@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate 
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
-import ChatBot from './components/ChatBot';
+import SobrePage from './components/SobrePage';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -25,54 +25,6 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
-// ==========================================
-// COMPONENTE: PÁGINA SOBRE
-// ==========================================
-const SobrePage = ({ darkMode }) => (
-  <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
-    <div className={`backdrop-blur-2xl rounded-[2rem] border shadow-2xl p-8 lg:p-12 mb-8 transition-all duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-white/60'}`}>
-      <h2 className="text-3xl lg:text-4xl font-black mb-8 tracking-tighter">Sobre o Painel SECTI Territórios</h2>
-      <div className={`prose prose-sm sm:prose-base max-w-none ${darkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-600'}`}>
-        
-        <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 mt-8 border-b border-slate-200/20 pb-2">1. Visão Geral do Sistema</h3>
-        <p className="leading-relaxed mb-4">O Painel SECTI Territórios é uma plataforma de inteligência geográfica concebida para subsidiar a formulação e o acompanhamento de políticas públicas de Ciência, Tecnologia e Inovação (CT&I) no Estado da Bahia.</p>
-        <p className="leading-relaxed mb-8">Através da consolidação de dados territorializados, o sistema integra informações referentes a capacidades institucionais, desenvolvimento socioeconómico, cadeias produtivas e assistência pública. A plataforma proporciona aos gestores e investigadores uma base analítica rigorosa sobre as vocações e características dos 27 Territórios de Identidade da Bahia.</p>
-
-        <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-6 mt-10 border-b border-slate-200/20 pb-2">2. Definições e Indicadores (KPIs)</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-          {[
-            { t: 'Capacidade em CT&I', d: 'Quantitativo de infraestruturas mapeadas, englobando Universidades (Federais e Estaduais), Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.' },
-            { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM) de 2023. O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem os respectivos Territórios de Identidade da Bahia. O índice é composto por variáveis relacionadas às condições de Emprego e Renda, Saúde e Educação dos municípios.' },
-            { t: 'Cursos Superiores em CT&I', d: 'Levantamento da capacidade de formação de talentos. Consolida as informações sobre cursos de nível superior ofertados pelas entidades de ensino em Ciência, Tecnologia e Inovação na Bahia.' },
-            { t: 'APLs e IGs', d: 'Mapeamento de Arranjos Produtivos Locais (aglomerações de cooperação económica) e Indicações Geográficas (certificações de produtos inerentes à sua origem territorial).' }
-          ].map((item, idx) => (
-            <div key={idx} className={`p-5 rounded-2xl border transition-transform hover:-translate-y-1 duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200/60'}`}>
-              <span className={`block font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{item.t}</span>
-              <span className="text-[11px] leading-relaxed opacity-80">{item.d}</span>
-            </div>
-          ))}
-        </div>
-
-        <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-6 mt-10 border-b border-slate-200/20 pb-2">3. Guia de Funcionalidades</h3>
-        <ul className="space-y-6">
-          {[
-            { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z', c: 'text-orange-500 bg-orange-500/10' },
-            { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em quatro abas relacionais, preparado para análises estatísticas externas.', i: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', c: 'text-purple-500 bg-purple-500/10' }
-          ].map((func, idx) => (
-            <li key={idx} className="flex gap-4 items-start">
-              <div className={`p-2.5 rounded-xl shrink-0 ${func.c}`}><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={func.i}/></svg></div>
-              <div>
-                <strong className={`block text-sm mb-1 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{func.t}</strong>
-                <span className="text-[11px] opacity-80 leading-relaxed">{func.d}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-      </div>
-    </div>
-  </div>
-);
 
 // ==========================================
 // COMPONENTE PRINCIPAL DO APP
@@ -83,6 +35,7 @@ function MainApp() {
   
   // Estados Básicos
   const [territoriosData, setTerritoriosData] = useState([]);
+  const [globalStats, setGlobalStats] = useState({ totalBahia: 417, totalSemiarido: 0, pctGlobalSemiarido: 0 });
   const [semiaridoMunicipios, setSemiaridoMunicipios] = useState([]); 
   const [isLoadingPipeline, setIsLoadingPipeline] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("Atualizando...");
@@ -168,6 +121,9 @@ function MainApp() {
       });
 
       setTerritoriosData(territoriosFormatados);
+      setTerritoriosData(territoriosFormatados);
+      setGlobalStats(data.globalStats || { totalBahia: 417, totalSemiarido: 0, pctGlobalSemiarido: 0 });
+      setSemiaridoMunicipios(semiaridoNormList);
       setSemiaridoMunicipios(semiaridoNormList); 
       setLastUpdate(new Date(data.generatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
     } catch (error) {
@@ -493,7 +449,7 @@ function MainApp() {
     const ifdmValue = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao) : 0;
 
     let coberturaCalculada = "";
-    let pctBarraSemi = 100;
+    let pctBarraSemi = 0;
 
     if (selectedLocation) {
         const tb = territoriosMunicipios.territorios_de_identidade.find(x => normalize(x.nome) === normalize(selectedLocation.nome));
@@ -505,17 +461,14 @@ function MainApp() {
         if (filtroSemiarido) {
             coberturaCalculada = `${qtdSemiTerr}/${totalMunTerr} mun.`;
         } else {
-            if (pctTerr >= 100) coberturaCalculada = `100% (${qtdSemiTerr} mun.)`;
-            else if (pctTerr <= 0) coberturaCalculada = `0%`;
-            else coberturaCalculada = `${pctTerr.toFixed(1)}% (${qtdSemiTerr} mun.)`;
+            coberturaCalculada = pctTerr >= 100 ? `100% (${qtdSemiTerr} mun.)` : `${pctTerr.toFixed(1)}% (${qtdSemiTerr} mun.)`;
         }
     } else {
-        pctBarraSemi = 85.6; 
-        if (filtroSemiarido) {
-            coberturaCalculada = `${totalSemiEstado}/${totalMunsEstado} mun.`;
-        } else {
-            coberturaCalculada = `85.6% (${totalSemiEstado} mun.)`;
-        }
+        // Usa os dados globais calculados pelo Vite
+        pctBarraSemi = globalStats.pctGlobalSemiarido;
+        coberturaCalculada = filtroSemiarido 
+            ? `${globalStats.totalSemiarido}/${globalStats.totalBahia} mun.` 
+            : `${globalStats.pctGlobalSemiarido.toFixed(1)}% (${globalStats.totalSemiarido} mun.)`;
     }
 
     const topKpisPct = {
@@ -540,7 +493,7 @@ function MainApp() {
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, ctiFilters]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, ctiFilters, globalStats]);
 
   const toggleCtiFilter = (key) => {
       setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
@@ -787,7 +740,7 @@ function MainApp() {
           <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
           
           <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
-
+            
           <Route path="/territorios" element={
             <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
                 <div className={`${themeClasses.glass} rounded-[2rem] p-4 lg:p-6 flex flex-col gap-4`}>
@@ -965,9 +918,24 @@ function MainApp() {
                             </div>
                         </div>
                        
-                        <a className={`absolute -bottom-6 left-4 text-left text-[13px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer">
-                         Fonte: IBGE/Semiárido Brasileiro (2022)
-                        </a>
+                        <div className="absolute -bottom-10 left-4 flex flex-col">
+                            <a 
+                                className={`text-[11px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} 
+                                href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                IBGE/Semiárido Brasileiro (2022)
+                            </a>
+                            <a 
+                                className={`text-[11px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} 
+                                href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                SECULT/Divisão Territorial da Bahia (2024)
+                            </a>
+                        </div>
                     </div>
 
                     <div className="w-full lg:w-[50%] xl:w-[45%] flex flex-col gap-4 h-full overflow-hidden">
@@ -1184,12 +1152,6 @@ function MainApp() {
 
         </Routes>
       </main>
-      <ChatBot context={{
-        kpis: dashboardData.topKpis,
-        subKpis: dashboardData.subKpis,
-        ultimaAtualizacao: lastUpdate,
-        todosTerritorios: territoriosData
-      }} />
     </div>
   );
 }
