@@ -3,8 +3,8 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
-import { Target, BarChart3, Database, Settings, Map as MapIcon, Bot, Code, Info, Download, Sun } from 'lucide-react';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
+import SobrePage from './components/SobrePage';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -25,90 +25,6 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
-// ==========================================
-// COMPONENTE: PÁGINA SOBRE
-// ==========================================
-const SobrePage = ({ darkMode }) => {
-  const SectionTitle = ({ number, title }) => (
-    <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 mt-8 border-b border-slate-200/20 pb-2">
-      {number}. {title}
-    </h3>
-  );
-
-  return (
-    <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
-      <div className={`backdrop-blur-2xl rounded-[2rem] border shadow-2xl p-8 lg:p-12 mb-8 transition-all duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-white/60'}`}>
-        <h2 className="text-3xl lg:text-4xl font-black mb-8 tracking-tighter">Sobre o Painel SECTI Territórios</h2>
-        <div className={`prose prose-sm sm:prose-base max-w-none ${darkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-600'}`}>
-          
-          <SectionTitle number="1" title="O Projeto" />
-          <p className="leading-relaxed">O <strong>Painel Territorial de CT&I da Bahia</strong> é uma plataforma digital interativa, desenvolvida pela Secretaria de Ciência, Tecnologia e Inovação (SECTI), para consolidar, analisar e dar transparência aos principais dados do ecossistema de CT&I nos 27 Territórios de Identidade do estado.</p>
-          <p className="leading-relaxed">A ferramenta foi concebida como um instrumento estratégico para mapear as capacidades, vocações e desafios de cada região, oferecendo uma visão integrada e georreferenciada de ativos cruciais para o desenvolvimento socioeconômico.</p>
-
-          <SectionTitle number="2" title="Nossos Objetivos" />
-          <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Apoiar a Tomada de Decisão:</strong> Fornecer dados qualificados para subsidiar o planejamento e a formulação de políticas públicas.</li>
-            <li><strong>Promover a Transparência:</strong> Disponibilizar de forma aberta informações sobre investimentos, infraestrutura e indicadores de CT&I.</li>
-            <li><strong>Fomentar a Articulação:</strong> Facilitar a identificação de sinergias entre governo, setor produtivo, academia e sociedade civil.</li>
-            <li><strong>Democratizar a Informação:</strong> Servir como fonte de consulta para pesquisadores, estudantes, gestores e investidores.</li>
-          </ul>
-
-          <SectionTitle number="3" title="Definições e Indicadores (KPIs)" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { t: 'Capacidade em CT&I', d: 'Quantitativo de infraestruturas mapeadas, englobando Universidades, Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.' },
-              { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM). O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem cada Território.' },
-              { t: 'Cursos Superiores em CT&I', d: 'Levantamento da capacidade de formação de talentos, consolidando informações sobre cursos de nível superior ofertados pelas entidades de ensino em CT&I na Bahia.' },
-              { t: 'APLs e IGs', d: 'Mapeamento de Arranjos Produtivos Locais (aglomerações de cooperação económica) e Indicações Geográficas (certificações de produtos inerentes à sua origem territorial).' }
-            ].map((item, idx) => (
-              <div key={idx} className={`p-5 rounded-2xl border transition-transform hover:-translate-y-1 duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200/60'}`}>
-                <span className={`block font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{item.t}</span>
-                <span className="text-[11px] leading-relaxed opacity-80">{item.d}</span>
-              </div>
-            ))}
-          </div>
-
-          <SectionTitle number="4" title="Fontes dos Dados" />
-          <p>A riqueza de informações é resultado da consolidação de múltiplas fontes, garantindo abrangência e confiabilidade:</p>
-          <ul className="list-disc pl-5 space-y-2 text-sm">
-            <li><strong>SECTI/SharePoint:</strong> Mapeamento de entidades, programas e infraestruturas de CT&I.</li>
-            <li><strong>SEPLAN-BA:</strong> Dados geográficos e demográficos, incluindo a delimitação dos Territórios de Identidade.</li>
-            <li><strong>IBGE:</strong> Dados populacionais e malhas territoriais dos municípios.</li>
-            <li><strong>FIRJAN:</strong> Índice FIRJAN de Desenvolvimento Municipal (IFDM).</li>
-            <li><strong>INEP/MEC:</strong> Dados do Censo da Educação Superior.</li>
-            <li><strong>Fontes Setoriais e Acadêmicas:</strong> Informações sobre Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs).</li>
-          </ul>
-
-          <SectionTitle number="5" title="Metodologia e Tratamento dos Dados" />
-          <ol className="list-decimal pl-5 space-y-2">
-            <li><strong>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
-            <li><strong>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
-            <li><strong>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong>média ponderada pela população</strong> de cada município.</li>
-            <li><strong>Geração de Relatórios:</strong> A funcionalidade de exportação de relatórios em PDF segue as normas da <strong>ABNT (NBR 14724 e 6023)</strong>.</li>
-          </ol>
-
-          <SectionTitle number="6" title="Guia de Funcionalidades" />
-          <ul className="space-y-6">
-            {[
-              { t: 'Mapa Interativo', d: 'Explore os 27 Territórios, visualize a distribuição de ativos e acesse dados detalhados por município com funções de zoom e pan.', i: <MapIcon size={20} />, c: 'text-blue-500 bg-blue-500/10' },
-              { t: 'Filtros Avançados', d: 'Refine sua busca por Território, Indicadores (IFDM), Cursos Superiores, Cadeias Produtivas e tipos de Entidades de CT&I.', i: <Settings size={20} />, c: 'text-emerald-500 bg-emerald-500/10' },
-              { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: <Sun size={20} />, c: 'text-orange-500 bg-orange-500/10' },
-              { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em abas relacionais.', i: <Download size={20} />, c: 'text-purple-500 bg-purple-500/10' }
-            ].map((func, idx) => (
-              <li key={idx} className="flex gap-4 items-start">
-                <div className={`p-2.5 rounded-xl shrink-0 ${func.c}`}>{func.i}</div>
-                <div>
-                  <strong className={`block text-sm mb-1 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{func.t}</strong>
-                  <span className="text-[11px] opacity-80 leading-relaxed">{func.d}</span>
-                </div>
-              </li>
-            ))}
-          </ul> 
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // ==========================================
 // COMPONENTE PRINCIPAL DO APP
@@ -742,15 +658,6 @@ function MainApp() {
       return result;
   }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
-  const hasActiveFilters = searchTerm !== '' || 
-                         selectedLocation !== null || 
-                         ifdmMin !== '' || 
-                         ifdmMax !== '' || 
-                         filtroSemiarido !== false || 
-                         areaGeralFilter.length > 0 || 
-                         cursoSearchTerm !== '' || 
-                         !Object.values(ctiFilters).every(val => val === true);
-
   return (
     <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
       <Helmet>
@@ -893,15 +800,13 @@ function MainApp() {
                                 Filtros Avançados
                             </button>
 
-                            {hasActiveFilters && (
-                                <button 
-                                    onClick={resetGlobalFilters} 
-                                    className={`h-11 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 text-red-400 hover:bg-red-900/30 hover:border-red-500/50' : 'bg-white border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
-                                    title="Limpar todos os filtros e pesquisas ativos"
-                                >
-                                    Limpar
-                                </button>
-                            )}
+                            <button 
+                                onClick={resetGlobalFilters} 
+                                className={`h-11 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${darkMode ? 'bg-slate-800 border-slate-700 text-red-400 hover:bg-red-900/30 hover:border-red-500/50' : 'bg-white border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
+                                title="Limpar todos os filtros e pesquisas ativos"
+                            >
+                                Limpar
+                            </button>
 
                             {isFilterPanelOpen && (
                                 <div className={`absolute left-0 lg:left-auto lg:right-0 top-[100%] mt-2 w-72 rounded-2xl p-4 shadow-2xl border z-[150] flex flex-col gap-4 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
