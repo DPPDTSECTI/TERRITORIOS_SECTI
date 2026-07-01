@@ -1,10 +1,16 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import * as topojson from 'topojson-client';
+import { forceSimulation, forceCollide, forceX, forceY } from 'd3-force';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
 
 const SVG_W = 800;
 const SVG_H = 800;
 const PADDING = 20;
+
+// Constantes para o algoritmo de anti-colisão de rótulos
+const LABEL_COLLISION_PADDING = 4; // Espaçamento extra entre rótulos
+const LABEL_FORCE_STRENGTH = 0.08; // Força que "puxa" o rótulo de volta ao seu centroide
+const SIMULATION_ITERATIONS = 250; // Número de iterações da simulação
 
 const TERRITORY_COLORS = [
     '#E03C5A', '#F9A03F', '#C3D471', '#149BDB', '#86CBA0', '#E53B94', '#B94B85',
@@ -145,7 +151,7 @@ export default function ConectaMap({
             const tKey = getTerritoryKey(feat.territory);
             const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
 
-            if (!tB[tKey]) tB[tKey] = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+            if (!tB[tKey]) tB[tKey] = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity, area: 0 };
             if (!tBS[tKey]) tBS[tKey] = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
 
             const updateBounds = (b) => {
@@ -153,6 +159,8 @@ export default function ConectaMap({
                 if (feat.fBounds.maxX > b.maxX) b.maxX = feat.fBounds.maxX;
                 if (feat.fBounds.minY < b.minY) b.minY = feat.fBounds.minY;
                 if (feat.fBounds.maxY > b.maxY) b.maxY = feat.fBounds.maxY;
+                // Recalcula a área do bounding box
+                b.area = (b.maxX - b.minX) * (b.maxY - b.minY);
             };
 
             updateBounds(tB[tKey]);
@@ -160,19 +168,6 @@ export default function ConectaMap({
         });
         return { calcBoundsGlobal: tB, calcBoundsSemi: tBS };
     }, [mapFeatures, semiaridoMunicipios]);
-
-    useEffect(() => {
-        const svg = svgRef.current;
-        if (!svg) return;
-        const handleNativeWheel = (e) => {
-            e.preventDefault(); 
-            const zoomFactor = 0.1;
-            const delta = e.deltaY < 0 ? 1 + zoomFactor : 1 - zoomFactor;
-            setUserScale(prev => Math.min(Math.max(prev * delta, 0.5), 15));
-        };
-        svg.addEventListener('wheel', handleNativeWheel, { passive: false });
-        return () => svg.removeEventListener('wheel', handleNativeWheel);
-    }, [loading]);
 
     // === CÂMERA INTELIGENTE ===
     const baseTransform = useMemo(() => {
@@ -203,6 +198,109 @@ export default function ConectaMap({
     }, [selectedTerritory, calcBoundsGlobal, calcBoundsSemi, filtroSemiarido]);
 
     const effectiveScale = userScale * baseTransform.scale;
+
+    // Hook para calcular o layout dos rótulos com anti-colisão
+    const laidOutLabels = useMemo(() => {
+        if (territoryLabels.length === 0) return [];
+
+        const fontSize = 16 / effectiveScale;
+        const lineHeight = fontSize * 1.1;
+
+        // 1. Preparar nós para a simulação
+        const nodes = territoryLabels.map(label => {
+            const lines = wrapText(label.name);
+            const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), '');
+            
+            // Estimar dimensões do rótulo
+            const width = longestLine.length * fontSize * 0.55 + LABEL_COLLISION_PADDING;
+            const height = lines.length * lineHeight + LABEL_COLLISION_PADDING;
+
+            return {
+                id: getTerritoryKey(label.name),
+                idealX: label.x, // Posição ideal (centroide)
+                idealY: label.y,
+                x: label.x, // Posição inicial
+                y: label.y,
+                width,
+                height,
+                radius: Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2)), // Raio para colisão
+                lines,
+                name: label.name,
+            };
+        });
+
+        // 2. Configurar e rodar a simulação de força
+        const simulation = forceSimulation(nodes)
+            .force('collide', forceCollide(d => d.radius).strength(1))
+            .force('x', forceX(d => d.idealX).strength(LABEL_FORCE_STRENGTH))
+            .force('y', forceY(d => d.idealY).strength(LABEL_FORCE_STRENGTH))
+            .stop();
+
+        // Rodar a simulação de forma síncrona
+        for (let i = 0; i < SIMULATION_ITERATIONS; ++i) {
+            simulation.tick();
+        }
+
+        // 3. Retornar os nós com as posições finais calculadas
+        return nodes;
+    }, [territoryLabels, effectiveScale]);
+
+    // Hook para calcular o layout dos rótulos dos MUNICÍPIOS com anti-colisão
+    const laidOutMunicipalityLabels = useMemo(() => {
+        if (!selectedTerritory || mapFeatures.length === 0) return [];
+
+        const fontSize = 14 / effectiveScale;
+        const lineHeight = fontSize * 1.1;
+
+        const visibleMunicipalities = mapFeatures.filter(f => {
+            const isSameTerritory = getTerritoryKey(f.territory) === getTerritoryKey(selectedTerritory.nome);
+            if (!isSameTerritory) return false;
+            const isMunSemi = semiaridoMunicipios.includes(normalizeName(f.nome));
+            if (filtroSemiarido && !isMunSemi) return false;
+            return true;
+        });
+
+        const nodes = visibleMunicipalities.map(feat => {
+            const lines = wrapText(feat.nome);
+            const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), '');
+            const width = longestLine.length * fontSize * 0.55 + LABEL_COLLISION_PADDING;
+            const height = lines.length * lineHeight + LABEL_COLLISION_PADDING;
+
+            return {
+                id: normalizeName(feat.nome),
+                idealX: feat.cx, idealY: feat.cy,
+                x: feat.cx, y: feat.cy,
+                width, height,
+                radius: Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2)),
+                lines, name: feat.nome,
+            };
+        });
+
+        const simulation = forceSimulation(nodes)
+            .force('collide', forceCollide(d => d.radius).strength(1))
+            .force('x', forceX(d => d.idealX).strength(LABEL_FORCE_STRENGTH))
+            .force('y', forceY(d => d.idealY).strength(LABEL_FORCE_STRENGTH))
+            .stop();
+
+        for (let i = 0; i < SIMULATION_ITERATIONS; ++i) {
+            simulation.tick();
+        }
+
+        return nodes;
+    }, [selectedTerritory, mapFeatures, effectiveScale, filtroSemiarido, semiaridoMunicipios]);
+
+    useEffect(() => {
+        const svg = svgRef.current;
+        if (!svg) return;
+        const handleNativeWheel = (e) => {
+            e.preventDefault(); 
+            const zoomFactor = 0.1;
+            const delta = e.deltaY < 0 ? 1 + zoomFactor : 1 - zoomFactor;
+            setUserScale(prev => Math.min(Math.max(prev * delta, 0.5), 15));
+        };
+        svg.addEventListener('wheel', handleNativeWheel, { passive: false });
+        return () => svg.removeEventListener('wheel', handleNativeWheel);
+    }, [loading]);
 
     const handleMouseDown = (e) => { setIsDragging(true); dragTotal.current = 0; lastMousePos.current = { x: e.clientX, y: e.clientY }; };
     const handleMouseMoveSVG = (e) => {
@@ -325,27 +423,34 @@ export default function ConectaMap({
                                 const dStats = territoriesDynamicStats[normalizedFeatName];
                                 const matchesFilters = dStats ? dStats.matchesFilters : true;
 
+                                const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
                                 const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
                                 
-                                // BLOQUEIA SE: Filtro semiárido chocar com cidade não-semiárida, OU Se os filtros de CTI/IFDM removerem essa região.
-                                const blockClickAndColor = (filtroSemiarido && !isMunSemi) || !matchesFilters;
+                                // A lógica de bloqueio agora considera se um território está selecionado.
+                                // Se um território estiver selecionado, não bloqueamos os outros visualmente, apenas a interatividade.
+                                const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
                                 
-                                const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
                                 const isHovered = !blockClickAndColor && (hoveredTerritory === feat.territory || hoveredMunicipality === feat.nome);
 
                                 let opacity = 0.90; 
                                 let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
-                                if (blockClickAndColor) {
-                                    fillColor = darkMode ? '#1e293b' : '#e2e8f0'; 
-                                    opacity = 0.1;        
+                                if (blockClickAndColor && !selectedTerritory) {
+                                    // Se o bloqueio for pelo filtro do semiárido, apenas diminui a opacidade, mantendo a cor.
+                                    if (filtroSemiarido && !isMunSemi) {
+                                        opacity = 0.15;
+                                    } else { // Se for por outros filtros (CTI, IFDM), deixa cinza.
+                                        fillColor = darkMode ? '#1e293b' : '#e2e8f0'; 
+                                        opacity = 0.1;
+                                    }
                                 } else if (selectedTerritory) {
                                     if (isSelectedMap) {
                                         opacity = 1;
-                                        if (isMunSemi) fillColor = '#F97316'; 
+                                        // A cor laranja do semiárido só se aplica se o filtro estiver ativo.
+                                        if (filtroSemiarido && isMunSemi) fillColor = '#F97316'; 
                                     } else {
-                                        fillColor = darkMode ? '#334155' : '#cbd5e1'; 
-                                        opacity = 0.15; 
+                                        fillColor = darkMode ? '#334155' : '#cbd5e1';
+                                        opacity = 0.4; // Aumenta a visibilidade das áreas não selecionadas
                                     }
                                 } else {
                                     if (isHovered) opacity = 1;
@@ -388,26 +493,77 @@ export default function ConectaMap({
 
                             {/* 2. TEXTOS DOS TERRITÓRIOS (Sem seleção) */}
                             {!selectedTerritory && (
-                                <g style={{ opacity: userScale > 1.05 ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
-                                    {territoryLabels.map((lbl, i) => {
+                                <g 
+                                    className="territory-labels-container"
+                                    style={{ opacity: userScale > 1.05 ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}
+                                >
+                                    {laidOutLabels.map((node, i) => {
                                         // Oculta o texto também se a região estiver bloqueada pelos filtros cruzados
-                                        const dStats = territoriesDynamicStats[getTerritoryKey(lbl.name)];
+                                        const dStats = territoriesDynamicStats[node.id];
                                         if (dStats && !dStats.matchesFilters) return null;
 
-                                        const lines = wrapText(lbl.name);
+                                        const { x, y, idealX, idealY, lines } = node;
                                         const fontSize = 16 / effectiveScale; 
                                         const strokeW = 4 / effectiveScale;
                                         const lineHeight = fontSize * 1.1;
-                                        const startY = lbl.y - ((lines.length - 1) * lineHeight) / 2;
+                                        const startY = y - ((lines.length - 1) * lineHeight) / 2;
+
+                                        // Verifica se precisa de uma leader line
+                                        const dx = x - idealX;
+                                        const dy = y - idealY;
+                                        const distance = Math.sqrt(dx * dx + dy * dy);
+                                        const needsLeaderLine = distance > 10 / baseTransform.scale;
 
                                         return (
-                                            <text 
-                                                key={`t-lbl-${i}`} x={lbl.x} y={lbl.y} textAnchor="middle" alignmentBaseline="middle" 
-                                                style={{ 
-                                                    paintOrder: 'stroke', stroke: 'rgba(0, 0, 0, 0.65)', strokeWidth: `${strokeW * 0.8}px`, 
-                                                    fill: 'rgba(255, 255, 255, 0.95)', fontSize: `${fontSize}px`, fontWeight: '600', pointerEvents: 'none',
-                                                }}
-                                            >
+                                            <g key={`t-lbl-${i}`}>
+                                                {needsLeaderLine && (
+                                                    <>
+                                                        <line 
+                                                            x1={idealX} y1={idealY} x2={x} y2={y} 
+                                                            stroke={darkMode ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"} 
+                                                            strokeWidth={0.8 / effectiveScale} 
+                                                        />
+                                                        <circle cx={idealX} cy={idealY} r={1.5 / effectiveScale} fill={darkMode ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"} />
+                                                    </>
+                                                )}
+                                                <text 
+                                                    x={x} y={y} textAnchor="middle" alignmentBaseline="middle" 
+                                                    style={{ 
+                                                        paintOrder: 'stroke', stroke: darkMode ? 'rgba(10, 15, 28, 0.7)' : 'rgba(255, 255, 255, 0.7)', strokeWidth: `${strokeW * 0.8}px`, strokeLinejoin: 'round',
+                                                        fill: darkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0,0,0,0.85)', fontSize: `${fontSize}px`, fontWeight: '600',
+                                                    }}
+                                                >
+                                                    {lines.map((line, idx) => (
+                                                        <tspan key={idx} x={x} y={startY + (idx * lineHeight)}>{line}</tspan>
+                                                    ))}
+                                                </text>
+                                            </g>
+                                        );
+                                    })}
+                                </g>
+                            )}
+
+                            {/* TEXTOS DOS TERRITÓRIOS (QUANDO HÁ SELEÇÃO - para os não selecionados) */}
+                            {selectedTerritory && (
+                                <g style={{ pointerEvents: 'none' }}>
+                                    {territoryLabels.map((lbl, i) => {
+                                        const isSelectedLabel = getTerritoryKey(lbl.name) === getTerritoryKey(selectedTerritory.nome);
+                                        if (isSelectedLabel) return null; // Não renderiza o nome do território já selecionado
+
+                                        const lines = wrapText(lbl.name);
+                                        const fontSize = 14 / effectiveScale;
+                                        const lineHeight = fontSize * 1.1;
+                                        const startY = lbl.y - ((lines.length - 1) * lineHeight) / 2;
+
+                                        // Determina a cor do texto: mais sutil se não corresponder aos filtros
+                                        const dStats = territoriesDynamicStats[getTerritoryKey(lbl.name)];
+                                        const matchesFilters = !dStats || dStats.matchesFilters;
+                                        const fillColor = darkMode 
+                                            ? (matchesFilters ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)') 
+                                            : (matchesFilters ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)');
+
+                                        return (
+                                            <text key={`t-lbl-inactive-${i}`} x={lbl.x} y={lbl.y} textAnchor="middle" alignmentBaseline="middle" style={{ fill: fillColor, fontSize: `${fontSize}px`, fontWeight: '600' }}>
                                                 {lines.map((line, idx) => (
                                                     <tspan key={idx} x={lbl.x} y={startY + (idx * lineHeight)}>{line}</tspan>
                                                 ))}
@@ -417,34 +573,44 @@ export default function ConectaMap({
                                 </g>
                             )}
 
-                            {/* 3. TEXTOS DOS MUNICÍPIOS (Com seleção) */}
+                            {/* 3. TEXTOS DOS MUNICÍPIOS (Aparecem apenas quando um território é selecionado) */}
                             {selectedTerritory && (
                                 <g style={{ opacity: 1, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
-                                    {mapFeatures.filter(f => {
-                                        const isSameTerritory = getTerritoryKey(f.territory) === getTerritoryKey(selectedTerritory.nome);
-                                        if (!isSameTerritory) return false;
-                                        const isMunSemi = semiaridoMunicipios.includes(normalizeName(f.nome));
-                                        if (filtroSemiarido && !isMunSemi) return false;
-                                        return true;
-                                    }).map((feat, i) => {
-                                        const lines = wrapText(feat.nome);
+                                    {laidOutMunicipalityLabels.map((node, i) => {
+                                        const { x, y, idealX, idealY, lines } = node;
                                         const fontSize = 14 / effectiveScale; 
                                         const strokeW = 3.5 / effectiveScale;
                                         const lineHeight = fontSize * 1.1;
-                                        const startY = feat.cy - ((lines.length - 1) * lineHeight) / 2;
+                                        const startY = y - ((lines.length - 1) * lineHeight) / 2;
+
+                                        const dx = x - idealX;
+                                        const dy = y - idealY;
+                                        const distance = Math.sqrt(dx * dx + dy * dy);
+                                        const needsLeaderLine = distance > 5 / baseTransform.scale;
 
                                         return (
-                                            <text 
-                                                key={`m-lbl-${i}`} x={feat.cx} y={feat.cy} textAnchor="middle" alignmentBaseline="middle" 
-                                                style={{ 
-                                                    paintOrder: 'stroke', stroke: 'rgba(0, 0, 0, 0.65)', strokeWidth: `${strokeW * 0.7}px`, 
-                                                    fill: 'rgba(255, 255, 255, 0.9)', fontSize: `${fontSize}px`, fontWeight: '500', pointerEvents: 'none',
-                                                }}
-                                            >
-                                                {lines.map((line, idx) => (
-                                                    <tspan key={idx} x={feat.cx} y={startY + (idx * lineHeight)}>{line}</tspan>
-                                                ))}
-                                            </text>
+                                            <g key={`m-lbl-${i}`}>
+                                                {needsLeaderLine && (
+                                                    <>
+                                                        <line x1={idealX} y1={idealY} x2={x} y2={y} stroke={darkMode ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.35)"} strokeWidth={0.7 / effectiveScale} />
+                                                        <circle cx={idealX} cy={idealY} r={1.2 / effectiveScale} fill={darkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"} />
+                                                    </>
+                                                )}
+                                                <text 
+                                                    x={x} y={y} textAnchor="middle" alignmentBaseline="middle"
+                                                    style={{ 
+                                                        paintOrder: 'stroke', 
+                                                        stroke: darkMode ? 'rgba(10, 15, 28, 0.8)' : 'rgba(255, 255, 255, 0.8)', 
+                                                        strokeWidth: `${strokeW * 0.7}px`, strokeLinejoin: 'round',
+                                                        fill: darkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0,0,0,0.8)', 
+                                                        fontSize: `${fontSize}px`, fontWeight: '500',
+                                                    }}
+                                                >
+                                                    {lines.map((line, idx) => (
+                                                        <tspan key={idx} x={x} y={startY + (idx * lineHeight)}>{line}</tspan>
+                                                    ))}
+                                                </text>
+                                            </g>
                                         );
                                     })}
                                 </g>

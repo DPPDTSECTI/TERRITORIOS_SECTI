@@ -1,4 +1,5 @@
 import React from 'react';
+import { Map as MapIcon, Settings, Sun, Download } from 'lucide-react';
 
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE

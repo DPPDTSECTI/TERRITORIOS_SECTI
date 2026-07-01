@@ -304,11 +304,16 @@ export default function useTerritoriosData(filters) {
             });
 
             t.cadeiasProdutivasDetalhado.forEach(cad => {
+                // A filtragem de cadeias produtivas agora é independente dos filtros de CTI/IFDM.
+                // Ela só considera a localização (filtro semiarido) e o termo de busca.
                 const sateliteRobusto = extrairSatelite(cad);
                 const sede = cad.sede || sateliteRobusto || 'Não informada';
                 const perts = filtroSemiarido ? String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(m => isMunValid(m)) : String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(Boolean);
+                
+                // 1. Filtro Geográfico (Semiárido)
                 if (filtroSemiarido && !isMunValid(sede) && perts.length === 0) return;
-                if (rawTerm && !isSearchTermATerritory) {
+                // 2. Filtro de Busca (Deep Search)
+                if (rawTerm) {
                     const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')}`;
                     if (!terms.every(term => searchString.includes(term))) return;
                 }
