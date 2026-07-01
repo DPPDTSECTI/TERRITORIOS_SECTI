@@ -1,9 +1,24 @@
 import { useState, useEffect, useMemo } from 'react';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
 
-function normalize(value) {
-    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
-}
+// Otimização: Memoiza a função de normalização para evitar recalcular strings repetidamente.
+const normalize = (() => {
+    const cache = new Map();
+    const CACHE_LIMIT = 2000; // Limite para evitar consumo excessivo de memória
+
+    return (value) => {
+        const strValue = String(value || '');
+        if (cache.has(strValue)) {
+            return cache.get(strValue);
+        }
+        const result = strValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+        if (cache.size > CACHE_LIMIT) {
+            cache.delete(cache.keys().next().value); // Remove o item mais antigo
+        }
+        cache.set(strValue, result);
+        return result;
+    };
+})();
 
 export default function useTerritoriosData(filters) {
     const {

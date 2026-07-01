@@ -63,6 +63,29 @@ const getPathD = (geometry, project) => {
     return '';
 };
 
+// Otimização (Problema 4): Componente de Path individual memoizado.
+// Ele só será re-renderizado se o objeto `pathProps` mudar de identidade.
+const MunicipalityPath = React.memo(function MunicipalityPath({ pathProps }) {
+    const { d, fill, stroke, strokeWidth, style, opacity, onMouseEnter, onMouseMove, onMouseLeave, onClick } = pathProps;
+    return (
+        <path
+            d={d}
+            fill={fill}
+            stroke={stroke}
+            strokeWidth={strokeWidth}
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+            className="outline-none"
+            style={style}
+            opacity={opacity}
+            onMouseEnter={onMouseEnter}
+            onMouseMove={onMouseMove}
+            onMouseLeave={onMouseLeave}
+            onClick={onClick}
+        />
+    );
+});
+
 export default function ConectaMap({ 
     territoriosData = [], territoriesDynamicStats = {}, searchTerm = '', 
     filtroSemiarido = false, selectedTerritory = null, 
@@ -200,10 +223,15 @@ export default function ConectaMap({
     const effectiveScale = userScale * baseTransform.scale;
 
     // Hook para calcular o layout dos rótulos com anti-colisão
+    // IMPORTANTE: usa baseTransform.scale (câmera/território selecionado), não effectiveScale.
+    // effectiveScale muda a cada tick da roda do mouse (zoom manual), o que faria a simulação
+    // de 250 iterações rodar em todo scroll, travando a interação. baseTransform.scale só
+    // muda quando o território selecionado muda, então o layout é recalculado raramente,
+    // mas o tamanho visual do texto continua reativo ao zoom (calculado fora do memo, no render).
     const laidOutLabels = useMemo(() => {
         if (territoryLabels.length === 0) return [];
 
-        const fontSize = 16 / effectiveScale;
+        const fontSize = 16 / baseTransform.scale;
         const lineHeight = fontSize * 1.1;
 
         // 1. Preparar nós para a simulação
@@ -243,13 +271,15 @@ export default function ConectaMap({
 
         // 3. Retornar os nós com as posições finais calculadas
         return nodes;
-    }, [territoryLabels, effectiveScale]);
+    }, [territoryLabels, baseTransform.scale]);
 
     // Hook para calcular o layout dos rótulos dos MUNICÍPIOS com anti-colisão
+    // Mesma correção: usa baseTransform.scale em vez de effectiveScale para não
+    // recalcular a simulação a cada tick de zoom manual (userScale).
     const laidOutMunicipalityLabels = useMemo(() => {
         if (!selectedTerritory || mapFeatures.length === 0) return [];
 
-        const fontSize = 14 / effectiveScale;
+        const fontSize = 14 / baseTransform.scale;
         const lineHeight = fontSize * 1.1;
 
         const visibleMunicipalities = mapFeatures.filter(f => {
@@ -287,7 +317,78 @@ export default function ConectaMap({
         }
 
         return nodes;
-    }, [selectedTerritory, mapFeatures, effectiveScale, filtroSemiarido, semiaridoMunicipios]);
+    }, [selectedTerritory, mapFeatures, baseTransform.scale, filtroSemiarido, semiaridoMunicipios]);
+
+    // Otimização (Problemas 2, 3, 4): Pré-calcula os estilos e props de cada município.
+    // Este hook recalcula apenas quando os filtros ou o estado de interação (hover, select) mudam,
+    // e não a cada pan/zoom, tornando os re-renders subsequentes extremamente baratos.
+    const styledMapFeatures = useMemo(() => {
+        return mapFeatures.map((feat, index) => {
+            const normalizedFeatName = getTerritoryKey(feat.territory);
+            const dStats = territoriesDynamicStats[normalizedFeatName];
+            const matchesFilters = dStats ? dStats.matchesFilters : true;
+
+            const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
+            const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
+            
+            const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
+            const isHovered = !blockClickAndColor && (hoveredTerritory === feat.territory || hoveredMunicipality === feat.nome);
+
+            let opacity = 0.90; 
+            let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
+
+            if (blockClickAndColor && !selectedTerritory) {
+                if (filtroSemiarido && !isMunSemi) {
+                    opacity = 0.15;
+                } else {
+                    fillColor = darkMode ? '#1e293b' : '#e2e8f0'; 
+                    opacity = 0.1;
+                }
+            } else if (selectedTerritory) {
+                if (isSelectedMap) {
+                    opacity = 1;
+                    if (filtroSemiarido && isMunSemi) fillColor = '#F97316'; 
+                } else {
+                    fillColor = darkMode ? '#334155' : '#cbd5e1';
+                    opacity = 0.4;
+                }
+            } else {
+                if (isHovered) opacity = 1;
+            }
+
+            return {
+                key: `${feat.nome}-${index}`,
+                d: feat.d,
+                fill: fillColor,
+                stroke: isSelectedMap || isHovered ? '#ffffff' : (darkMode ? '#1e293b' : '#f8fafc'),
+                strokeWidth: isSelectedMap ? 2 : isHovered ? 2 : 0.8,
+                style: { 
+                    pointerEvents: blockClickAndColor ? 'none' : 'auto',
+                    cursor: blockClickAndColor ? 'default' : 'pointer'
+                },
+                opacity: opacity,
+                onMouseEnter: (e) => onMapHover(e, feat),
+                onMouseMove: (e) => onMapHover(e, feat),
+                onMouseLeave: () => {
+                    setTooltip({ visible: false, x: 0, y: 0 });
+                    setHoveredTerritory(null);
+                    setHoveredMunicipality(null);
+                },
+                onClick: (e) => {
+                    e.stopPropagation(); 
+                    if (dragTotal.current > 10) return; 
+                    if (!blockClickAndColor && feat.territory !== 'Sem Território') {
+                        const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(feat.territory));
+                        if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(feat.territory)) {
+                            onSelectTerritory(null);
+                        } else {
+                            onSelectTerritory(foundData);
+                        }
+                    }
+                }
+            };
+        });
+    }, [mapFeatures, territoriesDynamicStats, selectedTerritory, hoveredTerritory, hoveredMunicipality, filtroSemiarido, darkMode, onSelectTerritory, territoriosData, semiaridoMunicipios]);
 
     useEffect(() => {
         const svg = svgRef.current;
@@ -416,80 +517,9 @@ export default function ConectaMap({
                         <g style={{ transform: `translate(${baseTransform.tx}px, ${baseTransform.ty}px) scale(${baseTransform.scale})`, transformOrigin: '0 0', transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)' }}>
                             
                             {/* 1. MUNICÍPIOS (POLÍGONOS) */}
-                            {mapFeatures.map((feat, index) => {
-                                const normalizedFeatName = getTerritoryKey(feat.territory);
-                                
-                                // ACESSO AOS CÁLCULOS CRUZADOS DE FILTROS VINDOS DO APP.JSX
-                                const dStats = territoriesDynamicStats[normalizedFeatName];
-                                const matchesFilters = dStats ? dStats.matchesFilters : true;
-
-                                const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
-                                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
-                                
-                                // A lógica de bloqueio agora considera se um território está selecionado.
-                                // Se um território estiver selecionado, não bloqueamos os outros visualmente, apenas a interatividade.
-                                const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
-                                
-                                const isHovered = !blockClickAndColor && (hoveredTerritory === feat.territory || hoveredMunicipality === feat.nome);
-
-                                let opacity = 0.90; 
-                                let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
-
-                                if (blockClickAndColor && !selectedTerritory) {
-                                    // Se o bloqueio for pelo filtro do semiárido, apenas diminui a opacidade, mantendo a cor.
-                                    if (filtroSemiarido && !isMunSemi) {
-                                        opacity = 0.15;
-                                    } else { // Se for por outros filtros (CTI, IFDM), deixa cinza.
-                                        fillColor = darkMode ? '#1e293b' : '#e2e8f0'; 
-                                        opacity = 0.1;
-                                    }
-                                } else if (selectedTerritory) {
-                                    if (isSelectedMap) {
-                                        opacity = 1;
-                                        // A cor laranja do semiárido só se aplica se o filtro estiver ativo.
-                                        if (filtroSemiarido && isMunSemi) fillColor = '#F97316'; 
-                                    } else {
-                                        fillColor = darkMode ? '#334155' : '#cbd5e1';
-                                        opacity = 0.4; // Aumenta a visibilidade das áreas não selecionadas
-                                    }
-                                } else {
-                                    if (isHovered) opacity = 1;
-                                }
-
-                                return (
-                                    <path
-                                        key={`${feat.nome}-${index}`}
-                                        d={feat.d}
-                                        fill={fillColor}
-                                        stroke={isSelectedMap || isHovered ? '#ffffff' : (darkMode ? '#1e293b' : '#f8fafc')}
-                                        strokeWidth={isSelectedMap ? 2 : isHovered ? 2 : 0.8}
-                                        strokeLinejoin="round"
-                                        vectorEffect="non-scaling-stroke" 
-                                        className="outline-none"
-                                        style={{ 
-                                            pointerEvents: blockClickAndColor ? 'none' : 'auto',
-                                            cursor: blockClickAndColor ? 'default' : 'pointer'
-                                        }}
-                                        opacity={opacity}
-                                        onMouseEnter={(e) => onMapHover(e, feat)}
-                                        onMouseMove={(e) => onMapHover(e, feat)}
-                                        onMouseLeave={() => {
-                                            setTooltip({ visible: false, x: 0, y: 0 });
-                                            setHoveredTerritory(null);
-                                            setHoveredMunicipality(null);
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation(); 
-                                            if (dragTotal.current > 10) return; 
-                                            if (!blockClickAndColor && feat.territory !== 'Sem Território') {
-                                                const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(feat.territory));
-                                                if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(feat.territory)) onSelectTerritory(null);
-                                                else onSelectTerritory(foundData);
-                                            }
-                                        }}
-                                    />
-                                );
-                            })}
+                            {styledMapFeatures.map((pathProps) => (
+                                <MunicipalityPath key={pathProps.key} pathProps={pathProps} />
+                            ))}
 
                             {/* 2. TEXTOS DOS TERRITÓRIOS (Sem seleção) */}
                             {!selectedTerritory && (
