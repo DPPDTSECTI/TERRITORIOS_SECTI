@@ -1,5 +1,5 @@
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
@@ -95,6 +95,11 @@ function MainApp() {
     areaGeralFilter,
     debouncedCursoSearchTerm,
   });
+
+  const handleSelectTerritory = useCallback((loc) => {
+    setSelectedLocation(loc);
+    setSearchTerm(loc ? loc.nome : '');
+  }, []); // Setters de estado do useState são estáveis e não precisam ser listados como dependências.
 
   useEffect(() => {
     function handleClickOutside(event) { 
@@ -586,7 +591,7 @@ function MainApp() {
                                     territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats} 
                                     searchTerm={searchTerm} filtroSemiarido={filtroSemiarido} 
                                     selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios}
-                                    onSelectTerritory={(loc) => { setSelectedLocation(loc); setSearchTerm(loc ? loc.nome : ''); }} 
+                                    onSelectTerritory={handleSelectTerritory} 
                                     darkMode={darkMode} 
                                 />
                             </div>

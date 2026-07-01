@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import * as topojson from 'topojson-client';
 import { forceSimulation, forceCollide, forceX, forceY } from 'd3-force';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
@@ -63,10 +63,16 @@ const getPathD = (geometry, project) => {
     return '';
 };
 
-// Otimização (Problema 4): Componente de Path individual memoizado.
-// Ele só será re-renderizado se o objeto `pathProps` mudar de identidade.
-const MunicipalityPath = React.memo(function MunicipalityPath({ pathProps }) {
-    const { d, fill, stroke, strokeWidth, style, opacity, onMouseEnter, onMouseMove, onMouseLeave, onClick } = pathProps;
+// Componente memoizado para cada polígono de município. Evita re-renderizar
+// os ~400 <path> quando o pai re-renderiza por motivos que não afetam aquele
+// município específico (ex: hover em outro, mudança de tooltip, etc). Como
+// pan/zoom agora são throttled via rAF (ver ConectaMap) e a simulação de
+// labels não depende mais de effectiveScale, o pai já re-renderiza bem menos —
+// este memo é uma segunda camada de proteção para quando ele ainda re-renderizar.
+const MunicipioPath = React.memo(function MunicipioPath({
+    feat, d, fill, stroke, strokeWidth, opacity, blockClickAndColor,
+    onEnter, onLeave, onClick,
+}) {
     return (
         <path
             d={d}
@@ -76,12 +82,15 @@ const MunicipalityPath = React.memo(function MunicipalityPath({ pathProps }) {
             strokeLinejoin="round"
             vectorEffect="non-scaling-stroke"
             className="outline-none"
-            style={style}
+            style={{
+                pointerEvents: blockClickAndColor ? 'none' : 'auto',
+                cursor: blockClickAndColor ? 'default' : 'pointer'
+            }}
             opacity={opacity}
-            onMouseEnter={onMouseEnter}
-            onMouseMove={onMouseMove}
-            onMouseLeave={onMouseLeave}
-            onClick={onClick}
+            onMouseEnter={(e) => onEnter(e, feat)}
+            onMouseMove={(e) => onEnter(e, feat)}
+            onMouseLeave={onLeave}
+            onClick={(e) => { e.stopPropagation(); onClick(feat, blockClickAndColor); }}
         />
     );
 });
@@ -107,6 +116,26 @@ export default function ConectaMap({
     const lastMousePos = useRef({ x: 0, y: 0 });
     const dragTotal = useRef(0);
     const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
+
+    // --- Throttle via requestAnimationFrame para pan (arraste) e zoom (scroll) ---
+    // Em vez de chamar setState a cada evento de mousemove/wheel (que pode disparar
+    // dezenas de re-renders por segundo, cada um reconciliando ~400 <path>), acumulamos
+    // o delta em refs e só sincronizamos o estado React uma vez por frame de animação
+    // (no máximo ~60x/s), mantendo a fluidez visual e o comportamento reativo idêntico.
+    const userPanRef = useRef(userPan);
+    const userScaleRef = useRef(userScale);
+    const pendingPan = useRef(null);
+    const pendingScale = useRef(null);
+    const rafPanId = useRef(null);
+    const rafScaleId = useRef(null);
+
+    useEffect(() => { userPanRef.current = userPan; }, [userPan]);
+    useEffect(() => { userScaleRef.current = userScale; }, [userScale]);
+
+    useEffect(() => () => {
+        if (rafPanId.current) cancelAnimationFrame(rafPanId.current);
+        if (rafScaleId.current) cancelAnimationFrame(rafScaleId.current);
+    }, []);
 
     useEffect(() => { setUserScale(1); setUserPan({ x: 0, y: 0 }); }, [selectedTerritory]);
 
@@ -319,85 +348,25 @@ export default function ConectaMap({
         return nodes;
     }, [selectedTerritory, mapFeatures, baseTransform.scale, filtroSemiarido, semiaridoMunicipios]);
 
-    // Otimização (Problemas 2, 3, 4): Pré-calcula os estilos e props de cada município.
-    // Este hook recalcula apenas quando os filtros ou o estado de interação (hover, select) mudam,
-    // e não a cada pan/zoom, tornando os re-renders subsequentes extremamente baratos.
-    const styledMapFeatures = useMemo(() => {
-        return mapFeatures.map((feat, index) => {
-            const normalizedFeatName = getTerritoryKey(feat.territory);
-            const dStats = territoriesDynamicStats[normalizedFeatName];
-            const matchesFilters = dStats ? dStats.matchesFilters : true;
-
-            const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
-            const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
-            
-            const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
-            const isHovered = !blockClickAndColor && (hoveredTerritory === feat.territory || hoveredMunicipality === feat.nome);
-
-            let opacity = 0.90; 
-            let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
-
-            if (blockClickAndColor && !selectedTerritory) {
-                if (filtroSemiarido && !isMunSemi) {
-                    opacity = 0.15;
-                } else {
-                    fillColor = darkMode ? '#1e293b' : '#e2e8f0'; 
-                    opacity = 0.1;
-                }
-            } else if (selectedTerritory) {
-                if (isSelectedMap) {
-                    opacity = 1;
-                    if (filtroSemiarido && isMunSemi) fillColor = '#F97316'; 
-                } else {
-                    fillColor = darkMode ? '#334155' : '#cbd5e1';
-                    opacity = 0.4;
-                }
-            } else {
-                if (isHovered) opacity = 1;
-            }
-
-            return {
-                key: `${feat.nome}-${index}`,
-                d: feat.d,
-                fill: fillColor,
-                stroke: isSelectedMap || isHovered ? '#ffffff' : (darkMode ? '#1e293b' : '#f8fafc'),
-                strokeWidth: isSelectedMap ? 2 : isHovered ? 2 : 0.8,
-                style: { 
-                    pointerEvents: blockClickAndColor ? 'none' : 'auto',
-                    cursor: blockClickAndColor ? 'default' : 'pointer'
-                },
-                opacity: opacity,
-                onMouseEnter: (e) => onMapHover(e, feat),
-                onMouseMove: (e) => onMapHover(e, feat),
-                onMouseLeave: () => {
-                    setTooltip({ visible: false, x: 0, y: 0 });
-                    setHoveredTerritory(null);
-                    setHoveredMunicipality(null);
-                },
-                onClick: (e) => {
-                    e.stopPropagation(); 
-                    if (dragTotal.current > 10) return; 
-                    if (!blockClickAndColor && feat.territory !== 'Sem Território') {
-                        const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(feat.territory));
-                        if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(feat.territory)) {
-                            onSelectTerritory(null);
-                        } else {
-                            onSelectTerritory(foundData);
-                        }
-                    }
-                }
-            };
-        });
-    }, [mapFeatures, territoriesDynamicStats, selectedTerritory, hoveredTerritory, hoveredMunicipality, filtroSemiarido, darkMode, onSelectTerritory, territoriosData, semiaridoMunicipios]);
-
     useEffect(() => {
         const svg = svgRef.current;
         if (!svg) return;
         const handleNativeWheel = (e) => {
-            e.preventDefault(); 
+            e.preventDefault();
             const zoomFactor = 0.1;
             const delta = e.deltaY < 0 ? 1 + zoomFactor : 1 - zoomFactor;
-            setUserScale(prev => Math.min(Math.max(prev * delta, 0.5), 15));
+            const base = pendingScale.current ?? userScaleRef.current;
+            pendingScale.current = Math.min(Math.max(base * delta, 0.5), 15);
+
+            // Só agenda 1 atualização de estado por frame de animação, mesmo que
+            // vários eventos de wheel cheguem entre um frame e outro (comum em trackpads).
+            if (rafScaleId.current == null) {
+                rafScaleId.current = requestAnimationFrame(() => {
+                    setUserScale(pendingScale.current);
+                    pendingScale.current = null;
+                    rafScaleId.current = null;
+                });
+            }
         };
         svg.addEventListener('wheel', handleNativeWheel, { passive: false });
         return () => svg.removeEventListener('wheel', handleNativeWheel);
@@ -405,17 +374,28 @@ export default function ConectaMap({
 
     const handleMouseDown = (e) => { setIsDragging(true); dragTotal.current = 0; lastMousePos.current = { x: e.clientX, y: e.clientY }; };
     const handleMouseMoveSVG = (e) => {
-        if (isDragging) {
-            const dx = e.clientX - lastMousePos.current.x; const dy = e.clientY - lastMousePos.current.y;
-            dragTotal.current += Math.abs(dx) + Math.abs(dy);
-            setUserPan(prev => ({ x: prev.x + dx, y: prev.y + dy }));
-            lastMousePos.current = { x: e.clientX, y: e.clientY };
+        if (!isDragging) return;
+        const dx = e.clientX - lastMousePos.current.x; const dy = e.clientY - lastMousePos.current.y;
+        dragTotal.current += Math.abs(dx) + Math.abs(dy);
+        lastMousePos.current = { x: e.clientX, y: e.clientY };
+
+        const base = pendingPan.current ?? userPanRef.current;
+        pendingPan.current = { x: base.x + dx, y: base.y + dy };
+
+        // Mesma lógica de throttle do zoom: no máximo 1 setState por frame de animação,
+        // independente de quantos eventos de mousemove chegarem nesse intervalo.
+        if (rafPanId.current == null) {
+            rafPanId.current = requestAnimationFrame(() => {
+                setUserPan(pendingPan.current);
+                pendingPan.current = null;
+                rafPanId.current = null;
+            });
         }
     };
     const handleMouseUp = () => setIsDragging(false);
 
     // LÓGICA DE HOVER
-    const onMapHover = (e, feat) => {
+    const onMapHover = useCallback((e, feat) => {
         if (feat.territory === 'Sem Território' || isDragging) return;
         
         if (selectedTerritory) {
@@ -443,7 +423,24 @@ export default function ConectaMap({
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
         
         setTooltip({ visible: true, x, y });
-    };
+    }, [isDragging, selectedTerritory]);
+
+    // Handler de saída do hover, estável entre renders (usado pelo MunicipioPath memoizado)
+    const onMapLeave = useCallback(() => {
+        setTooltip({ visible: false, x: 0, y: 0 });
+        setHoveredTerritory(null);
+        setHoveredMunicipality(null);
+    }, []);
+
+    // Handler de clique num município, estável entre renders (usado pelo MunicipioPath memoizado)
+    const onMapClick = useCallback((feat, blockClickAndColor) => {
+        if (dragTotal.current > 10) return;
+        if (!blockClickAndColor && feat.territory !== 'Sem Território') {
+            const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(feat.territory));
+            if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(feat.territory)) onSelectTerritory(null);
+            else onSelectTerritory(foundData);
+        }
+    }, [territoriosData, selectedTerritory, onSelectTerritory]);
 
     const hoveredData = hoveredTerritory ? territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(hoveredTerritory)) : null;
     const dynamicStats = hoveredTerritory ? territoriesDynamicStats[getTerritoryKey(hoveredTerritory)] : null;
@@ -517,9 +514,62 @@ export default function ConectaMap({
                         <g style={{ transform: `translate(${baseTransform.tx}px, ${baseTransform.ty}px) scale(${baseTransform.scale})`, transformOrigin: '0 0', transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)' }}>
                             
                             {/* 1. MUNICÍPIOS (POLÍGONOS) */}
-                            {styledMapFeatures.map((pathProps) => (
-                                <MunicipalityPath key={pathProps.key} pathProps={pathProps} />
-                            ))}
+                            {mapFeatures.map((feat, index) => {
+                                const normalizedFeatName = getTerritoryKey(feat.territory);
+                                
+                                // ACESSO AOS CÁLCULOS CRUZADOS DE FILTROS VINDOS DO APP.JSX
+                                const dStats = territoriesDynamicStats[normalizedFeatName];
+                                const matchesFilters = dStats ? dStats.matchesFilters : true;
+
+                                const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
+                                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
+                                
+                                // A lógica de bloqueio agora considera se um território está selecionado.
+                                // Se um território estiver selecionado, não bloqueamos os outros visualmente, apenas a interatividade.
+                                const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
+                                
+                                const isHovered = !blockClickAndColor && (hoveredTerritory === feat.territory || hoveredMunicipality === feat.nome);
+
+                                let opacity = 0.90; 
+                                let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
+
+                                if (blockClickAndColor && !selectedTerritory) {
+                                    // Se o bloqueio for pelo filtro do semiárido, apenas diminui a opacidade, mantendo a cor.
+                                    if (filtroSemiarido && !isMunSemi) {
+                                        opacity = 0.15;
+                                    } else { // Se for por outros filtros (CTI, IFDM), deixa cinza.
+                                        fillColor = darkMode ? '#1e293b' : '#e2e8f0'; 
+                                        opacity = 0.1;
+                                    }
+                                } else if (selectedTerritory) {
+                                    if (isSelectedMap) {
+                                        opacity = 1;
+                                        // A cor laranja do semiárido só se aplica se o filtro estiver ativo.
+                                        if (filtroSemiarido && isMunSemi) fillColor = '#F97316'; 
+                                    } else {
+                                        fillColor = darkMode ? '#334155' : '#cbd5e1';
+                                        opacity = 0.4; // Aumenta a visibilidade das áreas não selecionadas
+                                    }
+                                } else {
+                                    if (isHovered) opacity = 1;
+                                }
+
+                                return (
+                                    <MunicipioPath
+                                        key={`${feat.nome}-${index}`}
+                                        feat={feat}
+                                        d={feat.d}
+                                        fill={fillColor}
+                                        stroke={isSelectedMap || isHovered ? '#ffffff' : (darkMode ? '#1e293b' : '#f8fafc')}
+                                        strokeWidth={isSelectedMap ? 2 : isHovered ? 2 : 0.8}
+                                        opacity={opacity}
+                                        blockClickAndColor={blockClickAndColor}
+                                        onEnter={onMapHover}
+                                        onLeave={onMapLeave}
+                                        onClick={onMapClick}
+                                    />
+                                );
+                            })}
 
                             {/* 2. TEXTOS DOS TERRITÓRIOS (Sem seleção) */}
                             {!selectedTerritory && (
