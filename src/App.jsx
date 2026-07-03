@@ -15,6 +15,31 @@ function normalize(value) {
     return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+function fixWeirdCapitalization(str) {
+    if (!str || typeof str !== 'string') return str;
+
+    // This function handles two types of casing errors from the source data:
+    // 1. ALL-CAPS words with stray lowercase letters (e.g., "SANTÍsSIMO" -> "SANTÍSSIMO")
+    // 2. Title-case words with stray uppercase letters (e.g., "EspaçO" -> "Espaço")
+    return str.split(' ').map(word => {
+        const letters = word.replace(/[^a-zA-ZáéíóúâêôãõçÁÉÍÓÚÂÊÔÃÕÇ]/g, '');
+        if (letters.length < 3) { // For short words, just apply the simple fix
+            return word.replace(/(?<=[áéíóúâêôãõçÁÉÍÓÚÂÊÔÃÕÇ])([A-Z])/g, (match) => match.toLowerCase());
+        }
+
+        const upperCount = (letters.match(/[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/g) || []).length;
+        const ratio = upperCount / letters.length;
+
+        // If a word is mostly uppercase (like an acronym or a proper name in caps), force it to be fully uppercase.
+        if (ratio > 0.5) {
+            return word.toLocaleUpperCase('pt-BR');
+        }
+        
+        // Otherwise, assume it's a regular word and fix the specific issue of a capital letter after an accent.
+        return word.replace(/(?<=[áéíóúâêôãõçÁÉÍÓÚÂÊÔÃÕÇ])([A-Z])/g, (match) => match.toLowerCase());
+    }).join(' ');
+}
+
 // ==========================================
 // HOOKS CUSTOMIZADOS
 // ==========================================
@@ -149,19 +174,24 @@ function MainApp() {
 
   // Lógica para clique nos cards de KPI de CTI
   const handleCtiKpiClick = (clickedKey) => {
-    const currentlyActiveCount = ctiFilterKeys.filter(key => ctiFilters[key]).length;
-    const isClickedKeyActive = ctiFilters[clickedKey];
+    const activeKeys = ctiFilterKeys.filter(key => ctiFilters[key]);
+    const currentlyActiveCount = activeKeys.length;
+    const areAllCurrentlyActive = currentlyActiveCount === ctiFilterKeys.length;
 
-    // Se nenhum ou vários estiverem ativos, o primeiro clique em um card define ele como o único filtro
-    if (!isClickedKeyActive && (currentlyActiveCount === ctiFilterKeys.length || currentlyActiveCount === 0)) {
-        const newFilters = {};
-        ctiFilterKeys.forEach(key => {
-            newFilters[key] = (key === clickedKey);
-        });
-        setCtiFilters(newFilters);
+    // Se todos os filtros estiverem ativos (estado inicial), um clique em qualquer card
+    // iniciará uma nova seleção, ativando apenas o item clicado (modo de foco).
+    if (areAllCurrentlyActive) {
+      const newFilters = {};
+      ctiFilterKeys.forEach(key => {
+        newFilters[key] = (key === clickedKey);
+      });
+      setCtiFilters(newFilters);
+    // Se apenas um filtro estiver ativo e o usuário clicar nele novamente, reseta para todos ativos.
+    } else if (currentlyActiveCount === 1 && ctiFilters[clickedKey]) {
+      handleToggleAllCti();
     } else {
-        // Se já estamos em modo de seleção múltipla, apenas alterna o estado do card clicado
-        toggleCtiFilter(clickedKey);
+      // Em qualquer outro caso, o clique simplesmente alterna o estado do card (seleção múltipla).
+      toggleCtiFilter(clickedKey);
     }
   };
   // Efeito para marcar "Todos" se todas as opções individuais forem marcadas
@@ -576,11 +606,25 @@ function MainApp() {
                 
                 <div className="flex flex-col lg:flex-row gap-4 items-stretch min-h-[550px] lg:h-[650px] xl:h-[700px] 2xl:h-[78vh] w-full mt-2 mb-3">
                     
-                    <div ref={mapSectionRef} className="w-full lg:w-[50%] xl:w-[55%] flex flex-col relative">
+                    <div ref={mapSectionRef} className="w-full lg:w-[60%] flex flex-col relative">
                         <div className={`rounded-[2rem] border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
-                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
-                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Motor Cartográfico
-                            </div><div className="w-full h-full flex-1 rounded-xl overflow-hidden">
+                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Motor Cartográfico</span>
+                                <div className="relative group flex items-center justify-center">
+                                    <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
+                                    </button>
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+                                        <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                            <span className="block font-bold mb-1 opacity-70">Fontes dos Dados:</span>
+                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
+                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="w-full h-full flex-1 rounded-xl overflow-hidden">
                                 <ConectaMap 
                                     territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats} 
                                     searchTerm={searchTerm} filtroSemiarido={filtroSemiarido} 
@@ -590,28 +634,9 @@ function MainApp() {
                                 />
                             </div>
                         </div>
-                       
-                        <div className="absolute -bottom-10 left-4 flex flex-col">
-                            <a 
-                                className={`text-[11px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} 
-                                href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" 
-                                target="_blank" 
-                                rel="noreferrer"
-                            >
-                                IBGE/Semiárido Brasileiro (2022)
-                            </a>
-                            <a 
-                                className={`text-[11px] opacity-70 transition-colors ${themeClasses.textMuted} ${darkMode ? 'hover:text-slate-200' : 'hover:text-slate-900'}`} 
-                                href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" 
-                                target="_blank" 
-                                rel="noreferrer"
-                            >
-                                SECULT/Divisão Territorial da Bahia (2024)
-                            </a>
-                        </div>
                     </div>
 
-                    <div className="w-full lg:w-[50%] xl:w-[45%] flex flex-col gap-4 h-full overflow-hidden">
+                    <div className="w-full lg:w-[40%] flex flex-col gap-4 h-full overflow-hidden">
                         <div className="flex flex-col sm:flex-row gap-4 flex-[0.8] min-h-0">
                             {/* LISTA 1: ESTRUTURAS CT&I */}
                             <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
@@ -625,8 +650,8 @@ function MainApp() {
                                     <div className="flex flex-col gap-2">
                                     {dashboardData.entidades.length > 0 ? (
                                         dashboardData.entidades.map((ent, idx) => (
-                                        <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 hover:pl-4 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-                                            <span className="text-[11px] font-bold leading-tight">{ent.entidade}</span>
+                                        <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                                            <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                                             <div className="flex justify-between items-end mt-1">
                                                 <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
                                                     <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
@@ -664,20 +689,20 @@ function MainApp() {
                                 <div className="flex-1 overflow-y-auto p-3 hide-scroll">
                                     <div className="flex flex-col gap-2">
                                     {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
-                                        <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 hover:pl-4 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                                        <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
                                             <div className="flex items-start justify-between mb-1.5">
                                                 <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{apl.segmento}</span>
                                                 <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
                                             </div>
-                                            {apl.entidade && <span className="text-[11px] font-bold leading-tight mb-1">{apl.entidade}</span>}
+                                            {apl.entidade && <span className="text-[11px] font-bold leading-tight mb-1">{fixWeirdCapitalization(apl.entidade)}</span>}
                                             <div className={`p-2 rounded-lg border mt-1 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
                                                 <span className="block text-[8px] font-black uppercase opacity-50 mb-1">Abrangência Municipal:</span>
-                                                <p className="text-[9px] font-medium leading-relaxed opacity-90 truncate" title={apl.municipiosPertencentes}>{apl.municipiosPertencentes}</p>
+                                                <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipiosPertencentes}>{apl.municipiosPertencentes}</p>
                                                 
                                                 {apl.municipioSatelite && apl.municipioSatelite !== '' && (
                                                     <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
                                                         <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Município(s) Satélite(s):</span>
-                                                        <p className="text-[9px] font-medium leading-relaxed opacity-90 truncate" title={apl.municipioSatelite}>{apl.municipioSatelite}</p>
+                                                        <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipioSatelite}>{apl.municipioSatelite}</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -692,7 +717,22 @@ function MainApp() {
                         <div className={`flex-1 min-h-0 mt-4 relative rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                             <div className={`p-4 rounded-t-[1.5rem] border-b flex flex-col shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                 <div className="flex items-center justify-between gap-3">
-                                    <h4 className={`text-xs font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cursos em CT&I (Ensino Superior)</h4>
+                                    <div className="flex items-center gap-1.5">
+                                        <h4 className={`text-xs font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cursos em CT&I (Ensino Superior)</h4>
+                                        <div className="relative group flex items-center justify-center z-50">
+                                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
+                                            </button>
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                                    <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
+                                                    <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                        INEP/ Censo de Educação Superior (2022)
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <span className={`px-2.5 py-1 rounded-md text-[10px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{cursosFiltrados.length} Cursos</span>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -779,7 +819,7 @@ function MainApp() {
                                             
                                             {/* CABEÇALHO */}
                                             <div className="flex flex-col items-start gap-1.5 mb-2">
-                                                <h5 className={`text-[13px] font-bold leading-snug ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{curso.curso}</h5>
+                                                <h5 className={`text-[13px] font-bold leading-snug ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{fixWeirdCapitalization(curso.curso)}</h5>
                                                 {curso.areaGeral && (
                                                     <span 
                                                         className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}
@@ -791,7 +831,7 @@ function MainApp() {
 
                                             {/* CORPO: Info Institucional */}
                                             <div className={`p-2.5 rounded-lg border ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
-                                                <span className={`block text-[10px] font-bold mb-1.5 leading-tight ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>{curso.entidade}</span>
+                                                <span className={`block text-[10px] font-bold mb-1.5 leading-tight ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>{fixWeirdCapitalization(curso.entidade)}</span>
                                                 {(curso.categoriaAdm || curso.orgAcademica) && (
                                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[8px] font-medium uppercase tracking-wider opacity-80">
                                                         {[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (
@@ -821,15 +861,6 @@ function MainApp() {
                                     }) : (<div className={`col-span-full flex items-center justify-center py-8 text-[11px] font-medium italic ${themeClasses.textMuted}`}>{areaGeralFilter.length > 0 || cursoSearchTerm ? `Nenhum curso encontrado para a pesquisa e/ou filtros aplicados.` : 'Nenhum curso superior mapeado ou isolado.'}</div>)}
                                 </div>
                             </div>
-
-                            <a 
-                                className={`absolute -bottom-6 left-4 text-left text-[12px] font-medium opacity-70 transition-opacity hover:opacity-100 ${themeClasses.textMuted}`} 
-                                href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" 
-                                target="_blank" 
-                                rel="noreferrer"
-                            >
-                                Fonte: INEP/Censo da Educação Superior (2024)
-                            </a>
                         </div>
                     </div>
                 </div>
