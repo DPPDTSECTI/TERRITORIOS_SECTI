@@ -3,17 +3,17 @@ import ExcelExportButton from './ExcelExportButton';
 
 const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
     const images = [
-        "/img/hero/55177617481_a2f52dd9f0_o.jpg",
-        "/img/hero/55193881827_608169f0ec_o.jpg",
-        "/img/hero/55280502368_f86e6bea57_o.jpg",
-        "/img/hero/55284715576_5c6c560a5c_o.jpg",
-        "/img/hero/55287787257_7b4ae60fbf_o.jpg",
-        "/img/hero/54208024118_e48b529bdd_o.jpg",
-        "/img/hero/54400089577_6b2f2c3fce_o.jpg",
-        "/img/hero/54446840370_c6fa9c1d3c_o.jpg",
-        "/img/hero/54492136003_c06ca3e046_o.jpg",
-        "/img/hero/54718163457_5a44dc81e3_o.jpg",
-        "/img/hero/54893586223_d842cb4664_o.jpg"
+        { src: "/img/hero/55177617481_a2f52dd9f0_o.jpg", credit: "Amanda Ercília/GOVBA" },
+        { src: "/img/hero/55193881827_608169f0ec_o.jpg", credit: "Amanda Ercília/GOVBA" },
+        { src: "/img/hero/55280502368_f86e6bea57_o.jpg", credit: "Thuane Maria/GOVBA" },
+        { src: "/img/hero/55284715576_5c6c560a5c_o.jpg", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/55287787257_7b4ae60fbf_o.jpg", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/54208024118_e48b529bdd_o.jpg", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/54400089577_6b2f2c3fce_o.jpg", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/54446840370_c6fa9c1d3c_o.jpg", credit: "Matheus Landim/GOVBA" },
+        { src: "/img/hero/54492136003_c06ca3e046_o.jpg", credit: "Thuane Maria/GOVBA" },
+        { src: "/img/hero/54718163457_5a44dc81e3_o.jpg", credit: "Amanda Ercília/GOVBA" },
+        { src: "/img/hero/54893586223_d842cb4664_o.jpg", credit: "Matheus Landim/GOVBA" }
     ];
 
     const [currentImage, setCurrentImage] = useState(0);
@@ -131,12 +131,17 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
                                 }}
                             >
                                 <img 
-                                    src={img} 
+                                    src={img.src} 
                                     alt={`Paisagem da Bahia ${index + 1}`} 
                                     className="w-full h-full object-cover transform-gpu antialiased"
                                     style={{ imageRendering: 'high-quality' }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                                {img.credit && (
+                                    <p className="absolute bottom-4 right-4 z-40 text-white text-[10px] font-light bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md opacity-60 hover:opacity-100 transition-opacity">
+                                        Foto: {img.credit}
+                                    </p>
+                                )}
                             </div>
                         );
                     })}
