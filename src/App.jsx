@@ -391,7 +391,7 @@ function MainApp() {
         const renderCursoItem = (curso, idx) => {
             const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
             return (
-                <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:border-current ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50 hover:bg-slate-800/50' : 'bg-white shadow-sm border-slate-100 hover:bg-white'}`}>
                     <div className="flex flex-col items-start gap-1">
                         <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
                         {curso.areaGeral && (
@@ -999,7 +999,7 @@ function MainApp() {
                                         const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
                                         const hoverClasses = darkMode ? 'hover:border-current' : 'hover:border-current';
                                         return (
-                                        <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} hover:border-current ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                                        <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} ${hoverClasses} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
                                             <div className="flex flex-col items-start gap-1">
                                                 <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
                                                 {curso.areaGeral && (
