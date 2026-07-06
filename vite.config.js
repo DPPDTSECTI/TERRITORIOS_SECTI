@@ -8,7 +8,7 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v19'; // Atualizado para restaurar categorias (Centros de Pesquisa, etc)
+const CACHE_VERSION = 'v20'; // Atualizado para separar Univs Públicas e Privadas
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
@@ -204,6 +204,7 @@ function parseSpreadsheet(buffer) {
       const municipio = String(row['municipio'] || row['cidade'] || row['local'] || '').trim();
       const orgAcademica = String(row['orgacademica'] || '').trim();
       const categoriaAdm = String(row['categoriaadm'] || '').trim();
+      const rede = String(row['rede'] || '').trim(); // Nova coluna adicionada
       
       const cabeçalhoColunaA = Object.keys(rawRow)[0]; 
       const valorColunaA = String(rawRow[cabeçalhoColunaA] || '').trim(); 
@@ -213,7 +214,6 @@ function parseSpreadsheet(buffer) {
 
       // ==================== EXTRATOR DIRECIONADO PARA CRUZAMENTO ====================
       if (sheetNorm.includes('curso') || sheetNorm.includes('ensino')) {
-          // Na aba de cursos, o nome vem da coluna Universidade e o tipo de Org_academica
           entidadeRaw = String(row['universidade'] || row['ies'] || '').trim();
           tipoOriginal = String(orgAcademica).trim();
       } else {
@@ -228,15 +228,19 @@ function parseSpreadsheet(buffer) {
       let categoriaEntidade = null;
       let isCTI = false;
       
-      // ==================== MOTOR DE CLASSIFICAÇÃO RESTAURADO (Com Centros de Pesquisa) ====================
+      // ==================== MOTOR DE CLASSIFICAÇÃO RESTAURADO E ATUALIZADO ====================
       if (sheetNorm.includes('capacidade')) {
           isCTI = true; 
-          tipoFinal = tipoOriginal; // Mantém o Tipo visual idêntico ao da planilha (ex: "Centro de Pesquisa")
+          tipoFinal = tipoOriginal; 
 
           const tNorm = normalize(tipoOriginal);
           
-          // O mapeamento exato que o teu frontend precisa para não "sumir" com as abas
-          if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => tNorm.includes(c))) { categoriaEntidade = 'univs'; }
+          if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => tNorm.includes(c))) { 
+              categoriaEntidade = 'univsPublica'; // Força para pública conforme a sua indicação
+              if (!tNorm.includes('publica') && !tNorm.includes('federal') && !tNorm.includes('estadual')) {
+                  tipoFinal = tipoFinal ? `${tipoFinal} - Pública` : 'Universidade Pública';
+              }
+          }
           else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tNorm.includes(c))) { categoriaEntidade = 'ifs'; }
           else if (['centro de pesquisa', 'pesquisa'].some(c => tNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; }
           else if (['ict'].some(c => tNorm.includes(c))) { categoriaEntidade = 'icts'; }
@@ -249,16 +253,22 @@ function parseSpreadsheet(buffer) {
           isCTI = true; 
           
           const orgNorm = normalize(tipoOriginal);
-          if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => orgNorm.includes(c))) { categoriaEntidade = 'univs'; }
+          const catNorm = normalize(`${categoriaAdm} ${rede}`);
+
+          const isPrivada = catNorm.includes('privada') || catNorm.includes('lucrativo') || catNorm.includes('particular');
+
+          if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => orgNorm.includes(c))) { 
+              categoriaEntidade = isPrivada ? 'univsPrivada' : 'univsPublica'; 
+          }
           else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => orgNorm.includes(c))) { categoriaEntidade = 'ifs'; }
           else { categoriaEntidade = 'outros'; }
 
-          // Constrói o Tipo de Apresentação (Ex: Universidade - Pública Federal)
+          // Constrói o Tipo de Apresentação visual
           let tipoParts = [tipoOriginal];
-          const catNorm = categoriaAdm.toLowerCase();
-          if (catNorm.includes('privada') || catNorm.includes('lucrativos')) tipoParts.push('Privada');
+          if (isPrivada) tipoParts.push('Privada');
           else if (catNorm.includes('estadual')) tipoParts.push('Pública Estadual');
           else if (catNorm.includes('federal')) tipoParts.push('Pública Federal');
+          else tipoParts.push('Pública');
 
           tipoFinal = tipoParts.filter(Boolean).join(' - ');
       }
@@ -276,7 +286,6 @@ function parseSpreadsheet(buffer) {
          // 1. INJEÇÃO DE CAPACIDADE TERRITORIAL E CRUZAMENTO
          if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('ensino') || sheetNorm.includes('curso')) {
              if (isCTI && entidadesExpandida !== '') {
-                 // SÓ ADICIONA SE AINDA NÃO EXISTIR. A PLANILHA DE CURSOS NÃO SOBRESCREVE NADA.
                  const alreadyExists = territory.capacidadeRows.some(e => e.id === uniqueRowId);
                  if (!alreadyExists) {
                      territory.capacidadeRows.push({
