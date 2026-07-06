@@ -69,8 +69,9 @@ function MainApp() {
   const [semiMunsMin, setSemiMunsMin] = useState('');
   const [semiMunsMax, setSemiMunsMax] = useState('');
 
+  // ATUALIZADO: Agora suporta as Univs Divididas
   const [ctiFilters, setCtiFilters] = useState({
-      univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+      univsPublica: true, univsPrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
   });
 
   const sideFilterRef = useRef(null);
@@ -87,7 +88,7 @@ function MainApp() {
       setAreaGeralFilter([]);
       setCursoSearchTerm('');
       setCtiFilters({
-          univs: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+          univsPublica: true, univsPrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
       });
       setIsDropdownOpen(false);
   };
@@ -107,6 +108,8 @@ function MainApp() {
     debouncedSearchTerm,
     ifdmMin,
     ifdmMax,
+    semiMunsMin,
+    semiMunsMax,
     ctiFilters,
     areaGeralFilter,
     debouncedCursoSearchTerm,
@@ -114,11 +117,9 @@ function MainApp() {
 
   const handleSelectTerritory = useCallback((loc) => {
     setSelectedLocation(loc);
-    // Se selecionarmos um território, limpamos a barra de busca local para não criar conflito de overlap
     setSearchTerm(''); 
   }, []); 
 
-  // Fecha menus ao clicar fora
   useEffect(() => {
     function handleClickOutside(event) { 
         if (sideFilterRef.current && !sideFilterRef.current.contains(event.target)) {
@@ -133,21 +134,19 @@ function MainApp() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []); 
 
-  // Auto-scroll suave para o mapa
   useEffect(() => {
     if (selectedLocation && mapSectionRef.current) {
       setTimeout(() => { mapSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
     }
   }, [selectedLocation]);
 
-  // Controlador de Scroll da Janela para a Navbar
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
-        setNavVisible(false); // Esconde a descer
+        setNavVisible(false); 
       } else {
-        setNavVisible(true);  // Mostra a subir
+        setNavVisible(true);  
       }
       lastScrollY.current = currentScrollY;
     };
@@ -156,7 +155,7 @@ function MainApp() {
   }, []);
 
   const toggleCtiFilter = (key) => { setCtiFilters(prev => ({ ...prev, [key]: !prev[key] })); };
-  const ctiFilterKeys = useMemo(() => ['univs', 'ifs', 'icts', 'centrosPesquisa', 'espacos', 'parques', 'incubadoras'], []);
+  const ctiFilterKeys = useMemo(() => ['univsPublica', 'univsPrivada', 'ifs', 'icts', 'centrosPesquisa', 'espacos', 'parques', 'incubadoras'], []);
   const areAllCtiSelected = useMemo(() => ctiFilterKeys.every(key => ctiFilters[key]), [ctiFilters, ctiFilterKeys]);
 
   const handleToggleAllCti = () => {
@@ -198,7 +197,8 @@ function MainApp() {
 
   const getCtiBadgeStyle = (cat, isDark) => {
       const styles = {
-          univs: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-100',
+          univsPublica: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-100',
+          univsPrivada: isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/20' : 'bg-sky-50 text-sky-600 border-sky-100',
           ifs: isDark ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-red-50 text-red-600 border-red-100',
           icts: isDark ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' : 'bg-cyan-50 text-cyan-600 border-cyan-100',
           centrosPesquisa: isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -456,7 +456,7 @@ function MainApp() {
                                   <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
                               </label>
                               {[
-                                  { id: 'univs', label: 'Universidades' }, { id: 'ifs', label: 'Institutos Federais' },
+                                  { id: 'univsPublica', label: 'Univ. Públicas' }, { id: 'univsPrivada', label: 'Univ. Privadas' }, { id: 'ifs', label: 'Institutos Federais' },
                                   { id: 'icts', label: 'ICTs' }, { id: 'centrosPesquisa', label: 'Centros de Pesquisa' },
                                   { id: 'espacos', label: 'Espaços Dinamizadores' }, { id: 'parques', label: 'Parques Tecnológicos' },
                                   { id: 'incubadoras', label: 'Incubadoras' }
@@ -508,15 +508,16 @@ function MainApp() {
                 </div>
 
                 {/* Sub KPIs de CTI */}
-                <div className="grid grid-cols-4 lg:grid-cols-7 gap-2 lg:gap-3">
+                <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-3">
                     {[
-                        { id: 'univs', l: 'Univs.', v: dashboardData.subKpis.univs, pct: dashboardData.unfiltSubKpis.univs > 0 ? (dashboardData.subKpis.univs / dashboardData.unfiltSubKpis.univs)*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500', h: darkMode ? 'hover:border-blue-400' : 'hover:border-blue-600' },
-                        { id: 'ifs', l: 'Inst. Fed.', v: dashboardData.subKpis.ifs, pct: dashboardData.unfiltSubKpis.ifs > 0 ? (dashboardData.subKpis.ifs / dashboardData.unfiltSubKpis.ifs)*100 : 0, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500', h: darkMode ? 'hover:border-red-400' : 'hover:border-red-600' },
-                        { id: 'icts', l: 'ICTs', v: dashboardData.subKpis.icts, pct: dashboardData.unfiltSubKpis.icts > 0 ? (dashboardData.subKpis.icts / dashboardData.unfiltSubKpis.icts)*100 : 0, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', h: darkMode ? 'hover:border-cyan-400' : 'hover:border-cyan-600' },
-                        { id: 'centrosPesquisa', l: 'C. Pesquisa', v: dashboardData.subKpis.centrosPesquisa, pct: dashboardData.unfiltSubKpis.centrosPesquisa > 0 ? (dashboardData.subKpis.centrosPesquisa / dashboardData.unfiltSubKpis.centrosPesquisa)*100 : 0, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', h: darkMode ? 'hover:border-emerald-400' : 'hover:border-emerald-600' },
-                        { id: 'espacos', l: 'Espaços', v: dashboardData.subKpis.espacos, pct: dashboardData.unfiltSubKpis.espacos > 0 ? (dashboardData.subKpis.espacos / dashboardData.unfiltSubKpis.espacos)*100 : 0, c: darkMode ? 'text-indigo-400' : 'text-indigo-600', b: 'bg-indigo-500', h: darkMode ? 'hover:border-indigo-400' : 'hover:border-indigo-600' },
-                        { id: 'parques', l: 'Parques', v: dashboardData.subKpis.parques, pct: dashboardData.unfiltSubKpis.parques > 0 ? (dashboardData.subKpis.parques / dashboardData.unfiltSubKpis.parques)*100 : 0, c: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', b: 'bg-fuchsia-500', h: darkMode ? 'hover:border-fuchsia-400' : 'hover:border-fuchsia-600' },
-                        { id: 'incubadoras', l: 'Incub.', v: dashboardData.subKpis.incubadoras, pct: dashboardData.unfiltSubKpis.incubadoras > 0 ? (dashboardData.subKpis.incubadoras / dashboardData.unfiltSubKpis.incubadoras)*100 : 0, c: darkMode ? 'text-amber-400' : 'text-amber-600', b: 'bg-amber-500', h: darkMode ? 'hover:border-amber-400' : 'hover:border-amber-600' }
+                        { id: 'univsPublica', l: 'Univ. Pública', v: dashboardData.subKpis.univsPublica || 0, pct: (dashboardData.unfiltSubKpis.univsPublica || 0) > 0 ? ((dashboardData.subKpis.univsPublica || 0) / (dashboardData.unfiltSubKpis.univsPublica || 1))*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500', h: darkMode ? 'hover:border-blue-400' : 'hover:border-blue-600' },
+                        { id: 'univsPrivada', l: 'Univ. Privada', v: dashboardData.subKpis.univsPrivada || 0, pct: (dashboardData.unfiltSubKpis.univsPrivada || 0) > 0 ? ((dashboardData.subKpis.univsPrivada || 0) / (dashboardData.unfiltSubKpis.univsPrivada || 1))*100 : 0, c: darkMode ? 'text-sky-400' : 'text-sky-600', b: 'bg-sky-500', h: darkMode ? 'hover:border-sky-400' : 'hover:border-sky-600' },
+                        { id: 'ifs', l: 'Inst. Fed.', v: dashboardData.subKpis.ifs || 0, pct: (dashboardData.unfiltSubKpis.ifs || 0) > 0 ? ((dashboardData.subKpis.ifs || 0) / (dashboardData.unfiltSubKpis.ifs || 1))*100 : 0, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500', h: darkMode ? 'hover:border-red-400' : 'hover:border-red-600' },
+                        { id: 'icts', l: 'ICTs', v: dashboardData.subKpis.icts || 0, pct: (dashboardData.unfiltSubKpis.icts || 0) > 0 ? ((dashboardData.subKpis.icts || 0) / (dashboardData.unfiltSubKpis.icts || 1))*100 : 0, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', h: darkMode ? 'hover:border-cyan-400' : 'hover:border-cyan-600' },
+                        { id: 'centrosPesquisa', l: 'C. Pesquisa', v: dashboardData.subKpis.centrosPesquisa || 0, pct: (dashboardData.unfiltSubKpis.centrosPesquisa || 0) > 0 ? ((dashboardData.subKpis.centrosPesquisa || 0) / (dashboardData.unfiltSubKpis.centrosPesquisa || 1))*100 : 0, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', h: darkMode ? 'hover:border-emerald-400' : 'hover:border-emerald-600' },
+                        { id: 'espacos', l: 'Espaços', v: dashboardData.subKpis.espacos || 0, pct: (dashboardData.unfiltSubKpis.espacos || 0) > 0 ? ((dashboardData.subKpis.espacos || 0) / (dashboardData.unfiltSubKpis.espacos || 1))*100 : 0, c: darkMode ? 'text-indigo-400' : 'text-indigo-600', b: 'bg-indigo-500', h: darkMode ? 'hover:border-indigo-400' : 'hover:border-indigo-600' },
+                        { id: 'parques', l: 'Parques', v: dashboardData.subKpis.parques || 0, pct: (dashboardData.unfiltSubKpis.parques || 0) > 0 ? ((dashboardData.subKpis.parques || 0) / (dashboardData.unfiltSubKpis.parques || 1))*100 : 0, c: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', b: 'bg-fuchsia-500', h: darkMode ? 'hover:border-fuchsia-400' : 'hover:border-fuchsia-600' },
+                        { id: 'incubadoras', l: 'Incub.', v: dashboardData.subKpis.incubadoras || 0, pct: (dashboardData.unfiltSubKpis.incubadoras || 0) > 0 ? ((dashboardData.subKpis.incubadoras || 0) / (dashboardData.unfiltSubKpis.incubadoras || 1))*100 : 0, c: darkMode ? 'text-amber-400' : 'text-amber-600', b: 'bg-amber-500', h: darkMode ? 'hover:border-amber-400' : 'hover:border-amber-600' }
                     ].map((sK) => (
                         <div 
                             key={sK.id}
