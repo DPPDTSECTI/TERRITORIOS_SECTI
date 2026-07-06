@@ -110,6 +110,7 @@ export default function ConectaMap({
     const [userScale, setUserScale] = useState(1);
     const [userPan, setUserPan] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
+    const [isMunListExpanded, setIsMunListExpanded] = useState(false);
     
     const svgRef = useRef(null);
     const containerRef = useRef(null);
@@ -137,7 +138,11 @@ export default function ConectaMap({
         if (rafScaleId.current) cancelAnimationFrame(rafScaleId.current);
     }, []);
 
-    useEffect(() => { setUserScale(1); setUserPan({ x: 0, y: 0 }); }, [selectedTerritory]);
+    useEffect(() => {
+        setUserScale(1);
+        setUserPan({ x: 0, y: 0 });
+        setIsMunListExpanded(false);
+    }, [selectedTerritory]);
 
     useEffect(() => {
         setLoading(true);
@@ -487,6 +492,8 @@ export default function ConectaMap({
         return muns.sort();
     }, [selectedTerritory, filtroSemiarido, semiaridoMunicipios]);
 
+    const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
+
     return (
         <div ref={containerRef} className="relative isolate w-full h-full min-h-[500px] flex items-center justify-center bg-transparent rounded-xl overflow-hidden">
             
@@ -707,16 +714,24 @@ export default function ConectaMap({
                         {selectedTerritory.nome}
                     </h4>
                     <ul className="flex flex-col gap-1.5">
-                        {selectedTerritoryMunicipalities.map((m, idx) => {
+                        {municipalitiesToShow.map((m, idx) => {
                             const isSemi = semiaridoMunicipios.includes(normalizeName(m));
                             return (
                                 <li key={idx} className={`text-[11px] font-medium flex items-center gap-2 leading-tight ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                                     <span className={`shrink-0 w-2 h-2 rounded-full border ${isSemi ? 'bg-orange-500 border-orange-600' : (darkMode ? 'bg-slate-300 border-slate-400' : 'bg-slate-200 border-slate-300')}`}></span>
                                     {m}
                                 </li>
-                            )
+                            );
                         })}
                     </ul>
+                    {selectedTerritoryMunicipalities.length > 4 && (
+                        <button 
+                            onClick={() => setIsMunListExpanded(!isMunListExpanded)}
+                            className={`w-full mt-3 text-center text-[10px] font-bold uppercase tracking-wider py-2 rounded-lg transition-colors ${darkMode ? 'bg-slate-800/70 hover:bg-slate-700/90 text-slate-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'}`}
+                        >
+                            {isMunListExpanded ? 'Ver menos' : `Ver mais ${selectedTerritoryMunicipalities.length - 4}...`}
+                        </button>
+                    )}
                 </div>
             )}
 

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
-import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw } from 'lucide-react';
+import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
 import SobrePage from './components/SobrePage';
@@ -54,11 +54,18 @@ function MainApp() {
   const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
   const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
+  const [expandedList, setExpandedList] = useState(null);
+
+  // Filtros para o Modal Expandido
+  const [modalCursoSearchTerm, setModalCursoSearchTerm] = useState('');
+  const debouncedModalCursoSearchTerm = useDebounce(modalCursoSearchTerm, 300);
+  const [modalAreaGeralFilter, setModalAreaGeralFilter] = useState([]);
+  const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
 
   // Navbars e Scroll
   const [navVisible, setNavVisible] = useState(true);
   const lastScrollY = useRef(0);
-  
+
   // Menus Laterais
   const [isSideFilterOpen, setIsSideFilterOpen] = useState(false);
   const [isVerticalSearchOpen, setIsVerticalSearchOpen] = useState(false);
@@ -78,6 +85,7 @@ function MainApp() {
   const searchDropdownRef = useRef(null);
   const areaGeralRef = useRef(null);
   const mapSectionRef = useRef(null);
+  const modalAreaGeralRef = useRef(null);
 
   const resetGlobalFilters = () => {
       setSearchTerm('');
@@ -128,7 +136,12 @@ function MainApp() {
         if (searchDropdownRef.current && !searchDropdownRef.current.contains(event.target)) {
             setIsDropdownOpen(false);
         }
-        if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) setIsAreaGeralOpen(false);
+    if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) {
+        setIsAreaGeralOpen(false);
+    }
+    if (modalAreaGeralRef.current && !modalAreaGeralRef.current.contains(event.target)) {
+        setIsModalAreaGeralOpen(false);
+    }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -189,10 +202,28 @@ function MainApp() {
     });
   }; 
 
+  const handleModalAreaGeralToggle = (areaName) => {
+    setModalAreaGeralFilter(prev => {
+        const newFilters = new Set(prev);
+        if (newFilters.has(areaName)) {
+            newFilters.delete(areaName);
+        } else {
+            newFilters.add(areaName);
+        }
+        return Array.from(newFilters);
+    });
+  };
+
   const getAreaFilterButtonText = () => {
     if (areaGeralFilter.length === 0) return 'Filtrar Área';
     if (areaGeralFilter.length === 1) return `Área: ${areaGeralFilter[0]}`;
     return `${areaGeralFilter.length} Selecionadas`;
+  };
+
+  const getModalAreaFilterButtonText = () => {
+    if (modalAreaGeralFilter.length === 0) return 'Filtrar Área';
+    if (modalAreaGeralFilter.length === 1) return `Área: ${modalAreaGeralFilter[0]}`;
+    return `${modalAreaGeralFilter.length} Selecionadas`;
   };
 
   const getCtiBadgeStyle = (cat, isDark) => {
@@ -277,6 +308,26 @@ function MainApp() {
       return result;
   }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
+  const modalCursosFiltrados = useMemo(() => {
+    if (expandedList !== 'cursos') return [];
+    let result = cursosFiltrados || [];
+    if (modalAreaGeralFilter.length > 0) {
+        result = result.filter(c => modalAreaGeralFilter.includes(c.areaGeral || 'Não Informada'));
+    }
+    if (debouncedModalCursoSearchTerm) {
+        const term = normalize(debouncedModalCursoSearchTerm);
+        result = result.filter(curso => normalize(curso.curso).includes(term));
+    }
+    return result;
+  }, [cursosFiltrados, modalAreaGeralFilter, debouncedModalCursoSearchTerm, expandedList]);
+
+  const modalAreaGeralSummary = useMemo(() => {
+      if (expandedList !== 'cursos') return [];
+      const counts = {};
+      (cursosFiltrados || []).forEach(c => { counts[c.areaGeral || 'Não Informada'] = (counts[c.areaGeral || 'Não Informada'] || 0) + 1; });
+      return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  }, [cursosFiltrados, expandedList]);
+
   const hasActiveFilters = searchTerm !== '' || 
                            selectedLocation !== null || 
                            ifdmMin !== '' || 
@@ -289,7 +340,164 @@ function MainApp() {
                            !Object.values(ctiFilters).every(val => val === true);
 
   return (
-    <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}> 
+    <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
+      {expandedList && (() => {
+        const isCti = expandedList === 'cti';
+        const isCadeias = expandedList === 'cadeias';
+        const isCursos = expandedList === 'cursos';
+
+        let listData, title, renderItem;
+        
+        const renderCtiItem = (ent, idx) => (
+            <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
+                <div className="flex justify-between items-end mt-1">
+                    <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
+                        {ent.tipo || "Instituição"}
+                    </span>
+                    <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{ent.municipio}</span></div>
+                </div>
+            </div>
+        );
+
+        const renderCadeiaItem = (apl, idx) => (
+            <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                <div className="flex items-start justify-between mb-1.5">
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{apl.segmento}</span>
+                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
+                </div>
+                {apl.entidade && <span className="text-[11px] font-bold leading-tight mb-1">{fixWeirdCapitalization(apl.entidade)}</span>}
+                <div className={`p-2 rounded-lg border mt-1 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
+                    <span className="block text-[8px] font-black uppercase opacity-50 mb-1">Abrangência Municipal:</span>
+                    <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipiosPertencentes}>{apl.municipiosPertencentes}</p>
+                    {apl.municipioSatelite && apl.municipioSatelite !== '' && (
+                        <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
+                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Município(s) Satélite(s):</span>
+                            <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipioSatelite}>{apl.municipioSatelite}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+
+        const renderCursoItem = (curso, idx) => {
+            const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
+            return (
+                <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                    <div className="flex flex-col items-start gap-1">
+                        <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
+                        {curso.areaGeral && (
+                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>
+                                {curso.areaGeral}
+                            </span>
+                        )}
+                    </div>
+                    <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
+                        <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
+                        {(curso.categoriaAdm || curso.orgAcademica) && (
+                            <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">
+                                {[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (
+                                    <React.Fragment key={i}>
+                                        <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>{tag}</span>
+                                        {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        )}
+                        <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
+                            <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}>
+                                <svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg>
+                                <span className="truncate">{curso.municipio}</span>
+                            </span>
+                            <div className="flex items-center gap-1 shrink-0">
+                                {curso.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.nivel}</span>}
+                                {curso.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.modalidade}</span>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        if (isCti) {
+            listData = dashboardData.entidades;
+            title = 'Estruturas CT&I';
+            renderItem = renderCtiItem;
+        } else if (isCadeias) {
+            listData = dashboardData.aplIgs;
+            title = 'Cadeias Produtivas';
+            renderItem = renderCadeiaItem;
+        } else if (isCursos) {
+            listData = modalCursosFiltrados;
+            title = 'Cursos CT&I';
+            renderItem = renderCursoItem;
+        } else {
+            return null;
+        }
+
+        return (
+            <div className="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
+                <div className={`relative w-full ${isCursos ? 'max-w-6xl' : 'max-w-4xl'} h-[85vh] rounded-2xl border shadow-2xl flex flex-col ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'}`} onClick={e => e.stopPropagation()}>
+                    <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+                        <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title} ({listData.length})</h3>
+                        
+                        {isCursos && (
+                            <div className="flex-1 flex items-center justify-end gap-2">
+                                <div className="relative w-full max-w-xs">
+                                    <input 
+                                        type="text" 
+                                        placeholder="Buscar curso..." 
+                                        value={modalCursoSearchTerm} 
+                                        onChange={(e) => setModalCursoSearchTerm(e.target.value)} 
+                                        className={`w-full h-8 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
+                                    />
+                                    <Search size={14} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} />
+                                    {modalCursoSearchTerm && (
+                                        <button onClick={() => setModalCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-red-500 text-slate-400">
+                                            <Eraser size={14} />
+                                        </button>
+                                    )}
+                                </div>
+                                {modalAreaGeralSummary.length > 0 && (
+                                    <div className="relative" ref={modalAreaGeralRef}>
+                                        <button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || modalAreaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
+                                            <Filter size={14} />
+                                            <span className="whitespace-nowrap hidden sm:inline">{getModalAreaFilterButtonText()}</span>
+                                        </button>
+                                        {isModalAreaGeralOpen && (
+                                            <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
+                                                <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
+                                                    {modalAreaGeralSummary.map(area => { 
+                                                        const styles = getAreaStyles(area.name, darkMode);
+                                                        const isSelected = modalAreaGeralFilter.includes(area.name);
+                                                        return (
+                                                            <button key={area.name} onClick={() => handleModalAreaGeralToggle(area.name)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
+                                                                <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span></div>
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span> 
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                                {modalAreaGeralFilter.length > 0 && <button onClick={() => { setModalAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        <button onClick={handleCloseModal} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700' : 'text-slate-500 hover:bg-slate-100'}`} title="Fechar"><Minimize size={18} /></button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 hide-scroll">
+                        <div className={`grid grid-cols-1 gap-3 ${isCursos ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'}`}>
+                            {listData.map(renderItem)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+      })()}
       <Helmet>
         <title>Painel Territorial CT&I | Governo da Bahia</title>
         <meta name="description" content="Plataforma interativa da SECTI com indicadores de Ciência, Tecnologia, Inovação e Cadeias Produtivas dos 27 Territórios de Identidade da Bahia." />
@@ -490,16 +698,35 @@ function MainApp() {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {[
-                            { l: 'Capacidade CTI', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500' },
-                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500' },
-                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-slate-300' : 'text-slate-700', b: 'bg-slate-400', tr: true },
-                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true },
-                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', tr: true },
+                            { l: 'Capacidade CTI', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500', sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500', sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
+                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-slate-300' : 'text-slate-700', b: 'bg-slate-400', tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e' },
+                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/' },
                         ].map((k, idx) => (
-                            <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
-                                <p className={`text-[9px] font-black uppercase tracking-widest mb-1 opacity-60 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{k.l}</p>
+                            <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
+                                <div className="flex items-center justify-between">
+                                    <p className={`text-[9px] font-black uppercase tracking-widest mb-1 opacity-60 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{k.l}</p>
+                                    {k.sourceText && (
+                                        <div className="relative group flex items-center justify-center">
+                                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
+                                                <Info size={12} />
+                                            </button>
+                                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                <div className={`p-2 rounded-lg text-[9px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                                    <span className="block font-bold mb-1 opacity-70">Fonte:</span>
+                                                    {k.sourceLink ? (
+                                                        <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
+                                                    ) : (
+                                                        <span className="block opacity-80">{k.sourceText}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                                 <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1.5 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{k.v}</p>
-                                <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50">
+                                <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50 overflow-hidden rounded-b-xl">
                                     <div className={`h-full ${k.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, k.pct))}%` }}></div>
                                 </div>
                             </div>
@@ -522,11 +749,11 @@ function MainApp() {
                         <div 
                             key={sK.id}
                             onClick={() => handleCtiKpiClick(sK.id)}
-                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center overflow-hidden transition-all duration-300 cursor-pointer ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'} ${ctiFilters[sK.id] ? `opacity-100 ${sK.h}` : 'opacity-30 grayscale hover:opacity-60 hover:grayscale-0'}`}
+                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center transition-all duration-300 cursor-pointer ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'} ${ctiFilters[sK.id] ? `opacity-100 ${sK.h}` : 'opacity-30 grayscale hover:opacity-60 hover:grayscale-0'}`}
                         >
                             <span className={`text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{sK.l}</span>
                             <span className={`text-xl font-black leading-none pb-1 drop-shadow-sm ${sK.c}`}>{sK.v || 0}</span>
-                            <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50">
+                            <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50 overflow-hidden rounded-b-xl">
                                 <div className={`h-full ${sK.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, sK.pct))}%` }}></div>
                             </div>
                         </div>
@@ -537,8 +764,8 @@ function MainApp() {
                 <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[calc(100vh-180px)] min-h-[500px] w-full mt-4 mb-3">
                     
                     {/* COLUNA DO MAPA (40%) */}
-                    <div ref={mapSectionRef} className="w-full lg:w-[40%] flex flex-col relative">
-                        <div className={`rounded-[2rem] border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
+                    <div ref={mapSectionRef} className="w-full lg:w-[40%] flex flex-col">
+                        <div className={`rounded-[2rem] border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
                             <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
                                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                                 <span>Motor Cartográfico</span>
@@ -546,11 +773,11 @@ function MainApp() {
                                     <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                     </button>
-                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
-                                        <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+                                        <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                             <span className="block font-bold mb-1 opacity-70">Fontes dos Dados:</span>
-                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
-                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
+                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
+                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
                                         </div>
                                     </div>
                                 </div>
@@ -571,12 +798,34 @@ function MainApp() {
                     <div className="w-full lg:w-[60%] flex flex-col gap-4 h-full overflow-hidden">
                         <div className="flex flex-col sm:flex-row gap-4 flex-[0.8] min-h-0">
                             {/* LISTA 1: ESTRUTURAS CT&I */}
-                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
-                                    <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
-                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
-                                        {dashboardData.entidades.length}
-                                    </span>
+                                    <div className="flex items-center gap-1.5">
+                                        <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
+                                        <div className="relative group flex items-center justify-center z-50">
+                                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
+                                            </button>
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                                    <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
+                                                    <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">
+                                                        INEP/ Censo de Educação Superior (2022)
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
+                                            {dashboardData.entidades.length}
+                                        </span>
+                                        {dashboardData.entidades.length > 0 && (
+                                            <button onClick={() => setExpandedList('cti')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
+                                                <Expand size={14} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-3 hide-scroll">
                                     <div className="flex flex-col gap-2">
@@ -598,7 +847,7 @@ function MainApp() {
                             </div>
 
                             {/* LISTA 2: CADEIAS PRODUTIVAS */}
-                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                     <div className="flex items-center gap-1.5">
                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cadeias Produtivas</h4>
@@ -606,17 +855,24 @@ function MainApp() {
                                             <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                             </button>
-                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                                <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                                     <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                                    <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                    <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">
                                                         DataSebrae / Indicações Geográficas
                                                     </a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>{dashboardData.aplIgs.length}</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>{dashboardData.aplIgs.length}</span>
+                                        {dashboardData.aplIgs.length > 0 && (
+                                            <button onClick={() => setExpandedList('cadeias')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
+                                                <Expand size={14} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-3 hide-scroll">
                                     <div className="flex flex-col gap-2">
@@ -654,16 +910,21 @@ function MainApp() {
                                         <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                         </button>
-                                        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                            <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                        <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                                 <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                                <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                            <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">
                                                     INEP/ Censo de Educação Superior (2022)
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
                                     <span className={`px-2 py-0.5 rounded-md text-[9px] font-black hidden lg:inline-block ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{cursosFiltrados.length}</span>
+                                    {cursosFiltrados.length > 0 && (
+                                        <button onClick={() => setExpandedList('cursos')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
+                                            <Expand size={14} />
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="flex items-center gap-2">
