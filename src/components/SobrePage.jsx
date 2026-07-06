@@ -6,7 +6,7 @@ import { Map as MapIcon, Settings, Sun, Download } from 'lucide-react';
 // ==========================================
 const SobrePage = ({ darkMode }) => {
   const SectionTitle = ({ number, title }) => (
-    <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 mt-8 border-b border-slate-200/20 pb-2">
+    <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 pt-8 border-b border-slate-200/20 pb-2">
       {number}. {title}
     </h3>
   );
@@ -14,19 +14,19 @@ const SobrePage = ({ darkMode }) => {
   return (
     <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
       <div className={`backdrop-blur-2xl rounded-[2rem] border shadow-2xl p-8 lg:p-12 mb-8 transition-all duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-white/60'}`}>
-        <h2 className="text-3xl lg:text-4xl font-black mb-8 tracking-tighter">Sobre o Painel SECTI Territórios</h2>
-        <div className={`prose prose-sm sm:prose-base max-w-none ${darkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-600'}`}>
+        <h2 className="text-3xl lg:text-4xl font-black mb-12 tracking-tighter">Sobre o Painel SECTI Territórios</h2>
+        <div className={`text-sm sm:text-base max-w-none space-y-6 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           
           <SectionTitle number="1" title="O Projeto" />
-          <p className="leading-relaxed">O <strong>Painel Territorial de CT&I da Bahia</strong> é uma plataforma digital interativa, desenvolvida pela Secretaria de Ciência, Tecnologia e Inovação (SECTI), para consolidar, analisar e dar transparência aos principais dados do ecossistema de CT&I nos 27 Territórios de Identidade do estado.</p>
+          <p className="leading-relaxed">O <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Painel Territorial de CT&I da Bahia</strong> é uma plataforma digital interativa, desenvolvida pela Secretaria de Ciência, Tecnologia e Inovação (SECTI), para consolidar, analisar e dar transparência aos principais dados do ecossistema de CT&I nos 27 Territórios de Identidade do estado.</p>
           <p className="leading-relaxed">A ferramenta foi concebida como um instrumento estratégico para mapear as capacidades, vocações e desafios de cada região, oferecendo uma visão integrada e georreferenciada de ativos cruciais para o desenvolvimento socioeconômico.</p>
 
           <SectionTitle number="2" title="Nossos Objetivos" />
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Apoiar a Tomada de Decisão:</strong> Fornecer dados qualificados para subsidiar o planejamento e a formulação de políticas públicas.</li>
-            <li><strong>Promover a Transparência:</strong> Disponibilizar de forma aberta informações sobre investimentos, infraestrutura e indicadores de CT&I.</li>
-            <li><strong>Fomentar a Articulação:</strong> Facilitar a identificação de sinergias entre governo, setor produtivo, academia e sociedade civil.</li>
-            <li><strong>Democratizar a Informação:</strong> Servir como fonte de consulta para pesquisadores, estudantes, gestores e investidores.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Apoiar a Tomada de Decisão:</strong> Fornecer dados qualificados para subsidiar o planejamento e a formulação de políticas públicas.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Promover a Transparência:</strong> Disponibilizar de forma aberta informações sobre investimentos, infraestrutura e indicadores de CT&I.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Fomentar a Articulação:</strong> Facilitar a identificação de sinergias entre governo, setor produtivo, academia e sociedade civil.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Democratizar a Informação:</strong> Servir como fonte de consulta para pesquisadores, estudantes, gestores e investidores.</li>
           </ul>
 
           <SectionTitle number="3" title="Definições e Indicadores (KPIs)" />
@@ -45,22 +45,22 @@ const SobrePage = ({ darkMode }) => {
           </div>
 
           <SectionTitle number="4" title="Fontes dos Dados" />
-          <p>A riqueza de informações é resultado da consolidação de múltiplas fontes, garantindo abrangência e confiabilidade:</p>
+          <p className="leading-relaxed">A riqueza de informações é resultado da consolidação de múltiplas fontes, garantindo abrangência e confiabilidade:</p>
           <ul className="list-disc pl-5 space-y-2 text-sm">
-            <li><strong>SECTI/SharePoint:</strong> Mapeamento de entidades, programas e infraestruturas de CT&I.</li>
-            <li><strong>SEPLAN-BA:</strong> Dados geográficos e demográficos, incluindo a delimitação dos Territórios de Identidade.</li>
-            <li><strong>IBGE:</strong> Dados populacionais e malhas territoriais dos municípios.</li>
-            <li><strong>FIRJAN:</strong> Índice FIRJAN de Desenvolvimento Municipal (IFDM).</li>
-            <li><strong>INEP/MEC:</strong> Dados do Censo da Educação Superior.</li>
-            <li><strong>Fontes Setoriais e Acadêmicas:</strong> Informações sobre Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs).</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>SECTI/SharePoint:</strong> Mapeamento de entidades, programas e infraestruturas de CT&I.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>SEPLAN-BA:</strong> Dados geográficos e demográficos, incluindo a delimitação dos Territórios de Identidade.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>IBGE:</strong> Dados populacionais e malhas territoriais dos municípios.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>FIRJAN:</strong> Índice FIRJAN de Desenvolvimento Municipal (IFDM).</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>INEP/MEC:</strong> Dados do Censo da Educação Superior.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Fontes Setoriais e Acadêmicas:</strong> Informações sobre Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs).</li>
           </ul>
 
           <SectionTitle number="5" title="Metodologia e Tratamento dos Dados" />
           <ol className="list-decimal pl-5 space-y-2">
-            <li><strong>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
-            <li><strong>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
-            <li><strong>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong>média ponderada pela população</strong> de cada município.</li>
-            <li><strong>Geração de Relatórios:</strong> A funcionalidade de exportação de relatórios em PDF segue as normas da <strong>ABNT (NBR 14724 e 6023)</strong>.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>média ponderada pela população</strong> de cada município.</li>
+            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Geração de Relatórios:</strong> A funcionalidade de exportação de relatórios em PDF segue as normas da <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>ABNT (NBR 14724 e 6023)</strong>.</li>
           </ol>
 
           <SectionTitle number="6" title="Guia de Funcionalidades" />
