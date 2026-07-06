@@ -147,6 +147,13 @@ function MainApp() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []); 
 
+  const handleCloseModal = () => {
+    setExpandedList(null);
+    setModalCursoSearchTerm('');
+    setModalAreaGeralFilter([]);
+    setIsModalAreaGeralOpen(false);
+  };
+
   useEffect(() => {
     if (selectedLocation && mapSectionRef.current) {
       setTimeout(() => { mapSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
@@ -795,10 +802,10 @@ function MainApp() {
                     </div>
 
                     {/* COLUNA DAS LISTAS (60%) */}
-                    <div className="w-full lg:w-[60%] flex flex-col gap-4 h-full overflow-hidden">
+                    <div className="w-full lg:w-[60%] flex flex-col gap-4 h-full">
                         <div className="flex flex-col sm:flex-row gap-4 flex-[0.8] min-h-0">
                             {/* LISTA 1: ESTRUTURAS CT&I */}
-                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all overflow-hidden ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                     <div className="flex items-center gap-1.5">
                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
@@ -847,7 +854,7 @@ function MainApp() {
                             </div>
 
                             {/* LISTA 2: CADEIAS PRODUTIVAS */}
-                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all overflow-hidden ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                     <div className="flex items-center gap-1.5">
                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cadeias Produtivas</h4>
@@ -893,7 +900,7 @@ function MainApp() {
                                                         <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipioSatelite}>{apl.municipioSatelite}</p>
                                                     </div>
                                                 )}
-                                            </div>
+                                                </div>
                                         </div>
                                     )) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma cadeia isolada para os filtros ativos.</div>)}
                                     </div>
@@ -902,7 +909,7 @@ function MainApp() {
                         </div>
 
                         {/* LISTA 3: CURSOS SUPERIORES */}
-                        <div className={`flex-[0.6] min-h-0 relative rounded-[1.5rem] border shadow-sm flex flex-col transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                        <div className={`flex-[0.6] min-h-0 relative rounded-[1.5rem] border shadow-sm flex flex-col transition-all overflow-hidden ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                             <div className={`p-3 border-b flex items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                 <div className="flex items-center gap-2">
                                     <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cursos CT&I</h4>
@@ -986,7 +993,6 @@ function MainApp() {
                                 )}
                                 </div>
                             </div>
-
                             <div className="flex-1 p-3 overflow-y-auto hide-scroll">
                                 <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-2.5">
                                     {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => {
@@ -1029,6 +1035,7 @@ function MainApp() {
                                     );
                                     }) : (<div className={`col-span-full flex items-center justify-center py-6 text-[10px] font-medium italic ${themeClasses.textMuted}`}>{areaGeralFilter.length > 0 || cursoSearchTerm ? `Nenhum curso encontrado para a pesquisa e/ou filtros aplicados.` : 'Nenhum curso superior mapeado ou isolado.'}</div>)}
                                 </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1036,7 +1043,6 @@ function MainApp() {
                 </div>
 
                 </div>
-            </div>
           } />
 
         </Routes>
