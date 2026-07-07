@@ -107,7 +107,6 @@ function MainApp() {
     lastUpdate,
     carregarDadosDoSharePoint,
     filteredOptions,
-    territoriesDynamicStats,
     dashboardData,
     semiaridoMunicipios
   } = useTerritoriosData({
@@ -119,8 +118,6 @@ function MainApp() {
     semiMunsMin,
     semiMunsMax,
     ctiFilters,
-    areaGeralFilter,
-    debouncedCursoSearchTerm,
   });
 
   const handleSelectTerritory = useCallback((loc) => {
@@ -295,26 +292,153 @@ function MainApp() {
       textMuted: darkMode ? 'text-slate-400' : 'text-slate-500',
       cardHover: darkMode ? 'hover:bg-slate-800/50 hover:border-slate-600' : 'hover:bg-white hover:border-slate-300'
   };
+  
+  // --- LÓGICA DE FILTRAGEM EM CASCATA ---
+  // 1. `isMunValid` é uma função helper para verificar se um município deve ser incluído com base no filtro do semiárido.
+  const isMunValid = useCallback((munName) => {
+    if (!munName) return false;
+    if (filtroSemiarido && !semiaridoMunicipios.includes(normalize(munName))) return false;
+    return true;
+  }, [filtroSemiarido, semiaridoMunicipios]);
 
+  // 2. `cursosFiltradosPorTexto` aplica apenas o filtro de busca textual na lista de cursos base.
+  // Isso serve como base para a contagem de áreas, garantindo que a contagem reflita a busca mas não o filtro de área.
+  const cursosFiltradosPorTexto = useMemo(() => {
+    if (!debouncedCursoSearchTerm) return dashboardData.cursos || [];
+    const term = normalize(debouncedCursoSearchTerm);
+    return (dashboardData.cursos || []).filter(curso => normalize(curso.curso).includes(term));
+  }, [dashboardData.cursos, debouncedCursoSearchTerm]);
+
+  // 3. `areaGeralSummary` calcula as contagens de cursos por área GERAL, com base na lista já filtrada por texto.
+  // Isso garante que o dropdown de filtro de área mostre contagens precisas em relação ao que o usuário digitou na busca.
   const areaGeralSummary = useMemo(() => {
-      const counts = {};
-      (dashboardData.cursos || []).forEach(c => {
-          const area = c.areaGeral || 'Não Informada';
-          counts[area] = (counts[area] || 0) + 1;
-      });
-      return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
-  }, [dashboardData.cursos]);
+    const counts = {};
+    (cursosFiltradosPorTexto || []).forEach(c => {
+        const area = c.areaGeral || 'Não Informada';
+        counts[area] = (counts[area] || 0) + 1;
+    });
+    return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  }, [cursosFiltradosPorTexto]);
 
+  // 4. `cursosFiltrados` é a lista final de cursos para exibição, aplicando o filtro de área sobre a lista já filtrada por texto.
   const cursosFiltrados = useMemo(() => {
-      let result = dashboardData.cursos || [];
-      if (areaGeralFilter.length > 0) result = result.filter(c => areaGeralFilter.includes(c.areaGeral || 'Não Informada'));
-      if (debouncedCursoSearchTerm) {
-          const term = normalize(debouncedCursoSearchTerm);
-          result = result.filter(curso => normalize(curso.curso).includes(term));
-      }
-      return result;
-  }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
+    if (areaGeralFilter.length === 0) return cursosFiltradosPorTexto;
+    return cursosFiltradosPorTexto.filter(c => areaGeralFilter.includes(c.areaGeral || 'Não Informada'));
+  }, [cursosFiltradosPorTexto, areaGeralFilter]);
 
+  // 5. `todasAsAreasGerais` é a lista completa de todas as áreas possíveis, usada para renderizar todas as opções no dropdown.
+  // É derivada de `territoriosData` para ser estável e não mudar com os filtros.
+  const todasAsAreasGerais = useMemo(() => {
+    const areas = new Set();
+    territoriosData.forEach(t => {
+        (t.cursosDetalhado || []).forEach(c => {
+            areas.add(c.areaGeral || 'Não Informada');
+        });
+    });
+    return [...areas].sort();
+  }, [territoriosData]);
+
+  // 6. `territoriesDynamicStats` é recalculado aqui para que o mapa possa refletir os filtros de curso.
+  const territoriesDynamicStats = useMemo(() => {
+    const stats = {}; const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+    const cursoTerm = normalize(debouncedCursoSearchTerm);
+    const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
+
+    const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
+    const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
+
+    territoriosData.forEach(t => {
+        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
+        const qtdSemiVal = t.qtdSemiarido || 0;
+        
+        let passesIntervals = true;
+        if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) passesIntervals = false;
+        if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) passesIntervals = false;
+        if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) passesIntervals = false;
+        if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) passesIntervals = false;
+
+        let somaIfdmPop = 0; let somaPop = 0;
+        if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
+            t.desenvolvimentoDetalhado.forEach(m => {
+                if (isMunValid(m.municipio)) {
+                    if (Number(m.ifdm) > 0 && Number(m.populacao) > 0) { somaIfdmPop += (Number(m.ifdm) * Number(m.populacao)); somaPop += Number(m.populacao); }
+                }
+            });
+        } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
+            somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal; somaPop = t.desenvolvimento.populacaoTotal;
+        }
+        
+        const validCti = (t.entidadesDetalhadas || []).filter(ent => {
+            if (!isMunValid(ent.municipio) || (ent.categoria && !ctiFilters[ent.categoria])) return false;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
+                if (!terms.every(term => searchString.includes(term))) return false;
+            }
+            return true;
+        });
+        
+        const validCadeias = (t.cadeiasProdutivasDetalhado || []).filter(cad => {
+            if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
+                if (!terms.every(term => searchString.includes(term))) return false;
+            }
+            return true;
+        });
+        
+        const validCursos = (t.cursosDetalhado || []).filter(curso => {
+            if (!isMunValid(curso.municipio)) return false;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
+                if (!terms.every(term => searchString.includes(term))) return false;
+            }
+            if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
+            if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
+            
+            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
+            let catCurso = null;
+            const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
+            if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
+                catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
+            } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
+                catCurso = 'ifs';
+            }
+            if (catCurso && !ctiFilters[catCurso]) return false;
+
+            return true;
+        });
+        
+        let matchesSearch = true;
+        if (rawTerm) {
+            const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
+            const tMatches = terms.every(term => normalize(t.nome).includes(term));
+            const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
+            matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
+        }
+
+        let hasDataForFilters = true;
+        if (isCtiFiltered && isCursoFiltered) {
+            hasDataForFilters = validCti.length > 0 && validCursos.length > 0;
+        } else if (isCtiFiltered) {
+            hasDataForFilters = validCti.length > 0;
+        } else if (isCursoFiltered) {
+            hasDataForFilters = validCursos.length > 0;
+        }
+
+        const matchesFilters = passesIntervals && matchesSearch && hasDataForFilters;
+
+        stats[normalize(t.nome)] = {
+            ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
+            capacidadeCti: String(validCti.length), 
+            cadeiasIgs: String(validCadeias.length),
+            cursos: String(validCursos.length),
+            pctSemiarido: t.pctSemiarido, 
+            matchesFilters: matchesFilters 
+        };
+    });
+    return stats;
+  }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, isMunValid]);
+  
   const modalCursosFiltrados = useMemo(() => {
     if (expandedList !== 'cursos') return [];
     let result = cursosFiltrados || [];
@@ -331,7 +455,7 @@ function MainApp() {
   const modalAreaGeralSummary = useMemo(() => {
       if (expandedList !== 'cursos') return [];
       const counts = {};
-      (cursosFiltrados || []).forEach(c => { counts[c.areaGeral || 'Não Informada'] = (counts[c.areaGeral || 'Não Informada'] || 0) + 1; });
+      (cursosFiltrados || []).forEach(c => { counts[c.areaGeral || 'Não Informada'] = (counts[c.areaGeral || 'Não Informada'] || 0) + 1; }); // This is correct for the modal, as it should filter on the already filtered list.
       return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
   }, [cursosFiltrados, expandedList]);
 
@@ -966,20 +1090,29 @@ function MainApp() {
                                             <div className={`absolute right-0 top-[100%] mt-2 w-64 sm:w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
                                                 <span className="block text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
                                                 <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
-                                                    {areaGeralSummary.map(area => { 
-                                                        const styles = getAreaStyles(area.name, darkMode);
-                                                        const isSelected = areaGeralFilter.includes(area.name);
+                                                    {todasAsAreasGerais.map(areaName => {
+                                                        const areaData = areaGeralSummary.find(a => a.name === areaName);
+                                                        const count = areaData ? areaData.count : 0;
+                                                        const styles = getAreaStyles(areaName, darkMode);
+                                                        const isSelected = areaGeralFilter.includes(areaName);
+
+                                                        // Não renderiza a opção se ela não tiver cursos correspondentes E não estiver selecionada.
+                                                        // Isso limpa a lista de opções irrelevantes, mas mantém as seleções ativas visíveis para que possam ser desmarcadas.
+                                                        if (count === 0 && !isSelected) {
+                                                            return null;
+                                                        }
+
                                                         return (
                                                             <button
-                                                                key={area.name}
-                                                                onClick={() => handleAreaGeralToggle(area.name)}
+                                                                key={areaName}
+                                                                onClick={() => handleAreaGeralToggle(areaName)}
                                                                 className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}
                                                             >
                                                                 <div className="flex items-center gap-1.5 pr-1">
                                                                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
-                                                                    <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span>
+                                                                    <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span>
                                                                 </div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span> 
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{count}</span>
                                                             </button>
                                                         );
                                                     })}

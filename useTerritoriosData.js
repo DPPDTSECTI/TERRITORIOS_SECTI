@@ -30,8 +30,6 @@ export default function useTerritoriosData(filters) {
         semiMunsMin,
         semiMunsMax,
         ctiFilters,
-        areaGeralFilter,
-        debouncedCursoSearchTerm,
     } = filters;
 
     const [territoriosData, setTerritoriosData] = useState([]);
@@ -154,106 +152,6 @@ export default function useTerritoriosData(filters) {
         return results.sort((a, b) => a.nome.localeCompare(b.nome));
     }, [debouncedSearchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters]);
 
-    const territoriesDynamicStats = useMemo(() => {
-      const stats = {}; const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
-      const cursoTerm = normalize(debouncedCursoSearchTerm);
-      const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
-
-      const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
-      const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
-
-      territoriosData.forEach(t => {
-          const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
-          const qtdSemiVal = t.qtdSemiarido || 0;
-          
-          let passesIntervals = true;
-          if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) passesIntervals = false;
-          if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) passesIntervals = false;
-          if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) passesIntervals = false;
-          if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) passesIntervals = false;
-
-          let somaIfdmPop = 0; let somaPop = 0;
-          if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
-              t.desenvolvimentoDetalhado.forEach(m => {
-                  if (isMunValid(m.municipio)) {
-                      if (Number(m.ifdm) > 0 && Number(m.populacao) > 0) { somaIfdmPop += (Number(m.ifdm) * Number(m.populacao)); somaPop += Number(m.populacao); }
-                  }
-              });
-          } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
-              somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal; somaPop = t.desenvolvimento.populacaoTotal;
-          }
-          
-          const validCti = (t.entidadesDetalhadas || []).filter(ent => {
-              if (!isMunValid(ent.municipio) || (ent.categoria && !ctiFilters[ent.categoria])) return false;
-              if (rawTerm && !isSearchTermATerritory) {
-                  const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
-                  if (!terms.every(term => searchString.includes(term))) return false;
-              }
-              return true;
-          });
-          
-          const validCadeias = (t.cadeiasProdutivasDetalhado || []).filter(cad => {
-              if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
-              if (rawTerm && !isSearchTermATerritory) {
-                  const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
-                  if (!terms.every(term => searchString.includes(term))) return false;
-              }
-              return true;
-          });
-          
-          const validCursos = (t.cursosDetalhado || []).filter(curso => {
-              if (!isMunValid(curso.municipio)) return false;
-              if (rawTerm && !isSearchTermATerritory) {
-                  const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
-                  if (!terms.every(term => searchString.includes(term))) return false;
-              }
-              if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
-              if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
-              
-              const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-              let catCurso = null;
-              const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
-              if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                  catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
-              } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                  catCurso = 'ifs';
-              }
-              if (catCurso && !ctiFilters[catCurso]) return false;
-
-              return true;
-          });
-          
-          let matchesSearch = true;
-          if (rawTerm) {
-              const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
-              const tMatches = terms.every(term => normalize(t.nome).includes(term));
-              const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
-              matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
-          }
-
-          let hasDataForFilters = true;
-          if (isCtiFiltered && isCursoFiltered) {
-              hasDataForFilters = validCti.length > 0 || validCursos.length > 0;
-          } else if (isCtiFiltered) {
-              hasDataForFilters = validCti.length > 0;
-          } else if (isCursoFiltered) {
-              hasDataForFilters = validCursos.length > 0;
-          }
-
-          const matchesFilters = passesIntervals && matchesSearch && hasDataForFilters;
-
-          stats[normalize(t.nome)] = {
-              ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
-              capacidadeCti: String(validCti.length), 
-              cadeiasIgs: String(validCadeias.length),
-              cursos: String(validCursos.length), // <---- ESTA É A LINHA MÁGICA QUE FALTAVA
-              pctSemiarido: t.pctSemiarido, 
-              matchesFilters: matchesFilters 
-          };
-      });
-      return stats;
-  }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm]);
-
     const dashboardData = useMemo(() => {
     if (!territoriosData || territoriosData.length === 0) {
         return { 
@@ -271,9 +169,6 @@ export default function useTerritoriosData(filters) {
 
     const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
-    
-    const cursoTerm = normalize(debouncedCursoSearchTerm);
-    const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
     
     // CORREÇÃO: Variáveis atualizadas para as novas categorias Pública/Privada
     const kpisPanel = { univsPublica: 0, univsPrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
@@ -337,24 +232,6 @@ export default function useTerritoriosData(filters) {
                 const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
                 if (!terms.every(term => searchString.includes(term))) return;
             }
-
-            if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return;
-            if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return;
-            
-            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-            let catCurso = null;
-            
-            // CORREÇÃO: Aplica a mesma diferenciação de Pública/Privada para os cursos
-            const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
-            if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
-            } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                catCurso = 'ifs';
-            }
-            
-            if (catCurso && !ctiFilters[catCurso]) return;
-            
-            entidadesComCursosValidos.add(normalize(curso.entidade)); 
             cursosFlat.push({ ...curso, territorioRef: t.nome });
         });
 
@@ -366,8 +243,6 @@ export default function useTerritoriosData(filters) {
             }
             
             if (ent.categoria && !ctiFilters[ent.categoria]) return;
-
-            if (isCursoFiltered && !entidadesComCursosValidos.has(normalize(ent.entidade))) return;
 
             entidadesFlat.push({ ...ent, territorioRef: t.nome });
             if (ent.id && !globalIds.has(ent.id)) {
@@ -447,7 +322,7 @@ export default function useTerritoriosData(filters) {
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, globalStats]);
+  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, globalStats]);
 
     return {
         territoriosData,
@@ -457,7 +332,6 @@ export default function useTerritoriosData(filters) {
         lastUpdate,
         carregarDadosDoSharePoint,
         filteredOptions,
-        territoriesDynamicStats,
         dashboardData,
     };
 }
