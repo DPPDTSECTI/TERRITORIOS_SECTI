@@ -37,6 +37,79 @@ function useDebounce(value, delay) {
 }
 
 // ==========================================
+// COMPONENTES DE ITEM DE LISTA (MEMOIZED)
+// ==========================================
+
+const CtiListItem = React.memo(({ item, themeClasses, darkMode, getCtiBadgeStyle, fixWeirdCapitalization }) => (
+    <div className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+        <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(item.entidade)}</span>
+        <div className="flex justify-between items-end mt-1">
+            <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(item.categoria, darkMode)}`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
+                {item.tipo || "Instituição"}
+            </span>
+            <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{item.municipio}</span></div>
+        </div>
+    </div>
+));
+
+const CadeiaListItem = React.memo(({ item, themeClasses, darkMode, getBadgeStyle, fixWeirdCapitalization }) => (
+    <div className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+        <div className="flex items-start justify-between mb-1.5">
+            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{item.segmento}</span>
+            <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${getBadgeStyle(item.tipo)}`}>{item.tipo}</span>
+        </div>
+        {item.entidade && <span className="text-[11px] font-bold leading-tight mb-1">{fixWeirdCapitalization(item.entidade)}</span>}
+        <div className={`p-2 rounded-lg border mt-1 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
+            <span className="block text-[8px] font-black uppercase opacity-50 mb-1">Abrangência Municipal:</span>
+            <p className="text-[9px] font-medium leading-relaxed opacity-90" title={item.municipiosPertencentes}>{item.municipiosPertencentes}</p>
+            {item.municipioSatelite && item.municipioSatelite !== '' && (
+                <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
+                    <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Município(s) Satélite(s):</span>
+                    <p className="text-[9px] font-medium leading-relaxed opacity-90" title={item.municipioSatelite}>{item.municipioSatelite}</p>
+                </div>
+            )}
+        </div>
+    </div>
+));
+
+const CursoListItem = React.memo(({ item, darkMode, getAreaStyles, fixWeirdCapitalization }) => {
+    const areaStyles = getAreaStyles(item.areaGeral, darkMode);
+    return (
+        <div className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:border-current ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50 hover:bg-slate-800/50' : 'bg-white shadow-sm border-slate-100 hover:bg-white'}`}>
+            <div className="flex flex-col items-start gap-1">
+                <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(item.curso)}>{fixWeirdCapitalization(item.curso)}</h5>
+                {item.areaGeral && (
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(item.areaGeral, darkMode).activeBg} ${getAreaStyles(item.areaGeral, darkMode).text}`}>
+                        {item.areaGeral}
+                    </span>
+                )}
+            </div>
+            <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
+                <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={fixWeirdCapitalization(item.entidade)}>{fixWeirdCapitalization(item.entidade)}</span>
+                {(item.categoriaAdm || item.orgAcademica) && (
+                    <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">
+                        {[item.categoriaAdm, item.orgAcademica].filter(Boolean).map((tag, i, arr) => (
+                            <React.Fragment key={i}>
+                                <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>{tag}</span>
+                                {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                )}
+                <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
+                    <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${item.municipio} • ${item.territorioRef}`}><svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg><span className="truncate">{item.municipio}</span></span>
+                    <div className="flex items-center gap-1 shrink-0">
+                        {item.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{item.nivel}</span>}
+                        {item.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{item.modalidade}</span>}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+});
+
+// ==========================================
 // COMPONENTE PRINCIPAL DO APP
 // ==========================================
 function MainApp() {
@@ -197,37 +270,26 @@ function MainApp() {
     }
   };
 
-  const handleAreaGeralToggle = (areaName) => {
-    setAreaGeralFilter(prev => {
-        const newFilters = new Set(prev);
-        if (newFilters.has(areaName)) newFilters.delete(areaName);
-        else newFilters.add(areaName);
-        return Array.from(newFilters);
-    });
-  }; 
-
-  const handleModalAreaGeralToggle = (areaName) => {
-    setModalAreaGeralFilter(prev => {
-        const newFilters = new Set(prev);
-        if (newFilters.has(areaName)) {
-            newFilters.delete(areaName);
-        } else {
-            newFilters.add(areaName);
-        }
-        return Array.from(newFilters);
+  /**
+   * Cria um handler genérico para alternar um item em um filtro de array.
+   * @param {React.Dispatch<React.SetStateAction<any[]>>} setter - A função `setState` do filtro.
+   * @returns {(itemName: any) => void}
+   */
+  const createArrayFilterToggleHandler = (setter) => (itemName) => {
+    setter(prev => {
+      const newFilters = new Set(prev);
+      if (newFilters.has(itemName)) newFilters.delete(itemName);
+      else newFilters.add(itemName);
+      return Array.from(newFilters);
     });
   };
+  const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
+  const handleModalAreaGeralToggle = createArrayFilterToggleHandler(setModalAreaGeralFilter);
 
-  const getAreaFilterButtonText = () => {
-    if (areaGeralFilter.length === 0) return 'Filtrar Área';
-    if (areaGeralFilter.length === 1) return `Área: ${areaGeralFilter[0]}`;
-    return `${areaGeralFilter.length} Selecionadas`;
-  };
-
-  const getModalAreaFilterButtonText = () => {
-    if (modalAreaGeralFilter.length === 0) return 'Filtrar Área';
-    if (modalAreaGeralFilter.length === 1) return `Área: ${modalAreaGeralFilter[0]}`;
-    return `${modalAreaGeralFilter.length} Selecionadas`;
+  const getAreaFilterButtonText = (filterArray) => {
+    if (filterArray.length === 0) return 'Filtrar Área';
+    if (filterArray.length === 1) return `Área: ${filterArray[0]}`;
+    return `${filterArray.length} Selecionadas`;
   };
 
   const getCtiBadgeStyle = (cat, isDark) => {
@@ -268,18 +330,18 @@ function MainApp() {
       else if (norm.includes('multidisciplinar')) theme = 'purple';
 
       const styles = {
-          green: { dot: 'bg-emerald-500', text: darkMode ? 'text-emerald-400' : 'text-emerald-600', activeBg: darkMode ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-100 border-emerald-200', countBg: darkMode ? 'bg-emerald-500/30 text-emerald-400' : 'bg-white text-emerald-800' },
-          cyan: { dot: 'bg-gov-cyan-500', text: darkMode ? 'text-gov-cyan-400' : 'text-gov-cyan-700', activeBg: darkMode ? 'bg-gov-cyan-500/20 border-gov-cyan-500/50' : 'bg-gov-cyan-100 border-gov-cyan-200', countBg: darkMode ? 'bg-gov-cyan-500/30 text-gov-cyan-400' : 'bg-white text-gov-cyan-800' },
-          blueDark: { dot: 'bg-gov-blueDark-500', text: darkMode ? 'text-blue-400' : 'text-gov-blueDark-700', activeBg: darkMode ? 'bg-blue-500/20 border-blue-500/50' : 'bg-gov-blueDark-100 border-gov-blueDark-200', countBg: darkMode ? 'bg-blue-500/30 text-blue-400' : 'bg-white text-gov-blueDark-800' },
-          magenta: { dot: 'bg-gov-magenta-500', text: darkMode ? 'text-gov-magenta-400' : 'text-gov-magenta-700', activeBg: darkMode ? 'bg-gov-magenta-500/20 border-gov-magenta-500/50' : 'bg-gov-magenta-100 border-gov-magenta-200', countBg: darkMode ? 'bg-gov-magenta-500/30 text-gov-magenta-400' : 'bg-white text-gov-magenta-800' },
-          red: { dot: 'bg-gov-red-500', text: darkMode ? 'text-gov-red-400' : 'text-gov-red-700', activeBg: darkMode ? 'bg-gov-red-500/20 border-gov-red-500/50' : 'bg-gov-red-100 border-gov-red-200', countBg: darkMode ? 'bg-gov-red-500/30 text-gov-red-400' : 'bg-white text-gov-red-800' },
-          yellow: { dot: 'bg-gov-yellow-500', text: darkMode ? 'text-gov-yellow-400' : 'text-gov-yellow-700', activeBg: darkMode ? 'bg-gov-yellow-500/20 border-gov-yellow-500/50' : 'bg-gov-yellow-100 border-gov-yellow-200', countBg: darkMode ? 'bg-gov-yellow-500/30 text-gov-yellow-400' : 'bg-white text-gov-yellow-800' },
-          teal: { dot: 'bg-teal-500', text: darkMode ? 'text-teal-400' : 'text-teal-700', activeBg: darkMode ? 'bg-teal-500/20 border-teal-500/50' : 'bg-teal-100 border-teal-200', countBg: darkMode ? 'bg-teal-500/30 text-teal-400' : 'bg-white text-teal-800' },
-          purple: { dot: 'bg-purple-500', text: darkMode ? 'text-purple-400' : 'text-purple-700', activeBg: darkMode ? 'bg-purple-500/20 border-purple-500/50' : 'bg-purple-100 border-purple-200', countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-white text-purple-800' },
-          indigo: { dot: 'bg-indigo-500', text: darkMode ? 'text-indigo-400' : 'text-indigo-600', activeBg: darkMode ? 'bg-indigo-500/20 border-indigo-500/50' : 'bg-indigo-100 border-indigo-200', countBg: darkMode ? 'bg-indigo-500/30 text-indigo-400' : 'bg-white text-indigo-800' },
-          fuchsia: { dot: 'bg-fuchsia-500', text: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', activeBg: darkMode ? 'bg-fuchsia-500/20 border-fuchsia-500/50' : 'bg-fuchsia-100 border-fuchsia-200', countBg: darkMode ? 'bg-fuchsia-500/30 text-fuchsia-400' : 'bg-white text-fuchsia-800' },
-          orange: { dot: 'bg-amber-500', text: darkMode ? 'text-amber-400' : 'text-amber-600', activeBg: darkMode ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-100 border-amber-200', countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-white text-purple-800' },
-          default: { dot: 'bg-slate-500', text: darkMode ? 'text-slate-400' : 'text-slate-600', activeBg: darkMode ? 'bg-slate-500/20 border-slate-500/50' : 'bg-slate-100 border-slate-200', countBg: darkMode ? 'bg-slate-500/30 text-slate-400' : 'bg-white text-slate-800' }
+          green: { dot: 'bg-emerald-500', text: darkMode ? 'text-emerald-400' : 'text-emerald-600', activeBg: darkMode ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-100 border-emerald-200', countBg: darkMode ? 'bg-emerald-500/30 text-emerald-400' : 'bg-emerald-100 text-emerald-600' },
+          cyan: { dot: 'bg-gov-cyan-500', text: darkMode ? 'text-gov-cyan-400' : 'text-gov-cyan-700', activeBg: darkMode ? 'bg-gov-cyan-500/20 border-gov-cyan-500/50' : 'bg-gov-cyan-100 border-gov-cyan-200', countBg: darkMode ? 'bg-gov-cyan-500/30 text-gov-cyan-400' : 'bg-gov-cyan-100 text-gov-cyan-700' },
+          blueDark: { dot: 'bg-gov-blueDark-500', text: darkMode ? 'text-blue-400' : 'text-gov-blueDark-700', activeBg: darkMode ? 'bg-blue-500/20 border-blue-500/50' : 'bg-gov-blueDark-100 border-gov-blueDark-200', countBg: darkMode ? 'bg-blue-500/30 text-blue-400' : 'bg-gov-blueDark-100 text-gov-blueDark-700' },
+          magenta: { dot: 'bg-gov-magenta-500', text: darkMode ? 'text-gov-magenta-400' : 'text-gov-magenta-700', activeBg: darkMode ? 'bg-gov-magenta-500/20 border-gov-magenta-500/50' : 'bg-gov-magenta-100 border-gov-magenta-200', countBg: darkMode ? 'bg-gov-magenta-500/30 text-gov-magenta-400' : 'bg-gov-magenta-100 text-gov-magenta-700' },
+          red: { dot: 'bg-gov-red-500', text: darkMode ? 'text-gov-red-400' : 'text-gov-red-700', activeBg: darkMode ? 'bg-gov-red-500/20 border-gov-red-500/50' : 'bg-gov-red-100 border-gov-red-200', countBg: darkMode ? 'bg-gov-red-500/30 text-gov-red-400' : 'bg-gov-red-100 text-gov-red-700' },
+          yellow: { dot: 'bg-gov-yellow-500', text: darkMode ? 'text-gov-yellow-400' : 'text-gov-yellow-700', activeBg: darkMode ? 'bg-gov-yellow-500/20 border-gov-yellow-500/50' : 'bg-gov-yellow-100 border-gov-yellow-200', countBg: darkMode ? 'bg-gov-yellow-500/30 text-gov-yellow-400' : 'bg-gov-yellow-100 text-gov-yellow-700' },
+          teal: { dot: 'bg-teal-500', text: darkMode ? 'text-teal-400' : 'text-teal-700', activeBg: darkMode ? 'bg-teal-500/20 border-teal-500/50' : 'bg-teal-100 border-teal-200', countBg: darkMode ? 'bg-teal-500/30 text-teal-400' : 'bg-teal-100 text-teal-700' },
+          purple: { dot: 'bg-purple-500', text: darkMode ? 'text-purple-400' : 'text-purple-700', activeBg: darkMode ? 'bg-purple-500/20 border-purple-500/50' : 'bg-purple-100 border-purple-200', countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-purple-100 text-purple-700' },
+          indigo: { dot: 'bg-indigo-500', text: darkMode ? 'text-indigo-400' : 'text-indigo-600', activeBg: darkMode ? 'bg-indigo-500/20 border-indigo-500/50' : 'bg-indigo-100 border-indigo-200', countBg: darkMode ? 'bg-indigo-500/30 text-indigo-400' : 'bg-indigo-100 text-indigo-600' },
+          fuchsia: { dot: 'bg-fuchsia-500', text: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', activeBg: darkMode ? 'bg-fuchsia-500/20 border-fuchsia-500/50' : 'bg-fuchsia-100 border-fuchsia-200', countBg: darkMode ? 'bg-fuchsia-500/30 text-fuchsia-400' : 'bg-fuchsia-100 text-fuchsia-600' },
+          orange: { dot: 'bg-amber-500', text: darkMode ? 'text-amber-400' : 'text-amber-600', activeBg: darkMode ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-100 border-amber-200', countBg: darkMode ? 'bg-amber-500/30 text-amber-400' : 'bg-amber-100 text-amber-600' },
+          default: { dot: 'bg-slate-500', text: darkMode ? 'text-slate-400' : 'text-slate-600', activeBg: darkMode ? 'bg-slate-500/20 border-slate-500/50' : 'bg-slate-100 border-slate-200', countBg: darkMode ? 'bg-slate-500/30 text-slate-400' : 'bg-slate-100 text-slate-600' }
       };
       return styles[theme] || styles.default;
   };
@@ -477,92 +539,26 @@ function MainApp() {
         const isCadeias = expandedList === 'cadeias';
         const isCursos = expandedList === 'cursos';
 
-        let listData, title, renderItem;
-        
-        const renderCtiItem = (ent, idx) => (
-            <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-                <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
-                <div className="flex justify-between items-end mt-1">
-                    <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
-                        {ent.tipo || "Instituição"}
-                    </span>
-                    <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{ent.municipio}</span></div>
-                </div>
-            </div>
-        );
-
-        const renderCadeiaItem = (apl, idx) => (
-            <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-                <div className="flex items-start justify-between mb-1.5">
-                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{apl.segmento}</span>
-                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
-                </div>
-                {apl.entidade && <span className="text-[11px] font-bold leading-tight mb-1">{fixWeirdCapitalization(apl.entidade)}</span>}
-                <div className={`p-2 rounded-lg border mt-1 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
-                    <span className="block text-[8px] font-black uppercase opacity-50 mb-1">Abrangência Municipal:</span>
-                    <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipiosPertencentes}>{apl.municipiosPertencentes}</p>
-                    {apl.municipioSatelite && apl.municipioSatelite !== '' && (
-                        <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
-                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Município(s) Satélite(s):</span>
-                            <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipioSatelite}>{apl.municipioSatelite}</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-
-        const renderCursoItem = (curso, idx) => {
-            const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
-            return (
-                <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:border-current ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50 hover:bg-slate-800/50' : 'bg-white shadow-sm border-slate-100 hover:bg-white'}`}>
-                    <div className="flex flex-col items-start gap-1">
-                        <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
-                        {curso.areaGeral && (
-                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>
-                                {curso.areaGeral}
-                            </span>
-                        )}
-                    </div>
-                    <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
-                        <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
-                        {(curso.categoriaAdm || curso.orgAcademica) && (
-                            <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">
-                                {[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (
-                                    <React.Fragment key={i}>
-                                        <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>{tag}</span>
-                                        {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                        )}
-                        <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
-                            <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}>
-                                <svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg>
-                                <span className="truncate">{curso.municipio}</span>
-                            </span>
-                            <div className="flex items-center gap-1 shrink-0">
-                                {curso.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.nivel}</span>}
-                                {curso.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.modalidade}</span>}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
+        let listData, title, renderItem, counterStyle, itemKey;
 
         if (isCti) {
             listData = dashboardData.entidades;
             title = 'Estruturas CT&I';
-            renderItem = renderCtiItem;
+            itemKey = (item, idx) => item.id || idx;
+            renderItem = (item, idx) => <CtiListItem item={item} themeClasses={themeClasses} darkMode={darkMode} getCtiBadgeStyle={getCtiBadgeStyle} fixWeirdCapitalization={fixWeirdCapitalization} />;
+            counterStyle = darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700';
         } else if (isCadeias) {
             listData = dashboardData.aplIgs;
             title = 'Cadeias Produtivas';
-            renderItem = renderCadeiaItem;
+            itemKey = (item, idx) => item.id || idx;
+            renderItem = (item, idx) => <CadeiaListItem item={item} themeClasses={themeClasses} darkMode={darkMode} getBadgeStyle={getBadgeStyle} fixWeirdCapitalization={fixWeirdCapitalization} />;
+            counterStyle = darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700';
         } else if (isCursos) {
             listData = modalCursosFiltrados;
             title = 'Cursos CT&I';
-            renderItem = renderCursoItem;
+            itemKey = (item, idx) => item.id || idx;
+            renderItem = (item, idx) => <CursoListItem item={item} darkMode={darkMode} getAreaStyles={getAreaStyles} fixWeirdCapitalization={fixWeirdCapitalization} />;
+            counterStyle = darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700';
         } else {
             return null;
         }
@@ -571,7 +567,12 @@ function MainApp() {
             <div className="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
                 <div className={`relative w-full ${isCursos ? 'max-w-6xl' : 'max-w-4xl'} h-[85vh] rounded-2xl border shadow-2xl flex flex-col ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'}`} onClick={e => e.stopPropagation()}>
                     <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-                        <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title} ({listData.length})</h3>
+                        <div className="flex items-center gap-3">
+                            <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title}</h3>
+                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${counterStyle}`}>
+                                {listData.length}
+                            </span>
+                        </div>
                         
                         {isCursos && (
                             <div className="flex-1 flex items-center justify-end gap-2">
@@ -594,7 +595,7 @@ function MainApp() {
                                     <div className="relative" ref={modalAreaGeralRef}>
                                         <button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || modalAreaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
                                             <Filter size={14} />
-                                            <span className="whitespace-nowrap hidden sm:inline">{getModalAreaFilterButtonText()}</span>
+                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText(modalAreaGeralFilter)}</span>
                                         </button>
                                         {isModalAreaGeralOpen && (
                                             <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
@@ -605,7 +606,7 @@ function MainApp() {
                                                         return (
                                                             <button key={area.name} onClick={() => handleModalAreaGeralToggle(area.name)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
                                                                 <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span></div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span> 
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${styles.countBg}`}>{area.count}</span> 
                                                             </button>
                                                         );
                                                     })}
@@ -622,7 +623,7 @@ function MainApp() {
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 hide-scroll">
                         <div className={`grid grid-cols-1 gap-3 ${isCursos ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'}`}>
-                            {listData.map(renderItem)}
+                            {listData.map((item, idx) => React.cloneElement(renderItem(item, idx), { key: itemKey(item, idx) }))}
                         </div>
                     </div>
                 </div>
@@ -1083,7 +1084,7 @@ function MainApp() {
                                             className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
                                         >
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText()}</span>
+                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText(areaGeralFilter)}</span>
                                         </button>
 
                                         {isAreaGeralOpen && (
@@ -1112,7 +1113,7 @@ function MainApp() {
                                                                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
                                                                     <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span>
                                                                 </div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{count}</span>
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${styles.countBg}`}>{count}</span>
                                                             </button>
                                                         );
                                                     })}

@@ -20,6 +20,18 @@ const normalize = (() => {
     };
 })();
 
+// Helper para extrair o nome do município satélite de forma robusta,
+// lidando com múltiplas chaves possíveis nos dados de origem.
+const extrairSatelite = (cad) => {
+    const val = cad.municipioSatelite || cad.municipiosSatelites || cad.satelite || cad.municipio_satelite || cad.municipios_satelites || cad.Satelite || cad.Satelites;
+    if (!val || val === 'undefined' || val === 'null') return '';
+    if (Array.isArray(val)) {
+        return val.map(item => typeof item === 'object' ? (item.Title || item.nome || item.NOME || item.value || '') : item).filter(Boolean).join(', ').trim();
+    }
+    if (typeof val === 'object') return val.Title || val.nome || val.NOME || val.value || '';
+    return String(val).trim();
+};
+
 export default function useTerritoriosData(filters) {
     const {
         selectedLocation,
@@ -181,16 +193,6 @@ export default function useTerritoriosData(filters) {
     let unfiltCursosCount = 0;
     const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
 
-    const extrairSatelite = (cad) => {
-        const val = cad.municipioSatelite || cad.municipiosSatelites || cad.satelite || cad.municipio_satelite || cad.municipios_satelites || cad.Satelite || cad.Satelites;
-        if (!val || val === 'undefined' || val === 'null') return '';
-        if (Array.isArray(val)) {
-            return val.map(item => typeof item === 'object' ? (item.Title || item.nome || item.NOME || item.value || '') : item).filter(Boolean).join(', ').trim();
-        }
-        if (typeof val === 'object') return val.Title || val.nome || val.NOME || val.value || '';
-        return String(val).trim();
-    };
-
     targetList.forEach(t => {
         unfiltCursosCount += (t.cursosDetalhado || []).length;
 
@@ -307,7 +309,12 @@ export default function useTerritoriosData(filters) {
         cadeias: unfiltCadeiasIds.size > 0 ? (globalCadeiasIds.size / unfiltCadeiasIds.size) * 100 : 0,
         cursos: unfiltCursosCount > 0 ? (cursosFlat.length / unfiltCursosCount) * 100 : 0
     };
-
+    
+    // Helper para criar uma chave única para cursos, evitando duplicatas quando o ID não existe.
+    const getCursoKey = (c) => {
+        return c.id || `${normalize(c.entidade)}-${normalize(c.curso)}-${normalize(c.municipio)}`;
+    };
+    
     return { 
         topKpis: {
             capacidadeCti: String(globalIds.size), 
@@ -320,7 +327,7 @@ export default function useTerritoriosData(filters) {
         topKpisPct, subKpis: kpisPanel, unfiltSubKpis: unfiltKpisPanel,
         entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
-        cursos: Array.from(new Map(cursosFlat.map(item => [item.id || Math.random(), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
+        cursos: Array.from(new Map(cursosFlat.map(item => [getCursoKey(item), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };
   }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, globalStats]);
 
