@@ -10,7 +10,7 @@
           "id": "ent_faculdaderegionaldojacuipe_capimgrosso",
           "municipio": "Capim Grosso",
           "entidade": "Faculdade Regional Do JacuíPe",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -18,7 +18,7 @@
           "id": "ent_faculdadecapimgrossofcg_capimgrosso",
           "municipio": "Capim Grosso",
           "entidade": "Faculdade Capim Grosso (FCG)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -320,7 +320,7 @@
           "id": "ent_universidadefederaldooestedabahiaufob_santamariadavitoria",
           "municipio": "Santa Maria da Vitória",
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         }
@@ -424,7 +424,7 @@
           "id": "ent_universidadefederaldooestedabahiaufob_barreiras",
           "municipio": "Barreiras",
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 7
         },
@@ -432,7 +432,7 @@
           "id": "ent_universidadedoestadodabahiauneb_barreiras",
           "municipio": "Barreiras",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -440,7 +440,7 @@
           "id": "ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes",
           "municipio": "Luís Eduardo Magalhães",
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -480,7 +480,7 @@
           "id": "ent_centrouniversitarioarnaldohoracioferreira_luiseduardomagalhaes",
           "municipio": "Luís Eduardo Magalhães",
           "entidade": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -488,7 +488,7 @@
           "id": "ent_centrouniversitariomauriciodenassauuninassau_barreiras",
           "municipio": "Barreiras",
           "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -496,7 +496,7 @@
           "id": "ent_centrouniversitariounirb_barreiras",
           "municipio": "Barreiras",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -504,7 +504,7 @@
           "id": "ent_faculdadesulamericabahia_luiseduardomagalhaes",
           "municipio": "Luís Eduardo Magalhães",
           "entidade": "Faculdade SulaméRica Bahia",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -980,7 +980,7 @@
           "id": "ent_universidadedoestadodabahiauneb_valenca",
           "municipio": "Valença",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -1012,7 +1012,7 @@
           "id": "ent_faculdadedafraternidadedevalenca_valenca",
           "municipio": "Valença",
           "entidade": "Faculdade DA FRATERNIDADE DE VALENÇA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -1020,7 +1020,7 @@
           "id": "ent_faculdadezacariasdegoes_valenca",
           "municipio": "Valença",
           "entidade": "Faculdade ZACARIAS DE GÓES",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -1287,7 +1287,7 @@
           "id": "ent_universidadedoestadodabahiauneb_seabra",
           "municipio": "Seabra",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 2
         },
@@ -1554,7 +1554,7 @@
           "id": "ent_universidadedoestadodabahiauneb_eunapolis",
           "municipio": "Eunápolis",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -1562,7 +1562,7 @@
           "id": "ent_universidadefederaldosuldabahiaufsb_portoseguro",
           "municipio": "Porto Seguro",
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -1586,7 +1586,7 @@
           "id": "ent_universidadefederaldosuldabahiaufsb_eunapolis",
           "municipio": "Eunápolis",
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -1816,7 +1816,7 @@
           "id": "ent_universidadedoestadodabahiauneb_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -1824,7 +1824,7 @@
           "id": "ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -1848,7 +1848,7 @@
           "id": "ent_faculdadeanhangueradeteixeiradefreitas_teixeiradefreitas",
           "municipio": "Teixeira de Freitas",
           "entidade": "Faculdade ANHANGUERA DE TEIXEIRA DE FREITAS",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -1856,7 +1856,7 @@
           "id": "ent_faculdadedecienciassociaisaplicadas_itamaraju",
           "municipio": "Itamaraju",
           "entidade": "Faculdade DE CIÊNCIAS SOCIAIS APLICADAS",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -2267,7 +2267,7 @@
           "id": "ent_universidadedoestadodabahiauneb_irece",
           "municipio": "Irecê",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 6
         },
@@ -2275,7 +2275,7 @@
           "id": "ent_universidadedoestadodabahiauneb_xiquexique",
           "municipio": "Xique-Xique",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -2315,7 +2315,7 @@
           "id": "ent_faculdadeirece_irece",
           "municipio": "Irecê",
           "entidade": "Faculdade IRECÊ",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -2323,7 +2323,7 @@
           "id": "ent_faculdadeagesdemedicinadeirece_irece",
           "municipio": "Irecê",
           "entidade": "Faculdade AGES De Medicina De Irecê",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -2601,7 +2601,7 @@
           "id": "ent_universidadedoestadodabahiauneb_pauloafonso",
           "municipio": "Paulo Afonso",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 3
         },
@@ -2617,7 +2617,7 @@
           "id": "ent_universidadefederaldovaledosaofranciscounivasf_pauloafonso",
           "municipio": "Paulo Afonso",
           "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -2625,7 +2625,7 @@
           "id": "ent_centrouniversitariodoriosaofranciscounirios_pauloafonso",
           "municipio": "Paulo Afonso",
           "entidade": "Centro UniversitáRio Do Rio SãO Francisco Unirios",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -2765,7 +2765,7 @@
           "id": "ent_centrouniversitariodoriosaofranciscounirios_pauloafonsosededaiesead",
           "municipio": "Paulo Afonso (sede da IES - EAD)",
           "entidade": "Centro UniversitáRio Do Rio SãO Francisco Unirios",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -2841,7 +2841,7 @@
           "id": "ent_universidadedoestadodabahiauneb_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -2873,7 +2873,7 @@
           "id": "ent_centrouniversitariounirb_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -2881,7 +2881,7 @@
           "id": "ent_centrouniversitariouniftc_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "Centro Universitário UniFTC",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -2889,7 +2889,7 @@
           "id": "ent_faculdadesantoantonio_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "Faculdade SANTO ANTONIO",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -2897,7 +2897,7 @@
           "id": "ent_faculdadesantissimosacramento_alagoinhas",
           "municipio": "Alagoinhas",
           "entidade": "Faculdade SANTÍSSIMO SACRAMENTO",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -3309,7 +3309,7 @@
           "id": "ent_universidadeestadualdesantacruzuesc_ilheus",
           "municipio": "Ilhéus",
           "entidade": "Universidade Estadual de Santa Cruz (UESC)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 12
         },
@@ -3317,7 +3317,7 @@
           "id": "ent_universidadefederaldosuldobahia_itabuna",
           "municipio": "Itabuna",
           "entidade": "Universidade Federal Do Sul Do Bahia",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -3405,7 +3405,7 @@
           "id": "ent_centrodeensinosuperiordeilheus_ilheus",
           "municipio": "Ilhéus",
           "entidade": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -3413,7 +3413,7 @@
           "id": "ent_faculdadeanhangueradeitabuna_itabuna",
           "municipio": "Itabuna",
           "entidade": "Faculdade ANHANGUERA DE ITABUNA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -3421,7 +3421,7 @@
           "id": "ent_faculdademadrethais_ilheus",
           "municipio": "Ilhéus",
           "entidade": "Faculdade MADRE THAIS",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -3429,7 +3429,7 @@
           "id": "ent_faculdadedeexcelenciaunexdeitabuna_itabuna",
           "municipio": "Itabuna",
           "entidade": "Faculdade De ExcelêNcia UNEX De Itabuna",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -3437,7 +3437,7 @@
           "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
           "municipio": "Itabuna",
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
-          "tipo": "Universidade - Pública Federal",
+          "tipo": "camp.Universidade Pública Federal",
           "categoria": "univsPublica",
           "quantidade": 1
         }
@@ -4203,7 +4203,7 @@
           "id": "ent_universidadedoestadodabahiauneb_ipiau",
           "municipio": "Ipiaú",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -4211,7 +4211,7 @@
           "id": "ent_universidadeestadualdosudoestedabahiauesb_jequie",
           "municipio": "Jequié",
           "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -4235,7 +4235,7 @@
           "id": "ent_faculdadeanhangueradejequie_jequie",
           "municipio": "Jequié",
           "entidade": "Faculdade ANHANGUERA DE JEQUIÉ",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -4243,7 +4243,7 @@
           "id": "ent_faculdadedeexcelenciaunexdejequie_jequie",
           "municipio": "Jequié",
           "entidade": "Faculdade De ExcelêNcia UNEX De Jequié",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -4537,7 +4537,7 @@
           "id": "ent_universidadeestadualdosudoestedabahiauesb_itapetinga",
           "municipio": "Itapetinga",
           "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 3
         },
@@ -4760,7 +4760,7 @@
           "id": "ent_universidadedoestadodabahiauneb_salvador",
           "municipio": "Salvador",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 29
         },
@@ -4768,7 +4768,7 @@
           "id": "ent_universidadefederaldabahiaufba_salvador",
           "municipio": "Salvador",
           "entidade": "Universidade Federal da Bahia (UFBA)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -4776,7 +4776,7 @@
           "id": "ent_universidadedaintegracaointernacionaldalusofoniaafrobrasileira_saofranciscodoconde",
           "municipio": "São Francisco do Conde",
           "entidade": "Universidade Da IntegraçãO Internacional Da Lusofonia Afro-Brasileira",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -4800,7 +4800,7 @@
           "id": "ent_universidadedoestadodabahiauneb_camacari",
           "municipio": "Camaçari",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -4808,7 +4808,7 @@
           "id": "ent_universidadedoestadodabahiauneb_laurodefreitas",
           "municipio": "Lauro de Freitas",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -4840,7 +4840,7 @@
           "id": "ent_universidadefederaldabahiaufba_camacari",
           "municipio": "Camaçari",
           "entidade": "Universidade Federal da Bahia (UFBA)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -5000,7 +5000,7 @@
           "id": "ent_centrouniversitariodesalvador_salvador",
           "municipio": "Salvador",
           "entidade": "CENTRO UNIVERSITÁRIO DE SALVADOR",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5008,7 +5008,7 @@
           "id": "ent_centrouniversitariodompedroii_salvador",
           "municipio": "Salvador",
           "entidade": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5016,7 +5016,7 @@
           "id": "ent_centrouniversitariojorgeamado_salvador",
           "municipio": "Salvador",
           "entidade": "CENTRO UNIVERSITÁRIO JORGE AMADO",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5024,7 +5024,7 @@
           "id": "ent_centrouniversitariounime_laurodefreitas",
           "municipio": "Lauro de Freitas",
           "entidade": "CENTRO UNIVERSITÁRIO UNIME",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5032,7 +5032,7 @@
           "id": "ent_centrouniversitariounirb_salvador",
           "municipio": "Salvador",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5040,7 +5040,7 @@
           "id": "ent_universidadeestaciodesa_salvador",
           "municipio": "Salvador",
           "entidade": "Universidade Estácio de Sá",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5048,7 +5048,7 @@
           "id": "ent_centrouniversitariofamec_camacari",
           "municipio": "Camaçari",
           "entidade": "Centro UniversitáRio FAMEC",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5056,7 +5056,7 @@
           "id": "ent_centrouniversitariomauriciodenassauuninassau_salvador",
           "municipio": "Salvador",
           "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5064,7 +5064,7 @@
           "id": "ent_centrouniversitarioruybarbosawyden_salvador",
           "municipio": "Salvador",
           "entidade": "Centro UniversitáRio Ruy Barbosa Wyden",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5072,7 +5072,7 @@
           "id": "ent_centrouniversitariouniftc_salvador",
           "municipio": "Salvador",
           "entidade": "Centro Universitário UniFTC",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5080,7 +5080,7 @@
           "id": "ent_escolabahianademedicinaesaudepublica_salvador",
           "municipio": "Salvador",
           "entidade": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5088,7 +5088,7 @@
           "id": "ent_faculdadecastroalves_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade CASTRO ALVES",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5096,7 +5096,7 @@
           "id": "ent_faculdadediplomata_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade DIPLOMATA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5104,7 +5104,7 @@
           "id": "ent_faculdadedoisdejulho_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade DOIS DE JULHO",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5112,7 +5112,7 @@
           "id": "ent_faculdadeheliorocha_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade HÉLIO ROCHA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5120,7 +5120,7 @@
           "id": "ent_faculdadesaosalvador_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade SÃO SALVADOR",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5128,7 +5128,7 @@
           "id": "ent_centrouniversitariounirb_camacari",
           "municipio": "Camaçari",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5136,7 +5136,7 @@
           "id": "ent_faculdadeviscondedecairu_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade VISCONDE DE CAIRÚ",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5144,7 +5144,7 @@
           "id": "ent_faculdadeintegradasipitanga_laurodefreitas",
           "municipio": "Lauro de Freitas",
           "entidade": "Faculdade INTEGRADAS IPITANGA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5152,7 +5152,7 @@
           "id": "ent_faculdadeanhangueraunimedesalvador_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade Anhanguera Unime De Salvador",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5160,7 +5160,7 @@
           "id": "ent_faculdadeedufordesalvador_salvador",
           "municipio": "Salvador",
           "entidade": "Faculdade Edufor De Salvador",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5168,7 +5168,7 @@
           "id": "ent_institutosalvadordeensinoecultura_salvador",
           "municipio": "Salvador",
           "entidade": "Instituto SALVADOR DE ENSINO E CULTURA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5176,7 +5176,7 @@
           "id": "ent_universidadecatolicadosalvadorucsal_salvador",
           "municipio": "Salvador",
           "entidade": "Universidade Católica do Salvador (UCSAL)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5184,7 +5184,7 @@
           "id": "ent_universidadesalvadorunifacs_salvador",
           "municipio": "Salvador",
           "entidade": "Universidade Salvador (UNIFACS)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -5192,7 +5192,7 @@
           "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvador",
           "municipio": "Salvador",
           "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -7703,7 +7703,7 @@
           "id": "ent_centrouniversitariodompedroii_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -7711,7 +7711,7 @@
           "id": "ent_centrouniversitariojorgeamado_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "CENTRO UNIVERSITÁRIO JORGE AMADO",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -7719,7 +7719,7 @@
           "id": "ent_centrouniversitariounirb_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -7727,7 +7727,7 @@
           "id": "ent_escolabahianademedicinaesaudepublica_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -7735,7 +7735,7 @@
           "id": "ent_faculdadeviscondedecairu_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Faculdade VISCONDE DE CAIRÚ",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -7751,7 +7751,7 @@
           "id": "ent_universidadecatolicadosalvadorucsal_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Universidade Católica do Salvador (UCSAL)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -7759,7 +7759,7 @@
           "id": "ent_universidadesalvadorunifacs_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Universidade Salvador (UNIFACS)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -7767,7 +7767,7 @@
           "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvadorsededaiesead",
           "municipio": "Salvador (sede da IES - EAD)",
           "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -8443,7 +8443,7 @@
           "id": "ent_universidadedoestadodabahiauneb_jacobina",
           "municipio": "Jacobina",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 3
         },
@@ -8467,7 +8467,7 @@
           "id": "ent_faculdadeagesdejacobina_jacobina",
           "municipio": "Jacobina",
           "entidade": "Faculdade AGES De Jacobina",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -8650,7 +8650,7 @@
           "id": "ent_universidadedoestadodabahiauneb_itaberaba",
           "municipio": "Itaberaba",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 3
         },
@@ -8800,7 +8800,7 @@
           "id": "ent_universidadedoestadodabahiauneb_senhordobonfim",
           "municipio": "Senhor do Bonfim",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -8824,7 +8824,7 @@
           "id": "ent_universidadefederaldovaledosaofranciscounivasf_senhordobonfim",
           "municipio": "Senhor do Bonfim",
           "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -8832,7 +8832,7 @@
           "id": "ent_faculdadeagesdesenhordobonfim_senhordobonfim",
           "municipio": "Senhor do Bonfim",
           "entidade": "Faculdade AGES De Senhor Do Bonfim",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -8975,7 +8975,7 @@
           "id": "ent_universidadeestadualdefeiradesantanauefs_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 5
         },
@@ -8991,7 +8991,7 @@
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -9015,7 +9015,7 @@
           "id": "ent_centrouniversitariodeexcelencia_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Centro UniversitáRio De ExcelêNcia",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -9023,7 +9023,7 @@
           "id": "ent_faculdadebrasileiradetecnologia_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Faculdade BRASILEIRA DE TECNOLOGIA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -9031,7 +9031,7 @@
           "id": "ent_universidadesalvadorunifacs_feiradesantana",
           "municipio": "Feira de Santana",
           "entidade": "Universidade Salvador (UNIFACS)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -9940,7 +9940,7 @@
           "id": "ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead",
           "municipio": "Feira de Santana (sede da IES - EAD)",
           "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -9948,7 +9948,7 @@
           "id": "ent_centrouniversitariodeexcelencia_feiradesantanasededaiesead",
           "municipio": "Feira de Santana (sede da IES - EAD)",
           "entidade": "Centro UniversitáRio De ExcelêNcia",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -10221,7 +10221,7 @@
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas",
           "municipio": "Cruz das Almas",
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 15
         },
@@ -10229,7 +10229,7 @@
           "id": "ent_universidadedoestadodabahiauneb_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -10261,7 +10261,7 @@
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_cachoeira",
           "municipio": "Cachoeira",
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -10269,7 +10269,7 @@
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoamaro",
           "municipio": "Santo Amaro",
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -10277,7 +10277,7 @@
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -10341,7 +10341,7 @@
           "id": "ent_centrouniversitariomariamilza_cruzdasalmas",
           "municipio": "Cruz das Almas",
           "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -10349,7 +10349,7 @@
           "id": "ent_centrouniversitarioadventistadeensinodonordeste_cachoeira",
           "municipio": "Cachoeira",
           "entidade": "Centro UniversitáRio Adventista De Ensino Do Nordeste",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -10357,7 +10357,7 @@
           "id": "ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
           "entidade": "Centro UniversitáRio De CiêNcias E Empreendedorismo",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -10365,7 +10365,7 @@
           "id": "ent_faculdadeanhangueradesantoantoniodejesus_santoantoniodejesus",
           "municipio": "Santo Antônio de Jesus",
           "entidade": "Faculdade ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -10988,7 +10988,7 @@
           "id": "ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesussededaiesead",
           "municipio": "Santo Antônio de Jesus (sede da IES - EAD)",
           "entidade": "Centro UniversitáRio De CiêNcias E Empreendedorismo",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -11064,7 +11064,7 @@
           "id": "ent_universidadedoestadodabahiauneb_euclidesdacunha",
           "municipio": "Euclides da Cunha",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 3
         },
@@ -11072,7 +11072,7 @@
           "id": "ent_universidadedoestadodabahiauneb_jeremoabo",
           "municipio": "Jeremoabo",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -11088,7 +11088,7 @@
           "id": "ent_centrouniversitarioages_paripiranga",
           "municipio": "Paripiranga",
           "entidade": "CENTRO UNIVERSITÁRIO AGES",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -11096,7 +11096,7 @@
           "id": "ent_faculdadedonordestedabahia_coroneljoaosa",
           "municipio": "Coronel João Sá",
           "entidade": "Faculdade DO NORDESTE DA BAHIA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -11104,7 +11104,7 @@
           "id": "ent_faculdadedompedroiiafya_ribeiradopombal",
           "municipio": "Ribeira do Pombal",
           "entidade": "Faculdade Dom Pedro II AFYA",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -11408,7 +11408,7 @@
           "id": "ent_centrouniversitarioages_paripirangasededaiesead",
           "municipio": "Paripiranga (sede da IES - EAD)",
           "entidade": "CENTRO UNIVERSITÁRIO AGES",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -11580,7 +11580,7 @@
           "id": "ent_universidadedoestadodabahiauneb_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 7
         },
@@ -11588,7 +11588,7 @@
           "id": "ent_universidadedoestadodabahiauneb_canudos",
           "municipio": "Canudos",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -11604,7 +11604,7 @@
           "id": "ent_universidadefederaldovaledosaofranciscounivasf_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -11636,7 +11636,7 @@
           "id": "ent_centrouniversitariounirb_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -11644,7 +11644,7 @@
           "id": "ent_faculdadeunibrasjuazeiro_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Faculdade UniBRAS Juazeiro",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -11652,7 +11652,7 @@
           "id": "ent_centrouniversitariouniftc_juazeiro",
           "municipio": "Juazeiro",
           "entidade": "Centro Universitário UniFTC",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -11918,7 +11918,7 @@
           "id": "ent_universidadedoestadodabahiauneb_caetite",
           "municipio": "Caetité",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 7
         },
@@ -11926,7 +11926,7 @@
           "id": "ent_universidadedoestadodabahiauneb_guanambi",
           "municipio": "Guanambi",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -11934,7 +11934,7 @@
           "id": "ent_universidadedoestadodabahiauneb_brumado",
           "municipio": "Brumado",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -11974,7 +11974,7 @@
           "id": "ent_centrouniversitariofg_guanambi",
           "municipio": "Guanambi",
           "entidade": "Centro UniversitáRio FG",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -12316,7 +12316,7 @@
           "id": "ent_universidadedoestadodabahiauneb_serrinha",
           "municipio": "Serrinha",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -12324,7 +12324,7 @@
           "id": "ent_universidadedoestadodabahiauneb_conceicaodocoite",
           "municipio": "Conceição do Coité",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -12348,7 +12348,7 @@
           "id": "ent_faculdadesantoantoniodequeimadas_queimadas",
           "municipio": "Queimadas",
           "entidade": "Faculdade SANTO ANTONIO DE QUEIMADAS",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -12356,7 +12356,7 @@
           "id": "ent_centrouniversitariounirb_serrinha",
           "municipio": "Serrinha",
           "entidade": "Centro Universitário UNIRB",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -12364,7 +12364,7 @@
           "id": "ent_faculdadedaregiaosisaleira_conceicaodocoite",
           "municipio": "Conceição do Coité",
           "entidade": "Faculdade Da RegiãO Sisaleira",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -12626,7 +12626,7 @@
           "id": "ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 6
         },
@@ -12642,7 +12642,7 @@
           "id": "ent_universidadefederaldabahiaufba_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Universidade Federal da Bahia (UFBA)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -12674,7 +12674,7 @@
           "id": "ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Centro UniversitáRio De ExcelêNcia De VitóRia Da Conquista",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -12682,7 +12682,7 @@
           "id": "ent_faculdadeindependentedonordeste_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -12690,7 +12690,7 @@
           "id": "ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         },
@@ -12698,7 +12698,7 @@
           "id": "ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista",
           "municipio": "Vitória da Conquista",
           "entidade": "Faculdade Anhanguera De VitóRia Da Conquista",
-          "tipo": "Universidade - Privada",
+          "tipo": "camp.Universidade Privada",
           "categoria": "univsPrivada",
           "quantidade": 1
         }
@@ -13286,7 +13286,7 @@
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_amargosa",
           "municipio": "Amargosa",
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -13488,7 +13488,7 @@
           "id": "ent_universidadedoestadodabahiauneb_bomjesusdalapa",
           "municipio": "Bom Jesus da Lapa",
           "entidade": "Universidade do Estado da Bahia (UNEB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 4
         },
@@ -13496,7 +13496,7 @@
           "id": "ent_universidadefederaldooestedabahiaufob_barra",
           "municipio": "Barra",
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },
@@ -13504,7 +13504,7 @@
           "id": "ent_universidadefederaldooestedabahiaufob_bomjesusdalapa",
           "municipio": "Bom Jesus da Lapa",
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
-          "tipo": "Universidade - Pública",
+          "tipo": "camp.Universidade Pública",
           "categoria": "univsPublica",
           "quantidade": 1
         },

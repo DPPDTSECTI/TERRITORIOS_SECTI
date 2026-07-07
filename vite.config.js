@@ -237,9 +237,9 @@ function parseSpreadsheet(buffer) {
           
           if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => tNorm.includes(c))) { 
               categoriaEntidade = 'univsPublica'; // Força para pública conforme a sua indicação
-              if (!tNorm.includes('publica') && !tNorm.includes('federal') && !tNorm.includes('estadual')) {
-                  tipoFinal = tipoFinal ? `${tipoFinal} - Pública` : 'Universidade Pública';
-              }
+               if (!tNorm.includes('publica') && !tNorm.includes('federal') && !tNorm.includes('estadual')) {
+                   tipoFinal = tipoFinal ? `${tipoFinal} - camp.Universidade Pública` : 'camp.Universidade Pública';
+               }
           }
           else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tNorm.includes(c))) { categoriaEntidade = 'ifs'; }
           else if (['centro de pesquisa', 'pesquisa'].some(c => tNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; }
@@ -265,10 +265,10 @@ function parseSpreadsheet(buffer) {
 
           // Constrói o Tipo de Apresentação visual
           let tipoParts = [tipoOriginal];
-          if (isPrivada) tipoParts.push('Privada');
+          if (isPrivada) tipoParts.push('camp.Universidade Privada');
           else if (catNorm.includes('estadual')) tipoParts.push('Pública Estadual');
           else if (catNorm.includes('federal')) tipoParts.push('Pública Federal');
-          else tipoParts.push('Pública');
+          else tipoParts.push('camp.Universidade Pública');
 
           tipoFinal = tipoParts.filter(Boolean).join(' - ');
       }
