@@ -37,79 +37,6 @@ function useDebounce(value, delay) {
 }
 
 // ==========================================
-// COMPONENTES DE ITEM DE LISTA (MEMOIZED)
-// ==========================================
-
-const CtiListItem = React.memo(({ item, themeClasses, darkMode, getCtiBadgeStyle, fixWeirdCapitalization }) => (
-    <div className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-        <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(item.entidade)}</span>
-        <div className="flex justify-between items-end mt-1">
-            <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(item.categoria, darkMode)}`}>
-                <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
-                {item.tipo || "Instituição"}
-            </span>
-            <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{item.municipio}</span></div>
-        </div>
-    </div>
-));
-
-const CadeiaListItem = React.memo(({ item, themeClasses, darkMode, getBadgeStyle, fixWeirdCapitalization }) => (
-    <div className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-        <div className="flex items-start justify-between mb-1.5">
-            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{item.segmento}</span>
-            <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${getBadgeStyle(item.tipo)}`}>{item.tipo}</span>
-        </div>
-        {item.entidade && <span className="text-[11px] font-bold leading-tight mb-1">{fixWeirdCapitalization(item.entidade)}</span>}
-        <div className={`p-2 rounded-lg border mt-1 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
-            <span className="block text-[8px] font-black uppercase opacity-50 mb-1">Abrangência Municipal:</span>
-            <p className="text-[9px] font-medium leading-relaxed opacity-90" title={item.municipiosPertencentes}>{item.municipiosPertencentes}</p>
-            {item.municipioSatelite && item.municipioSatelite !== '' && (
-                <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
-                    <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Município(s) Satélite(s):</span>
-                    <p className="text-[9px] font-medium leading-relaxed opacity-90" title={item.municipioSatelite}>{item.municipioSatelite}</p>
-                </div>
-            )}
-        </div>
-    </div>
-));
-
-const CursoListItem = React.memo(({ item, darkMode, getAreaStyles, fixWeirdCapitalization }) => {
-    const areaStyles = getAreaStyles(item.areaGeral, darkMode);
-    return (
-        <div className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:border-current ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50 hover:bg-slate-800/50' : 'bg-white shadow-sm border-slate-100 hover:bg-white'}`}>
-            <div className="flex flex-col items-start gap-1">
-                <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(item.curso)}>{fixWeirdCapitalization(item.curso)}</h5>
-                {item.areaGeral && (
-                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(item.areaGeral, darkMode).activeBg} ${getAreaStyles(item.areaGeral, darkMode).text}`}>
-                        {item.areaGeral}
-                    </span>
-                )}
-            </div>
-            <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
-                <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={fixWeirdCapitalization(item.entidade)}>{fixWeirdCapitalization(item.entidade)}</span>
-                {(item.categoriaAdm || item.orgAcademica) && (
-                    <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">
-                        {[item.categoriaAdm, item.orgAcademica].filter(Boolean).map((tag, i, arr) => (
-                            <React.Fragment key={i}>
-                                <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>{tag}</span>
-                                {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                )}
-                <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
-                    <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${item.municipio} • ${item.territorioRef}`}><svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg><span className="truncate">{item.municipio}</span></span>
-                    <div className="flex items-center gap-1 shrink-0">
-                        {item.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{item.nivel}</span>}
-                        {item.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{item.modalidade}</span>}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-});
-
-// ==========================================
 // COMPONENTE PRINCIPAL DO APP
 // ==========================================
 function MainApp() {
@@ -147,7 +74,7 @@ function MainApp() {
   const [semiMunsMin, setSemiMunsMin] = useState('');
   const [semiMunsMax, setSemiMunsMax] = useState('');
 
-  // ATUALIZADO: Agora suporta as Univs Divididas
+  // Filtros de CTI
   const [ctiFilters, setCtiFilters] = useState({
       univsPublica: true, univsPrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
   });
@@ -175,12 +102,20 @@ function MainApp() {
       setIsDropdownOpen(false);
   };
 
+  const handleCloseModal = useCallback(() => {
+    setExpandedList(null);
+    setModalCursoSearchTerm('');
+    setModalAreaGeralFilter([]);
+    setIsModalAreaGeralOpen(false);
+  }, []);
+
   const {
     territoriosData,
     isLoadingPipeline,
     lastUpdate,
     carregarDadosDoSharePoint,
     filteredOptions,
+    territoriesDynamicStats,
     dashboardData,
     semiaridoMunicipios
   } = useTerritoriosData({
@@ -193,6 +128,8 @@ function MainApp() {
     semiMunsMax,
     cadeiaProdutivaFilter,
     ctiFilters,
+    areaGeralFilter,
+    debouncedCursoSearchTerm,
   });
 
   const handleSelectTerritory = useCallback((loc) => {
@@ -208,6 +145,7 @@ function MainApp() {
         if (searchDropdownRef.current && !searchDropdownRef.current.contains(event.target)) {
             setIsDropdownOpen(false);
         }
+<<<<<<< HEAD
     if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) {
         setIsAreaGeralOpen(false);
     }
@@ -220,11 +158,20 @@ function MainApp() {
     if (modalCadeiaFilterRef.current && !modalCadeiaFilterRef.current.contains(event.target)) {
         setIsModalCadeiaFilterOpen(false);
     }
+=======
+        if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) {
+            setIsAreaGeralOpen(false);
+        }
+        if (modalAreaGeralRef.current && !modalAreaGeralRef.current.contains(event.target)) {
+            setIsModalAreaGeralOpen(false);
+        }
+>>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []); 
 
+<<<<<<< HEAD
   const handleCloseModal = () => {
     setExpandedList(null);
     setIsModalAreaGeralOpen(false);
@@ -232,6 +179,8 @@ function MainApp() {
     setIsModalCadeiaFilterOpen(false);
   };
 
+=======
+>>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
   useEffect(() => {
     if (selectedLocation && mapSectionRef.current) {
       setTimeout(() => { mapSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
@@ -278,26 +227,42 @@ function MainApp() {
     }
   };
 
-  /**
-   * Cria um handler genérico para alternar um item em um filtro de array.
-   * @param {React.Dispatch<React.SetStateAction<any[]>>} setter - A função `setState` do filtro.
-   * @returns {(itemName: any) => void}
-   */
-  const createArrayFilterToggleHandler = (setter) => (itemName) => {
-    setter(prev => {
-      const newFilters = new Set(prev);
-      if (newFilters.has(itemName)) newFilters.delete(itemName);
-      else newFilters.add(itemName);
-      return Array.from(newFilters);
+  const handleAreaGeralToggle = (areaName) => {
+    setAreaGeralFilter(prev => {
+        const newFilters = new Set(prev);
+        if (newFilters.has(areaName)) newFilters.delete(areaName);
+        else newFilters.add(areaName);
+        return Array.from(newFilters);
+    });
+  }; 
+
+  const handleModalAreaGeralToggle = (areaName) => {
+    setModalAreaGeralFilter(prev => {
+        const newFilters = new Set(prev);
+        if (newFilters.has(areaName)) {
+            newFilters.delete(areaName);
+        } else {
+            newFilters.add(areaName);
+        }
+        return Array.from(newFilters);
     });
   };
+<<<<<<< HEAD
   const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
   const handleCadeiaProdutivaToggle = createArrayFilterToggleHandler(setCadeiaProdutivaFilter);
+=======
+>>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
 
-  const getAreaFilterButtonText = (filterArray) => {
-    if (filterArray.length === 0) return 'Filtrar Área';
-    if (filterArray.length === 1) return `Área: ${filterArray[0]}`;
-    return `${filterArray.length} Selecionadas`;
+  const getAreaFilterButtonText = () => {
+    if (areaGeralFilter.length === 0) return 'Filtrar Área';
+    if (areaGeralFilter.length === 1) return `Área: ${areaGeralFilter[0]}`;
+    return `${areaGeralFilter.length} Selecionadas`;
+  };
+
+  const getModalAreaFilterButtonText = () => {
+    if (modalAreaGeralFilter.length === 0) return 'Filtrar Área';
+    if (modalAreaGeralFilter.length === 1) return `Área: ${modalAreaGeralFilter[0]}`;
+    return `${modalAreaGeralFilter.length} Selecionadas`;
   };
 
   const getCtiBadgeStyle = (cat, isDark) => {
@@ -338,18 +303,18 @@ function MainApp() {
       else if (norm.includes('multidisciplinar')) theme = 'purple';
 
       const styles = {
-          green: { dot: 'bg-emerald-500', text: darkMode ? 'text-emerald-400' : 'text-emerald-600', activeBg: darkMode ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-100 border-emerald-200', countBg: darkMode ? 'bg-emerald-500/30 text-emerald-400' : 'bg-emerald-100 text-emerald-600' },
-          cyan: { dot: 'bg-gov-cyan-500', text: darkMode ? 'text-gov-cyan-400' : 'text-gov-cyan-700', activeBg: darkMode ? 'bg-gov-cyan-500/20 border-gov-cyan-500/50' : 'bg-gov-cyan-100 border-gov-cyan-200', countBg: darkMode ? 'bg-gov-cyan-500/30 text-gov-cyan-400' : 'bg-gov-cyan-100 text-gov-cyan-700' },
-          blueDark: { dot: 'bg-gov-blueDark-500', text: darkMode ? 'text-blue-400' : 'text-gov-blueDark-700', activeBg: darkMode ? 'bg-blue-500/20 border-blue-500/50' : 'bg-gov-blueDark-100 border-gov-blueDark-200', countBg: darkMode ? 'bg-blue-500/30 text-blue-400' : 'bg-gov-blueDark-100 text-gov-blueDark-700' },
-          magenta: { dot: 'bg-gov-magenta-500', text: darkMode ? 'text-gov-magenta-400' : 'text-gov-magenta-700', activeBg: darkMode ? 'bg-gov-magenta-500/20 border-gov-magenta-500/50' : 'bg-gov-magenta-100 border-gov-magenta-200', countBg: darkMode ? 'bg-gov-magenta-500/30 text-gov-magenta-400' : 'bg-gov-magenta-100 text-gov-magenta-700' },
-          red: { dot: 'bg-gov-red-500', text: darkMode ? 'text-gov-red-400' : 'text-gov-red-700', activeBg: darkMode ? 'bg-gov-red-500/20 border-gov-red-500/50' : 'bg-gov-red-100 border-gov-red-200', countBg: darkMode ? 'bg-gov-red-500/30 text-gov-red-400' : 'bg-gov-red-100 text-gov-red-700' },
-          yellow: { dot: 'bg-gov-yellow-500', text: darkMode ? 'text-gov-yellow-400' : 'text-gov-yellow-700', activeBg: darkMode ? 'bg-gov-yellow-500/20 border-gov-yellow-500/50' : 'bg-gov-yellow-100 border-gov-yellow-200', countBg: darkMode ? 'bg-gov-yellow-500/30 text-gov-yellow-400' : 'bg-gov-yellow-100 text-gov-yellow-700' },
-          teal: { dot: 'bg-teal-500', text: darkMode ? 'text-teal-400' : 'text-teal-700', activeBg: darkMode ? 'bg-teal-500/20 border-teal-500/50' : 'bg-teal-100 border-teal-200', countBg: darkMode ? 'bg-teal-500/30 text-teal-400' : 'bg-teal-100 text-teal-700' },
-          purple: { dot: 'bg-purple-500', text: darkMode ? 'text-purple-400' : 'text-purple-700', activeBg: darkMode ? 'bg-purple-500/20 border-purple-500/50' : 'bg-purple-100 border-purple-200', countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-purple-100 text-purple-700' },
-          indigo: { dot: 'bg-indigo-500', text: darkMode ? 'text-indigo-400' : 'text-indigo-600', activeBg: darkMode ? 'bg-indigo-500/20 border-indigo-500/50' : 'bg-indigo-100 border-indigo-200', countBg: darkMode ? 'bg-indigo-500/30 text-indigo-400' : 'bg-indigo-100 text-indigo-600' },
-          fuchsia: { dot: 'bg-fuchsia-500', text: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', activeBg: darkMode ? 'bg-fuchsia-500/20 border-fuchsia-500/50' : 'bg-fuchsia-100 border-fuchsia-200', countBg: darkMode ? 'bg-fuchsia-500/30 text-fuchsia-400' : 'bg-fuchsia-100 text-fuchsia-600' },
-          orange: { dot: 'bg-amber-500', text: darkMode ? 'text-amber-400' : 'text-amber-600', activeBg: darkMode ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-100 border-amber-200', countBg: darkMode ? 'bg-amber-500/30 text-amber-400' : 'bg-amber-100 text-amber-600' },
-          default: { dot: 'bg-slate-500', text: darkMode ? 'text-slate-400' : 'text-slate-600', activeBg: darkMode ? 'bg-slate-500/20 border-slate-500/50' : 'bg-slate-100 border-slate-200', countBg: darkMode ? 'bg-slate-500/30 text-slate-400' : 'bg-slate-100 text-slate-600' }
+          green: { dot: 'bg-emerald-500', text: darkMode ? 'text-emerald-400' : 'text-emerald-600', activeBg: darkMode ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-100 border-emerald-200', countBg: darkMode ? 'bg-emerald-500/30 text-emerald-400' : 'bg-white text-emerald-800' },
+          cyan: { dot: 'bg-gov-cyan-500', text: darkMode ? 'text-gov-cyan-400' : 'text-gov-cyan-700', activeBg: darkMode ? 'bg-gov-cyan-500/20 border-gov-cyan-500/50' : 'bg-gov-cyan-100 border-gov-cyan-200', countBg: darkMode ? 'bg-gov-cyan-500/30 text-gov-cyan-400' : 'bg-white text-gov-cyan-800' },
+          blueDark: { dot: 'bg-gov-blueDark-500', text: darkMode ? 'text-blue-400' : 'text-gov-blueDark-700', activeBg: darkMode ? 'bg-blue-500/20 border-blue-500/50' : 'bg-gov-blueDark-100 border-gov-blueDark-200', countBg: darkMode ? 'bg-blue-500/30 text-blue-400' : 'bg-white text-gov-blueDark-800' },
+          magenta: { dot: 'bg-gov-magenta-500', text: darkMode ? 'text-gov-magenta-400' : 'text-gov-magenta-700', activeBg: darkMode ? 'bg-gov-magenta-500/20 border-gov-magenta-500/50' : 'bg-gov-magenta-100 border-gov-magenta-200', countBg: darkMode ? 'bg-gov-magenta-500/30 text-gov-magenta-400' : 'bg-white text-gov-magenta-800' },
+          red: { dot: 'bg-gov-red-500', text: darkMode ? 'text-gov-red-400' : 'text-gov-red-700', activeBg: darkMode ? 'bg-gov-red-500/20 border-gov-red-500/50' : 'bg-gov-red-100 border-gov-red-200', countBg: darkMode ? 'bg-gov-red-500/30 text-gov-red-400' : 'bg-white text-gov-red-800' },
+          yellow: { dot: 'bg-gov-yellow-500', text: darkMode ? 'text-gov-yellow-400' : 'text-gov-yellow-700', activeBg: darkMode ? 'bg-gov-yellow-500/20 border-gov-yellow-500/50' : 'bg-gov-yellow-100 border-gov-yellow-200', countBg: darkMode ? 'bg-gov-yellow-500/30 text-gov-yellow-400' : 'bg-white text-gov-yellow-800' },
+          teal: { dot: 'bg-teal-500', text: darkMode ? 'text-teal-400' : 'text-teal-700', activeBg: darkMode ? 'bg-teal-500/20 border-teal-500/50' : 'bg-teal-100 border-teal-200', countBg: darkMode ? 'bg-teal-500/30 text-teal-400' : 'bg-white text-teal-800' },
+          purple: { dot: 'bg-purple-500', text: darkMode ? 'text-purple-400' : 'text-purple-700', activeBg: darkMode ? 'bg-purple-500/20 border-purple-500/50' : 'bg-purple-100 border-purple-200', countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-white text-purple-800' },
+          indigo: { dot: 'bg-indigo-500', text: darkMode ? 'text-indigo-400' : 'text-indigo-600', activeBg: darkMode ? 'bg-indigo-500/20 border-indigo-500/50' : 'bg-indigo-100 border-indigo-200', countBg: darkMode ? 'bg-indigo-500/30 text-indigo-400' : 'bg-white text-indigo-800' },
+          fuchsia: { dot: 'bg-fuchsia-500', text: darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600', activeBg: darkMode ? 'bg-fuchsia-500/20 border-fuchsia-500/50' : 'bg-fuchsia-100 border-fuchsia-200', countBg: darkMode ? 'bg-fuchsia-500/30 text-fuchsia-400' : 'bg-white text-fuchsia-800' },
+          orange: { dot: 'bg-amber-500', text: darkMode ? 'text-amber-400' : 'text-amber-600', activeBg: darkMode ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-100 border-amber-200', countBg: darkMode ? 'bg-purple-500/30 text-purple-400' : 'bg-white text-purple-800' },
+          default: { dot: 'bg-slate-500', text: darkMode ? 'text-slate-400' : 'text-slate-600', activeBg: darkMode ? 'bg-slate-500/20 border-slate-500/50' : 'bg-slate-100 border-slate-200', countBg: darkMode ? 'bg-slate-500/30 text-slate-400' : 'bg-white text-slate-800' }
       };
       return styles[theme] || styles.default;
   };
@@ -362,40 +327,27 @@ function MainApp() {
       textMuted: darkMode ? 'text-slate-400' : 'text-slate-500',
       cardHover: darkMode ? 'hover:bg-slate-800/50 hover:border-slate-600' : 'hover:bg-white hover:border-slate-300'
   };
-  
-  // --- LÓGICA DE FILTRAGEM EM CASCATA ---
-  // 1. `isMunValid` é uma função helper para verificar se um município deve ser incluído com base no filtro do semiárido.
-  const isMunValid = useCallback((munName) => {
-    if (!munName) return false;
-    if (filtroSemiarido && !semiaridoMunicipios.includes(normalize(munName))) return false;
-    return true;
-  }, [filtroSemiarido, semiaridoMunicipios]);
 
-  // 2. `cursosFiltradosPorTexto` aplica apenas o filtro de busca textual na lista de cursos base.
-  // Isso serve como base para a contagem de áreas, garantindo que a contagem reflita a busca mas não o filtro de área.
-  const cursosFiltradosPorTexto = useMemo(() => {
-    if (!debouncedCursoSearchTerm) return dashboardData.cursos || [];
-    const term = normalize(debouncedCursoSearchTerm);
-    return (dashboardData.cursos || []).filter(curso => normalize(curso.curso).includes(term));
-  }, [dashboardData.cursos, debouncedCursoSearchTerm]);
-
-  // 3. `areaGeralSummary` calcula as contagens de cursos por área GERAL, com base na lista já filtrada por texto.
-  // Isso garante que o dropdown de filtro de área mostre contagens precisas em relação ao que o usuário digitou na busca.
   const areaGeralSummary = useMemo(() => {
-    const counts = {};
-    (cursosFiltradosPorTexto || []).forEach(c => {
-        const area = c.areaGeral || 'Não Informada';
-        counts[area] = (counts[area] || 0) + 1;
-    });
-    return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
-  }, [cursosFiltradosPorTexto]);
+      const counts = {};
+      (dashboardData.cursos || []).forEach(c => {
+          const area = c.areaGeral || 'Não Informada';
+          counts[area] = (counts[area] || 0) + 1;
+      });
+      return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  }, [dashboardData.cursos]);
 
-  // 4. `cursosFiltrados` é a lista final de cursos para exibição, aplicando o filtro de área sobre a lista já filtrada por texto.
   const cursosFiltrados = useMemo(() => {
-    if (areaGeralFilter.length === 0) return cursosFiltradosPorTexto;
-    return cursosFiltradosPorTexto.filter(c => areaGeralFilter.includes(c.areaGeral || 'Não Informada'));
-  }, [cursosFiltradosPorTexto, areaGeralFilter]);
+      let result = dashboardData.cursos || [];
+      if (areaGeralFilter.length > 0) result = result.filter(c => areaGeralFilter.includes(c.areaGeral || 'Não Informada'));
+      if (debouncedCursoSearchTerm) {
+          const term = normalize(debouncedCursoSearchTerm);
+          result = result.filter(curso => normalize(curso.curso).includes(term));
+      }
+      return result;
+  }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
+<<<<<<< HEAD
   // 5. `todasAsAreasGerais` é a lista completa de todas as áreas possíveis, usada para renderizar todas as opções no dropdown.
   // É derivada de `territoriosData` para ser estável e não mudar com os filtros.
   const todasAsAreasGerais = useMemo(() => {
@@ -522,6 +474,28 @@ function MainApp() {
     });
     return stats;}, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, isMunValid, cadeiaProdutivaFilter]);
   
+=======
+  const modalCursosFiltrados = useMemo(() => {
+    if (expandedList !== 'cursos') return [];
+    let result = cursosFiltrados || [];
+    if (modalAreaGeralFilter.length > 0) {
+        result = result.filter(c => modalAreaGeralFilter.includes(c.areaGeral || 'Não Informada'));
+    }
+    if (debouncedModalCursoSearchTerm) {
+        const term = normalize(debouncedModalCursoSearchTerm);
+        result = result.filter(curso => normalize(curso.curso).includes(term));
+    }
+    return result;
+  }, [cursosFiltrados, modalAreaGeralFilter, debouncedModalCursoSearchTerm, expandedList]);
+
+  const modalAreaGeralSummary = useMemo(() => {
+      if (expandedList !== 'cursos') return [];
+      const counts = {};
+      (cursosFiltrados || []).forEach(c => { counts[c.areaGeral || 'Não Informada'] = (counts[c.areaGeral || 'Não Informada'] || 0) + 1; });
+      return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  }, [cursosFiltrados, expandedList]);
+
+>>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
   const hasActiveFilters = searchTerm !== '' || 
                            selectedLocation !== null || 
                            ifdmMin !== '' || 
@@ -541,40 +515,125 @@ function MainApp() {
         const isCadeias = expandedList === 'cadeias';
         const isCursos = expandedList === 'cursos';
 
-        let listData, title, renderItem, counterStyle, itemKey;
+        let listData, title, renderItem;
+        
+        const renderCtiItem = (ent, idx) => (
+            <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
+                <div className="flex justify-between items-end mt-1">
+                    <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
+                        {ent.tipo || "Instituição"}
+                    </span>
+                    <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{ent.municipio}</span></div>
+                </div>
+            </div>
+        );
+
+        // NOVA RENDERIZAÇÃO DAS CADEIAS (Com Etiqueta de Entidade e Municípios Ilimitados)
+        const renderCadeiaItem = (apl, idx) => (
+            <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                <div className="flex items-start justify-between mb-2">
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
+                        {apl.segmento}
+                    </span>
+                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
+                        {apl.tipo}
+                    </span>
+                </div>
+                
+                {apl.entidade && (
+                    <div className="mb-2">
+                        <span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-blue-500 dark:text-blue-400">Entidade Vinculada</span>
+                        <span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                            {fixWeirdCapitalization(apl.entidade)}
+                        </span>
+                    </div>
+                )}
+                
+                <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
+                    <div className="grid grid-cols-2 gap-3 mb-2">
+                        <div>
+                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
+                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.sede}</p>
+                        </div>
+                        <div>
+                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span>
+                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <div className={`pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
+                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span>
+                        {/* Removemos o limite de linhas para que o modal mostre todos os municípios acumulados */}
+                        <p className={`text-[9px] font-medium leading-relaxed opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                            {apl.municipiosPertencentes}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const renderCursoItem = (curso, idx) => {
+            const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
+            return (
+                <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                    <div className="flex flex-col items-start gap-1">
+                        <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
+                        {curso.areaGeral && (
+                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>
+                                {curso.areaGeral}
+                            </span>
+                        )}
+                    </div>
+                    <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
+                        <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
+                        {(curso.categoriaAdm || curso.orgAcademica) && (
+                            <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">
+                                {[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (
+                                    <React.Fragment key={i}>
+                                        <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>{tag}</span>
+                                        {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        )}
+                        <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
+                            <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}>
+                                <svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg>
+                                <span className="truncate">{curso.municipio}</span>
+                            </span>
+                            <div className="flex items-center gap-1 shrink-0">
+                                {curso.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.nivel}</span>}
+                                {curso.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.modalidade}</span>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
 
         if (isCti) {
             listData = dashboardData.entidades;
             title = 'Estruturas CT&I';
-            itemKey = (item, idx) => item.id || idx;
-            renderItem = (item, idx) => <CtiListItem item={item} themeClasses={themeClasses} darkMode={darkMode} getCtiBadgeStyle={getCtiBadgeStyle} fixWeirdCapitalization={fixWeirdCapitalization} />;
-            counterStyle = darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700';
+            renderItem = renderCtiItem;
         } else if (isCadeias) {
             listData = dashboardData.aplIgs;
             title = 'Cadeias Produtivas';
-            itemKey = (item, idx) => item.id || idx;
-            renderItem = (item, idx) => <CadeiaListItem item={item} themeClasses={themeClasses} darkMode={darkMode} getBadgeStyle={getBadgeStyle} fixWeirdCapitalization={fixWeirdCapitalization} />;
-            counterStyle = darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700';
+            renderItem = renderCadeiaItem;
         } else if (isCursos) {
             listData = cursosFiltrados;
             title = 'Cursos CT&I';
-            itemKey = (item, idx) => item.id || idx;
-            renderItem = (item, idx) => <CursoListItem item={item} darkMode={darkMode} getAreaStyles={getAreaStyles} fixWeirdCapitalization={fixWeirdCapitalization} />;
-            counterStyle = darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700';
+            renderItem = renderCursoItem;
         } else {
             return null;
         }
 
         return (
             <div className="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
-                <div className={`relative w-full ${isCursos ? 'max-w-6xl' : 'max-w-4xl'} h-[85vh] rounded-2xl border shadow-2xl flex flex-col ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'}`} onClick={e => e.stopPropagation()}>
+                <div className={`relative w-full ${isCursos ? 'max-w-6xl' : 'max-w-4xl'} h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'}`} onClick={e => e.stopPropagation()}>
                     <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-                        <div className="flex items-center gap-3">
-                            <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title}</h3>
-                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${counterStyle}`}>
-                                {listData.length}
-                            </span>
-                        </div>
+                        <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title} ({listData.length})</h3>
                         
                         {isCti && (
                             <div className="flex-1 flex items-center justify-end gap-2">
@@ -653,7 +712,11 @@ function MainApp() {
                                     <div className="relative" ref={modalAreaGeralRef}>
                                         <button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
                                             <Filter size={14} />
+<<<<<<< HEAD
                                             <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText(areaGeralFilter)}</span>
+=======
+                                            <span className="whitespace-nowrap hidden sm:inline">{getModalAreaFilterButtonText()}</span>
+>>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
                                         </button>
                                         {isModalAreaGeralOpen && (
                                             <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
@@ -665,9 +728,15 @@ function MainApp() {
                                                         const isSelected = areaGeralFilter.includes(areaName);
                                                         if (count === 0 && !isSelected) return null;
                                                         return (
+<<<<<<< HEAD
                                                             <button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
                                                                 <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span></div>
                                                                 <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${styles.countBg}`}>{count}</span> 
+=======
+                                                            <button key={area.name} onClick={() => handleModalAreaGeralToggle(area.name)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
+                                                                <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span></div>
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span> 
+>>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
                                                             </button>
                                                         );
                                                     })}
@@ -684,7 +753,7 @@ function MainApp() {
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 hide-scroll">
                         <div className={`grid grid-cols-1 gap-3 ${isCursos ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'}`}>
-                            {listData.map((item, idx) => React.cloneElement(renderItem(item, idx), { key: itemKey(item, idx) }))}
+                            {listData.map(renderItem)}
                         </div>
                     </div>
                 </div>
@@ -761,10 +830,8 @@ function MainApp() {
           </div>
       </header>
 
-      {/* NAVBAR LATERAL VERTICAL (Sempre visível em /territorios quando header principal some) */}
-      <div className={`fixed right-4 top-1/2 -translate-y-1/2 z-[120] flex flex-col items-end gap-3 transition-all duration-500 
-    ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
-          {/* Grupo 1: Navegação */}
+      {/* NAVBAR LATERAL VERTICAL (Sempre visível em /territorios) */}
+      <div className={`fixed right-4 top-1/2 -translate-y-1/2 z-[120] flex flex-col items-end gap-3 transition-all duration-500 ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
           <div className={`flex flex-col items-center gap-2 p-2 rounded-2xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-slate-900/90 border-slate-700' : 'bg-white/95 border-slate-200'}`}>
               <Link to="/" className={`p-2.5 rounded-xl transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-800 hover:text-blue-400' : 'text-slate-500 hover:bg-slate-100 hover:text-gov-blueDark-500'}`} title="Início">
                   <Home size={18} strokeWidth={2.5} />
@@ -775,7 +842,6 @@ function MainApp() {
               </Link>
           </div>
 
-          {/* Grupo 2: Recursos */}
           <div ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-2xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-slate-900/90 border-slate-700' : 'bg-white/95 border-slate-200'}`}>
               <div className="relative flex items-center justify-end w-full" ref={searchDropdownRef}>
                   <div className={`absolute right-[115%] transition-all duration-300 ${isVerticalSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
@@ -910,7 +976,7 @@ function MainApp() {
                             { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
                             { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/' },
                         ].map((k, idx) => (
-                            <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
+                            <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 overflow-hidden ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
                                 <div className="flex items-center justify-between">
                                     <p className={`text-[9px] font-black uppercase tracking-widest mb-1 opacity-60 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{k.l}</p>
                                     {k.sourceText && (
@@ -943,8 +1009,8 @@ function MainApp() {
                 {/* Sub KPIs de CTI */}
                 <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-3">
                     {[
-                        { id: 'univsPublica', l: 'Camp. Univ. Pública', v: dashboardData.subKpis.univsPublica || 0, pct: (dashboardData.unfiltSubKpis.univsPublica || 0) > 0 ? ((dashboardData.subKpis.univsPublica || 0) / (dashboardData.unfiltSubKpis.univsPublica || 1))*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500', h: darkMode ? 'hover:border-blue-400' : 'hover:border-blue-600' },
-                        { id: 'univsPrivada', l: 'Camp. Univ. Privada', v: dashboardData.subKpis.univsPrivada || 0, pct: (dashboardData.unfiltSubKpis.univsPrivada || 0) > 0 ? ((dashboardData.subKpis.univsPrivada || 0) / (dashboardData.unfiltSubKpis.univsPrivada || 1))*100 : 0, c: darkMode ? 'text-sky-400' : 'text-sky-600', b: 'bg-sky-500', h: darkMode ? 'hover:border-sky-400' : 'hover:border-sky-600' },
+                        { id: 'univsPublica', l: 'Univ. Pública', v: dashboardData.subKpis.univsPublica || 0, pct: (dashboardData.unfiltSubKpis.univsPublica || 0) > 0 ? ((dashboardData.subKpis.univsPublica || 0) / (dashboardData.unfiltSubKpis.univsPublica || 1))*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500', h: darkMode ? 'hover:border-blue-400' : 'hover:border-blue-600' },
+                        { id: 'univsPrivada', l: 'Univ. Privada', v: dashboardData.subKpis.univsPrivada || 0, pct: (dashboardData.unfiltSubKpis.univsPrivada || 0) > 0 ? ((dashboardData.subKpis.univsPrivada || 0) / (dashboardData.unfiltSubKpis.univsPrivada || 1))*100 : 0, c: darkMode ? 'text-sky-400' : 'text-sky-600', b: 'bg-sky-500', h: darkMode ? 'hover:border-sky-400' : 'hover:border-sky-600' },
                         { id: 'ifs', l: 'Inst. Fed.', v: dashboardData.subKpis.ifs || 0, pct: (dashboardData.unfiltSubKpis.ifs || 0) > 0 ? ((dashboardData.subKpis.ifs || 0) / (dashboardData.unfiltSubKpis.ifs || 1))*100 : 0, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500', h: darkMode ? 'hover:border-red-400' : 'hover:border-red-600' },
                         { id: 'icts', l: 'ICTs', v: dashboardData.subKpis.icts || 0, pct: (dashboardData.unfiltSubKpis.icts || 0) > 0 ? ((dashboardData.subKpis.icts || 0) / (dashboardData.unfiltSubKpis.icts || 1))*100 : 0, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', h: darkMode ? 'hover:border-cyan-400' : 'hover:border-cyan-600' },
                         { id: 'centrosPesquisa', l: 'C. Pesquisa', v: dashboardData.subKpis.centrosPesquisa || 0, pct: (dashboardData.unfiltSubKpis.centrosPesquisa || 0) > 0 ? ((dashboardData.subKpis.centrosPesquisa || 0) / (dashboardData.unfiltSubKpis.centrosPesquisa || 1))*100 : 0, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', h: darkMode ? 'hover:border-emerald-400' : 'hover:border-emerald-600' },
@@ -955,23 +1021,23 @@ function MainApp() {
                         <div 
                             key={sK.id}
                             onClick={() => handleCtiKpiClick(sK.id)}
-                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center transition-all duration-300 cursor-pointer ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'} ${ctiFilters[sK.id] ? `opacity-100 ${sK.h}` : 'opacity-30 grayscale hover:opacity-60 hover:grayscale-0'}`}
+                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center overflow-hidden transition-all duration-300 cursor-pointer ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'} ${ctiFilters[sK.id] ? `opacity-100 ${sK.h}` : 'opacity-30 grayscale hover:opacity-60 hover:grayscale-0'}`}
                         >
                             <span className={`text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{sK.l}</span>
                             <span className={`text-xl font-black leading-none pb-1 drop-shadow-sm ${sK.c}`}>{sK.v || 0}</span>
-                            <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50 overflow-hidden rounded-b-xl">
+                            <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50">
                                 <div className={`h-full ${sK.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, sK.pct))}%` }}></div>
                             </div>
                         </div>
                     ))}
                 </div>
                 
-                {/* A "Ilha" Encaixada na tela (Viewport dynamic height calc) */}
+                {/* A "Ilha" Encaixada na tela */}
                 <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[calc(100vh-180px)] min-h-[500px] w-full mt-4 mb-3">
                     
                     {/* COLUNA DO MAPA (40%) */}
-                    <div ref={mapSectionRef} className="w-full lg:w-[40%] flex flex-col">
-                        <div className={`rounded-[2rem] border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
+                    <div ref={mapSectionRef} className="w-full lg:w-[40%] flex flex-col relative">
+                        <div className={`rounded-[2rem] border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-slate-50 border-slate-200/80'}`}>
                             <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-slate-800/80 text-white border-slate-600' : 'bg-white/90 text-slate-800 border-slate-200'}`}>
                                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                                 <span>Motor Cartográfico</span>
@@ -979,11 +1045,11 @@ function MainApp() {
                                     <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                     </button>
-                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
-                                        <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+                                        <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                             <span className="block font-bold mb-1 opacity-70">Fontes dos Dados:</span>
-                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
-                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
+                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
+                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
                                         </div>
                                     </div>
                                 </div>
@@ -1001,27 +1067,13 @@ function MainApp() {
                     </div>
 
                     {/* COLUNA DAS LISTAS (60%) */}
-                    <div className="w-full lg:w-[60%] flex flex-col gap-4 h-full">
+                    <div className="w-full lg:w-[60%] flex flex-col gap-4 h-full overflow-hidden">
                         <div className="flex flex-col sm:flex-row gap-4 flex-[0.8] min-h-0">
+                            
                             {/* LISTA 1: ESTRUTURAS CT&I */}
-                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all overflow-hidden ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
-                                <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
-                                    <div className="flex items-center gap-1.5">
-                                        <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
-                                        <div className="relative group flex items-center justify-center z-50">
-                                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
-                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
-                                            </button>
-                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                                <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
-                                                    <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                                    <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">
-                                                        INEP/ Censo de Educação Superior (2022)
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[2rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                                <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
+                                    <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
                                     <div className="flex items-center gap-2">
                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
                                             {dashboardData.entidades.length}
@@ -1033,7 +1085,7 @@ function MainApp() {
                                         )}
                                     </div>
                                 </div>
-                                <div className="flex-1 overflow-y-auto p-3 hide-scroll">
+                                <div className="flex-1 overflow-y-auto p-4 hide-scroll">
                                     <div className="flex flex-col gap-2">
                                     {dashboardData.entidades.length > 0 ? (
                                         dashboardData.entidades.map((ent, idx) => (
@@ -1053,18 +1105,18 @@ function MainApp() {
                             </div>
 
                             {/* LISTA 2: CADEIAS PRODUTIVAS */}
-                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[1.5rem] border shadow-sm flex flex-col transition-all overflow-hidden ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
-                                <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
+                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[2rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                                <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                     <div className="flex items-center gap-1.5">
                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cadeias Produtivas</h4>
                                         <div className="relative group flex items-center justify-center z-50">
                                             <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                             </button>
-                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                                <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                                     <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                                    <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">
+                                                    <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                         DataSebrae / Indicações Geográficas
                                                     </a>
                                                 </div>
@@ -1080,26 +1132,45 @@ function MainApp() {
                                         )}
                                     </div>
                                 </div>
-                                <div className="flex-1 overflow-y-auto p-3 hide-scroll">
+                                <div className="flex-1 overflow-y-auto p-4 hide-scroll">
                                     <div className="flex flex-col gap-2">
                                     {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
                                         <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-                                            <div className="flex items-start justify-between mb-1.5">
-                                                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{apl.segmento}</span>
-                                                <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
+                                            <div className="flex items-start justify-between mb-2">
+                                                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
+                                                    {apl.segmento}
+                                                </span>
+                                                <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
+                                                    {apl.tipo}
+                                                </span>
                                             </div>
-                                            {apl.entidade && <span className="text-[11px] font-bold leading-tight mb-1">{fixWeirdCapitalization(apl.entidade)}</span>}
-                                            <div className={`p-2 rounded-lg border mt-1 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
-                                                <span className="block text-[8px] font-black uppercase opacity-50 mb-1">Abrangência Municipal:</span>
-                                                <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipiosPertencentes}>{apl.municipiosPertencentes}</p>
-                                                
-                                                {apl.municipioSatelite && apl.municipioSatelite !== '' && (
-                                                    <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
-                                                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Município(s) Satélite(s):</span>
-                                                        <p className="text-[9px] font-medium leading-relaxed opacity-90" title={apl.municipioSatelite}>{apl.municipioSatelite}</p>
-                                                    </div>
-                                                )}
+                                            
+                                            {apl.entidade && (
+                                                <div className="mb-2">
+                                                    <span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-blue-500 dark:text-blue-400">Entidade Vinculada</span>
+                                                    <span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                                                        {fixWeirdCapitalization(apl.entidade)}
+                                                    </span>
                                                 </div>
+                                            )}
+                                            
+                                            <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
+                                                <div className="grid grid-cols-2 gap-3 mb-2">
+                                                    <div>
+                                                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
+                                                        <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.sede}</p>
+                                                    </div>
+                                                    <div>
+                                                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span>
+                                                        <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className={`pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
+                                                    <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span>
+                                                    <p className={`text-[9px] font-medium leading-relaxed opacity-80 line-clamp-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`} title={apl.municipiosPertencentes}>{apl.municipiosPertencentes}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     )) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma cadeia isolada para os filtros ativos.</div>)}
                                     </div>
@@ -1108,29 +1179,31 @@ function MainApp() {
                         </div>
 
                         {/* LISTA 3: CURSOS SUPERIORES */}
-                        <div className={`flex-[0.6] min-h-0 relative rounded-[1.5rem] border shadow-sm flex flex-col transition-all overflow-hidden ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
-                            <div className={`p-3 border-b flex items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
+                        <div className={`flex-[0.6] min-h-0 relative rounded-[2rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
+                            <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
                                 <div className="flex items-center gap-2">
                                     <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Cursos CT&I</h4>
                                     <div className="relative group flex items-center justify-center z-50">
                                         <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                         </button>
-                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                        <div className={`p-2.5 rounded-xl text-[10px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                            <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                                 <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                            <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">
+                                                <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                     INEP/ Censo de Educação Superior (2022)
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black hidden lg:inline-block ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{cursosFiltrados.length}</span>
-                                    {cursosFiltrados.length > 0 && (
-                                        <button onClick={() => setExpandedList('cursos')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
-                                            <Expand size={14} />
-                                        </button>
-                                    )}
+                                    <div className="flex items-center gap-2">
+                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black hidden lg:inline-block ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{cursosFiltrados.length}</span>
+                                        {cursosFiltrados.length > 0 && (
+                                            <button onClick={() => setExpandedList('cursos')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
+                                                <Expand size={14} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -1158,36 +1231,27 @@ function MainApp() {
                                             className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}
                                         >
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText(areaGeralFilter)}</span>
+                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText()}</span>
                                         </button>
 
                                         {isAreaGeralOpen && (
                                             <div className={`absolute right-0 top-[100%] mt-2 w-64 sm:w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
                                                 <span className="block text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
                                                 <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
-                                                    {todasAsAreasGerais.map(areaName => {
-                                                        const areaData = areaGeralSummary.find(a => a.name === areaName);
-                                                        const count = areaData ? areaData.count : 0;
-                                                        const styles = getAreaStyles(areaName, darkMode);
-                                                        const isSelected = areaGeralFilter.includes(areaName);
-
-                                                        // Não renderiza a opção se ela não tiver cursos correspondentes E não estiver selecionada.
-                                                        // Isso limpa a lista de opções irrelevantes, mas mantém as seleções ativas visíveis para que possam ser desmarcadas.
-                                                        if (count === 0 && !isSelected) {
-                                                            return null;
-                                                        }
-
+                                                    {areaGeralSummary.map(area => { 
+                                                        const styles = getAreaStyles(area.name, darkMode);
+                                                        const isSelected = areaGeralFilter.includes(area.name);
                                                         return (
                                                             <button
-                                                                key={areaName}
-                                                                onClick={() => handleAreaGeralToggle(areaName)}
+                                                                key={area.name}
+                                                                onClick={() => handleAreaGeralToggle(area.name)}
                                                                 className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}
                                                             >
                                                                 <div className="flex items-center gap-1.5 pr-1">
                                                                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
-                                                                    <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span>
+                                                                    <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span>
                                                                 </div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${styles.countBg}`}>{count}</span>
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span> 
                                                             </button>
                                                         );
                                                     })}
@@ -1201,13 +1265,14 @@ function MainApp() {
                                 )}
                                 </div>
                             </div>
-                            <div className="flex-1 p-3 overflow-y-auto hide-scroll">
+
+                            <div className="flex-1 p-4 overflow-y-auto hide-scroll">
                                 <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-2.5">
                                     {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => {
                                         const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
                                         const hoverClasses = darkMode ? 'hover:border-current' : 'hover:border-current';
                                         return (
-                                        <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} ${hoverClasses} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                                        <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} hover:border-current ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
                                             <div className="flex flex-col items-start gap-1">
                                                 <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
                                                 {curso.areaGeral && (
@@ -1230,7 +1295,7 @@ function MainApp() {
                                                 )}
                                                 <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
                                                     <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}>
-                                                        <svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                                        <svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg>
                                                         <span className="truncate">{curso.municipio}</span>
                                                     </span>
                                                     <div className="flex items-center gap-1 shrink-0">
@@ -1243,7 +1308,6 @@ function MainApp() {
                                     );
                                     }) : (<div className={`col-span-full flex items-center justify-center py-6 text-[10px] font-medium italic ${themeClasses.textMuted}`}>{areaGeralFilter.length > 0 || cursoSearchTerm ? `Nenhum curso encontrado para a pesquisa e/ou filtros aplicados.` : 'Nenhum curso superior mapeado ou isolado.'}</div>)}
                                 </div>
-                                </div>
                             </div>
                         </div>
 
@@ -1251,6 +1315,7 @@ function MainApp() {
                 </div>
 
                 </div>
+            </div>
           } />
 
         </Routes>
