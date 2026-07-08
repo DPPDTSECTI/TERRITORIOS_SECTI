@@ -60,7 +60,6 @@ const SobrePage = ({ darkMode }) => {
             <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
             <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
             <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>média ponderada pela população</strong> de cada município.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Geração de Relatórios:</strong> A funcionalidade de exportação de relatórios em PDF segue as normas da <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>ABNT (NBR 14724 e 6023)</strong>.</li>
           </ol>
 
           <SectionTitle number="6" title="Guia de Funcionalidades" />

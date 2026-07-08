@@ -8,7 +8,7 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v20'; // Atualizado para separar Univs Públicas e Privadas
+const CACHE_VERSION = 'v28_cadeias_cooperativas_fix'; // Força atualização do cache
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
@@ -21,47 +21,38 @@ function normalize(value) {
     .trim();
 }
 
-// ==================== O MEGA FILTRO DE ENTIDADES ====================
-function expandirNomeEntidade(nomeRaw, tipoRaw = '') {
-  let nome = String(nomeRaw || '').trim();
-  let tipoNorm = normalize(tipoRaw);
-  
-  // ESCUDO DE PROTEÇÃO: Entidades do Ecossistema não podem ser rebatizadas para Universidades
-  const isEcossistema = ['incubadora', 'parque', 'espaco', 'pesquisa', 'dinamizador', 'ict'].some(term => tipoNorm.includes(term));
-
-  // 1. Normalização profunda para comparação
-  let nomeNorm = String(nome)
+function safeKey(k) {
+  return String(k || '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[^a-z0-9]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/[^a-z0-9]/g, '');
+}
 
-  // 2. A TESOURA PRÉVIA: Corta o ruído antes de avaliar (Campus, Polos, EAD)
-  nomeNorm = nomeNorm.replace(/\b(campus|polo|unidade|centro de|ead|departamento)\b.*$/g, '').trim();
+// ==================== O MEGA FILTRO DE ENTIDADES ====================
+// NOVO: Adicionado o parâmetro isCadeia para impedir que Associações virem Universidades
+function expandirNomeEntidade(nomeRaw, tipoRaw = '', isCadeia = false) {
+  let nome = String(nomeRaw || '').trim();
+  let tipoNorm = normalize(tipoRaw);
+  
+  const isEcossistema = ['incubadora', 'parque', 'espaco', 'pesquisa', 'dinamizador', 'ict'].some(term => tipoNorm.includes(term));
 
-  // 3. Dicionário de Mapeamento Direto (Regex -> Nome Oficial)
-  if (!isEcossistema) {
+  // SE FOR CADEIA PRODUTIVA OU IG, IGNORA O DICIONÁRIO DE UNIVERSIDADES!
+  if (!isEcossistema && !isCadeia) {
+    let nomeNorm = normalize(nome).replace(/\b(campus|polo|unidade|centro de|ead|departamento)\b.*$/g, '').trim();
+
     const dicionario = [
-      // Federais
       { padrao: /\b(ufba|universidade federal da bahia)\b/, oficial: 'Universidade Federal da Bahia (UFBA)' },
       { padrao: /\b(ufrb|reconcavo da bahia|reconcavo)\b/, oficial: 'Universidade Federal do Recôncavo da Bahia (UFRB)' },
       { padrao: /\b(ufob|oeste da bahia)\b/, oficial: 'Universidade Federal do Oeste da Bahia (UFOB)' },
       { padrao: /\b(ufsb|sul da bahia)\b/, oficial: 'Universidade Federal do Sul da Bahia (UFSB)' },
       { padrao: /\b(univasf|vale do sao francisco)\b/, oficial: 'Universidade Federal do Vale do São Francisco (UNIVASF)' },
-      
-      // Estaduais
       { padrao: /\b(uneb|estado da bahia|estadual da bahia)\b/, oficial: 'Universidade do Estado da Bahia (UNEB)' },
       { padrao: /\b(uesc|santa cruz)\b/, oficial: 'Universidade Estadual de Santa Cruz (UESC)' },
       { padrao: /\b(uesb|sudoeste da bahia|sudoeste)\b/, oficial: 'Universidade Estadual do Sudoeste da Bahia (UESB)' },
       { padrao: /\b(uefs|feira de santana)\b/, oficial: 'Universidade Estadual de Feira de Santana (UEFS)' },
-
-      // Institutos Federais
       { padrao: /\b(ifbaiano|if baiano|tecnologia baiano)\b/, oficial: 'Instituto Federal Baiano (IF BAIANO)' },
       { padrao: /\b(ifba|instituto federal da bahia|ciencia e tecnologia da bahia)\b/, oficial: 'Instituto Federal da Bahia (IFBA)' },
-
-      // Sistema S e Privadas Comuns
       { padrao: /\b(senai|cimatec)\b/, oficial: 'Serviço Nacional de Aprendizagem Industrial (SENAI)' },
       { padrao: /\b(senac)\b/, oficial: 'Serviço Nacional de Aprendizagem Comercial (SENAC)' },
       { padrao: /\b(uninassau|mauricio de nassau)\b/, oficial: 'Centro Universitário Maurício de Nassau (UNINASSAU)' },
@@ -79,26 +70,16 @@ function expandirNomeEntidade(nomeRaw, tipoRaw = '') {
       }
     }
 
-    // 4. Tratamento de fallback (Corrige nomenclaturas caso não seja ecossistema)
     nome = nome.replace(/^UNIVERSI[A-Z]*\s/gi, 'Universidade '); 
     nome = nome.replace(/^INSTITUT[A-Z]*\s/gi, 'Instituto ');
     nome = nome.replace(/^CENTRO U[A-Z]*\s/gi, 'Centro Universitário ');
     nome = nome.replace(/^FACULDA[A-Z]*\s/gi, 'Faculdade ');
   }
   
-  // A Tesoura Final (Serve para todos, limpa Campi e Polos do final da string)
   nome = nome.replace(/\s*[-–|/]\s*(Campus|Polo|Unidade|Centro).*$/i, '');
   nome = nome.replace(/\s+(Campus|Polo|Unidade)\s+.*$/i, '');
   
-  return nome.trim().replace(/\b\w/g, l => l.toUpperCase());
-}
-
-function safeKey(k) {
-  return String(k || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '');
+  return nome.trim();
 }
 
 const toNumber = (value) => {
@@ -190,6 +171,13 @@ function parseSpreadsheet(buffer) {
 
     const sheetNorm = safeKey(sheetName);
 
+    const isCadeiaSheet = ['cadeiaprodutiva', 'cadeiasprodutivas', 'igpotenciais', 'igspotenciais', 'potenciais', 'producao', 'apl', 'arranjoprodutivo'].some(term => sheetNorm.includes(term)) || sheetNorm === 'ig' || sheetNorm === 'igs';
+    const isCursoSheet = ['curso', 'ensino', 'superior', 'graduacao', 'educacao'].some(term => sheetNorm.includes(term));
+    const isIfdmSheet = ['ifdm', 'desenvolvimento', 'populacao', 'socioecon'].some(term => sheetNorm.includes(term));
+    const isCapacidadeSheet = (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('infraestrutura') || sheetNorm.includes('entidade')) && !isCadeiaSheet && !isCursoSheet && !isIfdmSheet;
+
+    if (!isCadeiaSheet && !isCursoSheet && !isIfdmSheet && !isCapacidadeSheet) return;
+
     rawRows.forEach((rawRow, idx) => {
       const row = {};
       for (const key in rawRow) {
@@ -204,7 +192,7 @@ function parseSpreadsheet(buffer) {
       const municipio = String(row['municipio'] || row['cidade'] || row['local'] || '').trim();
       const orgAcademica = String(row['orgacademica'] || '').trim();
       const categoriaAdm = String(row['categoriaadm'] || '').trim();
-      const rede = String(row['rede'] || '').trim(); // Nova coluna adicionada
+      const rede = String(row['rede'] || '').trim(); 
       
       const cabeçalhoColunaA = Object.keys(rawRow)[0]; 
       const valorColunaA = String(rawRow[cabeçalhoColunaA] || '').trim(); 
@@ -212,34 +200,36 @@ function parseSpreadsheet(buffer) {
       let entidadeRaw = '';
       let tipoOriginal = '';
 
-      // ==================== EXTRATOR DIRECIONADO PARA CRUZAMENTO ====================
-      if (sheetNorm.includes('curso') || sheetNorm.includes('ensino')) {
+      if (isCursoSheet) {
           entidadeRaw = String(row['universidade'] || row['ies'] || '').trim();
           tipoOriginal = String(orgAcademica).trim();
+      } else if (isCadeiaSheet) {
+          entidadeRaw = String(row['entidadegestora'] || row['entidade'] || row['associacao'] || '').trim();
+          tipoOriginal = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || '').trim();
       } else {
           entidadeRaw = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || row['ies'] || row['sigla'] || valorColunaA).trim();
-          tipoOriginal = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || row['categoria'] || row['natureza'] || '').trim();
+          tipoOriginal = String(row['tipo'] || row['categoria'] || row['natureza'] || '').trim();
       }
 
-      const entidadesExpandida = expandirNomeEntidade(entidadeRaw, tipoOriginal);
+      // PASSANDO isCadeiaSheet PARA IMPEDIR A TROCA DE NOMES
+      const entidadesExpandida = expandirNomeEntidade(entidadeRaw, tipoOriginal, isCadeiaSheet);
       const qtd = toNumber(row['quantidade'] || row['qtd'] || row['qtdenti'] || row['valorentidades'] || 1);
 
       let tipoFinal = tipoOriginal;
       let categoriaEntidade = null;
       let isCTI = false;
       
-      // ==================== MOTOR DE CLASSIFICAÇÃO RESTAURADO E ATUALIZADO ====================
-      if (sheetNorm.includes('capacidade')) {
+      if (isCapacidadeSheet) {
           isCTI = true; 
           tipoFinal = tipoOriginal; 
 
           const tNorm = normalize(tipoOriginal);
           
           if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => tNorm.includes(c))) { 
-              categoriaEntidade = 'univsPublica'; // Força para pública conforme a sua indicação
-              if (!tNorm.includes('publica') && !tNorm.includes('federal') && !tNorm.includes('estadual')) {
-                  tipoFinal = tipoFinal ? `${tipoFinal} - Pública` : 'Universidade Pública';
-              }
+              categoriaEntidade = 'univsPublica';
+               if (!tNorm.includes('publica') && !tNorm.includes('federal') && !tNorm.includes('estadual')) {
+                   tipoFinal = tipoFinal ? `${tipoFinal} - Pública` : 'Universidade Pública';
+               }
           }
           else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tNorm.includes(c))) { categoriaEntidade = 'ifs'; }
           else if (['centro de pesquisa', 'pesquisa'].some(c => tNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; }
@@ -249,7 +239,7 @@ function parseSpreadsheet(buffer) {
           else if (['parque'].some(c => tNorm.includes(c))) { categoriaEntidade = 'parques'; }
           else { categoriaEntidade = 'outros'; }
           
-      } else if (sheetNorm.includes('curso') || sheetNorm.includes('ensino')) {
+      } else if (isCursoSheet) {
           isCTI = true; 
           
           const orgNorm = normalize(tipoOriginal);
@@ -263,7 +253,6 @@ function parseSpreadsheet(buffer) {
           else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => orgNorm.includes(c))) { categoriaEntidade = 'ifs'; }
           else { categoriaEntidade = 'outros'; }
 
-          // Constrói o Tipo de Apresentação visual
           let tipoParts = [tipoOriginal];
           if (isPrivada) tipoParts.push('Privada');
           else if (catNorm.includes('estadual')) tipoParts.push('Pública Estadual');
@@ -272,9 +261,7 @@ function parseSpreadsheet(buffer) {
 
           tipoFinal = tipoParts.filter(Boolean).join(' - ');
       }
-      // =========================================================================================
 
-      // ID Único Blindado
       const uniqueRowId = (entidadesExpandida && municipio) 
           ? `ent_${safeKey(entidadesExpandida)}_${safeKey(municipio)}` 
           : `aba_${sheetNorm}_linha_${idx}`;
@@ -283,8 +270,7 @@ function parseSpreadsheet(buffer) {
          const territory = getTerritory(tName);
          if (!territory) return;
 
-         // 1. INJEÇÃO DE CAPACIDADE TERRITORIAL E CRUZAMENTO
-         if (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('ensino') || sheetNorm.includes('curso')) {
+         if (isCapacidadeSheet || isCursoSheet) {
              if (isCTI && entidadesExpandida !== '') {
                  const alreadyExists = territory.capacidadeRows.some(e => e.id === uniqueRowId);
                  if (!alreadyExists) {
@@ -300,16 +286,17 @@ function parseSpreadsheet(buffer) {
              }
          }
 
-         // 2. CADEIAS PRODUTIVAS
-         if (sheetNorm.includes('cadeia') || sheetNorm.includes('ig') || sheetNorm.includes('potencial')) {
+         if (isCadeiaSheet) {
              const cadeia = String(row['cadeiaprodutiva'] || row['cadeiasprodutivas'] || row['cadeia'] || row['segmento'] || '').trim();
              if (cadeia !== '') {
                  const sede = String(row['sede'] || row['municipiosatelite'] || '').trim();
                  const abrangencia = String(row['municipiospertencentes'] || row['abrangencia'] || '').trim();
                  const fonte = String(row['fontedodado'] || row['fonte'] || row['link'] || '').trim();
 
+                 const semanticId = `cad_${safeKey(cadeia)}_${safeKey(sede)}_${safeKey(entidadesExpandida)}`;
+
                  territory.cadeiasRows.push({
-                     id: `aba_${sheetNorm}_linha_${idx}`,
+                     id: semanticId,
                      segmento: cadeia,
                      sede: sede || abrangencia.split(/[;,]/)[0].trim() || municipio || 'N/A',
                      municipiosPertencentes: abrangencia,
@@ -321,8 +308,7 @@ function parseSpreadsheet(buffer) {
              }
          }
 
-         // 3. DESENVOLVIMENTO (IFDM)
-         if (sheetNorm.includes('desenvolvimento') || sheetNorm.includes('ifdm')) {
+         if (isIfdmSheet) {
              const ifdm = toNumber(row['ifdm']);
              const pop = toNumber(row['populacao']);
              const ifdmTi = toNumber(row['ifdmt'] || row['ifdmti']);
@@ -338,14 +324,12 @@ function parseSpreadsheet(buffer) {
              if (ifdmTi > 0) territory.desenvolvimento.ifdmTi = ifdmTi;
          }
 
-         // 4. ASSISTÊNCIA PÚBLICA
          const assistencia = String(row['assistenciapublica'] || row['conecta'] || '');
          const iniciativas = String(row['iniciativas'] || row['dispositivosestaduais'] || '');
          if (isTruthy(assistencia)) territory.assistenciaPublica.existe = true;
          if (iniciativas !== '') splitList(iniciativas).forEach(i => territory.assistenciaPublica.iniciativas.add(i));
 
-         // 5. CURSOS EM CT&I
-         if (sheetNorm.includes('curso') || sheetNorm.includes('ensino')) {
+         if (isCursoSheet) {
              const nomeCurso = String(row['curso'] || '').trim();
              if (nomeCurso !== '') {
                  territory.cursosRows.push({
@@ -366,12 +350,11 @@ function parseSpreadsheet(buffer) {
     });
   };
 
-  // ORDENAÇÃO DE ABAS
   const ordenadasSheetNames = [...targetSheetNames].sort((a, b) => {
       const aKey = safeKey(a);
       const bKey = safeKey(b);
-      const aIsMain = aKey.includes('capacidade') || aKey.includes('cti');
-      const bIsMain = bKey.includes('capacidade') || bKey.includes('cti');
+      const aIsMain = aKey.includes('capacidade') || (aKey.includes('cti') && !aKey.includes('conecti'));
+      const bIsMain = bKey.includes('capacidade') || (bKey.includes('cti') && !bKey.includes('conecti'));
       if (aIsMain && !bIsMain) return -1;
       if (!aIsMain && bIsMain) return 1;
       return 0;
