@@ -180,249 +180,21 @@ export default function useTerritoriosData(filters) {
         });
         return results.sort((a, b) => a.nome.localeCompare(b.nome));}, [debouncedSearchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters, cadeiaProdutivaFilter]);
 
-    const dashboardData = useMemo(() => {
-        if (!territoriosData || territoriosData.length === 0) {
-            return { 
-                topKpis: { capacidadeCti: "0", ifdm: "-", cadeiasIgs: "0", coberturaSemiarido: "0%", cursos: "0", unfiltCursosCount: 0 },
-                topKpisPct: { cti: 0, ifdm: 0, semiarido: 0, cadeias: 0, cursos: 0 },
-                subKpis: {}, unfiltSubKpis: {}, entidades: [], aplIgs: [], cursos: [] 
-            };
-        }
-
-        let targetList = selectedLocation 
-            ? territoriosData.filter(t => normalize(t.nome) === normalize(selectedLocation.nome || selectedLocation.territory || selectedLocation.regiao))
-            : territoriosData;
-
-        if (targetList.length === 0) targetList = territoriosData;
-
-        const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
-        const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
-        
-        const cursoTerm = normalize(debouncedCursoSearchTerm);
-        const isCursoFiltered = cursoTerm !== '' || (areaGeralFilter && areaGeralFilter.length > 0);
-
-        const kpisPanel = { univsPublica: 0, univsPrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
-        const unfiltKpisPanel = { univsPublica: 0, univsPrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
-        
-        const entidadesFlat = []; 
-        const aplIgsMap = new Map(); // Mapa para garantir Sede Única e mesclar municípios
-        const cursosFlat = [];
-        
-        const globalIds = new Set(); const globalCadeiasIds = new Set();
-        let somaIfdmPop = 0; let somaPopulacao = 0;
-        
-        let unfiltCursosCount = 0;
-        const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
-
-        targetList.forEach(t => {
-            unfiltCursosCount += (t.cursosDetalhado || []).length;
-
-            const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
-            const qtdSemiVal = t.qtdSemiarido || 0;
-            if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
-            if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
-            if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
-            if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
-
-            // Coleta Não-Filtrada (Para porcentagens de barras)
-            (t.entidadesDetalhadas || []).forEach(ent => {
-                if (!isMunValid(ent.municipio)) return;
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return;
-                }
-                if (ent.id) {
-                    unfiltIds.add(ent.id);
-                    if (ent.categoria && unfiltKpisPanel[ent.categoria] !== undefined) unfiltKpisPanel[ent.categoria]++;
-                }
-            });
-
-            (t.cadeiasProdutivasDetalhado || []).forEach(cad => {
-                const sateliteRobusto = extrairSatelite(cad);
-                const sede = cad.sede || sateliteRobusto || 'Não informada';
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return;
-                }
-                if (cad.id) {
-                    const uniqueCadId = `cad_${normalize(cad.segmento)}_${normalize(sede)}`;
-                    unfiltCadeiasIds.add(uniqueCadId);
-                }
-            });
-
-            if (filtroSemiarido && !t.isSemiarido) return;
-
-            // 1. Processar Cursos
-            const entidadesComCursosValidos = new Set();
-            (t.cursosDetalhado || []).forEach(curso => {
-                if (!isMunValid(curso.municipio)) return;
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return;
-                }
-
-                if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return;
-                if (areaGeralFilter && areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return;
-                
-                const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-                let catCurso = null;
-                const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
-                if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                    catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
-                } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                    catCurso = 'ifs';
-                }
-                
-                if (catCurso && ctiFilters && !ctiFilters[catCurso]) return;
-                
-                entidadesComCursosValidos.add(normalize(curso.entidade)); 
-                cursosFlat.push({ ...curso, territorioRef: t.nome });
-            });
-
-            // 2. Processar Entidades
-            (t.entidadesDetalhadas || []).forEach(ent => {
-                if (!isMunValid(ent.municipio)) return;
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return;
-                }
-                
-                if (ent.categoria && ctiFilters && !ctiFilters[ent.categoria]) return;
-                if (isCursoFiltered && !entidadesComCursosValidos.has(normalize(ent.entidade))) return;
-
-                entidadesFlat.push({ ...ent, territorioRef: t.nome });
-                if (ent.id && !globalIds.has(ent.id)) {
-                    globalIds.add(ent.id); 
-                    if (ent.categoria && kpisPanel[ent.categoria] !== undefined) kpisPanel[ent.categoria]++;
-                }
-            });
-            
-            // 3. Processar Cadeias Produtivas (AQUI ESTÁ A MAGIA DE JUNTAR OS MUNICÍPIOS)
-            (t.cadeiasProdutivasDetalhado || []).forEach(cad => {
-                const sateliteRobusto = extrairSatelite(cad);
-                const sede = cad.sede || sateliteRobusto || 'Não informada';
-                // O array de municípios pertencentes desta linha específica
-                const perts = filtroSemiarido ? String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(m => isMunValid(m)) : String(cad.municipiosPertencentes || '').split(/[,;\-]/).map(m => m.trim()).filter(Boolean);
-                
-                if (filtroSemiarido && !isMunValid(sede) && perts.length === 0) return;
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return;
-                }
-                
-                const cadId = `cad_${normalize(cad.segmento)}_${normalize(sede)}`;
-                
-                if (aplIgsMap.has(cadId)) {
-                    const existing = aplIgsMap.get(cadId);
-                    
-                    // Adiciona o novo território, se ainda não existir
-                    if (!existing.territorios.includes(t.nome)) existing.territorios.push(t.nome);
-                    
-                    // JUNTA OS MUNICÍPIOS DESTA LINHA COM OS DA LINHA ANTERIOR
-                    const currentMuns = new Set(existing.municipiosPertencentes.split(',').map(m => m.trim()).filter(Boolean));
-                    perts.forEach(m => currentMuns.add(m));
-                    existing.municipiosPertencentes = Array.from(currentMuns).join(', ');
-
-                    // Se a entidade nova for mais descritiva, substitui a antiga (ex: Conselho... vs Uvas...)
-                    if (cad.entidade && cad.entidade.length > (existing.entidade || '').length) {
-                        existing.entidade = cad.entidade;
-                    }
-
-                } else {
-                    aplIgsMap.set(cadId, { 
-                        id: cadId, 
-                        segmento: cad.segmento || 'Sem Segmento', 
-                        entidade: cad.entidade, 
-                        tipo: cad.tipo || 'N/A', 
-                        municipiosPertencentes: perts.join(', ') || sede, 
-                        sede, 
-                        territorios: [t.nome], 
-                        municipioSatelite: sateliteRobusto 
-                    });
-                }
-                globalCadeiasIds.add(cadId);
-            });
-
-            // 4. Desenvolvimento
-            if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
-                t.desenvolvimentoDetalhado.forEach(m => {
-                    if (isMunValid(m.municipio) && Number(m.ifdm) > 0) { 
-                        somaIfdmPop += (Number(m.ifdm) * Number(m.populacao)); 
-                        somaPopulacao += Number(m.populacao); 
-                    }
-                });
-            } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
-                somaIfdmPop += (t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal); 
-                somaPopulacao += t.desenvolvimento.populacaoTotal;
-            }
-        });
-
-        const ifdmValue = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao) : 0;
-
-        let coberturaCalculada = "";
-        let pctBarraSemi = 0;
-
-        if (selectedLocation) {
-            const tb = territoriosMunicipios.territorios_de_identidade.find(x => normalize(x.nome) === normalize(selectedLocation.nome));
-            const totalMunTerr = tb ? tb.municipios.length : 0;
-            const qtdSemiTerr = selectedLocation.qtdSemiarido || 0;
-            const pctTerr = totalMunTerr > 0 ? (qtdSemiTerr / totalMunTerr) * 100 : 0;
-            pctBarraSemi = pctTerr;
-
-            if (filtroSemiarido) {
-                coberturaCalculada = `${qtdSemiTerr}/${totalMunTerr} mun.`;
-            } else {
-                coberturaCalculada = pctTerr >= 100 ? `100% (${qtdSemiTerr} mun.)` : `${pctTerr.toFixed(1)}% (${qtdSemiTerr} mun.)`;
-            }
-        } else {
-            pctBarraSemi = globalStats.pctGlobalSemiarido;
-            coberturaCalculada = filtroSemiarido 
-                ? `${globalStats.totalSemiarido}/${globalStats.totalBahia} mun.` 
-                : `${(globalStats.pctGlobalSemiarido || 0).toFixed(1)}% (${globalStats.totalSemiarido} mun.)`;
-        }
-
-        const topKpisPct = {
-            cti: unfiltIds.size > 0 ? (globalIds.size / unfiltIds.size) * 100 : 0,
-            ifdm: ifdmValue * 100, 
-            semiarido: pctBarraSemi,
-            cadeias: unfiltCadeiasIds.size > 0 ? (globalCadeiasIds.size / unfiltCadeiasIds.size) * 100 : 0,
-            cursos: unfiltCursosCount > 0 ? (cursosFlat.length / unfiltCursosCount) * 100 : 0
-        };
-        
-        const getCursoKey = (c) => c.id || `${normalize(c.entidade)}-${normalize(c.curso)}-${normalize(c.municipio)}`;
-        
-        return { 
-            topKpis: {
-                capacidadeCti: String(globalIds.size), 
-                ifdm: somaPopulacao > 0 ? ifdmValue.toFixed(3) : "-",
-                cadeiasIgs: String(globalCadeiasIds.size), 
-                coberturaSemiarido: coberturaCalculada,
-                cursos: String(cursosFlat.length),
-                unfiltCursosCount: unfiltCursosCount
-            }, 
-            topKpisPct, 
-            subKpis: kpisPanel, 
-            unfiltSubKpis: unfiltKpisPanel,
-            entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
-            aplIgs: Array.from(aplIgsMap.values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
-            cursos: Array.from(new Map(cursosFlat.map(item => [getCursoKey(item), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
-        };
-    }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, globalStats]);
-
     const territoriesDynamicStats = useMemo(() => {
-        const stats = {}; 
-        const rawTerm = normalize(debouncedSearchTerm); 
+        const stats = {};
+        const rawTerm = normalize(debouncedSearchTerm);
         const terms = rawTerm.split(' ').filter(Boolean);
         const cursoTerm = normalize(debouncedCursoSearchTerm);
         const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
-        const isCtiFiltered = ctiFilters && Object.values(ctiFilters).some(v => !v);
+        const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
         const isCursoFiltered = cursoTerm !== '' || (areaGeralFilter && areaGeralFilter.length > 0);
+        const isCadeiaFiltered = cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0;
 
         territoriosData.forEach(t => {
             const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
             const qtdSemiVal = t.qtdSemiarido || 0;
-            
+
             let passesIntervals = true;
             if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) passesIntervals = false;
             if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) passesIntervals = false;
@@ -439,8 +211,157 @@ export default function useTerritoriosData(filters) {
             } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
                 somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal; somaPop = t.desenvolvimento.populacaoTotal;
             }
+
+            const validCti = (t.entidadesDetalhadas || []).filter(ent => {
+                if (!isMunValid(ent.municipio) || (ent.categoria && !ctiFilters[ent.categoria])) return false;
+                if (rawTerm && !isSearchTermATerritory) {
+                    const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
+                    if (!terms.every(term => searchString.includes(term))) return false;
+                }
+                return true;
+            });
+
+            const validCadeias = (t.cadeiasProdutivasDetalhado || []).filter(cad => {
+                if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
+                if (rawTerm && !isSearchTermATerritory) {
+                    const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
+                    if (!terms.every(term => searchString.includes(term))) return false;
+                }
+                if (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) {
+                    const tipo = String(cad.tipo).toLowerCase();
+                    const isAPL = tipo.includes('apl') || tipo.includes('arranjo');
+                    const isIG = tipo.includes('ig') || tipo.includes('indicação');
+                    const wantsAPL = cadeiaProdutivaFilter.includes('APL');
+                    const wantsIG = cadeiaProdutivaFilter.includes('IG');
+                    if (!((wantsAPL && isAPL) || (wantsIG && isIG))) return false;
+                }
+                return true;
+            });
+
+            const validCursos = (t.cursosDetalhado || []).filter(curso => {
+                if (!isMunValid(curso.municipio)) return false;
+                if (rawTerm && !isSearchTermATerritory) {
+                    const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
+                    if (!terms.every(term => searchString.includes(term))) return false;
+                }
+                if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
+                if (areaGeralFilter && areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
+
+                const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
+                let catCurso = null;
+                const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
+                if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
+                    catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
+                } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
+                    catCurso = 'ifs';
+                }
+                if (catCurso && !ctiFilters[catCurso]) return false;
+
+                return true;
+            });
+
+            let matchesSearch = true;
+            if (rawTerm) {
+                const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
+                const tMatches = terms.every(term => normalize(t.nome).includes(term));
+                const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
+                matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
+            }
+
+            const hasDataForFilters = !( (isCtiFiltered && validCti.length === 0) || (isCursoFiltered && validCursos.length === 0) || (isCadeiaFiltered && validCadeias.length === 0) );
+
+            stats[normalize(t.nome)] = {
+                ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
+                capacidadeCti: String(validCti.length),
+                cadeiasIgs: String(validCadeias.length),
+                cursos: String(validCursos.length),
+                pctSemiarido: t.pctSemiarido,
+                matchesFilters: passesIntervals && matchesSearch && hasDataForFilters
+            };
+        });
+        return stats;
+    }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, cadeiaProdutivaFilter]);
+
+    const dashboardData = useMemo(() => {
+    if (!territoriosData || territoriosData.length === 0) {
+        return { 
+            topKpis: { capacidadeCti: "0", ifdm: "-", cadeiasIgs: "0", coberturaSemiarido: "0%", cursos: "0", unfiltCursosCount: 0 },
+            topKpisPct: { cti: 0, ifdm: 0, semiarido: 0, cadeias: 0, cursos: 0 },
+            subKpis: {}, unfiltSubKpis: {}, entidades: [], aplIgs: [], cursos: [] 
+        };
+    }
+
+    let targetList = selectedLocation 
+        ? territoriosData.filter(t => normalize(t.nome) === normalize(selectedLocation.nome || selectedLocation.territory || selectedLocation.regiao))
+        : territoriosData;
+
+    if (targetList.length === 0) targetList = territoriosData;
+
+    const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
+    const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
+    
+    // CORREÇÃO: Variáveis atualizadas para as novas categorias Pública/Privada
+    const kpisPanel = { univsPublica: 0, univsPrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
+    const unfiltKpisPanel = { univsPublica: 0, univsPrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
+    
+    const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = [];
+    const globalIds = new Set(); const globalCadeiasIds = new Set();
+    let somaIfdmPop = 0; let somaPopulacao = 0;
+    
+    let unfiltCursosCount = 0;
+    const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
+
+    targetList.forEach(t => {
+        unfiltCursosCount += (t.cursosDetalhado || []).length;
+
+        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
+        const qtdSemiVal = t.qtdSemiarido || 0;
+        if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
+        if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
+        if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
+        if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
+
+        (t.entidadesDetalhadas || []).forEach(ent => {
+            if (!ent.municipio) return;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
+            if (ent.id) {
+                unfiltIds.add(ent.id);
+                if (ent.categoria && unfiltKpisPanel[ent.categoria] !== undefined) unfiltKpisPanel[ent.categoria]++;
+            }
+        });
+        
+        (t.cadeiasProdutivasDetalhado || []).forEach(cad => {
+            const sateliteRobusto = extrairSatelite(cad);
+            const sede = cad.sede || sateliteRobusto || 'Não informada';
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
+            if (cad.id) unfiltCadeiasIds.add(cad.id);
+        });
+
+        if (filtroSemiarido && !t.isSemiarido) return;
+
+        const entidadesComCursosValidos = new Set();
+        (t.cursosDetalhado || []).forEach(curso => {
+            if (!isMunValid(curso.municipio)) return;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
+            cursosFlat.push({ ...curso, territorioRef: t.nome });
+        });
+
+        (t.entidadesDetalhadas || []).forEach(ent => {
+            if (!isMunValid(ent.municipio)) return;
+            if (rawTerm && !isSearchTermATerritory) {
+                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
+                if (!terms.every(term => searchString.includes(term))) return;
+            }
             
-<<<<<<< HEAD
             if (ent.categoria && !ctiFilters[ent.categoria]) return;
 
             entidadesFlat.push({ ...ent, territorioRef: t.nome });
@@ -473,68 +394,31 @@ export default function useTerritoriosData(filters) {
             aplIgsFlat.push({ 
                 id: cad.id || Math.random(), segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A', 
                 municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto 
-=======
-            const validCti = (t.entidadesDetalhadas || []).filter(ent => {
-                if (!isMunValid(ent.municipio) || (ent.categoria && ctiFilters && !ctiFilters[ent.categoria])) return false;
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return false;
-                }
-                return true;
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
             });
-            
-            const validCadeias = (t.cadeiasProdutivasDetalhado || []).filter(cad => {
-                if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return false;
-                }
-                return true;
+            if (cad.id) globalCadeiasIds.add(cad.id);
+        });
+
+        if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
+            t.desenvolvimentoDetalhado.forEach(m => {
+                if (isMunValid(m.municipio) && Number(m.ifdm) > 0) { somaIfdmPop += (Number(m.ifdm) * Number(m.populacao)); somaPopulacao += Number(m.populacao); }
             });
-            
-            const validCursos = (t.cursosDetalhado || []).filter(curso => {
-                if (!isMunValid(curso.municipio)) return false;
-                if (rawTerm && !isSearchTermATerritory) {
-                    const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
-                    if (!terms.every(term => searchString.includes(term))) return false;
-                }
-                if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
-                if (areaGeralFilter && areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
-                
-                const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-                let catCurso = null;
-                const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
-                if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                    catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
-                } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                    catCurso = 'ifs';
-                }
-                if (catCurso && ctiFilters && !ctiFilters[catCurso]) return false;
+        } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
+            somaIfdmPop += (t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal); somaPopulacao += t.desenvolvimento.populacaoTotal;
+        }
+    });
 
-                return true;
-            });
-            
-            let matchesSearch = true;
-            if (rawTerm) {
-                const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
-                const tMatches = terms.every(term => normalize(t.nome).includes(term));
-                const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
-                matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
-            }
+    const ifdmValue = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao) : 0;
 
-            let hasDataForFilters = true;
-            if (isCtiFiltered && isCursoFiltered) {
-                hasDataForFilters = validCti.length > 0 || validCursos.length > 0;
-            } else if (isCtiFiltered) {
-                hasDataForFilters = validCti.length > 0;
-            } else if (isCursoFiltered) {
-                hasDataForFilters = validCursos.length > 0;
-            }
+    let coberturaCalculada = "";
+    let pctBarraSemi = 0;
 
-            const matchesFilters = passesIntervals && matchesSearch && hasDataForFilters;
+    if (selectedLocation) {
+        const tb = territoriosMunicipios.territorios_de_identidade.find(x => normalize(x.nome) === normalize(selectedLocation.nome));
+        const totalMunTerr = tb ? tb.municipios.length : 0;
+        const qtdSemiTerr = selectedLocation.qtdSemiarido || 0;
+        const pctTerr = totalMunTerr > 0 ? (qtdSemiTerr / totalMunTerr) * 100 : 0;
+        pctBarraSemi = pctTerr;
 
-<<<<<<< HEAD
         if (filtroSemiarido) {
             coberturaCalculada = `${qtdSemiTerr}/${totalMunTerr} mun.`;
         } else {
@@ -574,19 +458,6 @@ export default function useTerritoriosData(filters) {
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         cursos: Array.from(new Map(cursosFlat.map(item => [getCursoKey(item), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };}, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, globalStats, cadeiaProdutivaFilter]);
-=======
-            stats[normalize(t.nome)] = {
-                ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
-                capacidadeCti: String(validCti.length), 
-                cadeiasIgs: String(validCadeias.length),
-                cursos: String(validCursos.length), 
-                pctSemiarido: t.pctSemiarido, 
-                matchesFilters: matchesFilters 
-            };
-        });
-        return stats;
-    }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm]);
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
 
     return {
         territoriosData,
@@ -597,6 +468,6 @@ export default function useTerritoriosData(filters) {
         carregarDadosDoSharePoint,
         filteredOptions,
         dashboardData,
-        territoriesDynamicStats
+        territoriesDynamicStats,
     };
 }

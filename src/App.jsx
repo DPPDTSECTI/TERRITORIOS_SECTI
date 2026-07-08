@@ -36,6 +36,17 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
+const createArrayFilterToggleHandler = (setter) => (itemName) => {
+    setter(prev => {
+        const newItems = new Set(prev);
+        if (newItems.has(itemName)) {
+            newItems.delete(itemName);
+        } else {
+            newItems.add(itemName);
+        }
+        return Array.from(newItems);
+    });
+};
 // ==========================================
 // COMPONENTE PRINCIPAL DO APP
 // ==========================================
@@ -54,6 +65,8 @@ function MainApp() {
   const [cadeiaProdutivaFilter, setCadeiaProdutivaFilter] = useState([]);
   const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
+  const [modalCursoSearchTerm, setModalCursoSearchTerm] = useState(''); // Estado para a busca de cursos no modal
+  const [modalAreaGeralFilter, setModalAreaGeralFilter] = useState([]); // Estado para o filtro de área no modal
   const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
   const [expandedList, setExpandedList] = useState(null);
   const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
@@ -104,16 +117,18 @@ function MainApp() {
 
   const handleCloseModal = useCallback(() => {
     setExpandedList(null);
-    setModalCursoSearchTerm('');
-    setModalAreaGeralFilter([]);
+    setModalCursoSearchTerm(''); // Resetar a busca de cursos do modal
+    setModalAreaGeralFilter([]); // Resetar o filtro de área do modal
     setIsModalAreaGeralOpen(false);
+    setIsModalCtiFilterOpen(false);
+    setIsModalCadeiaFilterOpen(false);
   }, []);
 
   const {
     territoriosData,
     isLoadingPipeline,
     lastUpdate,
-    carregarDadosDoSharePoint,
+    carregarDadosDoSharePoint, 
     filteredOptions,
     territoriesDynamicStats,
     dashboardData,
@@ -145,7 +160,6 @@ function MainApp() {
         if (searchDropdownRef.current && !searchDropdownRef.current.contains(event.target)) {
             setIsDropdownOpen(false);
         }
-<<<<<<< HEAD
     if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) {
         setIsAreaGeralOpen(false);
     }
@@ -158,29 +172,11 @@ function MainApp() {
     if (modalCadeiaFilterRef.current && !modalCadeiaFilterRef.current.contains(event.target)) {
         setIsModalCadeiaFilterOpen(false);
     }
-=======
-        if (areaGeralRef.current && !areaGeralRef.current.contains(event.target)) {
-            setIsAreaGeralOpen(false);
-        }
-        if (modalAreaGeralRef.current && !modalAreaGeralRef.current.contains(event.target)) {
-            setIsModalAreaGeralOpen(false);
-        }
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []); 
 
-<<<<<<< HEAD
-  const handleCloseModal = () => {
-    setExpandedList(null);
-    setIsModalAreaGeralOpen(false);
-    setIsModalCtiFilterOpen(false);
-    setIsModalCadeiaFilterOpen(false);
-  };
-
-=======
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
   useEffect(() => {
     if (selectedLocation && mapSectionRef.current) {
       setTimeout(() => { mapSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
@@ -227,15 +223,6 @@ function MainApp() {
     }
   };
 
-  const handleAreaGeralToggle = (areaName) => {
-    setAreaGeralFilter(prev => {
-        const newFilters = new Set(prev);
-        if (newFilters.has(areaName)) newFilters.delete(areaName);
-        else newFilters.add(areaName);
-        return Array.from(newFilters);
-    });
-  }; 
-
   const handleModalAreaGeralToggle = (areaName) => {
     setModalAreaGeralFilter(prev => {
         const newFilters = new Set(prev);
@@ -247,11 +234,8 @@ function MainApp() {
         return Array.from(newFilters);
     });
   };
-<<<<<<< HEAD
   const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
   const handleCadeiaProdutivaToggle = createArrayFilterToggleHandler(setCadeiaProdutivaFilter);
-=======
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
 
   const getAreaFilterButtonText = () => {
     if (areaGeralFilter.length === 0) return 'Filtrar Área';
@@ -347,8 +331,7 @@ function MainApp() {
       return result;
   }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
-<<<<<<< HEAD
-  // 5. `todasAsAreasGerais` é a lista completa de todas as áreas possíveis, usada para renderizar todas as opções no dropdown.
+  // `todasAsAreasGerais` é a lista completa de todas as áreas possíveis, usada para renderizar todas as opções no dropdown.
   // É derivada de `territoriosData` para ser estável e não mudar com os filtros.
   const todasAsAreasGerais = useMemo(() => {
     const areas = new Set();
@@ -360,133 +343,18 @@ function MainApp() {
     return [...areas].sort();
   }, [territoriosData]);
 
-  // 6. `territoriesDynamicStats` é recalculado aqui para que o mapa possa refletir os filtros de curso.
-  const territoriesDynamicStats = useMemo(() => {
-    const stats = {}; const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
-    const cursoTerm = normalize(debouncedCursoSearchTerm);
-    const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
-
-    const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
-    const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
-    const isCadeiaFiltered = cadeiaProdutivaFilter.length > 0;
-
-    territoriosData.forEach(t => {
-        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
-        const qtdSemiVal = t.qtdSemiarido || 0;
-        
-        let passesIntervals = true;
-        if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) passesIntervals = false;
-        if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) passesIntervals = false;
-        if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) passesIntervals = false;
-        if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) passesIntervals = false;
-
-        let somaIfdmPop = 0; let somaPop = 0;
-        if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
-            t.desenvolvimentoDetalhado.forEach(m => {
-                if (isMunValid(m.municipio)) {
-                    if (Number(m.ifdm) > 0 && Number(m.populacao) > 0) { somaIfdmPop += (Number(m.ifdm) * Number(m.populacao)); somaPop += Number(m.populacao); }
-                }
-            });
-        } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
-            somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal; somaPop = t.desenvolvimento.populacaoTotal;
-        }
-        
-        const validCti = (t.entidadesDetalhadas || []).filter(ent => {
-            if (!isMunValid(ent.municipio) || (ent.categoria && !ctiFilters[ent.categoria])) return false;
-            if (rawTerm && !isSearchTermATerritory) {
-                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
-                if (!terms.every(term => searchString.includes(term))) return false;
-            }
-            return true;
-        });
-        
-        const validCadeias = (t.cadeiasProdutivasDetalhado || []).filter(cad => {
-            if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
-            if (rawTerm && !isSearchTermATerritory) {
-                const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
-                if (!terms.every(term => searchString.includes(term))) return false;
-            }
-            if (cadeiaProdutivaFilter.length > 0) {
-                const tipo = String(cad.tipo).toLowerCase();
-                const isAPL = tipo.includes('apl') || tipo.includes('arranjo');
-                const isIG = tipo.includes('ig') || tipo.includes('indicação');
-                const wantsAPL = cadeiaProdutivaFilter.includes('APL');
-                const wantsIG = cadeiaProdutivaFilter.includes('IG');
-                let passes = false;
-                if (wantsAPL && isAPL) passes = true;
-                if (wantsIG && isIG) passes = true;
-                if (!passes) return false;
-            }
-            return true;
-        });
-        
-        const validCursos = (t.cursosDetalhado || []).filter(curso => {
-            if (!isMunValid(curso.municipio)) return false;
-            if (rawTerm && !isSearchTermATerritory) {
-                const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.areaGeral)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
-                if (!terms.every(term => searchString.includes(term))) return false;
-            }
-            if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
-            if (areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
-            
-            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-            let catCurso = null;
-            const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
-            if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
-            } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                catCurso = 'ifs';
-            }
-            if (catCurso && !ctiFilters[catCurso]) return false;
-
-            return true;
-        });
-        
-        let matchesSearch = true;
-        if (rawTerm) {
-            const territorioBase = territoriosMunicipios.territorios_de_identidade.find(tb => normalize(tb.nome) === normalize(t.nome));
-            const tMatches = terms.every(term => normalize(t.nome).includes(term));
-            const mMatches = territorioBase && territorioBase.municipios.some(m => terms.every(term => normalize(m).includes(term)));
-            matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
-        }
-
-        let hasDataForFilters = true;
-        if (isCtiFiltered && validCti.length === 0) {
-            hasDataForFilters = false;
-        }
-        if (isCursoFiltered && validCursos.length === 0) {
-            hasDataForFilters = false;
-        }
-        if (isCadeiaFiltered && validCadeias.length === 0) {
-            hasDataForFilters = false;
-        }
-
-        const matchesFilters = passesIntervals && matchesSearch && hasDataForFilters;
-
-        stats[normalize(t.nome)] = {
-            ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
-            capacidadeCti: String(validCti.length), 
-            cadeiasIgs: String(validCadeias.length),
-            cursos: String(validCursos.length),
-            pctSemiarido: t.pctSemiarido, 
-            matchesFilters: matchesFilters 
-        };
-    });
-    return stats;}, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, isMunValid, cadeiaProdutivaFilter]);
-  
-=======
   const modalCursosFiltrados = useMemo(() => {
     if (expandedList !== 'cursos') return [];
     let result = cursosFiltrados || [];
     if (modalAreaGeralFilter.length > 0) {
         result = result.filter(c => modalAreaGeralFilter.includes(c.areaGeral || 'Não Informada'));
     }
-    if (debouncedModalCursoSearchTerm) {
-        const term = normalize(debouncedModalCursoSearchTerm);
+    if (modalCursoSearchTerm) { // Usar modalCursoSearchTerm diretamente
+        const term = normalize(modalCursoSearchTerm);
         result = result.filter(curso => normalize(curso.curso).includes(term));
     }
-    return result;
-  }, [cursosFiltrados, modalAreaGeralFilter, debouncedModalCursoSearchTerm, expandedList]);
+    return result; 
+  }, [cursosFiltrados, modalAreaGeralFilter, modalCursoSearchTerm, expandedList]);
 
   const modalAreaGeralSummary = useMemo(() => {
       if (expandedList !== 'cursos') return [];
@@ -494,8 +362,6 @@ function MainApp() {
       (cursosFiltrados || []).forEach(c => { counts[c.areaGeral || 'Não Informada'] = (counts[c.areaGeral || 'Não Informada'] || 0) + 1; });
       return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
   }, [cursosFiltrados, expandedList]);
-
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
   const hasActiveFilters = searchTerm !== '' || 
                            selectedLocation !== null || 
                            ifdmMin !== '' || 
@@ -629,11 +495,20 @@ function MainApp() {
             return null;
         }
 
+        const counterClasses = isCadeias
+            ? (darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700')
+            : (darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700');
+
         return (
             <div className="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
                 <div className={`relative w-full ${isCursos ? 'max-w-6xl' : 'max-w-4xl'} h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'}`} onClick={e => e.stopPropagation()}>
                     <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-                        <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title} ({listData.length})</h3>
+                        <div className="flex items-center gap-3">
+                            <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title}</h3>
+                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${counterClasses}`}>
+                                {listData.length}
+                            </span>
+                        </div>
                         
                         {isCti && (
                             <div className="flex-1 flex items-center justify-end gap-2">
@@ -697,8 +572,8 @@ function MainApp() {
                                     <input 
                                         type="text" 
                                         placeholder="Buscar curso..." 
-                                        value={cursoSearchTerm} 
-                                        onChange={(e) => setCursoSearchTerm(e.target.value)} 
+                                        value={modalCursoSearchTerm} 
+                                        onChange={(e) => setModalCursoSearchTerm(e.target.value)} 
                                         className={`w-full h-8 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
                                     />
                                     <Search size={14} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} />
@@ -712,11 +587,7 @@ function MainApp() {
                                     <div className="relative" ref={modalAreaGeralRef}>
                                         <button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
                                             <Filter size={14} />
-<<<<<<< HEAD
-                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText(areaGeralFilter)}</span>
-=======
                                             <span className="whitespace-nowrap hidden sm:inline">{getModalAreaFilterButtonText()}</span>
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
                                         </button>
                                         {isModalAreaGeralOpen && (
                                             <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
@@ -725,23 +596,22 @@ function MainApp() {
                                                         const areaData = areaGeralSummary.find(a => a.name === areaName);
                                                         const count = areaData ? areaData.count : 0;
                                                         const styles = getAreaStyles(areaName, darkMode);
-                                                        const isSelected = areaGeralFilter.includes(areaName);
+                                                        const isSelected = modalAreaGeralFilter.includes(areaName); // Usar modalAreaGeralFilter aqui
                                                         if (count === 0 && !isSelected) return null;
                                                         return (
-<<<<<<< HEAD
-                                                            <button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
-                                                                <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span></div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${styles.countBg}`}>{count}</span> 
-=======
-                                                            <button key={area.name} onClick={() => handleModalAreaGeralToggle(area.name)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
-                                                                <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span></div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{area.count}</span> 
->>>>>>> 4cceae05297e8feae2a45a960a53d9e3a6292bb9
+                                                            <button key={areaName} onClick={() => handleModalAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
+                                                                <div className="flex items-center gap-1.5 pr-1">
+                                                                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
+                                                                    <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span>
+                                                                </div>
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{count}</span> 
                                                             </button>
                                                         );
                                                     })}
                                                 </div>
-                                                {areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
+                                                {modalAreaGeralFilter.length > 0 && (
+                                                    <button onClick={() => { setModalAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>
+                                                )}
                                             </div>
                                         )}
                                     </div>
