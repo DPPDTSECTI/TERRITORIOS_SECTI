@@ -41,6 +41,7 @@ export default function useTerritoriosData(filters) {
         ifdmMax,
         semiMunsMin,
         semiMunsMax,
+        cadeiaProdutivaFilter,
         ctiFilters,
     } = filters;
 
@@ -141,6 +142,20 @@ export default function useTerritoriosData(filters) {
             if (!matched && t.cadeiasProdutivasDetalhado) {
                 foundCadeiaMatch = t.cadeiasProdutivasDetalhado.find(cad => {
                     if (!isMunValid(cad.sede || cad.municipioSatelite)) return false;
+                    
+                    // NEW FILTER LOGIC
+                    if (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) {
+                        const tipo = String(cad.tipo).toLowerCase();
+                        const isAPL = tipo.includes('apl') || tipo.includes('arranjo');
+                        const isIG = tipo.includes('ig') || tipo.includes('indicação');
+                        const wantsAPL = cadeiaProdutivaFilter.includes('APL');
+                        const wantsIG = cadeiaProdutivaFilter.includes('IG');
+                        let passes = false;
+                        if (wantsAPL && isAPL) passes = true;
+                        if (wantsIG && isIG) passes = true;
+                        if (!passes) return false;
+                    }
+
                     const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')}`;
                     return terms.every(term => searchString.includes(term));
                 });
@@ -161,8 +176,7 @@ export default function useTerritoriosData(filters) {
             else if (foundCursoMatch) results.push({ ...t, matchType: 'Curso Superior', matchText: foundCursoMatch.curso });
             else if (terms.every(term => normalize(t.nome).includes(term))) results.push({ ...t, matchType: 'Território', matchText: t.regiao });
         });
-        return results.sort((a, b) => a.nome.localeCompare(b.nome));
-    }, [debouncedSearchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters]);
+        return results.sort((a, b) => a.nome.localeCompare(b.nome));}, [debouncedSearchTerm, territoriosData, filtroSemiarido, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters, cadeiaProdutivaFilter]);
 
     const dashboardData = useMemo(() => {
     if (!territoriosData || territoriosData.length === 0) {
@@ -262,6 +276,17 @@ export default function useTerritoriosData(filters) {
                 const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
                 if (!terms.every(term => searchString.includes(term))) return;
             }
+            if (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) {
+                const tipo = String(cad.tipo).toLowerCase();
+                const isAPL = tipo.includes('apl') || tipo.includes('arranjo');
+                const isIG = tipo.includes('ig') || tipo.includes('indicação');
+                const wantsAPL = cadeiaProdutivaFilter.includes('APL');
+                const wantsIG = cadeiaProdutivaFilter.includes('IG');
+                let passes = false;
+                if (wantsAPL && isAPL) passes = true;
+                if (wantsIG && isIG) passes = true;
+                if (!passes) return;
+            }
             aplIgsFlat.push({ 
                 id: cad.id || Math.random(), segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A', 
                 municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto 
@@ -328,8 +353,7 @@ export default function useTerritoriosData(filters) {
         entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
         aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
         cursos: Array.from(new Map(cursosFlat.map(item => [getCursoKey(item), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
-    };
-  }, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, globalStats]);
+    };}, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, globalStats, cadeiaProdutivaFilter]);
 
     return {
         territoriosData,

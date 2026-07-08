@@ -124,16 +124,14 @@ function MainApp() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [areaGeralFilter, setAreaGeralFilter] = useState([]);
+  const [cadeiaProdutivaFilter, setCadeiaProdutivaFilter] = useState([]);
   const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
   const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
   const [expandedList, setExpandedList] = useState(null);
-
-  // Filtros para o Modal Expandido
-  const [modalCursoSearchTerm, setModalCursoSearchTerm] = useState('');
-  const debouncedModalCursoSearchTerm = useDebounce(modalCursoSearchTerm, 300);
-  const [modalAreaGeralFilter, setModalAreaGeralFilter] = useState([]);
   const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
+  const [isModalCtiFilterOpen, setIsModalCtiFilterOpen] = useState(false);
+  const [isModalCadeiaFilterOpen, setIsModalCadeiaFilterOpen] = useState(false);
 
   // Navbars e Scroll
   const [navVisible, setNavVisible] = useState(true);
@@ -159,6 +157,8 @@ function MainApp() {
   const areaGeralRef = useRef(null);
   const mapSectionRef = useRef(null);
   const modalAreaGeralRef = useRef(null);
+  const modalCtiFilterRef = useRef(null);
+  const modalCadeiaFilterRef = useRef(null);
 
   const resetGlobalFilters = () => {
       setSearchTerm('');
@@ -167,6 +167,7 @@ function MainApp() {
       setSemiMunsMin(''); setSemiMunsMax('');
       setFiltroSemiarido(false);
       setAreaGeralFilter([]);
+      setCadeiaProdutivaFilter([]);
       setCursoSearchTerm('');
       setCtiFilters({
           univsPublica: true, univsPrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
@@ -190,6 +191,7 @@ function MainApp() {
     ifdmMax,
     semiMunsMin,
     semiMunsMax,
+    cadeiaProdutivaFilter,
     ctiFilters,
   });
 
@@ -212,6 +214,12 @@ function MainApp() {
     if (modalAreaGeralRef.current && !modalAreaGeralRef.current.contains(event.target)) {
         setIsModalAreaGeralOpen(false);
     }
+    if (modalCtiFilterRef.current && !modalCtiFilterRef.current.contains(event.target)) {
+        setIsModalCtiFilterOpen(false);
+    }
+    if (modalCadeiaFilterRef.current && !modalCadeiaFilterRef.current.contains(event.target)) {
+        setIsModalCadeiaFilterOpen(false);
+    }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -219,9 +227,9 @@ function MainApp() {
 
   const handleCloseModal = () => {
     setExpandedList(null);
-    setModalCursoSearchTerm('');
-    setModalAreaGeralFilter([]);
     setIsModalAreaGeralOpen(false);
+    setIsModalCtiFilterOpen(false);
+    setIsModalCadeiaFilterOpen(false);
   };
 
   useEffect(() => {
@@ -284,7 +292,7 @@ function MainApp() {
     });
   };
   const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
-  const handleModalAreaGeralToggle = createArrayFilterToggleHandler(setModalAreaGeralFilter);
+  const handleCadeiaProdutivaToggle = createArrayFilterToggleHandler(setCadeiaProdutivaFilter);
 
   const getAreaFilterButtonText = (filterArray) => {
     if (filterArray.length === 0) return 'Filtrar Área';
@@ -408,6 +416,7 @@ function MainApp() {
 
     const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
     const isCursoFiltered = cursoTerm !== '' || areaGeralFilter.length > 0;
+    const isCadeiaFiltered = cadeiaProdutivaFilter.length > 0;
 
     territoriosData.forEach(t => {
         const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
@@ -445,6 +454,17 @@ function MainApp() {
                 const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
                 if (!terms.every(term => searchString.includes(term))) return false;
             }
+            if (cadeiaProdutivaFilter.length > 0) {
+                const tipo = String(cad.tipo).toLowerCase();
+                const isAPL = tipo.includes('apl') || tipo.includes('arranjo');
+                const isIG = tipo.includes('ig') || tipo.includes('indicação');
+                const wantsAPL = cadeiaProdutivaFilter.includes('APL');
+                const wantsIG = cadeiaProdutivaFilter.includes('IG');
+                let passes = false;
+                if (wantsAPL && isAPL) passes = true;
+                if (wantsIG && isIG) passes = true;
+                if (!passes) return false;
+            }
             return true;
         });
         
@@ -479,12 +499,14 @@ function MainApp() {
         }
 
         let hasDataForFilters = true;
-        if (isCtiFiltered && isCursoFiltered) {
-            hasDataForFilters = validCti.length > 0 && validCursos.length > 0;
-        } else if (isCtiFiltered) {
-            hasDataForFilters = validCti.length > 0;
-        } else if (isCursoFiltered) {
-            hasDataForFilters = validCursos.length > 0;
+        if (isCtiFiltered && validCti.length === 0) {
+            hasDataForFilters = false;
+        }
+        if (isCursoFiltered && validCursos.length === 0) {
+            hasDataForFilters = false;
+        }
+        if (isCadeiaFiltered && validCadeias.length === 0) {
+            hasDataForFilters = false;
         }
 
         const matchesFilters = passesIntervals && matchesSearch && hasDataForFilters;
@@ -498,29 +520,8 @@ function MainApp() {
             matchesFilters: matchesFilters 
         };
     });
-    return stats;
-  }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, isMunValid]);
+    return stats;}, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, isMunValid, cadeiaProdutivaFilter]);
   
-  const modalCursosFiltrados = useMemo(() => {
-    if (expandedList !== 'cursos') return [];
-    let result = cursosFiltrados || [];
-    if (modalAreaGeralFilter.length > 0) {
-        result = result.filter(c => modalAreaGeralFilter.includes(c.areaGeral || 'Não Informada'));
-    }
-    if (debouncedModalCursoSearchTerm) {
-        const term = normalize(debouncedModalCursoSearchTerm);
-        result = result.filter(curso => normalize(curso.curso).includes(term));
-    }
-    return result;
-  }, [cursosFiltrados, modalAreaGeralFilter, debouncedModalCursoSearchTerm, expandedList]);
-
-  const modalAreaGeralSummary = useMemo(() => {
-      if (expandedList !== 'cursos') return [];
-      const counts = {};
-      (cursosFiltrados || []).forEach(c => { counts[c.areaGeral || 'Não Informada'] = (counts[c.areaGeral || 'Não Informada'] || 0) + 1; }); // This is correct for the modal, as it should filter on the already filtered list.
-      return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
-  }, [cursosFiltrados, expandedList]);
-
   const hasActiveFilters = searchTerm !== '' || 
                            selectedLocation !== null || 
                            ifdmMin !== '' || 
@@ -529,6 +530,7 @@ function MainApp() {
                            semiMunsMax !== '' ||
                            filtroSemiarido !== false || 
                            areaGeralFilter.length > 0 || 
+                           cadeiaProdutivaFilter.length > 0 ||
                            cursoSearchTerm !== '' || 
                            !Object.values(ctiFilters).every(val => val === true);
 
@@ -554,7 +556,7 @@ function MainApp() {
             renderItem = (item, idx) => <CadeiaListItem item={item} themeClasses={themeClasses} darkMode={darkMode} getBadgeStyle={getBadgeStyle} fixWeirdCapitalization={fixWeirdCapitalization} />;
             counterStyle = darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700';
         } else if (isCursos) {
-            listData = modalCursosFiltrados;
+            listData = cursosFiltrados;
             title = 'Cursos CT&I';
             itemKey = (item, idx) => item.id || idx;
             renderItem = (item, idx) => <CursoListItem item={item} darkMode={darkMode} getAreaStyles={getAreaStyles} fixWeirdCapitalization={fixWeirdCapitalization} />;
@@ -574,44 +576,103 @@ function MainApp() {
                             </span>
                         </div>
                         
+                        {isCti && (
+                            <div className="flex-1 flex items-center justify-end gap-2">
+                                <div className="relative" ref={modalCtiFilterRef}>
+                                    <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
+                                        <Filter size={14} />
+                                        <span className="whitespace-nowrap hidden sm:inline">
+                                            {areAllCtiSelected ? 'Filtrar Categoria' : `${Object.values(ctiFilters).filter(v => v).length} Selecionadas`}
+                                        </span>
+                                    </button>
+                                    {isModalCtiFilterOpen && (
+                                        <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
+                                            <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1">
+                                                <label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-slate-500/10 pb-1.5 mb-1">
+                                                    <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" />
+                                                    <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
+                                                </label>
+                                                {ctiFilterKeys.map((key) => (
+                                                    <label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
+                                                        <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" />
+                                                        <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{ {univsPublica: 'Univ. Públicas', univsPrivada: 'Univ. Privadas', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras'}[key] }</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                            {!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {isCadeias && (
+                            <div className="flex-1 flex items-center justify-end gap-2">
+                                <div className="relative" ref={modalCadeiaFilterRef}>
+                                    <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
+                                        <Filter size={14} />
+                                        <span className="whitespace-nowrap hidden sm:inline">
+                                            {cadeiaProdutivaFilter.length === 0 ? 'Filtrar Tipo' : cadeiaProdutivaFilter.length === 1 ? `Tipo: ${cadeiaProdutivaFilter[0]}` : `${cadeiaProdutivaFilter.length} Selecionados`}
+                                        </span>
+                                    </button>
+                                    {isModalCadeiaFilterOpen && (
+                                        <div className={`absolute right-0 top-[100%] mt-2 w-48 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
+                                            {['APL', 'IG'].map(tipo => {
+                                                const isSelected = cadeiaProdutivaFilter.includes(tipo);
+                                                return (
+                                                    <button key={tipo} onClick={() => handleCadeiaProdutivaToggle(tipo)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-center justify-between gap-2 border ${isSelected ? (darkMode ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-emerald-100 border-emerald-200 text-emerald-700') : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
+                                                        <span>{tipo}</span>
+                                                    </button>
+                                                )
+                                            })}
+                                            {cadeiaProdutivaFilter.length > 0 && <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        
                         {isCursos && (
                             <div className="flex-1 flex items-center justify-end gap-2">
                                 <div className="relative w-full max-w-xs">
                                     <input 
                                         type="text" 
                                         placeholder="Buscar curso..." 
-                                        value={modalCursoSearchTerm} 
-                                        onChange={(e) => setModalCursoSearchTerm(e.target.value)} 
+                                        value={cursoSearchTerm} 
+                                        onChange={(e) => setCursoSearchTerm(e.target.value)} 
                                         className={`w-full h-8 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
                                     />
                                     <Search size={14} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} />
-                                    {modalCursoSearchTerm && (
-                                        <button onClick={() => setModalCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-red-500 text-slate-400">
+                                    {cursoSearchTerm && (
+                                        <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-red-500 text-slate-400">
                                             <Eraser size={14} />
                                         </button>
                                     )}
                                 </div>
-                                {modalAreaGeralSummary.length > 0 && (
+                                {areaGeralSummary.length > 0 && (
                                     <div className="relative" ref={modalAreaGeralRef}>
-                                        <button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || modalAreaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
+                                        <button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
                                             <Filter size={14} />
-                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText(modalAreaGeralFilter)}</span>
+                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText(areaGeralFilter)}</span>
                                         </button>
                                         {isModalAreaGeralOpen && (
                                             <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
                                                 <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
-                                                    {modalAreaGeralSummary.map(area => { 
-                                                        const styles = getAreaStyles(area.name, darkMode);
-                                                        const isSelected = modalAreaGeralFilter.includes(area.name);
+                                                    {todasAsAreasGerais.map(areaName => { 
+                                                        const areaData = areaGeralSummary.find(a => a.name === areaName);
+                                                        const count = areaData ? areaData.count : 0;
+                                                        const styles = getAreaStyles(areaName, darkMode);
+                                                        const isSelected = areaGeralFilter.includes(areaName);
+                                                        if (count === 0 && !isSelected) return null;
                                                         return (
-                                                            <button key={area.name} onClick={() => handleModalAreaGeralToggle(area.name)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
-                                                                <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{area.name}</span></div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${styles.countBg}`}>{area.count}</span> 
+                                                            <button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
+                                                                <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span></div>
+                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${styles.countBg}`}>{count}</span> 
                                                             </button>
                                                         );
                                                     })}
                                                 </div>
-                                                {modalAreaGeralFilter.length > 0 && <button onClick={() => { setModalAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
+                                                {areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
                                             </div>
                                         )}
                                     </div>
@@ -806,6 +867,19 @@ function MainApp() {
                                       <span className={ctiFilters[f.id] ? 'opacity-100' : 'opacity-40'}>{f.label}</span>
                                   </label>
                               ))}
+                          </div>
+                      </div>
+                      <div>
+                          <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Filtrar Cadeias Produtivas</span>
+                          <div className="flex flex-col gap-1.5">
+                              {['APL', 'IG'].map(tipo => {
+                                  const isSelected = cadeiaProdutivaFilter.includes(tipo);
+                                  return (
+                                      <button key={tipo} onClick={() => handleCadeiaProdutivaToggle(tipo)} className={`w-full text-left px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-between gap-2 border ${isSelected ? (darkMode ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-emerald-100 border-emerald-200 text-emerald-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
+                                          <span>{tipo}</span>
+                                      </button>
+                                  )
+                              })}
                           </div>
                       </div>
                   </div>
