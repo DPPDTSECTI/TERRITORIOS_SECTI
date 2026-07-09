@@ -227,6 +227,17 @@ export default function useTerritoriosData(filters) {
                     const searchString = `${normalize(cad.segmento)} ${normalize(cad.sede || '')} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
                     if (!terms.every(term => searchString.includes(term))) return false;
                 }
+
+                if (cad.entidade) {
+                    const entidadeCadeiaNorm = normalize(cad.entidade);
+                    const linkedEnt = (t.entidadesDetalhadas || []).find(ent => 
+                        normalize(ent.entidade).includes(entidadeCadeiaNorm)
+                    );
+                    if (linkedEnt && linkedEnt.categoria && !ctiFilters[linkedEnt.categoria]) {
+                        return false;
+                    }
+                }
+
                 if (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) {
                     const tipo = String(cad.tipo).toLowerCase();
                     const isAPL = tipo.includes('apl') || tipo.includes('arranjo');
@@ -300,6 +311,24 @@ export default function useTerritoriosData(filters) {
     const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
+    // Lógica para filtrar territórios com base nos filtros de CTI.
+    // Se um filtro de CTI está ativo (ex: apenas 'ICTs'), primeiro identificamos
+    // quais territórios possuem pelo menos uma entidade daquele tipo.
+    const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
+    const activeTerritoriesByCti = new Set();
+
+    if (isCtiFiltered) {
+        targetList.forEach(t => {
+            const hasMatchingEntity = (t.entidadesDetalhadas || []).some(ent => {
+                // A entidade precisa estar num município válido e pertencer a uma categoria CTI selecionada.
+                return isMunValid(ent.municipio) && ent.categoria && ctiFilters[ent.categoria];
+            });
+            if (hasMatchingEntity) {
+                activeTerritoriesByCti.add(normalize(t.nome));
+            }
+        });
+    }
+
     // CORREÇÃO: Variáveis atualizadas para as novas categorias Pública/Privada
     const kpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const unfiltKpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
@@ -320,6 +349,12 @@ export default function useTerritoriosData(filters) {
         if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
         if (semiMunsMin !== '' && qtdSemiVal < Number(semiMunsMin)) return;
         if (semiMunsMax !== '' && qtdSemiVal > Number(semiMunsMax)) return;
+
+        // Se os filtros de CTI estão ativos, só processa os territórios que contêm as entidades filtradas.
+        // Isso garante que a lista de cadeias produtivas e cursos também reflita o filtro de CTI.
+        if (isCtiFiltered && !activeTerritoriesByCti.has(normalize(t.nome))) {
+            return;
+        }
 
         (t.entidadesDetalhadas || []).forEach(ent => {
             if (!ent.municipio) return;
@@ -352,6 +387,18 @@ export default function useTerritoriosData(filters) {
                 const searchString = `${normalize(curso.curso)} ${normalize(curso.entidade)} ${normalize(curso.municipio)} ${normalize(t.nome)}`;
                 if (!terms.every(term => searchString.includes(term))) return;
             }
+
+            // Filtra cursos com base nos filtros de CTI (público/privado/IF)
+            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
+            let catCurso = null;
+            const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
+            if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
+                catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
+            } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
+                catCurso = 'ifs';
+            }
+            if (catCurso && !ctiFilters[catCurso]) return;
+
             cursosFlat.push({ ...curso, territorioRef: t.nome });
         });
 
@@ -380,6 +427,17 @@ export default function useTerritoriosData(filters) {
                 const searchString = `${normalize(cad.segmento)} ${normalize(sede)} ${normalize(cad.entidade || '')} ${normalize(cad.tipo || '')} ${normalize(t.nome)}`;
                 if (!terms.every(term => searchString.includes(term))) return;
             }
+
+            if (cad.entidade) {
+                const entidadeCadeiaNorm = normalize(cad.entidade);
+                const linkedEnt = (t.entidadesDetalhadas || []).find(ent => 
+                    normalize(ent.entidade).includes(entidadeCadeiaNorm)
+                );
+                if (linkedEnt && linkedEnt.categoria && !ctiFilters[linkedEnt.categoria]) {
+                    return;
+                }
+            }
+
             if (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) {
                 const tipo = String(cad.tipo).toLowerCase();
                 const isAPL = tipo.includes('apl') || tipo.includes('arranjo');
