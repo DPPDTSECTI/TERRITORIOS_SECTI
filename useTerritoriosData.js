@@ -251,7 +251,7 @@ export default function useTerritoriosData(filters) {
                 let catCurso = null;
                 const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
                 if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                    catCurso = isPrivada ? 'univsPrivada' : 'univsPublica';
+                    catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
                 } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
                     catCurso = 'ifs';
                 }
@@ -301,8 +301,8 @@ export default function useTerritoriosData(filters) {
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
     // CORREÇÃO: Variáveis atualizadas para as novas categorias Pública/Privada
-    const kpisPanel = { univsPublica: 0, univsPrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
-    const unfiltKpisPanel = { univsPublica: 0, univsPrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
+    const kpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
+    const unfiltKpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     
     const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = [];
     const globalIds = new Set(); const globalCadeiasIds = new Set();
@@ -391,9 +391,9 @@ export default function useTerritoriosData(filters) {
                 if (wantsIG && isIG) passes = true;
                 if (!passes) return;
             }
-            aplIgsFlat.push({ 
-                id: cad.id || Math.random(), segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A', 
-                municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto 
+            aplIgsFlat.push({
+                id: cad.id || `${normalize(cad.segmento || '')}-${normalize(cad.tipo || '')}`, segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A',
+                municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto
             });
             if (cad.id) globalCadeiasIds.add(cad.id);
         });
@@ -438,12 +438,32 @@ export default function useTerritoriosData(filters) {
         cadeias: unfiltCadeiasIds.size > 0 ? (globalCadeiasIds.size / unfiltCadeiasIds.size) * 100 : 0,
         cursos: unfiltCursosCount > 0 ? (cursosFlat.length / unfiltCursosCount) * 100 : 0
     };
-    
+
     // Helper para criar uma chave única para cursos, evitando duplicatas quando o ID não existe.
     const getCursoKey = (c) => {
         return c.id || `${normalize(c.entidade)}-${normalize(c.curso)}-${normalize(c.municipio)}`;
     };
-    
+
+    const aggregatedAplIgs = new Map();
+    aplIgsFlat.forEach(item => {
+        if (!item.id) return;
+        if (!aggregatedAplIgs.has(item.id)) {
+            aggregatedAplIgs.set(item.id, { ...item, territorios: [item.territorioRef] });
+        } else {
+            const existing = aggregatedAplIgs.get(item.id);
+            existing.territorios.push(item.territorioRef);
+            const currentMuns = new Set((existing.municipiosPertencentes || '').split(', ').filter(Boolean));
+            (item.municipiosPertencentes || '').split(', ').filter(Boolean).forEach(m => currentMuns.add(m));
+            existing.municipiosPertencentes = [...currentMuns].sort().join(', ');
+        }
+    });
+
+    const finalAplIgs = Array.from(aggregatedAplIgs.values()).map(item => {
+        const { territorioRef, ...rest } = item;
+        rest.territorios = [...new Set(rest.territorios)].sort();
+        return rest;
+    });
+
     return { 
         topKpis: {
             capacidadeCti: String(globalIds.size), 
@@ -454,8 +474,8 @@ export default function useTerritoriosData(filters) {
             unfiltCursosCount: unfiltCursosCount
         }, 
         topKpisPct, subKpis: kpisPanel, unfiltSubKpis: unfiltKpisPanel,
-        entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")), 
-        aplIgs: Array.from(new Map(aplIgsFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")), 
+        entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")),
+        aplIgs: finalAplIgs.sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")),
         cursos: Array.from(new Map(cursosFlat.map(item => [getCursoKey(item), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
     };}, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, semiMunsMin, semiMunsMax, ctiFilters, globalStats, cadeiaProdutivaFilter]);
 

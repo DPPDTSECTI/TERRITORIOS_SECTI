@@ -87,7 +87,7 @@ function MainApp() {
 
   // Filtros de CTI
   const [ctiFilters, setCtiFilters] = useState({
-      univsPublica: true, univsPrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+      campiUniversidadePublica: true, campiUniversidadePrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
   });
 
   const sideFilterRef = useRef(null);
@@ -108,7 +108,7 @@ function MainApp() {
       setCadeiaProdutivaFilter([]);
       setCursoSearchTerm('');
       setCtiFilters({
-          univsPublica: true, univsPrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+          campiUniversidadePublica: true, campiUniversidadePrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
       });
       setIsDropdownOpen(false);
   };
@@ -194,7 +194,7 @@ function MainApp() {
   }, []);
 
   const toggleCtiFilter = (key) => { setCtiFilters(prev => ({ ...prev, [key]: !prev[key] })); };
-  const ctiFilterKeys = useMemo(() => ['univsPublica', 'univsPrivada', 'ifs', 'icts', 'centrosPesquisa', 'espacos', 'parques', 'incubadoras'], []);
+  const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'ifs', 'icts', 'centrosPesquisa', 'espacos', 'parques', 'incubadoras'], []);
   const areAllCtiSelected = useMemo(() => ctiFilterKeys.every(key => ctiFilters[key]), [ctiFilters, ctiFilterKeys]);
 
   const handleToggleAllCti = () => {
@@ -230,8 +230,8 @@ function MainApp() {
 
   const getCtiBadgeStyle = (cat, isDark) => {
       const styles = {
-          univsPublica: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-100',
-          univsPrivada: isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/20' : 'bg-sky-50 text-sky-600 border-sky-100',
+          campiUniversidadePublica: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-100',
+          campiUniversidadePrivada: isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/20' : 'bg-sky-50 text-sky-600 border-sky-100',
           ifs: isDark ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-red-50 text-red-600 border-red-100',
           icts: isDark ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' : 'bg-cyan-50 text-cyan-600 border-cyan-100',
           centrosPesquisa: isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -488,8 +488,8 @@ function MainApp() {
                                                 </label>
                                                 {ctiFilterKeys.map((key) => (
                                                     <label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
-                                                        <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" />
-                                                        <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{ {univsPublica: 'Univ. Públicas', univsPrivada: 'Univ. Privadas', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras'}[key] }</span>
+                                                        <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" /> 
+                                                        <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{ {campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras'}[key] }</span>
                                                     </label>
                                                 ))}
                                             </div>
@@ -749,11 +749,11 @@ function MainApp() {
                           <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Filtrar Ativos de CTI</span>
                           <div className="max-h-32 overflow-y-auto hide-scroll flex flex-col gap-1.5 border p-2 rounded-xl border-slate-500/20">
                               <label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-slate-500/10 pb-1.5 mb-1">
-                                  <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" />
+                                  <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" /> 
                                   <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
                               </label>
                               {[
-                                  { id: 'univsPublica', label: 'Univ. Públicas' }, { id: 'univsPrivada', label: 'Univ. Privadas' }, { id: 'ifs', label: 'Institutos Federais' },
+                                  { id: 'campiUniversidadePublica', label: 'Campi Universidade Pública' }, { id: 'campiUniversidadePrivada', label: 'Campi Universidade Privada' }, { id: 'ifs', label: 'Institutos Federais' },
                                   { id: 'icts', label: 'ICTs' }, { id: 'centrosPesquisa', label: 'Centros de Pesquisa' },
                                   { id: 'espacos', label: 'Espaços Dinamizadores' }, { id: 'parques', label: 'Parques Tecnológicos' },
                                   { id: 'incubadoras', label: 'Incubadoras' }
@@ -839,8 +839,8 @@ function MainApp() {
                 {/* Sub KPIs de CTI */}
                 <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-3">
                     {[
-                        { id: 'univsPublica', l: 'Univ. Pública', v: dashboardData.subKpis.univsPublica || 0, pct: (dashboardData.unfiltSubKpis.univsPublica || 0) > 0 ? ((dashboardData.subKpis.univsPublica || 0) / (dashboardData.unfiltSubKpis.univsPublica || 1))*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500', h: darkMode ? 'hover:border-blue-400' : 'hover:border-blue-600' },
-                        { id: 'univsPrivada', l: 'Univ. Privada', v: dashboardData.subKpis.univsPrivada || 0, pct: (dashboardData.unfiltSubKpis.univsPrivada || 0) > 0 ? ((dashboardData.subKpis.univsPrivada || 0) / (dashboardData.unfiltSubKpis.univsPrivada || 1))*100 : 0, c: darkMode ? 'text-sky-400' : 'text-sky-600', b: 'bg-sky-500', h: darkMode ? 'hover:border-sky-400' : 'hover:border-sky-600' },
+                        { id: 'campiUniversidadePublica', l: 'Campi Univ Pública', v: dashboardData.subKpis.campiUniversidadePublica || 0, pct: (dashboardData.unfiltSubKpis.campiUniversidadePublica || 0) > 0 ? ((dashboardData.subKpis.campiUniversidadePublica || 0) / (dashboardData.unfiltSubKpis.campiUniversidadePublica || 1))*100 : 0, c: darkMode ? 'text-blue-400' : 'text-blue-600', b: 'bg-blue-500', h: darkMode ? 'hover:border-blue-400' : 'hover:border-blue-600' },
+                        { id: 'campiUniversidadePrivada', l: 'Campi Univ Privada', v: dashboardData.subKpis.campiUniversidadePrivada || 0, pct: (dashboardData.unfiltSubKpis.campiUniversidadePrivada || 0) > 0 ? ((dashboardData.subKpis.campiUniversidadePrivada || 0) / (dashboardData.unfiltSubKpis.campiUniversidadePrivada || 1))*100 : 0, c: darkMode ? 'text-sky-400' : 'text-sky-600', b: 'bg-sky-500', h: darkMode ? 'hover:border-sky-400' : 'hover:border-sky-600' },
                         { id: 'ifs', l: 'Inst. Fed.', v: dashboardData.subKpis.ifs || 0, pct: (dashboardData.unfiltSubKpis.ifs || 0) > 0 ? ((dashboardData.subKpis.ifs || 0) / (dashboardData.unfiltSubKpis.ifs || 1))*100 : 0, c: darkMode ? 'text-red-400' : 'text-red-600', b: 'bg-red-500', h: darkMode ? 'hover:border-red-400' : 'hover:border-red-600' },
                         { id: 'icts', l: 'ICTs', v: dashboardData.subKpis.icts || 0, pct: (dashboardData.unfiltSubKpis.icts || 0) > 0 ? ((dashboardData.subKpis.icts || 0) / (dashboardData.unfiltSubKpis.icts || 1))*100 : 0, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', h: darkMode ? 'hover:border-cyan-400' : 'hover:border-cyan-600' },
                         { id: 'centrosPesquisa', l: 'C. Pesquisa', v: dashboardData.subKpis.centrosPesquisa || 0, pct: (dashboardData.unfiltSubKpis.centrosPesquisa || 0) > 0 ? ((dashboardData.subKpis.centrosPesquisa || 0) / (dashboardData.unfiltSubKpis.centrosPesquisa || 1))*100 : 0, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', h: darkMode ? 'hover:border-emerald-400' : 'hover:border-emerald-600' },

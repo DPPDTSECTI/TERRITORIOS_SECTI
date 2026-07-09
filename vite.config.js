@@ -224,10 +224,11 @@ function parseSpreadsheet(buffer) {
           tipoFinal = tipoOriginal; 
 
           const tNorm = normalize(tipoOriginal);
+          const isPrivadaCapacidade = tNorm.includes('privada') || tNorm.includes('particular');
           
           if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => tNorm.includes(c))) { 
-              categoriaEntidade = 'univsPublica';
-               if (!tNorm.includes('publica') && !tNorm.includes('federal') && !tNorm.includes('estadual')) {
+              categoriaEntidade = isPrivadaCapacidade ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
+               if (!isPrivadaCapacidade && !tNorm.includes('publica') && !tNorm.includes('federal') && !tNorm.includes('estadual')) {
                    tipoFinal = tipoFinal ? `${tipoFinal} - Pública` : 'Universidade Pública';
                }
           }
@@ -248,7 +249,7 @@ function parseSpreadsheet(buffer) {
           const isPrivada = catNorm.includes('privada') || catNorm.includes('lucrativo') || catNorm.includes('particular');
 
           if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => orgNorm.includes(c))) { 
-              categoriaEntidade = isPrivada ? 'univsPrivada' : 'univsPublica'; 
+              categoriaEntidade = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica'; 
           }
           else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => orgNorm.includes(c))) { categoriaEntidade = 'ifs'; }
           else { categoriaEntidade = 'outros'; }
