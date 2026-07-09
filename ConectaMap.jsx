@@ -746,7 +746,7 @@ export default function ConectaMap({
                 <div className="flex items-center gap-2.5 opacity-80">
                     <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></span>
                     <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                        Oculto ou Sem Dados
+                        Não pertencente ao Semiárido
                     </span>
                 </div>
             </div>

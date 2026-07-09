@@ -66,7 +66,7 @@ function MainApp() {
   const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
   const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
-  const [expandedList, setExpandedList] = useState(null);
+  const [expandedLists, setExpandedLists] = useState([]);
   const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
   const [isModalCtiFilterOpen, setIsModalCtiFilterOpen] = useState(false);
   const [isModalCadeiaFilterOpen, setIsModalCadeiaFilterOpen] = useState(false);
@@ -114,7 +114,7 @@ function MainApp() {
   };
 
   const handleCloseModal = useCallback(() => {
-    setExpandedList(null);
+    setExpandedLists([]);
     setIsModalAreaGeralOpen(false);
     setIsModalCtiFilterOpen(false);
     setIsModalCadeiaFilterOpen(false);
@@ -336,260 +336,159 @@ function MainApp() {
 
   return (
     <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
-      {expandedList && (() => {
-        const isCti = expandedList === 'cti';
-        const isCadeias = expandedList === 'cadeias';
-        const isCursos = expandedList === 'cursos';
-
-        let listData, title, renderItem;
-        
-        const renderCtiItem = (ent, idx) => (
-            <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-                <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
-                <div className="flex justify-between items-end mt-1">
-                    <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
-                        {ent.tipo || "Instituição"}
-                    </span>
-                    <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{ent.municipio}</span></div>
-                </div>
+      {expandedLists.length > 0 && (
+        <div className="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
+          <div 
+            className={`relative h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'} ${
+              expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'w-[90vw] max-w-[1800px]'
+            }`} 
+            onClick={e => e.stopPropagation()}
+          >
+            {/* HEADER DO MODAL */}
+            <div className={`p-3 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+              <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>Listas Expandidas</h3>
+              <div className="flex items-center gap-2">
+                {['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type)).map(type => {
+                  const config = {
+                    cti: { title: 'CT&I', icon: <Database size={14} />, color: 'blue' },
+                    cadeias: { title: 'Cadeias', icon: <BarChart3 size={14} />, color: 'emerald' },
+                    cursos: { title: 'Cursos', icon: <Target size={14} />, color: 'cyan' }
+                  }[type];
+                  return (
+                    <button 
+                      key={type} 
+                      onClick={() => setExpandedLists(prev => [...prev, type])} 
+                      className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${darkMode ? `bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700` : `bg-white border-slate-200 text-slate-600 hover:bg-slate-50`}`}
+                    >
+                      {config.icon}
+                      <span className="hidden sm:inline">Adicionar {config.title}</span>
+                    </button>
+                  );
+                })}
+                <button onClick={handleCloseModal} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700' : 'text-slate-500 hover:bg-slate-100'}`} title="Fechar"><Minimize size={18} /></button>
+              </div>
             </div>
-        );
 
-        // NOVA RENDERIZAÇÃO DAS CADEIAS (Com Etiqueta de Entidade e Municípios Ilimitados)
-        const renderCadeiaItem = (apl, idx) => (
-            <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-                <div className="flex items-start justify-between mb-2">
-                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
-                        {apl.segmento}
-                    </span>
-                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
-                        {apl.tipo}
-                    </span>
-                </div>
-                
-                {apl.entidade && (
-                    <div className="mb-2">
-                        <span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-blue-500 dark:text-blue-400">Entidade Vinculada</span>
-                        <span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
-                            {fixWeirdCapitalization(apl.entidade)}
-                        </span>
-                    </div>
-                )}
-                
-                <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
-                    <div className="grid grid-cols-2 gap-3 mb-2">
-                        <div>
-                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
-                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.sede}</p>
-                        </div>
-                        <div>
-                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span>
-                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p>
-                        </div>
-                    </div>
+            {/* GRID DE CONTEÚDO DO MODAL */}
+            <div className="flex-1 p-4 overflow-hidden">
+              <div className="grid h-full gap-4" style={{ gridTemplateColumns: `repeat(${expandedLists.length}, minmax(0, 1fr))` }}>
+                {expandedLists.map(listType => {
+                  let listData, renderItem, listTitle, filterControls, gridColsClass;
 
-                    <div className={`pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}>
-                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span>
-                        {/* Removemos o limite de linhas para que o modal mostre todos os municípios acumulados */}
-                        <p className={`text-[9px] font-medium leading-relaxed opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                            {apl.municipiosPertencentes}
-                        </p>
+                  const renderCtiItem = (ent, idx) => (
+                      <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                          <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
+                          <div className="flex justify-between items-end mt-1">
+                              <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
+                                  {ent.tipo || "Instituição"}
+                              </span>
+                              <div className="text-right"><span className="block text-[9px] font-medium opacity-80">{ent.municipio}</span></div>
+                          </div>
+                      </div>
+                  );
+
+                  const renderCadeiaItem = (apl, idx) => (
+                      <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-900/50 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                          <div className="flex items-start justify-between mb-2">
+                              <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{apl.segmento}</span>
+                              <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
+                          </div>
+                          {apl.entidade && <div className="mb-2"><span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-blue-500 dark:text-blue-400">Entidade Vinculada</span><span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{fixWeirdCapitalization(apl.entidade)}</span></div>}
+                          <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
+                              <div className="grid grid-cols-2 gap-3 mb-2">
+                                  <div><span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span><p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.sede}</p></div>
+                                  <div><span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span><p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p></div>
+                              </div>
+                              <div className={`pt-2 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-200/50'}`}><span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span><p className={`text-[9px] font-medium leading-relaxed opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{apl.municipiosPertencentes}</p></div>
+                          </div>
+                      </div>
+                  );
+
+                  const renderCursoItem = (curso, idx) => {
+                      const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
+                      return (
+                          <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
+                              <div className="flex flex-col items-start gap-1">
+                                  <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
+                                  {curso.areaGeral && <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>{curso.areaGeral}</span>}
+                              </div>
+                              <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
+                                  <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
+                                  {(curso.categoriaAdm || curso.orgAcademica) && <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">{[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (<React.Fragment key={i}><span>{tag}</span>{i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}</React.Fragment>))}</div>}
+                                  <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
+                                      <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}><svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg><span className="truncate">{curso.municipio}</span></span>
+                                      <div className="flex items-center gap-1 shrink-0">{curso.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.nivel}</span>}{curso.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.modalidade}</span>}</div>
+                                  </div>
+                              </div>
+                          </div>
+                      );
+                  };
+
+                  if (listType === 'cti') {
+                      listData = dashboardData.entidades;
+                      renderItem = renderCtiItem;
+                      listTitle = 'Estruturas CT&I';
+                      gridColsClass = 'grid-cols-1';
+                      filterControls = (
+                          <div className="relative" ref={modalCtiFilterRef}>
+                              <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-slate-700 border-slate-600' : 'bg-slate-100 border-slate-200') : (darkMode ? 'bg-transparent border-slate-700 hover:bg-slate-700' : 'bg-transparent border-slate-200 hover:bg-slate-100')}`}><Filter size={12} /></button>
+                              {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700' : 'bg-white/95 border-slate-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-slate-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras'}[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar</button>}</div>}
+                          </div>
+                      );
+                  } else if (listType === 'cadeias') {
+                      listData = dashboardData.aplIgs;
+                      renderItem = renderCadeiaItem;
+                      listTitle = 'Cadeias Produtivas';
+                      gridColsClass = 'grid-cols-1';
+                      filterControls = (
+                          <div className="relative" ref={modalCadeiaFilterRef}>
+                              <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600' : 'bg-slate-100 border-slate-200') : (darkMode ? 'bg-transparent border-slate-700 hover:bg-slate-700' : 'bg-transparent border-slate-200 hover:bg-slate-100')}`}><Filter size={12} /></button>
+                              {isModalCadeiaFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-48 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700' : 'bg-white/95 border-slate-200'}`}>{['APL', 'IG'].map(tipo => (<button key={tipo} onClick={() => handleCadeiaProdutivaToggle(tipo)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-center justify-between gap-2 border ${cadeiaProdutivaFilter.includes(tipo) ? (darkMode ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-emerald-100 border-emerald-200 text-emerald-700') : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}><span>{tipo}</span></button>))}{cadeiaProdutivaFilter.length > 0 && <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar</button>}</div>}
+                          </div>
+                      );
+                  } else if (listType === 'cursos') {
+                      listData = cursosFiltrados;
+                      renderItem = renderCursoItem;
+                      listTitle = 'Cursos CT&I';
+                      gridColsClass = 'grid-cols-1 md:grid-cols-2';
+                      filterControls = (
+                          <>
+                              <div className="relative w-32 sm:w-40"><input type="text" placeholder="Buscar curso..." value={cursoSearchTerm} onChange={(e) => setCursoSearchTerm(e.target.value)} className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`} /><Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} />{cursoSearchTerm && <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-red-500 text-slate-400"><Eraser size={12} /></button>}</div>
+                              {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600' : 'bg-slate-100 border-slate-200') : (darkMode ? 'bg-transparent border-slate-700 hover:bg-slate-700' : 'bg-transparent border-slate-200 hover:bg-slate-100')}`}><Filter size={12} /></button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700' : 'bg-white/95 border-slate-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{count}</span></button>);})}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar</button>}</div>}</div>}
+                          </>
+                      );
+                  } else {
+                      return null;
+                  }
+
+                  return (
+                    <div key={listType} className={`rounded-2xl border flex flex-col min-h-0 ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white/80 border-slate-200'}`}>
+                      <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+                        <div className="flex items-center gap-2">
+                          <h4 className={`font-bold text-xs ${darkMode ? 'text-white' : 'text-slate-800'}`}>{listTitle}</h4>
+                          <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>{listData.length}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {filterControls}
+                          <button onClick={() => setExpandedLists(p => p.filter(l => l !== listType))} className={`p-1.5 rounded-lg transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700' : 'text-slate-500 hover:bg-slate-100'}`} title={`Remover ${listTitle}`}>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex-1 overflow-y-auto p-3 hide-scroll">
+                        <div className={`grid gap-2 ${gridColsClass}`}>
+                          {listData.map(renderItem)}
+                        </div>
+                      </div>
                     </div>
-                </div>
+                  );
+                })}
+              </div>
             </div>
-        );
-
-        const renderCursoItem = (curso, idx) => {
-            const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
-            return (
-                <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-slate-900/40 border-slate-700/50' : 'bg-white shadow-sm border-slate-100'}`}>
-                    <div className="flex flex-col items-start gap-1">
-                        <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
-                        {curso.areaGeral && (
-                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>
-                                {curso.areaGeral}
-                            </span>
-                        )}
-                    </div>
-                    <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200/50'}`}>
-                        <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
-                        {(curso.categoriaAdm || curso.orgAcademica) && (
-                            <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">
-                                {[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (
-                                    <React.Fragment key={i}>
-                                        <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>{tag}</span>
-                                        {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                        )}
-                        <div className="flex justify-between items-end mt-2 pt-1 border-t border-slate-500/10 gap-1.5">
-                            <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}>
-                                <svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg>
-                                <span className="truncate">{curso.municipio}</span>
-                            </span>
-                            <div className="flex items-center gap-1 shrink-0">
-                                {curso.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.nivel}</span>}
-                                {curso.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-600 border-slate-200'}`}>{curso.modalidade}</span>}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        if (isCti) {
-            listData = dashboardData.entidades;
-            title = 'Estruturas CT&I';
-            renderItem = renderCtiItem;
-        } else if (isCadeias) {
-            listData = dashboardData.aplIgs;
-            title = 'Cadeias Produtivas';
-            renderItem = renderCadeiaItem;
-        } else if (isCursos) {
-            listData = cursosFiltrados;
-            title = 'Cursos CT&I';
-            renderItem = renderCursoItem;
-        } else {
-            return null;
-        }
-
-        const counterClasses = isCadeias
-            ? (darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700')
-            : (darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700');
-
-        return (
-            <div className="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
-                <div className={`relative w-full ${isCursos ? 'max-w-6xl' : 'max-w-4xl'} h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'}`} onClick={e => e.stopPropagation()}>
-                    <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
-                        <div className="flex items-center gap-3">
-                            <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>{title}</h3>
-                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${counterClasses}`}>
-                                {listData.length}
-                            </span>
-                        </div>
-                        
-                        {isCti && (
-                            <div className="flex-1 flex items-center justify-end gap-2">
-                                <div className="relative" ref={modalCtiFilterRef}>
-                                    <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
-                                        <Filter size={14} />
-                                        <span className="whitespace-nowrap hidden sm:inline">
-                                            {areAllCtiSelected ? 'Filtrar Categoria' : `${Object.values(ctiFilters).filter(v => v).length} Selecionadas`}
-                                        </span>
-                                    </button>
-                                    {isModalCtiFilterOpen && (
-                                        <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
-                                            <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1">
-                                                <label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-slate-500/10 pb-1.5 mb-1">
-                                                    <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" />
-                                                    <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
-                                                </label>
-                                                {ctiFilterKeys.map((key) => (
-                                                    <label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
-                                                        <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3 w-3" /> 
-                                                        <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{ {campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras'}[key] }</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                            {!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {isCadeias && (
-                            <div className="flex-1 flex items-center justify-end gap-2">
-                                <div className="relative" ref={modalCadeiaFilterRef}>
-                                    <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
-                                        <Filter size={14} />
-                                        <span className="whitespace-nowrap hidden sm:inline">
-                                            {cadeiaProdutivaFilter.length === 0 ? 'Filtrar Tipo' : cadeiaProdutivaFilter.length === 1 ? `Tipo: ${cadeiaProdutivaFilter[0]}` : `${cadeiaProdutivaFilter.length} Selecionados`}
-                                        </span>
-                                    </button>
-                                    {isModalCadeiaFilterOpen && (
-                                        <div className={`absolute right-0 top-[100%] mt-2 w-48 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
-                                            {['APL', 'IG'].map(tipo => {
-                                                const isSelected = cadeiaProdutivaFilter.includes(tipo);
-                                                return (
-                                                    <button key={tipo} onClick={() => handleCadeiaProdutivaToggle(tipo)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-center justify-between gap-2 border ${isSelected ? (darkMode ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-emerald-100 border-emerald-200 text-emerald-700') : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
-                                                        <span>{tipo}</span>
-                                                    </button>
-                                                )
-                                            })}
-                                            {cadeiaProdutivaFilter.length > 0 && <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                        
-                        {isCursos && (
-                            <div className="flex-1 flex items-center justify-end gap-2">
-                                <div className="relative w-full max-w-xs">
-                                    <input 
-                                        type="text" 
-                                        placeholder="Buscar curso..." 
-                                        value={cursoSearchTerm} 
-                                        onChange={(e) => setCursoSearchTerm(e.target.value)} 
-                                        className={`w-full h-8 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500' : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
-                                    />
-                                    <Search size={14} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`} />
-                                    {cursoSearchTerm && (
-                                        <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-red-500 text-slate-400">
-                                            <Eraser size={14} />
-                                        </button>
-                                    )}
-                                </div>
-                                {areaGeralSummary.length > 0 && (
-                                    <div className="relative" ref={modalAreaGeralRef}>
-                                        <button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-slate-700 border-slate-600 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700') : (darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50')}`}>
-                                            <Filter size={14} />
-                                            <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText()}</span>
-                                        </button>
-                                        {isModalAreaGeralOpen && (
-                                            <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-slate-900/95 border-slate-700 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'}`}>
-                                                <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
-                                                    {todasAsAreasGerais.map(areaName => { 
-                                                        const areaData = areaGeralSummary.find(a => a.name === areaName);
-                                                        const count = areaData ? areaData.count : 0;
-                                                        const styles = getAreaStyles(areaName, darkMode);
-                                                        const isSelected = areaGeralFilter.includes(areaName);
-                                                        if (count === 0 && !isSelected) return null;
-                                                        return (
-                                                            <button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-slate-800' : 'bg-transparent border-transparent hover:bg-slate-50')}`}>
-                                                                <div className="flex items-center gap-1.5 pr-1">
-                                                                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
-                                                                    <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-slate-300' : 'text-slate-600')}`}>{areaName}</span>
-                                                                </div>
-                                                                <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500')}`}>{count}</span> 
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                                {areaGeralFilter.length > 0 && (
-                                                    <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/20' : 'border-red-200 text-red-600 hover:bg-red-50'}`}>Limpar Filtros</button>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        <button onClick={handleCloseModal} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700' : 'text-slate-500 hover:bg-slate-100'}`} title="Fechar"><Minimize size={18} /></button>
-                    </div>
-                    <div className="flex-1 overflow-y-auto p-4 hide-scroll">
-                        <div className={`grid grid-cols-1 gap-3 ${isCursos ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'}`}>
-                            {listData.map(renderItem)}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-      })()}
+          </div>
+        </div>
+      )}
       <Helmet>
         <title>Painel Territorial CT&I | Governo da Bahia</title>
         <meta name="description" content="Plataforma interativa da SECTI com indicadores de Ciência, Tecnologia, Inovação e Cadeias Produtivas dos 27 Territórios de Identidade da Bahia." />
@@ -806,7 +705,7 @@ function MainApp() {
                             { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-cyan-600', b: 'bg-cyan-500', tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
                             { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-emerald-400' : 'text-emerald-600', b: 'bg-emerald-500', tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/' },
                         ].map((k, idx) => (
-                            <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 overflow-hidden ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
+                            <div key={idx} className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200/60'}`}>
                                 <div className="flex items-center justify-between">
                                     <p className={`text-[9px] font-black uppercase tracking-widest mb-1 opacity-60 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{k.l}</p>
                                     {k.sourceText && (
@@ -814,8 +713,8 @@ function MainApp() {
                                             <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                                 <Info size={12} />
                                             </button>
-                                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                                <div className={`p-2 rounded-lg text-[9px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                                                <div className={`p-3 rounded-xl text-[10px] leading-relaxed shadow-2xl border ${darkMode ? 'bg-slate-900 text-slate-200 border-slate-700' : 'bg-white text-slate-700 border-slate-200'}`}>
                                                     <span className="block font-bold mb-1 opacity-70">Fonte:</span>
                                                     {k.sourceLink ? (
                                                         <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
@@ -828,7 +727,7 @@ function MainApp() {
                                     )}
                                 </div>
                                 <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1.5 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{k.v}</p>
-                                <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50 overflow-hidden rounded-b-xl">
+                                <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-200/50 dark:bg-slate-700/50 rounded-b-xl">
                                     <div className={`h-full ${k.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, k.pct))}%` }}></div>
                                 </div>
                             </div>
@@ -908,8 +807,8 @@ function MainApp() {
                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
                                             {dashboardData.entidades.length}
                                         </span>
-                                        {dashboardData.entidades.length > 0 && (
-                                            <button onClick={() => setExpandedList('cti')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
+                                    {dashboardData.entidades.length > 0 && !expandedLists.length && (
+                                        <button onClick={() => setExpandedLists(['cti'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
                                                 <Expand size={14} />
                                             </button>
                                         )}
@@ -955,8 +854,8 @@ function MainApp() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>{dashboardData.aplIgs.length}</span>
-                                        {dashboardData.aplIgs.length > 0 && (
-                                            <button onClick={() => setExpandedList('cadeias')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
+                                        {dashboardData.aplIgs.length > 0 && !expandedLists.length && (
+                                            <button onClick={() => setExpandedLists(['cadeias'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
                                                 <Expand size={14} />
                                             </button>
                                         )}
@@ -1027,9 +926,9 @@ function MainApp() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black hidden lg:inline-block ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>{cursosFiltrados.length}</span>
-                                        {cursosFiltrados.length > 0 && (
-                                            <button onClick={() => setExpandedList('cursos')} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
+                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black hidden lg:inline-block ${darkMode ? 'bg-cyan-500/20 text-cyan-400' : 'bg-cyan-100 text-cyan-700'}`}>{cursosFiltrados.length}</span>
+                                        {cursosFiltrados.length > 0 && !expandedLists.length && (
+                                            <button onClick={() => setExpandedLists(['cursos'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-800'}`} title="Expandir lista">
                                                 <Expand size={14} />
                                             </button>
                                         )}
