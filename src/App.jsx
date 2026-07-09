@@ -713,8 +713,8 @@ function MainApp() {
                                             <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                                 <Info size={12} />
                                             </button>
-                                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                                                <div className={`p-3 rounded-xl text-[10px] leading-relaxed shadow-2xl border ${darkMode ? 'bg-slate-900 text-slate-200 border-slate-700' : 'bg-white text-slate-700 border-slate-200'}`}>
+                                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                <div className={`p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-slate-900 text-slate-200 border-slate-700' : 'bg-white text-slate-700 border-slate-200'}`}>
                                                     <span className="block font-bold mb-1 opacity-70">Fonte:</span>
                                                     {k.sourceLink ? (
                                                         <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
@@ -774,8 +774,8 @@ function MainApp() {
                                     <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                     </button>
-                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
-                                        <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                        <div className={`w-max p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                             <span className="block font-bold mb-1 opacity-70">Fontes dos Dados:</span>
                                             <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
                                             <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
@@ -802,7 +802,22 @@ function MainApp() {
                             {/* LISTA 1: ESTRUTURAS CT&I */}
                             <div className={`w-full sm:w-1/2 min-h-0 rounded-[2rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white border-slate-200/80'}`}>
                                 <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
-                                    <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
+                                    <div className="flex items-center gap-1.5">
+                                        <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>Estruturas CT&I</h4>
+                                        <div className="relative group flex items-center justify-center z-50">
+                                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-help outline-none">
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
+                                            </button>
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                <div className={`w-max p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                                    <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
+                                                    <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                        INEP / Censo da Educação Superior (2022)
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="flex items-center gap-2">
                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
                                             {dashboardData.entidades.length}
@@ -843,7 +858,7 @@ function MainApp() {
                                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                             </button>
                                             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                                <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                                <div className={`w-max p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                                     <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
                                                     <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                         DataSebrae / Indicações Geográficas
@@ -917,7 +932,7 @@ function MainApp() {
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                         </button>
                                         <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                                            <div className={`w-max p-3 rounded-xl text-[11px] leading-relaxed shadow-xl border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
+                                            <div className={`w-max p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                                                 <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
                                                 <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                     INEP/ Censo de Educação Superior (2022)
