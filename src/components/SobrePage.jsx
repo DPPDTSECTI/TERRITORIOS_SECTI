@@ -51,11 +51,6 @@ const SobrePage = ({ darkMode }) => {
           <div className="space-y-4 !mt-6">
             {[
               {
-                nome: 'SECTI (Secretaria de Ciência, Tecnologia e Inovação)',
-                info: 'Mapeamento de entidades, programas e infraestruturas de CT&I, como universidades, ICTs, espaços dinamizadores e parques tecnológicos.',
-                link: 'http://www.secti.ba.gov.br/'
-              },
-              {
                 nome: 'SEPLAN-BA (Secretaria do Planejamento)',
                 info: 'Dados geográficos e demográficos, incluindo a delimitação oficial dos 27 Territórios de Identidade da Bahia.',
                 link: 'http://www.seplan.ba.gov.br/'
@@ -63,7 +58,7 @@ const SobrePage = ({ darkMode }) => {
               {
                 nome: 'IBGE (Instituto Brasileiro de Geografia e Estatística)',
                 info: 'Dados populacionais, malhas territoriais dos municípios e informações geográficas essenciais para o georreferenciamento.',
-                link: 'https://www.ibge.gov.br/'
+                link: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e'
               },
               {
                 nome: 'Sistema FIRJAN',
