@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map as MapIcon, Settings, Sun, Download } from 'lucide-react';
+import { Map as MapIcon, Settings, Sun, Download, Link as LinkIcon } from 'lucide-react';
 
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
@@ -45,15 +45,54 @@ const SobrePage = ({ darkMode }) => {
           </div>
 
           <SectionTitle number="4" title="Fontes dos Dados" />
-          <p className="leading-relaxed">A riqueza de informações é resultado da consolidação de múltiplas fontes, garantindo abrangência e confiabilidade:</p>
-          <ul className="list-disc pl-5 space-y-2 text-sm">
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>SECTI/SharePoint:</strong> Mapeamento de entidades, programas e infraestruturas de CT&I.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>SEPLAN-BA:</strong> Dados geográficos e demográficos, incluindo a delimitação dos Territórios de Identidade.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>IBGE:</strong> Dados populacionais e malhas territoriais dos municípios.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>FIRJAN:</strong> Índice FIRJAN de Desenvolvimento Municipal (IFDM).</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>INEP/MEC:</strong> Dados do Censo da Educação Superior.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Fontes Setoriais e Acadêmicas:</strong> Informações sobre Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs).</li>
-          </ul>
+          <p className="leading-relaxed">
+            A riqueza de informações do painel é resultado da consolidação de múltiplas fontes de dados abertos, garantindo abrangência e confiabilidade. As principais fontes utilizadas são:
+          </p>
+          <div className="space-y-4 !mt-6">
+            {[
+              {
+                nome: 'SECTI (Secretaria de Ciência, Tecnologia e Inovação)',
+                info: 'Mapeamento de entidades, programas e infraestruturas de CT&I, como universidades, ICTs, espaços dinamizadores e parques tecnológicos.',
+                link: 'http://www.secti.ba.gov.br/'
+              },
+              {
+                nome: 'SEPLAN-BA (Secretaria do Planejamento)',
+                info: 'Dados geográficos e demográficos, incluindo a delimitação oficial dos 27 Territórios de Identidade da Bahia.',
+                link: 'http://www.seplan.ba.gov.br/'
+              },
+              {
+                nome: 'IBGE (Instituto Brasileiro de Geografia e Estatística)',
+                info: 'Dados populacionais, malhas territoriais dos municípios e informações geográficas essenciais para o georreferenciamento.',
+                link: 'https://www.ibge.gov.br/'
+              },
+              {
+                nome: 'Sistema FIRJAN',
+                info: 'Índice FIRJAN de Desenvolvimento Municipal (IFDM), utilizado como base para o indicador de Desenvolvimento Territorial.',
+                link: 'https://www.firjan.com.br/ifdm/'
+              },
+              {
+                nome: 'INEP/MEC (Instituto Nacional de Estudos e Pesquisas Educacionais)',
+                info: 'Microdados do Censo da Educação Superior, que fornecem a base para o levantamento de cursos superiores em CT&I.',
+                link: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior'
+              },
+              {
+                nome: 'SEBRAE, MAPA e Fontes Acadêmicas',
+                info: 'Consolidação de informações sobre Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs) a partir de diversas fontes setoriais.',
+                link: 'https://datasebrae.com.br/indicacoesgeograficas/'
+              }
+            ].map((fonte, idx) => (
+              <div key={idx} className={`p-5 rounded-2xl border transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/60 hover:border-slate-300'}`}>
+                <a href={fonte.link} target="_blank" rel="noopener noreferrer" className="group">
+                  <div className="flex justify-between items-start">
+                    <span className={`block font-bold mb-2 group-hover:text-gov-blueDark-500 dark:group-hover:text-blue-400 transition-colors ${darkMode ? 'text-white' : 'text-slate-800'}`}>{fonte.nome}</span>
+                    <LinkIcon size={16} className="text-slate-400 group-hover:text-gov-blueDark-500 dark:group-hover:text-blue-400 transition-colors shrink-0 ml-4" />
+                  </div>
+                  <p className="text-xs leading-relaxed opacity-80">{fonte.info}</p>
+                  <span className="text-[10px] mt-3 block text-gov-blueDark-500/50 dark:text-blue-400/50 group-hover:text-gov-blueDark-500 dark:group-hover:text-blue-400 font-mono break-all transition-colors">{fonte.link}</span>
+                </a>
+              </div>
+            ))}
+          </div>
 
           <SectionTitle number="5" title="Metodologia e Tratamento dos Dados" />
           <ol className="list-decimal pl-5 space-y-2">
