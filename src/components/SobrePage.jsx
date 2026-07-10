@@ -51,9 +51,9 @@ const SobrePage = ({ darkMode }) => {
           <div className="space-y-4 !mt-6">
             {[
               {
-                nome: 'SEPLAN-BA (Secretaria do Planejamento)',
+                nome: 'SECULT-BA (Secretaria de Cultura)',
                 info: 'Dados geográficos e demográficos, incluindo a delimitação oficial dos 27 Territórios de Identidade da Bahia.',
-                link: 'http://www.seplan.ba.gov.br/'
+                link: 'https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia'
               },
               {
                 nome: 'IBGE (Instituto Brasileiro de Geografia e Estatística)',
