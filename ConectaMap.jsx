@@ -12,11 +12,51 @@ const LABEL_COLLISION_PADDING = 4; // Espaçamento extra entre rótulos
 const LABEL_FORCE_STRENGTH = 0.08; // Força que "puxa" o rótulo de volta ao seu centroide
 const SIMULATION_ITERATIONS = 250; // Número de iterações da simulação
 
+// Paleta de cores baseada no sistema de design gov.br, ordenada para criar um visual mais harmonioso no mapa.
 const TERRITORY_COLORS = [
-    '#E03C5A', '#F9A03F', '#C3D471', '#149BDB', '#86CBA0', '#E53B94', '#B94B85',
-    '#B57753', '#CFBE5C', '#1AB2ED', '#B0AD23', '#1A9F9E', '#ED7D31', '#9CC14A',
-    '#8786AD', '#12A759', '#4EC1D3', '#1C9395', '#FAC637', '#9A5B74', '#F6ED70',
-    '#F2A09E', '#3D8576', '#D2C365', '#A7B665', '#B8BAD2', '#BDBBB9',
+    // Sequência de Amarelo -> Laranja -> Vermelho
+    '#FFC107', '#FFB300', '#E0A000', // Amarelos
+    '#FD7E14', '#E66F0E', '#CC630C', // Laranjas
+    '#DC3545', '#C42A39', '#B02532', // Vermelhos
+    // Sequência de Rosa -> Roxo
+    '#E83E8C', '#D63384', '#BF2E73', // Rosas
+    '#6610F2', '#7A28D9', '#580BC1', '#45099A', // Roxo
+    // Sequência de Azul -> Ciano
+    '#0174DF', '#005A9C', '#004A80', '#003B66', // Azuis
+    '#17A2B8', '#00A8B5', '#008B96', '#006E78', // Cianos
+    // Sequência de Verde
+    '#28A745', '#1B9A59', '#0F8243', '#076833'
+];
+
+// Ordem geográfica dos territórios para uma paleta de cores mais coesa
+const GEOGRAPHICAL_ORDER = [
+    'Bacia do Rio Grande',
+    'Bacia do Rio Corrente',
+    'Velho Chico',
+    'Sertão do São Francisco',
+    'Piemonte Norte do Itapicuru',
+    'Itaparica',
+    'Irecê',
+    'Chapada Diamantina',
+    'Piemonte da Diamantina',
+    'Sisal',
+    'Bacia do Jacuípe',
+    'Semiárido Nordeste II',
+    'Litoral Norte e Agreste Baiano',
+    'Portal do Sertão',
+    'Metropolitano de Salvador',
+    'Recôncavo',
+    'Baixo Sul',
+    'Vale do Jiquiriçá',
+    'Piemonte do Paraguaçu',
+    'Médio Rio de Contas',
+    'Sudoeste Baiano',
+    'Sertão Produtivo',
+    'Bacia do Paramirim',
+    'Médio Sudoeste da Bahia',
+    'Litoral Sul',
+    'Costa do Descobrimento',
+    'Extremo Sul'
 ];
 
 function normalizeName(value) {
@@ -35,9 +75,18 @@ function wrapText(text) {
 
 const getTerritoryKey = (value) => normalizeName(value);
 
+// Ordena os territórios geograficamente antes de atribuir as cores
+const sortedTerritories = [...territoriosMunicipios.territorios_de_identidade].sort((a, b) => {
+    const indexA = GEOGRAPHICAL_ORDER.indexOf(a.nome);
+    const indexB = GEOGRAPHICAL_ORDER.indexOf(b.nome);
+    if (indexA === -1) return 1; // Coloca territórios não listados no final
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+});
+
 const territoryColorMap = {};
-territoriosMunicipios.territorios_de_identidade.forEach((territorio) => {
-    territoryColorMap[getTerritoryKey(territorio.nome)] = TERRITORY_COLORS[territorio.id - 1] || '#E2E8F0';
+sortedTerritories.forEach((territorio, index) => {
+    territoryColorMap[getTerritoryKey(territorio.nome)] = TERRITORY_COLORS[index] || '#D1D5DB'; // gray-300
 });
 
 const buildMunicipioTerritoryMap = () => {
@@ -545,16 +594,16 @@ export default function ConectaMap({
                                     if (filtroSemiarido && !isMunSemi) {
                                         opacity = 0.15;
                                     } else { // Se for por outros filtros (CTI, IFDM), deixa cinza.
-                                        fillColor = darkMode ? '#1e293b' : '#e2e8f0'; 
+                                        fillColor = darkMode ? '#374151' : '#E5E7EB'; // gray-700 / gray-200
                                         opacity = 0.1;
                                     }
                                 } else if (selectedTerritory) {
                                     if (isSelectedMap) {
                                         opacity = 1;
                                         // A cor laranja do semiárido só se aplica se o filtro estiver ativo.
-                                        if (filtroSemiarido && isMunSemi) fillColor = '#F97316'; 
+                                        if (filtroSemiarido && isMunSemi) fillColor = '#FFC107'; // gov-yellow
                                     } else {
-                                        fillColor = darkMode ? '#334155' : '#cbd5e1';
+                                        fillColor = darkMode ? '#4B5563' : '#D1D5DB'; // gray-600 / gray-300
                                         opacity = 0.4; // Aumenta a visibilidade das áreas não selecionadas
                                     }
                                 } else {
@@ -567,7 +616,7 @@ export default function ConectaMap({
                                         feat={feat}
                                         d={feat.d}
                                         fill={fillColor}
-                                        stroke={isSelectedMap || isHovered ? '#ffffff' : (darkMode ? '#1e293b' : '#f8fafc')}
+                                        stroke={isSelectedMap || isHovered ? (darkMode ? '#000' : '#fff') : (darkMode ? '#111827' : '#F9FAFB')}
                                         strokeWidth={isSelectedMap ? 2 : isHovered ? 2 : 0.8}
                                         opacity={opacity}
                                         blockClickAndColor={blockClickAndColor}
@@ -604,19 +653,19 @@ export default function ConectaMap({
                                         return (
                                             <g key={`t-lbl-${i}`}>
                                                 {needsLeaderLine && (
-                                                    <>
+                                                    <g opacity={0.7}>
                                                         <line 
                                                             x1={idealX} y1={idealY} x2={x} y2={y} 
                                                             stroke={darkMode ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"} 
                                                             strokeWidth={0.8 / effectiveScale} 
                                                         />
                                                         <circle cx={idealX} cy={idealY} r={1.5 / effectiveScale} fill={darkMode ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"} />
-                                                    </>
+                                                    </g>
                                                 )}
                                                 <text 
                                                     x={x} y={y} textAnchor="middle" alignmentBaseline="middle" 
                                                     style={{ 
-                                                        paintOrder: 'stroke', stroke: darkMode ? 'rgba(10, 15, 28, 0.7)' : 'rgba(255, 255, 255, 0.7)', strokeWidth: `${strokeW * 0.8}px`, strokeLinejoin: 'round',
+                                                        paintOrder: 'stroke', stroke: darkMode ? 'rgba(17, 24, 39, 0.7)' : 'rgba(255, 255, 255, 0.7)', strokeWidth: `${strokeW * 0.8}px`, strokeLinejoin: 'round',
                                                         fill: darkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0,0,0,0.85)', fontSize: `${fontSize}px`, fontWeight: '600',
                                                     }}
                                                 >
@@ -686,8 +735,8 @@ export default function ConectaMap({
                                                 <text 
                                                     x={x} y={y} textAnchor="middle" alignmentBaseline="middle"
                                                     style={{ 
-                                                        paintOrder: 'stroke', 
-                                                        stroke: darkMode ? 'rgba(10, 15, 28, 0.8)' : 'rgba(255, 255, 255, 0.8)', 
+                                                        paintOrder: 'stroke',
+                                                        stroke: darkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)', 
                                                         strokeWidth: `${strokeW * 0.7}px`, strokeLinejoin: 'round',
                                                         fill: darkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0,0,0,0.8)', 
                                                         fontSize: `${fontSize}px`, fontWeight: '500',
@@ -709,16 +758,16 @@ export default function ConectaMap({
 
             {/* CAIXA LATERAL DE MUNICÍPIOS COM TRANSPARÊNCIA */}
             {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
-                <div className={`absolute top-5 right-5 z-30 w-56 md:w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[1.5rem] border backdrop-blur-xl shadow-2xl transition-all animate-soft-fade ${darkMode ? 'bg-slate-900/80 border-slate-700' : 'bg-white/80 border-white/60'}`}>
-                    <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 border-b pb-2 leading-tight ${darkMode ? 'text-slate-300 border-slate-700/50' : 'text-slate-500 border-slate-200/60'}`}>
+                <div className={`absolute top-5 right-5 z-30 w-56 md:w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[1.5rem] border backdrop-blur-xl shadow-2xl transition-all animate-soft-fade ${darkMode ? 'bg-gray-900/80 border-gray-700' : 'bg-white/80 border-white/60'}`}>
+                    <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 border-b pb-2 leading-tight ${darkMode ? 'text-gray-300 border-gray-700/50' : 'text-gray-500 border-gray-200/60'}`}>
                         {selectedTerritory.nome}
                     </h4>
                     <ul className="flex flex-col gap-1.5">
                         {municipalitiesToShow.map((m, idx) => {
                             const isSemi = semiaridoMunicipios.includes(normalizeName(m));
                             return (
-                                <li key={idx} className={`text-[11px] font-medium flex items-center gap-2 leading-tight ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                                    <span className={`shrink-0 w-2 h-2 rounded-full border ${isSemi ? 'bg-orange-500 border-orange-600' : (darkMode ? 'bg-slate-300 border-slate-400' : 'bg-slate-200 border-slate-300')}`}></span>
+                                <li key={idx} className={`text-[11px] font-medium flex items-center gap-2 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <span className={`shrink-0 w-2 h-2 rounded-full border ${isSemi ? 'bg-gov-yellow border-yellow-600' : (darkMode ? 'bg-gray-300 border-gray-400' : 'bg-gray-200 border-gray-300')}`}></span>
                                     {m}
                                 </li>
                             );
@@ -727,7 +776,7 @@ export default function ConectaMap({
                     {selectedTerritoryMunicipalities.length > 4 && (
                         <button 
                             onClick={() => setIsMunListExpanded(!isMunListExpanded)}
-                            className={`w-full mt-3 text-center text-[10px] font-bold uppercase tracking-wider py-2 rounded-lg transition-colors ${darkMode ? 'bg-slate-800/70 hover:bg-slate-700/90 text-slate-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'}`}
+                            className={`w-full mt-3 text-center text-[10px] font-bold uppercase tracking-wider py-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-800/70 hover:bg-gray-700/90 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}
                         >
                             {isMunListExpanded ? 'Ver menos' : `Ver mais ${selectedTerritoryMunicipalities.length - 4}...`}
                         </button>
@@ -736,16 +785,16 @@ export default function ConectaMap({
             )}
 
             {/* LEGENDA DO MAPA */}
-            <div className={`absolute bottom-6 left-6 z-20 px-4 py-3.5 rounded-2xl border shadow-xl backdrop-blur-xl flex flex-col gap-2.5 pointer-events-none transition-colors duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/70 border-white/60'}`}>
+            <div className={`absolute bottom-6 left-6 z-20 px-4 py-3.5 rounded-2xl border shadow-xl backdrop-blur-xl flex flex-col gap-2.5 pointer-events-none transition-colors duration-500 ${darkMode ? 'bg-gray-900/60 border-gray-700/50' : 'bg-white/70 border-white/60'}`}>
                 <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full bg-orange-500 shadow-sm"></span>
-                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                    <span className="w-2 h-2 rounded-full bg-gov-yellow shadow-sm"></span>
+                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                         Pertencente ao Semiárido
                     </span>
                 </div>
                 <div className="flex items-center gap-2.5 opacity-80">
-                    <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></span>
-                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                    <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></span>
+                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                         Não pertencente ao Semiárido
                     </span>
                 </div>
@@ -753,15 +802,15 @@ export default function ConectaMap({
 
             {/* CONTROLES MANUAIS FLUTUANTES */}
             <div className="absolute bottom-5 right-5 flex flex-col gap-2 z-20">
-                <button onClick={() => setUserScale(p => Math.min(p * 1.3, 10))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-100'}`}>+</button>
-                <button onClick={() => setUserScale(p => Math.max(p / 1.3, 0.5))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-100'}`}>-</button>
-                <button onClick={() => { setUserScale(1); setUserPan({x:0, y:0}); onSelectTerritory(null); }} className={`w-8 h-8 rounded-lg shadow-md font-bold text-[10px] flex items-center justify-center transition-colors border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-100'}`}>↺</button>
+                <button onClick={() => setUserScale(p => Math.min(p * 1.3, 10))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>+</button>
+                <button onClick={() => setUserScale(p => Math.max(p / 1.3, 0.5))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>-</button>
+                <button onClick={() => { setUserScale(1); setUserPan({x:0, y:0}); onSelectTerritory(null); }} className={`w-8 h-8 rounded-lg shadow-md font-bold text-[10px] flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>↺</button>
             </div>
 
             {/* TOOLTIP DO MOUSE DINÂMICO (Território OU Município) */}
             {tooltip.visible && !isDragging && (hoveredTerritory || hoveredMunicipality) && (
                 <div 
-                    className={`absolute z-50 overflow-hidden rounded-2xl border backdrop-blur-md shadow-2xl pointer-events-none transition-opacity duration-200 ${darkMode ? 'bg-slate-900/90 border-slate-700' : 'bg-white/90 border-white/60'}`} 
+                    className={`absolute z-50 overflow-hidden rounded-2xl border backdrop-blur-md shadow-2xl pointer-events-none transition-opacity duration-200 ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/90 border-white/60'}`} 
                     style={{ top: tooltip.y, left: tooltip.x, width: 280 }}
                 >
                     
@@ -771,30 +820,30 @@ export default function ConectaMap({
                             <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredData.nome)] || '#0f766e' }}></div>
                             <div className="p-4">
                                 <div className="flex justify-between items-start mb-3">
-                                    <h2 className={`font-bold text-[14px] uppercase tracking-tight leading-tight pr-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{hoveredData.nome}</h2>
+                                    <h2 className={`font-bold text-[14px] uppercase tracking-tight leading-tight pr-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{hoveredData.nome}</h2>
                                     {dynamicStats.pctSemiarido > 0 && (
-                                        <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full uppercase flex-shrink-0 mt-0.5 ${dynamicStats.pctSemiarido >= 100 ? 'text-gov-red-500 bg-gov-red-50 border border-gov-red-100' : 'text-orange-600 bg-orange-50 border border-orange-100'}`}>
+                                        <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full uppercase flex-shrink-0 mt-0.5 ${dynamicStats.pctSemiarido >= 100 ? 'text-gov-red bg-gov-red/10 border border-gov-red/20' : 'text-yellow-600 bg-yellow-50 border border-yellow-100'}`}>
                                             {dynamicStats.pctSemiarido >= 100 ? 'Semiárido' : `Semiárido: ${dynamicStats.pctSemiarido.toFixed(0)}%`}
                                         </span>
                                     )}
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100/50 border-slate-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-slate-400">Entidades CT&I</span>
-                                        <span className="block text-base font-black text-gov-blueDark-500">{dynamicStats.capacidadeCti}</span>
+                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
+                                        <span className="block text-[8px] font-bold uppercase text-gray-400">Entidades CT&I</span>
+                                        <span className="block text-base font-black text-gov-blue">{dynamicStats.capacidadeCti}</span>
                                     </div>
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100/50 border-slate-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-slate-400">IFDM (Média)</span>
-                                        <span className="block text-base font-black text-gov-red-500">{dynamicStats.ifdm}</span>
+                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
+                                        <span className="block text-[8px] font-bold uppercase text-gray-400">IFDM (Média)</span>
+                                        <span className="block text-base font-black text-gov-red">{dynamicStats.ifdm}</span>
                                     </div>
                                 </div>
-                                <div className={`rounded-lg p-2 border mb-2 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100/50 border-slate-200/50'}`}>
-                                    <span className="block text-[8px] font-bold uppercase text-slate-400">Iniciativas Estaduais</span>
-                                    <span className="block text-[11px] font-bold text-gov-cyan-700">{dynamicStats.conectaBahia}</span>
+                                <div className={`rounded-lg p-2 border mb-2 ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
+                                    <span className="block text-[8px] font-bold uppercase text-gray-400">Iniciativas Estaduais</span>
+                                    <span className="block text-[11px] font-bold text-gov-cyan">{dynamicStats.conectaBahia}</span>
                                 </div>
-                                <div className={`rounded-lg p-2 border ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100/50 border-slate-200/50'}`}>
-                                    <span className="block text-[8px] font-bold uppercase text-slate-400">Cadeias & IGs</span>
-                                    <span className={`block text-xs font-semibold truncate ${darkMode ? 'text-slate-300' : 'text-slate-700'}`} title={dynamicStats.cadeiasIgs}>{dynamicStats.cadeiasIgs}</span>
+                                <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
+                                    <span className="block text-[8px] font-bold uppercase text-gray-400">Cadeias & IGs</span>
+                                    <span className={`block text-xs font-semibold truncate ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={dynamicStats.cadeiasIgs}>{dynamicStats.cadeiasIgs}</span>
                                 </div>
                             </div>
                         </>
@@ -806,28 +855,28 @@ export default function ConectaMap({
                             <div className="h-1.5 w-full" style={{ backgroundColor: '#0ea5e9' }}></div>
                             <div className="p-4">
                                 <div className="flex justify-between items-start mb-3">
-                                    <h2 className={`font-bold text-[14px] uppercase tracking-tight leading-tight pr-2 ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                                    <h2 className={`font-bold text-[14px] uppercase tracking-tight leading-tight pr-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>
                                         {hoveredMunData.nome}
                                     </h2>
                                     {hoveredMunData.isSemi && (
-                                        <span className="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase flex-shrink-0 mt-0.5 text-orange-600 bg-orange-50 border border-orange-100">
+                                        <span className="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase flex-shrink-0 mt-0.5 text-yellow-700 bg-gov-yellow/20 border border-gov-yellow/30">
                                             Semiárido
                                         </span>
                                     )}
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100/50 border-slate-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-slate-400">Entidades CT&I</span>
-                                        <span className="block text-base font-black text-gov-blueDark-500">{hoveredMunData.entidadesCount}</span>
+                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
+                                        <span className="block text-[8px] font-bold uppercase text-gray-400">Entidades CT&I</span>
+                                        <span className="block text-base font-black text-gov-blue">{hoveredMunData.entidadesCount}</span>
                                     </div>
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100/50 border-slate-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-slate-400">Cadeias & IGs</span>
-                                        <span className="block text-base font-black text-emerald-500">{hoveredMunData.cadeiasCount}</span>
+                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
+                                        <span className="block text-[8px] font-bold uppercase text-gray-400">Cadeias & IGs</span>
+                                        <span className="block text-base font-black text-gov-green">{hoveredMunData.cadeiasCount}</span>
                                     </div>
                                 </div>
-                                <div className={`rounded-lg p-2 border mb-2 ${darkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100/50 border-slate-200/50'}`}>
-                                    <span className="block text-[8px] font-bold uppercase text-slate-400">D. Territ. (IFDM)</span>
-                                    <span className="block text-[11px] font-bold text-gov-red-500">{hoveredMunData.ifdm}</span>
+                                <div className={`rounded-lg p-2 border mb-2 ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
+                                    <span className="block text-[8px] font-bold uppercase text-gray-400">D. Territ. (IFDM)</span>
+                                    <span className="block text-[11px] font-bold text-gov-red">{hoveredMunData.ifdm}</span>
                                 </div>
                             </div>
                         </>
