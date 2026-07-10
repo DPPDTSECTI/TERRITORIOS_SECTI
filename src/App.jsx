@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap"; 
 import LandingHero from './components/hero';
-import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize } from 'lucide-react';
+import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
 import SobrePage from './components/SobrePage';
@@ -70,6 +70,7 @@ function MainApp() {
   const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
   const [isModalCtiFilterOpen, setIsModalCtiFilterOpen] = useState(false);
   const [isModalCadeiaFilterOpen, setIsModalCadeiaFilterOpen] = useState(false);
+  const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
 
   // Navbars e Scroll
   const [navVisible, setNavVisible] = useState(true);
@@ -97,6 +98,7 @@ function MainApp() {
   const modalAreaGeralRef = useRef(null);
   const modalCtiFilterRef = useRef(null);
   const modalCadeiaFilterRef = useRef(null);
+  const modalAddListRef = useRef(null);
 
   const resetGlobalFilters = () => {
       setSearchTerm('');
@@ -118,6 +120,7 @@ function MainApp() {
     setIsModalAreaGeralOpen(false);
     setIsModalCtiFilterOpen(false);
     setIsModalCadeiaFilterOpen(false);
+    setIsModalAddListOpen(false);
   }, []);
 
   const {
@@ -167,6 +170,9 @@ function MainApp() {
     }
     if (modalCadeiaFilterRef.current && !modalCadeiaFilterRef.current.contains(event.target)) {
         setIsModalCadeiaFilterOpen(false);
+    }
+    if (modalAddListRef.current && !modalAddListRef.current.contains(event.target)) {
+        setIsModalAddListOpen(false);
     }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -334,37 +340,22 @@ function MainApp() {
                            cursoSearchTerm !== '' || 
                            !Object.values(ctiFilters).every(val => val === true);
 
+  const availableListsToAdd = ['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type));
+
   return (
     <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
       {expandedLists.length > 0 && (
         <div className="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
-          <div 
-            className={`relative h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'} ${
+          <div className="relative" onClick={e => e.stopPropagation()}>
+            <div 
+              className={`h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-slate-800/90 border-slate-700' : 'bg-white/95 border-slate-200'} ${
               expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'w-[90vw] max-w-[1800px]'
             }`} 
-            onClick={e => e.stopPropagation()}
-          >
+            >
             {/* HEADER DO MODAL */}
             <div className={`p-3 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
               <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-slate-800'}`}>Listas Expandidas</h3>
               <div className="flex items-center gap-2">
-                {['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type)).map(type => {
-                  const config = {
-                    cti: { title: 'CT&I', icon: <Database size={14} />, color: 'blue' },
-                    cadeias: { title: 'Cadeias', icon: <BarChart3 size={14} />, color: 'emerald' },
-                    cursos: { title: 'Cursos', icon: <Target size={14} />, color: 'cyan' }
-                  }[type];
-                  return (
-                    <button 
-                      key={type} 
-                      onClick={() => setExpandedLists(prev => [...prev, type])} 
-                      className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${darkMode ? `bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700` : `bg-white border-slate-200 text-slate-600 hover:bg-slate-50`}`}
-                    >
-                      {config.icon}
-                      <span className="hidden sm:inline">Adicionar {config.title}</span>
-                    </button>
-                  );
-                })}
                 <button onClick={handleCloseModal} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700' : 'text-slate-500 hover:bg-slate-100'}`} title="Fechar"><Minimize size={18} /></button>
               </div>
             </div>
@@ -486,6 +477,42 @@ function MainApp() {
                 })}
               </div>
             </div>
+          </div>
+
+          {/* BOTÃO FLUTUANTE AO LADO */}
+          {availableListsToAdd.length > 0 && (
+            <div ref={modalAddListRef} className="absolute top-1/2 -translate-y-1/2 left-full ml-4">
+              <button
+                onClick={() => setIsModalAddListOpen(prev => !prev)}
+                className={`w-[72px] h-[72px] rounded-3xl flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-105 border ${
+                  darkMode 
+                  ? 'bg-slate-900/40 border-slate-700/30 text-slate-200 backdrop-blur-xl hover:bg-slate-800/60' 
+                  : 'bg-white/50 border-slate-200/60 text-slate-700 backdrop-blur-xl hover:bg-white/70'
+                }`}
+                aria-label="Adicionar nova lista"
+              >
+                <Plus size={30} strokeWidth={3} />
+              </button>
+
+              {isModalAddListOpen && (
+                <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
+                  {availableListsToAdd.map(type => {
+                    const config = {
+                      cti: { title: 'Estruturas CT&I', icon: <Database size={14} /> },
+                      cadeias: { title: 'Cadeias Produtivas', icon: <BarChart3 size={14} /> },
+                      cursos: { title: 'Cursos CT&I', icon: <Target size={14} /> }
+                    }[type];
+                    return (
+                      <button key={type} onClick={() => { setExpandedLists(prev => [...prev, type]); setIsModalAddListOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'}`}>
+                        {config.icon}
+                        {config.title}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
           </div>
         </div>
       )}
