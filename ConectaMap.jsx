@@ -13,19 +13,42 @@ const LABEL_FORCE_STRENGTH = 0.08; // Força que "puxa" o rótulo de volta ao se
 const SIMULATION_ITERATIONS = 250; // Número de iterações da simulação
 
 // Paleta de cores baseada no sistema de design gov.br, ordenada para criar um visual mais harmonioso no mapa.
+// Paleta de cores de alto contraste para garantir que territórios adjacentes sejam visualmente distintos.
 const TERRITORY_COLORS = [
-    // Sequência de Amarelo -> Laranja -> Vermelho
-    '#FFC107', '#FFB300', '#E0A000', // Amarelos
-    '#FD7E14', '#E66F0E', '#CC630C', // Laranjas
-    '#DC3545', '#C42A39', '#B02532', // Vermelhos
-    // Sequência de Rosa -> Roxo
-    '#E83E8C', '#D63384', '#BF2E73', // Rosas
-    '#6610F2', '#7A28D9', '#580BC1', '#45099A', // Roxo
-    // Sequência de Azul -> Ciano
-    '#0174DF', '#005A9C', '#004A80', '#003B66', // Azuis
-    '#17A2B8', '#00A8B5', '#008B96', '#006E78', // Cianos
-    // Sequência de Verde
-    '#28A745', '#1B9A59', '#0F8243', '#076833'
+    // Ciclo 1: Cores primárias e secundárias bem distintas
+    '#0174DF', // Azul (gov-blue)
+    '#28A745', // Verde (gov-green)
+    '#FFC107', // Amarelo (gov-yellow)
+    '#DC3545', // Vermelho (gov-red)
+    '#6610F2', // Roxo (gov-purple)
+    '#17A2B8', // Ciano (gov-cyan)
+    '#FD7E14', // Laranja (gov-orange)
+    '#E83E8C', // Rosa (gov-pink)
+
+    // Ciclo 2: Tons mais escuros ou secundários das mesmas famílias
+    '#004A80', // Azul escuro
+    '#1B9A59', // Verde escuro
+    '#E0A000', // Amarelo/Mostarda
+    '#B02532', // Vermelho escuro
+    '#45099A', // Roxo escuro
+    '#008B96', // Ciano escuro
+    '#CC630C', // Laranja escuro
+    '#BF2E73', // Rosa escuro
+
+    // Ciclo 3: Tons intermediários ou restantes
+    '#005A9C', // Azul médio
+    '#0F8243', // Verde médio
+    '#FFB300', // Amarelo-laranja
+    '#C42A39', // Vermelho médio
+    '#580BC1', // Roxo médio
+    '#00A8B5', // Ciano médio
+    '#E66F0E', // Laranja médio
+    '#D63384', // Rosa médio
+
+    // Cores restantes para completar 27 territórios
+    '#003B66', // Azul muito escuro
+    '#076833', // Verde muito escuro
+    '#7A28D9', // Roxo claro
 ];
 
 // Ordem geográfica dos territórios para uma paleta de cores mais coesa
@@ -603,8 +626,8 @@ export default function ConectaMap({
                                         // A cor laranja do semiárido só se aplica se o filtro estiver ativo.
                                         if (filtroSemiarido && isMunSemi) fillColor = '#FFC107'; // gov-yellow
                                     } else {
-                                        fillColor = darkMode ? '#4B5563' : '#D1D5DB'; // gray-600 / gray-300
-                                        opacity = 0.4; // Aumenta a visibilidade das áreas não selecionadas
+                                        fillColor = darkMode ? '#374151' : '#e5e7eb'; // gray-700 / gray-200
+                                        opacity = 0.25; // Reduz a opacidade para aumentar o contraste com o selecionado
                                     }
                                 } else {
                                     if (isHovered) opacity = 1;

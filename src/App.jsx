@@ -351,6 +351,21 @@ function MainApp() {
 
   const availableListsToAdd = ['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type));
 
+  const subKpisList = useMemo(() => {
+    if (!dashboardData?.subKpis || !dashboardData?.unfiltSubKpis) return [];
+    const kpiData = [
+        { id: 'campiUniversidadePublica', l: 'Univ. Públicas', c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue' },
+        { id: 'campiUniversidadePrivada', l: 'Univ. Privadas', c: darkMode ? 'text-cyan-400' : 'text-gov-cyan', b: 'bg-gov-cyan' },
+        { id: 'ifs', l: 'Inst. Federais', c: darkMode ? 'text-green-400' : 'text-gov-green', b: 'bg-gov-green' },
+        { id: 'icts', l: 'ICTs', c: darkMode ? 'text-purple-400' : 'text-gov-purple', b: 'bg-gov-purple' },
+        { id: 'centrosPesquisa', l: 'C. Pesquisa', c: darkMode ? 'text-orange-400' : 'text-gov-orange', b: 'bg-gov-orange' },
+        { id: 'espacos', l: 'Espaços', c: darkMode ? 'text-pink-400' : 'text-gov-pink', b: 'bg-gov-pink' },
+        { id: 'parques', l: 'Parques', c: darkMode ? 'text-yellow-400' : 'text-gov-yellow', b: 'bg-gov-yellow' },
+        { id: 'incubadoras', l: 'Incubadoras', c: darkMode ? 'text-teal-400' : 'text-gov-teal', b: 'bg-gov-teal' }
+    ];
+    return kpiData.map(kpi => ({ ...kpi, v: dashboardData.subKpis[kpi.id] || 0, pct: (dashboardData.unfiltSubKpis[kpi.id] || 0) > 0 ? ((dashboardData.subKpis[kpi.id] || 0) / dashboardData.unfiltSubKpis[kpi.id]) * 100 : 0 }));
+  }, [dashboardData, darkMode]);
+
   return (
     <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
       {expandedLists.length > 0 && (
@@ -774,37 +789,38 @@ function MainApp() {
                     </div>
                 </div>
 
-                {/* Sub KPIs de CTI */}
-                <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-3">
-                    {[
-                        { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicos', v: dashboardData.subKpis.campiUniversidadePublica || 0, pct: (dashboardData.unfiltSubKpis.campiUniversidadePublica || 0) > 0 ? ((dashboardData.subKpis.campiUniversidadePublica || 0) / (dashboardData.unfiltSubKpis.campiUniversidadePublica || 1))*100 : 0, c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue', h: darkMode ? 'hover:border-blue-400' : 'hover:border-gov-blue' },
-                        { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privados', v: dashboardData.subKpis.campiUniversidadePrivada || 0, pct: (dashboardData.unfiltSubKpis.campiUniversidadePrivada || 0) > 0 ? ((dashboardData.subKpis.campiUniversidadePrivada || 0) / (dashboardData.unfiltSubKpis.campiUniversidadePrivada || 1))*100 : 0, c: darkMode ? 'text-cyan-400' : 'text-gov-cyan', b: 'bg-gov-cyan', h: darkMode ? 'hover:border-cyan-400' : 'hover:border-gov-cyan' },
-                        { id: 'ifs', l: 'Inst. Fed.', v: dashboardData.subKpis.ifs || 0, pct: (dashboardData.unfiltSubKpis.ifs || 0) > 0 ? ((dashboardData.subKpis.ifs || 0) / (dashboardData.unfiltSubKpis.ifs || 1))*100 : 0, c: darkMode ? 'text-green-400' : 'text-gov-green', b: 'bg-gov-green', h: darkMode ? 'hover:border-green-400' : 'hover:border-gov-green' },
-                        { id: 'icts', l: 'ICTs', v: dashboardData.subKpis.icts || 0, pct: (dashboardData.unfiltSubKpis.icts || 0) > 0 ? ((dashboardData.subKpis.icts || 0) / (dashboardData.unfiltSubKpis.icts || 1))*100 : 0, c: darkMode ? 'text-purple-400' : 'text-gov-purple', b: 'bg-gov-purple', h: darkMode ? 'hover:border-purple-400' : 'hover:border-gov-purple' },
-                        { id: 'centrosPesquisa', l: 'C. Pesquisa', v: dashboardData.subKpis.centrosPesquisa || 0, pct: (dashboardData.unfiltSubKpis.centrosPesquisa || 0) > 0 ? ((dashboardData.subKpis.centrosPesquisa || 0) / (dashboardData.unfiltSubKpis.centrosPesquisa || 1))*100 : 0, c: darkMode ? 'text-orange-400' : 'text-gov-orange', b: 'bg-gov-orange', h: darkMode ? 'hover:border-orange-400' : 'hover:border-gov-orange' },
-                        { id: 'espacos', l: 'Espaços', v: dashboardData.subKpis.espacos || 0, pct: (dashboardData.unfiltSubKpis.espacos || 0) > 0 ? ((dashboardData.subKpis.espacos || 0) / (dashboardData.unfiltSubKpis.espacos || 1))*100 : 0, c: darkMode ? 'text-pink-400' : 'text-gov-pink', b: 'bg-gov-pink', h: darkMode ? 'hover:border-pink-400' : 'hover:border-gov-pink' },
-                        { id: 'parques', l: 'Parques', v: dashboardData.subKpis.parques || 0, pct: (dashboardData.unfiltSubKpis.parques || 0) > 0 ? ((dashboardData.subKpis.parques || 0) / (dashboardData.unfiltSubKpis.parques || 1))*100 : 0, c: darkMode ? 'text-yellow-400' : 'text-gov-yellow', b: 'bg-gov-yellow', h: darkMode ? 'hover:border-yellow-400' : 'hover:border-gov-yellow' },
-                        { id: 'incubadoras', l: 'Incub.', v: dashboardData.subKpis.incubadoras || 0, pct: (dashboardData.unfiltSubKpis.incubadoras || 0) > 0 ? ((dashboardData.subKpis.incubadoras || 0) / (dashboardData.unfiltSubKpis.incubadoras || 1))*100 : 0, c: darkMode ? 'text-teal-400' : 'text-gov-teal', b: 'bg-gov-teal', h: darkMode ? 'hover:border-teal-400' : 'hover:border-gov-teal' }
-                    ].map((sK) => (
-                        <div 
-                            key={sK.id}
-                            onClick={() => handleCtiKpiClick(sK.id)}
-                            className={`relative py-2 px-1 rounded-xl border shadow-sm flex flex-col justify-center items-center text-center overflow-hidden transition-all duration-300 cursor-pointer ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white/80 border-gray-200/50'} ${ctiFilters[sK.id] ? `opacity-100 ${sK.h}` : 'opacity-30 grayscale hover:opacity-60 hover:grayscale-0'}`}
-                        >
-                            <span className={`text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>{sK.l}</span>
-                            <span className={`text-xl font-black leading-none pb-1 drop-shadow-sm ${sK.c}`}>{sK.v || 0}</span>
-                            <div className="absolute bottom-0 left-0 h-1 w-full bg-gray-200/50 dark:bg-gray-700/50">
-                                <div className={`h-full ${sK.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, sK.pct))}%` }}></div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                
                 {/* A "Ilha" Encaixada na tela */}
                 <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[calc(100vh-180px)] min-h-[500px] w-full mt-4 mb-3">
                     
+                    {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
+                    {!selectedLocation && subKpisList.length > 0 && (
+                        <div className={`w-full lg:w-44 flex-shrink-0 h-full overflow-y-auto hide-scroll p-3 rounded-[1.5rem] border backdrop-blur-xl shadow-2xl transition-all animate-soft-fade ${darkMode ? 'bg-gray-900/80 border-gray-700' : 'bg-white/80 border-white/60'}`}>
+                            <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 border-b pb-2 leading-tight ${darkMode ? 'text-gray-300 border-gray-700/50' : 'text-gray-500 border-gray-200/60'}`}>
+                                Ativos de CT&I
+                            </h4>
+                            <div className="flex flex-col gap-2">
+                                {subKpisList.map(kpi => (
+                                    <div 
+                                        key={kpi.id} 
+                                        onClick={() => handleCtiKpiClick(kpi.id)}
+                                        className={`relative p-2 pr-4 rounded-lg border flex items-center justify-between text-left overflow-hidden transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
+                                    >
+                                        <div>
+                                            <span className={`text-[8px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
+                                            <span className={`block text-lg font-black leading-none pt-1 drop-shadow-sm ${kpi.c}`}>{kpi.v || 0}</span>
+                                        </div>
+                                        <div className="absolute top-0 right-0 h-full w-1 bg-slate-200/50 dark:bg-slate-700/50">
+                                            <div className={`absolute bottom-0 w-full ${kpi.b} transition-all duration-700 ease-out`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    
                     {/* COLUNA DO MAPA (40%) */}
-                    <div ref={mapSectionRef} className="w-full lg:w-[40%] flex flex-col relative">
+                    <div ref={mapSectionRef} className="w-full lg:w-[40%] flex-shrink-0 flex flex-col relative">
                         <div className={`rounded-[2rem] border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
                             <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
                                 <span className="w-2 h-2 rounded-full bg-gov-green animate-pulse"></span>
@@ -829,13 +845,15 @@ function MainApp() {
                                     selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios}
                                     onSelectTerritory={handleSelectTerritory} 
                                     darkMode={darkMode} 
+                                    dashboardData={dashboardData}
+                                    ctiFilters={ctiFilters}
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* COLUNA DAS LISTAS (60%) */}
-                    <div className="w-full lg:w-[60%] flex flex-col gap-4 h-full overflow-hidden">
+                    <div className="flex-1 flex flex-col gap-4 h-full overflow-hidden min-w-0">
                         <div className="flex flex-col sm:flex-row gap-4 flex-[0.8] min-h-0">
                             
                             {/* LISTA 1: ESTRUTURAS CT&I */}
