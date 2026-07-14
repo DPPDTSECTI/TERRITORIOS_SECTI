@@ -12,43 +12,47 @@ const LABEL_COLLISION_PADDING = 4; // Espaçamento extra entre rótulos
 const LABEL_FORCE_STRENGTH = 0.08; // Força que "puxa" o rótulo de volta ao seu centroide
 const SIMULATION_ITERATIONS = 250; // Número de iterações da simulação
 
-// Paleta de cores baseada no sistema de design gov.br, ordenada para criar um visual mais harmonioso no mapa.
-// Paleta de cores de alto contraste para garantir que territórios adjacentes sejam visualmente distintos.
+// Paleta de cores moderna e harmoniosa, inspirada nas paisagens e cultura da Bahia.
+// Os tons possuem saturação média e brilho equilibrado para garantir contraste e elegância.
 const TERRITORY_COLORS = [
-    // Ciclo 1: Cores primárias e secundárias bem distintas
-    '#0174DF', // Azul (gov-blue)
-    '#28A745', // Verde (gov-green)
-    '#FFC107', // Amarelo (gov-yellow)
-    '#DC3545', // Vermelho (gov-red)
-    '#6610F2', // Roxo (gov-purple)
-    '#17A2B8', // Ciano (gov-cyan)
-    '#FD7E14', // Laranja (gov-orange)
-    '#E83E8C', // Rosa (gov-pink)
+    // Tons de Azul e Turquesa (Litoral)
+    '#005f73', // Azul Atlântico Escuro
+    '#0a9396', // Turquesa Escuro
+    '#94d2bd', // Turquesa Médio
+    '#e9d8a6', // Amarelo Areia (transição)
 
-    // Ciclo 2: Tons mais escuros ou secundários das mesmas famílias
-    '#004A80', // Azul escuro
-    '#1B9A59', // Verde escuro
-    '#E0A000', // Amarelo/Mostarda
-    '#B02532', // Vermelho escuro
-    '#45099A', // Roxo escuro
-    '#008B96', // Ciano escuro
-    '#CC630C', // Laranja escuro
-    '#BF2E73', // Rosa escuro
+    // Tons de Verde (Mata Atlântica e Chapada)
+    '#1b4332', // Verde Mata Escuro
+    '#2d6a4f', // Verde Mata
+    '#40916c', // Verde Médio
+    '#52b788', // Verde Claro
+    '#74c69d', // Verde Sálvia
 
-    // Ciclo 3: Tons intermediários ou restantes
-    '#005A9C', // Azul médio
-    '#0F8243', // Verde médio
-    '#FFB300', // Amarelo-laranja
-    '#C42A39', // Vermelho médio
-    '#580BC1', // Roxo médio
-    '#00A8B5', // Ciano médio
-    '#E66F0E', // Laranja médio
-    '#D63384', // Rosa médio
+    // Tons Terrosos e Dourados (Sertão e Chapada)
+    '#bb9457', // Ocre Dourado
+    '#ca6702', // Laranja Queimado
+    '#c95c50', // Vermelho Terracota Suave
+    '#b5474b', // Vermelho Escuro Suave
 
-    // Cores restantes para completar 27 territórios
-    '#003B66', // Azul muito escuro
-    '#076833', // Verde muito escuro
-    '#7A28D9', // Roxo claro
+    // Tons de Púrpura e Rosa (Cultura, Flores, Pelourinho)
+    '#5a189a', // Roxo Açaí
+    '#7b2cbf', // Roxo Médio
+    '#9d4edd', // Lavanda
+    '#c77dff', // Lilás
+
+    // Cores de Destaque e Preenchimento (Vibrantes mas harmoniosas)
+    '#ee9b00', // Amarelo Dourado Vibrante
+    '#e76f51', // Coral
+    '#f4a261', // Laranja Pêssego
+    '#e5989b', // Rosa Antigo
+    '#b5838d', // Rosa Queimado
+
+    // Cores adicionais para garantir 27 tons distintos
+    '#003049', // Azul Petróleo
+    '#669bbc', // Azul Céu Suave
+    '#7f5539', // Marrom Café
+    '#dda15e', // Caramelo
+    '#d36a6d'  // Vermelho Cereja Suave
 ];
 
 // Ordem geográfica dos territórios para uma paleta de cores mais coesa
