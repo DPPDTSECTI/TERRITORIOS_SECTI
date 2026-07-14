@@ -45,14 +45,14 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
             <main className="relative z-30 w-full lg:w-[55%] h-full flex flex-col justify-center items-start px-8 sm:px-12 lg:pl-24 lg:pr-8 py-4 lg:py-0">
                 
                 <h2 className="text-lg sm:text-xl tracking-widest uppercase font-black mb-3 drop-shadow-sm flex gap-2">
-                    <span className={darkMode ? 'text-blue-400' : 'text-gov-blueDark-500'}>Painel</span>
-                    <span className={darkMode ? 'text-gov-red-400' : 'text-gov-red-500'}>Territorial</span>
+                    <span className={darkMode ? 'text-[#5B8FD9]' : 'text-[#1B4F9C]'}>Painel</span>
+                    <span className={darkMode ? 'text-[#F26B5E]' : 'text-[#D62828]'}>Territorial</span>
                 </h2>
                 
                 <h1 className={`text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-black tracking-tighter mb-6 leading-[1.05] drop-shadow-sm bg-clip-text text-transparent animate-text-gradient ${
                     darkMode 
-                        ? 'bg-gradient-to-r from-blue-400 via-indigo-400 to-red-400' 
-                        : 'bg-gradient-to-r from-gov-blueDark-500 via-purple-600 to-gov-red-500'
+                        ? 'bg-gradient-to-r from-[#F26B5E] via-[#7FB77E] to-[#5B8FD9]'
+                        : 'bg-gradient-to-r from-[#D62828] via-[#2E7D4F] to-[#1B4F9C]'
                 }`}>
                     Ciência, Tecnologia <br /> e Inovação
                 </h1>
@@ -68,8 +68,8 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
                         onClick={onAccessDashboard}
                         className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-black tracking-wider uppercase text-xs sm:text-sm transition-all duration-300 transform-gpu hover:-translate-y-1 ${
                             darkMode 
-                                ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]' 
-                                : 'bg-gov-blueDark-500 hover:bg-gov-blueDark-600 text-white shadow-xl hover:shadow-2xl'
+                                ? 'bg-[#1B4F9C] hover:bg-[#5B8FD9] text-white shadow-[0_0_20px_rgba(27,79,156,0.4)] hover:shadow-[0_0_30px_rgba(91,143,217,0.6)]'
+                                : 'bg-[#1B4F9C] hover:bg-[#0A2E5C] text-white shadow-xl hover:shadow-2xl'
                         }`}
                     >
                         Acessar o Painel
@@ -90,7 +90,7 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
                             aria-label={`Ir para a imagem ${index + 1}`}
                             className={`h-1.5 transition-all duration-500 rounded-full ${
                                 index === currentImage 
-                                    ? (darkMode ? 'w-10 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]' : 'w-10 bg-gov-blueDark-500 shadow-md') 
+                                    ? (darkMode ? 'w-10 bg-[#5B8FD9] shadow-[0_0_10px_rgba(91,143,217,0.8)]' : 'w-10 bg-[#1B4F9C] shadow-md')
                                     : (darkMode ? 'w-2.5 bg-slate-700 hover:bg-slate-500' : 'w-2.5 bg-slate-300 hover:bg-slate-400')
                             }`}
                         />

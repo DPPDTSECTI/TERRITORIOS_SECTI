@@ -2,8 +2,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap"; 
-import LandingHero from './components/hero';
-import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus } from 'lucide-react';
+import LandingHero from './components/hero';import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json'; 
 import SobrePage from './components/SobrePage';
@@ -288,6 +287,23 @@ function MainApp() {
 
   const isActive = (path) => location.pathname === path;
 
+  const getAreaIcon = (areaName) => {
+      const norm = normalize(areaName);
+      
+      if (norm.includes('engenharia')) return <Settings size={12} />;
+      if (norm.includes('agraria') || norm.includes('agricultura') || norm.includes('veterinaria')) return <Leaf size={12} />;
+      if (norm.includes('saude')) return <HeartPulse size={12} />;
+      if (norm.includes('biologica')) return <FlaskConical size={12} />;
+      if (norm.includes('exata') || norm.includes('tecnologia') || norm.includes('computacao')) return <Cpu size={12} />;
+      if (norm.includes('naturais') || norm.includes('natureza') || norm.includes('matematica') || norm.includes('estatistica')) return <Sigma size={12} />;
+      if (norm.includes('humana')) return <Brain size={12} />;
+      if (norm.includes('sociai') || norm.includes('aplicada')) return <Landmark size={12} />;
+      if (norm.includes('letra') || norm.includes('arte') || norm.includes('linguistica')) return <Palette size={12} />;
+      if (norm.includes('multidisciplinar')) return <Network size={12} />;
+  
+      return <HelpCircle size={12} />;
+  };
+
   // NOTA: As cores 'gov-*' devem ser configuradas no seu arquivo tailwind.config.js.
   // Exemplo:
   // theme: { extend: { colors: {
@@ -468,10 +484,10 @@ function MainApp() {
                       listTitle = 'Cursos CT&I';
                       gridColsClass = 'grid-cols-1 md:grid-cols-2';
                       filterControls = (
-                          <>
+                          <React.Fragment>
                               <div className="relative w-32 sm:w-40"><input type="text" placeholder="Buscar curso..." value={cursoSearchTerm} onChange={(e) => setCursoSearchTerm(e.target.value)} className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`} /><Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />{cursoSearchTerm && <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400"><Eraser size={12} /></button>}</div>
-                              {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>);})}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
-                          </>
+                              {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{getAreaIcon(areaName)}</span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>);})}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
+                          </React.Fragment>
                       );
                   } else {
                       return null;
@@ -735,6 +751,7 @@ function MainApp() {
           </div>
       </div>
 
+    
       <main className={`flex-1 overflow-y-auto relative w-full z-10 ${location.pathname === '/' ? '' : 'pt-4'}`}>
         <Routes>
           <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
@@ -752,18 +769,34 @@ function MainApp() {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {[
-                            { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue', sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
-                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-red-400' : 'text-gov-red', b: 'bg-gov-red', sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
-                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-yellow-300' : 'text-gov-yellow-dark', b: 'bg-gov-yellow', tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e' },
-                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-gov-cyan', b: 'bg-gov-cyan', tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
-                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-green-400' : 'text-gov-green', b: 'bg-gov-green', tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/', listType: 'cadeias' },
-                        ].map((k, idx) => (
-                            <div
+                            { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue', icon: <Database size={14} />, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
+                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-red-400' : 'text-gov-red', b: 'bg-gov-red', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
+                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-yellow-300' : 'text-gov-yellow-dark', b: 'bg-gov-yellow', icon: <Sun size={14} />, tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e', unit: 'mun.' },
+                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-gov-cyan', b: 'bg-gov-cyan', icon: <Target size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
+                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-green-400' : 'text-gov-green', b: 'bg-gov-green', icon: <BarChart3 size={14} />, tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/', listType: 'cadeias' },
+                        ].map((k, idx) => {
+                            let displayValue = k.v;
+                            if (k.l === 'Semiárido' && typeof k.v === 'string') {
+                                const match = k.v.match(/\((\d+)\s*mun\.\)/); // "68.8% (285 mun.)" -> "285"
+                                if (match && match[1]) {
+                                    displayValue = match[1];
+                                } else {
+                                    const fractionMatch = k.v.match(/(\d+)\/\d+/); // "285/417 mun." -> "285"
+                                    if (fractionMatch && fractionMatch[1]) {
+                                        displayValue = fractionMatch[1];
+                                    }
+                                }
+                            }
+                            return (
+                                <div
                                 key={idx} 
                                 className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
                             >
                                 <div className="flex items-center justify-between">
-                                    <p className={`text-[9px] font-black uppercase tracking-widest mb-1 opacity-60 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>{k.l}</p>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className={`opacity-70 ${k.c}`}>{k.icon}</span>
+                                        <p className={`text-[9px] font-black uppercase tracking-widest opacity-60 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>{k.l}</p>
+                                    </div>
                                     {k.sourceText && (
                                         <div className="relative group flex items-center justify-center">
                                             <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
@@ -782,12 +815,15 @@ function MainApp() {
                                         </div>
                                     )}
                                 </div>
-                                <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1.5 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{k.v}</p>
+                                <div className="flex items-baseline gap-1.5">
+                                    <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1.5 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{displayValue}</p>
+                                    {k.unit && <span className={`text-xs font-bold opacity-60 pb-1.5 ${k.c}`}>{k.unit}</span>}
+                                </div>
                                 <div className="absolute bottom-0 left-0 h-1 w-full bg-gray-200/50 dark:bg-gray-700/50 rounded-b-xl">
                                     <div className={`h-full ${k.b} transition-all duration-700 ease-out`} style={{ width: `${Math.min(100, Math.max(0, k.pct))}%` }}></div>
                                 </div>
                             </div>
-                        ))}
+                        )})}
                     </div>
                 </div>
 
@@ -1042,7 +1078,7 @@ function MainApp() {
                                                 <span className="block text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
                                                 <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
                                                     {areaGeralSummary.map(area => { 
-                                                        const styles = getAreaStyles(area.name, darkMode);
+                                                        const styles = getAreaStyles(area.name, darkMode); 
                                                         const isSelected = areaGeralFilter.includes(area.name);
                                                         return (
                                                             <button
@@ -1051,7 +1087,7 @@ function MainApp() {
                                                                 className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}
                                                             >
                                                                 <div className="flex items-center gap-1.5 pr-1">
-                                                                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 sm:mt-0 ${styles.dot}`}></span>
+                                                                    <span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{getAreaIcon(area.name)}</span>
                                                                     <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{area.name}</span>
                                                                 </div>
                                                                 <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{area.count}</span> 
@@ -1070,7 +1106,7 @@ function MainApp() {
                             </div>
 
                             <div className="flex-1 p-4 overflow-y-auto hide-scroll">
-                                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-2.5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                                     {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => {
                                         const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
                                         const hoverClasses = darkMode ? 'hover:border-current' : 'hover:border-current';
@@ -1086,26 +1122,7 @@ function MainApp() {
                                             </div>
                                             <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
                                                 <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
-                                                {(curso.categoriaAdm || curso.orgAcademica) && (
-                                                    <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">
-                                                        {[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (
-                                                            <React.Fragment key={i}>
-                                                                <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{tag}</span>
-                                                                {i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}
-                                                            </React.Fragment>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                                <div className="flex justify-between items-end mt-2 pt-1 border-t border-gray-500/10 gap-1.5">
-                                                    <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}>
-                                                        <svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg>
-                                                        <span className="truncate">{curso.municipio}</span>
-                                                    </span>
-                                                    <div className="flex items-center gap-1 shrink-0">
-                                                        {curso.nivel && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-white text-gray-600 border-gray-200'}`}>{curso.nivel}</span>}
-                                                        {curso.modalidade && <span className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-white text-gray-600 border-gray-200'}`}>{curso.modalidade}</span>}
-                                                    </div>
-                                                </div>
+                                                {/* Detalhes adicionais (local, nível, modalidade, tipo de universidade) movidos para a visualização expandida. */}
                                             </div>
                                         </div>
                                     );

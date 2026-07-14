@@ -808,20 +808,22 @@ export default function ConectaMap({
             )}
 
             {/* LEGENDA DO MAPA */}
-            <div className={`absolute bottom-6 left-6 z-20 px-4 py-3.5 rounded-2xl border shadow-xl backdrop-blur-xl flex flex-col gap-2.5 pointer-events-none transition-colors duration-500 ${darkMode ? 'bg-gray-900/60 border-gray-700/50' : 'bg-white/70 border-white/60'}`}>
-                <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full bg-gov-yellow shadow-sm"></span>
-                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                        Pertencente ao Semiárido
-                    </span>
+            {selectedTerritory && (
+                <div className={`absolute bottom-6 left-6 z-20 px-4 py-3.5 rounded-2xl border shadow-xl backdrop-blur-xl flex flex-col gap-2.5 pointer-events-none transition-all duration-500 animate-soft-fade ${darkMode ? 'bg-gray-900/60 border-gray-700/50' : 'bg-white/70 border-white/60'}`}>
+                    <div className="flex items-center gap-2.5">
+                        <span className="w-2 h-2 rounded-full bg-gov-yellow shadow-sm"></span>
+                        <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                            Pertencente ao Semiárido
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2.5 opacity-80">
+                        <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></span>
+                        <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Não pertencente ao Semiárido
+                        </span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2.5 opacity-80">
-                    <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></span>
-                    <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                        Não pertencente ao Semiárido
-                    </span>
-                </div>
-            </div>
+            )}
 
             {/* CONTROLES MANUAIS FLUTUANTES */}
             <div className="absolute bottom-5 right-5 flex flex-col gap-2 z-20">
