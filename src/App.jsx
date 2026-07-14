@@ -70,6 +70,7 @@ function MainApp() {
   const [isModalCtiFilterOpen, setIsModalCtiFilterOpen] = useState(false);
   const [isModalCadeiaFilterOpen, setIsModalCadeiaFilterOpen] = useState(false);
   const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
+  const [expandedCourse, setExpandedCourse] = useState(null);
 
   // Navbars e Scroll
   const [navVisible, setNavVisible] = useState(true);
@@ -287,21 +288,21 @@ function MainApp() {
 
   const isActive = (path) => location.pathname === path;
 
-  const getAreaIcon = (areaName) => {
+  const getAreaInfo = (areaName) => {
       const norm = normalize(areaName);
       
-      if (norm.includes('engenharia')) return <Settings size={12} />;
-      if (norm.includes('agraria') || norm.includes('agricultura') || norm.includes('veterinaria')) return <Leaf size={12} />;
-      if (norm.includes('saude')) return <HeartPulse size={12} />;
-      if (norm.includes('biologica')) return <FlaskConical size={12} />;
-      if (norm.includes('exata') || norm.includes('tecnologia') || norm.includes('computacao')) return <Cpu size={12} />;
-      if (norm.includes('naturais') || norm.includes('natureza') || norm.includes('matematica') || norm.includes('estatistica')) return <Sigma size={12} />;
-      if (norm.includes('humana')) return <Brain size={12} />;
-      if (norm.includes('sociai') || norm.includes('aplicada')) return <Landmark size={12} />;
-      if (norm.includes('letra') || norm.includes('arte') || norm.includes('linguistica')) return <Palette size={12} />;
-      if (norm.includes('multidisciplinar')) return <Network size={12} />;
+      if (norm.includes('engenharia')) return { icon: <Settings size={12} />, acronym: 'ENG' };
+      if (norm.includes('agraria') || norm.includes('agricultura') || norm.includes('veterinaria')) return { icon: <Leaf size={12} />, acronym: 'AGRO' };
+      if (norm.includes('saude')) return { icon: <HeartPulse size={12} />, acronym: 'SAÚDE' };
+      if (norm.includes('biologica')) return { icon: <FlaskConical size={12} />, acronym: 'BIO' };
+      if (norm.includes('exata') || norm.includes('tecnologia') || norm.includes('computacao')) return { icon: <Cpu size={12} />, acronym: 'TIC' };
+      if (norm.includes('naturais') || norm.includes('natureza') || norm.includes('matematica') || norm.includes('estatistica')) return { icon: <Sigma size={12} />, acronym: 'CNME' };
+      if (norm.includes('humana')) return { icon: <Brain size={12} />, acronym: 'HUMAN' };
+      if (norm.includes('sociai') || norm.includes('aplicada')) return { icon: <Landmark size={12} />, acronym: 'SOCIAIS' };
+      if (norm.includes('letra') || norm.includes('arte') || norm.includes('linguistica')) return { icon: <Palette size={12} />, acronym: 'ARTES' };
+      if (norm.includes('multidisciplinar')) return { icon: <Network size={12} />, acronym: 'MULTI' };
   
-      return <HelpCircle size={12} />;
+      return { icon: <HelpCircle size={12} />, acronym: 'N/A' };
   };
 
   // NOTA: As cores 'gov-*' devem ser configuradas no seu arquivo tailwind.config.js.
@@ -411,7 +412,6 @@ function MainApp() {
                           <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                           <div className="flex justify-between items-end mt-1">
                               <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
-                                  <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
                                   {ent.tipo || "Instituição"}
                               </span>
                               <div className="text-right"><span className={`block text-[9px] font-medium ${themeClasses.textMuted}`}>{ent.municipio}</span></div>
@@ -439,13 +439,17 @@ function MainApp() {
                   const renderCursoItem = (curso, idx) => {
                       const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
                       return (
-                          <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                          <div 
+                            key={curso.id || idx} 
+                            onClick={() => setExpandedCourse(curso)}
+                            className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
+                          >
                               <div className="flex flex-col items-start gap-1">
                                   <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
                                   {curso.areaGeral && <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>{curso.areaGeral}</span>}
                               </div>
                               <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
-                                  <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
+                                  <span className={`block text-[9px] font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
                                   {(curso.categoriaAdm || curso.orgAcademica) && <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">{[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (<React.Fragment key={i}><span>{tag}</span>{i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}</React.Fragment>))}</div>}
                                   <div className="flex justify-between items-end mt-2 pt-1 border-t border-gray-500/10 gap-1.5">
                                       <span className={`text-[8px] font-semibold flex items-center gap-1 min-w-0 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}><svg className="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 016 0z" /></svg><span className="truncate">{curso.municipio}</span></span>
@@ -482,11 +486,11 @@ function MainApp() {
                       listData = cursosFiltrados;
                       renderItem = renderCursoItem;
                       listTitle = 'Cursos CT&I';
-                      gridColsClass = 'grid-cols-1 md:grid-cols-2';
+                      gridColsClass = 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
                       filterControls = (
                           <React.Fragment>
                               <div className="relative w-32 sm:w-40"><input type="text" placeholder="Buscar curso..." value={cursoSearchTerm} onChange={(e) => setCursoSearchTerm(e.target.value)} className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`} /><Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />{cursoSearchTerm && <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400"><Eraser size={12} /></button>}</div>
-                              {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{getAreaIcon(areaName)}</span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>);})}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
+                              {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); const { icon } = getAreaInfo(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{icon}</span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>);})}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
                           </React.Fragment>
                       );
                   } else {
@@ -554,6 +558,48 @@ function MainApp() {
             </div>
           )}
           </div>
+        </div>
+      )}
+
+      {/* MODAL DE CURSO EXPANDIDO */}
+      {expandedCourse && (
+        <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCourse(null)}>
+            <div 
+                className={`relative max-w-md w-full rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
+                onClick={e => e.stopPropagation()}
+            >
+                <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <h3 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-gray-800'}`}>Detalhes do Curso</h3>
+                    <button onClick={() => setExpandedCourse(null)} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title="Fechar">
+                        <Minimize size={16} />
+                    </button>
+                </div>
+                <div className="p-4">
+                    {(() => {
+                        const curso = expandedCourse;
+                        const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
+                        return (
+                            <div className={`p-3 rounded-xl border flex flex-col gap-2 ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                <div className="flex flex-col items-start gap-1">
+                                    <h5 className={`text-base font-bold leading-snug ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
+                                    {curso.areaGeral && <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>{curso.areaGeral}</span>}
+                                </div>
+                                <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
+                                    <span className={`block text-sm font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
+                                    {(curso.categoriaAdm || curso.orgAcademica) && <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium uppercase tracking-wider opacity-80 mt-2">{[curso.orgAcademica, curso.categoriaAdm].filter(Boolean).map((tag, i) => (<span key={i} className={`px-2 py-1 rounded-md border ${darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-100 border-gray-200'}`}>{tag}</span>))}</div>}
+                                    <div className="flex justify-between items-end mt-3 pt-3 border-t border-gray-500/10 gap-1.5">
+                                        <span className={`text-xs font-semibold flex items-center gap-1.5 min-w-0 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} title={`${curso.municipio} • ${curso.territorioRef}`}><MapIcon className="w-3.5 h-3.5 opacity-60 shrink-0" /><span>{curso.municipio}</span></span>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            {curso.nivel && <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-white text-gray-600 border-gray-200'}`}>{curso.nivel}</span>}
+                                            {curso.modalidade && <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-white text-gray-600 border-gray-200'}`}>{curso.modalidade}</span>}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })()}
+                </div>
+            </div>
         </div>
       )}
       <Helmet>
@@ -832,7 +878,7 @@ function MainApp() {
                     
                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                     {!selectedLocation && subKpisList.length > 0 && (
-                        <div className={`w-full lg:w-44 flex-shrink-0 h-full overflow-y-auto hide-scroll p-3 rounded-[1.5rem] border backdrop-blur-xl shadow-2xl transition-all animate-soft-fade ${darkMode ? 'bg-gray-900/80 border-gray-700' : 'bg-white/80 border-white/60'}`}>
+                        <div className={`w-full lg:w-36 flex-shrink-0 h-full overflow-y-auto hide-scroll p-2 rounded-[1.5rem] border backdrop-blur-xl shadow-2xl transition-all animate-soft-fade ${darkMode ? 'bg-gray-900/80 border-gray-700' : 'bg-white/80 border-white/60'}`}>
                             <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 border-b pb-2 leading-tight ${darkMode ? 'text-gray-300 border-gray-700/50' : 'text-gray-500 border-gray-200/60'}`}>
                                 Ativos de CT&I
                             </h4>
@@ -841,7 +887,7 @@ function MainApp() {
                                     <div 
                                         key={kpi.id} 
                                         onClick={() => handleCtiKpiClick(kpi.id)}
-                                        className={`relative p-2 pr-4 rounded-lg border flex items-center justify-between text-left overflow-hidden transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
+                                        className={`relative p-2 pr-3 rounded-lg border flex items-center justify-between text-left overflow-hidden transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
                                     >
                                         <div>
                                             <span className={`text-[8px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
@@ -932,7 +978,6 @@ function MainApp() {
                                             <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                                             <div className="flex justify-between items-end mt-1">
                                                 <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80"></span>
                                                     {ent.tipo || "Instituição"}
                                                 </span>
                                                 <div className="text-right"><span className={`block text-[9px] font-medium ${themeClasses.textMuted}`}>{ent.municipio}</span></div>
@@ -1078,7 +1123,7 @@ function MainApp() {
                                                 <span className="block text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
                                                 <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
                                                     {areaGeralSummary.map(area => { 
-                                                        const styles = getAreaStyles(area.name, darkMode); 
+                                                        const styles = getAreaStyles(area.name, darkMode);
                                                         const isSelected = areaGeralFilter.includes(area.name);
                                                         return (
                                                             <button
@@ -1087,7 +1132,7 @@ function MainApp() {
                                                                 className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}
                                                             >
                                                                 <div className="flex items-center gap-1.5 pr-1">
-                                                                    <span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{getAreaIcon(area.name)}</span>
+                                                                    <span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{getAreaInfo(area.name).icon}</span>
                                                                     <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{area.name}</span>
                                                                 </div>
                                                                 <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{area.count}</span> 
@@ -1106,22 +1151,30 @@ function MainApp() {
                             </div>
 
                             <div className="flex-1 p-4 overflow-y-auto hide-scroll">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
                                     {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => {
                                         const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
-                                        const hoverClasses = darkMode ? 'hover:border-current' : 'hover:border-current';
+                                        const { icon, acronym } = getAreaInfo(curso.areaGeral);
                                         return (
-                                        <div key={curso.id || idx} className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} hover:border-current ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
-                                            <div className="flex flex-col items-start gap-1">
-                                                <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
+                                        <div 
+                                            key={curso.id || idx} 
+                                            onClick={() => setExpandedCourse(curso)}
+                                            className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} hover:border-current ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
+                                        >
+                                            <div className="flex justify-between items-start gap-2">
+                                                <h5 className={`text-[11px] font-bold leading-snug ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
                                                 {curso.areaGeral && (
-                                                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>
-                                                        {curso.areaGeral}
+                                                    <span 
+                                                        title={curso.areaGeral}
+                                                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider shrink-0 ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}
+                                                    >
+                                                        {icon}
+                                                        <span>{acronym}</span>
                                                     </span>
                                                 )}
                                             </div>
                                             <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
-                                                <span className={`block text-[9px] font-bold mb-1 leading-tight truncate ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
+                                                <span className={`block text-[9px] font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
                                                 {/* Detalhes adicionais (local, nível, modalidade, tipo de universidade) movidos para a visualização expandida. */}
                                             </div>
                                         </div>
