@@ -940,26 +940,30 @@ function MainApp() {
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                                     {!selectedLocation && subKpisList.length > 0 && (
-                                        <div className={`w-full lg:w-48 flex-shrink-0 h-full overflow-y-auto hide-scroll p-2 rounded-[1.5rem] border backdrop-blur-xl shadow-2xl transition-all animate-soft-fade ${darkMode ? 'bg-gray-900/80 border-gray-700' : 'bg-white/80 border-white/60'}`}>
-                                            <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 border-b pb-2 leading-tight ${darkMode ? 'text-gray-300 border-gray-700/50' : 'text-gray-500 border-gray-200/60'}`}>
-                                                Ativos de CT&I
-                                            </h4>
-                                            <div className="flex flex-col gap-2">
-                                                {subKpisList.map(kpi => (
-                                                    <div
-                                                        key={kpi.id}
-                                                        onClick={() => handleCtiKpiClick(kpi.id)}
-                                                        className={`relative p-2 pr-3 rounded-lg border flex items-center justify-between text-left overflow-hidden transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
-                                                    >
-                                                        <div>
-                                                            <span className={`text-[8px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
-                                                            <span className={`block text-lg font-black leading-none pt-1 drop-shadow-sm ${kpi.c}`}>{kpi.v || 0}</span>
+                                        <div className={`w-full lg:w-48 flex-shrink-0 h-full rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                            <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                                <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                                                    Ativos de CT&I
+                                                </h4>
+                                            </div>
+                                            <div className="flex-1 overflow-y-auto p-3 hide-scroll">
+                                                <div className="flex flex-col gap-2">
+                                                    {subKpisList.map(kpi => (
+                                                        <div
+                                                            key={kpi.id}
+                                                            onClick={() => handleCtiKpiClick(kpi.id)}
+                                                            className={`relative p-2 pr-3 rounded-lg border flex items-center justify-between text-left overflow-hidden transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
+                                                        >
+                                                            <div>
+                                                                <span className={`text-[8px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
+                                                                <span className={`block text-lg font-black leading-none pt-1 drop-shadow-sm ${kpi.c}`}>{kpi.v || 0}</span>
+                                                            </div>
+                                                            <div className="absolute top-0 right-0 h-full w-1 bg-slate-200/50 dark:bg-slate-700/50">
+                                                                <div className={`absolute bottom-0 w-full ${kpi.b} transition-all duration-700 ease-out`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
+                                                            </div>
                                                         </div>
-                                                        <div className="absolute top-0 right-0 h-full w-1 bg-slate-200/50 dark:bg-slate-700/50">
-                                                            <div className={`absolute bottom-0 w-full ${kpi.b} transition-all duration-700 ease-out`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
                                     )}
