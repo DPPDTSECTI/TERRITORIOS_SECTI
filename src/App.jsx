@@ -1086,7 +1086,10 @@ function MainApp() {
                                                         {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
                                                             <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                                                 <div className="flex items-start justify-between mb-2">
-                                                                    <p className={`text-[11px] font-bold leading-tight pr-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p>
+                                                                    <div>
+                                                                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
+                                                                        <p className={`text-[11px] font-bold leading-tight pr-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p>
+                                                                    </div>
                                                                     <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
                                                                         {apl.tipo}
                                                                     </span>
