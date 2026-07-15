@@ -486,7 +486,7 @@ function MainApp() {
                       listData = cursosFiltrados;
                       renderItem = renderCursoItem;
                       listTitle = 'Cursos CT&I';
-                      gridColsClass = 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
+                      gridColsClass = 'grid-cols-1 md:grid-cols-2';
                       filterControls = (
                           <React.Fragment>
                               <div className="relative w-32 sm:w-40"><input type="text" placeholder="Buscar curso..." value={cursoSearchTerm} onChange={(e) => setCursoSearchTerm(e.target.value)} className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`} /><Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />{cursoSearchTerm && <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400"><Eraser size={12} /></button>}</div>
