@@ -1086,19 +1086,29 @@ function MainApp() {
                                                         {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
                                                             <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                                                 <div className="flex items-start justify-between mb-2">
-                                                                    <div>
-                                                                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
-                                                                        <p className={`text-[11px] font-bold leading-tight pr-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p>
-                                                                    </div>
+                                                                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
                                                                     <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
                                                                         {apl.tipo}
                                                                     </span>
                                                                 </div>
 
-                                                                <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+                                                                {apl.entidade && (
                                                                     <div className="mb-2">
-                                                                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span>
-                                                                        <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p>
+                                                                        <span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-gov-blue dark:text-blue-400">Entidade Vinculada</span>
+                                                                        <span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{fixWeirdCapitalization(apl.entidade)}</span>
+                                                                    </div>
+                                                                )}
+
+                                                                <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+                                                                    <div className="grid grid-cols-2 gap-2 mb-2">
+                                                                        <div>
+                                                                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
+                                                                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p>
+                                                                        </div>
+                                                                        <div>
+                                                                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span>
+                                                                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p>
+                                                                        </div>
                                                                     </div>
 
                                                                     <div className={`pt-2 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
