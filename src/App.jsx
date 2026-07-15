@@ -66,6 +66,7 @@ function MainApp() {
   const [cursoSearchTerm, setCursoSearchTerm] = useState('');
   const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
   const [expandedLists, setExpandedLists] = useState([]);
+  const [modalVisibleCounts, setModalVisibleCounts] = useState({});
   const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
   const [isModalCtiFilterOpen, setIsModalCtiFilterOpen] = useState(false);
   const [isModalCadeiaFilterOpen, setIsModalCadeiaFilterOpen] = useState(false);
@@ -118,6 +119,7 @@ function MainApp() {
 
   const handleCloseModal = useCallback(() => {
     setExpandedLists([]);
+    setModalVisibleCounts({});
     setIsModalAreaGeralOpen(false);
     setIsModalCtiFilterOpen(false);
     setIsModalCadeiaFilterOpen(false);
@@ -387,7 +389,7 @@ function MainApp() {
   return (
     <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
       {expandedLists.length > 0 && (
-        <div className="fixed inset-0 z-[150] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
+        <div className="fixed inset-0 z-[150] bg-gray-900/90 flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
           <div className="relative" onClick={e => e.stopPropagation()}>
             <div 
               className={`h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${
@@ -409,7 +411,7 @@ function MainApp() {
                   let listData, renderItem, listTitle, filterControls, gridColsClass;
 
                   const renderCtiItem = (ent, idx) => (
-                      <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                      <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
                           <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                           <div className="flex justify-between items-end mt-1">
                               <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
@@ -421,7 +423,7 @@ function MainApp() {
                   );
 
                   const renderCadeiaItem = (apl, idx) => (
-                      <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
+                      <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                           <div className="flex items-start justify-between mb-2">
                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
                               <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
@@ -443,11 +445,11 @@ function MainApp() {
                           <div 
                             key={curso.id || idx} 
                             onClick={() => setExpandedCourse(curso)}
-                            className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
+                            className={`p-3 rounded-xl border flex flex-col gap-2 transition-colors duration-200 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
                           >
                               <div className="flex flex-col items-start gap-1">
                                   <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
-                                  {curso.areaGeral && <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>{curso.areaGeral}</span>}
+                                  {curso.areaGeral && <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${areaStyles.activeBg} ${areaStyles.text}`}>{curso.areaGeral}</span>}
                               </div>
                               <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
                                   <span className={`block text-[9px] font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
@@ -514,8 +516,16 @@ function MainApp() {
                       </div>
                       <div className="flex-1 overflow-y-auto p-3 hide-scroll">
                         <div className={`grid gap-2 ${gridColsClass}`}>
-                          {listData.map(renderItem)}
+                          {listData.slice(0, modalVisibleCounts[listType] || 50).map(renderItem)}
                         </div>
+                        {listData.length > (modalVisibleCounts[listType] || 50) && (
+                          <button 
+                            onClick={() => setModalVisibleCounts(prev => ({ ...prev, [listType]: (prev[listType] || 50) + 50 }))}
+                            className={`w-full mt-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors border ${darkMode ? 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
+                          >
+                            Carregar mais ({listData.length - (modalVisibleCounts[listType] || 50)} restantes)
+                          </button>
+                        )}
                       </div>
                     </div>
                   );
