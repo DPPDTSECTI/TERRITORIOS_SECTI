@@ -658,8 +658,8 @@ function MainApp() {
       <Helmet>
         <title>Painel Territorial CT&I | Governo da Bahia</title>
         <meta name="description" content="Plataforma interativa da SECTI com indicadores de Ciência, Tecnologia, Inovação e Cadeias Produtivas dos 27 Territórios de Identidade da Bahia." />
-        <link rel="icon" type="image/png" sizes="any" href="/img/favicon-512.png?v=4" />
-        <link rel="apple-touch-icon" href="/img/favicon-512.png?v=4" />
+        <link rel="icon" type="image/png" sizes="any" href="/img/favicon-512.png?v=6" />
+        <link rel="apple-touch-icon" href="/img/favicon-512.png?v=6" />
       </Helmet>
 
       <style>{`
