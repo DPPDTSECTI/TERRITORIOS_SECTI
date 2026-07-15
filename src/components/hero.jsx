@@ -45,8 +45,8 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
             <main className="relative z-30 w-full lg:w-[55%] h-full flex flex-col justify-center items-start px-8 sm:px-12 lg:pl-24 lg:pr-8 py-4 lg:py-0">
                 
                 <h2 className="text-lg sm:text-xl tracking-widest uppercase font-black mb-3 drop-shadow-sm flex gap-2">
-                    <span className={darkMode ? 'text-[#5B8FD9]' : 'text-[#1B4F9C]'}>Painel</span>
-                    <span className={darkMode ? 'text-[#F26B5E]' : 'text-[#D62828]'}>Territorial</span>
+                    <span className={darkMode ? 'text-white' : 'text-white'}>Painel</span>
+                    <span className={darkMode ? 'text-white' : 'text-white'}>Territorial</span>
                 </h2>
                 
                 <h1 className={`text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-black tracking-tighter mb-6 leading-[1.05] drop-shadow-sm bg-clip-text text-transparent animate-text-gradient ${
@@ -110,11 +110,11 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
                         const inactiveBorder = darkMode ? 'border-slate-800/50' : 'border-white/50';
                         
                         if (index === currentImage) {
-                            positionClasses = `translate-x-0 scale-100 opacity-100 z-30 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[6px] ${activeBorder} cursor-default`;
+                            positionClasses = `translate-x-0 scale-100 opacity-100 z-30 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[3px] ${activeBorder} cursor-default`;
                         } else if (index === prevIndex) {
-                            positionClasses = `-translate-x-[25%] xl:-translate-x-[30%] scale-90 opacity-20 z-20 border-[3px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:-translate-x-[28%]`;
+                            positionClasses = `-translate-x-[25%] xl:-translate-x-[30%] scale-90 opacity-20 z-20 border-[1px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:-translate-x-[28%]`;
                         } else if (index === nextIndex) {
-                            positionClasses = `translate-x-[25%] xl:translate-x-[30%] scale-90 opacity-20 z-20 border-[3px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:translate-x-[28%]`;
+                            positionClasses = `translate-x-[25%] xl:translate-x-[30%] scale-90 opacity-20 z-20 border-[1px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:translate-x-[28%]`;
                         } else {
                             positionClasses = 'translate-x-0 scale-75 opacity-0 z-10 pointer-events-none';
                         }
@@ -123,7 +123,7 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
                             <div
                                 key={index}
                                 /* A CORREÇÃO ESTÁ AQUI: bg-white ou bg-slate-800 impede o vazamento de sub-pixel da sombra */
-                                className={`absolute w-full h-full transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)] origin-center rounded-[2.5rem] overflow-hidden transform-gpu will-change-transform backface-hidden antialiased ${darkMode ? 'bg-slate-800' : 'bg-white'} ${positionClasses}`}
+                                className={`absolute w-full h-full transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)] origin-center rounded-[1rem] overflow-hidden transform-gpu will-change-transform backface-hidden antialiased ${darkMode ? 'bg-slate-800' : 'bg-white'} ${positionClasses}`}
                                 style={{ WebkitBackfaceVisibility: 'hidden' }}
                                 onClick={() => {
                                     if (index === prevIndex) setCurrentImage(prevIndex);
