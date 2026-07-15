@@ -940,7 +940,7 @@ function MainApp() {
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                                     {!selectedLocation && subKpisList.length > 0 && (
-                                        <div className={`w-full lg:w-48 flex-shrink-0 h-full rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div className={`w-full lg:w-48 flex-shrink-0 h-full rounded-[2rem] border shadow-sm flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                                                     Ativos de CT&I
