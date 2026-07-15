@@ -71,6 +71,7 @@ function MainApp() {
   const [isModalCadeiaFilterOpen, setIsModalCadeiaFilterOpen] = useState(false);
   const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
   const [expandedCourse, setExpandedCourse] = useState(null);
+  const [expandedCadeia, setExpandedCadeia] = useState(null);
 
   // Navbars e Scroll
   const [navVisible, setNavVisible] = useState(true);
@@ -420,7 +421,7 @@ function MainApp() {
                   );
 
                   const renderCadeiaItem = (apl, idx) => (
-                      <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                      <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                           <div className="flex items-start justify-between mb-2">
                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
                               <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
@@ -593,6 +594,58 @@ function MainApp() {
                                             {curso.nivel && <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-white text-gray-600 border-gray-200'}`}>{curso.nivel}</span>}
                                             {curso.modalidade && <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-white text-gray-600 border-gray-200'}`}>{curso.modalidade}</span>}
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })()}
+                </div>
+            </div>
+        </div>
+      )}
+
+      {/* MODAL DE CADEIA EXPANDIDA */}
+      {expandedCadeia && (
+        <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCadeia(null)}>
+            <div 
+                className={`relative max-w-md w-full rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
+                onClick={e => e.stopPropagation()}
+            >
+                <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <h3 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-gray-800'}`}>Detalhes da Cadeia Produtiva</h3>
+                    <button onClick={() => setExpandedCadeia(null)} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title="Fechar">
+                        <Minimize size={16} />
+                    </button>
+                </div>
+                <div className="p-4">
+                    {(() => {
+                        const apl = expandedCadeia;
+                        return (
+                            <div className={`p-3 rounded-xl border flex flex-col gap-2 ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                <div className="flex items-start justify-between mb-2">
+                                    <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento || 'Cadeia'}</span>
+                                    <span className={`text-[9px] font-black uppercase px-2 py-1 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
+                                </div>
+                                {apl.entidade && (
+                                    <div className="mb-2">
+                                        <span className="block text-[8px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-gov-blue dark:text-blue-400">Entidade Vinculada</span>
+                                        <h5 className={`text-base font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{fixWeirdCapitalization(apl.entidade)}</h5>
+                                    </div>
+                                )}
+                                <div className={`p-3 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+                                    <div className="grid grid-cols-2 gap-4 mb-3">
+                                        <div>
+                                            <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
+                                            <p className={`text-xs font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p>
+                                        </div>
+                                        <div>
+                                            <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Território(s):</span>
+                                            <p className={`text-xs font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p>
+                                        </div>
+                                    </div>
+                                    <div className={`pt-3 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
+                                        <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span>
+                                        <p className={`text-xs font-medium leading-relaxed opacity-80 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{apl.municipiosPertencentes}</p>
                                     </div>
                                 </div>
                             </div>
@@ -1018,7 +1071,7 @@ function MainApp() {
                                 <div className="flex-1 overflow-y-auto p-4 hide-scroll">
                                     <div className="flex flex-col gap-2">
                                     {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
-                                        <div key={idx} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                        <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                             <div className="flex items-start justify-between mb-2">
                                                 <p className={`text-[11px] font-bold leading-tight pr-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p>
                                                 <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
