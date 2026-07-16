@@ -464,7 +464,7 @@ function MainApp() {
                 <div className="fixed inset-0 z-[150] bg-gray-900/90 flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
                     <div className="relative" onClick={e => e.stopPropagation()}>
                         <div
-                            className={`h-[85vh] w-[95vw] sm:w-[90vw] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]'
+                            className={`h-[85vh] w-[95vw] sm:w-[90vw] rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]'
                                 }`}
                         >
                             {/* HEADER DO MODAL */}
@@ -482,7 +482,7 @@ function MainApp() {
                                         let listData, renderItem, listTitle, filterControls, gridColsClass;
 
                                         const renderCtiItem = (ent, idx) => (
-                                            <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                            <div key={idx} className={`p-3 rounded-lg border flex flex-col gap-1 transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
                                                 <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                                                 <div className="flex justify-between items-end mt-1">
                                                     <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
@@ -494,13 +494,13 @@ function MainApp() {
                                         );
 
                                         const renderCadeiaItem = (apl, idx) => (
-                                            <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
+                                            <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-lg border flex flex-col transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                                 <div className="flex items-start justify-between mb-2">
                                                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
                                                     <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
                                                 </div>
                                                 {apl.entidade && <div className="mb-2"><span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-gov-blue dark:text-blue-400">Entidade Vinculada</span><span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{fixWeirdCapitalization(apl.entidade)}</span></div>}
-                                                <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+                                                <div className={`p-2.5 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
                                                     <div className="grid grid-cols-2 gap-3 mb-2">
                                                         <div><span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span><p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p></div>
                                                         <div><span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span><p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p></div>
@@ -516,13 +516,13 @@ function MainApp() {
                                                 <div
                                                     key={curso.id || idx}
                                                     onClick={() => setExpandedCourse(curso)}
-                                                    className={`p-3 rounded-xl border flex flex-col gap-2 transition-colors duration-200 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
+                                                    className={`p-3 rounded-lg border flex flex-col gap-2 transition-colors duration-200 ${themeClasses.cardHover} ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
                                                 >
                                                     <div className="flex flex-col items-start gap-1">
                                                         <h5 className={`text-[11px] font-bold leading-snug line-clamp-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
                                                         {curso.areaGeral && <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${areaStyles.activeBg} ${areaStyles.text}`}>{curso.areaGeral}</span>}
                                                     </div>
-                                                    <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
+                                                    <div className={`p-2 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
                                                         <span className={`block text-[9px] font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
                                                         {(curso.categoriaAdm || curso.orgAcademica) && <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[7px] font-medium uppercase tracking-wider opacity-80">{[curso.categoriaAdm, curso.orgAcademica].filter(Boolean).map((tag, i, arr) => (<React.Fragment key={i}><span>{tag}</span>{i < arr.length - 1 && <span className="w-0.5 h-0.5 rounded-full bg-current opacity-40"></span>}</React.Fragment>))}</div>}
                                                         <div className="flex justify-between items-end mt-2 pt-1 border-t border-gray-500/10 gap-1.5">
@@ -547,7 +547,7 @@ function MainApp() {
                                                             placeholder="Buscar estrutura CT&I..."
                                                             value={ctiSearchTerm}
                                                             onChange={(e) => setCtiSearchTerm(e.target.value)}
-                                                            className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-blue' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-blue'}`}
+                                                            className={`w-full h-7 pl-7 pr-7 rounded-md text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-blue' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-blue'}`}
                                                         />
                                                         <Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
                                                         {ctiSearchTerm && (
@@ -557,8 +557,8 @@ function MainApp() {
                                                         )}
                                                     </div>
                                                     <div className="relative" ref={modalCtiFilterRef}>
-                                                        <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
-                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
+                                                        <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
+                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
                                                     </div>
                                                 </React.Fragment>
                                             );
@@ -575,7 +575,7 @@ function MainApp() {
                                                             placeholder="Buscar sede, satélite, segmento..."
                                                             value={cadeiaSearchTerm}
                                                             onChange={(e) => setCadeiaSearchTerm(e.target.value)}
-                                                            className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`}
+                                                            className={`w-full h-7 pl-7 pr-7 rounded-md text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`}
                                                         />
                                                         <Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
                                                         {cadeiaSearchTerm && (
@@ -585,11 +585,11 @@ function MainApp() {
                                                         )}
                                                     </div>
                                                     <div className="relative" ref={modalCadeiaFilterRef}>
-                                                        <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
+                                                        <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-7 px-2 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
                                                         {isModalCadeiaFilterOpen && (
-                                                            <div className={`absolute right-0 top-[100%] mt-2 w-64 max-w-[85vw] rounded-xl p-3 shadow-2xl border z-[150] flex flex-col gap-2 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                                                            <div className={`absolute right-0 top-[100%] mt-2 w-64 max-w-[85vw] rounded-lg p-3 shadow-2xl border z-[150] flex flex-col gap-2 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
                                                                 <span className="block text-[8px] font-black uppercase tracking-widest opacity-60">Filtrar por Cascata (APL/IG)</span>
-                                                                <div className="max-h-56 overflow-y-auto hide-scroll flex flex-col gap-2 border p-2 rounded-lg border-gray-500/20">
+                                                                <div className="max-h-56 overflow-y-auto hide-scroll flex flex-col gap-2 border p-2 rounded-md border-gray-500/20">
                                                                     {['APL', 'IG'].map(tipo => {
                                                                         const subSegments = todasAsCadeiasPorTipo[tipo] || [];
                                                                         const subKeys = subSegments.map(s => `${tipo}__${s}`);
@@ -636,7 +636,7 @@ function MainApp() {
                                                                     })}
                                                                 </div>
                                                                 {cadeiaProdutivaFilter.length > 0 && (
-                                                                    <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`w-full h-6 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar Filtros</button>
+                                                                    <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`w-full h-6 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar Filtros</button>
                                                                 )}
                                                             </div>
                                                         )}
@@ -650,8 +650,8 @@ function MainApp() {
                                             gridColsClass = 'grid-cols-1 md:grid-cols-2';
                                             filterControls = (
                                                 <React.Fragment>
-                                                    <div className="relative w-32 sm:w-40"><input type="text" placeholder="Buscar curso..." value={cursoSearchTerm} onChange={(e) => setCursoSearchTerm(e.target.value)} className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`} /><Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />{cursoSearchTerm && <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400"><Eraser size={12} /></button>}</div>
-                                                    {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}>{areaGeralFilter.length > 0 ? (<div className="flex items-center gap-0.5">{areaGeralFilter.map(areaName => (<span key={areaName} className={`flex items-center justify-center [&>svg]:w-3 [&>svg]:h-3 ${getAreaStyles(areaName, darkMode).text}`} title={areaName}>{getAreaInfo(areaName).icon}</span>))}</div>) : (<Filter size={12} />)}</button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); const { icon } = getAreaInfo(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{icon}</span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>); })}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
+                                                    <div className="relative w-32 sm:w-40"><input type="text" placeholder="Buscar curso..." value={cursoSearchTerm} onChange={(e) => setCursoSearchTerm(e.target.value)} className={`w-full h-7 pl-7 pr-7 rounded-md text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`} /><Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />{cursoSearchTerm && <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400"><Eraser size={12} /></button>}</div>
+                                                    {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}>{areaGeralFilter.length > 0 ? (<div className="flex items-center gap-0.5">{areaGeralFilter.map(areaName => (<span key={areaName} className={`flex items-center justify-center [&>svg]:w-3 [&>svg]:h-3 ${getAreaStyles(areaName, darkMode).text}`} title={areaName}>{getAreaInfo(areaName).icon}</span>))}</div>) : (<Filter size={12} />)}</button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); const { icon } = getAreaInfo(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{icon}</span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>); })}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
                                                 </React.Fragment>
                                             );
                                         } else {
@@ -659,7 +659,7 @@ function MainApp() {
                                         }
 
                                         return (
-                                            <div key={listType} className={`rounded-2xl border flex flex-col min-h-0 ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'}`}>
+                                            <div key={listType} className={`rounded-xl overflow-hidden border flex flex-col min-h-0 ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'}`}>
                                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`font-bold text-xs ${darkMode ? 'text-white' : 'text-gray-800'}`}>{listTitle}</h4>
@@ -668,7 +668,7 @@ function MainApp() {
                                                                 <Info size={12} />
                                                             </button>
                                                             <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[200] pointer-events-none group-hover:pointer-events-auto">
-                                                                <div className={`p-2.5 rounded-xl text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
+                                                                <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     {listType === 'cadeias' ? (
                                                                         <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
@@ -682,11 +682,11 @@ function MainApp() {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>{listData.length}</span>
+                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${listType === 'cti' || listType === 'cursos' ? (darkMode ? 'bg-gov-cyan/20 text-cyan-400' : 'bg-gov-cyan/10 text-gov-cyan-dark') : (darkMode ? 'bg-gov-green/20 text-green-400' : 'bg-gov-green/10 text-gov-green-dark')}`}>{listData.length}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1">
                                                         {filterControls}
-                                                        <button onClick={() => setExpandedLists(p => p.filter(l => l !== listType))} className={`p-1.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title={`Remover ${listTitle}`}>
+                                                        <button onClick={() => setExpandedLists(p => p.filter(l => l !== listType))} className={`p-1.5 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title={`Remover ${listTitle}`}>
                                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                                         </button>
                                                     </div>
@@ -698,7 +698,7 @@ function MainApp() {
                                                     {listData.length > (modalVisibleCounts[listType] || 50) && (
                                                         <button
                                                             onClick={() => setModalVisibleCounts(prev => ({ ...prev, [listType]: (prev[listType] || 50) + 50 }))}
-                                                            className={`w-full mt-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors border ${darkMode ? 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
+                                                            className={`w-full mt-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border ${darkMode ? 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
                                                         >
                                                             Carregar mais ({listData.length - (modalVisibleCounts[listType] || 50)} restantes)
                                                         </button>
@@ -716,7 +716,7 @@ function MainApp() {
                             <div ref={modalAddListRef} className="absolute top-1/2 -translate-y-1/2 left-full ml-4">
                                 <button
                                     onClick={() => setIsModalAddListOpen(prev => !prev)}
-                                    className={`w-[72px] h-[72px] rounded-3xl flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-105 border ${darkMode
+                                    className={`w-[72px] h-[72px] rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-105 border ${darkMode
                                         ? 'bg-gray-900/40 border-gray-700/30 text-gray-200 backdrop-blur-xl hover:bg-gray-800/60'
                                         : 'bg-white/50 border-gray-200/60 text-gray-700 backdrop-blur-xl hover:bg-white/70'
                                         }`}
@@ -726,7 +726,7 @@ function MainApp() {
                                 </button>
 
                                 {isModalAddListOpen && (
-                                    <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
+                                    <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
                                         {availableListsToAdd.map(type => {
                                             const config = {
                                                 cti: { title: 'Estruturas CT&I', icon: <Database size={14} className="text-gov-blue" /> },
@@ -734,7 +734,7 @@ function MainApp() {
                                                 cursos: { title: 'Cursos CT&I', icon: <Target size={14} className="text-gov-cyan" /> }
                                             }[type];
                                             return (
-                                                <button key={type} onClick={() => { setExpandedLists(prev => [...prev, type]); setIsModalAddListOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
+                                                <button key={type} onClick={() => { setExpandedLists(prev => [...prev, type]); setIsModalAddListOpen(false); }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
                                                     {config.icon}
                                                     {config.title}
                                                 </button>
@@ -752,7 +752,7 @@ function MainApp() {
             {expandedCourse && (
                 <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCourse(null)}>
                     <div
-                        className={`relative max-w-md w-full rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
+                        className={`relative max-w-md w-full rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
                         onClick={e => e.stopPropagation()}
                     >
                         <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
@@ -766,12 +766,12 @@ function MainApp() {
                                 const curso = expandedCourse;
                                 const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
                                 return (
-                                    <div className={`p-3 rounded-xl border flex flex-col gap-2 ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                    <div className={`p-3 rounded-lg border flex flex-col gap-2 ${areaStyles.text} ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
                                         <div className="flex flex-col items-start gap-1">
                                             <h5 className={`text-base font-bold leading-snug ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
                                             {curso.areaGeral && <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider inline-block text-left ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}>{curso.areaGeral}</span>}
                                         </div>
-                                        <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
+                                        <div className={`p-2 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
                                             <span className={`block text-sm font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
                                             {(curso.categoriaAdm || curso.orgAcademica) && <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium uppercase tracking-wider opacity-80 mt-2">{[curso.orgAcademica, curso.categoriaAdm].filter(Boolean).map((tag, i) => (<span key={i} className={`px-2 py-1 rounded-md border ${darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-100 border-gray-200'}`}>{tag}</span>))}</div>}
                                             <div className="flex justify-between items-end mt-3 pt-3 border-t border-gray-500/10 gap-1.5">
@@ -794,7 +794,7 @@ function MainApp() {
             {expandedCadeia && (
                 <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCadeia(null)}>
                     <div
-                        className={`relative max-w-md w-full rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
+                        className={`relative max-w-md w-full rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
                         onClick={e => e.stopPropagation()}
                     >
                         <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
@@ -807,7 +807,7 @@ function MainApp() {
                             {(() => {
                                 const apl = expandedCadeia;
                                 return (
-                                    <div className={`p-3 rounded-xl border flex flex-col gap-2 ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                    <div className={`p-3 rounded-lg border flex flex-col gap-2 ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
                                         <div className="flex items-start justify-between mb-2">
                                             <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento || 'Cadeia'}</span>
                                             <span className={`text-[9px] font-black uppercase px-2 py-1 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
@@ -818,7 +818,7 @@ function MainApp() {
                                                 <h5 className={`text-base font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{fixWeirdCapitalization(apl.entidade)}</h5>
                                             </div>
                                         )}
-                                        <div className={`p-3 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+                                        <div className={`p-3 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
                                             <div className="grid grid-cols-2 gap-4 mb-3">
                                                 <div>
                                                     <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
@@ -875,7 +875,7 @@ function MainApp() {
             {isLoadingPipeline && territoriosData.length === 0 && (
                 <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-gray-100/60 dark:bg-gray-900/80 backdrop-blur-2xl transition-all duration-500">
                     <div className="absolute w-72 h-72 bg-gov-blue/20 rounded-full blur-[100px] animate-pulse"></div>
-                    <div className={`relative p-10 rounded-[2.5rem] flex flex-col items-center shadow-2xl border ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/60 border-white/80'}`}>
+                    <div className={`relative p-10 rounded-3xl flex flex-col items-center shadow-2xl border ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/60 border-white/80'}`}>
                         <div className="relative w-20 h-20 mb-6 flex items-center justify-center">
                             <div className="absolute inset-0 border-4 border-gray-200/40 dark:border-gray-700/50 rounded-full"></div>
                             <div className="absolute inset-0 border-4 border-gov-blue rounded-full border-t-transparent animate-spin"></div>
@@ -891,7 +891,7 @@ function MainApp() {
             )}
 
             {/* HEADER PRINCIPAL FIXO NO TOPO */}
-            <header className={`sticky top-4 mx-auto w-[96%] max-w-[1600px] ${themeClasses.glass} h-16 rounded-2xl flex items-center justify-between px-6 z-[100] transition-all duration-500 ${navVisible ? 'translate-y-0 opacity-100' : '-translate-y-24 opacity-0 pointer-events-none'}`}>
+            <header className={`sticky top-4 mx-auto w-[96%] max-w-[1600px] ${themeClasses.glass} h-16 rounded-xl flex items-center justify-between px-6 z-[100] transition-all duration-500 ${navVisible ? 'translate-y-0 opacity-100' : '-translate-y-24 opacity-0 pointer-events-none'}`}>
                 <div className="flex items-center gap-8">
                     <h1 className="text-[11px] sm:text-xs font-black tracking-widest uppercase flex items-center gap-1.5 drop-shadow-sm">
                         <span className={darkMode ? 'text-blue-400' : 'text-gov-blue'}>Painel</span>
@@ -899,14 +899,14 @@ function MainApp() {
                     </h1>
                     <nav className="hidden sm:flex items-center gap-2">
                         {[{ p: '/', l: 'Início' }, { p: '/sobre', l: 'Sobre' }, { p: '/territorios', l: 'Territórios' }].map((tab) => (
-                            <Link key={tab.p} to={tab.p} className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${isActive(tab.p) ? 'bg-gov-blue text-white' : (darkMode ? 'text-gray-400 hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100')}`}>
+                            <Link key={tab.p} to={tab.p} className={`px-4 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${isActive(tab.p) ? 'bg-gov-blue text-white' : (darkMode ? 'text-gray-400 hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100')}`}>
                                 {tab.l}
                             </Link>
                         ))}
                     </nav>
                 </div>
                 <div className="flex items-center gap-4">
-                    <button onClick={() => setDarkMode(!darkMode)} aria-label="Alterar Tema" className={`p-2 rounded-xl transition-all border ${darkMode ? 'bg-gray-800 border-gray-700 text-yellow-400 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+                    <button onClick={() => setDarkMode(!darkMode)} aria-label="Alterar Tema" className={`p-2 rounded-lg transition-all border ${darkMode ? 'bg-gray-800 border-gray-700 text-yellow-400 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
                         {darkMode ? <Sun size={16} strokeWidth={2.5} /> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>}
                     </button>
                     <img src={darkMode ? "/img/Brasao-Horizontal_Branco.png" : "/img/Brasao-Horizontal_Preto.png"} alt="GOV BA" className="h-6 object-contain hidden lg:block opacity-90" />
@@ -915,17 +915,17 @@ function MainApp() {
 
             {/* NAVBAR LATERAL VERTICAL (Sempre visível em /territorios) */}
             <div className={`fixed right-4 top-1/2 -translate-y-1/2 z-[120] flex flex-col items-end gap-3 transition-all duration-500 ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
-                <div className={`flex flex-col items-center gap-2 p-2 rounded-2xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
-                    <Link to="/" className={`p-2.5 rounded-xl transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Início">
+                <div className={`flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                    <Link to="/" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Início">
                         <Home size={18} strokeWidth={2.5} />
                     </Link>
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
-                    <Link to="/sobre" className={`p-2.5 rounded-xl transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Sobre">
+                    <Link to="/sobre" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Sobre">
                         <Info size={18} strokeWidth={2.5} />
                     </Link>
                 </div>
 
-                <div ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-2xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                <div ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
                     <div className="relative flex items-center justify-end w-full" ref={searchDropdownRef}>
                         <div className={`absolute right-[115%] transition-all duration-300 ${isVerticalSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
                             <input
@@ -933,14 +933,14 @@ function MainApp() {
                                 placeholder="Buscar no painel..."
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setIsDropdownOpen(true); }}
-                                className={`w-full h-10 px-4 rounded-xl text-[11px] font-medium outline-none border shadow-2xl backdrop-blur-xl transition-all ${darkMode ? 'bg-gray-900/95 border-gray-700 text-white focus:border-gov-blue' : 'bg-white/95 border-gray-200 text-gray-800 focus:border-gov-blue'}`}
+                                className={`w-full h-10 px-4 rounded-lg text-[11px] font-medium outline-none border shadow-2xl backdrop-blur-xl transition-all ${darkMode ? 'bg-gray-900/95 border-gray-700 text-white focus:border-gov-blue' : 'bg-white/95 border-gray-200 text-gray-800 focus:border-gov-blue'}`}
                             />
                             {isDropdownOpen && searchTerm && isVerticalSearchOpen && (
-                                <div className={`absolute left-0 top-full mt-2 w-full max-h-64 overflow-y-auto hide-scroll rounded-xl border shadow-2xl z-[200] backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                                <div className={`absolute left-0 top-full mt-2 w-full max-h-64 overflow-y-auto hide-scroll rounded-lg border shadow-2xl z-[200] backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
                                     {filteredOptions.length > 0 ? (
                                         <div className="flex flex-col p-1.5 gap-0.5">
                                             {filteredOptions.map((opt, i) => (
-                                                <button key={i} onClick={() => { setSearchTerm(opt.matchText); setIsDropdownOpen(false); if (opt.matchType === 'Território') setSelectedLocation(opt); else setSelectedLocation(null); }} className={`w-full text-left px-3 py-2 rounded-lg text-[11px] transition-colors flex flex-col ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
+                                                <button key={i} onClick={() => { setSearchTerm(opt.matchText); setIsDropdownOpen(false); if (opt.matchType === 'Território') setSelectedLocation(opt); else setSelectedLocation(null); }} className={`w-full text-left px-3 py-2 rounded-md text-[11px] transition-colors flex flex-col ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
                                                     <span className="font-bold truncate">{opt.matchText}</span>
                                                     <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${darkMode ? 'text-blue-400' : 'text-gov-blue'}`}> {opt.matchType} <span className="opacity-50 text-gray-500 ml-1">em {opt.nome}</span> </span>
                                                 </button>
@@ -950,49 +950,49 @@ function MainApp() {
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-xl transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue') : ''}`} title="Pesquisar">
+                        <button onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue') : ''}`} title="Pesquisar">
                             <Search size={18} strokeWidth={2.5} />
                         </button>
                     </div>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <button onClick={resetGlobalFilters} className={`p-2.5 rounded-xl transition-colors ${hasActiveFilters ? (darkMode ? 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20' : 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20') : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-200' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800')}`} title="Limpar todos os filtros">
+                    <button onClick={resetGlobalFilters} className={`p-2.5 rounded-lg transition-colors ${hasActiveFilters ? (darkMode ? 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20' : 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20') : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-200' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800')}`} title="Limpar todos os filtros">
                         <Eraser size={18} strokeWidth={2.5} />
                     </button>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <button onClick={() => carregarDadosDoSharePoint(true)} disabled={isLoadingPipeline} className={`p-2.5 rounded-xl transition-colors ${isLoadingPipeline ? 'opacity-50 cursor-not-allowed animate-pulse' : ''} ${darkMode ? 'text-gray-400 hover:bg-gov-green/20 hover:text-green-400' : 'text-gray-500 hover:bg-gov-green/10 hover:text-gov-green-dark'}`} title="Sincronizar Dados">
+                    <button onClick={() => carregarDadosDoSharePoint(true)} disabled={isLoadingPipeline} className={`p-2.5 rounded-lg transition-colors ${isLoadingPipeline ? 'opacity-50 cursor-not-allowed animate-pulse' : ''} ${darkMode ? 'text-gray-400 hover:bg-gov-green/20 hover:text-green-400' : 'text-gray-500 hover:bg-gov-green/10 hover:text-gov-green-dark'}`} title="Sincronizar Dados">
                         <RefreshCw size={18} strokeWidth={2.5} className={isLoadingPipeline ? "animate-spin" : ""} />
                     </button>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <button onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-xl flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? 'bg-gov-blue text-white shadow-md' : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue')}`} title="Filtros Avançados">
+                    <button onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-lg flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? 'bg-gov-blue text-white shadow-md' : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue')}`} title="Filtros Avançados">
                         <Filter size={18} strokeWidth={2.5} />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>Filtros</span>
                     </button>
 
                     {isSideFilterOpen && (
-                        <div className={`absolute right-[125%] bottom-0 w-72 rounded-[2rem] p-5 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl animate-soft-fade ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                        <div className={`absolute right-[125%] bottom-0 w-72 rounded-2xl p-5 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl animate-soft-fade ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
                             <div>
                                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-2">Recorte Geográfico</span>
-                                <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-9 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-gov-yellow border-yellow-600 text-white hover:bg-yellow-600' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>
+                                <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-gov-yellow border-yellow-600 text-white hover:bg-yellow-600' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>
                                     {filtroSemiarido ? 'Semiárido: Ativo' : 'Ativar Semiárido'}
                                 </button>
                             </div>
                             <div>
                                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Intervalo D. Territ. (IFDM)</span>
                                 <div className="flex gap-2 items-center">
-                                    <input type="number" step="0.001" placeholder="Mín" value={ifdmMin} onChange={(e) => setIfdmMin(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
+                                    <input type="number" step="0.001" placeholder="Mín" value={ifdmMin} onChange={(e) => setIfdmMin(e.target.value)} className={`w-full h-8 px-2 rounded-md text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
                                     <span className="text-[10px] opacity-40">até</span>
-                                    <input type="number" step="0.001" placeholder="Máx" value={ifdmMax} onChange={(e) => setIfdmMax(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
+                                    <input type="number" step="0.001" placeholder="Máx" value={ifdmMax} onChange={(e) => setIfdmMax(e.target.value)} className={`w-full h-8 px-2 rounded-md text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
                                 </div>
                             </div>
                             <div>
                                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Filtrar Ativos de CTI</span>
-                                <div className="max-h-32 overflow-y-auto hide-scroll flex flex-col gap-1.5 border p-2 rounded-xl border-gray-500/20">
+                                <div className="max-h-32 overflow-y-auto hide-scroll flex flex-col gap-1.5 border p-2 rounded-lg border-gray-500/20">
                                     <label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1">
                                         <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
                                         <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
@@ -1023,7 +1023,7 @@ function MainApp() {
 
                     <Route path="/territorios" element={
                         <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
-                            <div className={`${themeClasses.glass} rounded-[2rem] p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
+                            <div className={`${themeClasses.glass} rounded-2xl p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
 
                                 {/* KPIs GLOBAIS */}
                                 <div>
@@ -1054,7 +1054,7 @@ function MainApp() {
                                             return (
                                                 <div
                                                     key={idx}
-                                                    className={`relative p-4 rounded-2xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
+                                                    className={`relative p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
                                                 >
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-2 mb-1">
@@ -1067,7 +1067,7 @@ function MainApp() {
                                                                     <Info size={12} />
                                                                 </button>
                                                                 <div className="absolute right-0 bottom-full pb-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
-                                                                    <div className={`p-2.5 rounded-xl text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
+                                                                    <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                         <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                         {k.sourceLink ? (
                                                                             <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
@@ -1097,7 +1097,7 @@ function MainApp() {
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                                     {!selectedLocation && subKpisList.length > 0 && (
-                                        <div className={`w-full lg:w-48 flex-shrink-0 h-full rounded-[2rem] border shadow-sm flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div className={`w-full lg:w-48 flex-shrink-0 h-full rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                                                     Ativos de CT&I
@@ -1109,7 +1109,7 @@ function MainApp() {
                                                         <div
                                                             key={kpi.id}
                                                             onClick={() => handleCtiKpiClick(kpi.id)}
-                                                            className={`p-2.5 px-3 rounded-xl border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
+                                                            className={`p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
                                                         >
                                                             <div>
                                                                 <span className={`text-[8px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
@@ -1128,8 +1128,8 @@ function MainApp() {
 
                                     {/* COLUNA DO MAPA (40%) */}
                                     <div ref={mapSectionRef} className="w-full lg:w-[40%] flex-shrink-0 flex flex-col relative">
-                                        <div className={`rounded-[2rem] border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
-                                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
+                                        <div className={`rounded-2xl border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
+                                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
                                                 <span className="w-2 h-2 rounded-full bg-gov-green animate-pulse"></span>
                                                 <span>Motor Cartográfico</span>
                                                 <div className="relative group flex items-center justify-center">
@@ -1137,7 +1137,7 @@ function MainApp() {
                                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                                     </button>
                                                     <div className="absolute left-1/2 -translate-x-1/2 bottom-full pb-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-50">
-                                                        <div className={`w-max p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                                                        <div className={`w-max p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
                                                             <span className="block font-bold mb-1 opacity-70">Fontes dos Dados:</span>
                                                             <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
                                                             <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
@@ -1145,7 +1145,7 @@ function MainApp() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="w-full h-full flex-1 rounded-xl overflow-hidden">
+                                            <div className="w-full h-full flex-1 rounded-lg overflow-hidden">
                                                 <ConectaMap
                                                     territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats}
                                                     searchTerm={searchTerm} filtroSemiarido={filtroSemiarido}
@@ -1164,8 +1164,8 @@ function MainApp() {
                                         <div className="flex flex-col sm:flex-row gap-4 flex-[0.8] min-h-0">
 
                                             {/* LISTA 1: ESTRUTURAS CT&I */}
-                                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[2rem] border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 rounded-t-[2rem] ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                            <div className={`w-full sm:w-1/2 min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Estruturas CT&I</h4>
                                                         <div className="relative group flex items-center justify-center">
@@ -1173,7 +1173,7 @@ function MainApp() {
                                                                 <Info size={12} />
                                                             </button>
                                                             <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
-                                                                <div className={`p-2.5 rounded-xl text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
+                                                                <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                                         INEP / Censo da Educação Superior (2022)
@@ -1183,7 +1183,7 @@ function MainApp() {
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue-dark'}`}>
+                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-cyan/20 text-cyan-400' : 'bg-gov-cyan/10 text-gov-cyan-dark'}`}>
                                                             {dashboardData.entidades.length}
                                                         </span>
                                                         {!expandedLists.length && (
@@ -1197,7 +1197,7 @@ function MainApp() {
                                                     <div className="flex flex-col gap-2">
                                                         {dashboardData.entidades.length > 0 ? (
                                                             dashboardData.entidades.map((ent, idx) => (
-                                                                <div key={idx} className={`p-3 rounded-xl border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                                                <div key={idx} className={`p-3 rounded-lg border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
                                                                     <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                                                                     <div className="flex justify-between items-end mt-1">
                                                                         <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
@@ -1211,8 +1211,8 @@ function MainApp() {
                                             </div>
 
                                             {/* LISTA 2: CADEIAS PRODUTIVAS */}
-                                            <div className={`w-full sm:w-1/2 min-h-0 rounded-[2rem] border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 rounded-t-[2rem] ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                            <div className={`w-full sm:w-1/2 min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cadeias Produtivas</h4>
                                                         <div className="relative group flex items-center justify-center">
@@ -1220,7 +1220,7 @@ function MainApp() {
                                                                 <Info size={12} />
                                                             </button>
                                                             <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
-                                                                <div className={`p-2.5 rounded-xl text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
+                                                                <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                                         DataSebrae / Indicações Geográficas
@@ -1241,7 +1241,7 @@ function MainApp() {
                                                 <div className="flex-1 overflow-y-auto p-4 hide-scroll">
                                                     <div className="flex flex-col gap-2">
                                                         {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
-                                                            <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-xl border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
+                                                            <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-lg border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                                                 <div className="flex items-start justify-between mb-2">
                                                                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
                                                                     <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
@@ -1256,7 +1256,7 @@ function MainApp() {
                                                                     </div>
                                                                 )}
 
-                                                                <div className={`p-2.5 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+                                                                <div className={`p-2.5 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
                                                                     <div className="grid grid-cols-2 gap-2 mb-2">
                                                                         <div>
                                                                             <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
@@ -1281,7 +1281,7 @@ function MainApp() {
                                         </div>
 
                                         {/* LISTA 3: CURSOS SUPERIORES */}
-                                        <div className={`flex-[0.6] min-h-0 relative rounded-[2rem] border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div className={`flex-[0.6] min-h-0 relative rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <div className="flex items-center gap-2">
                                                     <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cursos CT&I</h4>
@@ -1290,7 +1290,7 @@ function MainApp() {
                                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                                         </button>
                                                         <div className="absolute left-1/2 -translate-x-1/2 top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-50">
-                                                            <div className={`w-max p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                                                            <div className={`w-max p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
                                                                 <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
                                                                 <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
                                                                     INEP/ Censo de Educação Superior (2022)
@@ -1315,7 +1315,7 @@ function MainApp() {
                                                             placeholder="Buscar curso..."
                                                             value={cursoSearchTerm}
                                                             onChange={(e) => setCursoSearchTerm(e.target.value)}
-                                                            className={`w-full h-8 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`}
+                                                            className={`w-full h-8 pl-7 pr-7 rounded-md text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`}
                                                         />
                                                         <svg className={`w-3 h-3 absolute left-2 top-2.5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                                         {cursoSearchTerm && (
@@ -1330,7 +1330,7 @@ function MainApp() {
                                                         <div className="relative" ref={areaGeralRef}>
                                                             <button
                                                                 onClick={() => setIsAreaGeralOpen(!isAreaGeralOpen)}
-                                                                className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-700') : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}
+                                                                className={`h-8 px-3 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-700') : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}
                                                             >
                                                                 {areaGeralFilter.length > 0 ? (
                                                                     <div className="flex items-center gap-0.5">
@@ -1349,7 +1349,7 @@ function MainApp() {
                                                             </button>
 
                                                             {isAreaGeralOpen && (
-                                                                <div className={`absolute right-0 top-[100%] mt-2 w-64 sm:w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                                                                <div className={`absolute right-0 top-[100%] mt-2 w-64 sm:w-72 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
                                                                     <span className="block text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
                                                                     <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
                                                                         {areaGeralSummary.map(area => {
@@ -1359,7 +1359,7 @@ function MainApp() {
                                                                                 <button
                                                                                     key={area.name}
                                                                                     onClick={() => handleAreaGeralToggle(area.name)}
-                                                                                    className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}
+                                                                                    className={`w-full text-left px-2 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}
                                                                                 >
                                                                                     <div className="flex items-center gap-1.5 pr-1">
                                                                                         <span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{getAreaInfo(area.name).icon}</span>
@@ -1371,7 +1371,7 @@ function MainApp() {
                                                                         })}
                                                                     </div>
                                                                     {areaGeralFilter.length > 0 && (
-                                                                        <button onClick={() => { setAreaGeralFilter([]); setIsAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar Filtros</button>
+                                                                        <button onClick={() => { setAreaGeralFilter([]); setIsAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar Filtros</button>
                                                                     )}
                                                                 </div>
                                                             )}
@@ -1389,7 +1389,7 @@ function MainApp() {
                                                             <div
                                                                 key={curso.id || idx}
                                                                 onClick={() => setExpandedCourse(curso)}
-                                                                className={`p-3 rounded-xl border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} hover:border-current ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
+                                                                className={`p-3 rounded-lg border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} hover:border-current ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
                                                             >
                                                                 <div className="flex justify-between items-start gap-2">
                                                                     <h5 className={`text-[11px] font-bold leading-snug ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
@@ -1403,7 +1403,7 @@ function MainApp() {
                                                                         </span>
                                                                     )}
                                                                 </div>
-                                                                <div className={`p-2 rounded-lg border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
+                                                                <div className={`p-2 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
                                                                     <span className={`block text-[9px] font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
                                                                     {/* Detalhes adicionais (local, nível, modalidade, tipo de universidade) movidos para a visualização expandida. */}
                                                                 </div>
