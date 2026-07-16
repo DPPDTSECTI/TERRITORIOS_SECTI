@@ -247,17 +247,7 @@ function MainApp() {
     };
 
     const getCtiBadgeStyle = (cat, isDark) => {
-        const styles = {
-            campiUniversidadePublica: isDark ? 'bg-gov-blue/10 text-blue-400 border-gov-blue/20' : 'bg-gov-blue/10 text-gov-blue-dark border-gov-blue/20',
-            campiUniversidadePrivada: isDark ? 'bg-gov-cyan/10 text-cyan-400 border-gov-cyan/20' : 'bg-gov-cyan/10 text-gov-cyan-dark border-gov-cyan/20',
-            ifs: isDark ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20',
-            icts: isDark ? 'bg-gov-purple/10 text-purple-400 border-gov-purple/20' : 'bg-gov-purple/10 text-gov-purple-dark border-gov-purple/20',
-            centrosPesquisa: isDark ? 'bg-gov-orange/10 text-orange-400 border-gov-orange/20' : 'bg-gov-orange/10 text-gov-orange-dark border-gov-orange/20',
-            espacos: isDark ? 'bg-gov-pink/10 text-pink-400 border-gov-pink/20' : 'bg-gov-pink/10 text-gov-pink-dark border-gov-pink/20',
-            parques: isDark ? 'bg-gov-yellow/10 text-yellow-400 border-gov-yellow/20' : 'bg-gov-yellow/10 text-gov-yellow-dark border-gov-yellow/20',
-            incubadoras: isDark ? 'bg-gov-teal/10 text-teal-400 border-gov-teal/20' : 'bg-gov-teal/10 text-gov-teal-dark border-gov-teal/20',
-        };
-        return styles[cat] || (isDark ? 'bg-gray-700 text-gray-300 border-gray-600' : 'bg-gray-100 text-gray-600 border-gray-200');
+        return isDark ? 'bg-gov-cyan/10 text-cyan-400 border-gov-cyan/20' : 'bg-gov-cyan/10 text-gov-cyan-dark border-gov-cyan/20';
     };
 
     const getBadgeStyle = (tipo) => {
@@ -444,15 +434,17 @@ function MainApp() {
 
     const subKpisList = useMemo(() => {
         if (!dashboardData?.subKpis || !dashboardData?.unfiltSubKpis) return [];
+        const singleColorClass = darkMode ? 'text-cyan-400' : 'text-gov-cyan';
+        const singleBarClass = 'bg-gov-cyan';
         const kpiData = [
-            { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue' },
-            { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', c: darkMode ? 'text-cyan-400' : 'text-gov-cyan', b: 'bg-gov-cyan' },
-            { id: 'ifs', l: 'Inst. Federais', c: darkMode ? 'text-green-400' : 'text-gov-green', b: 'bg-gov-green' },
-            { id: 'icts', l: 'ICTs', c: darkMode ? 'text-purple-400' : 'text-gov-purple', b: 'bg-gov-purple' },
-            { id: 'centrosPesquisa', l: 'C. Pesquisa', c: darkMode ? 'text-orange-400' : 'text-gov-orange', b: 'bg-gov-orange' },
-            { id: 'espacos', l: 'Espaços', c: darkMode ? 'text-pink-400' : 'text-gov-pink', b: 'bg-gov-pink' },
-            { id: 'parques', l: 'Parques', c: darkMode ? 'text-yellow-400' : 'text-gov-yellow', b: 'bg-gov-yellow' },
-            { id: 'incubadoras', l: 'Incubadoras', c: darkMode ? 'text-teal-400' : 'text-gov-teal', b: 'bg-gov-teal' }
+            { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', c: singleColorClass, b: singleBarClass },
+            { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', c: singleColorClass, b: singleBarClass },
+            { id: 'ifs', l: 'Inst. Federais', c: singleColorClass, b: singleBarClass },
+            { id: 'icts', l: 'ICTs', c: singleColorClass, b: singleBarClass },
+            { id: 'centrosPesquisa', l: 'C. Pesquisa', c: singleColorClass, b: singleBarClass },
+            { id: 'espacos', l: 'Espaços', c: singleColorClass, b: singleBarClass },
+            { id: 'parques', l: 'Parques', c: singleColorClass, b: singleBarClass },
+            { id: 'incubadoras', l: 'Incubadoras', c: singleColorClass, b: singleBarClass }
         ];
         return kpiData.map(kpi => ({ ...kpi, v: dashboardData.subKpis[kpi.id] || 0, pct: (dashboardData.unfiltSubKpis[kpi.id] || 0) > 0 ? ((dashboardData.subKpis[kpi.id] || 0) / dashboardData.unfiltSubKpis[kpi.id]) * 100 : 0 }));
     }, [dashboardData, darkMode]);
@@ -666,7 +658,7 @@ function MainApp() {
                                                             <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                                 <Info size={12} />
                                                             </button>
-                                                            <div className="absolute left-0 bottom-full pb-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[200] pointer-events-none group-hover:pointer-events-auto">
+                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[200] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-xl text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     {listType === 'cadeias' ? (
@@ -1032,11 +1024,11 @@ function MainApp() {
                                     </div>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                                         {[
-                                            { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue', icon: <Database size={14} />, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
-                                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-red-400' : 'text-gov-red', b: 'bg-gov-red', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
-                                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-yellow-300' : 'text-gov-yellow-dark', b: 'bg-gov-yellow', icon: <Sun size={14} />, tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e', unit: 'mun.' },
-                                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-cyan-400' : 'text-gov-cyan', b: 'bg-gov-cyan', icon: <Target size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
-                                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-green-400' : 'text-gov-green', b: 'bg-gov-green', icon: <BarChart3 size={14} />, tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/', listType: 'cadeias' },
+                                            { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Database size={14} />, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
+                                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
+                                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Sun size={14} />, tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e', unit: 'mun.' },
+                                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Target size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
+                                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <BarChart3 size={14} />, tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/', listType: 'cadeias' },
                                         ].map((k, idx) => {
                                             let displayValue = k.v;
                                             if (k.l === 'Semiárido' && typeof k.v === 'string') {
@@ -1053,7 +1045,7 @@ function MainApp() {
                                             return (
                                                 <div
                                                     key={idx}
-                                                    className={`relative p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
+                                                    className={`relative p-4 rounded-2xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
                                                 >
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-2 mb-1">
@@ -1078,12 +1070,12 @@ function MainApp() {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <div className="flex items-baseline gap-1.5">
-                                                        <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1.5 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{displayValue}</p>
-                                                        {k.unit && <span className={`text-xs font-bold opacity-60 pb-1.5 ${k.c}`}>{k.unit}</span>}
+                                                    <div className="flex items-baseline gap-1.5 mt-1">
+                                                        <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{displayValue}</p>
+                                                        {k.unit && <span className={`text-xs font-bold opacity-60 pb-1 ${k.c}`}>{k.unit}</span>}
                                                     </div>
-                                                    <div className="absolute bottom-0 left-0 h-1.5 w-full bg-gray-200/50 dark:bg-gray-700/50 rounded-b-2xl overflow-hidden">
-                                                        <div className={`h-full ${k.b} transition-all duration-700 ease-out rounded-b-2xl`} style={{ width: `${Math.min(100, Math.max(0, k.pct))}%` }}></div>
+                                                    <div className="w-full h-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-full overflow-hidden mt-3">
+                                                        <div className={`h-full ${k.b} transition-all duration-700 ease-out rounded-full`} style={{ width: `${Math.min(100, Math.max(0, k.pct))}%` }}></div>
                                                     </div>
                                                 </div>
                                             )
@@ -1108,14 +1100,14 @@ function MainApp() {
                                                         <div
                                                             key={kpi.id}
                                                             onClick={() => handleCtiKpiClick(kpi.id)}
-                                                            className={`relative p-2 pr-3 rounded-lg border flex items-center justify-between text-left overflow-hidden transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
+                                                            className={`p-2.5 px-3 rounded-xl border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
                                                         >
                                                             <div>
                                                                 <span className={`text-[8px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
                                                                 <span className={`block text-lg font-black leading-none pt-1 drop-shadow-sm ${kpi.c}`}>{kpi.v || 0}</span>
                                                             </div>
-                                                            <div className="absolute top-0 right-0 h-full w-1 bg-slate-200/50 dark:bg-slate-700/50">
-                                                                <div className={`absolute bottom-0 w-full ${kpi.b} transition-all duration-700 ease-out`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
+                                                            <div className="w-1.5 h-12 bg-slate-200/60 dark:bg-slate-700/60 rounded-full overflow-hidden flex flex-col justify-end shrink-0 ml-2.0">
+                                                                <div className={`w-full ${kpi.b} transition-all duration-700 ease-out rounded-full`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -1171,7 +1163,7 @@ function MainApp() {
                                                             <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                                 <Info size={12} />
                                                             </button>
-                                                            <div className="absolute left-0 bottom-full pb-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
+                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-xl text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
@@ -1218,7 +1210,7 @@ function MainApp() {
                                                             <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                                 <Info size={12} />
                                                             </button>
-                                                            <div className="absolute left-0 bottom-full pb-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
+                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-xl text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
