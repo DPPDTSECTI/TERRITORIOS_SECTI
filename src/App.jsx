@@ -1185,7 +1185,7 @@ function MainApp() {
                                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue-dark'}`}>
                                                             {dashboardData.entidades.length}
                                                         </span>
-                                                        {dashboardData.entidades.length > 0 && !expandedLists.length && (
+                                                        {!expandedLists.length && (
                                                             <button onClick={() => setExpandedLists(['cti'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
                                                                 <Expand size={14} />
                                                             </button>
@@ -1230,7 +1230,7 @@ function MainApp() {
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-green/20 text-green-400' : 'bg-gov-green/10 text-gov-green-dark'}`}>{dashboardData.aplIgs.length}</span>
-                                                        {dashboardData.aplIgs.length > 0 && !expandedLists.length && (
+                                                        {!expandedLists.length && (
                                                             <button onClick={() => setExpandedLists(['cadeias'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
                                                                 <Expand size={14} />
                                                             </button>
@@ -1299,7 +1299,7 @@ function MainApp() {
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black hidden lg:inline-block ${darkMode ? 'bg-gov-cyan/20 text-cyan-400' : 'bg-gov-cyan/10 text-gov-cyan-dark'}`}>{cursosFiltrados.length}</span>
-                                                        {cursosFiltrados.length > 0 && !expandedLists.length && (
+                                                        {!expandedLists.length && (
                                                             <button onClick={() => setExpandedLists(['cursos'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
                                                                 <Expand size={14} />
                                                             </button>
