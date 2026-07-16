@@ -62,6 +62,8 @@ function MainApp() {
     const [darkMode, setDarkMode] = useState(false);
     const [areaGeralFilter, setAreaGeralFilter] = useState([]);
     const [cadeiaProdutivaFilter, setCadeiaProdutivaFilter] = useState([]);
+    const [cadeiaSearchTerm, setCadeiaSearchTerm] = useState('');
+    const debouncedCadeiaSearchTerm = useDebounce(cadeiaSearchTerm, 300);
     const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
     const [cursoSearchTerm, setCursoSearchTerm] = useState('');
     const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
@@ -70,6 +72,7 @@ function MainApp() {
     const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
     const [isModalCtiFilterOpen, setIsModalCtiFilterOpen] = useState(false);
     const [isModalCadeiaFilterOpen, setIsModalCadeiaFilterOpen] = useState(false);
+    const [isCardCadeiaFilterOpen, setIsCardCadeiaFilterOpen] = useState(false);
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
     const [expandedCourse, setExpandedCourse] = useState(null);
     const [expandedCadeia, setExpandedCadeia] = useState(null);
@@ -85,8 +88,6 @@ function MainApp() {
     // Filtros de D.Territorial
     const [ifdmMin, setIfdmMin] = useState('');
     const [ifdmMax, setIfdmMax] = useState('');
-    const [semiMunsMin, setSemiMunsMin] = useState('');
-    const [semiMunsMax, setSemiMunsMax] = useState('');
 
     // Filtros de CTI
     const [ctiFilters, setCtiFilters] = useState({
@@ -100,21 +101,23 @@ function MainApp() {
     const modalAreaGeralRef = useRef(null);
     const modalCtiFilterRef = useRef(null);
     const modalCadeiaFilterRef = useRef(null);
+    const cardCadeiaFilterRef = useRef(null);
     const modalAddListRef = useRef(null);
 
     const resetGlobalFilters = () => {
         setSearchTerm('');
         setSelectedLocation(null);
         setIfdmMin(''); setIfdmMax('');
-        setSemiMunsMin(''); setSemiMunsMax('');
         setFiltroSemiarido(false);
         setAreaGeralFilter([]);
         setCadeiaProdutivaFilter([]);
+        setCadeiaSearchTerm('');
         setCursoSearchTerm('');
         setCtiFilters({
             campiUniversidadePublica: true, campiUniversidadePrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
         });
         setIsDropdownOpen(false);
+        setIsCardCadeiaFilterOpen(false);
     };
 
     const handleCloseModal = useCallback(() => {
@@ -141,12 +144,11 @@ function MainApp() {
         debouncedSearchTerm,
         ifdmMin,
         ifdmMax,
-        semiMunsMin,
-        semiMunsMax,
         cadeiaProdutivaFilter,
         ctiFilters,
         areaGeralFilter,
         debouncedCursoSearchTerm,
+        debouncedCadeiaSearchTerm
     });
 
     const handleSelectTerritory = useCallback((loc) => {
@@ -173,6 +175,9 @@ function MainApp() {
             }
             if (modalCadeiaFilterRef.current && !modalCadeiaFilterRef.current.contains(event.target)) {
                 setIsModalCadeiaFilterOpen(false);
+            }
+            if (cardCadeiaFilterRef.current && !cardCadeiaFilterRef.current.contains(event.target)) {
+                setIsCardCadeiaFilterOpen(false);
             }
             if (modalAddListRef.current && !modalAddListRef.current.contains(event.target)) {
                 setIsModalAddListOpen(false);
@@ -357,15 +362,76 @@ function MainApp() {
         return [...areas].sort();
     }, [territoriosData]);
 
+    const todasAsCadeiasPorTipo = useMemo(() => {
+        const aplSegments = new Set();
+        const igSegments = new Set();
+        territoriosData.forEach(t => {
+            (t.cadeiasProdutivasDetalhado || []).forEach(cad => {
+                const tipoLower = String(cad.tipo || '').toLowerCase();
+                const seg = cad.segmento;
+                if (!seg) return;
+                if (tipoLower.includes('apl') || tipoLower.includes('arranjo')) {
+                    aplSegments.add(seg);
+                } else if (tipoLower.includes('ig') || tipoLower.includes('indicação')) {
+                    igSegments.add(seg);
+                }
+            });
+        });
+        return {
+            APL: Array.from(aplSegments).sort((a, b) => a.localeCompare(b, 'pt-BR')),
+            IG: Array.from(igSegments).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+        };
+    }, [territoriosData]);
+
+    const handleCadeiaParentToggle = (parentCategory) => {
+        const subSegments = todasAsCadeiasPorTipo[parentCategory] || [];
+        const subKeys = subSegments.map(s => `${parentCategory}__${s}`);
+
+        setCadeiaProdutivaFilter(prev => {
+            const current = new Set(prev);
+            const isParentSelected = current.has(parentCategory);
+            const allSubsSelected = subKeys.every(k => current.has(k));
+
+            if (isParentSelected || allSubsSelected) {
+                current.delete(parentCategory);
+                subKeys.forEach(k => current.delete(k));
+            } else {
+                current.add(parentCategory);
+                subKeys.forEach(k => current.add(k));
+            }
+            return Array.from(current);
+        });
+    };
+
+    const handleCadeiaSubToggle = (parentCategory, segmentName) => {
+        const key = `${parentCategory}__${segmentName}`;
+        const subSegments = todasAsCadeiasPorTipo[parentCategory] || [];
+        const subKeys = subSegments.map(s => `${parentCategory}__${s}`);
+
+        setCadeiaProdutivaFilter(prev => {
+            const current = new Set(prev);
+            if (current.has(key)) {
+                current.delete(key);
+                current.delete(parentCategory);
+            } else {
+                current.add(key);
+                const allOthersSelected = subKeys.every(k => k === key || current.has(k));
+                if (allOthersSelected) {
+                    current.add(parentCategory);
+                }
+            }
+            return Array.from(current);
+        });
+    };
+
     const hasActiveFilters = searchTerm !== '' ||
         selectedLocation !== null ||
         ifdmMin !== '' ||
         ifdmMax !== '' ||
-        semiMunsMin !== '' ||
-        semiMunsMax !== '' ||
         filtroSemiarido !== false ||
         areaGeralFilter.length > 0 ||
         cadeiaProdutivaFilter.length > 0 ||
+        cadeiaSearchTerm !== '' ||
         cursoSearchTerm !== '' ||
         !Object.values(ctiFilters).every(val => val === true);
 
@@ -479,10 +545,80 @@ function MainApp() {
                                             listTitle = 'Cadeias Produtivas';
                                             gridColsClass = 'grid-cols-1';
                                             filterControls = (
-                                                <div className="relative" ref={modalCadeiaFilterRef}>
-                                                    <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
-                                                    {isModalCadeiaFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-48 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>{['APL', 'IG'].map(tipo => (<button key={tipo} onClick={() => handleCadeiaProdutivaToggle(tipo)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-center justify-between gap-2 border ${cadeiaProdutivaFilter.includes(tipo) ? (darkMode ? 'bg-gov-green/20 border-gov-green/50 text-green-400' : 'bg-gov-green/10 border-gov-green/20 text-gov-green-dark') : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><span>{tipo}</span></button>))}{cadeiaProdutivaFilter.length > 0 && <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
-                                                </div>
+                                                <React.Fragment>
+                                                    <div className="relative w-36 sm:w-48">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Buscar sede, satélite, segmento..."
+                                                            value={cadeiaSearchTerm}
+                                                            onChange={(e) => setCadeiaSearchTerm(e.target.value)}
+                                                            className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`}
+                                                        />
+                                                        <Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                                                        {cadeiaSearchTerm && (
+                                                            <button onClick={() => setCadeiaSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400">
+                                                                <Eraser size={12} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className="relative" ref={modalCadeiaFilterRef}>
+                                                        <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
+                                                        {isModalCadeiaFilterOpen && (
+                                                            <div className={`absolute right-0 top-[100%] mt-2 w-64 max-w-[85vw] rounded-xl p-3 shadow-2xl border z-[150] flex flex-col gap-2 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                                                                <span className="block text-[8px] font-black uppercase tracking-widest opacity-60">Filtrar por Cascata (APL/IG)</span>
+                                                                <div className="max-h-56 overflow-y-auto hide-scroll flex flex-col gap-2 border p-2 rounded-lg border-gray-500/20">
+                                                                    {['APL', 'IG'].map(tipo => {
+                                                                        const subSegments = todasAsCadeiasPorTipo[tipo] || [];
+                                                                        const subKeys = subSegments.map(s => `${tipo}__${s}`);
+                                                                        const isParentSelected = cadeiaProdutivaFilter.includes(tipo);
+                                                                        const isSomeSubSelected = subKeys.some(k => cadeiaProdutivaFilter.includes(k));
+                                                                        const isAllSubSelected = subSegments.length > 0 && subKeys.every(k => cadeiaProdutivaFilter.includes(k));
+
+                                                                        return (
+                                                                            <div key={tipo} className="flex flex-col gap-1">
+                                                                                <label className="flex items-center gap-2 text-[10px] font-black cursor-pointer select-none">
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        checked={isParentSelected || isAllSubSelected}
+                                                                                        onChange={() => handleCadeiaParentToggle(tipo)}
+                                                                                        className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-3 w-3"
+                                                                                    />
+                                                                                    <span className={isParentSelected || isSomeSubSelected ? (darkMode ? 'text-green-400 font-bold' : 'text-gov-green-dark font-bold') : 'opacity-80'}>
+                                                                                        {tipo}
+                                                                                    </span>
+                                                                                </label>
+                                                                                {subSegments.length > 0 && (
+                                                                                    <div className="pl-3 flex flex-col gap-1 border-l border-gray-300 dark:border-gray-700 ml-1">
+                                                                                        {subSegments.map(seg => {
+                                                                                            const key = `${tipo}__${seg}`;
+                                                                                            const isSubChecked = isParentSelected || cadeiaProdutivaFilter.includes(key);
+                                                                                            return (
+                                                                                                <label key={seg} className="flex items-center gap-2 text-[9px] font-medium cursor-pointer select-none py-0.5">
+                                                                                                    <input
+                                                                                                        type="checkbox"
+                                                                                                        checked={isSubChecked}
+                                                                                                        onChange={() => handleCadeiaSubToggle(tipo, seg)}
+                                                                                                        className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-2.5 w-2.5"
+                                                                                                    />
+                                                                                                    <span className={isSubChecked ? (darkMode ? 'text-gray-100' : 'text-gray-900') : 'opacity-60'}>
+                                                                                                        {seg}
+                                                                                                    </span>
+                                                                                                </label>
+                                                                                            );
+                                                                                        })}
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                                {cadeiaProdutivaFilter.length > 0 && (
+                                                                    <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`w-full h-6 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar Filtros</button>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </React.Fragment>
                                             );
                                         } else if (listType === 'cursos') {
                                             listData = cursosFiltrados;
@@ -800,7 +936,7 @@ function MainApp() {
                         <div className={`absolute right-[125%] bottom-0 w-72 rounded-[2rem] p-5 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl animate-soft-fade ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
                             <div>
                                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-2">Recorte Geográfico</span>
-                                <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-9 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-gov-yellow border-yellow-600 text-white hover:bg-yellow-600' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>\
+                                <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-9 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-gov-yellow border-yellow-600 text-white hover:bg-yellow-600' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>
                                     {filtroSemiarido ? 'Semiárido: Ativo' : 'Ativar Semiárido'}
                                 </button>
                             </div>
@@ -810,14 +946,6 @@ function MainApp() {
                                     <input type="number" step="0.001" placeholder="Mín" value={ifdmMin} onChange={(e) => setIfdmMin(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
                                     <span className="text-[10px] opacity-40">até</span>
                                     <input type="number" step="0.001" placeholder="Máx" value={ifdmMax} onChange={(e) => setIfdmMax(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
-                                </div>
-                            </div>
-                            <div>
-                                <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Muns. no Semiárido (Qtd)</span>
-                                <div className="flex gap-2 items-center">
-                                    <input type="number" placeholder="Mín" value={semiMunsMin} onChange={(e) => setSemiMunsMin(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
-                                    <span className="text-[10px] opacity-40">até</span>
-                                    <input type="number" placeholder="Máx" value={semiMunsMax} onChange={(e) => setSemiMunsMax(e.target.value)} className={`w-full h-8 px-2 rounded-lg text-[11px] outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'}`} />
                                 </div>
                             </div>
                             <div>
@@ -838,19 +966,6 @@ function MainApp() {
                                             <span className={ctiFilters[f.id] ? 'opacity-100' : 'opacity-40'}>{f.label}</span>
                                         </label>
                                     ))}
-                                </div>
-                            </div>
-                            <div>
-                                <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Filtrar Cadeias Produtivas</span>
-                                <div className="flex flex-col gap-1.5">
-                                    {['APL', 'IG'].map(tipo => {
-                                        const isSelected = cadeiaProdutivaFilter.includes(tipo);
-                                        return (
-                                            <button key={tipo} onClick={() => handleCadeiaProdutivaToggle(tipo)} className={`w-full text-left px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-between gap-2 border ${isSelected ? (darkMode ? 'bg-gov-green/20 border-gov-green/50 text-green-400' : 'bg-gov-green/10 border-gov-green/20 text-gov-green-dark') : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>
-                                                <span>{tipo}</span>
-                                            </button>
-                                        )
-                                    })}
                                 </div>
                             </div>
                         </div>

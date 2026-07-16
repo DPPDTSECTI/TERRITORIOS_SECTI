@@ -37,11 +37,9 @@ export default function ModoExpandido({ darkMode }) {
     { id: 'dev', title: 'Desenvolvimento Territorial', content: 'Dados baseados no Índice FIRJAN de Desenvolvimento Municipal (IFDM).' },
   ]);
 
-  // Lista de todas as listas possíveis que o usuário pode adicionar.
   const listasDisponiveis = [
     { id: 'cursos', title: 'Cursos Superiores em CT&I', content: 'Levantamento de cursos de nível superior em CT&I.' },
-    { id: 'apl', title: 'APLs e IGs', content: 'Mapeamento de Arranjos Produtivos Locais e Indicações Geográficas.' },
-    // Adicione outras listas que podem ser adicionadas aqui...
+    { id: 'apl', title: 'APLs e IGs', content: 'Mapeamento em cascata de Arranjos Produtivos Locais (APL) e Indicações Geográficas (IG) com filtragem por segmento, sede e município satélite.' },
   ];
 
   const handleAdicionarLista = () => {
