@@ -241,9 +241,18 @@ function MainApp() {
     const handleCadeiaProdutivaToggle = createArrayFilterToggleHandler(setCadeiaProdutivaFilter);
 
     const getAreaFilterButtonText = () => {
-        if (areaGeralFilter.length === 0) return 'Filtrar Área';
-        if (areaGeralFilter.length === 1) return `Área: ${areaGeralFilter[0]}`;
-        return `${areaGeralFilter.length} Selecionadas`;
+        if (areaGeralFilter.length === 0) return 'Filtros';
+        return `${areaGeralFilter.length} Selecionada${areaGeralFilter.length > 1 ? 's' : ''}`;
+    };
+
+    const formatEntidadeTipo = (tipo, cat) => {
+        let t = String(tipo || '').trim();
+        if (cat === 'campiUniversidadePublica' || cat === 'campiUniversidadePrivada' || t.toLowerCase().includes('universidade')) {
+            if (!t.toLowerCase().startsWith('campi')) {
+                return `Campi  ${t}`;
+            }
+        }
+        return t || "Instituição";
     };
 
     const getCtiBadgeStyle = (cat, isDark) => {
@@ -642,7 +651,7 @@ function MainApp() {
                                             filterControls = (
                                                 <React.Fragment>
                                                     <div className="relative w-32 sm:w-40"><input type="text" placeholder="Buscar curso..." value={cursoSearchTerm} onChange={(e) => setCursoSearchTerm(e.target.value)} className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`} /><Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />{cursoSearchTerm && <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400"><Eraser size={12} /></button>}</div>
-                                                    {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); const { icon } = getAreaInfo(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{icon}</span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>); })}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
+                                                    {areaGeralSummary.length > 0 && <div className="relative" ref={modalAreaGeralRef}><button onClick={() => setIsModalAreaGeralOpen(!isModalAreaGeralOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}>{areaGeralFilter.length > 0 ? (<div className="flex items-center gap-0.5">{areaGeralFilter.map(areaName => (<span key={areaName} className={`flex items-center justify-center [&>svg]:w-3 [&>svg]:h-3 ${getAreaStyles(areaName, darkMode).text}`} title={areaName}>{getAreaInfo(areaName).icon}</span>))}</div>) : (<Filter size={12} />)}</button>{isModalAreaGeralOpen && <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">{todasAsAreasGerais.map(areaName => { const areaData = areaGeralSummary.find(a => a.name === areaName); const count = areaData ? areaData.count : 0; const styles = getAreaStyles(areaName, darkMode); const isSelected = areaGeralFilter.includes(areaName); const { icon } = getAreaInfo(areaName); if (count === 0 && !isSelected) return null; return (<button key={areaName} onClick={() => handleAreaGeralToggle(areaName)} className={`w-full text-left px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}><div className="flex items-center gap-1.5 pr-1"><span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{icon}</span><span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{areaName}</span></div><span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{count}</span></button>); })}</div>{areaGeralFilter.length > 0 && <button onClick={() => { setAreaGeralFilter([]); setIsModalAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}</div>}
                                                 </React.Fragment>
                                             );
                                         } else {
@@ -1192,7 +1201,7 @@ function MainApp() {
                                                                     <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                                                                     <div className="flex justify-between items-end mt-1">
                                                                         <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
-                                                                            {ent.tipo || "Instituição"}
+                                                                            {formatEntidadeTipo(ent.tipo, ent.categoria)}
                                                                         </span>
                                                                     </div>
                                                                 </div>
@@ -1323,8 +1332,20 @@ function MainApp() {
                                                                 onClick={() => setIsAreaGeralOpen(!isAreaGeralOpen)}
                                                                 className={`h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-700') : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}
                                                             >
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                                                                <span className="whitespace-nowrap hidden sm:inline">{getAreaFilterButtonText()}</span>
+                                                                {areaGeralFilter.length > 0 ? (
+                                                                    <div className="flex items-center gap-0.5">
+                                                                        {areaGeralFilter.map(areaName => (
+                                                                            <span key={areaName} className={`flex items-center justify-center [&>svg]:w-3 [&>svg]:h-3 ${getAreaStyles(areaName, darkMode).text}`} title={areaName}>
+                                                                                {getAreaInfo(areaName).icon}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                ) : (
+                                                                    <>
+                                                                        <Filter size={12} />
+                                                                        <span className="whitespace-nowrap hidden sm:inline">Filtros</span>
+                                                                    </>
+                                                                )}
                                                             </button>
 
                                                             {isAreaGeralOpen && (
