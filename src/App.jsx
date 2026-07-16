@@ -464,7 +464,7 @@ function MainApp() {
                 <div className="fixed inset-0 z-[150] bg-gray-900/90 flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
                     <div className="relative" onClick={e => e.stopPropagation()}>
                         <div
-                            className={`h-[85vh] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'w-[90vw] max-w-[1800px]'
+                            className={`h-[85vh] w-[95vw] sm:w-[90vw] rounded-[2rem] border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]'
                                 }`}
                         >
                             {/* HEADER DO MODAL */}
