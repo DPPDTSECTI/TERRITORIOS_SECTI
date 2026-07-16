@@ -72,7 +72,8 @@ export default function useTerritoriosData(filters) {
         ctiFilters,
         areaGeralFilter,
         debouncedCursoSearchTerm,
-        debouncedCadeiaSearchTerm
+        debouncedCadeiaSearchTerm,
+        debouncedCtiSearchTerm
     } = filters;
 
     const [territoriosData, setTerritoriosData] = useState([]);
@@ -231,6 +232,11 @@ export default function useTerritoriosData(filters) {
                     const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
                     if (!terms.every(term => searchString.includes(term))) return false;
                 }
+                if (debouncedCtiSearchTerm) {
+                    const cTerm = normalize(debouncedCtiSearchTerm);
+                    const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(ent.categoria || '')} ${normalize(t.nome)}`;
+                    if (!searchString.includes(cTerm)) return false;
+                }
                 return true;
             });
 
@@ -298,7 +304,7 @@ export default function useTerritoriosData(filters) {
             };
         });
         return stats;
-    }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, cadeiaProdutivaFilter, debouncedCadeiaSearchTerm]);
+    }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, cadeiaProdutivaFilter, debouncedCadeiaSearchTerm, debouncedCtiSearchTerm]);
 
     const dashboardData = useMemo(() => {
     if (!territoriosData || territoriosData.length === 0) {
@@ -405,6 +411,12 @@ export default function useTerritoriosData(filters) {
             }
             
             if (ent.categoria && !ctiFilters[ent.categoria]) return;
+
+            if (debouncedCtiSearchTerm) {
+                const cTerm = normalize(debouncedCtiSearchTerm);
+                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(ent.categoria || '')} ${normalize(t.nome)}`;
+                if (!searchString.includes(cTerm)) return;
+            }
 
             entidadesFlat.push({ ...ent, territorioRef: t.nome });
             if (ent.id && !globalIds.has(ent.id)) {

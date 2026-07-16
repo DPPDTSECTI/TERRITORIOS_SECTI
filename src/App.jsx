@@ -67,6 +67,8 @@ function MainApp() {
     const [isAreaGeralOpen, setIsAreaGeralOpen] = useState(false);
     const [cursoSearchTerm, setCursoSearchTerm] = useState('');
     const debouncedCursoSearchTerm = useDebounce(cursoSearchTerm, 300);
+    const [ctiSearchTerm, setCtiSearchTerm] = useState('');
+    const debouncedCtiSearchTerm = useDebounce(ctiSearchTerm, 300);
     const [expandedLists, setExpandedLists] = useState([]);
     const [modalVisibleCounts, setModalVisibleCounts] = useState({});
     const [isModalAreaGeralOpen, setIsModalAreaGeralOpen] = useState(false);
@@ -113,6 +115,7 @@ function MainApp() {
         setCadeiaProdutivaFilter([]);
         setCadeiaSearchTerm('');
         setCursoSearchTerm('');
+        setCtiSearchTerm('');
         setCtiFilters({
             campiUniversidadePublica: true, campiUniversidadePrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
         });
@@ -148,7 +151,8 @@ function MainApp() {
         ctiFilters,
         areaGeralFilter,
         debouncedCursoSearchTerm,
-        debouncedCadeiaSearchTerm
+        debouncedCadeiaSearchTerm,
+        debouncedCtiSearchTerm
     });
 
     const handleSelectTerritory = useCallback((loc) => {
@@ -433,6 +437,7 @@ function MainApp() {
         cadeiaProdutivaFilter.length > 0 ||
         cadeiaSearchTerm !== '' ||
         cursoSearchTerm !== '' ||
+        ctiSearchTerm !== '' ||
         !Object.values(ctiFilters).every(val => val === true);
 
     const availableListsToAdd = ['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type));
@@ -534,10 +539,27 @@ function MainApp() {
                                             listTitle = 'Estruturas CT&I';
                                             gridColsClass = 'grid-cols-1';
                                             filterControls = (
-                                                <div className="relative" ref={modalCtiFilterRef}>
-                                                    <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
-                                                    {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
-                                                </div>
+                                                <React.Fragment>
+                                                    <div className="relative w-36 sm:w-48">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Buscar estrutura CT&I..."
+                                                            value={ctiSearchTerm}
+                                                            onChange={(e) => setCtiSearchTerm(e.target.value)}
+                                                            className={`w-full h-7 pl-7 pr-7 rounded-lg text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-blue' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-blue'}`}
+                                                        />
+                                                        <Search size={12} className={`absolute left-2 top-1/2 -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                                                        {ctiSearchTerm && (
+                                                            <button onClick={() => setCtiSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400">
+                                                                <Eraser size={12} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className="relative" ref={modalCtiFilterRef}>
+                                                        <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
+                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-xl p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-lg font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
+                                                    </div>
+                                                </React.Fragment>
                                             );
                                         } else if (listType === 'cadeias') {
                                             listData = dashboardData.aplIgs;
@@ -638,8 +660,27 @@ function MainApp() {
                                         return (
                                             <div key={listType} className={`rounded-2xl border flex flex-col min-h-0 ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'}`}>
                                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-1.5">
                                                         <h4 className={`font-bold text-xs ${darkMode ? 'text-white' : 'text-gray-800'}`}>{listTitle}</h4>
+                                                        <div className="relative group flex items-center justify-center z-50">
+                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                                                                <Info size={12} />
+                                                            </button>
+                                                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                                                <div className={`w-max p-2 rounded-lg text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                                                                    <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
+                                                                    {listType === 'cadeias' ? (
+                                                                        <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                                            DataSebrae / Indicações Geográficas
+                                                                        </a>
+                                                                    ) : (
+                                                                        <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                                            INEP / Censo da Educação Superior (2022)
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>{listData.length}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1">
