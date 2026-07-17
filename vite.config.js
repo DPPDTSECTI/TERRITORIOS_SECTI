@@ -8,7 +8,7 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v28_cadeias_cooperativas_fix'; // Força atualização do cache
+const CACHE_VERSION = 'v29_ifdm_media_simples'; // Força atualização para nova métrica IFDM
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
@@ -29,15 +29,12 @@ function safeKey(k) {
     .replace(/[^a-z0-9]/g, '');
 }
 
-// ==================== O MEGA FILTRO DE ENTIDADES ====================
-// NOVO: Adicionado o parâmetro isCadeia para impedir que Associações virem Universidades
 function expandirNomeEntidade(nomeRaw, tipoRaw = '', isCadeia = false) {
   let nome = String(nomeRaw || '').trim();
   let tipoNorm = normalize(tipoRaw);
   
   const isEcossistema = ['incubadora', 'parque', 'espaco', 'pesquisa', 'dinamizador', 'ict'].some(term => tipoNorm.includes(term));
 
-  // SE FOR CADEIA PRODUTIVA OU IG, IGNORA O DICIONÁRIO DE UNIVERSIDADES!
   if (!isEcossistema && !isCadeia) {
     let nomeNorm = normalize(nome).replace(/\b(campus|polo|unidade|centro de|ead|departamento)\b.*$/g, '').trim();
 
@@ -153,7 +150,8 @@ function parseSpreadsheet(buffer) {
         cadeiasRows: [],
         desenvolvimentoRows: [],
         cursosRows: [],
-        desenvolvimento: { ifdmTi: null, somaIfdmPop: 0, populacaoTotal: 0 },
+        // NOVO: Adicionado parâmetros para Média Simples (soma e quantidade)
+        desenvolvimento: { ifdmTi: null, somaIfdm: 0, qtdMunicipiosIfdm: 0, populacaoTotal: 0 },
         assistenciaPublica: { existe: false, iniciativas: new Set() },
         semiaridoAcumulado: 0,
         semiaridoContador: 0
@@ -211,7 +209,6 @@ function parseSpreadsheet(buffer) {
           tipoOriginal = String(row['tipo'] || row['categoria'] || row['natureza'] || '').trim();
       }
 
-      // PASSANDO isCadeiaSheet PARA IMPEDIR A TROCA DE NOMES
       const entidadesExpandida = expandirNomeEntidade(entidadeRaw, tipoOriginal, isCadeiaSheet);
       const qtd = toNumber(row['quantidade'] || row['qtd'] || row['qtdenti'] || row['valorentidades'] || 1);
 
@@ -309,17 +306,21 @@ function parseSpreadsheet(buffer) {
              }
          }
 
+         // AQUI FOI ALTERADO PARA A LÓGICA DE MÉDIA SIMPLES
          if (isIfdmSheet) {
              const ifdm = toNumber(row['ifdm']);
              const pop = toNumber(row['populacao']);
-             const ifdmTi = toNumber(row['ifdmt'] || row['ifdmti']);
+             const ifdmTi = toNumber(row['ifdmt2'] || row['ifdmti']);
 
              if (municipio) {
                  territory.desenvolvimentoRows.push({ municipio, ifdm, populacao: pop });
              }
 
-             if (ifdm > 0 && pop > 0) {
-                 territory.desenvolvimento.somaIfdmPop += ifdm * pop;
+             if (ifdm > 0) {
+                 territory.desenvolvimento.somaIfdm += ifdm;
+                 territory.desenvolvimento.qtdMunicipiosIfdm += 1;
+             }
+             if (pop > 0) {
                  territory.desenvolvimento.populacaoTotal += pop;
              }
              if (ifdmTi > 0) territory.desenvolvimento.ifdmTi = ifdmTi;
@@ -368,8 +369,10 @@ function parseSpreadsheet(buffer) {
   if (!territoryMap.size) throw new Error('Nenhuma linha territorial válida encontrada.');
 
   const territories = Array.from(territoryMap.values()).map((entry) => {
-    if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.populacaoTotal > 0) {
-      entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdmPop / entry.desenvolvimento.populacaoTotal;
+    
+    // AQUI O CÁLCULO FINAL DE MÉDIA SIMPLES POR TERRITÓRIO
+    if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.qtdMunicipiosIfdm > 0) {
+      entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdm / entry.desenvolvimento.qtdMunicipiosIfdm;
     }
 
     const allMunicipios = new Set();
@@ -401,7 +404,7 @@ function parseSpreadsheet(buffer) {
       desenvolvimento: {
         ifdmTi: entry.desenvolvimento.ifdmTi,
         populacaoTotal: entry.desenvolvimento.populacaoTotal || null,
-        metodologia: 'IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)',
+        metodologia: 'IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)',
       },
       assistenciaPublica: {
         existe: entry.assistenciaPublica.existe,

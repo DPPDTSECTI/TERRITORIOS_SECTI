@@ -20,8 +20,7 @@ const normalize = (() => {
     };
 })();
 
-// Helper para extrair o nome do município satélite de forma robusta,
-// lidando com múltiplas chaves possíveis nos dados de origem.
+// Helper para extrair o nome do município satélite de forma robusta
 const extrairSatelite = (cad) => {
     const val = cad.municipioSatelite || cad.municipiosSatelites || cad.satelite || cad.municipio_satelite || cad.municipios_satelites || cad.Satelite || cad.Satelites;
     if (!val || val === 'undefined' || val === 'null') return '';
@@ -30,6 +29,16 @@ const extrairSatelite = (cad) => {
     }
     if (typeof val === 'object') return val.Title || val.nome || val.NOME || val.value || '';
     return String(val).trim();
+};
+
+// NOVO: Função para truncar o IFDM em 3 casas decimais SEM arredondamento matemático
+// Exemplo: 0.58978... se tornará "0.589" em vez de "0.590"
+const formatIFDM = (val) => {
+    if (val == null || isNaN(val)) return "-";
+    // Força 6 casas decimais primeiro para evitar bugs de ponto flutuante do JavaScript
+    const str = Number(val).toFixed(6); 
+    // Corta a string exatamente 3 posições após o ponto
+    return str.substring(0, str.indexOf('.') + 4); 
 };
 
 const passesCadeiaFilterAndSearch = (cad, cadeiaProdutivaFilter, debouncedCadeiaSearchTerm) => {
@@ -68,6 +77,8 @@ export default function useTerritoriosData(filters) {
         debouncedSearchTerm,
         ifdmMin,
         ifdmMax,
+        semiMunsMin,
+        semiMunsMax,
         cadeiaProdutivaFilter,
         ctiFilters,
         areaGeralFilter,
@@ -116,7 +127,8 @@ export default function useTerritoriosData(filters) {
                     assistenciaPublica: t.assistenciaPublica || { iniciativas: [] },
                     desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 },
                     kpis: {
-                        capacidadeCti: String(entidadesCTI.length), ifdm: t.desenvolvimento?.ifdmTi ? Number(t.desenvolvimento.ifdmTi).toFixed(3) : "-",
+                        capacidadeCti: String(entidadesCTI.length), 
+                        ifdm: t.desenvolvimento?.ifdmTi ? formatIFDM(t.desenvolvimento.ifdmTi) : "-",
                         conectaBahia: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado", cadeiasIgs: String(cadeiasAPL.length),
                         coberturaSemiarido: trueIsSemiarido ? (truePctSemiarido >= 100 ? "Pertencente" : "") : "Exterior"
                     }
@@ -146,7 +158,7 @@ export default function useTerritoriosData(filters) {
         territoriosData.forEach(t => {
             if (filtroSemiarido && !t.isSemiarido) return;
 
-            const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
+            const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(formatIFDM(t.desenvolvimento.ifdmTi)) : 0;
             if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
             if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
 
@@ -209,21 +221,25 @@ export default function useTerritoriosData(filters) {
         const isCadeiaFiltered = (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) || Boolean(debouncedCadeiaSearchTerm);
 
         territoriosData.forEach(t => {
-            const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
+            const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(formatIFDM(t.desenvolvimento.ifdmTi)) : 0;
 
             let passesIntervals = true;
             if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) passesIntervals = false;
             if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) passesIntervals = false;
 
-            let somaIfdmPop = 0; let somaPop = 0;
+            let somaIfdmLocal = 0; let qtdIfdmLocal = 0;
             if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
                 t.desenvolvimentoDetalhado.forEach(m => {
                     if (isMunValid(m.municipio)) {
-                        if (Number(m.ifdm) > 0 && Number(m.populacao) > 0) { somaIfdmPop += (Number(m.ifdm) * Number(m.populacao)); somaPop += Number(m.populacao); }
+                        if (Number(m.ifdm) > 0) { 
+                            somaIfdmLocal += Number(m.ifdm); 
+                            qtdIfdmLocal += 1; 
+                        }
                     }
                 });
             } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
-                somaIfdmPop = t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal; somaPop = t.desenvolvimento.populacaoTotal;
+                somaIfdmLocal = t.desenvolvimento.ifdmTi; 
+                qtdIfdmLocal = 1;
             }
 
             const validCti = (t.entidadesDetalhadas || []).filter(ent => {
@@ -295,7 +311,7 @@ export default function useTerritoriosData(filters) {
             const hasDataForFilters = !( (isCtiFiltered && validCti.length === 0) || (isCursoFiltered && validCursos.length === 0) || (isCadeiaFiltered && validCadeias.length === 0) );
 
             stats[normalize(t.nome)] = {
-                ifdm: somaPop > 0 ? (somaIfdmPop / somaPop).toFixed(3) : "-",
+                ifdm: qtdIfdmLocal > 0 ? formatIFDM(somaIfdmLocal / qtdIfdmLocal) : "-",
                 capacidadeCti: String(validCti.length),
                 cadeiasIgs: String(validCadeias.length),
                 cursos: String(validCursos.length),
@@ -329,7 +345,8 @@ export default function useTerritoriosData(filters) {
     
     const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = [];
     const globalIds = new Set(); const globalCadeiasIds = new Set();
-    let somaIfdmPop = 0; let somaPopulacao = 0;
+    
+    let somaIfdmGlobal = 0; let qtdMunicipiosIfdmGlobal = 0;
     
     let unfiltCursosCount = 0;
     const unfiltIds = new Set(); const unfiltCadeiasIds = new Set();
@@ -337,7 +354,7 @@ export default function useTerritoriosData(filters) {
     targetList.forEach(t => {
         unfiltCursosCount += (t.cursosDetalhado || []).length;
 
-        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : 0;
+        const ifdmVal = t.desenvolvimento?.ifdmTi ? Number(formatIFDM(t.desenvolvimento.ifdmTi)) : 0;
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
         if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
 
@@ -443,14 +460,18 @@ export default function useTerritoriosData(filters) {
 
         if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
             t.desenvolvimentoDetalhado.forEach(m => {
-                if (isMunValid(m.municipio) && Number(m.ifdm) > 0) { somaIfdmPop += (Number(m.ifdm) * Number(m.populacao)); somaPopulacao += Number(m.populacao); }
+                if (isMunValid(m.municipio) && Number(m.ifdm) > 0) { 
+                    somaIfdmGlobal += Number(m.ifdm); 
+                    qtdMunicipiosIfdmGlobal += 1; 
+                }
             });
         } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
-            somaIfdmPop += (t.desenvolvimento.ifdmTi * t.desenvolvimento.populacaoTotal); somaPopulacao += t.desenvolvimento.populacaoTotal;
+            somaIfdmGlobal += t.desenvolvimento.ifdmTi;
+            qtdMunicipiosIfdmGlobal += 1;
         }
     });
 
-    const ifdmValue = somaPopulacao > 0 ? (somaIfdmPop / somaPopulacao) : 0;
+    const ifdmValue = qtdMunicipiosIfdmGlobal > 0 ? (somaIfdmGlobal / qtdMunicipiosIfdmGlobal) : 0;
 
     let coberturaCalculada = "";
     let pctBarraSemi = 0;
@@ -509,7 +530,7 @@ export default function useTerritoriosData(filters) {
     return { 
         topKpis: {
             capacidadeCti: String(globalIds.size), 
-            ifdm: somaPopulacao > 0 ? ifdmValue.toFixed(3) : "-",
+            ifdm: qtdMunicipiosIfdmGlobal > 0 ? formatIFDM(ifdmValue) : "-",
             cadeiasIgs: String(globalCadeiasIds.size), 
             coberturaSemiarido: coberturaCalculada,
             cursos: String(cursosFlat.length),
