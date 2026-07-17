@@ -78,6 +78,8 @@ function MainApp() {
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
     const [expandedCourse, setExpandedCourse] = useState(null);
     const [expandedCadeia, setExpandedCadeia] = useState(null);
+    const [sidebarCadeiaSearch, setSidebarCadeiaSearch] = useState('');
+    const [expandedSidebarCadeia, setExpandedSidebarCadeia] = useState({});
 
     // Navbars e Scroll
     const [navVisible, setNavVisible] = useState(true);
@@ -1059,63 +1061,95 @@ function MainApp() {
                                 </div>
                             </div>
                             <div>
-                                <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Filtrar Cadeias Produtivas</span>
-                                <div className="flex flex-col gap-2">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">Filtrar Cadeias Produtivas</span>
+                                    {cadeiaProdutivaFilter.length > 0 && (
+                                        <button 
+                                            onClick={() => setCadeiaProdutivaFilter([])} 
+                                            className={`text-[9px] font-bold text-gov-red hover:underline opacity-80 hover:opacity-100 transition-opacity`}
+                                        >
+                                            Limpar ({cadeiaProdutivaFilter.length})
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="flex flex-col gap-2.5">
                                     <div className="relative w-full">
                                         <input
                                             type="text"
-                                            placeholder="Buscar cadeia, segmento..."
-                                            value={cadeiaSearchTerm}
-                                            onChange={(e) => setCadeiaSearchTerm(e.target.value)}
-                                            className={`w-full h-8 pl-7 pr-7 rounded-md text-[10px] font-medium transition-all outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-gray-50 border-gray-200 text-gray-800 focus:border-gov-green'}`}
+                                            placeholder="Buscar segmento..."
+                                            value={sidebarCadeiaSearch}
+                                            onChange={(e) => setSidebarCadeiaSearch(e.target.value)}
+                                            className={`w-full h-8 pl-8 pr-7 rounded-lg text-[10px] font-medium transition-all outline-none border ${darkMode ? 'bg-gray-800/80 border-gray-700 text-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500' : 'bg-gray-50 border-gray-200 text-gray-800 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600'}`}
                                         />
-                                        <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                        {cadeiaSearchTerm && (
-                                            <button onClick={() => setCadeiaSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2.5 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400">
+                                        <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                                        {sidebarCadeiaSearch && (
+                                            <button onClick={() => setSidebarCadeiaSearch('')} aria-label="Limpar pesquisa" className="absolute right-2.5 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400 transition-colors">
                                                 <Eraser size={12} />
                                             </button>
                                         )}
                                     </div>
-                                    <div className="max-h-40 overflow-y-auto hide-scroll flex flex-col gap-2 border p-2 rounded-lg border-gray-500/20">
+                                    <div className="max-h-60 overflow-y-auto hide-scroll flex flex-col gap-2.5 border p-2.5 rounded-xl border-gray-500/20 bg-gray-500/5">
                                         {['APL', 'IG'].map(tipo => {
-                                            const subSegments = todasAsCadeiasPorTipo[tipo] || [];
-                                            const subKeys = subSegments.map(s => `${tipo}__${s}`);
+                                            const allSubSegments = todasAsCadeiasPorTipo[tipo] || [];
+                                            const searchNorm = normalize(sidebarCadeiaSearch);
+                                            const filteredSubSegments = searchNorm
+                                                ? allSubSegments.filter(seg => normalize(seg).includes(searchNorm))
+                                                : allSubSegments;
+                                            const subKeys = filteredSubSegments.map(s => `${tipo}__${s}`);
                                             const isParentSelected = cadeiaProdutivaFilter.includes(tipo);
                                             const isSomeSubSelected = subKeys.some(k => cadeiaProdutivaFilter.includes(k));
-                                            const isAllSubSelected = subSegments.length > 0 && subKeys.every(k => cadeiaProdutivaFilter.includes(k));
+                                            const allSubKeys = allSubSegments.map(s => `${tipo}__${s}`);
+                                            const isAllSubSelected = allSubSegments.length > 0 && allSubKeys.every(k => cadeiaProdutivaFilter.includes(k));
+                                            const isExpanded = expandedSidebarCadeia[tipo] || false;
+                                            const LIMIT = 3;
+                                            const visibleSegments = (searchNorm || isExpanded) ? filteredSubSegments : filteredSubSegments.slice(0, LIMIT);
+                                            const hasMore = !searchNorm && filteredSubSegments.length > LIMIT;
+
+                                            if (searchNorm && filteredSubSegments.length === 0) return null;
 
                                             return (
-                                                <div key={tipo} className="flex flex-col gap-1">
-                                                    <label className="flex items-center gap-2 text-[10px] font-black cursor-pointer select-none">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={isParentSelected || isAllSubSelected}
-                                                            onChange={() => handleCadeiaParentToggle(tipo)}
-                                                            className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-3 w-3"
-                                                        />
-                                                        <span className={isParentSelected || isSomeSubSelected ? (darkMode ? 'text-green-400 font-bold' : 'text-gov-green-dark font-bold') : 'opacity-80'}>
-                                                            {tipo}
+                                                <div key={tipo} className={`flex flex-col gap-1.5 p-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-800/40 border border-gray-700/50' : 'bg-white border border-gray-100 shadow-xs'}`}>
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="flex items-center gap-2 text-[11px] font-black cursor-pointer select-none">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isParentSelected || isAllSubSelected}
+                                                                onChange={() => handleCadeiaParentToggle(tipo)}
+                                                                className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 h-3.5 w-3.5 accent-emerald-600 cursor-pointer"
+                                                            />
+                                                            <span className={isParentSelected || isSomeSubSelected ? (darkMode ? 'text-emerald-400 font-extrabold' : 'text-emerald-700 font-extrabold') : (darkMode ? 'text-gray-200' : 'text-gray-800')}>
+                                                                {tipo}
+                                                            </span>
+                                                        </label>
+                                                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${darkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800'}`}>
+                                                            {filteredSubSegments.length}
                                                         </span>
-                                                    </label>
-                                                    {subSegments.length > 0 && (
-                                                        <div className="pl-3 flex flex-col gap-1 border-l border-gray-300 dark:border-gray-700 ml-1">
-                                                            {subSegments.map(seg => {
+                                                    </div>
+                                                    {filteredSubSegments.length > 0 && (
+                                                        <div className="pl-3.5 flex flex-col gap-0.5 border-l-2 border-emerald-500/30 ml-1.5 mt-0.5">
+                                                            {visibleSegments.map(seg => {
                                                                 const key = `${tipo}__${seg}`;
                                                                 const isSubChecked = isParentSelected || cadeiaProdutivaFilter.includes(key);
                                                                 return (
-                                                                    <label key={seg} className="flex items-center gap-2 text-[9px] font-medium cursor-pointer select-none py-0.5">
+                                                                    <label key={seg} className={`flex items-center gap-2 text-[10px] font-medium cursor-pointer select-none px-2 py-1 rounded-md transition-all ${isSubChecked ? (darkMode ? 'bg-emerald-950/40 text-emerald-300 font-semibold' : 'bg-emerald-50 text-emerald-900 font-semibold') : (darkMode ? 'hover:bg-gray-700/40 text-gray-300' : 'hover:bg-gray-100 text-gray-700')}`}>
                                                                         <input
                                                                             type="checkbox"
                                                                             checked={isSubChecked}
                                                                             onChange={() => handleCadeiaSubToggle(tipo, seg)}
-                                                                            className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-2.5 w-2.5"
+                                                                            className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 h-3 w-3 accent-emerald-600 cursor-pointer"
                                                                         />
-                                                                        <span className={isSubChecked ? (darkMode ? 'text-gray-100' : 'text-gray-900') : 'opacity-60'}>
-                                                                            {seg}
-                                                                        </span>
+                                                                        <span className="truncate">{seg}</span>
                                                                     </label>
                                                                 );
                                                             })}
+                                                            {hasMore && (
+                                                                <button
+                                                                    onClick={() => setExpandedSidebarCadeia(prev => ({ ...prev, [tipo]: !prev[tipo] }))}
+                                                                    className={`w-full py-1 mt-1 text-[9px] font-bold uppercase tracking-wider rounded-md transition-colors flex items-center justify-center gap-1 ${darkMode ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700'}`}
+                                                                >
+                                                                    {isExpanded ? '▲ Ver menos' : `▼ Ver mais (${filteredSubSegments.length - LIMIT})`}
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
