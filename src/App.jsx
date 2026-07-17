@@ -1404,7 +1404,7 @@ function MainApp() {
 
                                             {/* LISTA 1: ESTRUTURAS CT&I */}
                                             <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-visible border shadow-sm flex flex-col relative transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                                <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Estruturas CT&I</h4>
                                                         <div className="relative group flex items-center justify-center z-40">
@@ -1451,7 +1451,7 @@ function MainApp() {
 
                                             {/* LISTA 2: CADEIAS PRODUTIVAS */}
                                             <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-visible border shadow-sm flex flex-col relative transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                                <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cadeias Produtivas</h4>
                                                         <div className="relative group flex items-center justify-center z-40">

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T17:55:23.584Z",
+  "generatedAt": "2026-07-17T18:23:17.890Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
@@ -243,9 +243,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.4964929131409561,
+        "ifdmTi": 0.4990799999999999,
         "populacaoTotal": 276540,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -302,9 +302,9 @@
       ],
       "cursosDetalhado": [],
       "desenvolvimento": {
-        "ifdmTi": 0.49970278753686376,
+        "ifdmTi": 0.5070875,
         "populacaoTotal": 141040,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -406,9 +406,9 @@
       ],
       "cursosDetalhado": [],
       "desenvolvimento": {
-        "ifdmTi": 0.4995820555939308,
+        "ifdmTi": 0.48486363636363633,
         "populacaoTotal": 209915,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -962,9 +962,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.588435865458623,
+        "ifdmTi": 0.4988571428571428,
         "populacaoTotal": 511902,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -1269,9 +1269,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.46233044121696026,
+        "ifdmTi": 0.4511866666666666,
         "populacaoTotal": 377728,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -1536,9 +1536,9 @@
       ],
       "cursosDetalhado": [],
       "desenvolvimento": {
-        "ifdmTi": 0.4964898708298718,
+        "ifdmTi": 0.48987916666666664,
         "populacaoTotal": 399628,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -1798,9 +1798,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5457866154512525,
+        "ifdmTi": 0.48985,
         "populacaoTotal": 420186,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2249,9 +2249,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5324169087934921,
+        "ifdmTi": 0.5072230769230769,
         "populacaoTotal": 452380,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2583,9 +2583,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5054257090737772,
+        "ifdmTi": 0.47702,
         "populacaoTotal": 430879,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2747,9 +2747,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5051380090250539,
+        "ifdmTi": 0.47861666666666663,
         "populacaoTotal": 183046,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2825,7 +2825,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -3291,9 +3291,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5067016588895186,
+        "ifdmTi": 0.483915,
         "populacaoTotal": 566403,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -4185,9 +4185,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.49105213674417014,
+        "ifdmTi": 0.46401153846153853,
         "populacaoTotal": 750979,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -4519,9 +4519,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5201378841963998,
+        "ifdmTi": 0.48881875,
         "populacaoTotal": 368106,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -4742,9 +4742,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.49301369380804294,
+        "ifdmTi": 0.4815307692307692,
         "populacaoTotal": 236355,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -7685,9 +7685,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.6337155035285221,
+        "ifdmTi": 0.5897846153846154,
         "populacaoTotal": 3623330,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8427,7 +8427,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8632,9 +8632,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5108206940272028,
+        "ifdmTi": 0.49085555555555566,
         "populacaoTotal": 211375,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8782,9 +8782,9 @@
       ],
       "cursosDetalhado": [],
       "desenvolvimento": {
-        "ifdmTi": 0.5204569926781494,
+        "ifdmTi": 0.4983846153846153,
         "populacaoTotal": 257312,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8957,9 +8957,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5054275300192587,
+        "ifdmTi": 0.4984111111111111,
         "populacaoTotal": 285067,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -9922,9 +9922,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5519643983587549,
+        "ifdmTi": 0.5065235294117647,
         "populacaoTotal": 1008990,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -10176,7 +10176,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -10205,7 +10205,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -10970,9 +10970,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5425469306949088,
+        "ifdmTi": 0.5233842105263158,
         "populacaoTotal": 538200,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11048,7 +11048,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11390,9 +11390,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.48850890670980146,
+        "ifdmTi": 0.4782111111111111,
         "populacaoTotal": 424096,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11564,7 +11564,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11900,9 +11900,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.4971660497736178,
+        "ifdmTi": 0.4432600000000001,
         "populacaoTotal": 590594,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -12298,9 +12298,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.56240738856681,
+        "ifdmTi": 0.530295,
         "populacaoTotal": 501085,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -12608,9 +12608,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.47714604216942147,
+        "ifdmTi": 0.48034999999999994,
         "populacaoTotal": 621161,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -13252,9 +13252,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.5677432834150894,
+        "ifdmTi": 0.517475,
         "populacaoTotal": 786486,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -13470,9 +13470,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.4949809912755369,
+        "ifdmTi": 0.47600499999999996,
         "populacaoTotal": 303629,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -13716,9 +13716,9 @@
         }
       ],
       "desenvolvimento": {
-        "ifdmTi": 0.4614334343908034,
+        "ifdmTi": 0.45249375000000003,
         "populacaoTotal": 394495,
-        "metodologia": "IFDM_TI = soma(IFDM_municipio * populacao_municipio) / soma(populacao_municipio)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
       },
       "assistenciaPublica": {
         "existe": false,
