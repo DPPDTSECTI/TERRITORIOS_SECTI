@@ -8,8 +8,8 @@ const SVG_H = 800;
 const PADDING = 20;
 
 // Constantes para o algoritmo de anti-colisão de rótulos
-const LABEL_COLLISION_PADDING = 4; // Espaçamento extra entre rótulos
-const LABEL_FORCE_STRENGTH = 0.08; // Força que "puxa" o rótulo de volta ao seu centroide
+const LABEL_COLLISION_PADDING = 2; // Espaçamento extra entre rótulos
+const LABEL_FORCE_STRENGTH = 0.45; // Força forte que mantém o rótulo próximo ao seu centroide
 const SIMULATION_ITERATIONS = 250; // Número de iterações da simulação
 
 // Paleta de cores moderna e harmoniosa, inspirada nas paisagens e cultura da Bahia.
@@ -250,18 +250,44 @@ export default function ConectaMap({
                     const tKey = getTerritoryKey(territoryName);
 
                     let fMinX = Infinity, fMaxX = -Infinity, fMinY = Infinity, fMaxY = -Infinity;
+                    let bestCx = 0, bestCy = 0, maxArea = -1;
 
                     if (feat.geometry) {
-                        const coords = feat.geometry.type === 'Polygon' ? feat.geometry.coordinates.flat() : feat.geometry.coordinates.flat(2);
-                        coords.forEach(([x, y]) => {
-                            const [px, py] = project([x, y]);
-                            if (px < fMinX) fMinX = px; if (px > fMaxX) fMaxX = px;
-                            if (py < fMinY) fMinY = py; if (py > fMaxY) fMaxY = py;
+                        let rings = [];
+                        if (feat.geometry.type === 'Polygon') {
+                            rings = [feat.geometry.coordinates[0]];
+                        } else if (feat.geometry.type === 'MultiPolygon') {
+                            rings = feat.geometry.coordinates.map(p => p[0]);
+                        } else {
+                            const coords = feat.geometry.coordinates.flat(2);
+                            rings = [coords];
+                        }
+
+                        rings.forEach(ring => {
+                            if (!ring || ring.length === 0) return;
+                            let rMinX = Infinity, rMaxX = -Infinity, rMinY = Infinity, rMaxY = -Infinity;
+                            let sumX = 0, sumY = 0, count = 0;
+
+                            ring.forEach(([x, y]) => {
+                                const [px, py] = project([x, y]);
+                                if (px < fMinX) fMinX = px; if (px > fMaxX) fMaxX = px;
+                                if (py < fMinY) fMinY = py; if (py > fMaxY) fMaxY = py;
+                                if (px < rMinX) rMinX = px; if (px > rMaxX) rMaxX = px;
+                                if (py < rMinY) rMinY = py; if (py > rMaxY) rMaxY = py;
+                                sumX += px; sumY += py; count++;
+                            });
+
+                            const area = (rMaxX - rMinX) * (rMaxY - rMinY);
+                            if (area > maxArea && count > 0) {
+                                maxArea = area;
+                                bestCx = sumX / count;
+                                bestCy = sumY / count;
+                            }
                         });
                     }
 
-                    const cx = (fMinX + fMaxX) / 2;
-                    const cy = (fMinY + fMaxY) / 2;
+                    const cx = bestCx || (fMinX + fMaxX) / 2;
+                    const cy = bestCy || (fMinY + fMaxY) / 2;
 
                     if (!tLabelsData[tKey]) tLabelsData[tKey] = { sumX: 0, sumY: 0, count: 0, name: territoryName };
                     tLabelsData[tKey].sumX += cx; tLabelsData[tKey].sumY += cy; tLabelsData[tKey].count += 1;
@@ -379,6 +405,18 @@ export default function ConectaMap({
             simulation.tick();
         }
 
+        // Limita o deslocamento máximo para impedir que o rótulo vá para longe de sua região
+        const maxDist = 20 / baseTransform.scale;
+        nodes.forEach(node => {
+            const dx = node.x - node.idealX;
+            const dy = node.y - node.idealY;
+            const dist = Math.hypot(dx, dy);
+            if (dist > maxDist) {
+                node.x = node.idealX + (dx / dist) * maxDist;
+                node.y = node.idealY + (dy / dist) * maxDist;
+            }
+        });
+
         // 3. Retornar os nós com as posições finais calculadas
         return nodes;
     }, [territoryLabels, baseTransform.scale]);
@@ -426,6 +464,17 @@ export default function ConectaMap({
             simulation.tick();
         }
 
+        const maxMunDist = 15 / baseTransform.scale;
+        nodes.forEach(node => {
+            const dx = node.x - node.idealX;
+            const dy = node.y - node.idealY;
+            const dist = Math.hypot(dx, dy);
+            if (dist > maxMunDist) {
+                node.x = node.idealX + (dx / dist) * maxMunDist;
+                node.y = node.idealY + (dy / dist) * maxMunDist;
+            }
+        });
+
         return nodes;
     }, [selectedTerritory, mapFeatures, baseTransform.scale, filtroSemiarido, semiaridoMunicipios]);
 
@@ -453,9 +502,17 @@ export default function ConectaMap({
         return () => svg.removeEventListener('wheel', handleNativeWheel);
     }, [loading]);
 
-    const handleMouseDown = (e) => { setIsDragging(true); dragTotal.current = 0; lastMousePos.current = { x: e.clientX, y: e.clientY }; };
+    const handleMouseDown = (e) => { 
+        if (e.button === 0) {
+            window.getSelection()?.removeAllRanges();
+        }
+        setIsDragging(true); 
+        dragTotal.current = 0; 
+        lastMousePos.current = { x: e.clientX, y: e.clientY }; 
+    };
     const handleMouseMoveSVG = (e) => {
         if (!isDragging) return;
+        window.getSelection()?.removeAllRanges();
         const dx = e.clientX - lastMousePos.current.x; const dy = e.clientY - lastMousePos.current.y;
         dragTotal.current += Math.abs(dx) + Math.abs(dy);
         lastMousePos.current = { x: e.clientX, y: e.clientY };
@@ -571,7 +628,7 @@ export default function ConectaMap({
     const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
 
     return (
-        <div ref={containerRef} className="relative isolate w-full h-full min-h-[500px] flex items-center justify-center bg-transparent rounded-xl overflow-hidden">
+        <div ref={containerRef} className="relative isolate w-full h-full min-h-[500px] flex items-center justify-center bg-transparent rounded-xl overflow-hidden select-none">
 
             {loading ? (
                 <div className="flex flex-col items-center text-gov-blueDark-500">
@@ -582,7 +639,8 @@ export default function ConectaMap({
                 <svg
                     ref={svgRef}
                     viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-                    className={`w-full h-full overflow-visible ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                    className={`w-full h-full overflow-visible select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                    style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
                     onMouseDown={handleMouseDown} onMouseMove={handleMouseMoveSVG}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={() => {
@@ -671,22 +729,23 @@ export default function ConectaMap({
                                         const lineHeight = fontSize * 1.1;
                                         const startY = y - ((lines.length - 1) * lineHeight) / 2;
 
-                                        // Verifica se precisa de uma leader line
+                                        // Verifica se precisa de uma leader line (apenas se o rótulo for afastado significativamente)
                                         const dx = x - idealX;
                                         const dy = y - idealY;
-                                        const distance = Math.sqrt(dx * dx + dy * dy);
-                                        const needsLeaderLine = distance > 10 / baseTransform.scale;
+                                        const distance = Math.hypot(dx, dy);
+                                        const needsLeaderLine = distance > 14 / baseTransform.scale;
 
                                         return (
                                             <g key={`t-lbl-${i}`}>
                                                 {needsLeaderLine && (
-                                                    <g opacity={0.7}>
+                                                    <g opacity={0.9}>
                                                         <line
                                                             x1={idealX} y1={idealY} x2={x} y2={y}
-                                                            stroke={darkMode ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"}
-                                                            strokeWidth={0.8 / effectiveScale}
+                                                            stroke={darkMode ? "rgba(255, 255, 255, 0.75)" : "rgba(15, 76, 129, 0.75)"}
+                                                            strokeWidth={1.8 / effectiveScale}
+                                                            strokeDasharray={`${3 / effectiveScale},${2 / effectiveScale}`}
                                                         />
-                                                        <circle cx={idealX} cy={idealY} r={1.5 / effectiveScale} fill={darkMode ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"} />
+                                                        <circle cx={idealX} cy={idealY} r={2.5 / effectiveScale} fill={darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(15, 76, 129, 0.9)"} />
                                                     </g>
                                                 )}
                                                 <text
@@ -748,16 +807,21 @@ export default function ConectaMap({
 
                                         const dx = x - idealX;
                                         const dy = y - idealY;
-                                        const distance = Math.sqrt(dx * dx + dy * dy);
-                                        const needsLeaderLine = distance > 5 / baseTransform.scale;
+                                        const distance = Math.hypot(dx, dy);
+                                        const needsLeaderLine = distance > 10 / baseTransform.scale;
 
                                         return (
                                             <g key={`m-lbl-${i}`}>
                                                 {needsLeaderLine && (
-                                                    <>
-                                                        <line x1={idealX} y1={idealY} x2={x} y2={y} stroke={darkMode ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.35)"} strokeWidth={0.7 / effectiveScale} />
-                                                        <circle cx={idealX} cy={idealY} r={1.2 / effectiveScale} fill={darkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"} />
-                                                    </>
+                                                    <g opacity={0.9}>
+                                                        <line
+                                                            x1={idealX} y1={idealY} x2={x} y2={y}
+                                                            stroke={darkMode ? "rgba(255, 255, 255, 0.8)" : "rgba(15, 76, 129, 0.8)"}
+                                                            strokeWidth={1.5 / effectiveScale}
+                                                            strokeDasharray={`${2.5 / effectiveScale},${1.5 / effectiveScale}`}
+                                                        />
+                                                        <circle cx={idealX} cy={idealY} r={2 / effectiveScale} fill={darkMode ? "rgba(255, 255, 255, 0.95)" : "rgba(15, 76, 129, 0.95)"} />
+                                                    </g>
                                                 )}
                                                 <text
                                                     x={x} y={y} textAnchor="middle" alignmentBaseline="middle"
