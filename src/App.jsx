@@ -2,7 +2,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap";
-import LandingHero from './components/hero'; import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg } from 'lucide-react';
+import LandingHero from './components/hero'; import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import SobrePage from './components/SobrePage';
@@ -86,6 +86,7 @@ function MainApp() {
     // Menus Laterais
     const [isSideFilterOpen, setIsSideFilterOpen] = useState(false);
     const [isVerticalSearchOpen, setIsVerticalSearchOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Filtros de D.Territorial
     const [ifdmMin, setIfdmMin] = useState('');
@@ -905,16 +906,59 @@ function MainApp() {
                         ))}
                     </nav>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 relative">
                     <button onClick={() => setDarkMode(!darkMode)} aria-label="Alterar Tema" className={`p-2 rounded-lg transition-all border ${darkMode ? 'bg-gray-800 border-gray-700 text-yellow-400 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
                         {darkMode ? <Sun size={16} strokeWidth={2.5} /> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>}
                     </button>
                     <img src={darkMode ? "/img/Brasao-Horizontal_Branco.png" : "/img/Brasao-Horizontal_Preto.png"} alt="GOV BA" className="h-6 object-contain hidden lg:block opacity-90" />
+                    
+                    {/* MOBILE MENU TOGGLE */}
+                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className={`lg:hidden p-2 rounded-lg transition-all border ${isMobileMenuOpen ? 'bg-gov-blue text-white border-gov-blue' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50')}`}>
+                        <Menu size={16} strokeWidth={2.5} />
+                    </button>
+
+                    {/* MOBILE MENU DROPDOWN */}
+                    {isMobileMenuOpen && (
+                        <div className={`lg:hidden absolute top-[calc(100%+1rem)] right-0 w-[calc(100vw-3rem)] max-w-sm rounded-2xl p-4 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl z-[200] animate-soft-fade ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                            {/* Navegação Mobile */}
+                            <div className="flex gap-2">
+                                <Link to="/" onClick={()=>setIsMobileMenuOpen(false)} className={`flex-1 text-center p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>Início</Link>
+                                <Link to="/sobre" onClick={()=>setIsMobileMenuOpen(false)} className={`flex-1 text-center p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>Sobre</Link>
+                            </div>
+                            
+                            {/* Busca */}
+                            <div className="relative">
+                                <input type="text" placeholder="Buscar no painel..." value={searchTerm} onChange={(e) => {setSearchTerm(e.target.value); setIsDropdownOpen(true);}} className={`w-full h-10 px-4 rounded-lg text-[11px] font-medium outline-none border transition-all ${darkMode ? 'bg-gray-900/95 border-gray-700 text-white focus:border-gov-blue' : 'bg-white/95 border-gray-200 text-gray-800 focus:border-gov-blue'}`} />
+                                {isDropdownOpen && searchTerm && (
+                                    <div className={`absolute left-0 top-full mt-2 w-full max-h-48 overflow-y-auto hide-scroll rounded-lg border shadow-2xl z-[250] backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                                        {filteredOptions.length > 0 ? (
+                                            <div className="flex flex-col p-1.5 gap-0.5">
+                                                {filteredOptions.map((opt, i) => (
+                                                    <button key={i} onClick={() => { setSearchTerm(opt.matchText); setIsDropdownOpen(false); setIsMobileMenuOpen(false); if (opt.matchType === 'Território') setSelectedLocation(opt); else setSelectedLocation(null); }} className={`w-full text-left px-3 py-2 rounded-md text-[11px] transition-colors flex flex-col ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
+                                                        <span className="font-bold truncate">{opt.matchText}</span>
+                                                        <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${darkMode ? 'text-blue-400' : 'text-gov-blue'}`}> {opt.matchType} <span className="opacity-50 text-gray-500 ml-1">em {opt.nome}</span> </span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (<div className={`p-4 text-center text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhum resultado encontrado.</div>)}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Ações */}
+                            <div className="grid grid-cols-2 gap-2">
+                                <button onClick={() => { setIsSideFilterOpen(!isSideFilterOpen); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${isSideFilterOpen ? 'bg-gov-blue text-white border-gov-blue' : (darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100')}`}><Filter size={14}/> Filtros</button>
+                                <button onClick={() => { carregarDadosDoSharePoint(true); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'text-green-400 bg-green-900/20 border-green-900/50' : 'text-gov-green-dark bg-gov-green/10 border-gov-green/30'}`}><RefreshCw size={14} className={isLoadingPipeline ? "animate-spin":""}/> Sync</button>
+                            </div>
+                            
+                            <button onClick={() => { resetGlobalFilters(); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${hasActiveFilters ? (darkMode ? 'text-red-400 bg-red-900/20 border-red-900/50' : 'text-gov-red bg-gov-red/10 border-gov-red/30') : (darkMode ? 'text-gray-500 bg-gray-800 border-gray-700' : 'text-gray-400 bg-gray-50 border-gray-200')}`}><Eraser size={14}/> Limpar Filtros</button>
+                        </div>
+                    )}
                 </div>
             </header>
 
-            {/* NAVBAR LATERAL VERTICAL (Sempre visível em /territorios) */}
-            <div className={`fixed right-4 top-1/2 -translate-y-1/2 z-[120] flex flex-col items-end gap-3 transition-all duration-500 ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
+            {/* NAVBAR LATERAL VERTICAL (Sempre visível em /territorios no Desktop) */}
+            <div className={`hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-[120] flex-col items-end gap-3 transition-all duration-500 ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
                 <div className={`flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
                     <Link to="/" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Início">
                         <Home size={18} strokeWidth={2.5} />
@@ -975,7 +1019,11 @@ function MainApp() {
                     </button>
 
                     {isSideFilterOpen && (
-                        <div className={`absolute right-[125%] bottom-0 w-72 rounded-2xl p-5 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl animate-soft-fade ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                        <div className={`fixed inset-x-4 bottom-4 lg:absolute lg:inset-auto lg:right-[125%] lg:bottom-0 lg:w-72 max-h-[80vh] overflow-y-auto lg:max-h-auto rounded-2xl p-5 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl animate-soft-fade z-[250] ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                            {/* Botão Fechar Modal Mobile */}
+                            <button onClick={() => setIsSideFilterOpen(false)} className={`lg:hidden absolute top-3 right-3 p-1.5 rounded-lg transition-colors ${darkMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-500'}`}>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
                             <div>
                                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-2">Recorte Geográfico</span>
                                 <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-gov-yellow border-yellow-600 text-white hover:bg-yellow-600' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>
@@ -1010,6 +1058,72 @@ function MainApp() {
                                     ))}
                                 </div>
                             </div>
+                            <div>
+                                <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-1.5">Filtrar Cadeias Produtivas</span>
+                                <div className="flex flex-col gap-2">
+                                    <div className="relative w-full">
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar cadeia, segmento..."
+                                            value={cadeiaSearchTerm}
+                                            onChange={(e) => setCadeiaSearchTerm(e.target.value)}
+                                            className={`w-full h-8 pl-7 pr-7 rounded-md text-[10px] font-medium transition-all outline-none border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-gray-50 border-gray-200 text-gray-800 focus:border-gov-green'}`}
+                                        />
+                                        <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                                        {cadeiaSearchTerm && (
+                                            <button onClick={() => setCadeiaSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2.5 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400">
+                                                <Eraser size={12} />
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="max-h-40 overflow-y-auto hide-scroll flex flex-col gap-2 border p-2 rounded-lg border-gray-500/20">
+                                        {['APL', 'IG'].map(tipo => {
+                                            const subSegments = todasAsCadeiasPorTipo[tipo] || [];
+                                            const subKeys = subSegments.map(s => `${tipo}__${s}`);
+                                            const isParentSelected = cadeiaProdutivaFilter.includes(tipo);
+                                            const isSomeSubSelected = subKeys.some(k => cadeiaProdutivaFilter.includes(k));
+                                            const isAllSubSelected = subSegments.length > 0 && subKeys.every(k => cadeiaProdutivaFilter.includes(k));
+
+                                            return (
+                                                <div key={tipo} className="flex flex-col gap-1">
+                                                    <label className="flex items-center gap-2 text-[10px] font-black cursor-pointer select-none">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isParentSelected || isAllSubSelected}
+                                                            onChange={() => handleCadeiaParentToggle(tipo)}
+                                                            className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-3 w-3"
+                                                        />
+                                                        <span className={isParentSelected || isSomeSubSelected ? (darkMode ? 'text-green-400 font-bold' : 'text-gov-green-dark font-bold') : 'opacity-80'}>
+                                                            {tipo}
+                                                        </span>
+                                                    </label>
+                                                    {subSegments.length > 0 && (
+                                                        <div className="pl-3 flex flex-col gap-1 border-l border-gray-300 dark:border-gray-700 ml-1">
+                                                            {subSegments.map(seg => {
+                                                                const key = `${tipo}__${seg}`;
+                                                                const isSubChecked = isParentSelected || cadeiaProdutivaFilter.includes(key);
+                                                                return (
+                                                                    <label key={seg} className="flex items-center gap-2 text-[9px] font-medium cursor-pointer select-none py-0.5">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={isSubChecked}
+                                                                            onChange={() => handleCadeiaSubToggle(tipo, seg)}
+                                                                            className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-2.5 w-2.5"
+                                                                        />
+                                                                        <span className={isSubChecked ? (darkMode ? 'text-gray-100' : 'text-gray-900') : 'opacity-60'}>
+                                                                            {seg}
+                                                                        </span>
+                                                                    </label>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -1031,7 +1145,7 @@ function MainApp() {
                                         <h3 className={`text-[10px] font-black uppercase tracking-widest ${themeClasses.textMuted}`}>Cenário Global {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Semiárido Baiano' : '— Estado da Bahia')}</h3>
                                         <span className={`text-[9px] font-medium hidden sm:block ${themeClasses.textMuted}`}>Status: {lastUpdate}</span>
                                     </div>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                                    <div className="flex overflow-x-auto snap-x hide-scroll sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3 pb-2 sm:pb-0">
                                         {[
                                             { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Database size={14} />, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
                                             { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
@@ -1054,7 +1168,7 @@ function MainApp() {
                                             return (
                                                 <div
                                                     key={idx}
-                                                    className={`relative p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
+                                                    className={`relative p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 shrink-0 w-[65vw] sm:w-auto snap-center ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
                                                 >
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-2 mb-1">
@@ -1093,11 +1207,11 @@ function MainApp() {
                                 </div>
 
                                 {/* A "Ilha" Encaixada na tela */}
-                                <div className="flex flex-col lg:flex-row gap-4 items-stretch h-[calc(100vh-180px)] min-h-[500px] w-full mt-4 mb-3">
+                                <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                                     {!selectedLocation && subKpisList.length > 0 && (
-                                        <div className={`w-full lg:w-48 flex-shrink-0 h-full rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div className={`w-full lg:w-48 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                                                     Ativos de CT&I
@@ -1127,7 +1241,7 @@ function MainApp() {
 
 
                                     {/* COLUNA DO MAPA (40%) */}
-                                    <div ref={mapSectionRef} className="w-full lg:w-[40%] flex-shrink-0 flex flex-col relative">
+                                    <div ref={mapSectionRef} className="w-full lg:w-[40%] h-[280px] lg:h-auto flex-shrink-0 flex flex-col relative">
                                         <div className={`rounded-2xl border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
                                             <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
                                                 <span className="w-2 h-2 rounded-full bg-gov-green animate-pulse"></span>
@@ -1160,11 +1274,11 @@ function MainApp() {
                                     </div>
 
                                     {/* COLUNA DAS LISTAS (60%) */}
-                                    <div className="flex-1 flex flex-col gap-4 h-full overflow-hidden min-w-0">
-                                        <div className="flex flex-col sm:flex-row gap-4 flex-[0.8] min-h-0">
+                                    <div className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-hidden min-w-0">
+                                        <div className="flex flex-col sm:flex-row gap-4 flex-none lg:flex-[0.8] min-h-0">
 
                                             {/* LISTA 1: ESTRUTURAS CT&I */}
-                                            <div className={`w-full sm:w-1/2 min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                                 <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Estruturas CT&I</h4>
@@ -1211,7 +1325,7 @@ function MainApp() {
                                             </div>
 
                                             {/* LISTA 2: CADEIAS PRODUTIVAS */}
-                                            <div className={`w-full sm:w-1/2 min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                                 <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cadeias Produtivas</h4>
@@ -1281,7 +1395,7 @@ function MainApp() {
                                         </div>
 
                                         {/* LISTA 3: CURSOS SUPERIORES */}
-                                        <div className={`flex-[0.6] min-h-0 relative rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div className={`lg:flex-[0.6] h-[350px] lg:h-auto min-h-0 relative rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <div className="flex items-center gap-2">
                                                     <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cursos CT&I</h4>

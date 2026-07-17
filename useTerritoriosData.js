@@ -324,20 +324,6 @@ export default function useTerritoriosData(filters) {
     const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
-    const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
-    const activeTerritoriesByCti = new Set();
-
-    if (isCtiFiltered) {
-        targetList.forEach(t => {
-            const hasMatchingEntity = (t.entidadesDetalhadas || []).some(ent => {
-                return isMunValid(ent.municipio) && ent.categoria && ctiFilters[ent.categoria];
-            });
-            if (hasMatchingEntity) {
-                activeTerritoriesByCti.add(normalize(t.nome));
-            }
-        });
-    }
-
     const kpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     const unfiltKpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
     
@@ -355,7 +341,8 @@ export default function useTerritoriosData(filters) {
         if (ifdmMin !== '' && ifdmVal < Number(ifdmMin)) return;
         if (ifdmMax !== '' && ifdmVal > Number(ifdmMax)) return;
 
-        if (isCtiFiltered && !activeTerritoriesByCti.has(normalize(t.nome))) {
+        const stats = territoriesDynamicStats[normalize(t.nome)];
+        if (stats && !stats.matchesFilters) {
             return;
         }
 
@@ -532,7 +519,7 @@ export default function useTerritoriosData(filters) {
         entidades: Array.from(new Map(entidadesFlat.map(item => [item.id, item])).values()).sort((a, b) => (a.municipio || "").localeCompare(b.municipio || "")),
         aplIgs: finalAplIgs.sort((a, b) => (a.segmento || "").localeCompare(b.segmento || "")),
         cursos: Array.from(new Map(cursosFlat.map(item => [getCursoKey(item), item])).values()).sort((a, b) => (a.curso || "").localeCompare(b.curso || ""))
-    };}, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, ctiFilters, globalStats, cadeiaProdutivaFilter, debouncedCadeiaSearchTerm]);
+    };}, [selectedLocation, filtroSemiarido, territoriosData, semiaridoMunicipios, debouncedSearchTerm, ifdmMin, ifdmMax, ctiFilters, globalStats, cadeiaProdutivaFilter, debouncedCadeiaSearchTerm, territoriesDynamicStats]);
 
     return {
         territoriosData,

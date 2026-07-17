@@ -171,10 +171,10 @@ const MunicipioPath = React.memo(function MunicipioPath({
     );
 });
 
-export default function ConectaMap({ 
-    territoriosData = [], territoriesDynamicStats = {}, searchTerm = '', 
-    filtroSemiarido = false, selectedTerritory = null, 
-    onSelectTerritory = () => {}, semiaridoMunicipios = [], darkMode = false
+export default function ConectaMap({
+    territoriosData = [], territoriesDynamicStats = {}, searchTerm = '',
+    filtroSemiarido = false, selectedTerritory = null,
+    onSelectTerritory = () => { }, semiaridoMunicipios = [], darkMode = false
 }) {
     const [mapFeatures, setMapFeatures] = useState([]);
     const [territoryLabels, setTerritoryLabels] = useState([]);
@@ -182,12 +182,12 @@ export default function ConectaMap({
     const [hoveredMunicipality, setHoveredMunicipality] = useState(null);
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
     const [loading, setLoading] = useState(true);
-    
+
     const [userScale, setUserScale] = useState(1);
     const [userPan, setUserPan] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [isMunListExpanded, setIsMunListExpanded] = useState(false);
-    
+
     const svgRef = useRef(null);
     const containerRef = useRef(null);
     const lastMousePos = useRef({ x: 0, y: 0 });
@@ -269,7 +269,7 @@ export default function ConectaMap({
                     const d = getPathD(feat.geometry, project);
                     return { nome: municipio, territory: territoryName, d, cx, cy, fBounds: { minX: fMinX, maxX: fMaxX, minY: fMinY, maxY: fMaxY } };
                 });
-                
+
                 const labels = Object.values(tLabelsData).map(t => ({ name: t.name, x: t.sumX / t.count, y: t.sumY / t.count }));
 
                 setMapFeatures(features);
@@ -305,7 +305,7 @@ export default function ConectaMap({
     // === CÂMERA INTELIGENTE ===
     const baseTransform = useMemo(() => {
         if (!selectedTerritory || Object.keys(calcBoundsGlobal).length === 0) return { tx: 0, ty: 0, scale: 1 };
-        
+
         const tKey = getTerritoryKey(selectedTerritory.nome);
         let bounds = calcBoundsGlobal[tKey];
 
@@ -315,14 +315,14 @@ export default function ConectaMap({
 
         if (!bounds || bounds.minX === Infinity) return { tx: 0, ty: 0, scale: 1 };
 
-        const w = bounds.maxX - bounds.minX; 
+        const w = bounds.maxX - bounds.minX;
         const h = bounds.maxY - bounds.minY;
-        const cx = bounds.minX + w / 2; 
+        const cx = bounds.minX + w / 2;
         const cy = bounds.minY + h / 2;
-        
-        const availableWidth = SVG_W - 280; 
+
+        const availableWidth = SVG_W - 280;
         const scale = Math.min(availableWidth / w, SVG_H / h) * 0.88;
-        const clampedScale = Math.min(scale, 8); 
+        const clampedScale = Math.min(scale, 8);
 
         const tx = (availableWidth / 2) - cx * clampedScale;
         const ty = (SVG_H / 2) - cy * clampedScale;
@@ -348,7 +348,7 @@ export default function ConectaMap({
         const nodes = territoryLabels.map(label => {
             const lines = wrapText(label.name);
             const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), '');
-            
+
             // Estimar dimensões do rótulo
             const width = longestLine.length * fontSize * 0.55 + LABEL_COLLISION_PADDING;
             const height = lines.length * lineHeight + LABEL_COLLISION_PADDING;
@@ -478,7 +478,7 @@ export default function ConectaMap({
     // LÓGICA DE HOVER
     const onMapHover = useCallback((e, feat) => {
         if (feat.territory === 'Sem Território' || isDragging) return;
-        
+
         if (selectedTerritory) {
             const isSameTerritory = getTerritoryKey(feat.territory) === getTerritoryKey(selectedTerritory.nome);
             if (isSameTerritory) {
@@ -497,12 +497,12 @@ export default function ConectaMap({
 
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return;
-        
+
         const tooltipWidth = 260; const tooltipHeight = 180; const offset = 15;
         let x = e.clientX - rect.left + offset; let y = e.clientY - rect.top + offset;
         if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
-        
+
         setTooltip({ visible: true, x, y });
     }, [isDragging, selectedTerritory]);
 
@@ -534,7 +534,7 @@ export default function ConectaMap({
         const ifdm = devData?.ifdm ? Number(devData.ifdm).toFixed(3) : '-';
 
         const entidades = selectedTerritory.entidadesDetalhadas?.filter(e => normalizeName(e.municipio) === munKey) || [];
-        
+
         const cadeias = selectedTerritory.cadeiasProdutivasDetalhado?.filter(c => {
             const sede = normalizeName(c.sede);
             let satelite = normalizeName(c.municipioSatelite || c.municipiosSatelites || c.satelite || '');
@@ -560,7 +560,7 @@ export default function ConectaMap({
         if (!selectedTerritory) return [];
         const tBase = territoriosMunicipios.territorios_de_identidade.find(t => getTerritoryKey(t.nome) === getTerritoryKey(selectedTerritory.nome));
         if (!tBase) return [];
-        
+
         let muns = tBase.municipios;
         if (filtroSemiarido) {
             muns = muns.filter(m => semiaridoMunicipios.includes(normalizeName(m)));
@@ -572,22 +572,22 @@ export default function ConectaMap({
 
     return (
         <div ref={containerRef} className="relative isolate w-full h-full min-h-[500px] flex items-center justify-center bg-transparent rounded-xl overflow-hidden">
-            
+
             {loading ? (
                 <div className="flex flex-col items-center text-gov-blueDark-500">
                     <svg className="animate-spin h-8 w-8 mb-3" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     <span className="text-xs font-semibold tracking-wider uppercase">Carregando Malha...</span>
                 </div>
             ) : (
-                <svg 
+                <svg
                     ref={svgRef}
-                    viewBox={`0 0 ${SVG_W} ${SVG_H}`} 
+                    viewBox={`0 0 ${SVG_W} ${SVG_H}`}
                     className={`w-full h-full overflow-visible ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                     onMouseDown={handleMouseDown} onMouseMove={handleMouseMoveSVG}
-                    onMouseUp={handleMouseUp} 
-                    onMouseLeave={() => { 
-                        handleMouseUp(); 
-                        setTooltip({ visible: false, x: 0, y: 0 }); 
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={() => {
+                        handleMouseUp();
+                        setTooltip({ visible: false, x: 0, y: 0 });
                         setHoveredTerritory(null);
                         setHoveredMunicipality(null);
                     }}
@@ -595,34 +595,34 @@ export default function ConectaMap({
 
                     <g style={{ transform: `translate(${userPan.x}px, ${userPan.y}px) scale(${userScale})`, transformOrigin: 'center', transition: isDragging ? 'none' : 'transform 0.1s ease-out' }}>
                         <g style={{ transform: `translate(${baseTransform.tx}px, ${baseTransform.ty}px) scale(${baseTransform.scale})`, transformOrigin: '0 0', transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                            
+
                             {/* 1. MUNICÍPIOS (POLÍGONOS) */}
                             {mapFeatures.map((feat, index) => {
                                 const normalizedFeatName = getTerritoryKey(feat.territory);
-                                
+
                                 // ACESSO AOS CÁLCULOS CRUZADOS DE FILTROS VINDOS DO APP.JSX
                                 const dStats = territoriesDynamicStats[normalizedFeatName];
                                 const matchesFilters = dStats ? dStats.matchesFilters : true;
 
                                 const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
                                 const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
-                                
+
                                 // A lógica de bloqueio agora considera se um território está selecionado.
                                 // Se um território estiver selecionado, não bloqueamos os outros visualmente, apenas a interatividade.
                                 const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
-                                
+
                                 const isHovered = !blockClickAndColor && (hoveredTerritory === feat.territory || hoveredMunicipality === feat.nome);
 
-                                let opacity = 0.90; 
+                                let opacity = 0.90;
                                 let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
                                 if (blockClickAndColor && !selectedTerritory) {
                                     // Se o bloqueio for pelo filtro do semiárido, apenas diminui a opacidade, mantendo a cor.
                                     if (filtroSemiarido && !isMunSemi) {
-                                        opacity = 0.15;
+                                        opacity = 0.50;
                                     } else { // Se for por outros filtros (CTI, IFDM), deixa cinza.
                                         fillColor = darkMode ? '#374151' : '#E5E7EB'; // gray-700 / gray-200
-                                        opacity = 0.1;
+                                        opacity = 0.50;
                                     }
                                 } else if (selectedTerritory) {
                                     if (isSelectedMap) {
@@ -656,7 +656,7 @@ export default function ConectaMap({
 
                             {/* 2. TEXTOS DOS TERRITÓRIOS (Sem seleção) */}
                             {!selectedTerritory && (
-                                <g 
+                                <g
                                     className="territory-labels-container"
                                     style={{ opacity: userScale > 1.05 ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}
                                 >
@@ -666,7 +666,7 @@ export default function ConectaMap({
                                         if (dStats && !dStats.matchesFilters) return null;
 
                                         const { x, y, idealX, idealY, lines } = node;
-                                        const fontSize = 16 / effectiveScale; 
+                                        const fontSize = 16 / effectiveScale;
                                         const strokeW = 4 / effectiveScale;
                                         const lineHeight = fontSize * 1.1;
                                         const startY = y - ((lines.length - 1) * lineHeight) / 2;
@@ -681,17 +681,17 @@ export default function ConectaMap({
                                             <g key={`t-lbl-${i}`}>
                                                 {needsLeaderLine && (
                                                     <g opacity={0.7}>
-                                                        <line 
-                                                            x1={idealX} y1={idealY} x2={x} y2={y} 
-                                                            stroke={darkMode ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"} 
-                                                            strokeWidth={0.8 / effectiveScale} 
+                                                        <line
+                                                            x1={idealX} y1={idealY} x2={x} y2={y}
+                                                            stroke={darkMode ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"}
+                                                            strokeWidth={0.8 / effectiveScale}
                                                         />
                                                         <circle cx={idealX} cy={idealY} r={1.5 / effectiveScale} fill={darkMode ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"} />
                                                     </g>
                                                 )}
-                                                <text 
-                                                    x={x} y={y} textAnchor="middle" alignmentBaseline="middle" 
-                                                    style={{ 
+                                                <text
+                                                    x={x} y={y} textAnchor="middle" alignmentBaseline="middle"
+                                                    style={{
                                                         paintOrder: 'stroke', stroke: darkMode ? 'rgba(17, 24, 39, 0.7)' : 'rgba(255, 255, 255, 0.7)', strokeWidth: `${strokeW * 0.8}px`, strokeLinejoin: 'round',
                                                         fill: darkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0,0,0,0.85)', fontSize: `${fontSize}px`, fontWeight: '600',
                                                     }}
@@ -721,8 +721,8 @@ export default function ConectaMap({
                                         // Determina a cor do texto: mais sutil se não corresponder aos filtros
                                         const dStats = territoriesDynamicStats[getTerritoryKey(lbl.name)];
                                         const matchesFilters = !dStats || dStats.matchesFilters;
-                                        const fillColor = darkMode 
-                                            ? (matchesFilters ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)') 
+                                        const fillColor = darkMode
+                                            ? (matchesFilters ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)')
                                             : (matchesFilters ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)');
 
                                         return (
@@ -741,7 +741,7 @@ export default function ConectaMap({
                                 <g style={{ opacity: 1, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
                                     {laidOutMunicipalityLabels.map((node, i) => {
                                         const { x, y, idealX, idealY, lines } = node;
-                                        const fontSize = 14 / effectiveScale; 
+                                        const fontSize = 14 / effectiveScale;
                                         const strokeW = 3.5 / effectiveScale;
                                         const lineHeight = fontSize * 1.1;
                                         const startY = y - ((lines.length - 1) * lineHeight) / 2;
@@ -759,13 +759,13 @@ export default function ConectaMap({
                                                         <circle cx={idealX} cy={idealY} r={1.2 / effectiveScale} fill={darkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"} />
                                                     </>
                                                 )}
-                                                <text 
+                                                <text
                                                     x={x} y={y} textAnchor="middle" alignmentBaseline="middle"
-                                                    style={{ 
+                                                    style={{
                                                         paintOrder: 'stroke',
-                                                        stroke: darkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)', 
+                                                        stroke: darkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)',
                                                         strokeWidth: `${strokeW * 0.7}px`, strokeLinejoin: 'round',
-                                                        fill: darkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0,0,0,0.8)', 
+                                                        fill: darkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0,0,0,0.8)',
                                                         fontSize: `${fontSize}px`, fontWeight: '500',
                                                     }}
                                                 >
@@ -801,7 +801,7 @@ export default function ConectaMap({
                         })}
                     </ul>
                     {selectedTerritoryMunicipalities.length > 4 && (
-                        <button 
+                        <button
                             onClick={() => setIsMunListExpanded(!isMunListExpanded)}
                             className={`w-full mt-3 text-center text-[10px] font-bold uppercase tracking-wider py-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-800/70 hover:bg-gray-700/90 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}
                         >
@@ -833,16 +833,16 @@ export default function ConectaMap({
             <div className="absolute bottom-5 right-5 flex flex-col gap-2 z-20">
                 <button onClick={() => setUserScale(p => Math.min(p * 1.3, 10))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>+</button>
                 <button onClick={() => setUserScale(p => Math.max(p / 1.3, 0.5))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>-</button>
-                <button onClick={() => { setUserScale(1); setUserPan({x:0, y:0}); onSelectTerritory(null); }} className={`w-8 h-8 rounded-lg shadow-md font-bold text-[10px] flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>↺</button>
+                <button onClick={() => { setUserScale(1); setUserPan({ x: 0, y: 0 }); onSelectTerritory(null); }} className={`w-8 h-8 rounded-lg shadow-md font-bold text-[10px] flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>↺</button>
             </div>
 
             {/* TOOLTIP DO MOUSE DINÂMICO (Território OU Município) */}
             {tooltip.visible && !isDragging && (hoveredTerritory || hoveredMunicipality) && (
-                <div 
-                    className={`absolute z-50 overflow-hidden rounded-2xl border backdrop-blur-md shadow-2xl pointer-events-none transition-opacity duration-200 ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/90 border-white/60'}`} 
+                <div
+                    className={`absolute z-50 overflow-hidden rounded-2xl border backdrop-blur-md shadow-2xl pointer-events-none transition-opacity duration-200 ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/90 border-white/60'}`}
                     style={{ top: tooltip.y, left: tooltip.x, width: 280 }}
                 >
-                    
+
                     {/* CASO 1: HOVER NUM TERRITÓRIO GERAL */}
                     {hoveredTerritory && hoveredData && dynamicStats && (
                         <>
