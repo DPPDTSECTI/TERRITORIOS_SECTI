@@ -1,0 +1,460 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ChevronLeft, ChevronRight, X, Sparkles, MousePointer2, MapPin, Filter, Search, BarChart3, Database, Target, Maximize2, Sun as SunIcon, RefreshCw, GraduationCap, Info } from 'lucide-react';
+
+// ==========================================
+// TUTORIAL STEPS DEFINITION
+// ==========================================
+const TUTORIAL_STEPS = [
+    {
+        id: 'welcome',
+        title: 'Bem-vindo ao Painel Territorial!',
+        description: 'Este tutorial interativo vai guiá-lo pelas principais funcionalidades da plataforma. Você aprenderá a navegar pelo mapa, filtrar dados e explorar os indicadores dos Territórios de Identidade da Bahia.',
+        icon: <Sparkles size={28} />,
+        position: 'center',
+        targetSelector: null,
+    },
+    {
+        id: 'kpis',
+        title: 'Indicadores Globais (KPIs)',
+        description: 'No topo da página, os cards de KPIs apresentam um panorama geral: Estruturas de CT&I, Desenvolvimento Territorial (IFDM), municípios do Semiárido, Cursos Superiores e Cadeias Produtivas. Cada card mostra o valor atual e uma barra de progresso relativa.',
+        icon: <BarChart3 size={28} />,
+        position: 'below',
+        targetSelector: '[data-tutorial="kpis"]',
+    },
+    {
+        id: 'kpi-info',
+        title: 'Fonte dos Dados (Ícone de Informação)',
+        description: 'No canto superior direito de cada card de KPI, você encontrará o ícone de informação (ⓘ). Ao passar o mouse sobre ele, uma caixa flutuante exibirá a fonte oficial das informações (como INEP, IBGE, FIRJAN ou DataSebrae) com link direto para consulta.',
+        icon: <Info size={28} />,
+        position: 'below',
+        targetSelector: '[data-tutorial="kpis"]',
+    },
+    {
+        id: 'map',
+        title: 'Mapa Interativo',
+        description: 'O mapa central exibe os 27 Territórios de Identidade da Bahia. Passe o mouse sobre um território para ver estatísticas resumidas. Clique em um território para filtrar todos os dados da página por aquela região.',
+        icon: <MapPin size={28} />,
+        position: 'right',
+        targetSelector: '[data-tutorial="map"]',
+    },
+    {
+        id: 'map-interact',
+        title: 'Interagindo com o Mapa',
+        description: 'Você pode arrastar o mapa para navegar e usar o scroll do mouse para ampliar ou reduzir. Ao selecionar um território, os KPIs e listas são filtrados automaticamente, e a lista de municípios do território aparece ao lado do mapa.',
+        icon: <MousePointer2 size={28} />,
+        position: 'right',
+        targetSelector: '[data-tutorial="map"]',
+    },
+    {
+        id: 'cti-panel',
+        title: 'Painel de Ativos CT&I',
+        description: 'À esquerda do mapa, o painel vertical mostra os sub-indicadores de CT&I: campi de universidades públicas e privadas, institutos federais, ICTs, centros de pesquisa, espaços dinamizadores, parques tecnológicos e incubadoras. Clique em cada item para filtrá-lo no mapa.',
+        icon: <Database size={28} />,
+        position: 'right',
+        targetSelector: '[data-tutorial="cti-panel"]',
+    },
+    {
+        id: 'lists',
+        title: 'Listas Detalhadas',
+        description: 'À direita do mapa, três listas mostram: Estruturas CT&I (instituições de pesquisa), Cadeias Produtivas (APLs e Indicações Geográficas), e Cursos CT&I (cursos superiores). Cada item pode ser clicado para abrir uma ficha detalhada.',
+        icon: <Target size={28} />,
+        position: 'left',
+        targetSelector: '[data-tutorial="lists"]',
+    },
+    {
+        id: 'search',
+        title: 'Pesquisa Global',
+        description: 'Na barra lateral direita (desktop) ou no topo (mobile), use o ícone de lupa (🔍) para pesquisar territórios, municípios, instituições ou cursos e encontrá-los rapidamente.',
+        icon: <Search size={28} />,
+        position: 'left',
+        targetSelector: '[data-tutorial="sidebar"]',
+    },
+    {
+        id: 'filters',
+        title: 'Filtros Avançados',
+        description: 'Clique no botão "Filtros" na barra lateral para abrir o painel completo. Aqui você pode: ativar o recorte do Semiárido, definir intervalos de IFDM, filtrar tipos de ativos CT&I, e selecionar cadeias produtivas por segmento (APL e IG).',
+        icon: <Filter size={28} />,
+        position: 'left',
+        targetSelector: '[data-tutorial="sidebar"]',
+    },
+    {
+        id: 'expanded-lists',
+        title: 'Modo Expandido',
+        description: 'Ao clicar no ícone de expandir (↗) em qualquer lista, ela será aberta em tela cheia com mais detalhes. Você pode abrir até 3 listas simultaneamente usando o botão "+" flutuante, aplicar filtros locais e buscar itens dentro de cada lista.',
+        icon: <Maximize2 size={28} />,
+        position: 'below',
+        targetSelector: '[data-tutorial="lists"]',
+    },
+    {
+        id: 'theme-sync',
+        title: 'Tema e Sincronização',
+        description: 'No topo da página, alterne entre modo claro e escuro com o ícone de lua/sol. Na barra lateral, o botão de sincronização (↻) atualiza os dados diretamente do SharePoint, e a borracha limpa todos os filtros ativos.',
+        icon: <SunIcon size={28} />,
+        position: 'below',
+        targetSelector: '[data-tutorial="header"]',
+    },
+    {
+        id: 'courses',
+        title: 'Cursos CT&I — Filtragem por Área',
+        description: 'Na lista de Cursos, use a barra de busca e o botão de filtro por Área Geral (Engenharias, Saúde, Tecnologia, etc.) para encontrar cursos específicos. Cada área tem um ícone e cor próprios para fácil identificação.',
+        icon: <GraduationCap size={28} />,
+        position: 'above',
+        targetSelector: '[data-tutorial="cursos-card"]',
+    },
+    {
+        id: 'finish',
+        title: 'Você está pronto!',
+        description: 'Agora você conhece todas as funcionalidades do Painel Territorial. Explore os dados, aplique filtros e descubra informações valiosas sobre a ciência, tecnologia e inovação nos Territórios de Identidade da Bahia. Bom uso! 🎉',
+        icon: <Sparkles size={28} />,
+        position: 'center',
+        targetSelector: null,
+    },
+];
+
+// ==========================================
+// TUTORIAL COMPONENT
+// ==========================================
+export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation, onCloseDetails }) {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [targetRect, setTargetRect] = useState(null);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const tooltipRef = useRef(null);
+    const step = TUTORIAL_STEPS[currentStep];
+    const totalSteps = TUTORIAL_STEPS.length;
+
+    // Manage UI states based on active step changes
+    useEffect(() => {
+        if (isOpen) {
+            // Automatically deselect territory when entering Step 6 (cti-panel)
+            if (step.id === 'cti-panel' && onDeselectLocation) {
+                onDeselectLocation();
+            }
+            // Automatically close detail modals when leaving Step 7 (lists)
+            if (step.id !== 'lists' && onCloseDetails) {
+                onCloseDetails();
+            }
+        }
+    }, [isOpen, currentStep, step.id, onDeselectLocation, onCloseDetails]);
+
+    // Find and highlight target element with real-time tracking
+    useEffect(() => {
+        if (!isOpen) return;
+
+        setIsAnimating(true);
+        const timer = setTimeout(() => setIsAnimating(false), 350);
+
+        let animFrameId;
+
+        const updateRect = () => {
+            let selector = step.targetSelector;
+            
+            // Dynamic tracking for Step 7: if user opens a details modal, highlight it instead of the background lists
+            if (step.id === 'lists' && document.querySelector('[data-tutorial="detail-modal"]')) {
+                selector = '[data-tutorial="detail-modal"]';
+            }
+
+            if (!selector) {
+                setTargetRect(null);
+                return;
+            }
+            const el = document.querySelector(selector);
+            if (el) {
+                const rect = el.getBoundingClientRect();
+                // Ensure element is visible (has dimensions and not hidden)
+                if (rect.width > 0 && rect.height > 0) {
+                    setTargetRect(prev => {
+                        if (
+                            prev &&
+                            Math.abs(prev.top - (rect.top - 8)) < 0.5 &&
+                            Math.abs(prev.left - (rect.left - 8)) < 0.5 &&
+                            Math.abs(prev.width - (rect.width + 16)) < 0.5 &&
+                            Math.abs(prev.height - (rect.height + 16)) < 0.5
+                        ) {
+                            return prev;
+                        }
+                        return {
+                            top: rect.top - 8,
+                            left: rect.left - 8,
+                            width: rect.width + 16,
+                            height: rect.height + 16,
+                        };
+                    });
+                    return;
+                }
+            }
+            setTargetRect(null);
+        };
+
+        updateRect();
+
+        // Scroll the element into view smoothly when step changes
+        if (step.targetSelector) {
+            const el = document.querySelector(step.targetSelector);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Continuous frame tracking to catch smooth CSS layout shifts & map selection changes
+        const loop = () => {
+            updateRect();
+            animFrameId = requestAnimationFrame(loop);
+        };
+        animFrameId = requestAnimationFrame(loop);
+
+        const handleResize = () => updateRect();
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('scroll', handleResize, true);
+
+        return () => {
+            clearTimeout(timer);
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('scroll', handleResize, true);
+        };
+    }, [isOpen, currentStep, step.targetSelector]);
+
+    // Keyboard navigation
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') onClose();
+            if (e.key === 'ArrowRight' || e.key === 'Enter') {
+                if (currentStep < totalSteps - 1) setCurrentStep(s => s + 1);
+                else onClose();
+            }
+            if (e.key === 'ArrowLeft') {
+                if (currentStep > 0) setCurrentStep(s => s - 1);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, currentStep, totalSteps, onClose]);
+
+    // Reset on open
+    useEffect(() => {
+        if (isOpen) setCurrentStep(0);
+    }, [isOpen]);
+
+    if (!isOpen) return null;
+
+    const goNext = () => {
+        if (currentStep < totalSteps - 1) setCurrentStep(s => s + 1);
+        else onClose();
+    };
+
+    const goPrev = () => {
+        if (currentStep > 0) setCurrentStep(s => s - 1);
+    };
+
+    // Calculate tooltip position with intelligent responsive fallbacks & viewport clamping
+    const getTooltipStyle = () => {
+        if (!targetRect || step.position === 'center') {
+            return {
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+            };
+        }
+
+        const pad = 16;
+        const isMobile = window.innerWidth < 640;
+        const tooltipW = isMobile ? Math.min(360, window.innerWidth - 32) : 400;
+        const tooltipH = tooltipRef.current ? tooltipRef.current.offsetHeight : 280;
+
+        let pos = step.position;
+
+        // Auto-fallback if 'left' or 'right' doesn't fit horizontally on screen
+        if (pos === 'left' && (targetRect.left - tooltipW - pad < 16)) {
+            pos = (targetRect.top + targetRect.height + tooltipH + pad < window.innerHeight - 16) ? 'below' : 'above';
+        } else if (pos === 'right' && (targetRect.left + targetRect.width + tooltipW + pad > window.innerWidth - 16)) {
+            pos = (targetRect.top + targetRect.height + tooltipH + pad < window.innerHeight - 16) ? 'below' : 'above';
+        }
+
+        let top, left;
+
+        if (pos === 'below') {
+            top = targetRect.top + targetRect.height + pad;
+            left = targetRect.left + (targetRect.width / 2) - (tooltipW / 2);
+        } else if (pos === 'above') {
+            top = targetRect.top - tooltipH - pad;
+            left = targetRect.left + (targetRect.width / 2) - (tooltipW / 2);
+        } else if (pos === 'left') {
+            top = targetRect.top + (targetRect.height / 2) - (tooltipH / 2);
+            left = targetRect.left - tooltipW - pad;
+        } else if (pos === 'right') {
+            top = targetRect.top + (targetRect.height / 2) - (tooltipH / 2);
+            left = targetRect.left + targetRect.width + pad;
+        } else {
+            return {
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+            };
+        }
+
+        // Strict viewport clamping to keep tooltip 100% visible on screen
+        left = Math.max(16, Math.min(left, window.innerWidth - tooltipW - 16));
+        top = Math.max(16, Math.min(top, window.innerHeight - tooltipH - 16));
+
+        return {
+            position: 'fixed',
+            top: `${top}px`,
+            left: `${left}px`,
+            width: `${tooltipW}px`,
+        };
+    };
+
+    const progressPct = ((currentStep + 1) / totalSteps) * 100;
+
+    return (
+        <>
+            {/* Full screen overlay */}
+            <div className="fixed inset-0 z-[9990] pointer-events-none transition-opacity duration-300">
+
+                {/* SVG Mask for spotlight cutout */}
+                <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
+                    <defs>
+                        <mask id="tutorial-spotlight-mask">
+                            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                            {targetRect && (
+                                <rect
+                                    x={targetRect.left}
+                                    y={targetRect.top}
+                                    width={targetRect.width}
+                                    height={targetRect.height}
+                                    rx="16"
+                                    fill="black"
+                                    className={isAnimating ? "transition-all duration-300 ease-out" : ""}
+                                />
+                            )}
+                        </mask>
+                    </defs>
+                    <rect
+                        x="0" y="0" width="100%" height="100%"
+                        fill={darkMode ? 'rgba(0,0,0,0.82)' : 'rgba(15,20,35,0.75)'}
+                        mask="url(#tutorial-spotlight-mask)"
+                    />
+                </svg>
+
+                {/* Spotlight ring glow */}
+                {targetRect && (
+                    <div
+                        className={`absolute rounded-2xl border-2 border-gov-blue/60 shadow-[0_0_30px_rgba(0,90,156,0.3)] pointer-events-none ${isAnimating ? "transition-all duration-300 ease-out" : ""}`}
+                        style={{
+                            top: targetRect.top,
+                            left: targetRect.left,
+                            width: targetRect.width,
+                            height: targetRect.height,
+                        }}
+                    >
+                        <div className="absolute inset-0 rounded-2xl animate-pulse border-2 border-gov-blue/30"></div>
+                    </div>
+                )}
+
+                {/* Tooltip Card */}
+                <div
+                    ref={tooltipRef}
+                    className={`w-[90vw] max-w-[420px] rounded-2xl border shadow-2xl flex flex-col overflow-hidden p-0 z-[9999] transition-all duration-500 ease-out ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} ${darkMode ? 'bg-gray-900 border-gray-700 text-gray-100' : 'bg-white border-gray-200 text-gray-800'}`}
+                    style={{ ...getTooltipStyle(), pointerEvents: 'auto' }}
+                >
+                    {/* Progress Bar */}
+                    <div className={`w-full h-1.5 shrink-0 ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                        <div
+                            className="h-full bg-gradient-to-r from-gov-blue via-gov-green to-gov-blue transition-all duration-700 ease-out"
+                            style={{ width: `${progressPct}%` }}
+                        />
+                    </div>
+
+                    {/* Top bar: step counter + close button */}
+                    <div className={`flex items-center justify-between px-5 pt-4 pb-0 shrink-0`}>
+                        <span className={`text-[9px] font-black uppercase tracking-[0.25em] ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                            Passo {currentStep + 1} de {totalSteps}
+                        </span>
+                        <button
+                            onClick={onClose}
+                            className={`p-1.5 rounded-lg transition-colors ${darkMode ? 'text-gray-500 hover:text-gray-300 hover:bg-gray-800' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}
+                            title="Fechar tutorial (Esc)"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 pb-4">
+
+                        {/* Icon + Title */}
+                        <div className="flex items-start gap-3.5 mb-3">
+                            <div className={`p-2.5 rounded-xl shrink-0 ${darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue'}`}>
+                                {step.icon}
+                            </div>
+                            <div>
+                                <h3 className={`text-base font-black leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                    {step.title}
+                                </h3>
+                            </div>
+                        </div>
+
+                        {/* Description */}
+                        <p className={`text-[12.5px] leading-relaxed mb-5 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {step.description}
+                        </p>
+
+                        {/* Step Dots */}
+                        <div className="flex items-center justify-center gap-1.5 mb-4">
+                            {TUTORIAL_STEPS.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setCurrentStep(idx)}
+                                    className={`rounded-full transition-all duration-300 ${idx === currentStep
+                                        ? 'w-6 h-2 bg-gov-blue'
+                                        : idx < currentStep
+                                            ? `w-2 h-2 ${darkMode ? 'bg-gov-green/60' : 'bg-gov-green/50'}`
+                                            : `w-2 h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`
+                                        }`}
+                                    title={`Ir para passo ${idx + 1}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Navigation Footer */}
+                    <div className={`flex items-center justify-between px-6 py-3.5 border-t rounded-b-2xl ${darkMode ? 'border-gray-800 bg-gray-800/30' : 'border-gray-100 bg-gray-50/50'}`}>
+                        <button
+                            onClick={onClose}
+                            className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${darkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            Pular Tutorial
+                        </button>
+
+                        <div className="flex items-center gap-2">
+                            {currentStep > 0 && (
+                                <button
+                                    onClick={goPrev}
+                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all ${darkMode
+                                        ? 'border-gray-700 text-gray-300 hover:bg-gray-800'
+                                        : 'border-gray-200 text-gray-600 hover:bg-gray-100'
+                                        }`}
+                                >
+                                    <ChevronLeft size={14} />
+                                    Anterior
+                                </button>
+                            )}
+                            <button
+                                onClick={goNext}
+                                className="flex items-center gap-1 px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-gov-blue text-white hover:bg-gov-blue/90 transition-all shadow-md shadow-gov-blue/20"
+                            >
+                                {currentStep === totalSteps - 1 ? 'Concluir' : 'Próximo'}
+                                {currentStep < totalSteps - 1 && <ChevronRight size={14} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}

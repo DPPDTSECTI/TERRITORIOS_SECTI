@@ -6,6 +6,7 @@ import LandingHero from './components/hero'; import { Target, BarChart3, Databas
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import SobrePage from './components/SobrePage';
+import Tutorial from './components/Tutorial';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -90,6 +91,21 @@ function MainApp() {
     const [isSideFilterOpen, setIsSideFilterOpen] = useState(false);
     const [isVerticalSearchOpen, setIsVerticalSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+
+    // Auto-open tutorial on first visit
+    useEffect(() => {
+        const hasSeenTutorial = localStorage.getItem('painel_tutorial_seen');
+        if (!hasSeenTutorial && location.pathname === '/territorios') {
+            const timer = setTimeout(() => setIsTutorialOpen(true), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [location.pathname]);
+
+    const handleCloseTutorial = useCallback(() => {
+        setIsTutorialOpen(false);
+        localStorage.setItem('painel_tutorial_seen', 'true');
+    }, []);
 
     // Filtros de D.Territorial
     const [ifdmMin, setIfdmMin] = useState('');
@@ -800,6 +816,7 @@ function MainApp() {
             {expandedCourse && (
                 <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCourse(null)}>
                     <div
+                        data-tutorial="detail-modal"
                         className={`relative max-w-md w-full rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
                         onClick={e => e.stopPropagation()}
                     >
@@ -842,6 +859,7 @@ function MainApp() {
             {expandedCadeia && (
                 <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCadeia(null)}>
                     <div
+                        data-tutorial="detail-modal"
                         className={`relative max-w-md w-full rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
                         onClick={e => e.stopPropagation()}
                     >
@@ -894,6 +912,7 @@ function MainApp() {
             {expandedCti && (
                 <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCti(null)}>
                     <div
+                        data-tutorial="detail-modal"
                         className={`relative max-w-md w-full rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
                         onClick={e => e.stopPropagation()}
                     >
@@ -985,7 +1004,7 @@ function MainApp() {
             )}
 
             {/* HEADER PRINCIPAL FIXO NO TOPO */}
-            <header className={`sticky top-4 mx-auto w-[96%] max-w-[1600px] ${themeClasses.glass} h-16 rounded-xl flex items-center justify-between px-6 z-[100] transition-all duration-500 ${navVisible ? 'translate-y-0 opacity-100' : '-translate-y-24 opacity-0 pointer-events-none'}`}>
+            <header data-tutorial="header" className={`sticky top-4 mx-auto w-[96%] max-w-[1600px] ${themeClasses.glass} h-16 rounded-xl flex items-center justify-between px-6 z-[100] transition-all duration-500 ${navVisible ? 'translate-y-0 opacity-100' : '-translate-y-24 opacity-0 pointer-events-none'}`}>
                 <div className="flex items-center gap-8">
                     <h1 className="text-[11px] sm:text-xs font-black tracking-widest uppercase flex items-center gap-1.5 drop-shadow-sm">
                         <span className={darkMode ? 'text-blue-400' : 'text-gov-blue'}>Painel</span>
@@ -1062,7 +1081,7 @@ function MainApp() {
                     </Link>
                 </div>
 
-                <div ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                <div data-tutorial="sidebar" ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
                     <div className="relative flex items-center justify-end w-full" ref={searchDropdownRef}>
                         <div className={`absolute right-[115%] transition-all duration-300 ${isVerticalSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
                             <input
@@ -1102,6 +1121,12 @@ function MainApp() {
 
                     <button onClick={() => carregarDadosDoSharePoint(true)} disabled={isLoadingPipeline} className={`p-2.5 rounded-lg transition-colors ${isLoadingPipeline ? 'opacity-50 cursor-not-allowed animate-pulse' : ''} ${darkMode ? 'text-gray-400 hover:bg-gov-green/20 hover:text-green-400' : 'text-gray-500 hover:bg-gov-green/10 hover:text-gov-green-dark'}`} title="Sincronizar Dados">
                         <RefreshCw size={18} strokeWidth={2.5} className={isLoadingPipeline ? "animate-spin" : ""} />
+                    </button>
+
+                    <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
+
+                    <button onClick={() => { setIsTutorialOpen(true); }} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Tutorial de uso">
+                        <HelpCircle size={18} strokeWidth={2.5} />
                     </button>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
@@ -1265,7 +1290,7 @@ function MainApp() {
                             <div className={`${themeClasses.glass} rounded-2xl p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
 
                                 {/* KPIs GLOBAIS */}
-                                <div>
+                                <div data-tutorial="kpis">
                                     <div className="flex items-center justify-between mb-2 px-1">
                                         <h3 className={`text-[10px] font-black uppercase tracking-widest ${themeClasses.textMuted}`}>Cenário Global {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Semiárido Baiano' : '— Estado da Bahia')}</h3>
                                         <span className={`text-[9px] font-medium hidden sm:block ${themeClasses.textMuted}`}>Status: {lastUpdate}</span>
@@ -1336,7 +1361,7 @@ function MainApp() {
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                                     {!selectedLocation && subKpisList.length > 0 && (
-                                        <div className={`w-full lg:w-48 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div data-tutorial="cti-panel" className={`w-full lg:w-48 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                                                     Ativos de CT&I
@@ -1366,7 +1391,7 @@ function MainApp() {
 
 
                                     {/* COLUNA DO MAPA (40%) */}
-                                    <div ref={mapSectionRef} className="w-full lg:w-[40%] h-[280px] lg:h-auto flex-shrink-0 flex flex-col relative z-20">
+                                    <div data-tutorial="map" ref={mapSectionRef} className="w-full lg:w-[40%] h-[280px] lg:h-auto flex-shrink-0 flex flex-col relative z-20">
                                         <div className={`rounded-2xl border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-visible ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
                                             <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest z-40 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
                                                 <span className="w-2 h-2 rounded-full bg-gov-green animate-pulse"></span>
@@ -1399,7 +1424,7 @@ function MainApp() {
                                     </div>
 
                                     {/* COLUNA DAS LISTAS (60%) */}
-                                    <div className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-visible min-w-0 min-h-0">
+                                    <div data-tutorial="lists" className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-visible min-w-0 min-h-0">
                                         <div className="flex flex-col sm:flex-row gap-4 flex-none lg:flex-[0.8] min-h-0">
 
                                             {/* LISTA 1: ESTRUTURAS CT&I */}
@@ -1520,7 +1545,7 @@ function MainApp() {
                                         </div>
 
                                         {/* LISTA 3: CURSOS SUPERIORES */}
-                                        <div className={`lg:flex-[0.6] h-[350px] lg:h-auto min-h-0 relative rounded-2xl overflow-visible border shadow-sm flex flex-col transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div data-tutorial="cursos-card" className={`lg:flex-[0.6] h-[350px] lg:h-auto min-h-0 relative rounded-2xl overflow-visible border shadow-sm flex flex-col transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 relative z-30 rounded-t-2xl ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <div className="flex items-center gap-2">
                                                     <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cursos CT&I</h4>
@@ -1662,6 +1687,19 @@ function MainApp() {
 
                 </Routes>
             </main>
+
+            {/* TUTORIAL OVERLAY */}
+            <Tutorial
+                isOpen={isTutorialOpen}
+                onClose={handleCloseTutorial}
+                darkMode={darkMode}
+                onDeselectLocation={() => setSelectedLocation(null)}
+                onCloseDetails={() => {
+                    setExpandedCourse(null);
+                    setExpandedCadeia(null);
+                    setExpandedCti(null);
+                }}
+            />
         </div>
     );
 }
