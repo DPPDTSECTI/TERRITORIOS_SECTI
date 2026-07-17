@@ -78,6 +78,7 @@ function MainApp() {
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
     const [expandedCourse, setExpandedCourse] = useState(null);
     const [expandedCadeia, setExpandedCadeia] = useState(null);
+    const [expandedCti, setExpandedCti] = useState(null);
     const [sidebarCadeiaSearch, setSidebarCadeiaSearch] = useState('');
     const [expandedSidebarCadeia, setExpandedSidebarCadeia] = useState({});
 
@@ -467,11 +468,11 @@ function MainApp() {
                 <div className="fixed inset-0 z-[150] bg-gray-900/90 flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
                     <div className="relative" onClick={e => e.stopPropagation()}>
                         <div
-                            className={`h-[85vh] w-[95vw] sm:w-[90vw] rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]'
+                            className={`h-[85vh] w-[95vw] sm:w-[90vw] rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]'
                                 }`}
                         >
                             {/* HEADER DO MODAL */}
-                            <div className={`p-3 border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                            <div className={`p-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                 <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-gray-800'}`}>Listas Expandidas</h3>
                                 <div className="flex items-center gap-2">
                                     <button onClick={handleCloseModal} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title="Fechar"><Minimize size={18} /></button>
@@ -479,13 +480,13 @@ function MainApp() {
                             </div>
 
                             {/* GRID DE CONTEÚDO DO MODAL */}
-                            <div className="flex-1 p-4 overflow-hidden">
+                            <div className="flex-1 p-4 overflow-visible rounded-b-2xl">
                                 <div className="grid h-full gap-4" style={{ gridTemplateColumns: `repeat(${expandedLists.length}, minmax(0, 1fr))` }}>
                                     {expandedLists.map(listType => {
                                         let listData, renderItem, listTitle, filterControls, gridColsClass;
 
                                         const renderCtiItem = (ent, idx) => (
-                                            <div key={idx} className={`p-3 rounded-lg border flex flex-col gap-1 transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                            <div key={idx} onClick={() => setExpandedCti(ent)} className={`p-3 rounded-lg border flex flex-col gap-1 transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                                 <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                                                 <div className="flex justify-between items-end mt-1">
                                                     <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
@@ -541,7 +542,7 @@ function MainApp() {
                                             listData = dashboardData.entidades;
                                             renderItem = renderCtiItem;
                                             listTitle = 'Estruturas CT&I';
-                                            gridColsClass = 'grid-cols-1';
+                                            gridColsClass = expandedLists.length === 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1';
                                             filterControls = (
                                                 <React.Fragment>
                                                     <div className="relative w-36 sm:w-48">
@@ -590,57 +591,101 @@ function MainApp() {
                                                     <div className="relative" ref={modalCadeiaFilterRef}>
                                                         <button onClick={() => setIsModalCadeiaFilterOpen(!isModalCadeiaFilterOpen)} className={`h-7 px-2 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCadeiaFilterOpen || cadeiaProdutivaFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
                                                         {isModalCadeiaFilterOpen && (
-                                                            <div className={`absolute right-0 top-[100%] mt-2 w-64 max-w-[85vw] rounded-lg p-3 shadow-2xl border z-[150] flex flex-col gap-2 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
-                                                                <span className="block text-[8px] font-black uppercase tracking-widest opacity-60">Filtrar por Cascata (APL/IG)</span>
-                                                                <div className="max-h-56 overflow-y-auto hide-scroll flex flex-col gap-2 border p-2 rounded-md border-gray-500/20">
+                                                            <div className={`absolute right-0 top-[100%] mt-2 w-72 max-w-[85vw] rounded-xl p-3 shadow-2xl border z-[150] flex flex-col gap-2.5 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                                                                <div className="flex items-center justify-between">
+                                                                    <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">Filtrar Cadeias Produtivas</span>
+                                                                    {cadeiaProdutivaFilter.length > 0 && (
+                                                                        <button 
+                                                                            onClick={() => setCadeiaProdutivaFilter([])} 
+                                                                            className={`text-[9px] font-bold text-gov-red hover:underline opacity-80 hover:opacity-100 transition-opacity`}
+                                                                        >
+                                                                            Limpar ({cadeiaProdutivaFilter.length})
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                                <div className="relative w-full">
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="Buscar segmento..."
+                                                                        value={sidebarCadeiaSearch}
+                                                                        onChange={(e) => setSidebarCadeiaSearch(e.target.value)}
+                                                                        className={`w-full h-7 pl-7 pr-7 rounded-lg text-[10px] font-medium transition-all outline-none border ${darkMode ? 'bg-gray-800/80 border-gray-700 text-gray-200 focus:border-emerald-500' : 'bg-gray-50 border-gray-200 text-gray-800 focus:border-emerald-600'}`}
+                                                                    />
+                                                                    <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                                                                    {sidebarCadeiaSearch && (
+                                                                        <button onClick={() => setSidebarCadeiaSearch('')} aria-label="Limpar pesquisa" className="absolute right-2.5 top-1/2 -translate-y-1/2 hover:text-gov-red text-gray-400">
+                                                                            <Eraser size={12} />
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                                <div className="max-h-60 overflow-y-auto hide-scroll flex flex-col gap-2 border p-2 rounded-lg border-gray-500/20 bg-gray-500/5">
                                                                     {['APL', 'IG'].map(tipo => {
-                                                                        const subSegments = todasAsCadeiasPorTipo[tipo] || [];
-                                                                        const subKeys = subSegments.map(s => `${tipo}__${s}`);
+                                                                        const allSubSegments = todasAsCadeiasPorTipo[tipo] || [];
+                                                                        const searchNorm = normalize(sidebarCadeiaSearch);
+                                                                        const filteredSubSegments = searchNorm
+                                                                            ? allSubSegments.filter(seg => normalize(seg).includes(searchNorm))
+                                                                            : allSubSegments;
+                                                                        const subKeys = filteredSubSegments.map(s => `${tipo}__${s}`);
                                                                         const isParentSelected = cadeiaProdutivaFilter.includes(tipo);
                                                                         const isSomeSubSelected = subKeys.some(k => cadeiaProdutivaFilter.includes(k));
-                                                                        const isAllSubSelected = subSegments.length > 0 && subKeys.every(k => cadeiaProdutivaFilter.includes(k));
+                                                                        const allSubKeys = allSubSegments.map(s => `${tipo}__${s}`);
+                                                                        const isAllSubSelected = allSubSegments.length > 0 && allSubKeys.every(k => cadeiaProdutivaFilter.includes(k));
+                                                                        const isExpanded = expandedSidebarCadeia[tipo] || false;
+                                                                        const LIMIT = 3;
+                                                                        const visibleSegments = (searchNorm || isExpanded) ? filteredSubSegments : filteredSubSegments.slice(0, LIMIT);
+                                                                        const hasMore = !searchNorm && filteredSubSegments.length > LIMIT;
+
+                                                                        if (searchNorm && filteredSubSegments.length === 0) return null;
 
                                                                         return (
-                                                                            <div key={tipo} className="flex flex-col gap-1">
-                                                                                <label className="flex items-center gap-2 text-[10px] font-black cursor-pointer select-none">
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        checked={isParentSelected || isAllSubSelected}
-                                                                                        onChange={() => handleCadeiaParentToggle(tipo)}
-                                                                                        className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-3 w-3"
-                                                                                    />
-                                                                                    <span className={isParentSelected || isSomeSubSelected ? (darkMode ? 'text-green-400 font-bold' : 'text-gov-green-dark font-bold') : 'opacity-80'}>
-                                                                                        {tipo}
+                                                                            <div key={tipo} className={`flex flex-col gap-1.5 p-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-800/40 border border-gray-700/50' : 'bg-white border border-gray-100 shadow-xs'}`}>
+                                                                                <div className="flex items-center justify-between">
+                                                                                    <label className="flex items-center gap-2 text-[10px] font-black cursor-pointer select-none">
+                                                                                        <input
+                                                                                            type="checkbox"
+                                                                                            checked={isParentSelected || isAllSubSelected}
+                                                                                            onChange={() => handleCadeiaParentToggle(tipo)}
+                                                                                            className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 h-3 w-3 accent-emerald-600 cursor-pointer"
+                                                                                        />
+                                                                                        <span className={isParentSelected || isSomeSubSelected ? (darkMode ? 'text-emerald-400 font-extrabold' : 'text-emerald-700 font-extrabold') : (darkMode ? 'text-gray-200' : 'text-gray-800')}>
+                                                                                            {tipo}
+                                                                                        </span>
+                                                                                    </label>
+                                                                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${darkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800'}`}>
+                                                                                        {filteredSubSegments.length}
                                                                                     </span>
-                                                                                </label>
-                                                                                {subSegments.length > 0 && (
-                                                                                    <div className="pl-3 flex flex-col gap-1 border-l border-gray-300 dark:border-gray-700 ml-1">
-                                                                                        {subSegments.map(seg => {
+                                                                                </div>
+                                                                                {filteredSubSegments.length > 0 && (
+                                                                                    <div className="pl-3 flex flex-col gap-0.5 border-l-2 border-emerald-500/30 ml-1.5 mt-0.5">
+                                                                                        {visibleSegments.map(seg => {
                                                                                             const key = `${tipo}__${seg}`;
                                                                                             const isSubChecked = isParentSelected || cadeiaProdutivaFilter.includes(key);
                                                                                             return (
-                                                                                                <label key={seg} className="flex items-center gap-2 text-[9px] font-medium cursor-pointer select-none py-0.5">
+                                                                                                <label key={seg} className={`flex items-center gap-2 text-[9px] font-medium cursor-pointer select-none px-2 py-0.5 rounded-md transition-all ${isSubChecked ? (darkMode ? 'bg-emerald-950/40 text-emerald-300 font-semibold' : 'bg-emerald-50 text-emerald-900 font-semibold') : (darkMode ? 'hover:bg-gray-700/40 text-gray-300' : 'hover:bg-gray-100 text-gray-700')}`}>
                                                                                                     <input
                                                                                                         type="checkbox"
                                                                                                         checked={isSubChecked}
                                                                                                         onChange={() => handleCadeiaSubToggle(tipo, seg)}
-                                                                                                        className="rounded border-gray-300 text-gov-green focus:ring-gov-green h-2.5 w-2.5"
+                                                                                                        className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 h-2.5 w-2.5 accent-emerald-600 cursor-pointer"
                                                                                                     />
-                                                                                                    <span className={isSubChecked ? (darkMode ? 'text-gray-100' : 'text-gray-900') : 'opacity-60'}>
-                                                                                                        {seg}
-                                                                                                    </span>
+                                                                                                    <span className="truncate">{seg}</span>
                                                                                                 </label>
                                                                                             );
                                                                                         })}
+                                                                                        {hasMore && (
+                                                                                            <button
+                                                                                                onClick={() => setExpandedSidebarCadeia(prev => ({ ...prev, [tipo]: !prev[tipo] }))}
+                                                                                                className={`w-full py-1 mt-1 text-[8px] font-bold uppercase tracking-wider rounded-md transition-colors flex items-center justify-center gap-1 ${darkMode ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700'}`}
+                                                                                            >
+                                                                                                {isExpanded ? '▲ Ver menos' : `▼ Ver mais (${filteredSubSegments.length - LIMIT})`}
+                                                                                            </button>
+                                                                                        )}
                                                                                     </div>
                                                                                 )}
                                                                             </div>
                                                                         );
                                                                     })}
                                                                 </div>
-                                                                {cadeiaProdutivaFilter.length > 0 && (
-                                                                    <button onClick={() => { setCadeiaProdutivaFilter([]); setIsModalCadeiaFilterOpen(false); }} className={`w-full h-6 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar Filtros</button>
-                                                                )}
                                                             </div>
                                                         )}
                                                     </div>
@@ -662,23 +707,23 @@ function MainApp() {
                                         }
 
                                         return (
-                                            <div key={listType} className={`rounded-xl overflow-hidden border flex flex-col min-h-0 ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'}`}>
+                                            <div key={listType} className={`rounded-xl overflow-visible border flex flex-col min-h-0 ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'}`}>
                                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`font-bold text-xs ${darkMode ? 'text-white' : 'text-gray-800'}`}>{listTitle}</h4>
-                                                        <div className="relative group flex items-center justify-center">
-                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                                <Info size={12} />
-                                                            </button>
-                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[200] pointer-events-none group-hover:pointer-events-auto">
+                                                                <div className="relative group flex items-center justify-center z-40">
+                                                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                                                                        <Info size={12} />
+                                                                    </button>
+                                                                    <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     {listType === 'cadeias' ? (
-                                                                        <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                                        <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                             DataSebrae / Indicações Geográficas
                                                                         </a>
                                                                     ) : (
-                                                                        <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                                        <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                             INEP / Censo da Educação Superior (2022)
                                                                         </a>
                                                                     )}
@@ -835,6 +880,52 @@ function MainApp() {
                                             <div className={`pt-3 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
                                                 <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span>
                                                 <p className={`text-xs font-medium leading-relaxed opacity-80 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{apl.municipiosPertencentes}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MODAL DE CT&I EXPANDIDO */}
+            {expandedCti && (
+                <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCti(null)}>
+                    <div
+                        className={`relative max-w-md w-full rounded-2xl border shadow-2xl flex flex-col overflow-hidden transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                            <h3 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-gray-800'}`}>Detalhes da Estrutura CT&I</h3>
+                            <button onClick={() => setExpandedCti(null)} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title="Fechar">
+                                <Minimize size={16} />
+                            </button>
+                        </div>
+                        <div className="p-4">
+                            {(() => {
+                                const ent = expandedCti;
+                                return (
+                                    <div className={`p-3.5 rounded-lg border flex flex-col gap-3 ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                        <div className="flex items-start justify-between gap-2">
+                                            <h5 className={`text-base font-bold leading-snug ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{fixWeirdCapitalization(ent.entidade)}</h5>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span className={`text-[10px] flex items-center font-black uppercase px-2 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
+                                                {formatEntidadeTipo(ent.tipo, ent.categoria)}
+                                            </span>
+                                        </div>
+                                        <div className={`p-3 rounded-md border mt-1 ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Município:</span>
+                                                    <p className={`text-xs font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{ent.municipio || 'N/A'}</p>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Território de Identidade:</span>
+                                                    <p className={`text-xs font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{ent.territorioRef || 'N/A'}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1179,7 +1270,7 @@ function MainApp() {
                                         <h3 className={`text-[10px] font-black uppercase tracking-widest ${themeClasses.textMuted}`}>Cenário Global {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Semiárido Baiano' : '— Estado da Bahia')}</h3>
                                         <span className={`text-[9px] font-medium hidden sm:block ${themeClasses.textMuted}`}>Status: {lastUpdate}</span>
                                     </div>
-                                    <div className="flex overflow-x-auto snap-x hide-scroll sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3 pb-2 sm:pb-0">
+                                    <div className="flex overflow-x-auto sm:overflow-visible snap-x hide-scroll sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3 pb-2 sm:pb-0">
                                         {[
                                             { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Database size={14} />, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
                                             { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
@@ -1202,7 +1293,7 @@ function MainApp() {
                                             return (
                                                 <div
                                                     key={idx}
-                                                    className={`relative p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-30 shrink-0 w-[65vw] sm:w-auto snap-center ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
+                                                    className={`relative p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-[999] shrink-0 w-[65vw] sm:w-auto snap-center ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
                                                 >
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-2 mb-1">
@@ -1210,17 +1301,17 @@ function MainApp() {
                                                             <p className={`text-[9px] font-black uppercase tracking-widest opacity-60 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>{k.l}</p>
                                                         </div>
                                                         {k.sourceText && (
-                                                            <div className="relative group flex items-center justify-center">
+                                                            <div className="relative group flex items-center justify-center z-40">
                                                                 <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                                     <Info size={12} />
                                                                 </button>
-                                                                <div className="absolute right-0 bottom-full pb-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
+                                                                <div className="absolute right-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
                                                                     <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                         <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                         {k.sourceLink ? (
-                                                                            <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
+                                                                            <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
                                                                         ) : (
-                                                                            <span className="block opacity-80">{k.sourceText}</span>
+                                                                            <span className="block leading-tight opacity-80">{k.sourceText}</span>
                                                                         )}
                                                                     </div>
                                                                 </div>
@@ -1245,8 +1336,8 @@ function MainApp() {
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                                     {!selectedLocation && subKpisList.length > 0 && (
-                                        <div className={`w-full lg:w-48 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                            <div className={`p-4 border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                        <div className={`w-full lg:w-48 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                            <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                                                     Ativos de CT&I
                                                 </h4>
@@ -1275,20 +1366,20 @@ function MainApp() {
 
 
                                     {/* COLUNA DO MAPA (40%) */}
-                                    <div ref={mapSectionRef} className="w-full lg:w-[40%] h-[280px] lg:h-auto flex-shrink-0 flex flex-col relative">
-                                        <div className={`rounded-2xl border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-hidden ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
-                                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest z-10 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
+                                    <div ref={mapSectionRef} className="w-full lg:w-[40%] h-[280px] lg:h-auto flex-shrink-0 flex flex-col relative z-20">
+                                        <div className={`rounded-2xl border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-visible ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
+                                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest z-40 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
                                                 <span className="w-2 h-2 rounded-full bg-gov-green animate-pulse"></span>
                                                 <span>Motor Cartográfico</span>
-                                                <div className="relative group flex items-center justify-center">
+                                                <div className="relative group flex items-center justify-center z-50">
                                                     <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                                     </button>
-                                                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full pb-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-50">
-                                                        <div className={`w-max p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                                                    <div className="absolute left-0 top-full pt-1.5 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[9999]">
+                                                        <div className={`p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
                                                             <span className="block font-bold mb-1 opacity-70">Fontes dos Dados:</span>
-                                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
-                                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
+                                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
+                                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1308,22 +1399,22 @@ function MainApp() {
                                     </div>
 
                                     {/* COLUNA DAS LISTAS (60%) */}
-                                    <div className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-hidden min-w-0">
+                                    <div className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-visible min-w-0">
                                         <div className="flex flex-col sm:flex-row gap-4 flex-none lg:flex-[0.8] min-h-0">
 
                                             {/* LISTA 1: ESTRUTURAS CT&I */}
-                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-visible border shadow-sm flex flex-col relative transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Estruturas CT&I</h4>
-                                                        <div className="relative group flex items-center justify-center">
+                                                        <div className="relative group flex items-center justify-center z-40">
                                                             <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                                 <Info size={12} />
                                                             </button>
-                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
+                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                    <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                                    <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                         INEP / Censo da Educação Superior (2022)
                                                                     </a>
                                                                 </div>
@@ -1341,11 +1432,11 @@ function MainApp() {
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="flex-1 overflow-y-auto p-4 hide-scroll">
+                                                <div className="flex-1 overflow-y-auto p-4 hide-scroll rounded-b-2xl">
                                                     <div className="flex flex-col gap-2">
                                                         {dashboardData.entidades.length > 0 ? (
                                                             dashboardData.entidades.map((ent, idx) => (
-                                                                <div key={idx} className={`p-3 rounded-lg border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'}`}>
+                                                                <div key={idx} onClick={() => setExpandedCti(ent)} className={`p-3 rounded-lg border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                                                     <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
                                                                     <div className="flex justify-between items-end mt-1">
                                                                         <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
@@ -1359,18 +1450,18 @@ function MainApp() {
                                             </div>
 
                                             {/* LISTA 2: CADEIAS PRODUTIVAS */}
-                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-hidden border shadow-sm flex flex-col relative transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-20 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-visible border shadow-sm flex flex-col relative transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                                <div className={`p-4 border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cadeias Produtivas</h4>
-                                                        <div className="relative group flex items-center justify-center">
+                                                        <div className="relative group flex items-center justify-center z-40">
                                                             <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                                 <Info size={12} />
                                                             </button>
-                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-xs opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] pointer-events-none group-hover:pointer-events-auto">
+                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                    <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                                    <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                         DataSebrae / Indicações Geográficas
                                                                     </a>
                                                                 </div>
@@ -1386,7 +1477,7 @@ function MainApp() {
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="flex-1 overflow-y-auto p-4 hide-scroll">
+                                                <div className="flex-1 overflow-y-auto p-4 hide-scroll rounded-b-2xl">
                                                     <div className="flex flex-col gap-2">
                                                         {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
                                                             <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-lg border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
@@ -1429,18 +1520,18 @@ function MainApp() {
                                         </div>
 
                                         {/* LISTA 3: CURSOS SUPERIORES */}
-                                        <div className={`lg:flex-[0.6] h-[350px] lg:h-auto min-h-0 relative rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-all ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                            <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+                                        <div className={`lg:flex-[0.6] h-[350px] lg:h-auto min-h-0 relative rounded-2xl overflow-visible border shadow-sm flex flex-col transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                            <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 relative z-30 rounded-t-2xl ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <div className="flex items-center gap-2">
                                                     <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cursos CT&I</h4>
-                                                    <div className="relative group flex items-center justify-center z-50">
+                                                    <div className="relative group flex items-center justify-center z-40">
                                                         <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
                                                         </button>
-                                                        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-50">
-                                                            <div className={`w-max p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                                                        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[9999]">
+                                                            <div className={`w-max max-w-[220px] p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
                                                                 <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                                                <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+                                                                <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                     INEP/ Censo de Educação Superior (2022)
                                                                 </a>
                                                             </div>
@@ -1528,7 +1619,7 @@ function MainApp() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex-1 p-4 overflow-y-auto hide-scroll">
+                                            <div className="flex-1 p-4 overflow-y-auto hide-scroll rounded-b-2xl">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
                                                     {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => {
                                                         const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
