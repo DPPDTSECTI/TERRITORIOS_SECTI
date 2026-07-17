@@ -480,7 +480,7 @@ function MainApp() {
                             </div>
 
                             {/* GRID DE CONTEÚDO DO MODAL */}
-                            <div className="flex-1 p-4 overflow-visible rounded-b-2xl">
+                            <div className="flex-1 min-h-0 p-4 overflow-visible rounded-b-2xl">
                                 <div className="grid h-full gap-4" style={{ gridTemplateColumns: `repeat(${expandedLists.length}, minmax(0, 1fr))` }}>
                                     {expandedLists.map(listType => {
                                         let listData, renderItem, listTitle, filterControls, gridColsClass;
@@ -739,7 +739,7 @@ function MainApp() {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className="flex-1 overflow-y-auto p-3 hide-scroll">
+                                                <div className="flex-1 min-h-0 overflow-y-auto p-3 hide-scroll">
                                                     <div className={`grid gap-2 ${gridColsClass}`}>
                                                         {listData.slice(0, modalVisibleCounts[listType] || 50).map(renderItem)}
                                                     </div>
@@ -1342,7 +1342,7 @@ function MainApp() {
                                                     Ativos de CT&I
                                                 </h4>
                                             </div>
-                                            <div className="flex-1 overflow-y-auto p-3 hide-scroll">
+                                            <div className="flex-1 min-h-0 overflow-y-auto p-3 hide-scroll">
                                                 <div className="flex flex-col gap-2">
                                                     {subKpisList.map(kpi => (
                                                         <div
@@ -1399,7 +1399,7 @@ function MainApp() {
                                     </div>
 
                                     {/* COLUNA DAS LISTAS (60%) */}
-                                    <div className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-visible min-w-0">
+                                    <div className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-visible min-w-0 min-h-0">
                                         <div className="flex flex-col sm:flex-row gap-4 flex-none lg:flex-[0.8] min-h-0">
 
                                             {/* LISTA 1: ESTRUTURAS CT&I */}
@@ -1477,7 +1477,7 @@ function MainApp() {
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="flex-1 overflow-y-auto p-4 hide-scroll rounded-b-2xl">
+                                                <div className="flex-1 min-h-0 overflow-y-auto p-4 hide-scroll rounded-b-2xl">
                                                     <div className="flex flex-col gap-2">
                                                         {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
                                                             <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-lg border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
@@ -1619,7 +1619,7 @@ function MainApp() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex-1 p-4 overflow-y-auto hide-scroll rounded-b-2xl">
+                                            <div className="flex-1 min-h-0 p-4 overflow-y-auto hide-scroll rounded-b-2xl">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
                                                     {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => {
                                                         const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
