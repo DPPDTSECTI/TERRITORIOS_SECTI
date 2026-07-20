@@ -2,7 +2,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import ConectaMap from "../ConectaMap";
-import LandingHero from './components/hero'; import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu } from 'lucide-react';
+import LandingHero from './components/hero'; import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import SobrePage from './components/SobrePage';
@@ -481,11 +481,11 @@ function MainApp() {
     return (
         <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
             {expandedLists.length > 0 && (
-                <div className="fixed inset-0 z-[150] bg-gray-900/90 flex items-center justify-center p-4 animate-soft-fade" onClick={handleCloseModal}>
-                    <div className="relative" onClick={e => e.stopPropagation()}>
+                <div className={`fixed inset-0 z-[150] bg-gray-900/90 flex items-center p-4 animate-soft-fade transition-all duration-500 ${isTutorialOpen ? 'justify-start pl-4 lg:pl-6 pr-4 lg:pr-[440px]' : 'justify-center'}`} onClick={handleCloseModal}>
+                    <div className="relative flex items-center justify-center" onClick={e => e.stopPropagation()}>
                         <div
-                            className={`h-[85vh] w-[95vw] sm:w-[90vw] rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]'
-                                }`}
+                            data-tutorial="expanded-lists-modal"
+                            className={`h-[85vh] ${isTutorialOpen ? 'w-full max-w-none' : 'w-[95vw] sm:w-[90vw]'} rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${isTutorialOpen ? '' : (expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]')}`}
                         >
                             {/* HEADER DO MODAL */}
                             <div className={`p-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
@@ -611,8 +611,8 @@ function MainApp() {
                                                                 <div className="flex items-center justify-between">
                                                                     <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">Filtrar Cadeias Produtivas</span>
                                                                     {cadeiaProdutivaFilter.length > 0 && (
-                                                                        <button 
-                                                                            onClick={() => setCadeiaProdutivaFilter([])} 
+                                                                        <button
+                                                                            onClick={() => setCadeiaProdutivaFilter([])}
                                                                             className={`text-[9px] font-bold text-gov-red hover:underline opacity-80 hover:opacity-100 transition-opacity`}
                                                                         >
                                                                             Limpar ({cadeiaProdutivaFilter.length})
@@ -727,11 +727,11 @@ function MainApp() {
                                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`font-bold text-xs ${darkMode ? 'text-white' : 'text-gray-800'}`}>{listTitle}</h4>
-                                                                <div className="relative group flex items-center justify-center z-40">
-                                                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                                        <Info size={12} />
-                                                                    </button>
-                                                                    <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
+                                                        <div className="relative group flex items-center justify-center z-40">
+                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                                                                <Info size={12} />
+                                                            </button>
+                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                     {listType === 'cadeias' ? (
@@ -777,9 +777,14 @@ function MainApp() {
 
                         {/* BOTÃO FLUTUANTE AO LADO */}
                         {availableListsToAdd.length > 0 && (
-                            <div ref={modalAddListRef} className="absolute top-1/2 -translate-y-1/2 left-full ml-4">
+                            <div data-tutorial="add-list-button" ref={modalAddListRef} className="absolute top-1/2 -translate-y-1/2 left-full ml-4">
                                 <button
-                                    onClick={() => setIsModalAddListOpen(prev => !prev)}
+                                    onClick={() => {
+                                        setIsModalAddListOpen(prev => !prev);
+                                        if (isTutorialOpen) {
+                                            window.dispatchEvent(new Event('tutorial-next-step'));
+                                        }
+                                    }}
                                     className={`w-[72px] h-[72px] rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-105 border ${darkMode
                                         ? 'bg-gray-900/40 border-gray-700/30 text-gray-200 backdrop-blur-xl hover:bg-gray-800/60'
                                         : 'bg-white/50 border-gray-200/60 text-gray-700 backdrop-blur-xl hover:bg-white/70'
@@ -790,12 +795,12 @@ function MainApp() {
                                 </button>
 
                                 {isModalAddListOpen && (
-                                    <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
+                                    <div data-tutorial="add-list-dropdown" className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
                                         {availableListsToAdd.map(type => {
                                             const config = {
                                                 cti: { title: 'Estruturas CT&I', icon: <Database size={14} className="text-gov-blue" /> },
                                                 cadeias: { title: 'Cadeias Produtivas', icon: <BarChart3 size={14} className="text-gov-green" /> },
-                                                cursos: { title: 'Cursos CT&I', icon: <Target size={14} className="text-gov-cyan" /> }
+                                                cursos: { title: 'Cursos CT&I', icon: <GraduationCap size={14} className="text-gov-cyan" /> }
                                             }[type];
                                             return (
                                                 <button key={type} onClick={() => { setExpandedLists(prev => [...prev, type]); setIsModalAddListOpen(false); }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
@@ -1023,7 +1028,7 @@ function MainApp() {
                         {darkMode ? <Sun size={16} strokeWidth={2.5} /> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>}
                     </button>
                     <img src={darkMode ? "/img/Brasao-Horizontal_Branco.png" : "/img/Brasao-Horizontal_Preto.png"} alt="GOV BA" className="h-6 object-contain hidden lg:block opacity-90" />
-                    
+
                     {/* MOBILE MENU TOGGLE */}
                     <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className={`lg:hidden p-2 rounded-lg transition-all border ${isMobileMenuOpen ? 'bg-gov-blue text-white border-gov-blue' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50')}`}>
                         <Menu size={16} strokeWidth={2.5} />
@@ -1034,13 +1039,13 @@ function MainApp() {
                         <div className={`lg:hidden absolute top-[calc(100%+1rem)] right-0 w-[calc(100vw-3rem)] max-w-sm rounded-2xl p-4 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl z-[200] animate-soft-fade ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
                             {/* Navegação Mobile */}
                             <div className="flex gap-2">
-                                <Link to="/" onClick={()=>setIsMobileMenuOpen(false)} className={`flex-1 text-center p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>Início</Link>
-                                <Link to="/sobre" onClick={()=>setIsMobileMenuOpen(false)} className={`flex-1 text-center p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>Sobre</Link>
+                                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={`flex-1 text-center p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>Início</Link>
+                                <Link to="/sobre" onClick={() => setIsMobileMenuOpen(false)} className={`flex-1 text-center p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>Sobre</Link>
                             </div>
-                            
+
                             {/* Busca */}
                             <div className="relative">
-                                <input type="text" placeholder="Buscar no painel..." value={searchTerm} onChange={(e) => {setSearchTerm(e.target.value); setIsDropdownOpen(true);}} className={`w-full h-10 px-4 rounded-lg text-[11px] font-medium outline-none border transition-all ${darkMode ? 'bg-gray-900/95 border-gray-700 text-white focus:border-gov-blue' : 'bg-white/95 border-gray-200 text-gray-800 focus:border-gov-blue'}`} />
+                                <input type="text" placeholder="Buscar no painel..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setIsDropdownOpen(true); }} className={`w-full h-10 px-4 rounded-lg text-[11px] font-medium outline-none border transition-all ${darkMode ? 'bg-gray-900/95 border-gray-700 text-white focus:border-gov-blue' : 'bg-white/95 border-gray-200 text-gray-800 focus:border-gov-blue'}`} />
                                 {isDropdownOpen && searchTerm && (
                                     <div className={`absolute left-0 top-full mt-2 w-full max-h-48 overflow-y-auto hide-scroll rounded-lg border shadow-2xl z-[250] backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
                                         {filteredOptions.length > 0 ? (
@@ -1059,11 +1064,11 @@ function MainApp() {
 
                             {/* Ações */}
                             <div className="grid grid-cols-2 gap-2">
-                                <button onClick={() => { setIsSideFilterOpen(!isSideFilterOpen); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${isSideFilterOpen ? 'bg-gov-blue text-white border-gov-blue' : (darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100')}`}><Filter size={14}/> Filtros</button>
-                                <button onClick={() => { carregarDadosDoSharePoint(true); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'text-green-400 bg-green-900/20 border-green-900/50' : 'text-gov-green-dark bg-gov-green/10 border-gov-green/30'}`}><RefreshCw size={14} className={isLoadingPipeline ? "animate-spin":""}/> Sync</button>
+                                <button onClick={() => { setIsSideFilterOpen(!isSideFilterOpen); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${isSideFilterOpen ? 'bg-gov-blue text-white border-gov-blue' : (darkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100')}`}><Filter size={14} /> Filtros</button>
+                                <button onClick={() => { carregarDadosDoSharePoint(true); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${darkMode ? 'text-green-400 bg-green-900/20 border-green-900/50' : 'text-gov-green-dark bg-gov-green/10 border-gov-green/30'}`}><RefreshCw size={14} className={isLoadingPipeline ? "animate-spin" : ""} /> Sync</button>
                             </div>
-                            
-                            <button onClick={() => { resetGlobalFilters(); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${hasActiveFilters ? (darkMode ? 'text-red-400 bg-red-900/20 border-red-900/50' : 'text-gov-red bg-gov-red/10 border-gov-red/30') : (darkMode ? 'text-gray-500 bg-gray-800 border-gray-700' : 'text-gray-400 bg-gray-50 border-gray-200')}`}><Eraser size={14}/> Limpar Filtros</button>
+
+                            <button onClick={() => { resetGlobalFilters(); setIsMobileMenuOpen(false); }} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors ${hasActiveFilters ? (darkMode ? 'text-red-400 bg-red-900/20 border-red-900/50' : 'text-gov-red bg-gov-red/10 border-gov-red/30') : (darkMode ? 'text-gray-500 bg-gray-800 border-gray-700' : 'text-gray-400 bg-gray-50 border-gray-200')}`}><Eraser size={14} /> Limpar Filtros</button>
                         </div>
                     )}
                 </div>
@@ -1083,7 +1088,7 @@ function MainApp() {
 
                 <div data-tutorial="sidebar" ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
                     <div className="relative flex items-center justify-end w-full" ref={searchDropdownRef}>
-                        <div className={`absolute right-[115%] transition-all duration-300 ${isVerticalSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
+                        <div data-tutorial="search-input" className={`absolute right-[115%] transition-all duration-300 ${isVerticalSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
                             <input
                                 type="text"
                                 placeholder="Buscar no painel..."
@@ -1137,10 +1142,10 @@ function MainApp() {
                     </button>
 
                     {isSideFilterOpen && (
-                        <div className={`fixed inset-x-4 bottom-4 lg:absolute lg:inset-auto lg:right-[125%] lg:bottom-0 lg:w-72 max-h-[80vh] overflow-y-auto lg:max-h-auto rounded-2xl p-5 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl animate-soft-fade z-[250] ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
+                        <div data-tutorial="filters-panel" className={`fixed inset-x-4 bottom-4 lg:absolute lg:inset-auto lg:right-[125%] lg:bottom-0 lg:w-72 max-h-[80vh] overflow-y-auto lg:max-h-auto rounded-2xl p-5 shadow-2xl border flex flex-col gap-4 backdrop-blur-2xl animate-soft-fade z-[250] ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
                             {/* Botão Fechar Modal Mobile */}
                             <button onClick={() => setIsSideFilterOpen(false)} className={`lg:hidden absolute top-3 right-3 p-1.5 rounded-lg transition-colors ${darkMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-500'}`}>
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                             <div>
                                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-2">Recorte Geográfico</span>
@@ -1180,8 +1185,8 @@ function MainApp() {
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">Filtrar Cadeias Produtivas</span>
                                     {cadeiaProdutivaFilter.length > 0 && (
-                                        <button 
-                                            onClick={() => setCadeiaProdutivaFilter([])} 
+                                        <button
+                                            onClick={() => setCadeiaProdutivaFilter([])}
                                             className={`text-[9px] font-bold text-gov-red hover:underline opacity-80 hover:opacity-100 transition-opacity`}
                                         >
                                             Limpar ({cadeiaProdutivaFilter.length})
@@ -1300,7 +1305,7 @@ function MainApp() {
                                             { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Database size={14} />, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
                                             { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
                                             { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Sun size={14} />, tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e', unit: 'mun.' },
-                                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Target size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
+                                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <GraduationCap size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
                                             { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <BarChart3 size={14} />, tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/', listType: 'cadeias' },
                                         ].map((k, idx) => {
                                             let displayValue = k.v;
@@ -1451,7 +1456,7 @@ function MainApp() {
                                                             {dashboardData.entidades.length}
                                                         </span>
                                                         {!expandedLists.length && (
-                                                            <button onClick={() => setExpandedLists(['cti'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
+                                                            <button data-tutorial="expand-button" onClick={() => setExpandedLists(['cti'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
                                                                 <Expand size={14} />
                                                             </button>
                                                         )}
@@ -1694,10 +1699,16 @@ function MainApp() {
                 onClose={handleCloseTutorial}
                 darkMode={darkMode}
                 onDeselectLocation={() => setSelectedLocation(null)}
+                onOpenExpandedList={() => setExpandedLists(['cti'])}
+                onOpenAddListDropdown={() => setIsModalAddListOpen(true)}
+                onCloseAddListDropdown={() => setIsModalAddListOpen(false)}
                 onCloseDetails={() => {
                     setExpandedCourse(null);
                     setExpandedCadeia(null);
                     setExpandedCti(null);
+                    setExpandedLists([]);
+                    setIsSideFilterOpen(false);
+                    setIsVerticalSearchOpen(false);
                 }}
             />
         </div>

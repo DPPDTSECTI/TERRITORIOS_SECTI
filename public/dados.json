@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T19:50:15.367Z",
+  "generatedAt": "2026-07-20T17:43:33.521Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
@@ -32,7 +32,7 @@
           "entidade": "Ser do Sertão",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_bovinoculturadeleite_ipira_bovinoculturadeleiteterritoriobaciadojacuipe",
@@ -42,7 +42,7 @@
           "entidade": "Bovinocultura de Leite - Território Bacia do Jacuípe",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_feiradesantana_rededeprodutorasdabahia",
@@ -52,7 +52,7 @@
           "entidade": "Rede de Produtoras da Bahia",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_licuri_capimgrosso_producaodaregiaodopiemontedadiamantina",
@@ -62,7 +62,7 @@
           "entidade": "Produção da Região do Piemonte da Diamantina",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_leite_riachaodojacuipe_leitedovaledojacuipe",
@@ -72,7 +72,7 @@
           "entidade": "Leite do Vale do Jacuípe",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_irece_producaoaquisicaoeservicodoestadodabahia",
@@ -82,7 +82,7 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_alimentos_juazeiro_centraldecomercializacaodascooperativasdacaatinga",
@@ -92,7 +92,7 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_alimentos_pintadas_alimentosbahia",
@@ -102,7 +102,7 @@
           "entidade": "Alimentos Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_artesanatodecouro_ipira_associacaoipiracouro",
@@ -528,7 +528,7 @@
           "entidade": "Bovinocultura de Leite - Território Bacia do Rio Grande",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_mandiocultura_saodesiderio_mandiocultoresdesaodesiderio",
@@ -538,7 +538,7 @@
           "entidade": "Mandiocultores de São Desidério",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
@@ -1044,7 +1044,7 @@
           "entidade": "Agricultura Familiar do Baixo Sul",
           "tipo": "APL",
           "quantidade": 8,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_palmito_igrapiuna_producaodepalmitodobaixosuldabahia",
@@ -1054,7 +1054,7 @@
           "entidade": "Produção de Palmito do Baixo Sul da Bahia",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_mutuipe_agriculturafamiliareeconomiasolidariasustentaveldosterritoriosdovaledojiquiricaebaixosuldabahia",
@@ -1064,7 +1064,7 @@
           "entidade": "Agricultura Familiar e Economia Solidária Sustentável dos Territórios do Vale do Jiquiriçá e Baixo Sul da Bahia",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cacau_itabuna_agriculturafamiliareeconomiasolidariadabaciadoriosalgadoeadjacentes",
@@ -1074,7 +1074,7 @@
           "entidade": "Agricultura Familiar e Economia Solidária da Bacia do Rio Salgado e Adjacentes",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_ceramica_aratuipe_associacaodeauxiliomutuodosoleirosdemaragogipinho",
@@ -1319,7 +1319,7 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 23,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_seabra_agroecologiaterritoriochapadadiamantina",
@@ -1329,7 +1329,7 @@
           "entidade": "Agroecologia - Território Chapada Diamantina",
           "tipo": "APL",
           "quantidade": 14,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_mucuge_produtosruraisdachapadadiamantina",
@@ -1339,7 +1339,7 @@
           "entidade": "Produtos Rurais da Chapada Diamantina",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cachaca_abaira_associacaodosprodutoresdeaguardentedequalidadedamicrorregiaoabaira",
@@ -1359,7 +1359,7 @@
           "entidade": "Produção de Orgânicos e Biodinâmicos da Chapada Diamantina",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -1379,7 +1379,7 @@
           "entidade": "Produção Agropecuária de Lagoa de Dentro e Região da Serra",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cafe_piata_cafesespeciaiseagropecuariadepiata",
@@ -1389,7 +1389,7 @@
           "entidade": "Cafés Especiais e Agropecuária de Piatã",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cafe_piata_chapadadiamantinapiata",
@@ -1610,7 +1610,7 @@
           "entidade": "Apicultura - Território Costa do Descobrimento",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cafe_barradochoca_cafeiculturadebarradochocaeregiao",
@@ -1620,7 +1620,7 @@
           "entidade": "Cafeicultura de Barra do Choça e Região",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -1880,7 +1880,7 @@
           "entidade": "Mandiocultura - Território do Extremo Sul",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_bovinoculturadeleite_medeirosneto_bovinoculturadeleiteterritorioextremosul",
@@ -1890,7 +1890,7 @@
           "entidade": "Bovinocultura de Leite - Território Extremo Sul",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_mel_alcobaca_associacaodeapicultoresderanchoqueimadoeigrejinha",
@@ -2337,7 +2337,7 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 20,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_irece_agroecologiaterritorioirece",
@@ -2347,7 +2347,7 @@
           "entidade": "Agroecologia - Território Irecê",
           "tipo": "APL",
           "quantidade": 16,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agropecuaria_irece_agropecuariamistadaregiaodeirece",
@@ -2357,7 +2357,7 @@
           "entidade": "Agropecuária Mista da Região De Irecê",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_mamona_irece_cooperativamistadeproducaoaquisicaoeservicodoestadodabahia",
@@ -2649,7 +2649,7 @@
           "entidade": "Bovinocultura de Leite - Território Itaparica",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -2911,7 +2911,7 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_artesanatodepiacava_entrerios_cooperativadeartesanatodotrancadotupinamba",
@@ -3461,7 +3461,7 @@
           "entidade": "Agricultura Familiar e Economia Solidária da Bacia do Rio Salgado e Adjacentes",
           "tipo": "APL",
           "quantidade": 9,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_bovinoculturadeleite_camacan_bovinoculturadeleiteterritoriolitoralsul",
@@ -3471,7 +3471,7 @@
           "entidade": "Bovinocultura de Leite - Território Litoral Sul",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cacau_itabuna_cacauiculturasafterritoriodolitoralsul",
@@ -3481,7 +3481,7 @@
           "entidade": "Cacauicultura - SAF - Território do Litoral Sul",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_itubera_agriculturafamiliardobaixosul",
@@ -3491,7 +3491,7 @@
           "entidade": "Agricultura Familiar do Baixo Sul",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cacau_ilheus_servicossustentaveisdabahia",
@@ -3501,7 +3501,7 @@
           "entidade": "Serviços Sustentáveis da Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_farinhademandioca_buerarema_cooperativamistadosprodutoresruraisdosuldabahia",
@@ -4267,7 +4267,7 @@
           "entidade": "Cacauicultura - SAF - Território  Médio Rio de Contas",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_caprinovinocultura_manoelvitorino_ovinocaprinoculturaterritoriodomedioriodecontas",
@@ -4277,7 +4277,7 @@
           "entidade": "Ovinocaprinocultura - Território do Médio Rio de Contas",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
@@ -4577,7 +4577,7 @@
           "entidade": "Agricultura Familiar e Economia Solidária da Bacia do Rio Salgado e Adjacentes",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_carnedesol_itororo_itororo",
@@ -5206,7 +5206,7 @@
           "entidade": "Pescados da Baía de Todos os Santos",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_textil_salvador_confeccoesbahiatextil",
@@ -5216,7 +5216,7 @@
           "entidade": "Confecções Bahia Têxtil",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_artesanatodepiacava_entrerios_cooperativadeartesanatodotrancadotupinamba",
@@ -8481,7 +8481,7 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 9,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -8501,7 +8501,7 @@
           "entidade": "Bovinocultura de Leite - Território Piemonte da Diamantina",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agropecuaria_varzeanova_producaoagropecuariadegiloeregiao",
@@ -8511,7 +8511,7 @@
           "entidade": "Produção Agropecuária de Giló e Região",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_marmore_ourolandia_marmorebegebahia",
@@ -8521,7 +8521,7 @@
           "entidade": "Mármore Bege Bahia",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agropecuaria_miguelcalmon_producaoagropecuariadelagoadedentroeregiaodaserra",
@@ -8531,7 +8531,7 @@
           "entidade": "Produção Agropecuária de Lagoa de Dentro e Região da Serra",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -8680,7 +8680,7 @@
           "entidade": "Bovinocultura de Leite - Território Piemonte do Paraguaçu",
           "tipo": "APL",
           "quantidade": 8,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agropecuaria_varzeanova_producaoagropecuariadegiloeregiao",
@@ -8690,7 +8690,7 @@
           "entidade": "Produção Agropecuária de Giló e Região",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_fruticultura_itaberaba_producaoeagroindustrializacao",
@@ -8700,7 +8700,7 @@
           "entidade": "Produção e Agroindustrialização",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_abacaxi_itaberaba_cooperativadosprodutoresdeabacaxideitaberaba",
@@ -8846,7 +8846,7 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -9045,7 +9045,7 @@
           "entidade": "Avicultura - Território Portal do Sertão",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_feiradesantana_rededeprodutorasdabahia",
@@ -9055,7 +9055,7 @@
           "entidade": "Rede de Produtoras da Bahia",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
@@ -9065,7 +9065,7 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_alimentos_feiradesantana_panificacaoterritorioportaldosertao",
@@ -9075,7 +9075,7 @@
           "entidade": "Panificação - Território Portal do Sertão",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
@@ -10379,7 +10379,7 @@
           "entidade": "Mandiocultura - Território do Recôncavo",
           "tipo": "APL",
           "quantidade": 8,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_aquiculturaepesca_veracruz_pescadosdabaiadetodosossantos",
@@ -10389,7 +10389,7 @@
           "entidade": "Pescados da Baía de Todos os Santos",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_artesanato_saubara_associacaodosartesaosdesaubara",
@@ -11118,7 +11118,7 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 13,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_bovinoculturadeleite_cicerodantas_bovinoculturadeleiteterritoriosemiaridonordesteii",
@@ -11128,7 +11128,7 @@
           "entidade": "Bovinocultura de Leite - Território Semiárido Nordeste II",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_bovinoculturadeleite_euclidesdacunha_bovinoculturadeleiteterritoriosemiaridonordesteiieuclidesdacunha",
@@ -11138,7 +11138,7 @@
           "entidade": "Bovinocultura de Leite - Território Semiárido Nordeste II - Euclides da Cunha",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -11676,7 +11676,7 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_fruticultura_uaua_agropecuariafamiliardecanudosuauaecuraca",
@@ -11686,7 +11686,7 @@
           "entidade": "Agropecuária Familiar de Canudos, Uauá e Curaçá",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_caprinovinocultura_casanova_ovinocaprinoculturaterritoriodosertaodosaofranciscocasanova",
@@ -11696,7 +11696,7 @@
           "entidade": "Ovinocaprinocultura - Território do Sertão do São Francisco - Casa Nova",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_caprinovinocultura_juazeiro_ovinocaprinoculturaterritoriodosertaodosaofranciscojuazeiro",
@@ -11706,7 +11706,7 @@
           "entidade": "Ovinocaprinocultura - Território do Sertão do São Francisco - Juazeiro",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_vinho_petrolina_institutodovinhodovaledosaofrancisco",
@@ -11726,7 +11726,7 @@
           "entidade": "Mármore Bege Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_fruticultura_sobradinho_agroindustrialvaledoparaiso",
@@ -11736,7 +11736,7 @@
           "entidade": "Agroindustrial Vale do Paraíso",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_docesegeleiasdeumbu_uaua_cooperativaagropecuariafamiliardecanudosuauaecuraca",
@@ -11988,7 +11988,7 @@
           "entidade": "Bovinocultura de Leite - Território Sertão Produtivo",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_apicultura_liciniodealmeida_produtosapicolasederivadoseprodutosdaagriculturafamiliareeconomiasolidariadaregiaodoriogaviaoeserrageral",
@@ -11998,7 +11998,7 @@
           "entidade": "Produtos Apícolas e Derivados e Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -12378,7 +12378,7 @@
           "entidade": "Rede de Produtoras da Bahia",
           "tipo": "APL",
           "quantidade": 11,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
@@ -12388,7 +12388,7 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_sisal_conceicaodocoite_sisalterritoriodosisal",
@@ -12398,7 +12398,7 @@
           "entidade": "Sisal - Território do Sisal",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_alimentos_juazeiro_centraldecomercializacaodascooperativasdacaatinga",
@@ -12408,7 +12408,7 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_alimentos_serrinha_comercializacaodaagriculturafamiliareeconomiasolidaria",
@@ -12418,7 +12418,7 @@
           "entidade": "Comercialização da Agricultura Familiar e Economia Solidária",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_sisal_valente_associacaodedesenvolvimentosustentavelesolidariodaregiaosisaleira",
@@ -12712,7 +12712,7 @@
           "entidade": "Produtos Apícolas e Derivados e Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_bovinoculturadeleite_pocoes_bovinoculturadeleiteterritoriosudoestebaiano",
@@ -12722,7 +12722,7 @@
           "entidade": "Bovinocultura de Leite - Território Sudoeste Baiano",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cafe_barradochoca_cafeiculturadebarradochocaeregiao",
@@ -12732,7 +12732,7 @@
           "entidade": "Cafeicultura de Barra do Choça e Região",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_mandiocultura_condeuba_produtosdaagriculturafamiliareeconomiasolidariadaregiaodoriogaviaoeserrageral",
@@ -12742,7 +12742,7 @@
           "entidade": "Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
@@ -13318,7 +13318,7 @@
           "entidade": "Agricultura Familiar e Economia Solidária Sustentável dos Territórios do Vale do Jiquiriçá e Baixo Sul da Bahia",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": ""
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",

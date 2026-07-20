@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronLeft, ChevronRight, X, Sparkles, MousePointer2, MapPin, Filter, Search, BarChart3, Database, Target, Maximize2, Sun as SunIcon, RefreshCw, GraduationCap, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Sparkles, MousePointer2, MapPin, Filter, Search, BarChart3, Database, Target, Maximize2, Sun as SunIcon, RefreshCw, GraduationCap, Info, Layers, Plus, List } from 'lucide-react';
 
 // ==========================================
 // TUTORIAL STEPS DEFINITION
@@ -57,7 +57,7 @@ const TUTORIAL_STEPS = [
         id: 'lists',
         title: 'Listas Detalhadas',
         description: 'À direita do mapa, três listas mostram: Estruturas CT&I (instituições de pesquisa), Cadeias Produtivas (APLs e Indicações Geográficas), e Cursos CT&I (cursos superiores). Cada item pode ser clicado para abrir uma ficha detalhada.',
-        icon: <Target size={28} />,
+        icon: <Layers size={28} />,
         position: 'left',
         targetSelector: '[data-tutorial="lists"]',
     },
@@ -80,10 +80,26 @@ const TUTORIAL_STEPS = [
     {
         id: 'expanded-lists',
         title: 'Modo Expandido',
-        description: 'Ao clicar no ícone de expandir (↗) em qualquer lista, ela será aberta em tela cheia com mais detalhes. Você pode abrir até 3 listas simultaneamente usando o botão "+" flutuante, aplicar filtros locais e buscar itens dentro de cada lista.',
+        description: 'Ao clicar no ícone de expandir (↗) em qualquer lista, ela será aberta em tela cheia com mais detalhes. Isso proporciona uma visão ampla das informações daquela categoria.',
         icon: <Maximize2 size={28} />,
-        position: 'below',
-        targetSelector: '[data-tutorial="lists"]',
+        position: 'left',
+        targetSelector: '[data-tutorial="expand-button"]',
+    },
+    {
+        id: 'add-lists',
+        title: 'Adicionar Novas Listas',
+        description: 'No modo expandido, clique no botão flutuante (+), localizado no canto lateral do painel.',
+        icon: <Plus size={28} />,
+        position: 'left',
+        targetSelector: '[data-tutorial="add-list-button"]',
+    },
+    {
+        id: 'add-lists-dropdown',
+        title: 'Escolher a Lista',
+        description: 'No menu que se abre, você pode escolher incluir até 3 listas simultaneamente (Estruturas CT&I, Cadeias Produtivas ou Cursos) para comparar os dados lado a lado.',
+        icon: <List size={28} />,
+        position: 'left',
+        targetSelector: '[data-tutorial="add-list-dropdown"]',
     },
     {
         id: 'theme-sync',
@@ -114,7 +130,7 @@ const TUTORIAL_STEPS = [
 // ==========================================
 // TUTORIAL COMPONENT
 // ==========================================
-export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation, onCloseDetails }) {
+export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation, onCloseDetails, onOpenExpandedList, onOpenAddListDropdown, onCloseAddListDropdown }) {
     const [currentStep, setCurrentStep] = useState(0);
     const [targetRect, setTargetRect] = useState(null);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -129,12 +145,20 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             if (step.id === 'cti-panel' && onDeselectLocation) {
                 onDeselectLocation();
             }
-            // Automatically close detail modals when leaving Step 7 (lists)
-            if (step.id !== 'lists' && onCloseDetails) {
-                onCloseDetails();
+            // Automatically open an expanded list when entering Step 10/11
+            if ((step.id === 'add-lists' || step.id === 'add-lists-dropdown') && onOpenExpandedList) {
+                onOpenExpandedList();
+            }
+            // Automatically open dropdown
+            if (step.id === 'add-lists-dropdown' && onOpenAddListDropdown) {
+                onOpenAddListDropdown();
+            }
+            // Close dropdown if not in dropdown step
+            if (step.id !== 'add-lists-dropdown' && onCloseAddListDropdown) {
+                onCloseAddListDropdown();
             }
         }
-    }, [isOpen, currentStep, step.id, onDeselectLocation, onCloseDetails]);
+    }, [isOpen, currentStep, step.id, onDeselectLocation, onOpenExpandedList, onOpenAddListDropdown, onCloseAddListDropdown]);
 
     // Find and highlight target element with real-time tracking
     useEffect(() => {
@@ -147,10 +171,20 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
 
         const updateRect = () => {
             let selector = step.targetSelector;
-            
-            // Dynamic tracking for Step 7: if user opens a details modal, highlight it instead of the background lists
+
             if (step.id === 'lists' && document.querySelector('[data-tutorial="detail-modal"]')) {
                 selector = '[data-tutorial="detail-modal"]';
+            } else if ((step.id === 'lists' || step.id === 'expanded-lists') && document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
+                selector = '[data-tutorial="expanded-lists-modal"]';
+            } else if (step.id === 'add-lists' && document.querySelector('[data-tutorial="add-list-button"]')) {
+                selector = '[data-tutorial="add-list-button"]';
+            } else if (step.id === 'search' && document.querySelector('[data-tutorial="search-input"]')) {
+                const searchEl = document.querySelector('[data-tutorial="search-input"]');
+                if (searchEl && searchEl.offsetWidth > 40) {
+                    selector = '[data-tutorial="search-input"]';
+                }
+            } else if ((step.id === 'search' || step.id === 'filters') && document.querySelector('[data-tutorial="filters-panel"]')) {
+                selector = '[data-tutorial="filters-panel"]';
             }
 
             if (!selector) {
@@ -160,24 +194,38 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             const el = document.querySelector(selector);
             if (el) {
                 const rect = el.getBoundingClientRect();
-                // Ensure element is visible (has dimensions and not hidden)
-                if (rect.width > 0 && rect.height > 0) {
+                let top = rect.top - 8;
+                let left = rect.left - 8;
+                let right = rect.right + 8;
+                let bottom = rect.bottom + 8;
+
+                // For expanded-lists-modal and add-list-button, also include the dropdown if open
+                const dropdownEl = document.querySelector('[data-tutorial="add-list-dropdown"]');
+                if (dropdownEl) {
+                    const dRect = dropdownEl.getBoundingClientRect();
+                    if (dRect.width > 0 && dRect.height > 0) {
+                        top = Math.min(top, dRect.top - 8);
+                        left = Math.min(left, dRect.left - 8);
+                        right = Math.max(right, dRect.right + 8);
+                        bottom = Math.max(bottom, dRect.bottom + 8);
+                    }
+                }
+
+                const width = right - left;
+                const height = bottom - top;
+
+                if (width > 0 && height > 0) {
                     setTargetRect(prev => {
                         if (
                             prev &&
-                            Math.abs(prev.top - (rect.top - 8)) < 0.5 &&
-                            Math.abs(prev.left - (rect.left - 8)) < 0.5 &&
-                            Math.abs(prev.width - (rect.width + 16)) < 0.5 &&
-                            Math.abs(prev.height - (rect.height + 16)) < 0.5
+                            Math.abs(prev.top - top) < 0.5 &&
+                            Math.abs(prev.left - left) < 0.5 &&
+                            Math.abs(prev.width - width) < 0.5 &&
+                            Math.abs(prev.height - height) < 0.5
                         ) {
                             return prev;
                         }
-                        return {
-                            top: rect.top - 8,
-                            left: rect.left - 8,
-                            width: rect.width + 16,
-                            height: rect.height + 16,
-                        };
+                        return { top, left, width, height };
                     });
                     return;
                 }
@@ -222,30 +270,46 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') onClose();
             if (e.key === 'ArrowRight' || e.key === 'Enter') {
+                if (onCloseDetails) onCloseDetails();
                 if (currentStep < totalSteps - 1) setCurrentStep(s => s + 1);
                 else onClose();
             }
             if (e.key === 'ArrowLeft') {
+                if (onCloseDetails) onCloseDetails();
                 if (currentStep > 0) setCurrentStep(s => s - 1);
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, currentStep, totalSteps, onClose]);
+    }, [isOpen, currentStep, totalSteps, onClose, onCloseDetails]);
 
     // Reset on open
     useEffect(() => {
         if (isOpen) setCurrentStep(0);
     }, [isOpen]);
 
+    // Listen for custom event to advance tutorial from external clicks
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleExternalNext = () => {
+            if (onCloseDetails) onCloseDetails();
+            if (currentStep < totalSteps - 1) setCurrentStep(s => s + 1);
+            else onClose();
+        };
+        window.addEventListener('tutorial-next-step', handleExternalNext);
+        return () => window.removeEventListener('tutorial-next-step', handleExternalNext);
+    }, [isOpen, currentStep, totalSteps, onClose, onCloseDetails]);
+
     if (!isOpen) return null;
 
     const goNext = () => {
+        if (onCloseDetails) onCloseDetails();
         if (currentStep < totalSteps - 1) setCurrentStep(s => s + 1);
         else onClose();
     };
 
     const goPrev = () => {
+        if (onCloseDetails) onCloseDetails();
         if (currentStep > 0) setCurrentStep(s => s - 1);
     };
 
@@ -257,6 +321,48 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
+            };
+        }
+
+        // Special override: If targeting the expanded list modal, force the tooltip to the far left reserved dark area
+        if ((step.id === 'lists' || step.id === 'expanded-lists') && document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
+            const isSm = window.innerWidth >= 640;
+            if (!isSm) {
+                return {
+                    position: 'fixed',
+                    bottom: '12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 'min(380px, calc(100vw - 24px))',
+                };
+            }
+            return {
+                position: 'fixed',
+                top: '50%',
+                left: '16px',
+                transform: 'translateY(-50%)',
+                width: '380px',
+            };
+        }
+
+        // Special override: Step 11 (add-lists) — place tooltip in the left reserved dark area, above the + button
+        if (step.id === 'add-lists' && document.querySelector('[data-tutorial="add-list-button"]')) {
+            const isSm = window.innerWidth >= 640;
+            if (!isSm) {
+                return {
+                    position: 'fixed',
+                    bottom: '12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 'min(380px, calc(100vw - 24px))',
+                };
+            }
+            return {
+                position: 'fixed',
+                top: '50%',
+                left: '16px',
+                transform: 'translateY(-50%)',
+                width: '380px',
             };
         }
 
@@ -316,7 +422,19 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             {/* Full screen overlay */}
             <div className="fixed inset-0 z-[9990] pointer-events-none transition-opacity duration-300">
 
-                {/* SVG Mask for spotlight cutout */}
+                {/* Click blocker — covers entire screen EXCEPT the spotlight area */}
+                {targetRect ? (
+                    <>
+                        <div className="fixed top-0 left-0 right-0 pointer-events-auto" style={{ height: Math.max(0, targetRect.top) }} />
+                        <div className="fixed bottom-0 left-0 right-0 pointer-events-auto" style={{ top: targetRect.top + targetRect.height }} />
+                        <div className="fixed pointer-events-auto" style={{ top: Math.max(0, targetRect.top), height: targetRect.height, left: 0, width: Math.max(0, targetRect.left) }} />
+                        <div className="fixed pointer-events-auto" style={{ top: Math.max(0, targetRect.top), height: targetRect.height, left: targetRect.left + targetRect.width, right: 0 }} />
+                    </>
+                ) : (
+                    <div className="fixed inset-0 pointer-events-auto" />
+                )}
+
+                {/* SVG Mask for spotlight cutout — visual only */}
                 <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
                     <defs>
                         <mask id="tutorial-spotlight-mask">
@@ -409,7 +527,10 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                             {TUTORIAL_STEPS.map((_, idx) => (
                                 <button
                                     key={idx}
-                                    onClick={() => setCurrentStep(idx)}
+                                    onClick={() => {
+                                        if (onCloseDetails) onCloseDetails();
+                                        setCurrentStep(idx);
+                                    }}
                                     className={`rounded-full transition-all duration-300 ${idx === currentStep
                                         ? 'w-6 h-2 bg-gov-blue'
                                         : idx < currentStep
