@@ -30,6 +30,14 @@ const TUTORIAL_STEPS = [
         targetSelector: '[data-tutorial="kpis"]',
     },
     {
+        id: 'cti-panel',
+        title: 'Painel de Ativos CT&I',
+        description: 'À esquerda do mapa, o painel vertical mostra os sub-indicadores de CT&I: campi de universidades públicas e privadas, institutos federais, ICTs, centros de pesquisa, espaços dinamizadores, parques tecnológicos e incubadoras. Clique em cada item para filtrá-lo no mapa.',
+        icon: <Database size={28} />,
+        position: 'right',
+        targetSelector: '[data-tutorial="cti-panel"]',
+    },
+    {
         id: 'map',
         title: 'Mapa Interativo',
         description: 'O mapa central exibe os 27 Territórios de Identidade da Bahia. Passe o mouse sobre um território para ver estatísticas resumidas. Clique em um território para filtrar todos os dados da página por aquela região.',
@@ -46,12 +54,12 @@ const TUTORIAL_STEPS = [
         targetSelector: '[data-tutorial="map"]',
     },
     {
-        id: 'cti-panel',
-        title: 'Painel de Ativos CT&I',
-        description: 'À esquerda do mapa, o painel vertical mostra os sub-indicadores de CT&I: campi de universidades públicas e privadas, institutos federais, ICTs, centros de pesquisa, espaços dinamizadores, parques tecnológicos e incubadoras. Clique em cada item para filtrá-lo no mapa.',
-        icon: <Database size={28} />,
-        position: 'right',
-        targetSelector: '[data-tutorial="cti-panel"]',
+        id: 'courses',
+        title: 'Cursos CT&I — Filtragem por Área',
+        description: 'Na lista de Cursos, use a barra de busca e o botão de filtro por Área Geral (Engenharias, Saúde, Tecnologia, etc.) para encontrar cursos específicos. Cada área tem um ícone e cor próprios para fácil identificação.',
+        icon: <GraduationCap size={28} />,
+        position: 'above',
+        targetSelector: '[data-tutorial="cursos-card"]',
     },
     {
         id: 'lists',
@@ -60,22 +68,6 @@ const TUTORIAL_STEPS = [
         icon: <Layers size={28} />,
         position: 'left',
         targetSelector: '[data-tutorial="lists"]',
-    },
-    {
-        id: 'search',
-        title: 'Pesquisa Global',
-        description: 'Na barra lateral direita (desktop) ou no topo (mobile), use o ícone de lupa (🔍) para pesquisar territórios, municípios, instituições ou cursos e encontrá-los rapidamente.',
-        icon: <Search size={28} />,
-        position: 'left',
-        targetSelector: '[data-tutorial="search-button"]',
-    },
-    {
-        id: 'filters',
-        title: 'Filtros Avançados',
-        description: 'Clique no botão "Filtros" na barra lateral para abrir o painel completo. Aqui você pode: ativar o recorte do Semiárido, definir intervalos de IFDM, filtrar tipos de ativos CT&I, e selecionar cadeias produtivas por segmento (APL e IG).',
-        icon: <Filter size={28} />,
-        position: 'left',
-        targetSelector: '[data-tutorial="filter-button"]',
     },
     {
         id: 'expanded-lists',
@@ -110,20 +102,20 @@ const TUTORIAL_STEPS = [
         targetSelector: '[data-tutorial="expanded-lists-grid"]',
     },
     {
-        id: 'theme-sync',
-        title: 'Tema e Sincronização',
-        description: 'No topo da página, alterne entre modo claro e escuro com o ícone de lua/sol. Na barra lateral, o botão de sincronização (↻) atualiza os dados diretamente do SharePoint, e a borracha limpa todos os filtros ativos.',
-        icon: <SunIcon size={28} />,
-        position: 'below',
-        targetSelector: '[data-tutorial="header"]',
+        id: 'search',
+        title: 'Pesquisa Global',
+        description: 'Na barra lateral direita (desktop) ou no topo (mobile), use o ícone de lupa (🔍) para pesquisar territórios, municípios, instituições ou cursos e encontrá-los rapidamente.',
+        icon: <Search size={28} />,
+        position: 'left',
+        targetSelector: '[data-tutorial="search-button"]',
     },
     {
-        id: 'courses',
-        title: 'Cursos CT&I — Filtragem por Área',
-        description: 'Na lista de Cursos, use a barra de busca e o botão de filtro por Área Geral (Engenharias, Saúde, Tecnologia, etc.) para encontrar cursos específicos. Cada área tem um ícone e cor próprios para fácil identificação.',
-        icon: <GraduationCap size={28} />,
-        position: 'above',
-        targetSelector: '[data-tutorial="cursos-card"]',
+        id: 'filters',
+        title: 'Filtros Avançados',
+        description: 'Clique no botão "Filtros" na barra lateral para abrir o painel completo. Aqui você pode: ativar o recorte do Semiárido, definir intervalos de IFDM, filtrar tipos de ativos CT&I, e selecionar cadeias produtivas por segmento (APL e IG).',
+        icon: <Filter size={28} />,
+        position: 'left',
+        targetSelector: '[data-tutorial="filter-button"]',
     },
     {
         id: 'finish',
@@ -170,7 +162,7 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                 onForceAddList();
             }
             // Close expanded lists if we navigate away from the expanded list steps
-            if ((step.id === 'theme-sync' || step.id === 'expanded-lists') && onCloseDetails) {
+            if ((step.id === 'expanded-lists' || step.id === 'search' || step.id === 'filters' || step.id === 'finish') && onCloseDetails) {
                 onCloseDetails();
             }
         }
