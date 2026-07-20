@@ -113,7 +113,7 @@ function MainApp() {
 
     // Filtros de CTI
     const [ctiFilters, setCtiFilters] = useState({
-        campiUniversidadePublica: true, campiUniversidadePrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+        campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
     });
 
     const sideFilterRef = useRef(null);
@@ -137,7 +137,7 @@ function MainApp() {
         setCursoSearchTerm('');
         setCtiSearchTerm('');
         setCtiFilters({
-            campiUniversidadePublica: true, campiUniversidadePrivada: true, ifs: true, icts: true, centrosPesquisa: true, espacos: true, parques: true, incubadoras: true
+            campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
         });
         setIsDropdownOpen(false);
         setIsCardCadeiaFilterOpen(false);
@@ -232,7 +232,7 @@ function MainApp() {
     }, []);
 
     const toggleCtiFilter = (key) => { setCtiFilters(prev => ({ ...prev, [key]: !prev[key] })); };
-    const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'ifs', 'icts', 'centrosPesquisa', 'espacos', 'parques', 'incubadoras'], []);
+    const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal', 'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'], []);
     const areAllCtiSelected = useMemo(() => ctiFilterKeys.every(key => ctiFilters[key]), [ctiFilters, ctiFilterKeys]);
 
     const handleToggleAllCti = () => {
@@ -465,16 +465,20 @@ function MainApp() {
         if (!dashboardData?.subKpis || !dashboardData?.unfiltSubKpis) return [];
         const singleColorClass = darkMode ? 'text-cyan-400' : 'text-gov-cyan';
         const singleBarClass = 'bg-gov-cyan';
+        
+        // --- SUBSTITUA ESTA VARIÁVEL kpiData: ---
         const kpiData = [
-            { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', c: singleColorClass, b: singleBarClass },
-            { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', c: singleColorClass, b: singleBarClass },
-            { id: 'ifs', l: 'Inst. Federais', c: singleColorClass, b: singleBarClass },
+            { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+            { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+            { id: 'campiInstitutoFederal', l: 'Campi Inst. Federais', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
             { id: 'icts', l: 'ICTs', c: singleColorClass, b: singleBarClass },
             { id: 'centrosPesquisa', l: 'C. Pesquisa', c: singleColorClass, b: singleBarClass },
-            { id: 'espacos', l: 'Espaços', c: singleColorClass, b: singleBarClass },
-            { id: 'parques', l: 'Parques', c: singleColorClass, b: singleBarClass },
+            { id: 'espacoDinamizadoress', l: 'Espaços Dinamizadores', c: singleColorClass, b: singleBarClass },
+            { id: 'parquesTecnologicos', l: 'Parques Tec.', c: singleColorClass, b: singleBarClass },
             { id: 'incubadoras', l: 'Incubadoras', c: singleColorClass, b: singleBarClass }
         ];
+        // ----------------------------------------
+        
         return kpiData.map(kpi => ({ ...kpi, v: dashboardData.subKpis[kpi.id] || 0, pct: (dashboardData.unfiltSubKpis[kpi.id] || 0) > 0 ? ((dashboardData.subKpis[kpi.id] || 0) / dashboardData.unfiltSubKpis[kpi.id]) * 100 : 0 }));
     }, [dashboardData, darkMode]);
 
@@ -557,7 +561,7 @@ function MainApp() {
                                         if (listType === 'cti') {
                                             listData = dashboardData.entidades;
                                             renderItem = renderCtiItem;
-                                            listTitle = 'Estruturas CT&I';
+                                            listTitle = 'Ativos de CT&I';
                                             gridColsClass = expandedLists.length === 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1';
                                             filterControls = (
                                                 <React.Fragment>
@@ -578,7 +582,7 @@ function MainApp() {
                                                     </div>
                                                     <div className="relative" ref={modalCtiFilterRef}>
                                                         <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
-                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', ifs: 'Institutos Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacos: 'Espaços Dinamizadores', parques: 'Parques Tecnológicos', incubadoras: 'Incubadoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
+                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', campiInstitutoFederal: 'Campi Inst. Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacoDinamizadoress: 'Espaços Dinamizadores Dinamizadores', parquesTecnologicos: 'Parques Tec. Tecnológicos', incubadoras: 'Incubadoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
                                                     </div>
                                                 </React.Fragment>
                                             );
@@ -710,7 +714,7 @@ function MainApp() {
                                         } else if (listType === 'cursos') {
                                             listData = cursosFiltrados;
                                             renderItem = renderCursoItem;
-                                            listTitle = 'Cursos CT&I';
+                                            listTitle = 'Cursos de CT&I';
                                             gridColsClass = 'grid-cols-1 md:grid-cols-2';
                                             filterControls = (
                                                 <React.Fragment>
@@ -732,17 +736,15 @@ function MainApp() {
                                                                         <Info size={12} />
                                                                     </button>
                                                                     <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
-                                                                <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
-                                                                    <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                    {listType === 'cadeias' ? (
-                                                                        <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
+                                                                <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
+                                                                    <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
+                                                                        <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
+                                                                        
+                                                                        <Link to="/sobre" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                             DataSebrae / Indicações Geográficas
-                                                                        </a>
-                                                                    ) : (
-                                                                        <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                                                                            INEP / Censo da Educação Superior (2022)
-                                                                        </a>
-                                                                    )}
+                                                                        </Link>
+
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -793,9 +795,9 @@ function MainApp() {
                                     <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
                                         {availableListsToAdd.map(type => {
                                             const config = {
-                                                cti: { title: 'Estruturas CT&I', icon: <Database size={14} className="text-gov-blue" /> },
+                                                cti: { title: 'Ativos de CT&I', icon: <Database size={14} className="text-gov-blue" /> },
                                                 cadeias: { title: 'Cadeias Produtivas', icon: <BarChart3 size={14} className="text-gov-green" /> },
-                                                cursos: { title: 'Cursos CT&I', icon: <Target size={14} className="text-gov-cyan" /> }
+                                                cursos: { title: 'Cursos de CT&I', icon: <Target size={14} className="text-gov-cyan" /> }
                                             }[type];
                                             return (
                                                 <button key={type} onClick={() => { setExpandedLists(prev => [...prev, type]); setIsModalAddListOpen(false); }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
@@ -917,7 +919,7 @@ function MainApp() {
                         onClick={e => e.stopPropagation()}
                     >
                         <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                            <h3 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-gray-800'}`}>Detalhes da Estrutura CT&I</h3>
+                            <h3 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-gray-800'}`}>Detalhes dos Ativos de CT&I</h3>
                             <button onClick={() => setExpandedCti(null)} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title="Fechar">
                                 <Minimize size={16} />
                             </button>
@@ -1144,7 +1146,7 @@ function MainApp() {
                             </button>
                             <div>
                                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60 mb-2">Recorte Geográfico</span>
-                                <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); setSelectedLocation(null); setSearchTerm(''); }} className={`w-full h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-gov-yellow border-yellow-600 text-white hover:bg-yellow-600' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>
+                                <button onClick={() => { setFiltroSemiarido(!filtroSemiarido); }} className={`w-full h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 border shadow-sm ${filtroSemiarido ? 'bg-gov-yellow border-yellow-600 text-white hover:bg-yellow-600' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}>
                                     {filtroSemiarido ? 'Semiárido: Ativo' : 'Ativar Semiárido'}
                                 </button>
                             </div>
@@ -1164,9 +1166,9 @@ function MainApp() {
                                         <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
                                     </label>
                                     {[
-                                        { id: 'campiUniversidadePublica', label: 'Campi Universidade Pública' }, { id: 'campiUniversidadePrivada', label: 'Campi Universidade Privada' }, { id: 'ifs', label: 'Institutos Federais' },
+                                        { id: 'campiUniversidadePublica', label: 'Campi Universidade Pública' }, { id: 'campiUniversidadePrivada', label: 'Campi Universidade Privada' }, { id: 'campiInstitutoFederal', label: 'Campi Institutos Federais' },
                                         { id: 'icts', label: 'ICTs' }, { id: 'centrosPesquisa', label: 'Centros de Pesquisa' },
-                                        { id: 'espacos', label: 'Espaços Dinamizadores' }, { id: 'parques', label: 'Parques Tecnológicos' },
+                                        { id: 'espacoDinamizadoress', label: 'Espaços Dinamizadores Dinamizadores' }, { id: 'parquesTecnologicos', label: 'Parques Tec. Tecnológicos' },
                                         { id: 'incubadoras', label: 'Incubadoras' }
                                     ].map((f) => (
                                         <label key={f.id} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
@@ -1297,11 +1299,11 @@ function MainApp() {
                                     </div>
                                     <div className="flex overflow-x-auto sm:overflow-visible snap-x hide-scroll sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3 pb-2 sm:pb-0">
                                         {[
-                                            { l: 'Estrutura CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Database size={14} />, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cti' },
+                                            { l: 'Ativos de CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Database size={14} />, listType: 'cti' },
                                             { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
                                             { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Sun size={14} />, tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e', unit: 'mun.' },
-                                            { l: 'Cursos Superiores', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Target size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
-                                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <BarChart3 size={14} />, tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: 'https://datasebrae.com.br/indicacoesgeograficas/', listType: 'cadeias' },
+                                            { l: 'Cursos de CT&I', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Target size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
+                                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <BarChart3 size={14} />, tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: '/sobre', listType: 'cadeias' },
                                         ].map((k, idx) => {
                                             let displayValue = k.v;
                                             if (k.l === 'Semiárido' && typeof k.v === 'string') {
@@ -1334,7 +1336,11 @@ function MainApp() {
                                                                     <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                         <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                         {k.sourceLink ? (
-                                                                            <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
+                                                                            k.sourceLink.startsWith('/') ? (
+                                                                                <Link to={k.sourceLink} className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</Link>
+                                                                            ) : (
+                                                                                <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
+                                                                            )
                                                                         ) : (
                                                                             <span className="block leading-tight opacity-80">{k.sourceText}</span>
                                                                         )}
@@ -1361,25 +1367,49 @@ function MainApp() {
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
                                     {!selectedLocation && subKpisList.length > 0 && (
-                                        <div data-tutorial="cti-panel" className={`w-full lg:w-48 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+                                        <div data-tutorial="cti-panel" className={`relative z-30 hover:z-[999] w-full lg:w-52 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                                                     Ativos de CT&I
                                                 </h4>
                                             </div>
-                                            <div className="flex-1 min-h-0 overflow-y-auto p-3 hide-scroll">
+                                            
+                                            {/* A MÁGICA ACONTECE AQUI: Mudamos para overflow-visible para o tooltip sair da caixa sem ser cortado */}
+                                            <div className="flex-1 min-h-0 overflow-visible p-3">
                                                 <div className="flex flex-col gap-2">
                                                     {subKpisList.map(kpi => (
                                                         <div
                                                             key={kpi.id}
                                                             onClick={() => handleCtiKpiClick(kpi.id)}
-                                                            className={`p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
+                                                            className={`relative p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
                                                         >
-                                                            <div>
-                                                                <span className={`text-[8px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
-                                                                <span className={`block text-lg font-black leading-none pt-1 drop-shadow-sm ${kpi.c}`}>{kpi.v || 0}</span>
+                                                            <div className="min-w-0 flex-1 pr-1.5">
+                                                                <div className="flex items-start justify-between gap-1">
+                                                                    <span className={`text-[9px] font-bold uppercase tracking-wider leading-tight opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
+                                                                    {kpi.sourceText && (
+                                                                        <div className="relative group flex items-center justify-center z-50 shrink-0 mt-0.5">
+                                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                                                                                <Info size={11} />
+                                                                            </button>
+                                                                            
+                                                                            {/* CAIXINHA DA FONTE: Agora abre para a direita (left-full) e fica à frente do mapa */}
+                                                                            <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 w-max max-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[99999]">
+                                                                                <div 
+                                                                                    className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`} 
+                                                                                    onClick={(e) => e.stopPropagation()}
+                                                                                >
+                                                                                    <span className="block font-bold mb-0.5 opacity-70">Fonte:</span>
+                                                                                    <a href={kpi.sourceLink} target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
+                                                                                        {kpi.sourceText}
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <span className={`block text-lg font-black leading-none pt-1.5 drop-shadow-sm ${kpi.c}`}>{kpi.v || 0}</span>
                                                             </div>
-                                                            <div className="w-1.5 h-12 bg-slate-200/60 dark:bg-slate-700/60 rounded-full overflow-hidden flex flex-col justify-end shrink-0 ml-2.0">
+                                                            <div className="w-1.5 h-12 bg-slate-200/60 dark:bg-slate-700/60 rounded-full overflow-hidden flex flex-col justify-end shrink-0 ml-1">
                                                                 <div className={`w-full ${kpi.b} transition-all duration-700 ease-out rounded-full`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
                                                             </div>
                                                         </div>
@@ -1431,20 +1461,7 @@ function MainApp() {
                                             <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-visible border shadow-sm flex flex-col relative transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                                 <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                     <div className="flex items-center gap-1.5">
-                                                        <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Estruturas CT&I</h4>
-                                                        <div className="relative group flex items-center justify-center z-40">
-                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                                <Info size={12} />
-                                                            </button>
-                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
-                                                                <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
-                                                                    <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                    <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                                                                        INEP / Censo da Educação Superior (2022)
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Ativos de CT&I</h4>
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-cyan/20 text-cyan-400' : 'bg-gov-cyan/10 text-gov-cyan-dark'}`}>
@@ -1486,9 +1503,13 @@ function MainApp() {
                                                             <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                    <a href="https://datasebrae.com.br/indicacoesgeograficas/" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
+                                                                    
+                                                                    {/* === SUBSTITUA AQUI === */}
+                                                                    <Link to="/sobre" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                         DataSebrae / Indicações Geográficas
-                                                                    </a>
+                                                                    </Link>
+                                                                    {/* ======================= */}
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1548,7 +1569,7 @@ function MainApp() {
                                         <div data-tutorial="cursos-card" className={`lg:flex-[0.6] h-[350px] lg:h-auto min-h-0 relative rounded-2xl overflow-visible border shadow-sm flex flex-col transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
                                             <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 relative z-30 rounded-t-2xl ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
                                                 <div className="flex items-center gap-2">
-                                                    <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cursos CT&I</h4>
+                                                    <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cursos de CT&I</h4>
                                                     <div className="relative group flex items-center justify-center z-40">
                                                         <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>

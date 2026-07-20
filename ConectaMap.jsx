@@ -675,13 +675,9 @@ export default function ConectaMap({
                                 let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
                                 if (blockClickAndColor && !selectedTerritory) {
-                                    // Se o bloqueio for pelo filtro do semiárido, apenas diminui a opacidade, mantendo a cor.
-                                    if (filtroSemiarido && !isMunSemi) {
-                                        opacity = 0.50;
-                                    } else { // Se for por outros filtros (CTI, IFDM), deixa cinza.
-                                        fillColor = darkMode ? '#374151' : '#E5E7EB'; // gray-700 / gray-200
-                                        opacity = 0.50;
-                                    }
+                                    // Bloqueio visual unificado: tudo o que estiver fora do filtro (seja Semiárido ou outros) fica cinza e opaco.
+                                    fillColor = darkMode ? '#374151' : '#E5E7EB'; // gray-700 / gray-200
+                                    opacity = 0.50;
                                 } else if (selectedTerritory) {
                                     if (isSelectedMap) {
                                         opacity = 1;

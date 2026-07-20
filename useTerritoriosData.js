@@ -293,7 +293,7 @@ export default function useTerritoriosData(filters) {
                 if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
                     catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
                 } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                    catCurso = 'ifs';
+                    catCurso = 'campiInstitutoFederal';
                 }
                 if (catCurso && !ctiFilters[catCurso]) return false;
 
@@ -340,8 +340,8 @@ export default function useTerritoriosData(filters) {
     const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
-    const kpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
-    const unfiltKpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, ifs: 0, icts: 0, centrosPesquisa: 0, espacos: 0, parques: 0, incubadoras: 0 };
+    const kpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, campiInstitutoFederal: 0, icts: 0, centrosPesquisa: 0, espacoDinamizadoress: 0, parquesTecnologicos: 0, incubadoras: 0 };
+    const unfiltKpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, campiInstitutoFederal: 0, icts: 0, centrosPesquisa: 0, espacoDinamizadoress: 0, parquesTecnologicos: 0, incubadoras: 0 };
     
     const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = [];
     const globalIds = new Set(); const globalCadeiasIds = new Set();
@@ -400,7 +400,7 @@ export default function useTerritoriosData(filters) {
             if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
                 catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
             } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                catCurso = 'ifs';
+                catCurso = 'campiInstitutoFederal';
             }
             if (catCurso && !ctiFilters[catCurso]) return;
 
