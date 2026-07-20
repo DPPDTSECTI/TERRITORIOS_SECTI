@@ -1695,13 +1695,15 @@ function MainApp() {
             </main>
 
             {/* BOTÃO FLUTUANTE TUTORIAL */}
-            <button 
-                onClick={() => setIsTutorialOpen(true)}
-                className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform hover:scale-110 bg-gov-blue text-white hover:bg-gov-blue-dark"
-                title="Tutorial de uso"
-            >
-                <HelpCircle size={28} strokeWidth={2.5} />
-            </button>
+            {location.pathname === '/territorios' && (
+                <button 
+                    onClick={() => setIsTutorialOpen(true)}
+                    className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform hover:scale-110 bg-gov-blue text-white hover:bg-gov-blue-dark"
+                    title="Tutorial de uso"
+                >
+                    <HelpCircle size={28} strokeWidth={2.5} />
+                </button>
+            )}
 
             {/* TUTORIAL OVERLAY */}
             <Tutorial
