@@ -67,7 +67,7 @@ const TUTORIAL_STEPS = [
         description: 'Na barra lateral direita (desktop) ou no topo (mobile), use o ícone de lupa (🔍) para pesquisar territórios, municípios, instituições ou cursos e encontrá-los rapidamente.',
         icon: <Search size={28} />,
         position: 'left',
-        targetSelector: '[data-tutorial="sidebar"]',
+        targetSelector: '[data-tutorial="search-button"]',
     },
     {
         id: 'filters',
@@ -75,7 +75,7 @@ const TUTORIAL_STEPS = [
         description: 'Clique no botão "Filtros" na barra lateral para abrir o painel completo. Aqui você pode: ativar o recorte do Semiárido, definir intervalos de IFDM, filtrar tipos de ativos CT&I, e selecionar cadeias produtivas por segmento (APL e IG).',
         icon: <Filter size={28} />,
         position: 'left',
-        targetSelector: '[data-tutorial="sidebar"]',
+        targetSelector: '[data-tutorial="filter-button"]',
     },
     {
         id: 'expanded-lists',
@@ -106,7 +106,7 @@ const TUTORIAL_STEPS = [
         title: 'Lista Adicionada!',
         description: 'Pronto! A lista foi adicionada e você pode comparar as informações lado a lado. Para remover uma lista, basta clicar no ícone da lixeira no cabeçalho dela.',
         icon: <Sparkles size={28} />,
-        position: 'above',
+        position: 'right',
         targetSelector: '[data-tutorial="expanded-lists-grid"]',
     },
     {

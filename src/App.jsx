@@ -1117,7 +1117,7 @@ function MainApp() {
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue') : ''}`} title="Pesquisar">
+                        <button data-tutorial="search-button" onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue') : ''}`} title="Pesquisar">
                             <Search size={18} strokeWidth={2.5} />
                         </button>
                     </div>
@@ -1137,7 +1137,7 @@ function MainApp() {
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
 
-                    <button onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-lg flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? 'bg-gov-blue text-white shadow-md' : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue')}`} title="Filtros Avançados">
+                    <button data-tutorial="filter-button" onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-lg flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? 'bg-gov-blue text-white shadow-md' : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue')}`} title="Filtros Avançados">
                         <Filter size={18} strokeWidth={2.5} />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>Filtros</span>
                     </button>
