@@ -489,16 +489,22 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                     className={`w-[90vw] max-w-[420px] rounded-2xl border shadow-2xl flex flex-col overflow-hidden p-0 z-[9999] transition-all duration-500 ease-out ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} ${darkMode ? 'bg-gray-900 border-gray-700 text-gray-100' : 'bg-white border-gray-200 text-gray-800'}`}
                     style={{ ...getTooltipStyle(), pointerEvents: 'auto' }}
                 >
-                    {/* Progress Bar */}
-                    <div className={`w-full h-1.5 shrink-0 ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                        <div
-                            className="h-full bg-gradient-to-r from-gov-blue via-gov-green to-gov-blue transition-all duration-700 ease-out"
-                            style={{ width: `${progressPct}%` }}
-                        />
+                    {/* Segmented Progress Bar */}
+                    <div className={`w-full flex items-center gap-1 px-3 pt-2 shrink-0 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+                        {TUTORIAL_STEPS.map((_, idx) => (
+                            <div
+                                key={idx}
+                                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                                    idx <= currentStep
+                                        ? 'bg-gov-blue'
+                                        : (darkMode ? 'bg-gray-800' : 'bg-gray-200')
+                                }`}
+                            />
+                        ))}
                     </div>
 
                     {/* Top bar: step counter + close button */}
-                    <div className={`flex items-center justify-between px-5 pt-4 pb-0 shrink-0`}>
+                    <div className={`flex items-center justify-between px-5 pt-3 pb-0 shrink-0`}>
                         <span className={`text-[9px] font-black uppercase tracking-[0.25em] ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                             Passo {currentStep + 1} de {totalSteps}
                         </span>
@@ -543,7 +549,7 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                                     className={`rounded-full transition-all duration-300 ${idx === currentStep
                                         ? 'w-6 h-2 bg-gov-blue'
                                         : idx < currentStep
-                                            ? `w-2 h-2 ${darkMode ? 'bg-gov-green/60' : 'bg-gov-green/50'}`
+                                            ? `w-2 h-2 ${darkMode ? 'bg-gov-blue/60' : 'bg-gov-blue/50'}`
                                             : `w-2 h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`
                                         }`}
                                     title={`Ir para passo ${idx + 1}`}
