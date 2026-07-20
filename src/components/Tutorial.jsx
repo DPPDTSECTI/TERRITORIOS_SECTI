@@ -96,10 +96,18 @@ const TUTORIAL_STEPS = [
     {
         id: 'add-lists-dropdown',
         title: 'Escolher a Lista',
-        description: 'No menu que se abre, você pode escolher incluir até 3 listas simultaneamente (Estruturas CT&I, Cadeias Produtivas ou Cursos) para comparar os dados lado a lado.',
+        description: 'No menu que se abre, você pode escolher incluir até 3 listas simultaneamente (Estruturas CT&I, Cadeias Produtivas ou Cursos) para comparar os dados lado a lado. Após escolher uma lista, adicione ela.',
         icon: <List size={28} />,
         position: 'left',
         targetSelector: '[data-tutorial="add-list-dropdown"]',
+    },
+    {
+        id: 'added-list',
+        title: 'Lista Adicionada!',
+        description: 'Pronto! A lista foi adicionada e você pode comparar as informações lado a lado. Para remover uma lista, basta clicar no ícone da lixeira no cabeçalho dela.',
+        icon: <Sparkles size={28} />,
+        position: 'above',
+        targetSelector: '[data-tutorial="expanded-lists-grid"]',
     },
     {
         id: 'theme-sync',
@@ -130,7 +138,7 @@ const TUTORIAL_STEPS = [
 // ==========================================
 // TUTORIAL COMPONENT
 // ==========================================
-export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation, onCloseDetails, onOpenExpandedList, onOpenAddListDropdown, onCloseAddListDropdown }) {
+export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation, onCloseDetails, onOpenExpandedList, onOpenAddListDropdown, onCloseAddListDropdown, onForceAddList }) {
     const [currentStep, setCurrentStep] = useState(0);
     const [targetRect, setTargetRect] = useState(null);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -157,8 +165,17 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             if (step.id !== 'add-lists-dropdown' && onCloseAddListDropdown) {
                 onCloseAddListDropdown();
             }
+            // Ensure at least one list is added for the added-list step
+            if (step.id === 'added-list' && onForceAddList) {
+                onForceAddList();
+            }
+            // Close expanded lists if we navigate away from the expanded list steps
+            if ((step.id === 'theme-sync' || step.id === 'expanded-lists') && onCloseDetails) {
+                onCloseDetails();
+            }
         }
-    }, [isOpen, currentStep, step.id, onDeselectLocation, onOpenExpandedList, onOpenAddListDropdown, onCloseAddListDropdown]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, currentStep]);
 
     // Find and highlight target element with real-time tracking
     useEffect(() => {

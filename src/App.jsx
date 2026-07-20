@@ -497,8 +497,8 @@ function MainApp() {
 
                             {/* GRID DE CONTEÚDO DO MODAL */}
                             <div className="flex-1 min-h-0 p-4 overflow-visible rounded-b-2xl">
-                                <div className="grid h-full gap-4" style={{ gridTemplateColumns: `repeat(${expandedLists.length}, minmax(0, 1fr))` }}>
-                                    {expandedLists.map(listType => {
+                                <div data-tutorial="expanded-lists-grid" className="grid h-full gap-4" style={{ gridTemplateColumns: `repeat(${expandedLists.length}, minmax(0, 1fr))` }}>
+                                    {expandedLists.map((listType, listIndex) => {
                                         let listData, renderItem, listTitle, filterControls, gridColsClass;
 
                                         const renderCtiItem = (ent, idx) => (
@@ -723,7 +723,7 @@ function MainApp() {
                                         }
 
                                         return (
-                                            <div key={listType} className={`rounded-xl overflow-visible border flex flex-col min-h-0 ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'}`}>
+                                            <div key={listType} data-tutorial={listIndex === 1 ? 'added-list' : (listType === 'cursos' ? 'cursos-card' : undefined)} className={`rounded-xl overflow-visible border flex flex-col min-h-0 ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'}`}>
                                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`font-bold text-xs ${darkMode ? 'text-white' : 'text-gray-800'}`}>{listTitle}</h4>
@@ -803,7 +803,13 @@ function MainApp() {
                                                 cursos: { title: 'Cursos CT&I', icon: <GraduationCap size={14} className="text-gov-cyan" /> }
                                             }[type];
                                             return (
-                                                <button key={type} onClick={() => { setExpandedLists(prev => [...prev, type]); setIsModalAddListOpen(false); }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
+                                                <button key={type} onClick={() => { 
+                                                    setExpandedLists(prev => [...prev, type]); 
+                                                    setIsModalAddListOpen(false); 
+                                                    if (isTutorialOpen) {
+                                                        window.dispatchEvent(new Event('tutorial-next-step'));
+                                                    }
+                                                }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
                                                     {config.icon}
                                                     {config.title}
                                                 </button>
@@ -1130,11 +1136,6 @@ function MainApp() {
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <button onClick={() => { setIsTutorialOpen(true); }} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Tutorial de uso">
-                        <HelpCircle size={18} strokeWidth={2.5} />
-                    </button>
-
-                    <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
                     <button onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-lg flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? 'bg-gov-blue text-white shadow-md' : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue')}`} title="Filtros Avançados">
                         <Filter size={18} strokeWidth={2.5} />
@@ -1693,6 +1694,15 @@ function MainApp() {
                 </Routes>
             </main>
 
+            {/* BOTÃO FLUTUANTE TUTORIAL */}
+            <button 
+                onClick={() => setIsTutorialOpen(true)}
+                className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform hover:scale-110 bg-gov-blue text-white hover:bg-gov-blue-dark"
+                title="Tutorial de uso"
+            >
+                <HelpCircle size={28} strokeWidth={2.5} />
+            </button>
+
             {/* TUTORIAL OVERLAY */}
             <Tutorial
                 isOpen={isTutorialOpen}
@@ -1702,6 +1712,7 @@ function MainApp() {
                 onOpenExpandedList={() => setExpandedLists(['cti'])}
                 onOpenAddListDropdown={() => setIsModalAddListOpen(true)}
                 onCloseAddListDropdown={() => setIsModalAddListOpen(false)}
+                onForceAddList={() => setExpandedLists(prev => prev.length < 2 ? ['cti', 'cadeias'] : prev)}
                 onCloseDetails={() => {
                     setExpandedCourse(null);
                     setExpandedCadeia(null);
