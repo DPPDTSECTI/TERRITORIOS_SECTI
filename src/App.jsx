@@ -1401,7 +1401,7 @@ function MainApp() {
                                                                             </button>
                                                                             
                                                                             {/* CAIXINHA DA FONTE: Agora abre para a direita (left-full) e fica à frente do mapa */}
-                                                                            <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 w-max max-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[99999]">
+                                                                            <div className="absolute left-full top-1/2 -translate-y-1/2 pl-2.5 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[99999]">
                                                                                 <div 
                                                                                     className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`} 
                                                                                     onClick={(e) => e.stopPropagation()}
