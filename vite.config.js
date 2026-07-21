@@ -33,7 +33,7 @@ function expandirNomeEntidade(nomeRaw, tipoRaw = '', isCadeia = false) {
   let nome = String(nomeRaw || '').trim();
   let tipoNorm = normalize(tipoRaw);
   
-  const isEcossistema = ['incubadora', 'parque', 'espaco', 'pesquisa', 'dinamizador', 'ict'].some(term => tipoNorm.includes(term));
+  const isEcossistema = ['incubadora', 'parque', 'espacoDinamizadores', 'pesquisa', 'dinamizador', 'ict'].some(term => tipoNorm.includes(term));
 
   if (!isEcossistema && !isCadeia) {
     let nomeNorm = normalize(nome).replace(/\b(campus|polo|unidade|centro de|ead|departamento)\b.*$/g, '').trim();
@@ -229,12 +229,12 @@ function parseSpreadsheet(buffer) {
                    tipoFinal = tipoFinal ? `${tipoFinal} - Pública` : 'Universidade Pública';
                }
           }
-          else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tNorm.includes(c))) { categoriaEntidade = 'ifs'; }
+          else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tNorm.includes(c))) { categoriaEntidade = 'campiInstitutoFederal'; }
           else if (['centro de pesquisa', 'pesquisa'].some(c => tNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; }
           else if (['ict'].some(c => tNorm.includes(c))) { categoriaEntidade = 'icts'; }
           else if (['incubadora'].some(c => tNorm.includes(c))) { categoriaEntidade = 'incubadoras'; }
-          else if (['espaco', 'dinamizador'].some(c => tNorm.includes(c))) { categoriaEntidade = 'espacos'; }
-          else if (['parque'].some(c => tNorm.includes(c))) { categoriaEntidade = 'parques'; }
+          else if (['espacoDinamizadores', 'dinamizador'].some(c => tNorm.includes(c))) { categoriaEntidade = 'espacoDinamizadoress'; }
+          else if (['parque'].some(c => tNorm.includes(c))) { categoriaEntidade = 'parquesTecnologicos'; }
           else { categoriaEntidade = 'outros'; }
           
       } else if (isCursoSheet) {
@@ -248,7 +248,7 @@ function parseSpreadsheet(buffer) {
           if (['universidade', 'faculdade', 'centro universitario', 'superior'].some(c => orgNorm.includes(c))) { 
               categoriaEntidade = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica'; 
           }
-          else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => orgNorm.includes(c))) { categoriaEntidade = 'ifs'; }
+          else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => orgNorm.includes(c))) { categoriaEntidade = 'campiInstitutoFederal'; }
           else { categoriaEntidade = 'outros'; }
 
           let tipoParts = [tipoOriginal];
