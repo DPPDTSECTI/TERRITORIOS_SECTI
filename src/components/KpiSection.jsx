@@ -143,16 +143,18 @@ export function SubKpiPanel(props) {
 
   const subKpisList = useMemo(() => {
     if (!dashboardData?.subKpis) return [];
-    const totals = dashboardData.subKpis;
+    const totals = dashboardData.subKpis || {};
+    const singleColorClass = darkMode ? 'text-cyan-400' : 'text-gov-cyan';
+    const singleBarClass = 'bg-gov-cyan';
     const items = [
-      { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', v: totals.campiUniversidadePublica, c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue', sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
-      { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', v: totals.campiUniversidadePrivada, c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue', sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
-      { id: 'campiInstitutoFederal', l: 'Campi Inst. Federais', v: totals.campiInstitutoFederal, c: darkMode ? 'text-blue-400' : 'text-gov-blue', b: 'bg-gov-blue', sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
-      { id: 'icts', l: 'ICTs Mapeadas', v: totals.icts, c: darkMode ? 'text-cyan-400' : 'text-gov-cyan-dark', b: 'bg-gov-cyan', sourceText: 'MCTI / Cadastro Nacional de ICTs', sourceLink: 'https://www.gov.br/mcti/pt-br' },
-      { id: 'centrosPesquisa', l: 'Centros de Pesquisa', v: totals.centrosPesquisa, c: darkMode ? 'text-cyan-400' : 'text-gov-cyan-dark', b: 'bg-gov-cyan', sourceText: 'CNPq / Diretório dos Grupos de Pesquisa', sourceLink: 'http://dgp.cnpq.br/dgp/faces/consulta/consulta_parametrizada.jsf' },
-      { id: 'espacoDinamizadoress', l: 'Espaços Dinamizadores', v: totals.espacoDinamizadoress, c: darkMode ? 'text-teal-400' : 'text-gov-teal-dark', b: 'bg-gov-teal', sourceText: 'SECTI BA / Mapeamento de Inovação', sourceLink: 'https://www.secti.ba.gov.br/' },
-      { id: 'parquesTecnologicos', l: 'Parques Tecnológicos', v: totals.parquesTecnologicos, c: darkMode ? 'text-purple-400' : 'text-gov-purple-dark', b: 'bg-gov-purple', sourceText: 'Anprotec / Parque Tecnológico da Bahia', sourceLink: 'https://anprotec.org.br/' },
-      { id: 'incubadoras', l: 'Incubadoras de Empresas', v: totals.incubadoras, c: darkMode ? 'text-purple-400' : 'text-gov-purple-dark', b: 'bg-gov-purple', sourceText: 'Anprotec / Rede Baiana de Incubadoras', sourceLink: 'https://anprotec.org.br/' },
+      { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', v: totals.campiUniversidadePublica, c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+      { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', v: totals.campiUniversidadePrivada, c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+      { id: 'campiInstitutoFederal', l: 'Campi Inst. Federais', v: totals.campiInstitutoFederal, c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+      { id: 'icts', l: 'ICTs Mapeadas', v: totals.icts, c: singleColorClass, b: singleBarClass, sourceText: 'MCTI / Cadastro Nacional de ICTs', sourceLink: 'https://www.gov.br/mcti/pt-br' },
+      { id: 'centrosPesquisa', l: 'Centros de Pesquisa', v: totals.centrosPesquisa, c: singleColorClass, b: singleBarClass, sourceText: 'CNPq / Diretório dos Grupos de Pesquisa', sourceLink: 'http://dgp.cnpq.br/dgp/faces/consulta/consulta_parametrizada.jsf' },
+      { id: 'espacoDinamizadoress', l: 'Espaços Dinamizadores', v: totals.espacoDinamizadoress, c: singleColorClass, b: singleBarClass, sourceText: 'SECTI BA / Mapeamento de Inovação', sourceLink: 'https://www.secti.ba.gov.br/' },
+      { id: 'parquesTecnologicos', l: 'Parques Tecnológicos', v: totals.parquesTecnologicos, c: singleColorClass, b: singleBarClass, sourceText: 'Anprotec / Parque Tecnológico da Bahia', sourceLink: 'https://anprotec.org.br/' },
+      { id: 'incubadoras', l: 'Incubadoras de Empresas', v: totals.incubadoras, c: singleColorClass, b: singleBarClass, sourceText: 'Anprotec / Rede Baiana de Incubadoras', sourceLink: 'https://anprotec.org.br/' },
     ];
     const totalCTI = dashboardData?.topKpis?.capacidadeCtiNum || 1;
     return items.map(item => ({
