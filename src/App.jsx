@@ -1403,6 +1403,8 @@ function MainApp() {
                     onOpenAddListDropdown={() => setIsModalAddListOpen(true)}
                     onCloseAddListDropdown={() => setIsModalAddListOpen(false)}
                     onForceAddList={() => setExpandedLists(prev => prev.length < 2 ? ['cti', 'cadeias'] : prev)}
+                    onOpenSearch={() => setIsVerticalSearchOpen(true)}
+                    onOpenFilters={() => setIsSideFilterOpen(true)}
                     onCloseDetails={() => {
                         setExpandedCourse(null);
                         setExpandedCadeia(null);

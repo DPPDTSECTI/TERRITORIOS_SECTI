@@ -139,7 +139,7 @@ const TUTORIAL_STEPS = [
 // ==========================================
 // TUTORIAL COMPONENT
 // ==========================================
-export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation, onCloseDetails, onOpenExpandedList, onOpenAddListDropdown, onCloseAddListDropdown, onForceAddList }) {
+export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation, onCloseDetails, onOpenExpandedList, onOpenAddListDropdown, onCloseAddListDropdown, onForceAddList, onOpenSearch, onOpenFilters }) {
     const [currentStep, setCurrentStep] = useState(0);
     const [targetRect, setTargetRect] = useState(null);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -179,8 +179,19 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                 onForceAddList();
             }
             // Close expanded lists if we navigate away from the expanded list steps
-            if ((step.id === 'expanded-lists' || step.id === 'search' || step.id === 'filters' || step.id === 'finish') && onCloseDetails) {
+            if ((step.id === 'expanded-lists' || step.id === 'finish') && onCloseDetails) {
                 onCloseDetails();
+            }
+
+            // Automatically open Search panel on search step
+            if (step.id === 'search') {
+                if (onCloseDetails) onCloseDetails();
+                if (onOpenSearch) onOpenSearch();
+            }
+            // Automatically open Filters panel on filters step
+            if (step.id === 'filters') {
+                if (onCloseDetails) onCloseDetails();
+                if (onOpenFilters) onOpenFilters();
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
