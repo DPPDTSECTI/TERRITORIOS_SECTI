@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import https from 'https'
 import * as XLSX from 'xlsx'
@@ -447,7 +447,7 @@ function parseSpreadsheet(buffer) {
 
 // ==================== FIM DO PROCESSADOR ====================
 
-const sharepointProxyPlugin = () => ({
+const sharepointProxyPlugin = (targetSharepointUrl) => ({
   name: 'sharepoint-proxy',
   configureServer(server) {
     server.middlewares.use('/api/sharepoint', async (req, res) => {
@@ -462,7 +462,7 @@ const sharepointProxyPlugin = () => ({
         return;
       }
 
-      let downloadUrl = 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1';
+      let downloadUrl = targetSharepointUrl || process.env.VITE_SHAREPOINT_URL || 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1';
       if (!downloadUrl.includes('web=0')) downloadUrl += '&action=default&web=0';
 
       https.get(downloadUrl, {
@@ -526,24 +526,29 @@ function sendError(res, statusCode, message) {
   res.end(JSON.stringify({ error: 'Erro de Proxy', message }));
 }
 
-export default defineConfig({
-  plugins: [react(), sharepointProxyPlugin()],
-  build: {
-    target: 'es2015',
-    minify: 'esbuild',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-xlsx': ['xlsx'],
-          'vendor-topojson': ['topojson-client'],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const sharepointUrl = env.VITE_SHAREPOINT_URL || process.env.VITE_SHAREPOINT_URL || 'https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1';
+
+  return {
+    plugins: [react(), sharepointProxyPlugin(sharepointUrl)],
+    build: {
+      target: 'es2015',
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-xlsx': ['xlsx'],
+            'vendor-topojson': ['topojson-client'],
+          },
         },
       },
+      chunkSizeWarningLimit: 1000,
     },
-    chunkSizeWarningLimit: 1000,
-  },
-  server: { hmr: { overlay: true } },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'xlsx', 'topojson-client'],
-  },
+    server: { hmr: { overlay: true } },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'xlsx', 'topojson-client'],
+    },
+  };
 });
