@@ -322,13 +322,13 @@ export async function fetchConectaData(onUpdate = null, filterMode = 'ambos') {
     return { data: fallbackData, source: 'static', fresh: true };
   }
 
-  throw new Error('Não foi possível carregar dados do Conecta Bahia');
+  throw new Error('Não foi possível carregar dados do PTI');
 }
 
 async function fetchStaticFallbackData() {
   try {
-    console.log('[Conecta] Tentando fallback local: /conectaMunicipios.json');
-    const res = await fetch('/conectaMunicipios.json', { cache: 'no-store' });
+    console.log('[PTI] Tentando fallback local: /ptiMunicipios.json');
+    const res = await fetch('/ptiMunicipios.json', { cache: 'no-store' });
     if (!res.ok) return null;
     const json = await res.json();
     if (!json || typeof json !== 'object') return null;

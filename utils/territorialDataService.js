@@ -155,7 +155,7 @@ function asTerritorialPayload(payload) {
       },
       assistenciaPublica: {
         existe: rows.length > 0,
-        iniciativas: rows.length > 0 ? ['Conecta'] : [],
+        iniciativas: rows.length > 0 ? ['PTI'] : [],
       },
       cadeiasProdutivas: [],
       semiaridoPercentual: null,

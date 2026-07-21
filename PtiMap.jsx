@@ -142,7 +142,7 @@ const getPathD = (geometry, project) => {
 // Componente memoizado para cada polígono de município. Evita re-renderizar
 // os ~400 <path> quando o pai re-renderiza por motivos que não afetam aquele
 // município específico (ex: hover em outro, mudança de tooltip, etc). Como
-// pan/zoom agora são throttled via rAF (ver ConectaMap) e a simulação de
+// pan/zoom agora são throttled via rAF (ver PtiMap) e a simulação de
 // labels não depende mais de effectiveScale, o pai já re-renderiza bem menos —
 // este memo é uma segunda camada de proteção para quando ele ainda re-renderizar.
 const MunicipioPath = React.memo(function MunicipioPath({
@@ -171,7 +171,7 @@ const MunicipioPath = React.memo(function MunicipioPath({
     );
 });
 
-export default function ConectaMap({
+export default function PtiMap({
     territoriosData = [], territoriesDynamicStats = {}, searchTerm = '',
     filtroSemiarido = false, selectedTerritory = null,
     onSelectTerritory = () => { }, semiaridoMunicipios = [], darkMode = false

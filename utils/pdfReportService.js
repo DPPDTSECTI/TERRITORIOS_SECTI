@@ -474,7 +474,7 @@ export async function htmlElementToBase64(element) {
  */
 export async function generatePDFReport(options = {}) {
   const {
-    title = 'Programa Conecta Bahia',
+    title = 'Programa PTI',
     subtitle = 'Relatório de Pontos de Acesso à Internet',
     municipiosData = [],
     mapElement = null,
@@ -516,7 +516,7 @@ export async function generatePDFReport(options = {}) {
   yPos = addParagraph(
     pdf,
     yPos,
-    'O Programa Conecta Bahia é uma iniciativa da Secretaria de Ciência, Tecnologia e Inovação do Governo do Estado da Bahia, destinado a democratizar o acesso à internet e promover a inclusão digital dos cidadãos baianos através da instalação de pontos de acesso Wi-Fi em praças e espaços públicos.'
+    'O Programa PTI é uma iniciativa da Secretaria de Ciência, Tecnologia e Inovação do Governo do Estado da Bahia, destinado a democratizar o acesso à internet e promover a inclusão digital dos cidadãos baianos através da instalação de pontos de acesso Wi-Fi em praças e espaços públicos.'
   );
 
   // Estatísticas
@@ -530,7 +530,7 @@ export async function generatePDFReport(options = {}) {
     yPos = addParagraph(
       pdf,
       yPos,
-      `Este relatório apresenta uma análise dos ${totalMunicipios} municípios participantes do Programa Conecta Bahia, com um total de ${totalPontos} pontos de acesso à internet, representando uma média de ${mediaPontos} pontos por município.`
+      `Este relatório apresenta uma análise dos ${totalMunicipios} municípios participantes do Programa PTI, com um total de ${totalPontos} pontos de acesso à internet, representando uma média de ${mediaPontos} pontos por município.`
     );
 
     // Tabela de estatísticas
@@ -613,7 +613,7 @@ export async function generatePDFReport(options = {}) {
 export async function generateAndDownloadReport(options = {}) {
   try {
     const pdf = await generatePDFReport(options);
-    const filename = `ConectaBahia_Relatorio_${new Date().toISOString().split('T')[0]}.pdf`;
+    const filename = `PTIBahia_Relatorio_${new Date().toISOString().split('T')[0]}.pdf`;
     pdf.save(filename);
   } catch (error) {
     console.error('Erro ao gerar relatório:', error);

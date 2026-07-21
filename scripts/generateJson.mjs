@@ -7,7 +7,7 @@ import XLSX from 'xlsx';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
-const OUTPUT = path.join(ROOT, 'public', 'conectaMunicipios.json');
+const OUTPUT = path.join(ROOT, 'public', 'ptiMunicipios.json');
 
 const SHAREPOINT_DOWNLOAD_URL =
   'https://prodeboffice365-my.sharepoint.com/personal/valmir_ferreira_secti_ba_gov_br/_layouts/15/download.aspx?UniqueId=7ed06cd9-f10e-4c89-8191-bde4a43b30d9&e=kPaGNt';

@@ -1,7 +1,7 @@
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import ConectaMap from "../ConectaMap";
+import PtiMap from "../PtiMap";
 import LandingHero from './components/hero'; import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
@@ -1416,7 +1416,7 @@ function MainApp() {
                                                 </div>
                                             </div>
                                             <div className="w-full h-full flex-1 rounded-lg overflow-hidden">
-                                                <ConectaMap
+                                                <PtiMap
                                                     territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats}
                                                     searchTerm={searchTerm} filtroSemiarido={filtroSemiarido}
                                                     selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios}
