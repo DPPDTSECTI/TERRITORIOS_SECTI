@@ -35,6 +35,21 @@ Ao realizar o onboarding do projeto no **Netlify**:
 
 ---
 
+### 🧪 Testes Unitários (`vitest`)
+
+O projeto possui uma suíte de testes unitários automatizados cobrindo normalizações, expansões de nomes e filtros.
+
+Para executar os testes:
+```bash
+# Executa todos os testes unitários uma vez
+npm test
+
+# Executa os testes no modo interativo (watch mode)
+npm run test:watch
+```
+
+---
+
 ## Estrutura de arquivos
 
 ```
