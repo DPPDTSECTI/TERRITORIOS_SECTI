@@ -333,8 +333,8 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             };
         }
 
-        // Special override: If targeting the expanded list modal, force the tooltip to the far left reserved dark area
-        if ((step.id === 'lists' || step.id === 'expanded-lists') && document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
+        // Special override: If targeting the expanded list modal or steps inside it, force the tooltip to the right reserved dark area
+        if (document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
             const isSm = window.innerWidth >= 640;
             if (!isSm) {
                 return {
@@ -348,28 +348,7 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             return {
                 position: 'fixed',
                 top: '50%',
-                left: '16px',
-                transform: 'translateY(-50%)',
-                width: '380px',
-            };
-        }
-
-        // Special override: Step 11 (add-lists) — place tooltip in the left reserved dark area, above the + button
-        if (step.id === 'add-lists' && document.querySelector('[data-tutorial="add-list-button"]')) {
-            const isSm = window.innerWidth >= 640;
-            if (!isSm) {
-                return {
-                    position: 'fixed',
-                    bottom: '12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: 'min(380px, calc(100vw - 24px))',
-                };
-            }
-            return {
-                position: 'fixed',
-                top: '50%',
-                left: '16px',
+                right: '24px',
                 transform: 'translateY(-50%)',
                 width: '380px',
             };
@@ -537,25 +516,7 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                             {step.description}
                         </p>
 
-                        {/* Step Dots */}
-                        <div className="flex items-center justify-center gap-1.5 mb-4">
-                            {TUTORIAL_STEPS.map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => {
-                                        if (onCloseDetails) onCloseDetails();
-                                        setCurrentStep(idx);
-                                    }}
-                                    className={`rounded-full transition-all duration-300 ${idx === currentStep
-                                        ? 'w-6 h-2 bg-gov-blue'
-                                        : idx < currentStep
-                                            ? `w-2 h-2 ${darkMode ? 'bg-gov-blue/60' : 'bg-gov-blue/50'}`
-                                            : `w-2 h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`
-                                        }`}
-                                    title={`Ir para passo ${idx + 1}`}
-                                />
-                            ))}
-                        </div>
+
                     </div>
 
                     {/* Navigation Footer */}
