@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, X, Sparkles, MousePointer2, MapPin, Filter, Search, BarChart3, Database, Target, Maximize2, Sun as SunIcon, RefreshCw, GraduationCap, Info, Layers, Plus, List } from 'lucide-react';
 
 // ==========================================
@@ -64,7 +65,7 @@ const TUTORIAL_STEPS = [
     {
         id: 'lists',
         title: 'Listas Detalhadas',
-        description: 'À direita do mapa, três listas mostram: Estruturas CT&I (instituições de pesquisa), Cadeias Produtivas (APLs e Indicações Geográficas), e Cursos CT&I (cursos superiores). Cada item pode ser clicado para abrir uma ficha detalhada.',
+        description: 'À direita do mapa, três listas mostram: Estruturas CT&I, Cadeias Produtivas (APLs e Indicações Geográficas), e Cursos CT&I (cursos superiores). Cada item pode ser clicado para abrir uma ficha detalhada.',
         icon: <Layers size={28} />,
         position: 'left',
         targetSelector: '[data-tutorial="lists"]',
@@ -120,7 +121,15 @@ const TUTORIAL_STEPS = [
     {
         id: 'finish',
         title: 'Você está pronto!',
-        description: 'Agora você conhece todas as funcionalidades do Painel Territorial. Explore os dados, aplique filtros e descubra informações valiosas sobre a ciência, tecnologia e inovação nos Territórios de Identidade da Bahia. Bom uso! 🎉',
+        description: (
+            <span>
+                Agora você conhece todas as funcionalidades do Painel Territorial. Explore os dados, aplique filtros e descubra informações valiosas. Para entender as fontes e a metodologia por trás dos dados, recomendamos visitar nossa página{' '}
+                <Link to="/sobre" className="underline font-bold text-gov-blue hover:text-gov-blue/80">
+                    Sobre
+                </Link>
+                . Bom uso! 🎉
+            </span>
+        ),
         icon: <Sparkles size={28} />,
         position: 'center',
         targetSelector: null,
@@ -137,6 +146,14 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
     const tooltipRef = useRef(null);
     const step = TUTORIAL_STEPS[currentStep];
     const totalSteps = TUTORIAL_STEPS.length;
+    const location = useLocation();
+
+    // Auto-close tutorial if path changes (e.g. clicking "Sobre" link)
+    useEffect(() => {
+        if (isOpen && onClose) {
+            onClose();
+        }
+    }, [location.pathname]);
 
     // Manage UI states based on active step changes
     useEffect(() => {
@@ -471,13 +488,18 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                     {/* Segmented Progress Bar */}
                     <div className={`w-full flex items-center gap-1 px-3 pt-2 shrink-0 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
                         {TUTORIAL_STEPS.map((_, idx) => (
-                            <div
+                            <button
                                 key={idx}
-                                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                                onClick={() => {
+                                    if (onCloseDetails) onCloseDetails();
+                                    setCurrentStep(idx);
+                                }}
+                                className={`h-1.5 flex-1 rounded-full transition-all duration-300 outline-none ${
                                     idx <= currentStep
-                                        ? 'bg-gov-blue'
-                                        : (darkMode ? 'bg-gray-800' : 'bg-gray-200')
+                                        ? 'bg-gov-blue hover:bg-gov-blue/80'
+                                        : (darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300')
                                 }`}
+                                title={`Ir para o Passo ${idx + 1}`}
                             />
                         ))}
                     </div>
