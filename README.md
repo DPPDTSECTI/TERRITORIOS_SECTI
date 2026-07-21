@@ -4,6 +4,37 @@ Aplicação React que carrega um mapa da Bahia e destaca, por meio de marcadores
 
 ---
 
+## 🔐 Variáveis de Ambiente & Netlify Onboarding
+
+Para rodar a aplicação localmente ou realizar o deploy no **Netlify**, as seguintes variáveis de ambiente devem ser configuradas:
+
+| Variável | Escopo | Descrição | Exemplo / Valor Padrão |
+|---|---|---|---|
+| `VITE_SHAREPOINT_URL` | Build / Server / Client | URL do link de download direto da planilha oficial de dados no SharePoint. | `https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/...` |
+| `VITE_OPENROUTER_API_KEY` | Client (Opcional) | Chave da API OpenRouter utilizada pelos recursos de IA e assistente. | `sk-or-v1-...` |
+
+### 🛠️ Configuração Local (`.env`)
+
+1. Copie o arquivo de exemplo para o seu ambiente local:
+   ```bash
+   cp .env.example .env
+   ```
+2. Abra o arquivo `.env` e preencha a URL do SharePoint ou sua API Key se necessário.
+
+---
+
+### 🚀 Configuração no Netlify (Deploy & Functions)
+
+Ao realizar o onboarding do projeto no **Netlify**:
+
+1. Acesse o painel do site no Netlify: **Site configuration** $\rightarrow$ **Environment variables**.
+2. Adicione as seguintes chaves:
+   - **`VITE_SHAREPOINT_URL`**: `https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1`
+   - **`VITE_OPENROUTER_API_KEY`**: *(opcional - conforme o seu ambiente)*
+3. **Netlify Blobs**: Certifique-se de que a funcionalidade **Netlify Blobs** está habilitada no projeto para que as Netlify Functions (`sharepoint.js` e `sharepoint-refresh.js`) possam manter o cache de dados em produção.
+
+---
+
 ## Estrutura de arquivos
 
 ```
