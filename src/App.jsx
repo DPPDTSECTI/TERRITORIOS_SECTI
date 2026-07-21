@@ -1,14 +1,17 @@
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import PtiMap from "../PtiMap";
-import LandingHero from './components/hero'; import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap } from 'lucide-react';
+import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
-import SobrePage from './components/SobrePage';
-import Tutorial from './components/Tutorial';
-import ExcelExportButton from './components/ExcelExportButton';
 import { DataProvider } from './context/DataContext';
+
+// Carregamento Preguiçoso (Lazy Loading) das Rotas e Componentes Pesados
+const LandingHero = lazy(() => import('./components/hero'));
+const SobrePage = lazy(() => import('./components/SobrePage'));
+const Tutorial = lazy(() => import('./components/Tutorial'));
+const ExcelExportButton = lazy(() => import('./components/ExcelExportButton'));
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -338,17 +341,6 @@ function MainApp() {
         return { icon: <HelpCircle size={12} />, acronym: 'N/A' };
     };
 
-    // NOTA: As cores 'gov-*' devem ser configuradas no seu arquivo tailwind.config.js.
-    // Exemplo:
-    // theme: { extend: { colors: {
-    //   'gov-blue': '#005A9C',
-    //   'gov-green': '#28A745',
-    //   'gov-red': '#DC3545',
-    //   'gov-yellow': '#FFC107',
-    //   'gov-cyan': '#17A2B8',
-    //   /* ... etc ... */
-    // }}}
-
     const themeClasses = {
         app: darkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-100 text-gray-800',
         glass: darkMode ? 'bg-gray-900/80 border-gray-700/60 shadow-2xl backdrop-blur-xl' : 'bg-white/80 border-gray-200/80 shadow-xl backdrop-blur-xl',
@@ -375,8 +367,6 @@ function MainApp() {
         return result;
     }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
-    // `todasAsAreasGerais` é a lista completa de todas as áreas possíveis, usada para renderizar todas as opções no dropdown.
-    // É derivada de `territoriosData` para ser estável e não mudar com os filtros.
     const todasAsAreasGerais = useMemo(() => {
         const areas = new Set();
         territoriosData.forEach(t => {
@@ -467,8 +457,7 @@ function MainApp() {
         if (!dashboardData?.subKpis || !dashboardData?.unfiltSubKpis) return [];
         const singleColorClass = darkMode ? 'text-cyan-400' : 'text-gov-cyan';
         const singleBarClass = 'bg-gov-cyan';
-        
-        // --- SUBSTITUA ESTA VARIÁVEL kpiData: ---
+
         const kpiData = [
             { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
             { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
@@ -479,8 +468,7 @@ function MainApp() {
             { id: 'parquesTecnologicos', l: 'Parques Tec.', c: singleColorClass, b: singleBarClass },
             { id: 'incubadoras', l: 'Incubadoras', c: singleColorClass, b: singleBarClass }
         ];
-        // ----------------------------------------
-        
+
         return kpiData.map(kpi => ({ ...kpi, v: dashboardData.subKpis[kpi.id] || 0, pct: (dashboardData.unfiltSubKpis[kpi.id] || 0) > 0 ? ((dashboardData.subKpis[kpi.id] || 0) / dashboardData.unfiltSubKpis[kpi.id]) * 100 : 0 }));
     }, [dashboardData, darkMode]);
 
@@ -809,9 +797,9 @@ function MainApp() {
                                                 cursos: { title: 'Cursos de CT&I', icon: <GraduationCap size={14} className="text-gov-cyan" /> }
                                             }[type];
                                             return (
-                                                <button key={type} onClick={() => { 
-                                                    setExpandedLists(prev => [...prev, type]); 
-                                                    setIsModalAddListOpen(false); 
+                                                <button key={type} onClick={() => {
+                                                    setExpandedLists(prev => [...prev, type]);
+                                                    setIsModalAddListOpen(false);
                                                     if (isTutorialOpen) {
                                                         window.dispatchEvent(new Event('tutorial-next-step'));
                                                     }
@@ -1142,11 +1130,13 @@ function MainApp() {
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <ExcelExportButton
-                        territoriosData={territoriosData}
-                        variant="nav"
-                        darkMode={darkMode}
-                    />
+                    <Suspense fallback={null}>
+                        <ExcelExportButton
+                            territoriosData={territoriosData}
+                            variant="nav"
+                            darkMode={darkMode}
+                        />
+                    </Suspense>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
@@ -1215,7 +1205,7 @@ function MainApp() {
                                             placeholder="Buscar segmento..."
                                             value={sidebarCadeiaSearch}
                                             onChange={(e) => setSidebarCadeiaSearch(e.target.value)}
-                                            className={`w-full h-8 pl-8 pr-7 rounded-lg text-[10px] font-medium transition-all outline-none border ${darkMode ? 'bg-gray-800/80 border-gray-700 text-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500' : 'bg-gray-50 border-gray-200 text-gray-800 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600'}`}
+                                            className={`w-full h-8 pl-8 pr-7 rounded-lg text-[10px] font-medium transition-all outline-none border ${darkMode ? 'bg-gray-800/80 border-gray-700 text-gray-200 focus:border-emerald-500' : 'bg-gray-50 border-gray-200 text-gray-800 focus:border-emerald-600'}`}
                                         />
                                         <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
                                         {sidebarCadeiaSearch && (
@@ -1301,7 +1291,15 @@ function MainApp() {
 
 
             <main className={`flex-1 overflow-y-auto relative w-full z-10 ${location.pathname === '/' ? '' : 'pt-4'}`}>
-                <Routes>
+                <Suspense fallback={
+                    <div className="flex flex-col items-center justify-center min-h-[60vh] w-full gap-3 animate-pulse">
+                        <RefreshCw className={`w-8 h-8 animate-spin ${darkMode ? 'text-blue-400' : 'text-gov-blue'}`} />
+                        <span className={`text-[11px] font-bold uppercase tracking-widest ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Carregando módulo...
+                        </span>
+                    </div>
+                }>
+                    <Routes>
                     <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
                     <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
 
@@ -1391,7 +1389,7 @@ function MainApp() {
                                                     Ativos de CT&I
                                                 </h4>
                                             </div>
-                                            
+
                                             {/* A MÁGICA ACONTECE AQUI: Mudamos para overflow-visible para o tooltip sair da caixa sem ser cortado */}
                                             <div className="flex-1 min-h-0 overflow-visible p-3">
                                                 <div className="flex flex-col gap-2">
@@ -1409,11 +1407,11 @@ function MainApp() {
                                                                             <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                                                                                 <Info size={11} />
                                                                             </button>
-                                                                            
+
                                                                             {/* CAIXINHA DA FONTE: Agora abre para a direita (left-full) e fica à frente do mapa */}
                                                                             <div className="absolute left-full top-1/2 -translate-y-1/2 pl-2.5 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[99999]">
-                                                                                <div 
-                                                                                    className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`} 
+                                                                                <div
+                                                                                    className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`}
                                                                                     onClick={(e) => e.stopPropagation()}
                                                                                 >
                                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte:</span>
@@ -1521,12 +1519,10 @@ function MainApp() {
                                                             <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
                                                                 <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                     <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                    
-                                                                    {/* === SUBSTITUA AQUI === */}
+
                                                                     <Link to="/sobre" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                         DataSebrae / Indicações Geográficas
                                                                     </Link>
-                                                                    {/* ======================= */}
 
                                                                 </div>
                                                             </div>
@@ -1708,7 +1704,6 @@ function MainApp() {
                                                                 </div>
                                                                 <div className={`p-2 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
                                                                     <span className={`block text-[9px] font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
-                                                                    {/* Detalhes adicionais (local, nível, modalidade, tipo de universidade) movidos para a visualização expandida. */}
                                                                 </div>
                                                             </div>
                                                         );
@@ -1725,11 +1720,12 @@ function MainApp() {
                     } />
 
                 </Routes>
+                </Suspense>
             </main>
 
             {/* BOTÃO FLUTUANTE TUTORIAL */}
             {location.pathname === '/territorios' && (
-                <button 
+                <button
                     onClick={() => setIsTutorialOpen(true)}
                     className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform hover:scale-110 bg-gov-blue text-white hover:bg-gov-blue-dark"
                     title="Tutorial de uso"
@@ -1739,24 +1735,26 @@ function MainApp() {
             )}
 
             {/* TUTORIAL OVERLAY */}
-            <Tutorial
-                isOpen={isTutorialOpen}
-                onClose={handleCloseTutorial}
-                darkMode={darkMode}
-                onDeselectLocation={() => setSelectedLocation(null)}
-                onOpenExpandedList={() => setExpandedLists(['cti'])}
-                onOpenAddListDropdown={() => setIsModalAddListOpen(true)}
-                onCloseAddListDropdown={() => setIsModalAddListOpen(false)}
-                onForceAddList={() => setExpandedLists(prev => prev.length < 2 ? ['cti', 'cadeias'] : prev)}
-                onCloseDetails={() => {
-                    setExpandedCourse(null);
-                    setExpandedCadeia(null);
-                    setExpandedCti(null);
-                    setExpandedLists([]);
-                    setIsSideFilterOpen(false);
-                    setIsVerticalSearchOpen(false);
-                }}
-            />
+            <Suspense fallback={null}>
+                <Tutorial
+                    isOpen={isTutorialOpen}
+                    onClose={handleCloseTutorial}
+                    darkMode={darkMode}
+                    onDeselectLocation={() => setSelectedLocation(null)}
+                    onOpenExpandedList={() => setExpandedLists(['cti'])}
+                    onOpenAddListDropdown={() => setIsModalAddListOpen(true)}
+                    onCloseAddListDropdown={() => setIsModalAddListOpen(false)}
+                    onForceAddList={() => setExpandedLists(prev => prev.length < 2 ? ['cti', 'cadeias'] : prev)}
+                    onCloseDetails={() => {
+                        setExpandedCourse(null);
+                        setExpandedCadeia(null);
+                        setExpandedCti(null);
+                        setExpandedLists([]);
+                        setIsSideFilterOpen(false);
+                        setIsVerticalSearchOpen(false);
+                    }}
+                />
+            </Suspense>
         </div>
     );
 }
