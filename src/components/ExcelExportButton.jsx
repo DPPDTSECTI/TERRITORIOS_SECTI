@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { Download, RefreshCw } from 'lucide-react';
+import { useData } from '../context/DataContext';
 
 /**
  * Calcula dinamicamente as larguras ideais para cada coluna da planilha
@@ -46,12 +47,17 @@ function sortAlpha(a, b, key) {
 }
 
 export default function ExcelExportButton({
-  territoriosData = [],
+  territoriosData: propTerritoriosData,
   className = '',
   variant = 'solid',
-  darkMode = false
+  darkMode: propDarkMode
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  let contextData;
+  try { contextData = useData(); } catch (e) { contextData = null; }
+
+  const territoriosData = (propTerritoriosData && propTerritoriosData.length > 0) ? propTerritoriosData : (contextData?.territoriosData || []);
+  const darkMode = propDarkMode !== undefined ? propDarkMode : (contextData?.darkMode || false);
 
   const handleExportExcel = () => {
     setIsLoading(true);

@@ -8,6 +8,7 @@ import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import SobrePage from './components/SobrePage';
 import Tutorial from './components/Tutorial';
 import ExcelExportButton from './components/ExcelExportButton';
+import { DataProvider } from './context/DataContext';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -1764,7 +1765,9 @@ export default function AppWrapper() {
     return (
         <HelmetProvider>
             <Router>
-                <MainApp />
+                <DataProvider>
+                    <MainApp />
+                </DataProvider>
             </Router>
         </HelmetProvider>
     );
