@@ -191,9 +191,11 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
         if (!isOpen) return;
 
         setIsAnimating(true);
-        const timer = setTimeout(() => setIsAnimating(false), 350);
+        const animTimer = setTimeout(() => setIsAnimating(false), 350);
 
         let animFrameId;
+        let isLoopActive = true;
+        const loopStartTime = Date.now();
 
         const updateRect = () => {
             let selector = step.targetSelector;
@@ -215,7 +217,7 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
 
             if (!selector) {
                 setTargetRect(null);
-                return;
+                return null;
             }
             const el = document.querySelector(selector);
             if (el) {
@@ -253,13 +255,14 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                         }
                         return { top, left, width, height };
                     });
-                    return;
+                    return el;
                 }
             }
             setTargetRect(null);
+            return null;
         };
 
-        updateRect();
+        const targetEl = updateRect();
 
         // Scroll the element into view smoothly when step changes
         if (step.targetSelector) {
@@ -271,22 +274,44 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Continuous frame tracking to catch smooth CSS layout shifts & map selection changes
-        const loop = () => {
+        // Run animation frame tracking only for 1000ms after step change to catch smooth CSS transitions/modals opening
+        const animationLoop = () => {
             updateRect();
-            animFrameId = requestAnimationFrame(loop);
+            if (isLoopActive && Date.now() - loopStartTime < 1000) {
+                animFrameId = requestAnimationFrame(animationLoop);
+            }
         };
-        animFrameId = requestAnimationFrame(loop);
+        animFrameId = requestAnimationFrame(animationLoop);
 
-        const handleResize = () => updateRect();
-        window.addEventListener('resize', handleResize);
-        window.addEventListener('scroll', handleResize, true);
+        // ResizeObserver to track layout resizing of target element efficiently without polling
+        let resizeObserver;
+        if (targetEl && typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(() => {
+                updateRect();
+            });
+            resizeObserver.observe(targetEl);
+        }
+
+        // Throttle scroll and resize updates using requestAnimationFrame
+        let scrollResizeTimeout;
+        const handleScrollResize = () => {
+            if (scrollResizeTimeout) cancelAnimationFrame(scrollResizeTimeout);
+            scrollResizeTimeout = requestAnimationFrame(() => {
+                updateRect();
+            });
+        };
+
+        window.addEventListener('resize', handleScrollResize, { passive: true });
+        window.addEventListener('scroll', handleScrollResize, { capture: true, passive: true });
 
         return () => {
-            clearTimeout(timer);
+            isLoopActive = false;
+            clearTimeout(animTimer);
             if (animFrameId) cancelAnimationFrame(animFrameId);
-            window.removeEventListener('resize', handleResize);
-            window.removeEventListener('scroll', handleResize, true);
+            if (scrollResizeTimeout) cancelAnimationFrame(scrollResizeTimeout);
+            if (resizeObserver) resizeObserver.disconnect();
+            window.removeEventListener('resize', handleScrollResize);
+            window.removeEventListener('scroll', handleScrollResize, true);
         };
     }, [isOpen, currentStep, step.targetSelector]);
 

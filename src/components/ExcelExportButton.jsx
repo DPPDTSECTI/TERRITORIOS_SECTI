@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
+import { Download, RefreshCw } from 'lucide-react';
 
 export default function ExcelExportButton({
   territoriosData = [],
   className = '',
-  variant = 'solid' 
+  variant = 'solid',
+  darkMode = false
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,14 +22,14 @@ export default function ExcelExportButton({
       const dataCursos = [];
 
       territoriosData.forEach(t => {
-        // ABA 1: RESUMO DO TERRITÓRIO (Atualizado com Assistência Pública em CT&I)
+        // ABA 1: RESUMO DO TERRITÓRIO
         dataTerritorios.push({
           "Território de Identidade": t.nome,
           "Recorte Semiárido": t.isSemiarido ? "Sim" : "Não",
           "IFDM Territorial (Média)": t.kpis?.ifdm !== "-" ? Number(t.kpis.ifdm) : "-",
           "Total Entidades CT&I": Number(t.kpis?.capacidadeCti || 0),
           "Total Cadeias/IGs": Number(t.kpis?.cadeiasIgs || 0),
-          "Assistência Pública em CT&I": t.kpis?.conectaBahia || "Não Mapeado",
+          "Assistência Pública em CT&I (PTI)": t.kpis?.conectaBahia || t.kpis?.pti || "Não Mapeado",
           "Total Cursos Superiores": t.cursosDetalhado ? t.cursosDetalhado.length : 0
         });
 
@@ -103,7 +105,6 @@ export default function ExcelExportButton({
       const wsCursos = XLSX.utils.json_to_sheet(dataCursos);
 
       // 3. AJUSTAR LARGURAS DAS COLUNAS PARA FICAR PROFISSIONAL
-      // Coluna 6 (wch: 32) garante espaço para "Assistência Pública em CT&I"
       wsTerritorios['!cols'] = [{ wch: 30 }, { wch: 18 }, { wch: 22 }, { wch: 20 }, { wch: 20 }, { wch: 32 }, { wch: 25 }];
       wsCTI['!cols'] = [{ wch: 30 }, { wch: 25 }, { wch: 25 }, { wch: 55 }];
       wsCadeias['!cols'] = [{ wch: 30 }, { wch: 35 }, { wch: 20 }, { wch: 45 }, { wch: 25 }, { wch: 50 }, { wch: 30 }];
@@ -129,6 +130,24 @@ export default function ExcelExportButton({
     }
   };
 
+  // Nav / Icon Variant (Download Arrow Button)
+  if (variant === 'nav' || variant === 'icon') {
+    return (
+      <button
+        onClick={handleExportExcel}
+        disabled={isLoading || !territoriosData || territoriosData.length === 0}
+        className={className || `p-2.5 rounded-lg transition-colors ${isLoading || !territoriosData || territoriosData.length === 0 ? 'opacity-50 cursor-not-allowed' : ''} ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-green-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-green'}`}
+        title="Exportar Base de Dados Excel (.xlsx)"
+      >
+        {isLoading ? (
+          <RefreshCw size={18} strokeWidth={2.5} className="animate-spin text-gov-green" />
+        ) : (
+          <Download size={18} strokeWidth={2.5} />
+        )}
+      </button>
+    );
+  }
+
   const buttonStyles = variant === 'outline'
     ? "w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center shadow-sm border border-slate-200 hover:border-slate-300 transform-gpu"
     : "w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gov-green-600 hover:bg-gov-green-700 text-white font-black tracking-wider uppercase text-xs sm:text-sm transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center transform-gpu";
@@ -142,17 +161,12 @@ export default function ExcelExportButton({
       >
         {isLoading ? (
           <>
-            <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <RefreshCw className="animate-spin h-4 w-4 mr-2" />
             <span>A Estruturar Base...</span>
           </>
         ) : (
           <>
-            <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <Download className="h-4 w-4 mr-2" />
             <span>Exportar Planilha Excel</span>
           </>
         )}

@@ -7,6 +7,7 @@ import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import SobrePage from './components/SobrePage';
 import Tutorial from './components/Tutorial';
+import ExcelExportButton from './components/ExcelExportButton';
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -1140,6 +1141,14 @@ function MainApp() {
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
+                    <ExcelExportButton
+                        territoriosData={territoriosData}
+                        variant="nav"
+                        darkMode={darkMode}
+                    />
+
+                    <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
+
 
                     <button data-tutorial="filter-button" onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-lg flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? 'bg-gov-blue text-white shadow-md' : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue')}`} title="Filtros Avançados">
                         <Filter size={18} strokeWidth={2.5} />
@@ -1450,7 +1459,7 @@ function MainApp() {
                                             <div className="w-full h-full flex-1 rounded-lg overflow-hidden">
                                                 <PtiMap
                                                     territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats}
-                                                    searchTerm={searchTerm} filtroSemiarido={filtroSemiarido}
+                                                    filtroSemiarido={filtroSemiarido}
                                                     selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios}
                                                     onSelectTerritory={handleSelectTerritory}
                                                     darkMode={darkMode}

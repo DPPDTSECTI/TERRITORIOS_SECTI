@@ -171,7 +171,7 @@ const MunicipioPath = React.memo(function MunicipioPath({
     );
 });
 
-export default function PtiMap({
+const PtiMap = React.memo(function PtiMap({
     territoriosData = [], territoriesDynamicStats = {}, searchTerm = '',
     filtroSemiarido = false, selectedTerritory = null,
     onSelectTerritory = () => { }, semiaridoMunicipios = [], darkMode = false
@@ -974,4 +974,6 @@ export default function PtiMap({
             )}
         </div>
     );
-}
+});
+
+export default PtiMap;
