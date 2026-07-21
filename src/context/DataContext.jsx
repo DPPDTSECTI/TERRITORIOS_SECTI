@@ -10,7 +10,7 @@ function useDebounce(value, delay) {
   return debouncedValue;
 }
 
-const DataContext = createContext(null);
+export const DataContext = createContext(null);
 
 export function DataProvider({ children }) {
   // Tema e Navegação
@@ -172,3 +172,5 @@ export function useData() {
   }
   return context;
 }
+
+export default DataContext;

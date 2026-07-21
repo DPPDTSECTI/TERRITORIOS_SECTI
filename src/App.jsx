@@ -6,6 +6,9 @@ import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Down
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import { DataProvider } from './context/DataContext';
+import KpiSection, { SubKpiPanel } from './components/KpiSection';
+import MapSection from './components/MapSection';
+import ListSection from './components/ListSection';
 
 // Carregamento Preguiçoso (Lazy Loading) das Rotas e Componentes Pesados
 const LandingHero = lazy(() => import('./components/hero'));
@@ -1308,413 +1311,68 @@ function MainApp() {
                             <div className={`${themeClasses.glass} rounded-2xl p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
 
                                 {/* KPIs GLOBAIS */}
-                                <div data-tutorial="kpis">
-                                    <div className="flex items-center justify-between mb-2 px-1">
-                                        <h3 className={`text-[10px] font-black uppercase tracking-widest ${themeClasses.textMuted}`}>Cenário Global {selectedLocation ? `— ${selectedLocation.nome}` : (filtroSemiarido ? '— Semiárido Baiano' : '— Estado da Bahia')}</h3>
-                                        <span className={`text-[9px] font-medium hidden sm:block ${themeClasses.textMuted}`}>Status: {lastUpdate}</span>
-                                    </div>
-                                    <div className="flex overflow-x-auto sm:overflow-visible snap-x hide-scroll sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3 pb-2 sm:pb-0">
-                                        {[
-                                            { l: 'Ativos de CT&I', v: dashboardData.topKpis.capacidadeCti, pct: dashboardData.topKpisPct.cti, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Database size={14} />, listType: 'cti' },
-                                            { l: 'D. Territ. (IFDM)', v: dashboardData.topKpis.ifdm, pct: dashboardData.topKpisPct.ifdm, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <TrendingUp size={14} />, sourceText: 'FIRJAN / IFDM (2021)', sourceLink: 'https://www.firjan.com.br/ifdm/' },
-                                            { l: 'Semiárido', v: dashboardData.topKpis.coberturaSemiarido, pct: dashboardData.topKpisPct.semiarido, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <Sun size={14} />, tr: true, sourceText: 'IBGE / Semiárido Brasileiro (2022)', sourceLink: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e', unit: 'mun.' },
-                                            { l: 'Cursos de CT&I', v: dashboardData.topKpis.cursos, pct: dashboardData.topKpisPct.cursos, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <GraduationCap size={14} />, tr: true, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior', listType: 'cursos' },
-                                            { l: 'Cadeias Produtivas', v: dashboardData.topKpis.cadeiasIgs, pct: dashboardData.topKpisPct.cadeias, c: darkMode ? 'text-blue-400' : 'text-[#0F4C81]', b: 'bg-[#0F4C81]', icon: <BarChart3 size={14} />, tr: true, sourceText: 'DataSebrae / Indicações Geográficas', sourceLink: '/sobre', listType: 'cadeias' },
-                                        ].map((k, idx) => {
-                                            let displayValue = k.v;
-                                            if (k.l === 'Semiárido' && typeof k.v === 'string') {
-                                                const match = k.v.match(/\((\d+)\s*mun\.\)/); // "68.8% (285 mun.)" -> "285"
-                                                if (match && match[1]) {
-                                                    displayValue = match[1];
-                                                } else {
-                                                    const fractionMatch = k.v.match(/(\d+)\/\d+/); // "285/417 mun." -> "285"
-                                                    if (fractionMatch && fractionMatch[1]) {
-                                                        displayValue = fractionMatch[1];
-                                                    }
-                                                }
-                                            }
-                                            return (
-                                                <div
-                                                    key={idx}
-                                                    className={`relative p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:z-[999] shrink-0 w-[65vw] sm:w-auto snap-center ${themeClasses.cardHover} ${darkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white border-gray-200/60'}`}
-                                                >
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className={`opacity-70 ${k.c}`}>{k.icon}</span>
-                                                            <p className={`text-[9px] font-black uppercase tracking-widest opacity-60 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>{k.l}</p>
-                                                        </div>
-                                                        {k.sourceText && (
-                                                            <div className="relative group flex items-center justify-center z-40">
-                                                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                                    <Info size={12} />
-                                                                </button>
-                                                                <div className="absolute right-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
-                                                                    <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
-                                                                        <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                        {k.sourceLink ? (
-                                                                            k.sourceLink.startsWith('/') ? (
-                                                                                <Link to={k.sourceLink} className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</Link>
-                                                                            ) : (
-                                                                                <a href={k.sourceLink} target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">{k.sourceText}</a>
-                                                                            )
-                                                                        ) : (
-                                                                            <span className="block leading-tight opacity-80">{k.sourceText}</span>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="flex items-baseline gap-1.5 mt-1">
-                                                        <p className={`text-2xl lg:text-3xl font-black leading-none tracking-tight pb-1 ${k.c} ${k.tr ? 'truncate text-xl lg:text-2xl' : ''}`}>{displayValue}</p>
-                                                        {k.unit && <span className={`text-xs font-bold opacity-60 pb-1 ${k.c}`}>{k.unit}</span>}
-                                                    </div>
-                                                    <div className="w-full h-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-full overflow-hidden mt-3">
-                                                        <div className={`h-full ${k.b} transition-all duration-700 ease-out rounded-full`} style={{ width: `${Math.min(100, Math.max(0, k.pct))}%` }}></div>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
+                                <KpiSection
+                                    darkMode={darkMode}
+                                    selectedLocation={selectedLocation}
+                                    filtroSemiarido={filtroSemiarido}
+                                    lastUpdate={lastUpdate}
+                                    dashboardData={dashboardData}
+                                    onOpenExpandedList={(type) => setExpandedLists([type])}
+                                />
 
                                 {/* A "Ilha" Encaixada na tela */}
                                 <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
 
                                     {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
-                                    {!selectedLocation && subKpisList.length > 0 && (
-                                        <div data-tutorial="cti-panel" className={`relative z-30 hover:z-[999] w-full lg:w-52 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                            <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
-                                                <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                    Ativos de CT&I
-                                                </h4>
-                                            </div>
-
-                                            {/* A MÁGICA ACONTECE AQUI: Mudamos para overflow-visible para o tooltip sair da caixa sem ser cortado */}
-                                            <div className="flex-1 min-h-0 overflow-visible p-3">
-                                                <div className="flex flex-col gap-2">
-                                                    {subKpisList.map(kpi => (
-                                                        <div
-                                                            key={kpi.id}
-                                                            onClick={() => handleCtiKpiClick(kpi.id)}
-                                                            className={`relative p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
-                                                        >
-                                                            <div className="min-w-0 flex-1 pr-1.5">
-                                                                <div className="flex items-start justify-between gap-1">
-                                                                    <span className={`text-[9px] font-bold uppercase tracking-wider leading-tight opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
-                                                                    {kpi.sourceText && (
-                                                                        <div className="relative group flex items-center justify-center z-50 shrink-0 mt-0.5">
-                                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                                                <Info size={11} />
-                                                                            </button>
-
-                                                                            {/* CAIXINHA DA FONTE: Agora abre para a direita (left-full) e fica à frente do mapa */}
-                                                                            <div className="absolute left-full top-1/2 -translate-y-1/2 pl-2.5 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[99999]">
-                                                                                <div
-                                                                                    className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`}
-                                                                                    onClick={(e) => e.stopPropagation()}
-                                                                                >
-                                                                                    <span className="block font-bold mb-0.5 opacity-70">Fonte:</span>
-                                                                                    <a href={kpi.sourceLink} target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                                                                                        {kpi.sourceText}
-                                                                                    </a>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                                <span className={`block text-lg font-black leading-none pt-1.5 drop-shadow-sm ${kpi.c}`}>{kpi.v || 0}</span>
-                                                            </div>
-                                                            <div className="w-1.5 h-12 bg-slate-200/60 dark:bg-slate-700/60 rounded-full overflow-hidden flex flex-col justify-end shrink-0 ml-1">
-                                                                <div className={`w-full ${kpi.b} transition-all duration-700 ease-out rounded-full`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
+                                    <SubKpiPanel
+                                        darkMode={darkMode}
+                                        selectedLocation={selectedLocation}
+                                        dashboardData={dashboardData}
+                                        ctiFilters={ctiFilters}
+                                        setCtiFilters={setCtiFilters}
+                                    />
 
                                     {/* COLUNA DO MAPA (40%) */}
-                                    <div data-tutorial="map" ref={mapSectionRef} className="w-full lg:w-[40%] h-[280px] lg:h-auto flex-shrink-0 flex flex-col relative z-20">
-                                        <div className={`rounded-2xl border p-1 shadow-inner relative flex flex-col flex-1 min-h-0 overflow-visible ${darkMode ? 'bg-gray-900 border-gray-700/50' : 'bg-gray-50 border-gray-200/80'}`}>
-                                            <div className={`absolute top-5 left-5 backdrop-blur-md px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest z-40 flex items-center gap-2.5 border shadow-lg ${darkMode ? 'bg-gray-800/80 text-white border-gray-600' : 'bg-white/90 text-gray-800 border-gray-200'}`}>
-                                                <span className="w-2 h-2 rounded-full bg-gov-green animate-pulse"></span>
-                                                <span>Motor Cartográfico</span>
-                                                <div className="relative group flex items-center justify-center z-50">
-                                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
-                                                    </button>
-                                                    <div className="absolute left-0 top-full pt-1.5 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[9999]">
-                                                        <div className={`p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
-                                                            <span className="block font-bold mb-1 opacity-70">Fontes dos Dados:</span>
-                                                            <a href="https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">IBGE/Semiárido Brasileiro (2022)</a>
-                                                            <a href="https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity mt-1">SECULT/Divisão Territorial da Bahia (2024)</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="w-full h-full flex-1 rounded-lg overflow-hidden">
-                                                <PtiMap
-                                                    territoriosData={territoriosData} territoriesDynamicStats={territoriesDynamicStats}
-                                                    filtroSemiarido={filtroSemiarido}
-                                                    selectedTerritory={selectedLocation} semiaridoMunicipios={semiaridoMunicipios}
-                                                    onSelectTerritory={handleSelectTerritory}
-                                                    darkMode={darkMode}
-                                                    dashboardData={dashboardData}
-                                                    ctiFilters={ctiFilters}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <MapSection
+                                        mapSectionRef={mapSectionRef}
+                                        darkMode={darkMode}
+                                        territoriosData={territoriosData}
+                                        territoriesDynamicStats={territoriesDynamicStats}
+                                        filtroSemiarido={filtroSemiarido}
+                                        selectedLocation={selectedLocation}
+                                        semiaridoMunicipios={semiaridoMunicipios}
+                                        handleSelectTerritory={handleSelectTerritory}
+                                        dashboardData={dashboardData}
+                                        ctiFilters={ctiFilters}
+                                    />
 
                                     {/* COLUNA DAS LISTAS (60%) */}
-                                    <div data-tutorial="lists" className="flex-1 flex flex-col gap-4 h-auto lg:h-full lg:overflow-visible min-w-0 min-h-0">
-                                        <div className="flex flex-col sm:flex-row gap-4 flex-none lg:flex-[0.8] min-h-0">
-
-                                            {/* LISTA 1: ESTRUTURAS CT&I */}
-                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-visible border shadow-sm flex flex-col relative transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Ativos de CT&I</h4>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-cyan/20 text-cyan-400' : 'bg-gov-cyan/10 text-gov-cyan-dark'}`}>
-                                                            {dashboardData.entidades.length}
-                                                        </span>
-                                                        {!expandedLists.length && (
-                                                            <button data-tutorial="expand-button" onClick={() => setExpandedLists(['cti'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
-                                                                <Expand size={14} />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1 overflow-y-auto p-4 hide-scroll rounded-b-2xl">
-                                                    <div className="flex flex-col gap-2">
-                                                        {dashboardData.entidades.length > 0 ? (
-                                                            dashboardData.entidades.map((ent, idx) => (
-                                                                <div key={idx} onClick={() => setExpandedCti(ent)} className={`p-3 rounded-lg border flex flex-col gap-1 transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
-                                                                    <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
-                                                                    <div className="flex justify-between items-end mt-1">
-                                                                        <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
-                                                                            {formatEntidadeTipo(ent.tipo, ent.categoria)}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            ))) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma infraestrutura mapeada para os filtros ativos.</div>)}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* LISTA 2: CADEIAS PRODUTIVAS */}
-                                            <div className={`w-full sm:w-1/2 h-[350px] lg:h-auto min-h-0 rounded-2xl overflow-visible border shadow-sm flex flex-col relative transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                                <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cadeias Produtivas</h4>
-                                                        <div className="relative group flex items-center justify-center z-40">
-                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                                <Info size={12} />
-                                                            </button>
-                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
-                                                                <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
-                                                                    <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-
-                                                                    <Link to="/sobre" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                                                                        DataSebrae / Indicações Geográficas
-                                                                    </Link>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-green/20 text-green-400' : 'bg-gov-green/10 text-gov-green-dark'}`}>{dashboardData.aplIgs.length}</span>
-                                                        {!expandedLists.length && (
-                                                            <button onClick={() => setExpandedLists(['cadeias'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
-                                                                <Expand size={14} />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1 min-h-0 overflow-y-auto p-4 hide-scroll rounded-b-2xl">
-                                                    <div className="flex flex-col gap-2">
-                                                        {dashboardData.aplIgs.length > 0 ? dashboardData.aplIgs.map((apl, idx) => (
-                                                            <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-lg border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
-                                                                <div className="flex items-start justify-between mb-2">
-                                                                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
-                                                                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
-                                                                        {apl.tipo}
-                                                                    </span>
-                                                                </div>
-
-                                                                {apl.entidade && (
-                                                                    <div className="mb-2">
-                                                                        <span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-gov-blue dark:text-blue-400">Entidade Vinculada</span>
-                                                                        <span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{fixWeirdCapitalization(apl.entidade)}</span>
-                                                                    </div>
-                                                                )}
-
-                                                                <div className={`p-2.5 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
-                                                                    <div className="grid grid-cols-2 gap-2 mb-2">
-                                                                        <div>
-                                                                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Sede:</span>
-                                                                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.sede}</p>
-                                                                        </div>
-                                                                        <div>
-                                                                            <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Território(s):</span>
-                                                                            <p className={`text-[10px] font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{apl.territorios ? apl.territorios.join(', ') : 'N/A'}</p>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div className={`pt-2 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
-                                                                        <span className="block text-[8px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span>
-                                                                        <p className={`text-[9px] font-medium leading-relaxed opacity-80 line-clamp-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} title={apl.municipiosPertencentes}>{apl.municipiosPertencentes}</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        )) : (<div className={`flex items-center justify-center h-full text-[10px] font-medium italic ${themeClasses.textMuted}`}>Nenhuma cadeia isolada para os filtros ativos.</div>)}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* LISTA 3: CURSOS SUPERIORES */}
-                                        <div data-tutorial="cursos-card" className={`lg:flex-[0.6] h-[350px] lg:h-auto min-h-0 relative rounded-2xl overflow-visible border shadow-sm flex flex-col transition-all hover:z-[999] ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-                                            <div className={`p-4 border-b flex items-center justify-between shrink-0 gap-3 relative z-30 rounded-t-2xl ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
-                                                <div className="flex items-center gap-2">
-                                                    <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cursos de CT&I</h4>
-                                                    <div className="relative group flex items-center justify-center z-40">
-                                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"></circle><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4M12 8h.01"></path></svg>
-                                                        </button>
-                                                        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[9999]">
-                                                            <div className={`w-max max-w-[220px] p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
-                                                                <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
-                                                                <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                                                                    INEP/ Censo de Educação Superior (2022)
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black hidden lg:inline-block ${darkMode ? 'bg-gov-cyan/20 text-cyan-400' : 'bg-gov-cyan/10 text-gov-cyan-dark'}`}>{cursosFiltrados.length}</span>
-                                                        {!expandedLists.length && (
-                                                            <button onClick={() => setExpandedLists(['cursos'])} className={`p-1 rounded-md transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-800'}`} title="Expandir lista">
-                                                                <Expand size={14} />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <div className="relative w-32 sm:w-40 lg:w-48">
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Buscar curso..."
-                                                            value={cursoSearchTerm}
-                                                            onChange={(e) => setCursoSearchTerm(e.target.value)}
-                                                            className={`w-full h-8 pl-7 pr-7 rounded-md text-[9px] font-medium transition-all outline-none border shadow-sm ${darkMode ? 'bg-gray-900/50 border-gray-700 text-gray-200 focus:border-gov-green' : 'bg-white border-gray-200 text-gray-800 focus:border-gov-green'}`}
-                                                        />
-                                                        <svg className={`w-3 h-3 absolute left-2 top-2.5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                                        {cursoSearchTerm && (
-                                                            <button onClick={() => setCursoSearchTerm('')} aria-label="Limpar pesquisa" className="absolute right-2 top-2.5 hover:text-gov-red text-gray-400">
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                                            </button>
-                                                        )}
-                                                    </div>
-
-                                                    {/* DROPDOWN DE FILTRO DE ÁREA GERAL */}
-                                                    {areaGeralSummary.length > 0 && (
-                                                        <div className="relative" ref={areaGeralRef}>
-                                                            <button
-                                                                onClick={() => setIsAreaGeralOpen(!isAreaGeralOpen)}
-                                                                className={`h-8 px-3 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isAreaGeralOpen || areaGeralFilter.length > 0 ? (darkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-700') : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')}`}
-                                                            >
-                                                                {areaGeralFilter.length > 0 ? (
-                                                                    <div className="flex items-center gap-0.5">
-                                                                        {areaGeralFilter.map(areaName => (
-                                                                            <span key={areaName} className={`flex items-center justify-center [&>svg]:w-3 [&>svg]:h-3 ${getAreaStyles(areaName, darkMode).text}`} title={areaName}>
-                                                                                {getAreaInfo(areaName).icon}
-                                                                            </span>
-                                                                        ))}
-                                                                    </div>
-                                                                ) : (
-                                                                    <>
-                                                                        <Filter size={12} />
-                                                                        <span className="whitespace-nowrap hidden sm:inline">Filtros</span>
-                                                                    </>
-                                                                )}
-                                                            </button>
-
-                                                            {isAreaGeralOpen && (
-                                                                <div className={`absolute right-0 top-[100%] mt-2 w-64 sm:w-72 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700 text-gray-200' : 'bg-white/95 border-gray-200 text-gray-800'}`}>
-                                                                    <span className="block text-[8px] font-black uppercase tracking-widest opacity-60 mb-1 px-1">Áreas Gerais</span>
-                                                                    <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1 pr-1">
-                                                                        {areaGeralSummary.map(area => {
-                                                                            const styles = getAreaStyles(area.name, darkMode);
-                                                                            const isSelected = areaGeralFilter.includes(area.name);
-                                                                            return (
-                                                                                <button
-                                                                                    key={area.name}
-                                                                                    onClick={() => handleAreaGeralToggle(area.name)}
-                                                                                    className={`w-full text-left px-2 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all flex items-start sm:items-center justify-between gap-2 border ${isSelected ? styles.activeBg : (darkMode ? 'bg-transparent border-transparent hover:bg-gray-800' : 'bg-transparent border-transparent hover:bg-gray-50')}`}
-                                                                                >
-                                                                                    <div className="flex items-center gap-1.5 pr-1">
-                                                                                        <span className={`shrink-0 mt-0.5 sm:mt-0 ${styles.text}`}>{getAreaInfo(area.name).icon}</span>
-                                                                                        <span className={`whitespace-normal leading-snug ${isSelected ? styles.text : (darkMode ? 'text-gray-300' : 'text-gray-600')}`}>{area.name}</span>
-                                                                                    </div>
-                                                                                    <span className={`px-1.5 py-0.5 rounded text-[8px] shrink-0 ${isSelected ? styles.countBg : (darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>{area.count}</span>
-                                                                                </button>
-                                                                            );
-                                                                        })}
-                                                                    </div>
-                                                                    {areaGeralFilter.length > 0 && (
-                                                                        <button onClick={() => { setAreaGeralFilter([]); setIsAreaGeralOpen(false); }} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar Filtros</button>
-                                                                    )}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex-1 min-h-0 p-4 overflow-y-auto hide-scroll rounded-b-2xl">
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                                                    {cursosFiltrados.length > 0 ? cursosFiltrados.map((curso, idx) => {
-                                                        const areaStyles = getAreaStyles(curso.areaGeral, darkMode);
-                                                        const { icon, acronym } = getAreaInfo(curso.areaGeral);
-                                                        return (
-                                                            <div
-                                                                key={curso.id || idx}
-                                                                onClick={() => setExpandedCourse(curso)}
-                                                                className={`p-3 rounded-lg border flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 ${areaStyles.text} hover:border-current ${darkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}
-                                                            >
-                                                                <div className="flex justify-between items-start gap-2">
-                                                                    <h5 className={`text-[11px] font-bold leading-snug ${darkMode ? 'text-gray-100' : 'text-gray-800'}`} title={fixWeirdCapitalization(curso.curso)}>{fixWeirdCapitalization(curso.curso)}</h5>
-                                                                    {curso.areaGeral && (
-                                                                        <span
-                                                                            title={curso.areaGeral}
-                                                                            className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider shrink-0 ${getAreaStyles(curso.areaGeral, darkMode).activeBg} ${getAreaStyles(curso.areaGeral, darkMode).text}`}
-                                                                        >
-                                                                            {icon}
-                                                                            <span>{acronym}</span>
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                                <div className={`p-2 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/30 border-gray-700/50' : 'bg-gray-50 border-gray-200/50'}`}>
-                                                                    <span className={`block text-[9px] font-bold mb-1 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={fixWeirdCapitalization(curso.entidade)}>{fixWeirdCapitalization(curso.entidade)}</span>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    }) : (<div className={`col-span-full flex items-center justify-center py-6 text-[10px] font-medium italic ${themeClasses.textMuted}`}>{areaGeralFilter.length > 0 || cursoSearchTerm ? `Nenhum curso encontrado para a pesquisa e/ou filtros aplicados.` : 'Nenhum curso superior mapeado ou isolado.'}</div>)}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
+                                    <ListSection
+                                        darkMode={darkMode}
+                                        dashboardData={dashboardData}
+                                        cursosFiltrados={cursosFiltrados}
+                                        cursoSearchTerm={cursoSearchTerm}
+                                        setCursoSearchTerm={setCursoSearchTerm}
+                                        areaGeralSummary={areaGeralSummary}
+                                        areaGeralFilter={areaGeralFilter}
+                                        setAreaGeralFilter={setAreaGeralFilter}
+                                        handleAreaGeralToggle={handleAreaGeralToggle}
+                                        expandedLists={expandedLists}
+                                        setExpandedLists={setExpandedLists}
+                                        fixWeirdCapitalization={fixWeirdCapitalization}
+                                        formatEntidadeTipo={formatEntidadeTipo}
+                                        getCtiBadgeStyle={getCtiBadgeStyle}
+                                        getBadgeStyle={getBadgeStyle}
+                                        getAreaStyles={getAreaStyles}
+                                        getAreaInfo={getAreaInfo}
+                                        setExpandedCti={setExpandedCti}
+                                        setExpandedCadeia={setExpandedCadeia}
+                                        setExpandedCourse={setExpandedCourse}
+                                        isAreaGeralOpen={isAreaGeralOpen}
+                                        setIsAreaGeralOpen={setIsAreaGeralOpen}
+                                        areaGeralRef={areaGeralRef}
+                                    />
                                 </div>
-
                             </div>
                         </div>
                     } />
