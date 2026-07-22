@@ -82,19 +82,6 @@ export default function ListSection(props) {
           <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 relative z-30 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
             <div className="flex items-center gap-1.5">
               <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Cadeias Produtivas</h4>
-              <div className="relative group flex items-center justify-center z-40">
-                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                  <Info size={12} />
-                </button>
-                <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
-                  <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
-                    <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                    <Link to="/sobre" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                      DataSebrae / Indicações Geográficas
-                    </Link>
-                  </div>
-                </div>
-              </div>
             </div>
             <div className="flex items-center gap-2">
               <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${darkMode ? 'bg-gov-green/20 text-green-400' : 'bg-gov-green/10 text-gov-green-dark'}`}>{dashboardData.aplIgs ? dashboardData.aplIgs.length : 0}</span>
@@ -111,9 +98,59 @@ export default function ListSection(props) {
                 <div key={idx} onClick={() => setExpandedCadeia && setExpandedCadeia(apl)} className={`p-3 rounded-lg border flex flex-col transition-all duration-300 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                   <div className="flex items-start justify-between mb-2">
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
-                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
-                      {apl.tipo}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>
+                        {apl.tipo}
+                      </span>
+                      {apl.fonte && (
+                        <div className="relative group flex items-center justify-center z-50 shrink-0" onClick={e => e.stopPropagation()}>
+                          <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                            <Info size={12} />
+                          </button>
+                          <div className="absolute right-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[99999] pointer-events-none group-hover:pointer-events-auto">
+                            <div className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`}>
+                              <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
+                              {(() => {
+                                let str = String(apl.fonte).trim();
+                                const hMatch = str.match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
+                                if (hMatch && hMatch[1]) str = hMatch[1].trim();
+
+                                const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/ig;
+                                if (urlRegex.test(str)) {
+                                  const parts = str.split(urlRegex);
+                                  return (
+                                    <span className="block leading-tight opacity-90">
+                                      {parts.map((part, i) => {
+                                        if (part.match(urlRegex)) {
+                                          const href = part.startsWith('http') ? part : `https://${part}`;
+                                          return (
+                                            <a key={i} href={href} target="_blank" rel="noreferrer" className="underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-all" onClick={e => e.stopPropagation()}>
+                                              {part}
+                                            </a>
+                                          );
+                                        }
+                                        return <span key={i}>{part}</span>;
+                                      })}
+                                    </span>
+                                  );
+                                }
+
+                                const isSimpleDomain = /^[a-zA-Z0-9-]+\.(com|gov|org|edu|br|net|io|me|info)(\/.*)?$/i.test(str);
+                                if (isSimpleDomain && !str.includes(' ')) {
+                                  return (
+                                    <a href={`https://${str}`} target="_blank" rel="noreferrer" className="block leading-tight opacity-90 hover:opacity-100 transition-opacity underline break-all text-blue-500 dark:text-blue-400" onClick={e => e.stopPropagation()}>
+                                      {str}
+                                    </a>
+                                  );
+                                }
+
+                                return <span className="block leading-tight opacity-90">{str}</span>;
+                              })()}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {apl.entidade && (

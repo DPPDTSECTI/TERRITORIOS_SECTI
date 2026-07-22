@@ -8,7 +8,7 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v29_ifdm_media_simples'; // Força atualização para nova métrica IFDM
+const CACHE_VERSION = 'v31_cadeias_hyperlinks'; // Força atualização para suporte a HYPERLINKs
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
@@ -289,7 +289,9 @@ function parseSpreadsheet(buffer) {
              if (cadeia !== '') {
                  const sede = String(row['sede'] || row['municipiosatelite'] || '').trim();
                  const abrangencia = String(row['municipiospertencentes'] || row['abrangencia'] || '').trim();
-                 const fonte = String(row['fontedodado'] || row['fonte'] || row['link'] || '').trim();
+                 const fonteRaw = row['fontedosdados'] || row['fontedodado'] || row['fontededados'] || row['fontedados'] || row['fonte'] || row['fontes'] || row['linkdafonte'] || row['linkfonte'] || row['link'] || row['referencia'] || row['referencias'] || row['origem'] || row['origemdosdados'] || '';
+                 const hMatch = String(fonteRaw).match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
+                 const fonte = (hMatch && hMatch[1]) ? hMatch[1].trim() : String(fonteRaw).trim();
 
                  const semanticId = `cad_${safeKey(cadeia)}_${safeKey(sede)}_${safeKey(entidadesExpandida)}`;
 

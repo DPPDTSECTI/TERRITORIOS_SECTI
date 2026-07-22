@@ -453,7 +453,7 @@ export default function useTerritoriosData(filters) {
 
             aplIgsFlat.push({
                 id: cad.id || `${normalize(cad.segmento || '')}-${normalize(cad.tipo || '')}`, segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A',
-                municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto
+                municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto, fonte: cad.fonte
             });
             if (cad.id) globalCadeiasIds.add(cad.id);
         });
@@ -515,6 +515,7 @@ export default function useTerritoriosData(filters) {
         } else {
             const existing = aggregatedAplIgs.get(item.id);
             existing.territorios.push(item.territorioRef);
+            if (!existing.fonte && item.fonte) existing.fonte = item.fonte;
             const currentMuns = new Set((existing.municipiosPertencentes || '').split(', ').filter(Boolean));
             (item.municipiosPertencentes || '').split(', ').filter(Boolean).forEach(m => currentMuns.add(m));
             existing.municipiosPertencentes = [...currentMuns].sort().join(', ');
