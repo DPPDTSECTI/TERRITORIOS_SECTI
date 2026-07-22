@@ -388,8 +388,8 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
 
         // Special override: If targeting the expanded list modal or steps inside it, force the tooltip to the right reserved dark area
         if (document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
-            const isSm = window.innerWidth >= 640;
-            if (!isSm) {
+            const isXl = window.innerWidth >= 1280;
+            if (!isXl) {
                 return {
                     position: 'fixed',
                     bottom: '12px',

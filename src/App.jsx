@@ -479,11 +479,11 @@ function MainApp() {
     return (
         <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
             {expandedLists.length > 0 && (
-                <div className={`fixed inset-0 z-[150] bg-gray-900/90 flex items-center p-4 animate-soft-fade transition-all duration-500 ${isTutorialOpen ? 'justify-start pl-4 lg:pl-6 pr-4 lg:pr-[440px]' : 'justify-center'}`} onClick={handleCloseModal}>
-                    <div className="relative flex items-center justify-center" onClick={e => e.stopPropagation()}>
+                <div className={`fixed inset-0 z-[150] bg-gray-900/90 flex items-center p-4 animate-soft-fade transition-all duration-500 ${isTutorialOpen ? 'justify-start pl-4 xl:pl-6 pr-4 xl:pr-[440px]' : 'justify-center'}`} onClick={handleCloseModal}>
+                    <div className="relative w-full min-w-0 flex items-center justify-center" onClick={e => e.stopPropagation()}>
                         <div
                             data-tutorial="expanded-lists-modal"
-                            className={`h-[85vh] ${isTutorialOpen ? 'w-full max-w-none' : 'w-[95vw] sm:w-[90vw]'} rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${isTutorialOpen ? '' : (expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]')}`}
+                            className={`h-[85vh] ${isTutorialOpen ? 'w-full max-w-none' : 'w-[95vw] sm:w-[90vw]'} min-w-0 rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${isTutorialOpen ? '' : (expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]')}`}
                         >
                             {/* HEADER DO MODAL */}
                             <div className={`p-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
