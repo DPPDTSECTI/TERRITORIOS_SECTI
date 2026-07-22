@@ -489,6 +489,47 @@ function MainApp() {
                             <div className={`p-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                 <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-gray-800'}`}>Listas Expandidas</h3>
                                 <div className="flex items-center gap-2">
+                                    {/* BOTÃO ADICIONAR LISTA (movido para dentro do header) */}
+                                    {availableListsToAdd.length > 0 && (
+                                        <div data-tutorial="add-list-button" ref={modalAddListRef} className="relative">
+                                            <button
+                                                onClick={() => {
+                                                    setIsModalAddListOpen(prev => !prev);
+                                                    if (isTutorialOpen) {
+                                                        window.dispatchEvent(new Event('tutorial-next-step'));
+                                                    }
+                                                }}
+                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all shadow-sm ${darkMode ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                                                aria-label="Adicionar nova lista"
+                                            >
+                                                <Plus size={14} strokeWidth={2.5} />
+                                                Adicionar Lista
+                                            </button>
+                                            {isModalAddListOpen && (
+                                                <div data-tutorial="add-list-dropdown" className={`absolute top-full right-0 mt-2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
+                                                    {availableListsToAdd.map(type => {
+                                                        const config = {
+                                                            cti: { title: 'Ativos de CT&I', icon: <Database size={14} className="text-gov-blue" /> },
+                                                            cadeias: { title: 'Cadeias Produtivas', icon: <BarChart3 size={14} className="text-gov-green" /> },
+                                                            cursos: { title: 'Cursos de CT&I', icon: <GraduationCap size={14} className="text-gov-cyan" /> }
+                                                        }[type];
+                                                        return (
+                                                            <button key={type} onClick={() => {
+                                                                setExpandedLists(prev => [...prev, type]);
+                                                                setIsModalAddListOpen(false);
+                                                                if (isTutorialOpen) {
+                                                                    window.dispatchEvent(new Event('tutorial-next-step'));
+                                                                }
+                                                            }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
+                                                                {config.icon}
+                                                                {config.title}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                     <button onClick={handleCloseModal} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title="Fechar"><Minimize size={18} /></button>
                                 </div>
                             </div>
@@ -798,50 +839,7 @@ function MainApp() {
                             </div>
                         </div>
 
-                        {/* BOTÃO FLUTUANTE AO LADO */}
-                        {availableListsToAdd.length > 0 && (
-                            <div data-tutorial="add-list-button" ref={modalAddListRef} className="absolute top-1/2 -translate-y-1/2 left-full ml-4">
-                                <button
-                                    onClick={() => {
-                                        setIsModalAddListOpen(prev => !prev);
-                                        if (isTutorialOpen) {
-                                            window.dispatchEvent(new Event('tutorial-next-step'));
-                                        }
-                                    }}
-                                    className={`w-[72px] h-[72px] rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-105 border ${darkMode
-                                        ? 'bg-gray-900/40 border-gray-700/30 text-gray-200 backdrop-blur-xl hover:bg-gray-800/60'
-                                        : 'bg-white/50 border-gray-200/60 text-gray-700 backdrop-blur-xl hover:bg-white/70'
-                                        }`}
-                                    aria-label="Adicionar nova lista"
-                                >
-                                    <Plus size={30} strokeWidth={3} />
-                                </button>
 
-                                {isModalAddListOpen && (
-                                    <div data-tutorial="add-list-dropdown" className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
-                                        {availableListsToAdd.map(type => {
-                                            const config = {
-                                                cti: { title: 'Ativos de CT&I', icon: <Database size={14} className="text-gov-blue" /> },
-                                                cadeias: { title: 'Cadeias Produtivas', icon: <BarChart3 size={14} className="text-gov-green" /> },
-                                                cursos: { title: 'Cursos de CT&I', icon: <GraduationCap size={14} className="text-gov-cyan" /> }
-                                            }[type];
-                                            return (
-                                                <button key={type} onClick={() => {
-                                                    setExpandedLists(prev => [...prev, type]);
-                                                    setIsModalAddListOpen(false);
-                                                    if (isTutorialOpen) {
-                                                        window.dispatchEvent(new Event('tutorial-next-step'));
-                                                    }
-                                                }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
-                                                    {config.icon}
-                                                    {config.title}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        )}
                     </div>
                 </div>
             )}
