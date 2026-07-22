@@ -1,118 +1,228 @@
-import React from 'react';
-import { Map as MapIcon, Settings, Sun, Download, Link as LinkIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Map as MapIcon, Settings, Sun, Download, Link as LinkIcon, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
 // ==========================================
 const SobrePage = ({ darkMode }) => {
+  // Estado para controlar a expansão da lista de IGs Potenciais
+  const [showAllIgs, setShowAllIgs] = useState(false);
+
   const SectionTitle = ({ number, title }) => (
-    <h3 className="text-gov-blueDark-500 dark:text-blue-400 font-black uppercase tracking-[0.2em] text-xs mb-4 pt-8 border-b border-slate-200/20 pb-2">
+    <h3 className={`font-black uppercase tracking-[0.15em] text-lg mb-6 pt-10 border-b pb-3 ${darkMode ? 'text-blue-400 border-slate-700' : 'text-gov-blueDark-500 border-slate-200'}`}>
       {number}. {title}
     </h3>
   );
 
+  // Estrutura das Referências
+  const mainReferences = [
+    {
+      categoria: 'Mapa Cartográfico e Divisão do Semiárido Brasileiro',
+      fontes: [
+        { nome: 'SECULT-BA | Divisão Territorial da Bahia (2024)', info: 'Dados geográficos e demográficos, incluindo a delimitação oficial dos 27 Territórios de Identidade da Bahia.', link: 'https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia' },
+        { nome: 'IBGE | Semiárido Brasileiro (2022)', info: 'Delimitação e classificação dos municípios pertencentes ao semiárido.', link: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e' }
+      ]
+    },
+    {
+      categoria: 'Indicador de Desenvolvimento Territorial (IFDMT)',
+      fontes: [
+        { nome: 'Índice FIRJAN de Desenvolvimento Municipal (IFDM)', info: 'Utilizado como base para o indicador de Desenvolvimento Territorial.', link: 'https://www.firjan.com.br/ifdm/' }
+      ]
+    },
+    {
+      categoria: 'Cursos Superiores em CT&I',
+      fontes: [
+        { nome: 'INEP | Censo da Educação Superior', info: 'Microdados que fornecem a base para o levantamento de cursos superiores em CT&I.', link: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' }
+      ]
+    },
+    {
+      categoria: 'Cadeias Produtivas',
+      fontes: [
+        { nome: 'Indicações Geográficas (IGs) | Sebrae Origens – DataSebrae', info: 'Consolidação de informações sobre Indicações Geográficas.', link: 'https://datasebrae.com.br/indicacoesgeograficas/' },
+        { nome: 'Arranjos Produtivos Locais (APLs) | Observatório APL', info: 'Consolidação de informações sobre Arranjos Produtivos Locais.', link: 'https://observatorioapl.mdic.gov.br/' }
+      ]
+    }
+  ];
+
+  // Lista dos artigos
+  const igPotenciais = [
+    { txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024.", link: "https://datasebrae.com.br/wp-content/uploads/2025/01/1a-Diagnostico-Ceramica-da-Barra.pdf" },
+    { txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024.", link: "https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf" },
+    { txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica das cerâmicas de Maragogipinho. Brasília: SEBRAE, 2024.", link: "https://datasebrae.com.br/wp-content/uploads/2025/01/3a-Diagnostico-Ceramica-de-Maragogipinho.pdf" },
+    { txt: "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, v. 22, n. 6, 2024.", link: "https://doi.org/10.55905/oelv22n6-111" },
+    { txt: "FERRAZ, Luciana Alves Vieira et al. Diagnóstico do potencial de indicação geográfica da carne de fumeiro de Maragogipe-Bahia sob a ótica da metodologia do SEBRAE. Revista de Gestão e Secretariado (GeSec), v. 14, n. 11, 2023.", link: "http://doi.org/10.7769/gesec.v14i11.3173" },
+    { txt: "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, v. 4, n. 7, 2017.", link: "https://periodicos.uesb.br/index.php/extensao/article/view/7258" },
+    { txt: "CONCEIÇÃO, Valdir Silva et al. Potencial de Indicação Geográfica para o mel produzido por abelha sem ferrão de Alagoinhas - Bahia. Cadernos de Prospecção, v. 15, n. 2, 2022.", link: "https://doi.org/10.9771/cp.v1512.47406" },
+    { txt: "SANTOS, Letícia Sena dos et al. Análise do potencial de Indicação Geográfica (IG) para o licor artesanal da cidade de Cachoeira no Recôncavo Baiano. Revista Caderno Pedagógico, v. 21, n. 10, 2024.", link: "https://doi.org/10.54033/cadpedv21n10-401" },
+    { txt: "RIBEIRO, Bruno Bahia et al. Diagnóstico do potencial de indicação geográfica da mamona produzida na região centro-norte da Bahia. Revista Aracê, v. 7, n. 2, 2025.", link: "https://doi.org/10.56238/arev7n2-047" },
+    { txt: "ANDRADE, Lanacris de Jesus et al. Potencialidade de indicação geográfica do mel do extremo sul da Bahia sob a ótica da metodologia do SEBRAE. Revista INGI, v. 8, n. 1, 2024.", link: "https://doi.org/10.51722/Ingi.v8.i1.311" },
+    { txt: "MARQUES, Bartolomeu das Neves et al. Artefatos de couro de Ipirá: potencial de Indicação Geográfica no território da Bacia do Jacuípe - Bahia. Cadernos de Prospecção, v. 12, n. 5, 2019.", link: "https://doi.org/10.9771/cp.v1215.31018" },
+    { txt: "BONFIM, Catarina Vilas Boas da Silva et al. Diagnóstico do potencial de indicação geográfica do abacaxi de Itaberaba-Bahia sob a ótica da metodologia do SEBRAE. Revista Aracê, v. 7, n. 3, 2025.", link: "https://doi.org/10.56238/arev7n3-283" },
+    { txt: "SILVA, Rosilene Alves da et al. Potencialidade de Indicação Geográfica: Vinhos de Morro do Chapéu-BA. Revista de Gestão e Secretariado (GeSec), v. 16, n. 8, 2025.", link: "http://doi.org/10.7769/gesec.v1618.5056" },
+    { txt: "SANTOS, Aline Teles et al. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, v. 16, n. 1, 2023.", link: "https://doi.org/10.9771/cp.v16i1.50700" },
+    { txt: "SOUZA, Diego de Oliveira et al. Cachaça Rainha do Santo Onofre de Paratinga-Bahia: potencial de indicação geográfica de procedência. Revista INGI, v. 4, n. 3, 2020.", link: "https://seer.ufrgs.br/index.php/ingi/article/view/100411" },
+    { txt: "CALDAS, Alcides dos Santos et al. Potential geographical indication study for Salinas da Margarida shellfish region: protection of cultural and economic identity analysis. Revista INGI, v. 7, n. 4, 2023.", link: "https://seer.ufrgs.br/index.php/ingi/article/view/131752" },
+    { txt: "ROCHA, Angela Machado et al. Um estudo do requeijão de Santa Bárbara-BA para o reconhecimento de Indicação Geográfica (IG). Revista de Gestão e Secretariado (GeSec), v. 14, n. 11, 2023.", link: "http://doi.org/10.7769/gesec.v14i11.2973" },
+    { txt: "BAQUEIRO, Arminda Ursula Pereira et al. Potencial de Indicação Geográfica para o Guaraná de Taperoá - Bahia. Revista Observatorio de la Economia Latinoamericana, v. 21, n. 3, 2023.", link: "https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/285" }
+  ];
+
   return (
-    <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start">
+    <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start font-sans">
       <div className={`backdrop-blur-2xl rounded-[2rem] border shadow-2xl p-8 lg:p-12 mb-8 transition-all duration-500 ${darkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-white/60'}`}>
-        <h2 className="text-3xl lg:text-4xl font-black mb-12 tracking-tighter">Sobre o Painel SECTI Territórios</h2>
-        <div className={`text-sm sm:text-base max-w-none space-y-6 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+        <h2 className={`text-4xl lg:text-5xl font-black mb-12 tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+          Sobre o Painel SECTI Territórios
+        </h2>
+        
+        <div className={`text-sm sm:text-base max-w-none space-y-8 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           
-          <SectionTitle number="1" title="O Projeto" />
-          <p className="leading-relaxed">O <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Painel Territorial de CT&I da Bahia</strong> é uma plataforma digital interativa, desenvolvida pela Secretaria de Ciência, Tecnologia e Inovação (SECTI), para consolidar, analisar e dar transparência aos principais dados do ecossistema de CT&I nos 27 Territórios de Identidade do estado.</p>
-          <p className="leading-relaxed">A ferramenta foi concebida como um instrumento estratégico para mapear as capacidades, vocações e desafios de cada região, oferecendo uma visão integrada e georreferenciada de ativos cruciais para o desenvolvimento socioeconômico.</p>
-
-          <SectionTitle number="2" title="Nossos Objetivos" />
-          <ul className="list-disc pl-5 space-y-2">
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Apoiar a Tomada de Decisão:</strong> Fornecer dados qualificados para subsidiar o planejamento e a formulação de políticas públicas.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Promover a Transparência:</strong> Disponibilizar de forma aberta informações sobre investimentos, infraestrutura e indicadores de CT&I.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Fomentar a Articulação:</strong> Facilitar a identificação de sinergias entre governo, setor produtivo, academia e sociedade civil.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Democratizar a Informação:</strong> Servir como fonte de consulta para pesquisadores, estudantes, gestores e investidores.</li>
-          </ul>
-
-          <SectionTitle number="3" title="Definições e Indicadores (KPIs)" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { t: 'Capacidade em CT&I', d: 'Quantitativo de infraestruturas mapeadas, englobando Universidades, Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.' },
-              { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM). O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem cada Território.' },
-              { t: 'Cursos Superiores em CT&I', d: 'Levantamento da capacidade de formação de talentos, consolidando informações sobre cursos de nível superior ofertados pelas entidades de ensino em CT&I na Bahia.' },
-              { t: 'APLs e IGs', d: 'Mapeamento de Arranjos Produtivos Locais (aglomerações de cooperação económica) e Indicações Geográficas (certificações de produtos inerentes à sua origem territorial).' }
-            ].map((item, idx) => (
-              <div key={idx} className={`p-5 rounded-2xl border transition-transform hover:-translate-y-1 duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200/60'}`}>
-                <span className={`block font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{item.t}</span>
-                <span className="text-[11px] leading-relaxed opacity-80">{item.d}</span>
-              </div>
-            ))}
+          <div>
+            <SectionTitle number="1" title="O Projeto" />
+            <p className="leading-relaxed mb-4 text-base">
+              O <strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Painel Territorial de CT&I da Bahia</strong> é uma plataforma digital interativa, desenvolvida pela Secretaria de Ciência, Tecnologia e Inovação (SECTI), para consolidar, analisar e dar transparência aos principais dados do ecossistema de CT&I nos 27 Territórios de Identidade do estado.
+            </p>
+            <p className="leading-relaxed text-base">
+              A ferramenta foi concebida como um instrumento estratégico para mapear as capacidades, vocações e desafios de cada região, oferecendo uma visão integrada e georreferenciada de ativos cruciais para o desenvolvimento socioeconômico.
+            </p>
           </div>
 
-          <SectionTitle number="4" title="Referências" />
-          <p className="leading-relaxed">
-            A riqueza de informações do painel é resultado da consolidação de múltiplas fontes de dados abertos, garantindo abrangência e confiabilidade. As principais fontes utilizadas são:
-          </p>
-          <div className="space-y-4 !mt-6">
-            {[
-              {
-                nome: 'SECULT-BA (Secretaria de Cultura)',
-                info: 'Dados geográficos e demográficos, incluindo a delimitação oficial dos 27 Territórios de Identidade da Bahia.',
-                link: 'https://www.ba.gov.br/cultura/314/divisao-territorial-da-bahia'
-              },
-              {
-                nome: 'IBGE (Instituto Brasileiro de Geografia e Estatística)',
-                info: 'Dados populacionais, malhas territoriais dos municípios e informações geográficas essenciais para o georreferenciamento.',
-                link: 'https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15974-semiarido-brasileiro.html?=&t=o-que-e'
-              },
-              {
-                nome: 'Sistema FIRJAN',
-                info: 'Índice FIRJAN de Desenvolvimento Municipal (IFDM), utilizado como base para o indicador de Desenvolvimento Territorial.',
-                link: 'https://www.firjan.com.br/ifdm/'
-              },
-              {
-                nome: 'INEP/MEC (Instituto Nacional de Estudos e Pesquisas Educacionais)',
-                info: 'Microdados do Censo da Educação Superior, que fornecem a base para o levantamento de cursos superiores em CT&I.',
-                link: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior'
-              },
-              {
-                nome: 'SEBRAE, MAPA e Fontes Acadêmicas',
-                info: 'Consolidação de informações sobre Arranjos Produtivos Locais (APLs) e Indicações Geográficas (IGs) a partir de diversas fontes setoriais.',
-                link: 'https://datasebrae.com.br/indicacoesgeograficas/'
-              }
-            ].map((fonte, idx) => (
-              <div key={idx} className={`p-5 rounded-2xl border transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/60 hover:border-slate-300'}`}>
-                <a href={fonte.link} target="_blank" rel="noopener noreferrer" className="group">
-                  <div className="flex justify-between items-start">
-                    <span className={`block font-bold mb-2 group-hover:text-gov-blueDark-500 dark:group-hover:text-blue-400 transition-colors ${darkMode ? 'text-white' : 'text-slate-800'}`}>{fonte.nome}</span>
-                    <LinkIcon size={16} className="text-slate-400 group-hover:text-gov-blueDark-500 dark:group-hover:text-blue-400 transition-colors shrink-0 ml-4" />
-                  </div>
-                  <p className="text-xs leading-relaxed opacity-80">{fonte.info}</p>
-                  <span className="text-[10px] mt-3 block text-gov-blueDark-500/50 dark:text-blue-400/50 group-hover:text-gov-blueDark-500 dark:group-hover:text-blue-400 font-mono break-all transition-colors">{fonte.link}</span>
-                </a>
-              </div>
-            ))}
+          <div>
+            <SectionTitle number="2" title="Nossos Objetivos" />
+            <ul className="list-disc pl-5 space-y-3 text-base">
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Apoiar a Tomada de Decisão:</strong> Fornecer dados qualificados para subsidiar o planejamento e a formulação de políticas públicas.</li>
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Promover a Transparência:</strong> Disponibilizar de forma aberta informações sobre investimentos, infraestrutura e indicadores de CT&I.</li>
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Fomentar a Articulação:</strong> Facilitar a identificação de sinergias entre governo, setor produtivo, academia e sociedade civil.</li>
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Democratizar a Informação:</strong> Servir como fonte de consulta para pesquisadores, estudantes, gestores e investidores.</li>
+            </ul>
           </div>
 
-          <SectionTitle number="5" title="Metodologia e Tratamento dos Dados" />
-          <ol className="list-decimal pl-5 space-y-2">
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
-            <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>média ponderada pela população</strong> de cada município.</li>
-          </ol>
-
-          <SectionTitle number="6" title="Guia de Funcionalidades" />
-          <ul className="space-y-6">
-            {[
-              { t: 'Mapa Interativo', d: 'Explore os 27 Territórios, visualize a distribuição de ativos e acesse dados detalhados por município com funções de zoom e pan.', i: <MapIcon size={20} />, c: 'text-blue-500 bg-blue-500/10' },
-              { t: 'Filtros Avançados', d: 'Refine sua busca por Território, Indicadores (IFDM), Cursos Superiores, Cadeias Produtivas e tipos de Entidades de CT&I.', i: <Settings size={20} />, c: 'text-emerald-500 bg-emerald-500/10' },
-              { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: <Sun size={20} />, c: 'text-orange-500 bg-orange-500/10' },
-              { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em abas relacionais.', i: <Download size={20} />, c: 'text-purple-500 bg-purple-500/10' }
-            ].map((func, idx) => (
-              <li key={idx} className="flex gap-4 items-start">
-                <div className={`p-2.5 rounded-xl shrink-0 ${func.c}`}>{func.i}</div>
-                <div>
-                  <strong className={`block text-sm mb-1 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{func.t}</strong>
-                  <span className="text-[11px] opacity-80 leading-relaxed">{func.d}</span>
+          <div>
+            <SectionTitle number="3" title="Definições e Indicadores (KPIs)" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+              {[
+                { t: 'Capacidade em CT&I', d: 'Quantitativo de infraestruturas mapeadas, englobando Universidades, Institutos Federais, Centros de Pesquisa, ICTs, Espaços Dinamizadores, Parques Tecnológicos e Incubadoras.' },
+                { t: 'Desenvolvimento Territorial', d: 'Baseado no Índice FIRJAN (IFDM). O valor do índice é adotado sob uma perspectiva territorial, calculando a média ponderada dos municípios que constituem cada Território.' },
+                { t: 'Cursos Superiores em CT&I', d: 'Levantamento da capacidade de formação de talentos, consolidando informações sobre cursos de nível superior ofertados pelas entidades de ensino em CT&I na Bahia.' },
+                { t: 'APLs e IGs', d: 'Mapeamento de Arranjos Produtivos Locais (aglomerações de cooperação económica) e Indicações Geográficas (certificações de produtos inerentes à sua origem territorial).' }
+              ].map((item, idx) => (
+                <div key={idx} className={`p-6 rounded-2xl border transition-transform hover:-translate-y-1 duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200/60'}`}>
+                  <span className={`block font-extrabold mb-3 text-lg ${darkMode ? 'text-white' : 'text-slate-800'}`}>{item.t}</span>
+                  <span className="text-sm leading-relaxed opacity-90">{item.d}</span>
                 </div>
-              </li>
-            ))}
-          </ul> 
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SectionTitle number="4" title="Referências e Fontes de Dados" />
+            <p className="leading-relaxed mb-10 text-base">
+              A riqueza de informações do painel é resultado da consolidação de múltiplas fontes de dados abertos e artigos científicos, garantindo abrangência e confiabilidade.
+            </p>
+            
+            <div className="space-y-12">
+              {/* CARTÕES DAS FONTES PRINCIPAIS */}
+              {mainReferences.map((refBloco, i) => (
+                <div key={i} className="space-y-4">
+                  <h4 className={`font-extrabold text-base lg:text-lg uppercase tracking-wide flex items-center gap-2 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                    <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-blue-400' : 'bg-gov-blue'}`}></span>
+                    {refBloco.categoria}
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 gap-3 pl-0 sm:pl-4">
+                    {refBloco.fontes.map((fonte, idx) => (
+                      <a 
+                        key={idx} 
+                        href={fonte.link !== '#' ? fonte.link : undefined} 
+                        target={fonte.link !== '#' ? "_blank" : undefined} 
+                        rel="noopener noreferrer" 
+                        className={`group p-5 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
+                      >
+                         <div className="flex justify-between items-start mb-2">
+                           <span className={`block font-bold text-sm lg:text-base leading-tight transition-colors ${darkMode ? 'text-blue-300 group-hover:text-blue-200' : 'text-gov-blue group-hover:text-gov-blueDark-500'}`}>
+                              {fonte.nome}
+                           </span>
+                           <LinkIcon size={16} className="opacity-40 group-hover:opacity-100 shrink-0 ml-3 mt-0.5" />
+                         </div>
+                         <span className={`text-sm opacity-80 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{fonte.info}</span>
+                      </a>
+                    ))}
+                  </div>
+
+                  {/* BLOCO DA CADEIA PRODUTIVA COM ARTIGOS AGRUPADOS */}
+                  {refBloco.categoria === 'Cadeias Produtivas' && (
+                    <div className="pt-6 mt-6 border-t-2 border-dashed border-slate-200 dark:border-slate-700 pl-0 sm:pl-4">
+                      <h5 className={`font-bold text-sm tracking-wide mb-5 flex items-center gap-2 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                        <BookOpen size={18} className="opacity-70" /> Artigos Científicos: Indicações Geográficas Potenciais
+                      </h5>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => (
+                          <a 
+                            key={idx} 
+                            href={ig.link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className={`group p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
+                          >
+                            <div className="flex justify-between items-start">
+                               <span className={`text-xs leading-relaxed transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
+                                 {ig.txt}
+                               </span>
+                               <LinkIcon size={14} className="opacity-0 group-hover:opacity-50 shrink-0 ml-3 mt-1" />
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                      
+                      {igPotenciais.length > 4 && (
+                        <div className="mt-5">
+                          <button
+                            onClick={() => setShowAllIgs(!showAllIgs)}
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border shadow-sm ${darkMode ? 'bg-slate-800/80 hover:bg-slate-700 border-slate-600 text-blue-400 hover:text-blue-300' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-gov-blue hover:text-gov-blueDark-500'}`}
+                          >
+                            {showAllIgs ? (
+                              <>Esconder Artigos <ChevronUp size={18} /></>
+                            ) : (
+                              <>Mostrar mais ({igPotenciais.length - 4} artigos) <ChevronDown size={18} /></>
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SectionTitle number="5" title="Metodologia e Tratamento dos Dados" />
+            <ol className="list-decimal pl-5 space-y-3 text-base">
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>média ponderada pela população</strong> de cada município.</li>
+            </ol>
+          </div>
+
+          <div>
+            <SectionTitle number="6" title="Guia de Funcionalidades" />
+            <ul className="space-y-6 mt-8">
+              {[
+                { t: 'Mapa Interativo', d: 'Explore os 27 Territórios, visualize a distribuição de ativos e acesse dados detalhados por município com funções de zoom e pan.', i: <MapIcon size={24} />, c: 'text-blue-500 bg-blue-500/10 border border-blue-500/20' },
+                { t: 'Filtros Avançados', d: 'Refine sua busca por Território, Indicadores (IFDM), Cursos Superiores, Cadeias Produtivas e tipos de Entidades de CT&I.', i: <Settings size={24} />, c: 'text-emerald-500 bg-emerald-500/10 border border-emerald-500/20' },
+                { t: 'Filtro do Semiárido Baiano', d: 'A ativação do "Recorte Semiárido" isola estritamente os dados do polígono correspondente ao semiárido.', i: <Sun size={24} />, c: 'text-orange-500 bg-orange-500/10 border border-orange-500/20' },
+                { t: 'Exportação para Business Intelligence', d: 'A plataforma disponibiliza a extração integral dos dados. A exportação gera um ficheiro em formato Excel (.xlsx), estruturado em abas relacionais.', i: <Download size={24} />, c: 'text-purple-500 bg-purple-500/10 border border-purple-500/20' }
+              ].map((func, idx) => (
+                <li key={idx} className="flex gap-5 items-start">
+                  <div className={`p-4 rounded-xl shrink-0 shadow-sm ${func.c}`}>{func.i}</div>
+                  <div className="pt-1">
+                    <strong className={`block text-lg mb-1.5 ${darkMode ? 'text-white' : 'text-slate-800'}`}>{func.t}</strong>
+                    <span className="text-sm opacity-90 leading-relaxed">{func.d}</span>
+                  </div>
+                </li>
+              ))}
+            </ul> 
+          </div>
+
         </div>
       </div>
     </div>
