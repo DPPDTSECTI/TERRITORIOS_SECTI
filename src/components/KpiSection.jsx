@@ -104,7 +104,7 @@ export function SubKpiPanel(props) {
   const selectedLocation = props.selectedLocation ?? context.selectedLocation;
   const dashboardData = props.dashboardData ?? context.dashboardData;
   const ctiFilters = props.ctiFilters ?? context.ctiFilters ?? {};
-  const setCtiFilters = props.setCtiFilters ?? context.setCtiFilters ?? (() => {});
+  const setCtiFilters = props.setCtiFilters ?? context.setCtiFilters ?? (() => { });
 
   const ctiFilterKeys = useMemo(() => [
     'campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal',
@@ -172,7 +172,7 @@ export function SubKpiPanel(props) {
           Ativos de CT&I
         </h4>
       </div>
-      
+
       <div className="flex-1 min-h-0 overflow-visible p-3">
         <div className="flex flex-col gap-2">
           {subKpisList.map(kpi => (
@@ -184,15 +184,15 @@ export function SubKpiPanel(props) {
               <div className="min-w-0 flex-1 pr-1.5">
                 <div className="flex items-start justify-between gap-1">
                   <span className={`text-[9px] font-bold uppercase tracking-wider leading-tight opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
-                  {kpi.sourceText && (
+                  {kpi.sourceText && !['icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'].includes(kpi.id) && (
                     <div className="relative group flex items-center justify-center z-50 shrink-0 mt-0.5">
                       <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                         <Info size={11} />
                       </button>
-                      
+
                       <div className="absolute left-full top-1/2 -translate-y-1/2 pl-2.5 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none group-hover:pointer-events-auto z-[99999]">
-                        <div 
-                          className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`} 
+                        <div
+                          className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <span className="block font-bold mb-0.5 opacity-70">Fonte:</span>

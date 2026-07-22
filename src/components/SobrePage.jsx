@@ -44,7 +44,7 @@ const SobrePage = ({ darkMode }) => {
             ))}
           </div>
 
-          <SectionTitle number="4" title="Fontes dos Dados" />
+          <SectionTitle number="4" title="Referências" />
           <p className="leading-relaxed">
             A riqueza de informações do painel é resultado da consolidação de múltiplas fontes de dados abertos, garantindo abrangência e confiabilidade. As principais fontes utilizadas são:
           </p>
