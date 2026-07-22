@@ -24,7 +24,7 @@ const SobrePage = ({ darkMode }) => {
       ]
     },
     {
-      categoria: 'Indicador de Desenvolvimento Territorial (IFDMT)',
+      categoria: 'Indicador de Desenvolvimento Territorial',
       fontes: [
         { nome: 'Índice FIRJAN de Desenvolvimento Municipal (IFDM)', info: 'Utilizado como base para o indicador de Desenvolvimento Territorial.', link: 'https://www.firjan.com.br/ifdm/' }
       ]
@@ -72,9 +72,9 @@ const SobrePage = ({ darkMode }) => {
         <h2 className={`text-4xl lg:text-5xl font-black mb-12 tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
           Sobre o Painel SECTI Territórios
         </h2>
-        
+
         <div className={`text-sm sm:text-base max-w-none space-y-8 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-          
+
           <div>
             <SectionTitle number="1" title="O Projeto" />
             <p className="leading-relaxed mb-4 text-base">
@@ -117,7 +117,7 @@ const SobrePage = ({ darkMode }) => {
             <p className="leading-relaxed mb-10 text-base">
               A riqueza de informações do painel é resultado da consolidação de múltiplas fontes de dados abertos e artigos científicos, garantindo abrangência e confiabilidade.
             </p>
-            
+
             <div className="space-y-12">
               {/* CARTÕES DAS FONTES PRINCIPAIS */}
               {mainReferences.map((refBloco, i) => (
@@ -126,23 +126,23 @@ const SobrePage = ({ darkMode }) => {
                     <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-blue-400' : 'bg-gov-blue'}`}></span>
                     {refBloco.categoria}
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 gap-3 pl-0 sm:pl-4">
                     {refBloco.fontes.map((fonte, idx) => (
-                      <a 
-                        key={idx} 
-                        href={fonte.link !== '#' ? fonte.link : undefined} 
-                        target={fonte.link !== '#' ? "_blank" : undefined} 
-                        rel="noopener noreferrer" 
+                      <a
+                        key={idx}
+                        href={fonte.link !== '#' ? fonte.link : undefined}
+                        target={fonte.link !== '#' ? "_blank" : undefined}
+                        rel="noopener noreferrer"
                         className={`group p-5 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
                       >
-                         <div className="flex justify-between items-start mb-2">
-                           <span className={`block font-bold text-sm lg:text-base leading-tight transition-colors ${darkMode ? 'text-blue-300 group-hover:text-blue-200' : 'text-gov-blue group-hover:text-gov-blueDark-500'}`}>
-                              {fonte.nome}
-                           </span>
-                           <LinkIcon size={16} className="opacity-40 group-hover:opacity-100 shrink-0 ml-3 mt-0.5" />
-                         </div>
-                         <span className={`text-sm opacity-80 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{fonte.info}</span>
+                        <div className="flex justify-between items-start mb-2">
+                          <span className={`block font-bold text-sm lg:text-base leading-tight transition-colors ${darkMode ? 'text-blue-300 group-hover:text-blue-200' : 'text-gov-blue group-hover:text-gov-blueDark-500'}`}>
+                            {fonte.nome}
+                          </span>
+                          <LinkIcon size={16} className="opacity-40 group-hover:opacity-100 shrink-0 ml-3 mt-0.5" />
+                        </div>
+                        <span className={`text-sm opacity-80 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{fonte.info}</span>
                       </a>
                     ))}
                   </div>
@@ -153,26 +153,26 @@ const SobrePage = ({ darkMode }) => {
                       <h5 className={`font-bold text-sm tracking-wide mb-5 flex items-center gap-2 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                         <BookOpen size={18} className="opacity-70" /> Artigos Científicos: Indicações Geográficas Potenciais
                       </h5>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => (
-                          <a 
-                            key={idx} 
-                            href={ig.link} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            key={idx}
+                            href={ig.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className={`group p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
                           >
                             <div className="flex justify-between items-start">
-                               <span className={`text-xs leading-relaxed transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
-                                 {ig.txt}
-                               </span>
-                               <LinkIcon size={14} className="opacity-0 group-hover:opacity-50 shrink-0 ml-3 mt-1" />
+                              <span className={`text-xs leading-relaxed transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
+                                {ig.txt}
+                              </span>
+                              <LinkIcon size={14} className="opacity-0 group-hover:opacity-50 shrink-0 ml-3 mt-1" />
                             </div>
                           </a>
                         ))}
                       </div>
-                      
+
                       {igPotenciais.length > 4 && (
                         <div className="mt-5">
                           <button
@@ -220,7 +220,7 @@ const SobrePage = ({ darkMode }) => {
                   </div>
                 </li>
               ))}
-            </ul> 
+            </ul>
           </div>
 
         </div>

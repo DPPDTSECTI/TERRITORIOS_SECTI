@@ -2,13 +2,14 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import React, { useState, useRef, useEffect, useMemo, useCallback, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import PtiMap from "../PtiMap";
-import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap } from 'lucide-react';
+import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap, ExternalLink } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import { DataProvider } from './context/DataContext';
 import KpiSection, { SubKpiPanel } from './components/KpiSection';
 import MapSection from './components/MapSection';
 import ListSection from './components/ListSection';
+import { resolveCadeiaFonte } from './utils/cadeiasUtils';
 
 // Carregamento Preguiçoso (Lazy Loading) das Rotas e Componentes Pesados
 const LandingHero = lazy(() => import('./components/hero'));
@@ -525,40 +526,19 @@ function MainApp() {
                                                                     <div className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`}>
                                                                         <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                         {(() => {
-                                                                            let str = String(apl.fonte).trim();
-                                                                            const hMatch = str.match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
-                                                                            if (hMatch && hMatch[1]) str = hMatch[1].trim();
-
-                                                                            const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/ig;
-                                                                            if (urlRegex.test(str)) {
-                                                                              const parts = str.split(urlRegex);
-                                                                              return (
-                                                                                <span className="block leading-tight opacity-90">
-                                                                                  {parts.map((part, i) => {
-                                                                                    if (part.match(urlRegex)) {
-                                                                                      const href = part.startsWith('http') ? part : `https://${part}`;
-                                                                                      return (
-                                                                                        <a key={i} href={href} target="_blank" rel="noreferrer" className="underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-all" onClick={e => e.stopPropagation()}>
-                                                                                          {part}
-                                                                                        </a>
-                                                                                      );
-                                                                                    }
-                                                                                    return <span key={i}>{part}</span>;
-                                                                                  })}
-                                                                                </span>
-                                                                              );
-                                                                            }
-
-                                                                            const isSimpleDomain = /^[a-zA-Z0-9-]+\.(com|gov|org|edu|br|net|io|me|info)(\/.*)?$/i.test(str);
-                                                                            if (isSimpleDomain && !str.includes(' ')) {
-                                                                              return (
-                                                                                <a href={`https://${str}`} target="_blank" rel="noreferrer" className="block leading-tight opacity-90 hover:opacity-100 transition-opacity underline break-all text-blue-500 dark:text-blue-400" onClick={e => e.stopPropagation()}>
-                                                                                  {str}
+                                                                            const info = resolveCadeiaFonte(apl);
+                                                                            return (
+                                                                                <a
+                                                                                    href={info.url}
+                                                                                    target="_blank"
+                                                                                    rel="noreferrer"
+                                                                                    className="group/link flex items-start gap-1 underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 font-semibold leading-relaxed break-words"
+                                                                                    onClick={e => e.stopPropagation()}
+                                                                                >
+                                                                                    <span className="line-clamp-4">{info.isArticle ? info.label : (info.originalFonte || info.label)}</span>
+                                                                                    <ExternalLink size={10} className="shrink-0 mt-0.5" />
                                                                                 </a>
-                                                                              );
-                                                                            }
-
-                                                                            return <span className="block leading-tight opacity-90">{str}</span>;
+                                                                            );
                                                                         })()}
                                                                     </div>
                                                                 </div>
@@ -955,42 +935,15 @@ function MainApp() {
                                             </div>
                                             {apl.fonte && (
                                                 <div className={`pt-3 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
-                                                    <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Fonte dos Dados:</span>
+                                                    <span className="block text-[9px] font-black uppercase opacity-50 mb-1">Fonte dos Dados:</span>
                                                     {(() => {
-                                                         let str = String(apl.fonte).trim();
-                                                         const hMatch = str.match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
-                                                         if (hMatch && hMatch[1]) str = hMatch[1].trim();
-
-                                                         const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/ig;
-                                                         if (urlRegex.test(str)) {
-                                                           const parts = str.split(urlRegex);
-                                                           return (
-                                                             <p className={`text-xs font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-                                                               {parts.map((part, i) => {
-                                                                 if (part.match(urlRegex)) {
-                                                                   const href = part.startsWith('http') ? part : `https://${part}`;
-                                                                   return (
-                                                                     <a key={i} href={href} target="_blank" rel="noreferrer" className="underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-all" onClick={e => e.stopPropagation()}>
-                                                                       {part}
-                                                                     </a>
-                                                                   );
-                                                                 }
-                                                                 return <span key={i}>{part}</span>;
-                                                               })}
-                                                             </p>
-                                                           );
-                                                         }
-
-                                                         const isSimpleDomain = /^[a-zA-Z0-9-]+\.(com|gov|org|edu|br|net|io|me|info)(\/.*)?$/i.test(str);
-                                                         if (isSimpleDomain && !str.includes(' ')) {
-                                                           return (
-                                                             <a href={`https://${str}`} target="_blank" rel="noreferrer" className="text-xs font-bold leading-relaxed opacity-90 hover:opacity-100 transition-opacity underline break-all text-blue-500 dark:text-blue-400" onClick={e => e.stopPropagation()}>
-                                                               {str}
+                                                         const info = resolveCadeiaFonte(apl);
+                                                         return (
+                                                             <a href={info.url} target="_blank" rel="noreferrer" className="inline-flex items-start gap-1.5 text-xs font-bold leading-relaxed underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-words" onClick={e => e.stopPropagation()}>
+                                                               <span>{info.isArticle ? info.label : (info.originalFonte || info.label)}</span>
+                                                               <ExternalLink size={12} className="shrink-0 mt-0.5" />
                                                              </a>
-                                                           );
-                                                         }
-
-                                                         return <p className={`text-xs font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{str}</p>;
+                                                         );
                                                      })()}
                                                 </div>
                                             )}

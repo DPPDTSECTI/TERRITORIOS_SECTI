@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Expand, Info, Filter } from 'lucide-react';
+import { Expand, Info, Filter, ExternalLink } from 'lucide-react';
 import DataContext from '../context/DataContext';
+import { resolveCadeiaFonte } from '../utils/cadeiasUtils';
 
 export default function ListSection(props) {
   const context = useContext(DataContext) || {};
@@ -104,47 +105,26 @@ export default function ListSection(props) {
                       </span>
                       {apl.fonte && (
                         <div className="relative group flex items-center justify-center z-50 shrink-0" onClick={e => e.stopPropagation()}>
-                          <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                          <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none" title="Ver fonte / artigo">
                             <Info size={12} />
                           </button>
-                          <div className="absolute right-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[99999] pointer-events-none group-hover:pointer-events-auto">
+                          <div className="absolute right-0 top-full pt-1 w-max max-w-[260px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[99999] pointer-events-none group-hover:pointer-events-auto">
                             <div className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`}>
-                              <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
+                              <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
                               {(() => {
-                                let str = String(apl.fonte).trim();
-                                const hMatch = str.match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
-                                if (hMatch && hMatch[1]) str = hMatch[1].trim();
-
-                                const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/ig;
-                                if (urlRegex.test(str)) {
-                                  const parts = str.split(urlRegex);
-                                  return (
-                                    <span className="block leading-tight opacity-90">
-                                      {parts.map((part, i) => {
-                                        if (part.match(urlRegex)) {
-                                          const href = part.startsWith('http') ? part : `https://${part}`;
-                                          return (
-                                            <a key={i} href={href} target="_blank" rel="noreferrer" className="underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-all" onClick={e => e.stopPropagation()}>
-                                              {part}
-                                            </a>
-                                          );
-                                        }
-                                        return <span key={i}>{part}</span>;
-                                      })}
-                                    </span>
-                                  );
-                                }
-
-                                const isSimpleDomain = /^[a-zA-Z0-9-]+\.(com|gov|org|edu|br|net|io|me|info)(\/.*)?$/i.test(str);
-                                if (isSimpleDomain && !str.includes(' ')) {
-                                  return (
-                                    <a href={`https://${str}`} target="_blank" rel="noreferrer" className="block leading-tight opacity-90 hover:opacity-100 transition-opacity underline break-all text-blue-500 dark:text-blue-400" onClick={e => e.stopPropagation()}>
-                                      {str}
-                                    </a>
-                                  );
-                                }
-
-                                return <span className="block leading-tight opacity-90">{str}</span>;
+                                const info = resolveCadeiaFonte(apl);
+                                return (
+                                  <a
+                                    href={info.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="group/link flex items-start gap-1 underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 font-semibold leading-relaxed break-words"
+                                    onClick={e => e.stopPropagation()}
+                                  >
+                                    <span className="line-clamp-4">{info.isArticle ? info.label : (info.originalFonte || info.label)}</span>
+                                    <ExternalLink size={10} className="shrink-0 mt-0.5" />
+                                  </a>
+                                );
                               })()}
                             </div>
                           </div>
