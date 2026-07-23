@@ -72,6 +72,7 @@ const SobrePage = ({ darkMode }) => {
       categoria: 'Cadeias Produtivas',
       fontes: [
         { nome: 'Indicações Geográficas (IGs) | Sebrae Origens – DataSebrae', info: 'Consolidação de informações sobre Indicações Geográficas.', link: 'https://datasebrae.com.br/indicacoesgeograficas/' },
+        { nome: 'Indicações Geográficas (IGs) | INPI', info: 'Consolidação de informações sobre Indicações Geográficas.', link: 'https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas' },
         { nome: 'Arranjos Produtivos Locais (APLs) | Observatório APL', info: 'Consolidação de informações sobre Arranjos Produtivos Locais.', link: 'https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl' }
       ]
     }
