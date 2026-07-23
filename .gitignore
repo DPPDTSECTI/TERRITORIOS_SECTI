@@ -14,6 +14,7 @@ dist-ssr
 .env
 .env.*
 .cache
+/public/dados.json
 
 .vscode/*
 !.vscode/extensions.json
@@ -25,4 +26,3 @@ dist-ssr
 *.sln
 *.sw?
 public/img/*.exe
-.json
