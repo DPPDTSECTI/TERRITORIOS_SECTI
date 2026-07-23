@@ -950,14 +950,14 @@ function MainApp() {
                                                 <div className={`pt-3 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
                                                     <span className="block text-[9px] font-black uppercase opacity-50 mb-1">Fonte dos Dados:</span>
                                                     {(() => {
-                                                         const info = resolveCadeiaFonte(apl);
-                                                         return (
-                                                             <a href={info.url} target="_blank" rel="noreferrer" className="inline-flex items-start gap-1.5 text-xs font-bold leading-relaxed underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-words" onClick={e => e.stopPropagation()}>
-                                                               <span>{info.isArticle ? info.label : (info.originalFonte || info.label)}</span>
-                                                               <ExternalLink size={12} className="shrink-0 mt-0.5" />
-                                                             </a>
-                                                         );
-                                                     })()}
+                                                        const info = resolveCadeiaFonte(apl);
+                                                        return (
+                                                            <a href={info.url} target="_blank" rel="noreferrer" className="inline-flex items-start gap-1.5 text-xs font-bold leading-relaxed underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-words" onClick={e => e.stopPropagation()}>
+                                                                <span>{info.isArticle ? info.label : (info.originalFonte || info.label)}</span>
+                                                                <ExternalLink size={12} className="shrink-0 mt-0.5" />
+                                                            </a>
+                                                        );
+                                                    })()}
                                                 </div>
                                             )}
                                         </div>
@@ -1356,81 +1356,81 @@ function MainApp() {
                     </div>
                 }>
                     <Routes>
-                    <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
-                    <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
+                        <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
+                        <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
 
-                    <Route path="/territorios" element={
-                        <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
-                            <div className={`${themeClasses.glass} rounded-2xl p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
+                        <Route path="/territorios" element={
+                            <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
+                                <div className={`${themeClasses.glass} rounded-2xl p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
 
-                                {/* KPIs GLOBAIS */}
-                                <KpiSection
-                                    darkMode={darkMode}
-                                    selectedLocation={selectedLocation}
-                                    filtroSemiarido={filtroSemiarido}
-                                    lastUpdate={lastUpdate}
-                                    dashboardData={dashboardData}
-                                    onOpenExpandedList={(type) => setExpandedLists([type])}
-                                />
-
-                                {/* A "Ilha" Encaixada na tela */}
-                                <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
-
-                                    {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
-                                    <SubKpiPanel
+                                    {/* KPIs GLOBAIS */}
+                                    <KpiSection
                                         darkMode={darkMode}
                                         selectedLocation={selectedLocation}
-                                        dashboardData={dashboardData}
-                                        ctiFilters={ctiFilters}
-                                        setCtiFilters={setCtiFilters}
-                                    />
-
-                                    {/* COLUNA DO MAPA (40%) */}
-                                    <MapSection
-                                        mapSectionRef={mapSectionRef}
-                                        darkMode={darkMode}
-                                        territoriosData={territoriosData}
-                                        territoriesDynamicStats={territoriesDynamicStats}
                                         filtroSemiarido={filtroSemiarido}
-                                        selectedLocation={selectedLocation}
-                                        semiaridoMunicipios={semiaridoMunicipios}
-                                        handleSelectTerritory={handleSelectTerritory}
+                                        lastUpdate={lastUpdate}
                                         dashboardData={dashboardData}
-                                        ctiFilters={ctiFilters}
+                                        onOpenExpandedList={(type) => setExpandedLists([type])}
                                     />
 
-                                    {/* COLUNA DAS LISTAS (60%) */}
-                                    <ListSection
-                                        darkMode={darkMode}
-                                        dashboardData={dashboardData}
-                                        cursosFiltrados={cursosFiltrados}
-                                        cursoSearchTerm={cursoSearchTerm}
-                                        setCursoSearchTerm={setCursoSearchTerm}
-                                        areaGeralSummary={areaGeralSummary}
-                                        areaGeralFilter={areaGeralFilter}
-                                        setAreaGeralFilter={setAreaGeralFilter}
-                                        handleAreaGeralToggle={handleAreaGeralToggle}
-                                        expandedLists={expandedLists}
-                                        setExpandedLists={setExpandedLists}
-                                        fixWeirdCapitalization={fixWeirdCapitalization}
-                                        formatEntidadeTipo={formatEntidadeTipo}
-                                        getCtiBadgeStyle={getCtiBadgeStyle}
-                                        getBadgeStyle={getBadgeStyle}
-                                        getAreaStyles={getAreaStyles}
-                                        getAreaInfo={getAreaInfo}
-                                        setExpandedCti={setExpandedCti}
-                                        setExpandedCadeia={setExpandedCadeia}
-                                        setExpandedCourse={setExpandedCourse}
-                                        isAreaGeralOpen={isAreaGeralOpen}
-                                        setIsAreaGeralOpen={setIsAreaGeralOpen}
-                                        areaGeralRef={areaGeralRef}
-                                    />
+                                    {/* A "Ilha" Encaixada na tela */}
+                                    <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
+
+                                        {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
+                                        <SubKpiPanel
+                                            darkMode={darkMode}
+                                            selectedLocation={selectedLocation}
+                                            dashboardData={dashboardData}
+                                            ctiFilters={ctiFilters}
+                                            setCtiFilters={setCtiFilters}
+                                        />
+
+                                        {/* COLUNA DO MAPA (40%) */}
+                                        <MapSection
+                                            mapSectionRef={mapSectionRef}
+                                            darkMode={darkMode}
+                                            territoriosData={territoriosData}
+                                            territoriesDynamicStats={territoriesDynamicStats}
+                                            filtroSemiarido={filtroSemiarido}
+                                            selectedLocation={selectedLocation}
+                                            semiaridoMunicipios={semiaridoMunicipios}
+                                            handleSelectTerritory={handleSelectTerritory}
+                                            dashboardData={dashboardData}
+                                            ctiFilters={ctiFilters}
+                                        />
+
+                                        {/* COLUNA DAS LISTAS (60%) */}
+                                        <ListSection
+                                            darkMode={darkMode}
+                                            dashboardData={dashboardData}
+                                            cursosFiltrados={cursosFiltrados}
+                                            cursoSearchTerm={cursoSearchTerm}
+                                            setCursoSearchTerm={setCursoSearchTerm}
+                                            areaGeralSummary={areaGeralSummary}
+                                            areaGeralFilter={areaGeralFilter}
+                                            setAreaGeralFilter={setAreaGeralFilter}
+                                            handleAreaGeralToggle={handleAreaGeralToggle}
+                                            expandedLists={expandedLists}
+                                            setExpandedLists={setExpandedLists}
+                                            fixWeirdCapitalization={fixWeirdCapitalization}
+                                            formatEntidadeTipo={formatEntidadeTipo}
+                                            getCtiBadgeStyle={getCtiBadgeStyle}
+                                            getBadgeStyle={getBadgeStyle}
+                                            getAreaStyles={getAreaStyles}
+                                            getAreaInfo={getAreaInfo}
+                                            setExpandedCti={setExpandedCti}
+                                            setExpandedCadeia={setExpandedCadeia}
+                                            setExpandedCourse={setExpandedCourse}
+                                            isAreaGeralOpen={isAreaGeralOpen}
+                                            setIsAreaGeralOpen={setIsAreaGeralOpen}
+                                            areaGeralRef={areaGeralRef}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    } />
+                        } />
 
-                </Routes>
+                    </Routes>
                 </Suspense>
             </main>
 

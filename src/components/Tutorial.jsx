@@ -211,7 +211,7 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
         const updateRect = () => {
             let selector = step.targetSelector;
 
-            if (step.id === 'lists' && document.querySelector('[data-tutorial="detail-modal"]')) {
+            if ((step.id === 'lists' || step.id === 'courses') && document.querySelector('[data-tutorial="detail-modal"]')) {
                 selector = '[data-tutorial="detail-modal"]';
             } else if ((step.id === 'lists' || step.id === 'expanded-lists') && document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
                 selector = '[data-tutorial="expanded-lists-modal"]';
@@ -285,10 +285,10 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Run animation frame tracking only for 1000ms after step change to catch smooth CSS transitions/modals opening
+        // Run animation frame tracking continuously while tutorial is open to catch modal openings/closings at any time
         const animationLoop = () => {
             updateRect();
-            if (isLoopActive && Date.now() - loopStartTime < 1000) {
+            if (isLoopActive) {
                 animFrameId = requestAnimationFrame(animationLoop);
             }
         };
