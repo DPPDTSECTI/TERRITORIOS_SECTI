@@ -105,6 +105,8 @@ export function SubKpiPanel(props) {
   const dashboardData = props.dashboardData ?? context.dashboardData;
   const ctiFilters = props.ctiFilters ?? context.ctiFilters ?? {};
   const setCtiFilters = props.setCtiFilters ?? context.setCtiFilters ?? (() => { });
+  const isCtiFilterActive = props.isCtiFilterActive ?? context.isCtiFilterActive ?? false;
+  const setIsCtiFilterActive = props.setIsCtiFilterActive ?? context.setIsCtiFilterActive ?? (() => { });
 
   const ctiFilterKeys = useMemo(() => [
     'campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal',
@@ -115,7 +117,14 @@ export function SubKpiPanel(props) {
     return ctiFilterKeys.every(key => ctiFilters[key]);
   }, [ctiFilters, ctiFilterKeys]);
 
+  const activeCtiCount = useMemo(() => {
+    return ctiFilterKeys.filter(key => ctiFilters[key]).length;
+  }, [ctiFilters, ctiFilterKeys]);
+
+  const isEffectiveFilterActive = isCtiFilterActive && activeCtiCount > 0;
+
   const toggleCtiFilter = (keyToToggle) => {
+    setIsCtiFilterActive(true);
     setCtiFilters(prev => ({ ...prev, [keyToToggle]: !prev[keyToToggle] }));
   };
 
@@ -123,10 +132,23 @@ export function SubKpiPanel(props) {
     const nextValue = !areAllCtiSelected;
     const newFilters = {};
     ctiFilterKeys.forEach(key => { newFilters[key] = nextValue; });
+    setIsCtiFilterActive(nextValue);
     setCtiFilters(newFilters);
   };
 
+  const handleFilterToggleBtn = () => {
+    if (isEffectiveFilterActive) {
+      setIsCtiFilterActive(false);
+      const newFilters = {};
+      ctiFilterKeys.forEach(key => { newFilters[key] = true; });
+      setCtiFilters(newFilters);
+    } else {
+      setIsCtiFilterActive(true);
+    }
+  };
+
   const handleCtiKpiClick = (clickedKey) => {
+    setIsCtiFilterActive(true);
     const activeKeys = ctiFilterKeys.filter(k => ctiFilters[k]);
     const areAllCurrentlyActive = activeKeys.length === ctiFilterKeys.length;
 
@@ -169,18 +191,46 @@ export function SubKpiPanel(props) {
     <div data-tutorial="cti-panel" className={`relative z-30 hover:z-[999] w-full lg:w-52 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
       <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-          Ativos de CT&I
+          Ativos CT&I
         </h4>
+        <button
+          onClick={handleFilterToggleBtn}
+          className="flex items-center gap-1.5 group cursor-pointer outline-none select-none"
+          title={isEffectiveFilterActive ? "Filtro ligado. Clique para desligar e resetar o mapa" : "Filtro desligado. Clique para ligar"}
+        >
+          <span className={`text-[8px] font-black uppercase tracking-wider ${isEffectiveFilterActive ? (darkMode ? 'text-emerald-400' : 'text-emerald-600') : (darkMode ? 'text-gray-400' : 'text-gray-500')}`}>
+            {isEffectiveFilterActive ? 'Ligado' : 'Desligado'}
+          </span>
+          <div className={`w-7 h-4 rounded-full p-0.5 transition-colors duration-300 relative flex items-center ${
+            isEffectiveFilterActive
+              ? 'bg-emerald-500'
+              : (darkMode ? 'bg-gray-700 border border-gray-600' : 'bg-gray-300')
+          }`}>
+            <div className={`w-3 h-3 rounded-full bg-white shadow-md transform transition-transform duration-300 ${
+              isEffectiveFilterActive ? 'translate-x-3' : 'translate-x-0'
+            }`} />
+          </div>
+        </button>
       </div>
 
       <div className="flex-1 min-h-0 overflow-visible p-3">
         <div className="flex flex-col gap-2">
-          {subKpisList.map(kpi => (
-            <div
-              key={kpi.id}
-              onClick={() => handleCtiKpiClick(kpi.id)}
-              className={`relative p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
-            >
+          {subKpisList.map(kpi => {
+            const isItemActive = isCtiFilterActive ? Boolean(ctiFilters[kpi.id]) : true;
+            const isSelectedInFilterMode = isCtiFilterActive && ctiFilters[kpi.id];
+
+            return (
+              <div
+                key={kpi.id}
+                onClick={() => handleCtiKpiClick(kpi.id)}
+                className={`relative p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${
+                  isSelectedInFilterMode
+                    ? (darkMode ? 'bg-slate-800/90 border-emerald-500/60 shadow-sm opacity-100' : 'bg-emerald-50/60 border-emerald-400/80 shadow-sm opacity-100')
+                    : isCtiFilterActive
+                      ? 'opacity-35 grayscale border-transparent hover:opacity-70'
+                      : (darkMode ? 'bg-slate-800/40 border-slate-700 opacity-100' : 'bg-white/80 border-slate-200/50 opacity-100')
+                }`}
+              >
               <div className="min-w-0 flex-1 pr-1.5">
                 <div className="flex items-start justify-between gap-1">
                   <span className={`text-[9px] font-bold uppercase tracking-wider leading-tight opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
@@ -210,9 +260,11 @@ export function SubKpiPanel(props) {
                 <div className={`w-full ${kpi.b} transition-all duration-700 ease-out rounded-full`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
-  );
+  </div>
+);
 }
+

@@ -124,6 +124,7 @@ function MainApp() {
     const [ctiFilters, setCtiFilters] = useState({
         campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
     });
+    const [isCtiFilterActive, setIsCtiFilterActive] = useState(false);
 
     const sideFilterRef = useRef(null);
     const searchDropdownRef = useRef(null);
@@ -148,6 +149,7 @@ function MainApp() {
         setCtiFilters({
             campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
         });
+        setIsCtiFilterActive(false);
         setIsDropdownOpen(false);
         setIsCardCadeiaFilterOpen(false);
     };
@@ -178,6 +180,7 @@ function MainApp() {
         ifdmMax,
         cadeiaProdutivaFilter,
         ctiFilters,
+        isCtiFilterActive,
         areaGeralFilter,
         debouncedCursoSearchTerm,
         debouncedCadeiaSearchTerm,
@@ -253,7 +256,10 @@ function MainApp() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const toggleCtiFilter = (key) => { setCtiFilters(prev => ({ ...prev, [key]: !prev[key] })); };
+    const toggleCtiFilter = (key) => {
+        setIsCtiFilterActive(true);
+        setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
+    };
     const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal', 'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'], []);
     const areAllCtiSelected = useMemo(() => ctiFilterKeys.every(key => ctiFilters[key]), [ctiFilters, ctiFilterKeys]);
 
@@ -261,10 +267,19 @@ function MainApp() {
         const newValue = !areAllCtiSelected;
         const newFilters = {};
         ctiFilterKeys.forEach(key => { newFilters[key] = newValue; });
+        setIsCtiFilterActive(true);
+        setCtiFilters(newFilters);
+    };
+
+    const handleDeselectAll = () => {
+        const newFilters = {};
+        ctiFilterKeys.forEach(key => { newFilters[key] = false; });
+        setIsCtiFilterActive(true);
         setCtiFilters(newFilters);
     };
 
     const handleCtiKpiClick = (clickedKey) => {
+        setIsCtiFilterActive(true);
         const activeKeys = ctiFilterKeys.filter(key => ctiFilters[key]);
         const areAllCurrentlyActive = activeKeys.length === ctiFilterKeys.length;
 
@@ -1383,6 +1398,7 @@ function MainApp() {
                                             dashboardData={dashboardData}
                                             ctiFilters={ctiFilters}
                                             setCtiFilters={setCtiFilters}
+                                            setIsCtiFilterActive={setIsCtiFilterActive}
                                         />
 
                                         {/* COLUNA DO MAPA (40%) */}
