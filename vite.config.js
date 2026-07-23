@@ -8,7 +8,7 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v29_ifdm_media_simples'; // Força atualização para nova métrica IFDM
+const CACHE_VERSION = 'v37_hyperlinks_coordenadas_robustas';
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
@@ -98,9 +98,10 @@ function parseSpreadsheet(buffer) {
     throw new Error("ACESSO NEGADO: O SharePoint retornou a página de Login (HTML). Verifique as permissões do ficheiro ou atualize os Cookies.");
   }
 
+  // IMPORTANTE: cellFormula DEVE estar true para ler =HYPERLINK()
   const workbook = XLSX.read(buffer, {
     type: 'buffer',
-    cellFormula: false,
+    cellFormula: true, 
     cellHTML: false,
     cellStyles: false,
     cellText: false,
@@ -150,7 +151,6 @@ function parseSpreadsheet(buffer) {
         cadeiasRows: [],
         desenvolvimentoRows: [],
         cursosRows: [],
-        // NOVO: Adicionado parâmetros para Média Simples (soma e quantidade)
         desenvolvimento: { ifdmTi: null, somaIfdm: 0, qtdMunicipiosIfdm: 0, populacaoTotal: 0 },
         assistenciaPublica: { existe: false, iniciativas: new Set() },
         semiaridoAcumulado: 0,
@@ -164,7 +164,28 @@ function parseSpreadsheet(buffer) {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
 
-    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    // --- NOVA LÓGICA CIRÚRGICA (Procura TODAS as colunas possíveis de Fonte) ---
+    const ref = sheet['!ref'];
+    let fonteCols = []; // Agora pode guardar mais de uma coluna
+    let headerRow = 0;
+    
+    if (ref) {
+      const range = XLSX.utils.decode_range(ref);
+      headerRow = range.s.r;
+      
+      // Mapeia todas as colunas que parecem ser de fonte de dados/artigos
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cell = sheet[XLSX.utils.encode_cell({c: C, r: headerRow})];
+        if (cell && cell.v) {
+          const headerRaw = safeKey(cell.v);
+          if (['fontedosdados', 'fontedodado', 'fontededados', 'fontedados', 'fonte', 'fontes', 'referencia', 'referencias', 'artigo', 'documento'].includes(headerRaw)) {
+            fonteCols.push(C);
+          }
+        }
+      }
+    }
+
+    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '', blankrows: true });
     if (rawRows.length === 0) return;
 
     const sheetNorm = safeKey(sheetName);
@@ -177,10 +198,38 @@ function parseSpreadsheet(buffer) {
     if (!isCadeiaSheet && !isCursoSheet && !isIfdmSheet && !isCapacidadeSheet) return;
 
     rawRows.forEach((rawRow, idx) => {
+      // Ignora linhas totalmente vazias
+      if (Object.values(rawRow).every(v => v === '')) return;
+
       const row = {};
       for (const key in rawRow) {
           row[safeKey(key)] = rawRow[key];
       }
+      
+      // ==== EXTRACTOR DO HIPERLINK VERDADEIRO NAS COLUNAS DE FONTE ====
+      let urlTarget = '';
+      if (fonteCols.length > 0 && isCadeiaSheet) {
+          const excelRow = headerRow + 1 + idx; // Calcula a linha exata
+          
+          for (let colIndex of fonteCols) {
+              const cellAddress = XLSX.utils.encode_cell({ c: colIndex, r: excelRow });
+              const cell = sheet[cellAddress];
+              
+              if (cell) {
+                  if (cell.l && cell.l.Target) {
+                      urlTarget = cell.l.Target; // Hiperlink Nativo (inserido pelo botão direito)
+                      break; // Pára de procurar se achou
+                  } else if (cell.f) {
+                      const hMatch = String(cell.f).match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
+                      if (hMatch) {
+                          urlTarget = hMatch[1]; // Fómula =HYPERLINK()
+                          break;
+                      }
+                  }
+              }
+          }
+      }
+      // ==========================================================
 
       const territorioRaw = row['territoriodeidentidade'] || row['territorioidentidade'] || row['territoriosdeidentidade'] || row['territorio'] || row['territorios'];
       if (!territorioRaw) return;
@@ -289,7 +338,9 @@ function parseSpreadsheet(buffer) {
              if (cadeia !== '') {
                  const sede = String(row['sede'] || row['municipiosatelite'] || '').trim();
                  const abrangencia = String(row['municipiospertencentes'] || row['abrangencia'] || '').trim();
-                 const fonte = String(row['fontedodado'] || row['fonte'] || row['link'] || '').trim();
+                 
+                 // Puxamos a string bruta exibida na célula, varrendo os nomes possíveis
+                 const textoVisual = String(row['fontedosdados'] || row['fontedodado'] || row['fontededados'] || row['fontedados'] || row['fonte'] || row['fontes'] || row['referencia'] || row['referencias'] || row['artigo'] || row['documento'] || '').trim();
 
                  const semanticId = `cad_${safeKey(cadeia)}_${safeKey(sede)}_${safeKey(entidadesExpandida)}`;
 
@@ -301,12 +352,12 @@ function parseSpreadsheet(buffer) {
                      entidade: entidadesExpandida, 
                      tipo: tipoOriginal,
                      quantidade: qtd,
-                     fonte
+                     fonte: textoVisual,      
+                     urlTarget: urlTarget   // O Hiperlink exato guardado à parte
                  });
              }
          }
 
-         // AQUI FOI ALTERADO PARA A LÓGICA DE MÉDIA SIMPLES
          if (isIfdmSheet) {
              const ifdm = toNumber(row['ifdm']);
              const pop = toNumber(row['populacao']);
@@ -369,8 +420,6 @@ function parseSpreadsheet(buffer) {
   if (!territoryMap.size) throw new Error('Nenhuma linha territorial válida encontrada.');
 
   const territories = Array.from(territoryMap.values()).map((entry) => {
-    
-    // AQUI O CÁLCULO FINAL DE MÉDIA SIMPLES POR TERRITÓRIO
     if (entry.desenvolvimento.ifdmTi == null && entry.desenvolvimento.qtdMunicipiosIfdm > 0) {
       entry.desenvolvimento.ifdmTi = entry.desenvolvimento.somaIfdm / entry.desenvolvimento.qtdMunicipiosIfdm;
     }
@@ -404,7 +453,7 @@ function parseSpreadsheet(buffer) {
       desenvolvimento: {
         ifdmTi: entry.desenvolvimento.ifdmTi,
         populacaoTotal: entry.desenvolvimento.populacaoTotal || null,
-        metodologia: 'IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)',
+        metodologia: 'IFDM_TI = Média Aritmética Simples',
       },
       assistenciaPublica: {
         existe: entry.assistenciaPublica.existe,
@@ -431,21 +480,14 @@ function parseSpreadsheet(buffer) {
     },
   };
 
-  console.log(`[Dev Parser] ✓ Parseado: ${result.summary.territories} territórios`);
-
   try {
     const publicDir = path.join(process.cwd(), 'public');
     if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
     fs.writeFileSync(path.join(publicDir, 'dados.json'), JSON.stringify(result, null, 2));
-    console.log(`[Dev Parser] 💾 JSON Salvo Localmente.`);
-  } catch (err) { 
-    console.warn(`[Dev Parser] Falha ao salvar JSON local: ${err.message}`); 
-  }
+  } catch (err) {}
 
   return result;
 }
-
-// ==================== FIM DO PROCESSADOR ====================
 
 const sharepointProxyPlugin = (targetSharepointUrl) => ({
   name: 'sharepoint-proxy',
