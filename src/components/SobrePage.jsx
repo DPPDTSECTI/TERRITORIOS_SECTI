@@ -15,14 +15,20 @@ const SobrePage = ({ darkMode }) => {
     const uniqueArticles = new Map();
 
     allCadeias.forEach(cad => {
+      // Filtra apenas cadeias que são estritamente IGs Potenciais
+      const tipoLower = (cad.tipo || '').toLowerCase();
+      const isIgPotencial = tipoLower === 'ig potencial';
+      
+      if (!isIgPotencial) return;
+
       const fonteInfo = resolveCadeiaFonte(cad);
       const rawFonte = cad.fonte || '';
       const labelLower = fonteInfo.label.toLowerCase();
 
       // Ignora as fontes genéricas ou de portais governamentais que não são artigos/estudos diretos
-      const isGeneric = 
-        labelLower.includes('mapa interativo') || 
-        labelLower.includes('observatório apl') || 
+      const isGeneric =
+        labelLower.includes('mapa interativo') ||
+        labelLower.includes('observatório apl') ||
         labelLower.includes('observatorioapl') ||
         labelLower.includes('datasebrae') ||
         labelLower.includes('gov.br/empresas');

@@ -21,7 +21,7 @@ export function resolveCadeiaFonte(apl) {
   const raw = (apl.fonte || '').trim();
   let url = '';
   let label = raw;
-  
+
   // 1. Verifica se a URL foi extraída nativamente do Excel via tag "|URL: "
   const urlMarker = ' |URL: ';
   if (raw.includes(urlMarker)) {
@@ -46,10 +46,20 @@ export function resolveCadeiaFonte(apl) {
     }
   }
 
+  // 4. Garante que se o label estiver vazio, e a url existir, mostramos a própria URL conforme o Excel
+  if (!label && url) {
+    label = url;
+  }
+
+  // Se tudo estiver vazio, exibe o aviso neutro
+  if (!label && !url) {
+    label = 'Fonte não informada';
+  }
+
   return {
     url: url,
     label: label, 
-    isArticle: url.includes('doi.org'), // heurística simples
+    isArticle: url.includes('doi.org') || label.includes('doi:'), // heurística simples
     originalFonte: label
   };
 }
