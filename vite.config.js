@@ -164,7 +164,7 @@ function parseSpreadsheet(buffer) {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
 
-    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '', blankrows: true });
     if (rawRows.length === 0) return;
 
     const sheetNorm = safeKey(sheetName);
@@ -176,7 +176,17 @@ function parseSpreadsheet(buffer) {
 
     if (!isCadeiaSheet && !isCursoSheet && !isIfdmSheet && !isCapacidadeSheet) return;
 
+    const range = XLSX.utils.decode_range(sheet['!ref']);
+    const headerMap = {};
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell = sheet[XLSX.utils.encode_cell({ c: C, r: range.s.r })];
+      if (cell && cell.v) {
+        headerMap[safeKey(cell.v)] = C;
+      }
+    }
+
     rawRows.forEach((rawRow, idx) => {
+      const R = range.s.r + 1 + idx;
       const row = {};
       for (const key in rawRow) {
           row[safeKey(key)] = rawRow[key];
@@ -290,8 +300,26 @@ function parseSpreadsheet(buffer) {
                  const sede = String(row['sede'] || row['municipiosatelite'] || '').trim();
                  const abrangencia = String(row['municipiospertencentes'] || row['abrangencia'] || '').trim();
                  const fonteRaw = row['fontedosdados'] || row['fontedodado'] || row['fontededados'] || row['fontedados'] || row['fonte'] || row['fontes'] || row['linkdafonte'] || row['linkfonte'] || row['link'] || row['referencia'] || row['referencias'] || row['origem'] || row['origemdosdados'] || '';
+                 
+                 let excelHyperlink = '';
+                 const possibleFonteKeys = ['fontedosdados', 'fontedodado', 'fontededados', 'fontedados', 'fonte', 'fontes', 'linkdafonte', 'linkfonte', 'link', 'referencia', 'referencias', 'origem', 'origemdosdados'];
+                 const matchedKey = possibleFonteKeys.find(k => headerMap[k] !== undefined && row[k] !== undefined);
+                 if (matchedKey) {
+                     const C = headerMap[matchedKey];
+                     const cell = sheet[XLSX.utils.encode_cell({ r: R, c: C })];
+                     if (cell && cell.l && cell.l.Target) {
+                         excelHyperlink = cell.l.Target;
+                     }
+                 }
+
                  const hMatch = String(fonteRaw).match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
-                 const fonte = (hMatch && hMatch[1]) ? hMatch[1].trim() : String(fonteRaw).trim();
+                 const formulaHyperlink = hMatch ? hMatch[1].trim() : '';
+                 const linkOficial = excelHyperlink || formulaHyperlink;
+                 
+                 let fonteFinal = String(fonteRaw).trim();
+                 if (linkOficial) {
+                     fonteFinal = `${fonteFinal} |URL: ${linkOficial}`;
+                 }
 
                  const semanticId = `cad_${safeKey(cadeia)}_${safeKey(sede)}_${safeKey(entidadesExpandida)}`;
 
@@ -303,7 +331,7 @@ function parseSpreadsheet(buffer) {
                      entidade: entidadesExpandida, 
                      tipo: tipoOriginal,
                      quantidade: qtd,
-                     fonte
+                     fonte: fonteFinal
                  });
              }
          }

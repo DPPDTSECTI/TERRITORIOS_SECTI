@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-import { Map as MapIcon, Settings, Sun, Download, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
-import { ARTICLES_LIST } from '../utils/cadeiasUtils';
+import React from 'react';
+import { Map as MapIcon, Settings, Sun, Download, ExternalLink, BookOpen } from 'lucide-react';
 
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
 // ==========================================
 const SobrePage = ({ darkMode }) => {
-  // Estado para controlar a expansão da lista de IGs Potenciais
-  const [showAllIgs, setShowAllIgs] = useState(false);
-
   const SectionTitle = ({ number, title }) => (
     <h3 className={`font-black uppercase tracking-[0.15em] text-lg mb-6 pt-10 border-b pb-3 ${darkMode ? 'text-blue-400 border-slate-700' : 'text-gov-blueDark-500 border-slate-200'}`}>
       {number}. {title}
@@ -44,9 +40,6 @@ const SobrePage = ({ darkMode }) => {
       ]
     }
   ];
-
-  // Lista dos artigos científicos centralizada e ordenada alfabeticamente
-  const igPotenciais = [...ARTICLES_LIST].sort((a, b) => a.txt.localeCompare(b.txt, 'pt'));
 
   return (
     <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start font-sans">
@@ -129,48 +122,7 @@ const SobrePage = ({ darkMode }) => {
                     ))}
                   </div>
 
-                  {/* BLOCO DA CADEIA PRODUTIVA COM ARTIGOS AGRUPADOS */}
-                  {refBloco.categoria === 'Cadeias Produtivas' && (
-                    <div className="pt-6 mt-6 border-t-2 border-dashed border-slate-200 dark:border-slate-700 pl-0 sm:pl-4">
-                      <h5 className={`font-bold text-sm tracking-wide mb-5 flex items-center gap-2 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                        <BookOpen size={18} className="opacity-70" /> Artigos Científicos: Indicações Geográficas Potenciais
-                      </h5>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => (
-                          <a
-                            key={idx}
-                            href={ig.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`group p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
-                          >
-                            <div className="flex justify-between items-start">
-                              <span className={`text-xs leading-relaxed transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
-                                {ig.txt}
-                              </span>
-                              <ExternalLink size={14} className="opacity-0 group-hover:opacity-50 shrink-0 ml-3 mt-1" />
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-
-                      {igPotenciais.length > 4 && (
-                        <div className="mt-5">
-                          <button
-                            onClick={() => setShowAllIgs(!showAllIgs)}
-                            className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border shadow-sm ${darkMode ? 'bg-slate-800/80 hover:bg-slate-700 border-slate-600 text-blue-400 hover:text-blue-300' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-gov-blue hover:text-gov-blueDark-500'}`}
-                          >
-                            {showAllIgs ? (
-                              <>Esconder Artigos <ChevronUp size={18} /></>
-                            ) : (
-                              <>Mostrar mais ({igPotenciais.length - 4} artigos) <ChevronDown size={18} /></>
-                            )}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T19:24:34.131Z",
+  "generatedAt": "2026-07-23T16:26:08.109Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
@@ -72,7 +72,7 @@
           "entidade": "Leite do Vale do Jacuípe",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl |URL: https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_irece_producaoaquisicaoeservicodoestadodabahia",
@@ -112,7 +112,7 @@
           "entidade": "Associação Ipirá Couro",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "MARQUES, Bartolomeu das Neves et al. Artefatos de couro de Ipirá: potencial de Indicação Geográfica no território da Bacia do Jacuípe - Bahia. Cadernos de Prospecção, Salvador, v. 12, n. 5, p. 1598-1611, 2019. DOI: https://doi.org/10.9771/cp.v1215.31018."
+          "fonte": "MARQUES, Bartolomeu das Neves et al. Artefatos de couro de Ipirá: potencial de Indicação Geográfica no território da Bacia do Jacuípe - Bahia. Cadernos de Prospecção, Salvador, v. 12, n. 5, p. 1598-1611, 2019. |URL: https://doi.org/10.9771/cp.v12i5.31018"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -334,7 +334,7 @@
           "entidade": "Associação dos Cafeicultores do Oeste da Bahia",
           "tipo": "IG",
           "quantidade": 3,
-          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/ |URL: https://datasebrae.com.br/ig-oeste-da-bahia/"
         },
         {
           "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
@@ -344,7 +344,7 @@
           "entidade": "Associação Baiana de Produtores de Algodão",
           "tipo": "IG Potencial",
           "quantidade": 11,
-          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. DOI: https://doi.org/10.9771/cp.v16i1.50700."
+          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. |URL: https://doi.org/10.9771/cp.v16i1.50700"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -518,7 +518,7 @@
           "entidade": "Associação dos Cafeicultores do Oeste da Bahia",
           "tipo": "IG",
           "quantidade": 8,
-          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/ |URL: https://datasebrae.com.br/ig-oeste-da-bahia/"
         },
         {
           "id": "cad_bovinoculturadeleite_barreiras_bovinoculturadeleiteterritoriobaciadoriogrande",
@@ -548,7 +548,7 @@
           "entidade": "Associação Baiana de Produtores de Algodão",
           "tipo": "IG Potencial",
           "quantidade": 11,
-          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. DOI: https://doi.org/10.9771/cp.v16i1.50700."
+          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. |URL: https://doi.org/10.9771/cp.v16i1.50700"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -1034,7 +1034,7 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 12,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_agricultura_itubera_agriculturafamiliardobaixosul",
@@ -1084,7 +1084,7 @@
           "entidade": "Associação de Auxílio Mútuo dos Oleiros de Maragogipinho",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica das cerâmicas de Maragogipinho. Brasília: SEBRAE, 2024."
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica das cerâmicas de Maragogipinho. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/3a-Diagnostico-Ceramica-de-Maragogipinho.pdf"
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -1094,7 +1094,7 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
@@ -1104,7 +1104,7 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_guarana_taperoa_cooperativaagricolamistaltdadoprojetoonca",
@@ -1114,7 +1114,7 @@
           "entidade": "Cooperativa Agrícola Mista Ltda. do Projeto Onça",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "BAQUEIRO, Arminda Ursula Pereira et al. Potencial de Indicação Geográfica para o Guaraná de Taperoá - Bahia. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 21, n. 3, p. 1422-1441, 2023. DOI: 1696-8352."
+          "fonte": "BAQUEIRO, Arminda Ursula Pereira et al. Potencial de Indicação Geográfica para o Guaraná de Taperoá - Bahia. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 21, n. 3, p. 1422-1441, 2023. DOI: 1696-8352. |URL: https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/413/300"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -1309,7 +1309,7 @@
           "entidade": "Aliança dos Cafeicultores da Chapada Diamantina",
           "tipo": "IG",
           "quantidade": 24,
-          "fonte": "https://datasebrae.com.br/ig-chapada-diamantina/"
+          "fonte": "https://datasebrae.com.br/ig-chapada-diamantina/ |URL: https://datasebrae.com.br/ig-chapada-diamantina/"
         },
         {
           "id": "cad_agricultura_irece_producaoaquisicaoeservicodoestadodabahia",
@@ -1349,7 +1349,7 @@
           "entidade": "Associação dos Produtores de Aguardente de Qualidade da Microrregião Abaíra",
           "tipo": "IG",
           "quantidade": 4,
-          "fonte": "https://datasebrae.com.br/ig-abaira/"
+          "fonte": "https://datasebrae.com.br/ig-abaira/ |URL: https://datasebrae.com.br/ig-abaira/"
         },
         {
           "id": "cad_cafe_seabra_producaodeorganicosebiodinamicosdachapadadiamantina",
@@ -1369,7 +1369,7 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_agropecuaria_miguelcalmon_producaoagropecuariadelagoadedentroeregiaodaserra",
@@ -1399,7 +1399,7 @@
           "entidade": "Chapada Diamantina (Piatã)",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_vinho_morrodochapeu_associacaodeagroturismodachapadadiamantina",
@@ -1409,7 +1409,7 @@
           "entidade": "Associação de Agroturismo da Chapada Diamantina",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SILVA, Rosilene Alves da et al. Potencialidade de Indicação Geográfica: Vinhos de Morro do Chapéu-BA. Revista de Gestão e Secretariado (GeSec), São José dos Pinhais, v. 16, n. 8, p. 01-24, 2025. DOI: http://doi.org/10.7769/gesec.v1618.5056."
+          "fonte": "SILVA, Rosilene Alves da et al. Potencialidade de Indicação Geográfica: Vinhos de Morro do Chapéu-BA. Revista de Gestão e Secretariado (GeSec), São José dos Pinhais, v. 16, n. 8, p. 01-24, 2025. |URL: https://ojs.revistagesec.org.br/secretariado/article/view/5056/3402"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -1600,7 +1600,7 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 8,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_apicultura_eunapolis_apiculturaterritoriocostadodescobrimento",
@@ -1630,7 +1630,7 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -1870,7 +1870,7 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 7,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_mandiocultura_itamaraju_mandioculturaterritoriodoextremosul",
@@ -1900,7 +1900,7 @@
           "entidade": "Associação de Apicultores de Rancho Queimado e Igrejinha",
           "tipo": "IG Potencial",
           "quantidade": 4,
-          "fonte": "ANDRADE, Lanacris de Jesus et al. Potencialidade de indicação geográfica do mel do extremo sul da Bahia sob a ótica da metodologia do SEBRAE. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 8, n. 1, p. 2520-2532, 2024. DOI: 10.51722/Ingi.v8.i1.311."
+          "fonte": "ANDRADE, Lanacris de Jesus et al. Potencialidade de indicação geográfica do mel do extremo sul da Bahia sob a ótica da metodologia do SEBRAE. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 8, n. 1, p. 2520-2532, 2024. DOI: 10.51722/Ingi.v8.i1.311. |URL: https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=viewFile&amp;path%5b%5d=311&amp;path%5b%5d=269"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -2367,7 +2367,7 @@
           "entidade": "Cooperativa Mista de Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 2,
-          "fonte": "RIBEIRO, Bruno Bahia et al. Diagnóstico do potencial de indicação geográfica da mamona produzida na região centro-norte da Bahia. Revista Aracê, São José dos Pinhais, v. 7, n. 2, p. 5327-5347, 2025. DOI: https://doi.org/10.56238/arev7n2-047."
+          "fonte": "RIBEIRO, Bruno Bahia et al. Diagnóstico do potencial de indicação geográfica da mamona produzida na região centro-norte da Bahia. Revista Aracê, São José dos Pinhais, v. 7, n. 2, p. 5327-5347, 2025. |URL: https://periodicos.newsciencepubl.com/arace/article/view/3163/3902"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -2639,7 +2639,7 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 6,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_bovinoculturadeleite_pauloafonso_bovinoculturadeleiteterritorioitaparica",
@@ -2921,7 +2921,7 @@
           "entidade": "Cooperativa de Artesanato do Trançado Tupinambá",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024."
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
         },
         {
           "id": "cad_mel_alagoinhas_associacaodosapicultoresemeliponicultoresdaregiaonortedealagoinhas",
@@ -2931,7 +2931,7 @@
           "entidade": "Associação dos Apicultores e Meliponicultores da Região Norte de Alagoinhas",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "CONCEIÇÃO, Valdir Silva; SILVA, Dayana Ferraz; ROCHA, Angela Machado. Potencial de Indicação Geográfica para o mel produzido por abelha sem ferrão de Alagoinhas - Bahia. Cadernos de Prospecção, Salvador, v. 15, n. 2, p. 618-633, 2022. DOI: https://doi.org/10.9771/cp.v1512.47406."
+          "fonte": "CONCEIÇÃO, Valdir Silva; SILVA, Dayana Ferraz; ROCHA, Angela Machado. Potencial de Indicação Geográfica para o mel produzido por abelha sem ferrão de Alagoinhas - Bahia. Cadernos de Prospecção, Salvador, v. 15, n. 2, p. 618-633, 2022. |URL: https://doi.org/10.9771/cp.v15i2.47406"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -3451,7 +3451,7 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 26,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_cacau_itabuna_agriculturafamiliareeconomiasolidariadabaciadoriosalgadoeadjacentes",
@@ -3511,7 +3511,7 @@
           "entidade": "Cooperativa Mista dos Produtores Rurais do Sul da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 4,
-          "fonte": "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 22, n. 6, p. 01-20, 2024. DOI: 10.55905/oelv22n6-111."
+          "fonte": "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 22, n. 6, p. 01-20, 2024. DOI: 10.55905/oelv22n6-111. |URL: https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/5218/3367"
         },
         {
           "id": "cad_polenapicola_canavieiras_cooperativadeapicultoresdecanavieiras",
@@ -3521,7 +3521,7 @@
           "entidade": "Cooperativa de Apicultores de Canavieiras",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -3531,7 +3531,7 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -4257,7 +4257,7 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 15,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_cacau_jequie_cacauiculturasafterritoriomedioriodecontas",
@@ -4287,7 +4287,7 @@
           "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
           "tipo": "IG Potencial",
           "quantidade": 19,
-          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017."
+          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017. |URL: https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -4567,7 +4567,7 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 9,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_cacau_itabuna_agriculturafamiliareeconomiasolidariadabaciadoriosalgadoeadjacentes",
@@ -4587,7 +4587,7 @@
           "entidade": "Itororó",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
@@ -4597,7 +4597,7 @@
           "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
           "tipo": "IG Potencial",
           "quantidade": 19,
-          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017."
+          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017. |URL: https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -5226,7 +5226,7 @@
           "entidade": "Cooperativa de Artesanato do Trançado Tupinambá",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024."
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
@@ -5236,7 +5236,7 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -8491,7 +8491,7 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 6,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_bovinoculturadeleite_jacobina_bovinoculturadeleiteterritoriopiemontedadiamantina",
@@ -8710,7 +8710,7 @@
           "entidade": "Cooperativa dos Produtores de Abacaxi de Itaberaba",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "BONFIM, Catarina Vilas Boas da Silva et al. Diagnóstico do potencial de indicação geográfica do abacaxi de Itaberaba-Bahia sob a ótica da metodologia do SEBRAE. Revista Aracê, São José dos Pinhais, v. 7, n. 3, p. 15075-15090, 2025. DOI: https://doi.org/10.56238/arev7n3-283."
+          "fonte": "BONFIM, Catarina Vilas Boas da Silva et al. Diagnóstico do potencial de indicação geográfica do abacaxi de Itaberaba-Bahia sob a ótica da metodologia do SEBRAE. Revista Aracê, São José dos Pinhais, v. 7, n. 3, p. 15075-15090, 2025. |URL: https://periodicos.newsciencepubl.com/arace/article/view/4122/5434"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -8856,7 +8856,7 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 2,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -9085,7 +9085,7 @@
           "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 21,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -10197,7 +10197,7 @@
           "entidade": "Cooperativa Mista de Agricultores Familiares e Produtores de Leite de Santa Bárbara",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "ROCHA, Angela Machado; CALDAS, Alcides dos Santos; OLIVEIRA, Maria Cristina Idalina dos Santos de. Um estudo do requeijão de Santa Bárbara-BA para o reconhecimento de Indicação Geográfica (IG). Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 19821-19834, 2023. DOI: http://doi.org/10.7769/gesec.v14i11.2973."
+          "fonte": "ROCHA, Angela Machado; CALDAS, Alcides dos Santos; OLIVEIRA, Maria Cristina Idalina dos Santos de. Um estudo do requeijão de Santa Bárbara-BA para o reconhecimento de Indicação Geográfica (IG). Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 19821-19834, 2023. |URL: https://ojs.revistagesec.org.br/secretariado/article/view/2973/1887"
         }
       ],
       "desenvolvimentoDetalhado": [],
@@ -10399,7 +10399,7 @@
           "entidade": "Associação dos Artesãos de Saubara",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf"
+          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf |URL: https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf"
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -10409,7 +10409,7 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_carnedefumeiro_maragogipe_associacaodosprodutoresdacarnesuinosdefumeirosdemaragogipe",
@@ -10419,7 +10419,7 @@
           "entidade": "Associação dos Produtores da Carne Suínos de Fumeiros de Maragogipe",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "FERRAZ, Luciana Alves Vieira; SILVA, Davi Santos da; SANTOS, Laiane da Silva; VENANCIO, Maria Fernanda Daltro; CONCEIÇÃO, Valdir Silva da; ARAÚJO, Marcio Luís Valença; SILVA, Marcelo Santana. Diagnóstico do potencial de indicação geográfica da carne de fumeiro de Maragogipe-Bahia sob a ótica da metodologia do SEBRAE. Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 20202-20220, 2023. DOI: http://doi.org/10.7769/gesec.v14i11.3173."
+          "fonte": "FERRAZ, Luciana Alves Vieira; SILVA, Davi Santos da; SANTOS, Laiane da Silva; VENANCIO, Maria Fernanda Daltro; CONCEIÇÃO, Valdir Silva da; ARAÚJO, Marcio Luís Valença; SILVA, Marcelo Santana. Diagnóstico do potencial de indicação geográfica da carne de fumeiro de Maragogipe-Bahia sob a ótica da metodologia do SEBRAE. Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 20202-20220, 2023. |URL: https://ojs.revistagesec.org.br/secretariado/article/view/3173/1907"
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
@@ -10429,7 +10429,7 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
@@ -10439,7 +10439,7 @@
           "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 21,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_licor_cachoeira_associacaodefabricantesdelicordecachoeira",
@@ -10449,7 +10449,7 @@
           "entidade": "Associação de Fabricantes de Licor de Cachoeira",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SANTOS, Letícia Sena dos et al. Análise do potencial de Indicação Geográfica (IG) para o licor artesanal da cidade de Cachoeira no Recôncavo Baiano. Revista Caderno Pedagógico, Curitiba, v. 21, n. 10, p. 01-21, 2024. DOI: 10.54033/cadpedv21n10-401."
+          "fonte": "SANTOS, Letícia Sena dos et al. Análise do potencial de Indicação Geográfica (IG) para o licor artesanal da cidade de Cachoeira no Recôncavo Baiano. Revista Caderno Pedagógico, Curitiba, v. 21, n. 10, p. 01-21, 2024. DOI: 10.54033/cadpedv21n10-401. |URL: https://ojs.studiespublicacoes.com.br/ojs/index.php/cadped/article/view/9938/5762"
         },
         {
           "id": "cad_mariscos_salinasdamargarida_associacaodepescadoreseaquicultoresdesalinasdamargarida",
@@ -10459,7 +10459,7 @@
           "entidade": "Associação de Pescadores e Aquicultores de Salinas da Margarida",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "CALDAS, Alcides dos Santos et al. Potential geographical indication study for Salinas da Margarida shellfish region: protection of cultural and economic identity analysis. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 7, n. 4, 2023."
+          "fonte": "CALDAS, Alcides dos Santos et al. Potential geographical indication study for Salinas da Margarida shellfish region: protection of cultural and economic identity analysis. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 7, n. 4, 2023. |URL: https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=view&amp;path%5B%5D=270"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -11148,7 +11148,7 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -11666,7 +11666,7 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 8,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_alimentos_juazeiro_centraldecomercializacaodascooperativasdacaatinga",
@@ -11716,7 +11716,7 @@
           "entidade": "Instituto do Vinho do Vale do São Francisco",
           "tipo": "IG",
           "quantidade": 2,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-sao-francisco/"
         },
         {
           "id": "cad_marmore_ourolandia_marmorebegebahia",
@@ -11746,7 +11746,7 @@
           "entidade": "Cooperativa Agropecuária Familiar de Canudos, Uauá e Curaçá",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -12428,7 +12428,7 @@
           "entidade": "Associação de Desenvolvimento Sustentável e Solidário da Região Sisaleira",
           "tipo": "IG Potencial",
           "quantidade": 14,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -12752,7 +12752,7 @@
           "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
           "tipo": "IG Potencial",
           "quantidade": 19,
-          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017."
+          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017. |URL: https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -13308,7 +13308,7 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 6,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_agricultura_mutuipe_agriculturafamiliareeconomiasolidariasustentaveldosterritoriosdovaledojiquiricaebaixosuldabahia",
@@ -13328,7 +13328,7 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
@@ -13338,7 +13338,7 @@
           "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 21,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -13526,7 +13526,7 @@
           "entidade": "Associação Frutas Oeste do Projeto Formoso A/H",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/"
+          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/ |URL: https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/"
         },
         {
           "id": "cad_ceramica_barra_associacaocomunitarianossasenhoradefatima",
@@ -13536,7 +13536,7 @@
           "entidade": "Associação Comunitária Nossa Senhora de Fátima",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024."
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/1a-Diagnostico-Ceramica-da-Barra.pdf"
         },
         {
           "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
@@ -13546,7 +13546,7 @@
           "entidade": "Associação Baiana de Produtores de Algodão",
           "tipo": "IG Potencial",
           "quantidade": 11,
-          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. DOI: https://doi.org/10.9771/cp.v16i1.50700."
+          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. |URL: https://doi.org/10.9771/cp.v16i1.50700"
         },
         {
           "id": "cad_cachaca_paratinga_associacaodosprodutoresdecachacaartesanaldovaledosantoonofre",
@@ -13556,7 +13556,7 @@
           "entidade": "Associação dos Produtores de Cachaça Artesanal do Vale do Santo Onofre",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SOUZA, Diego de Oliveira et al. Cachaça Rainha do Santo Onofre de Paratinga-Bahia: potencial de indicação geográfica de procedência. Revista INGI, [S. l.], v. 4, n. 3, p. 903-917, 2020."
+          "fonte": "SOUZA, Diego de Oliveira et al. Cachaça Rainha do Santo Onofre de Paratinga-Bahia: potencial de indicação geográfica de procedência. Revista INGI, [S. l.], v. 4, n. 3, p. 903-917, 2020. |URL: https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=viewFile&amp;path%5b%5d=124&amp;path%5b%5d=111"
         }
       ],
       "desenvolvimentoDetalhado": [
