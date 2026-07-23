@@ -1,87 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Map as MapIcon, Settings, Sun, Download, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
-
-const ARTICLES_LIST = [
-  {
-    txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024.",
-    link: "https://datasebrae.com.br/wp-content/uploads/2025/01/1a-Diagnostico-Ceramica-da-Barra.pdf"
-  },
-  {
-    txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024.",
-    link: "https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
-  },
-  {
-    txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica das cerâmicas de Maragogipinho. Brasília: SEBRAE, 2024.",
-    link: "https://datasebrae.com.br/wp-content/uploads/2025/01/3a-Diagnostico-Ceramica-de-Maragogipinho.pdf"
-  },
-  {
-    txt: "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, v. 22, n. 6, 2024.",
-    link: "https://doi.org/10.55905/oelv22n6-111"
-  },
-  {
-    txt: "FERRAZ, Luciana Alves Vieira et al. Diagnóstico do potencial de indicação geográfica da carne de fumeiro de Maragogipe-Bahia sob a ótica da metodologia do SEBRAE. Revista de Gestão e Secretariado (GeSec), v. 14, n. 11, 2023.",
-    link: "http://doi.org/10.7769/gesec.v14i11.3173"
-  },
-  {
-    txt: "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, v. 4, n. 7, 2017.",
-    link: "https://periodicos.uesb.br/index.php/extensao/article/view/7258"
-  },
-  {
-    txt: "CONCEIÇÃO, Valdir Silva et al. Potencial de Indicação Geográfica para o mel produzido por abelha sem ferrão de Alagoinhas - Bahia. Cadernos de Prospecção, v. 15, n. 2, 2022.",
-    link: "https://doi.org/10.9771/cp.v1512.47406"
-  },
-  {
-    txt: "SANTOS, Letícia Sena dos et al. Análise do potencial de Indicação Geográfica (IG) para o licor artesanal da cidade de Cachoeira no Recôncavo Baiano. Revista Caderno Pedagógico, v. 21, n. 10, 2024.",
-    link: "https://doi.org/10.54033/cadpedv21n10-401"
-  },
-  {
-    txt: "RIBEIRO, Bruno Bahia et al. Diagnóstico do potencial de indicação geográfica da mamona produzida na região centro-norte da Bahia. Revista Aracê, v. 7, n. 2, 2025.",
-    link: "https://doi.org/10.56238/arev7n2-047"
-  },
-  {
-    txt: "ANDRADE, Lanacris de Jesus et al. Potencialidade de indicação geográfica do mel do extremo sul da Bahia sob a ótica da metodologia do SEBRAE. Revista INGI, v. 8, n. 1, 2024.",
-    link: "https://doi.org/10.51722/Ingi.v8.i1.311"
-  },
-  {
-    txt: "MARQUES, Bartolomeu das Neves et al. Artefatos de couro de Ipirá: potencial de Indicação Geográfica no território da Bacia do Jacuípe - Bahia. Cadernos de Prospecção, v. 12, n. 5, 2019.",
-    link: "https://doi.org/10.9771/cp.v1215.31018"
-  },
-  {
-    txt: "BONFIM, Catarina Vilas Boas da Silva et al. Diagnóstico do potencial de indicação geográfica do abacaxi de Itaberaba-Bahia sob a ótica da metodologia do SEBRAE. Revista Aracê, v. 7, n. 3, 2025.",
-    link: "https://doi.org/10.56238/arev7n3-283"
-  },
-  {
-    txt: "SILVA, Rosilene Alves da et al. Potencialidade de Indicação Geográfica: Vinhos de Morro do Chapéu-BA. Revista de Gestão e Secretariado (GeSec), v. 16, n. 8, 2025.",
-    link: "http://doi.org/10.7769/gesec.v1618.5056"
-  },
-  {
-    txt: "SANTOS, Aline Teles et al. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, v. 16, n. 1, 2023.",
-    link: "https://doi.org/10.9771/cp.v16i1.50700"
-  },
-  {
-    txt: "SOUZA, Diego de Oliveira et al. Cachaça Rainha do Santo Onofre de Paratinga-Bahia: potencial de indicação geográfica de procedência. Revista INGI, v. 4, n. 3, 2020.",
-    link: "https://seer.ufrgs.br/index.php/ingi/article/view/100411"
-  },
-  {
-    txt: "CALDAS, Alcides dos Santos et al. Potential geographical indication study for Salinas da Margarida shellfish region: protection of cultural and economic identity analysis. Revista INGI, v. 7, n. 4, 2023.",
-    link: "https://seer.ufrgs.br/index.php/ingi/article/view/131752"
-  },
-  {
-    txt: "ROCHA, Angela Machado et al. Um estudo do requeijão de Santa Bárbara-BA para o reconhecimento de Indicação Geográfica (IG). Revista de Gestão e Secretariado (GeSec), v. 14, n. 11, 2023.",
-    link: "http://doi.org/10.7769/gesec.v14i11.2973"
-  },
-  {
-    txt: "BAQUEIRO, Arminda Ursula Pereira et al. Potencial de Indicação Geográfica para o Guaraná de Taperoá - Bahia. Revista Observatorio de la Economia Latinoamericana, v. 21, n. 3, 2023.",
-    link: "https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/285"
-  }
-];
+import dashboardData from '../../public/dados.json';
+import { resolveCadeiaFonte } from '../utils/cadeiasUtils';
 
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
 // ==========================================
 const SobrePage = ({ darkMode }) => {
   const [showAllIgs, setShowAllIgs] = useState(false);
-  const igPotenciais = [...ARTICLES_LIST].sort((a, b) => a.txt.localeCompare(b.txt, 'pt'));
+
+  // Extrai dinamicamente todos os artigos/referências mapeados no Excel (via dados.json)
+  const igPotenciais = useMemo(() => {
+    const allCadeias = dashboardData.territories.flatMap(t => t.cadeiasProdutivasDetalhado || []);
+    const uniqueArticles = new Map();
+
+    allCadeias.forEach(cad => {
+      const fonteInfo = resolveCadeiaFonte(cad);
+      const rawFonte = cad.fonte || '';
+      const labelLower = fonteInfo.label.toLowerCase();
+
+      // Ignora as fontes genéricas ou de portais governamentais que não são artigos/estudos diretos
+      const isGeneric = 
+        labelLower.includes('mapa interativo') || 
+        labelLower.includes('observatório apl') || 
+        labelLower.includes('observatorioapl') ||
+        labelLower.includes('datasebrae') ||
+        labelLower.includes('gov.br/empresas');
+
+      // Se tem uma URL válida e não é genérica, nós consideramos um "Artigo Científico" ou "Estudo"
+      if (fonteInfo.url && !isGeneric && fonteInfo.label.length > 20) {
+        if (!uniqueArticles.has(fonteInfo.url)) {
+          uniqueArticles.set(fonteInfo.url, {
+            txt: fonteInfo.label,
+            link: fonteInfo.url
+          });
+        }
+      }
+    });
+
+    return Array.from(uniqueArticles.values()).sort((a, b) => a.txt.localeCompare(b.txt, 'pt'));
+  }, []);
 
   const SectionTitle = ({ number, title }) => (
     <h3 className={`font-black uppercase tracking-[0.15em] text-lg mb-6 pt-10 border-b pb-3 ${darkMode ? 'text-blue-400 border-slate-700' : 'text-gov-blueDark-500 border-slate-200'}`}>
