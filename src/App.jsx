@@ -1400,7 +1400,7 @@ function MainApp() {
                 }>
                     <Routes>
                         <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
-                        <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
+                        <Route path="/sobre" element={<SobrePage darkMode={darkMode} territoriosData={territoriosData} />} />
 
                         <Route path="/territorios" element={
                             <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">

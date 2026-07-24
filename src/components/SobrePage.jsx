@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { Map as MapIcon, Settings, Sun, Download, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
-import dashboardData from '../../public/dados.json';
+import React, { useState, useMemo, useContext } from 'react';
+import { Map as MapIcon, Settings, Sun, Download, ExternalLink, ChevronDown, ChevronUp, BookOpen, Building2 } from 'lucide-react';
+import DataContext from '../context/DataContext';
 import { resolveCadeiaFonte } from '../utils/cadeiasUtils';
 
 // ==========================================
@@ -8,28 +8,26 @@ import { resolveCadeiaFonte } from '../utils/cadeiasUtils';
 // ==========================================
 const SobrePage = ({ darkMode }) => {
   const [showAllIgs, setShowAllIgs] = useState(false);
+  const [showAllIncubadoras, setShowAllIncubadoras] = useState(false);
   
-  // Puxa a base de dados GERAL em vez do dashboardData
+  // Puxa a base de dados GERAL via Contexto
   const context = useContext(DataContext) || {};
   const territoriosData = context.territoriosData || [];
 
-  // Extrai dinamicamente todos os artigos/referências mapeados no Excel (via dados.json)
+  // Extrai dinamicamente todos os artigos/referências mapeados no Excel
   const igPotenciais = useMemo(() => {
-    const allCadeias = dashboardData.territories.flatMap(t => t.cadeiasProdutivasDetalhado || []);
+    const allCadeias = territoriosData.flatMap(t => t.cadeiasProdutivasDetalhado || []);
     const uniqueArticles = new Map();
 
     allCadeias.forEach(cad => {
-      // Filtra apenas cadeias que são estritamente IGs Potenciais
       const tipoLower = (cad.tipo || '').toLowerCase();
       const isIgPotencial = tipoLower === 'ig potencial';
       
       if (!isIgPotencial) return;
 
       const fonteInfo = resolveCadeiaFonte(cad);
-      const rawFonte = cad.fonte || '';
-      const labelLower = fonteInfo.label.toLowerCase();
+      const labelLower = (fonteInfo.label || '').toLowerCase();
 
-      // Ignora as fontes genéricas ou de portais governamentais que não são artigos/estudos diretos
       const isGeneric =
         labelLower.includes('mapa interativo') ||
         labelLower.includes('observatório apl') ||
@@ -37,19 +35,72 @@ const SobrePage = ({ darkMode }) => {
         labelLower.includes('datasebrae') ||
         labelLower.includes('gov.br/empresas');
 
-      // Se tem uma URL válida e não é genérica, nós consideramos um "Artigo Científico" ou "Estudo"
-      if (fonteInfo.url && !isGeneric && fonteInfo.label.length > 20) {
-        if (!uniqueArticles.has(fonteInfo.url)) {
-          uniqueArticles.set(fonteInfo.url, {
+      const linkCorreto = cad.urlTarget || fonteInfo.url;
+
+      if (linkCorreto && !isGeneric && (fonteInfo.label || '').length > 20) {
+        if (!uniqueArticles.has(linkCorreto)) {
+          uniqueArticles.set(linkCorreto, {
             txt: fonteInfo.label,
-            link: fonteInfo.url
+            link: linkCorreto
           });
         }
       }
     });
 
     return Array.from(uniqueArticles.values()).sort((a, b) => a.txt.localeCompare(b.txt, 'pt'));
-  }, []);
+  }, [territoriosData]);
+
+  // Extrai dinamicamente as Incubadoras e Aceleradoras que possuem link válido na fonte/site
+  const incubadorasAceleradorasList = useMemo(() => {
+    const allCapacidade = territoriosData.flatMap(t => t.capacidadeDetalhada || []);
+    const uniqueMap = new Map();
+
+    allCapacidade.forEach(item => {
+      const cat = (item.categoria || '').toLowerCase();
+      const tipo = (item.tipo || '').toLowerCase();
+      const entidadeNome = item.entidade ? String(item.entidade).trim() : '';
+
+      if (
+        cat.includes('incubadora') || 
+        cat.includes('aceleradora') || 
+        tipo.includes('incubadora') || 
+        tipo.includes('aceleradora') ||
+        cat === 'aceleradoras' ||
+        cat === 'incubadoras'
+      ) {
+        const rawLink = item.site || item.fonte || '';
+        
+        if (entidadeNome && rawLink && rawLink !== '#' && rawLink !== '' && !uniqueMap.has(entidadeNome)) {
+          const finalLink = rawLink.startsWith('http') ? rawLink : `https://${rawLink}`;
+
+          uniqueMap.set(entidadeNome, {
+            nome: entidadeNome,
+            link: finalLink,
+            municipio: item.municipio || ''
+          });
+        }
+      }
+    });
+
+    let extracted = Array.from(uniqueMap.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+    if (extracted.length === 0) {
+      extracted = [
+        { nome: "Áity Incubadora (Uneb/Sebrae)", link: "https://inovacao.uneb.br/aity-incubadora-de-empresas-ja-ouviu-falar/", municipio: "Salvador" },
+        { nome: "CIMATEC Park", link: "https://senaicimatec.com.br/", municipio: "Camaçari" },
+        { nome: "Cyklo Agritech", link: "https://cykloagritech.com.br/", municipio: "Luís Eduardo Magalhães" },
+        { nome: "GetIN Aceleradora", link: "https://getin.inf.br/", municipio: "Salvador" },
+        { nome: "Hub Conquista / Conquista Startups", link: "https://hubconquista.com.br/", municipio: "Vitória da Conquista" },
+        { nome: "IEBT Innovation", link: "https://www.iebtinnovation.com/", municipio: "Vitória da Conquista" },
+        { nome: "Inventivos", link: "https://inventivos.co/", municipio: "Salvador" },
+        { nome: "Novatores", link: "https://novatores.uefs.br/", municipio: "Feira de Santana" },
+        { nome: "SENAI CIMATEC", link: "https://senaicimatec.com.br/", municipio: "Salvador" },
+        { nome: "Vale do dendê", link: "https://www.valedodende.org/", municipio: "Salvador" }
+      ];
+    }
+
+    return extracted;
+  }, [territoriosData]);
 
   const SectionTitle = ({ number, title }) => (
     <h3 className={`font-black uppercase tracking-[0.15em] text-lg mb-6 pt-10 border-b pb-3 ${darkMode ? 'text-blue-400 border-slate-700' : 'text-gov-blueDark-500 border-slate-200'}`}>
@@ -73,9 +124,9 @@ const SobrePage = ({ darkMode }) => {
       ]
     },
     {
-      categoria: 'Cursos Superiores em CT&I',
+      categoria: 'Estruturas de CT&I e Cursos Superiores',
       fontes: [
-        { nome: 'INEP | Censo da Educação Superior', info: 'Microdados que fornecem a base para o levantamento de cursos superiores em CT&I.', link: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' }
+        { nome: 'INEP | Censo da Educação Superior', info: 'Microdados que fornecem a base para o levantamento de cursos superiores em CT&I e de campi de universidades públicas, privadas e institutos federais.', link: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' }
       ]
     },
     {
@@ -141,7 +192,6 @@ const SobrePage = ({ darkMode }) => {
             </p>
 
             <div className="space-y-12">
-              {/* CARTÕES DAS FONTES PRINCIPAIS */}
               {mainReferences.map((refBloco, i) => (
                 <div key={i} className="space-y-4">
                   <h4 className={`font-extrabold text-base lg:text-lg uppercase tracking-wide flex items-center gap-2 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
@@ -149,14 +199,17 @@ const SobrePage = ({ darkMode }) => {
                     {refBloco.categoria}
                   </h4>
 
-                  <div className="grid grid-cols-1 gap-3 pl-0 sm:pl-4">
-                    {refBloco.fontes.map((fonte, idx) => (
+                  {/* CAIXA AGRUPADA PADRÃO */}
+                  <div className={`flex flex-col rounded-2xl border overflow-hidden shadow-sm ${darkMode ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200'}`}>
+                    {refBloco.fontes.map((fonte, idx, arr) => (
                       <a
                         key={idx}
                         href={fonte.link !== '#' ? fonte.link : undefined}
                         target={fonte.link !== '#' ? "_blank" : undefined}
                         rel="noopener noreferrer"
-                        className={`group p-5 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
+                        className={`group p-5 flex flex-col justify-between transition-colors duration-300 
+                          ${idx !== arr.length - 1 ? (darkMode ? 'border-b border-slate-700/50' : 'border-b border-slate-200') : ''}
+                          ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-white'}`}
                       >
                         <div className="flex justify-between items-start mb-2">
                           <span className={`block font-bold text-sm lg:text-base leading-tight transition-colors ${darkMode ? 'text-blue-300 group-hover:text-blue-200' : 'text-gov-blue group-hover:text-gov-blueDark-500'}`}>
@@ -167,32 +220,90 @@ const SobrePage = ({ darkMode }) => {
                         <span className={`text-sm opacity-80 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{fonte.info}</span>
                       </a>
                     ))}
+
+                    {/* SE FOR A CATEGORIA DE ESTRUTURAS, AS INCUBADORAS & ACELERADORAS COM LINK ENTRARÃO AQUI */}
+                    {refBloco.categoria === 'Estruturas de CT&I e Cursos Superiores' && incubadorasAceleradorasList.length > 0 && (
+                      <>
+                        <div className={`px-5 py-3 border-t font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 ${darkMode ? 'bg-slate-800/50 border-slate-700/50 text-slate-300' : 'bg-slate-100/80 border-slate-200 text-slate-700'}`}>
+                          <Building2 size={16} className="opacity-70" /> Incubadoras & Aceleradoras (Com Link Mapeado)
+                        </div>
+
+                        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {(showAllIncubadoras ? incubadorasAceleradorasList : incubadorasAceleradorasList.slice(0, 4)).map((inc, idx) => {
+                            const isClickable = inc.link && inc.link !== '#';
+                            const Wrapper = isClickable ? 'a' : 'div';
+                            
+                            return (
+                              <Wrapper
+                                key={idx}
+                                href={isClickable ? inc.link : undefined}
+                                target={isClickable ? "_blank" : undefined}
+                                rel={isClickable ? "noopener noreferrer" : undefined}
+                                className={`group p-3.5 rounded-xl border flex items-center justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'} ${isClickable ? 'cursor-pointer' : 'cursor-default'}`}
+                              >
+                                <div className="flex flex-col min-w-0 pr-2">
+                                  <span className={`text-xs font-bold leading-snug truncate transition-colors ${darkMode ? 'text-slate-200 group-hover:text-white' : 'text-slate-800 group-hover:text-gov-blue'}`}>
+                                    {inc.nome}
+                                  </span>
+                                  {inc.municipio && (
+                                    <span className={`text-[10px] opacity-60 mt-0.5 truncate ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                      Município: {inc.municipio}
+                                    </span>
+                                  )}
+                                </div>
+                                {isClickable && <ExternalLink size={14} className="opacity-40 group-hover:opacity-100 shrink-0" />}
+                              </Wrapper>
+                            );
+                          })}
+                        </div>
+
+                        {incubadorasAceleradorasList.length > 4 && (
+                          <div className="p-4 pt-0">
+                            <button
+                              onClick={() => setShowAllIncubadoras(!showAllIncubadoras)}
+                              className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border shadow-sm ${darkMode ? 'bg-slate-800/80 hover:bg-slate-700 border-slate-600 text-blue-400 hover:text-blue-300' : 'bg-white hover:bg-slate-50 border-slate-200 text-gov-blue hover:text-gov-blueDark-500'}`}
+                            >
+                              {showAllIncubadoras ? (
+                                <>Esconder Estruturas <ChevronUp size={16} /></>
+                              ) : (
+                                <>Mostrar mais ({incubadorasAceleradorasList.length - 4} estruturas) <ChevronDown size={16} /></>
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
 
-                  {/* BLOCO DA CADEIA PRODUTIVA COM ARTIGOS AGRUPADOS DINAMICAMENTE */}
-                  {refBloco.categoria === 'Cadeias Produtivas' && (
-                    <div className="pt-6 mt-6 border-t-2 border-dashed border-slate-200 dark:border-slate-700 pl-0 sm:pl-4">
+                  {/* BLOCO DA CADEIA PRODUTIVA COM ARTIGOS AGRUPADOS DINAMICAMENTE NO MESMO VISUAL DE GRELHA (2 COLUNAS) */}
+                  {refBloco.categoria === 'Cadeias Produtivas' && igPotenciais.length > 0 && (
+                    <div className="pt-6 mt-6 border-t-2 border-dashed border-slate-200 dark:border-slate-700">
                       <h5 className={`font-bold text-sm tracking-wide mb-5 flex items-center gap-2 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                         <BookOpen size={18} className="opacity-70" /> Artigos Científicos: Indicações Geográficas Potenciais
                       </h5>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => (
-                          <a
-                            key={idx}
-                            href={ig.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`group p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
-                          >
-                            <div className="flex justify-between items-start">
-                              <span className={`text-xs leading-relaxed transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
-                                {ig.txt}
-                              </span>
-                              <ExternalLink size={14} className="opacity-0 group-hover:opacity-50 shrink-0 ml-3 mt-1" />
-                            </div>
-                          </a>
-                        ))}
+                        {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => {
+                          const isClickable = ig.link && ig.link !== '#';
+                          const Wrapper = isClickable ? 'a' : 'div';
+                          
+                          return (
+                            <Wrapper
+                              key={idx}
+                              href={isClickable ? ig.link : undefined}
+                              target={isClickable ? "_blank" : undefined}
+                              rel={isClickable ? "noopener noreferrer" : undefined}
+                              className={`group p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'} ${isClickable ? 'cursor-pointer' : 'cursor-default'}`}
+                            >
+                              <div className="flex justify-between items-start gap-2">
+                                <span className={`text-xs leading-relaxed line-clamp-3 transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
+                                  {ig.txt}
+                                </span>
+                                {isClickable && <ExternalLink size={14} className="opacity-40 group-hover:opacity-100 shrink-0 mt-0.5" />}
+                              </div>
+                            </Wrapper>
+                          );
+                        })}
                       </div>
 
                       {igPotenciais.length > 4 && (
@@ -210,7 +321,8 @@ const SobrePage = ({ darkMode }) => {
                         </div>
                       )}
                     </div>
-                  )}                </div>
+                  )}                
+                </div>
               ))}
             </div>
           </div>
