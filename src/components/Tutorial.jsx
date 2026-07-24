@@ -475,29 +475,33 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                     <div className="fixed inset-0 pointer-events-auto" />
                 )}
 
-                {/* SVG Mask for spotlight cutout — visual only */}
+                {/* Overlay with spotlight cutout — uses path with evenodd for Firefox compatibility */}
                 <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
-                    <defs>
-                        <mask id="tutorial-spotlight-mask">
-                            <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                            {targetRect && (
-                                <rect
-                                    x={targetRect.left}
-                                    y={targetRect.top}
-                                    width={targetRect.width}
-                                    height={targetRect.height}
-                                    rx="16"
-                                    fill="black"
-                                    className={isAnimating ? "transition-all duration-300 ease-out" : ""}
-                                />
-                            )}
-                        </mask>
-                    </defs>
-                    <rect
-                        x="0" y="0" width="100%" height="100%"
-                        fill={darkMode ? 'rgba(0,0,0,0.82)' : 'rgba(15,20,35,0.75)'}
-                        mask="url(#tutorial-spotlight-mask)"
-                    />
+                    {(() => {
+                        const W = typeof window !== 'undefined' ? window.innerWidth : 1920;
+                        const H = typeof window !== 'undefined' ? window.innerHeight : 1080;
+                        let d = `M0,0 H${W} V${H} H0 Z`;
+                        if (targetRect) {
+                            const r = 16;
+                            const x = targetRect.left;
+                            const y = targetRect.top;
+                            const w = targetRect.width;
+                            const h = targetRect.height;
+                            d += ` M${x + r},${y}`
+                              + ` H${x + w - r} Q${x + w},${y} ${x + w},${y + r}`
+                              + ` V${y + h - r} Q${x + w},${y + h} ${x + w - r},${y + h}`
+                              + ` H${x + r} Q${x},${y + h} ${x},${y + h - r}`
+                              + ` V${y + r} Q${x},${y} ${x + r},${y} Z`;
+                        }
+                        return (
+                            <path
+                                d={d}
+                                fillRule="evenodd"
+                                fill={darkMode ? 'rgba(0,0,0,0.82)' : 'rgba(15,20,35,0.75)'}
+                                className={isAnimating ? "transition-all duration-300 ease-out" : ""}
+                            />
+                        );
+                    })()}
                 </svg>
 
                 {/* Spotlight ring glow */}
