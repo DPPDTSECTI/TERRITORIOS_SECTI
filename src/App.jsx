@@ -257,7 +257,6 @@ function MainApp() {
     }, []);
 
     const toggleCtiFilter = (key) => {
-        setIsCtiFilterActive(true);
         setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
     };
     const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal', 'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'], []);
@@ -267,31 +266,7 @@ function MainApp() {
         const newValue = !areAllCtiSelected;
         const newFilters = {};
         ctiFilterKeys.forEach(key => { newFilters[key] = newValue; });
-        setIsCtiFilterActive(true);
         setCtiFilters(newFilters);
-    };
-
-    const handleDeselectAll = () => {
-        const newFilters = {};
-        ctiFilterKeys.forEach(key => { newFilters[key] = false; });
-        setIsCtiFilterActive(true);
-        setCtiFilters(newFilters);
-    };
-
-    const handleCtiKpiClick = (clickedKey) => {
-        setIsCtiFilterActive(true);
-        const activeKeys = ctiFilterKeys.filter(key => ctiFilters[key]);
-        const areAllCurrentlyActive = activeKeys.length === ctiFilterKeys.length;
-
-        if (areAllCurrentlyActive) {
-            const newFilters = {};
-            ctiFilterKeys.forEach(key => { newFilters[key] = (key === clickedKey); });
-            setCtiFilters(newFilters);
-        } else if (activeKeys.length === 1 && ctiFilters[clickedKey]) {
-            handleToggleAllCti();
-        } else {
-            toggleCtiFilter(clickedKey);
-        }
     };
 
     const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
@@ -1398,6 +1373,7 @@ function MainApp() {
                                             dashboardData={dashboardData}
                                             ctiFilters={ctiFilters}
                                             setCtiFilters={setCtiFilters}
+                                            isCtiFilterActive={isCtiFilterActive}
                                             setIsCtiFilterActive={setIsCtiFilterActive}
                                         />
 

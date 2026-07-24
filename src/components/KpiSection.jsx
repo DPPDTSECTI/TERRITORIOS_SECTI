@@ -137,29 +137,27 @@ export function SubKpiPanel(props) {
   };
 
   const handleFilterToggleBtn = () => {
-    if (isEffectiveFilterActive) {
+    if (isCtiFilterActive) {
       setIsCtiFilterActive(false);
       const newFilters = {};
       ctiFilterKeys.forEach(key => { newFilters[key] = true; });
       setCtiFilters(newFilters);
     } else {
       setIsCtiFilterActive(true);
+      const newFilters = {};
+      ctiFilterKeys.forEach(key => { newFilters[key] = false; });
+      setCtiFilters(newFilters);
     }
   };
 
   const handleCtiKpiClick = (clickedKey) => {
-    setIsCtiFilterActive(true);
-    const activeKeys = ctiFilterKeys.filter(k => ctiFilters[k]);
-    const areAllCurrentlyActive = activeKeys.length === ctiFilterKeys.length;
-
-    if (areAllCurrentlyActive) {
+    if (!isCtiFilterActive) {
+      setIsCtiFilterActive(true);
       const newFilters = {};
       ctiFilterKeys.forEach(key => { newFilters[key] = (key === clickedKey); });
       setCtiFilters(newFilters);
-    } else if (activeKeys.length === 1 && ctiFilters[clickedKey]) {
-      handleToggleAllCti();
     } else {
-      toggleCtiFilter(clickedKey);
+      setCtiFilters(prev => ({ ...prev, [clickedKey]: !prev[clickedKey] }));
     }
   };
 
@@ -196,18 +194,18 @@ export function SubKpiPanel(props) {
         <button
           onClick={handleFilterToggleBtn}
           className="flex items-center gap-1.5 group cursor-pointer outline-none select-none"
-          title={isEffectiveFilterActive ? "Filtro ligado. Clique para desligar e resetar o mapa" : "Filtro desligado. Clique para ligar"}
+          title={isCtiFilterActive ? "Filtro ligado. Clique para desligar e resetar o mapa" : "Filtro desligado. Clique para ligar"}
         >
-          <span className={`text-[8px] font-black uppercase tracking-wider ${isEffectiveFilterActive ? (darkMode ? 'text-emerald-400' : 'text-emerald-600') : (darkMode ? 'text-gray-400' : 'text-gray-500')}`}>
-            {isEffectiveFilterActive ? 'Ligado' : 'Desligado'}
+          <span className={`text-[8px] font-black uppercase tracking-wider ${isCtiFilterActive ? (darkMode ? 'text-emerald-400' : 'text-emerald-600') : (darkMode ? 'text-gray-400' : 'text-gray-500')}`}>
+            {isCtiFilterActive ? 'Ligado' : 'Desligado'}
           </span>
           <div className={`w-7 h-4 rounded-full p-0.5 transition-colors duration-300 relative flex items-center ${
-            isEffectiveFilterActive
+            isCtiFilterActive
               ? 'bg-emerald-500'
               : (darkMode ? 'bg-gray-700 border border-gray-600' : 'bg-gray-300')
           }`}>
             <div className={`w-3 h-3 rounded-full bg-white shadow-md transform transition-transform duration-300 ${
-              isEffectiveFilterActive ? 'translate-x-3' : 'translate-x-0'
+              isCtiFilterActive ? 'translate-x-3' : 'translate-x-0'
             }`} />
           </div>
         </button>
