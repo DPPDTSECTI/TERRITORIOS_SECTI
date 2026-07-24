@@ -197,7 +197,17 @@ function parseSpreadsheet(buffer) {
 
     if (!isCadeiaSheet && !isCursoSheet && !isIfdmSheet && !isCapacidadeSheet) return;
 
+    const range = XLSX.utils.decode_range(sheet['!ref']);
+    const headerMap = {};
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell = sheet[XLSX.utils.encode_cell({ c: C, r: range.s.r })];
+      if (cell && cell.v) {
+        headerMap[safeKey(cell.v)] = C;
+      }
+    }
+
     rawRows.forEach((rawRow, idx) => {
+      const R = range.s.r + 1 + idx;
       // Ignora linhas totalmente vazias
       if (Object.values(rawRow).every(v => v === '')) return;
 
@@ -338,9 +348,27 @@ function parseSpreadsheet(buffer) {
              if (cadeia !== '') {
                  const sede = String(row['sede'] || row['municipiosatelite'] || '').trim();
                  const abrangencia = String(row['municipiospertencentes'] || row['abrangencia'] || '').trim();
+                 const fonteRaw = row['fontedosdados'] || row['fontedodado'] || row['fontededados'] || row['fontedados'] || row['fonte'] || row['fontes'] || row['linkdafonte'] || row['linkfonte'] || row['link'] || row['referencia'] || row['referencias'] || row['origem'] || row['origemdosdados'] || '';
                  
-                 // Puxamos a string bruta exibida na célula, varrendo os nomes possíveis
-                 const textoVisual = String(row['fontedosdados'] || row['fontedodado'] || row['fontededados'] || row['fontedados'] || row['fonte'] || row['fontes'] || row['referencia'] || row['referencias'] || row['artigo'] || row['documento'] || '').trim();
+                 let excelHyperlink = '';
+                 const possibleFonteKeys = ['fontedosdados', 'fontedodado', 'fontededados', 'fontedados', 'fonte', 'fontes', 'linkdafonte', 'linkfonte', 'link', 'referencia', 'referencias', 'origem', 'origemdosdados'];
+                 const matchedKey = possibleFonteKeys.find(k => headerMap[k] !== undefined && row[k] !== undefined);
+                 if (matchedKey) {
+                     const C = headerMap[matchedKey];
+                     const cell = sheet[XLSX.utils.encode_cell({ r: R, c: C })];
+                     if (cell && cell.l && cell.l.Target) {
+                         excelHyperlink = cell.l.Target;
+                     }
+                 }
+
+                 const hMatch = String(fonteRaw).match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
+                 const formulaHyperlink = hMatch ? hMatch[1].trim() : '';
+                 const linkOficial = excelHyperlink || formulaHyperlink;
+                 
+                 let fonteFinal = String(fonteRaw).trim();
+                 if (linkOficial) {
+                     fonteFinal = `${fonteFinal} |URL: ${linkOficial}`;
+                 }
 
                  const semanticId = `cad_${safeKey(cadeia)}_${safeKey(sede)}_${safeKey(entidadesExpandida)}`;
 

@@ -1,6 +1,7 @@
-import React, { useState, useContext, useMemo } from 'react';
-import { Map as MapIcon, Settings, Sun, Download, Link as LinkIcon, ChevronDown, ChevronUp, BookOpen, ExternalLink } from 'lucide-react';
-import DataContext from '../context/DataContext';
+import React, { useState, useMemo } from 'react';
+import { Map as MapIcon, Settings, Sun, Download, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import dashboardData from '../../public/dados.json';
+import { resolveCadeiaFonte } from '../utils/cadeiasUtils';
 
 // ==========================================
 // COMPONENTE: PÁGINA SOBRE
@@ -11,6 +12,44 @@ const SobrePage = ({ darkMode }) => {
   // Puxa a base de dados GERAL em vez do dashboardData
   const context = useContext(DataContext) || {};
   const territoriosData = context.territoriosData || [];
+
+  // Extrai dinamicamente todos os artigos/referências mapeados no Excel (via dados.json)
+  const igPotenciais = useMemo(() => {
+    const allCadeias = dashboardData.territories.flatMap(t => t.cadeiasProdutivasDetalhado || []);
+    const uniqueArticles = new Map();
+
+    allCadeias.forEach(cad => {
+      // Filtra apenas cadeias que são estritamente IGs Potenciais
+      const tipoLower = (cad.tipo || '').toLowerCase();
+      const isIgPotencial = tipoLower === 'ig potencial';
+      
+      if (!isIgPotencial) return;
+
+      const fonteInfo = resolveCadeiaFonte(cad);
+      const rawFonte = cad.fonte || '';
+      const labelLower = fonteInfo.label.toLowerCase();
+
+      // Ignora as fontes genéricas ou de portais governamentais que não são artigos/estudos diretos
+      const isGeneric =
+        labelLower.includes('mapa interativo') ||
+        labelLower.includes('observatório apl') ||
+        labelLower.includes('observatorioapl') ||
+        labelLower.includes('datasebrae') ||
+        labelLower.includes('gov.br/empresas');
+
+      // Se tem uma URL válida e não é genérica, nós consideramos um "Artigo Científico" ou "Estudo"
+      if (fonteInfo.url && !isGeneric && fonteInfo.label.length > 20) {
+        if (!uniqueArticles.has(fonteInfo.url)) {
+          uniqueArticles.set(fonteInfo.url, {
+            txt: fonteInfo.label,
+            link: fonteInfo.url
+          });
+        }
+      }
+    });
+
+    return Array.from(uniqueArticles.values()).sort((a, b) => a.txt.localeCompare(b.txt, 'pt'));
+  }, []);
 
   const SectionTitle = ({ number, title }) => (
     <h3 className={`font-black uppercase tracking-[0.15em] text-lg mb-6 pt-10 border-b pb-3 ${darkMode ? 'text-blue-400 border-slate-700' : 'text-gov-blueDark-500 border-slate-200'}`}>
@@ -28,7 +67,7 @@ const SobrePage = ({ darkMode }) => {
       ]
     },
     {
-      categoria: 'Indicador de Desenvolvimento Territorial (IFDMT)',
+      categoria: 'Indicador de Desenvolvimento Territorial',
       fontes: [
         { nome: 'Índice FIRJAN de Desenvolvimento Municipal (IFDM)', info: 'Utilizado como base para o indicador de Desenvolvimento Territorial.', link: 'https://www.firjan.com.br/ifdm/' }
       ]
@@ -43,73 +82,11 @@ const SobrePage = ({ darkMode }) => {
       categoria: 'Cadeias Produtivas',
       fontes: [
         { nome: 'Indicações Geográficas (IGs) | Sebrae Origens – DataSebrae', info: 'Consolidação de informações sobre Indicações Geográficas.', link: 'https://datasebrae.com.br/indicacoesgeograficas/' },
-        { nome: 'Arranjos Produtivos Locais (APLs) | Observatório APL', info: 'Consolidação de informações sobre Arranjos Produtivos Locais.', link: 'https://observatorioapl.mdic.gov.br/' }
+        { nome: 'Indicações Geográficas (IGs) | INPI', info: 'Consolidação de informações sobre Indicações Geográficas.', link: 'https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas' },
+        { nome: 'Arranjos Produtivos Locais (APLs) | Observatório APL', info: 'Consolidação de informações sobre Arranjos Produtivos Locais.', link: 'https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl' }
       ]
     }
   ];
-
-  // ==========================================
-  // EXTRAÇÃO DINÂMICA DIRETO DO EXCEL
-  // ==========================================
-  const igPotenciais = useMemo(() => {
-    const map = new Map();
-    
-    if (territoriosData && territoriosData.length > 0) {
-      territoriosData.forEach(territorio => {
-        const cadeias = territorio.cadeiasProdutivasDetalhado || [];
-        
-        cadeias.forEach(apl => {
-          const textoFonte = String(apl.fonte || '').trim();
-          const textLower = textoFonte.toLowerCase();
-          
-          // Regra para identificar que a fonte é de facto um Artigo Científico
-          const isArticle = textLower.includes('revista') || 
-                            textLower.includes('cadernos') || 
-                            textLower.includes('avaliação da potencialidade') ||
-                            textLower.includes('et al') ||
-                            textLower.includes('doi:');
-                            
-          if (isArticle && textoFonte.length > 20) {
-            // Puxa o Hyperlink real extraído pelas coordenadas da célula
-            let urlFinal = apl.urlTarget; 
-
-            // Fallback: se o Excel não tinha hiperlink embutido, tenta ler um url no meio do texto
-            if (!urlFinal) {
-               const urlMatch = textoFonte.match(/https?:\/\/[^\s]+/i);
-               if (urlMatch) urlFinal = urlMatch[0];
-            }
-
-            // Agrupa os artigos usando o texto completo para não aparecerem repetidos
-            if (!map.has(textoFonte)) {
-              map.set(textoFonte, {
-                txt: textoFonte,
-                link: urlFinal || '#'
-              });
-            } else if (urlFinal && map.get(textoFonte).link === '#') {
-              map.get(textoFonte).link = urlFinal; // Atualiza o link se a 1ª vez não o tinha
-            }
-          }
-        });
-      });
-    }
-    
-    let extracted = Array.from(map.values());
-
-    // Fallback estático APENAS caso os dados do Excel ainda estejam a carregar na tela
-    if (extracted.length === 0) {
-       extracted = [
-         { txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024.", link: "https://datasebrae.com.br/wp-content/uploads/2025/01/1a-Diagnostico-Ceramica-da-Barra.pdf" },
-         { txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024.", link: "https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf" },
-         { txt: "SEBRAE. Avaliação da potencialidade para indicação geográfica das cerâmicas de Maragogipinho. Brasília: SEBRAE, 2024.", link: "https://datasebrae.com.br/wp-content/uploads/2025/01/3a-Diagnostico-Ceramica-de-Maragogipinho.pdf" },
-         { txt: "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, v. 22, n. 6, 2024.", link: "https://doi.org/10.55905/oelv22n6-111" }
-       ];
-    }
-
-    // RETORNA ORDENADO ALFABETICAMENTE A-Z 
-    // (Se quiser Z-A, troque "a.txt.localeCompare(b.txt..." por "b.txt.localeCompare(a.txt...")
-    return extracted.sort((a, b) => a.txt.localeCompare(b.txt, 'pt-BR'));
-    
-  }, [territoriosData]);
 
   return (
     <div className="animate-soft-fade relative p-4 max-w-4xl mx-auto w-full min-h-full flex flex-col justify-start font-sans">
@@ -117,9 +94,9 @@ const SobrePage = ({ darkMode }) => {
         <h2 className={`text-4xl lg:text-5xl font-black mb-12 tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
           Sobre o Painel SECTI Territórios
         </h2>
-        
+
         <div className={`text-sm sm:text-base max-w-none space-y-8 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-          
+
           <div>
             <SectionTitle number="1" title="O Projeto" />
             <p className="leading-relaxed mb-4 text-base">
@@ -162,7 +139,7 @@ const SobrePage = ({ darkMode }) => {
             <p className="leading-relaxed mb-10 text-base">
               A riqueza de informações do painel é resultado da consolidação de múltiplas fontes de dados abertos e artigos científicos, garantindo abrangência e confiabilidade.
             </p>
-            
+
             <div className="space-y-12">
               {/* CARTÕES DAS FONTES PRINCIPAIS */}
               {mainReferences.map((refBloco, i) => (
@@ -171,23 +148,23 @@ const SobrePage = ({ darkMode }) => {
                     <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-blue-400' : 'bg-gov-blue'}`}></span>
                     {refBloco.categoria}
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 gap-3 pl-0 sm:pl-4">
                     {refBloco.fontes.map((fonte, idx) => (
-                      <a 
-                        key={idx} 
-                        href={fonte.link !== '#' ? fonte.link : undefined} 
-                        target={fonte.link !== '#' ? "_blank" : undefined} 
-                        rel="noopener noreferrer" 
+                      <a
+                        key={idx}
+                        href={fonte.link !== '#' ? fonte.link : undefined}
+                        target={fonte.link !== '#' ? "_blank" : undefined}
+                        rel="noopener noreferrer"
                         className={`group p-5 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
                       >
-                         <div className="flex justify-between items-start mb-2">
-                           <span className={`block font-bold text-sm lg:text-base leading-tight transition-colors ${darkMode ? 'text-blue-300 group-hover:text-blue-200' : 'text-gov-blue group-hover:text-gov-blueDark-500'}`}>
-                              {fonte.nome}
-                           </span>
-                           <ExternalLink size={16} className="opacity-40 group-hover:opacity-100 shrink-0 ml-3 mt-0.5" />
-                         </div>
-                         <span className={`text-sm opacity-80 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{fonte.info}</span>
+                        <div className="flex justify-between items-start mb-2">
+                          <span className={`block font-bold text-sm lg:text-base leading-tight transition-colors ${darkMode ? 'text-blue-300 group-hover:text-blue-200' : 'text-gov-blue group-hover:text-gov-blueDark-500'}`}>
+                            {fonte.nome}
+                          </span>
+                          <ExternalLink size={16} className="opacity-40 group-hover:opacity-100 shrink-0 ml-3 mt-0.5" />
+                        </div>
+                        <span className={`text-sm opacity-80 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{fonte.info}</span>
                       </a>
                     ))}
                   </div>
@@ -198,56 +175,42 @@ const SobrePage = ({ darkMode }) => {
                       <h5 className={`font-bold text-sm tracking-wide mb-5 flex items-center gap-2 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                         <BookOpen size={18} className="opacity-70" /> Artigos Científicos: Indicações Geográficas Potenciais
                       </h5>
-                      
-                      {igPotenciais.length > 0 ? (
-                        <>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => {
-                              const isClickable = ig.link && ig.link !== '#';
-                              const Wrapper = isClickable ? 'a' : 'div';
-                              
-                              return (
-                                <Wrapper
-                                  key={idx}
-                                  href={isClickable ? ig.link : undefined}
-                                  target={isClickable ? "_blank" : undefined}
-                                  rel={isClickable ? "noopener noreferrer" : undefined}
-                                  className={`group p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'} ${isClickable ? 'cursor-pointer' : 'cursor-default'}`}
-                                >
-                                  <div className="flex justify-between items-start">
-                                    <span className={`text-xs leading-relaxed transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
-                                      {ig.txt}
-                                    </span>
-                                    {isClickable && <ExternalLink size={14} className="opacity-0 group-hover:opacity-50 shrink-0 ml-3 mt-1" />}
-                                  </div>
-                                </Wrapper>
-                              );
-                            })}
-                          </div>
-                          
-                          {igPotenciais.length > 4 && (
-                            <div className="mt-5">
-                              <button
-                                onClick={() => setShowAllIgs(!showAllIgs)}
-                                className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border shadow-sm ${darkMode ? 'bg-slate-800/80 hover:bg-slate-700 border-slate-600 text-blue-400 hover:text-blue-300' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-gov-blue hover:text-gov-blueDark-500'}`}
-                              >
-                                {showAllIgs ? (
-                                  <>Esconder Artigos <ChevronUp size={18} /></>
-                                ) : (
-                                  <>Mostrar mais ({igPotenciais.length - 4} artigos) <ChevronDown size={18} /></>
-                                )}
-                              </button>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => (
+                          <a
+                            key={idx}
+                            href={ig.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`group p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-gov-blue/40'}`}
+                          >
+                            <div className="flex justify-between items-start">
+                              <span className={`text-xs leading-relaxed transition-colors ${darkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
+                                {ig.txt}
+                              </span>
+                              <ExternalLink size={14} className="opacity-0 group-hover:opacity-50 shrink-0 ml-3 mt-1" />
                             </div>
-                          )}
-                        </>
-                      ) : (
-                        <div className={`p-4 rounded-xl border text-center text-sm font-medium italic ${darkMode ? 'bg-slate-800/40 border-slate-700/50 text-slate-400' : 'bg-slate-50 border-slate-200/60 text-slate-500'}`}>
-                          A carregar artigos científicos ou nenhum artigo mapeado no Excel...
+                          </a>
+                        ))}
+                      </div>
+
+                      {igPotenciais.length > 4 && (
+                        <div className="mt-5">
+                          <button
+                            onClick={() => setShowAllIgs(!showAllIgs)}
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border shadow-sm ${darkMode ? 'bg-slate-800/80 hover:bg-slate-700 border-slate-600 text-blue-400 hover:text-blue-300' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-gov-blue hover:text-gov-blueDark-500'}`}
+                          >
+                            {showAllIgs ? (
+                              <>Esconder Artigos <ChevronUp size={18} /></>
+                            ) : (
+                              <>Mostrar mais ({igPotenciais.length - 4} artigos) <ChevronDown size={18} /></>
+                            )}
+                          </button>
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
+                  )}                </div>
               ))}
             </div>
           </div>
@@ -278,7 +241,7 @@ const SobrePage = ({ darkMode }) => {
                   </div>
                 </li>
               ))}
-            </ul> 
+            </ul>
           </div>
 
         </div>

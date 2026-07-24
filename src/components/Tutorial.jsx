@@ -211,7 +211,7 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
         const updateRect = () => {
             let selector = step.targetSelector;
 
-            if (step.id === 'lists' && document.querySelector('[data-tutorial="detail-modal"]')) {
+            if ((step.id === 'lists' || step.id === 'courses') && document.querySelector('[data-tutorial="detail-modal"]')) {
                 selector = '[data-tutorial="detail-modal"]';
             } else if ((step.id === 'lists' || step.id === 'expanded-lists') && document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
                 selector = '[data-tutorial="expanded-lists-modal"]';
@@ -285,10 +285,10 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Run animation frame tracking only for 1000ms after step change to catch smooth CSS transitions/modals opening
+        // Run animation frame tracking continuously while tutorial is open to catch modal openings/closings at any time
         const animationLoop = () => {
             updateRect();
-            if (isLoopActive && Date.now() - loopStartTime < 1000) {
+            if (isLoopActive) {
                 animFrameId = requestAnimationFrame(animationLoop);
             }
         };
@@ -388,8 +388,8 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
 
         // Special override: If targeting the expanded list modal or steps inside it, force the tooltip to the right reserved dark area
         if (document.querySelector('[data-tutorial="expanded-lists-modal"]')) {
-            const isSm = window.innerWidth >= 640;
-            if (!isSm) {
+            const isXl = window.innerWidth >= 1280;
+            if (!isXl) {
                 return {
                     position: 'fixed',
                     bottom: '12px',
@@ -475,29 +475,33 @@ export default function Tutorial({ isOpen, onClose, darkMode, onDeselectLocation
                     <div className="fixed inset-0 pointer-events-auto" />
                 )}
 
-                {/* SVG Mask for spotlight cutout — visual only */}
+                {/* Overlay with spotlight cutout — uses path with evenodd for Firefox compatibility */}
                 <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
-                    <defs>
-                        <mask id="tutorial-spotlight-mask">
-                            <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                            {targetRect && (
-                                <rect
-                                    x={targetRect.left}
-                                    y={targetRect.top}
-                                    width={targetRect.width}
-                                    height={targetRect.height}
-                                    rx="16"
-                                    fill="black"
-                                    className={isAnimating ? "transition-all duration-300 ease-out" : ""}
-                                />
-                            )}
-                        </mask>
-                    </defs>
-                    <rect
-                        x="0" y="0" width="100%" height="100%"
-                        fill={darkMode ? 'rgba(0,0,0,0.82)' : 'rgba(15,20,35,0.75)'}
-                        mask="url(#tutorial-spotlight-mask)"
-                    />
+                    {(() => {
+                        const W = typeof window !== 'undefined' ? window.innerWidth : 1920;
+                        const H = typeof window !== 'undefined' ? window.innerHeight : 1080;
+                        let d = `M0,0 H${W} V${H} H0 Z`;
+                        if (targetRect) {
+                            const r = 16;
+                            const x = targetRect.left;
+                            const y = targetRect.top;
+                            const w = targetRect.width;
+                            const h = targetRect.height;
+                            d += ` M${x + r},${y}`
+                              + ` H${x + w - r} Q${x + w},${y} ${x + w},${y + r}`
+                              + ` V${y + h - r} Q${x + w},${y + h} ${x + w - r},${y + h}`
+                              + ` H${x + r} Q${x},${y + h} ${x},${y + h - r}`
+                              + ` V${y + r} Q${x},${y} ${x + r},${y} Z`;
+                        }
+                        return (
+                            <path
+                                d={d}
+                                fillRule="evenodd"
+                                fill={darkMode ? 'rgba(0,0,0,0.82)' : 'rgba(15,20,35,0.75)'}
+                                className={isAnimating ? "transition-all duration-300 ease-out" : ""}
+                            />
+                        );
+                    })()}
                 </svg>
 
                 {/* Spotlight ring glow */}

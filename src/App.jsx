@@ -2,13 +2,14 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import React, { useState, useRef, useEffect, useMemo, useCallback, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import PtiMap from "../PtiMap";
-import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap } from 'lucide-react';
+import { Target, BarChart3, Database, Settings, Map as MapIcon, Code, Info, Download, Sun, Home, Filter, Search, Eraser, RefreshCw, Expand, Minimize, Plus, FlaskConical, Leaf, HeartPulse, Cpu, Sigma, Brain, Landmark, Palette, Network, HelpCircle, TrendingUp, School, Library, Microscope, Lightbulb, Factory, Egg, Menu, GraduationCap, ExternalLink } from 'lucide-react';
 import useTerritoriosData from '../useTerritoriosData.js';
 import territoriosMunicipios from '../utils/territorioMunicipios.json';
 import { DataProvider } from './context/DataContext';
 import KpiSection, { SubKpiPanel } from './components/KpiSection';
 import MapSection from './components/MapSection';
 import ListSection from './components/ListSection';
+import { resolveCadeiaFonte } from './utils/cadeiasUtils';
 
 // Carregamento Preguiçoso (Lazy Loading) das Rotas e Componentes Pesados
 const LandingHero = lazy(() => import('./components/hero'));
@@ -123,6 +124,7 @@ function MainApp() {
     const [ctiFilters, setCtiFilters] = useState({
         campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
     });
+    const [isCtiFilterActive, setIsCtiFilterActive] = useState(false);
 
     const sideFilterRef = useRef(null);
     const searchDropdownRef = useRef(null);
@@ -147,6 +149,7 @@ function MainApp() {
         setCtiFilters({
             campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
         });
+        setIsCtiFilterActive(false);
         setIsDropdownOpen(false);
         setIsCardCadeiaFilterOpen(false);
     };
@@ -177,6 +180,7 @@ function MainApp() {
         ifdmMax,
         cadeiaProdutivaFilter,
         ctiFilters,
+        isCtiFilterActive,
         areaGeralFilter,
         debouncedCursoSearchTerm,
         debouncedCadeiaSearchTerm,
@@ -220,6 +224,19 @@ function MainApp() {
     }, []);
 
     useEffect(() => {
+        const handleEsc = (event) => {
+            if (event.key === 'Escape') {
+                if (expandedCourse) setExpandedCourse(null);
+                else if (expandedCadeia) setExpandedCadeia(null);
+                else if (expandedCti) setExpandedCti(null);
+                else if (expandedLists.length > 0) handleCloseModal();
+            }
+        };
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [expandedCourse, expandedCadeia, expandedCti, expandedLists, handleCloseModal]);
+
+    useEffect(() => {
         if (selectedLocation && mapSectionRef.current) {
             setTimeout(() => { mapSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
         }
@@ -239,7 +256,9 @@ function MainApp() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const toggleCtiFilter = (key) => { setCtiFilters(prev => ({ ...prev, [key]: !prev[key] })); };
+    const toggleCtiFilter = (key) => {
+        setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
+    };
     const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal', 'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'], []);
     const areAllCtiSelected = useMemo(() => ctiFilterKeys.every(key => ctiFilters[key]), [ctiFilters, ctiFilterKeys]);
 
@@ -248,21 +267,6 @@ function MainApp() {
         const newFilters = {};
         ctiFilterKeys.forEach(key => { newFilters[key] = newValue; });
         setCtiFilters(newFilters);
-    };
-
-    const handleCtiKpiClick = (clickedKey) => {
-        const activeKeys = ctiFilterKeys.filter(key => ctiFilters[key]);
-        const areAllCurrentlyActive = activeKeys.length === ctiFilterKeys.length;
-
-        if (areAllCurrentlyActive) {
-            const newFilters = {};
-            ctiFilterKeys.forEach(key => { newFilters[key] = (key === clickedKey); });
-            setCtiFilters(newFilters);
-        } else if (activeKeys.length === 1 && ctiFilters[clickedKey]) {
-            handleToggleAllCti();
-        } else {
-            toggleCtiFilter(clickedKey);
-        }
     };
 
     const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
@@ -478,16 +482,59 @@ function MainApp() {
     return (
         <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
             {expandedLists.length > 0 && (
-                <div className={`fixed inset-0 z-[150] bg-gray-900/90 flex items-center p-4 animate-soft-fade transition-all duration-500 ${isTutorialOpen ? 'justify-start pl-4 lg:pl-6 pr-4 lg:pr-[440px]' : 'justify-center'}`} onClick={handleCloseModal}>
-                    <div className="relative flex items-center justify-center" onClick={e => e.stopPropagation()}>
+                <div className={`fixed inset-0 z-[150] bg-gray-900/90 flex items-center p-4 animate-soft-fade transition-all duration-500 ${isTutorialOpen ? 'justify-start pl-4 xl:pl-6 pr-4 xl:pr-[440px]' : 'justify-center'}`} onClick={handleCloseModal}>
+                    {/* O stopPropagation foi retirado desta div invisível */}
+                    <div className="relative w-full min-w-0 flex items-center justify-center">
                         <div
                             data-tutorial="expanded-lists-modal"
-                            className={`h-[85vh] ${isTutorialOpen ? 'w-full max-w-none' : 'w-[95vw] sm:w-[90vw]'} rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${isTutorialOpen ? '' : (expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]')}`}
+                            onClick={e => e.stopPropagation()} // <- O stopPropagation foi movido exatamente para a caixa do modal
+                            className={`h-[85vh] ${isTutorialOpen ? 'w-full max-w-none' : 'w-[95vw] sm:w-[90vw]'} min-w-0 rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${isTutorialOpen ? '' : (expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]')}`}
                         >
                             {/* HEADER DO MODAL */}
                             <div className={`p-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                 <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-gray-800'}`}>Listas Expandidas</h3>
                                 <div className="flex items-center gap-2">
+                                    {/* BOTÃO ADICIONAR LISTA (movido para dentro do header) */}
+                                    {availableListsToAdd.length > 0 && (
+                                        <div data-tutorial="add-list-button" ref={modalAddListRef} className="relative">
+                                            <button
+                                                onClick={() => {
+                                                    setIsModalAddListOpen(prev => !prev);
+                                                    if (isTutorialOpen) {
+                                                        window.dispatchEvent(new Event('tutorial-next-step'));
+                                                    }
+                                                }}
+                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all shadow-sm ${darkMode ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                                                aria-label="Adicionar nova lista"
+                                            >
+                                                <Plus size={14} strokeWidth={2.5} />
+                                                Adicionar Lista
+                                            </button>
+                                            {isModalAddListOpen && (
+                                                <div data-tutorial="add-list-dropdown" className={`absolute top-full right-0 mt-2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
+                                                    {availableListsToAdd.map(type => {
+                                                        const config = {
+                                                            cti: { title: 'Ativos de CT&I', icon: <Database size={14} className="text-gov-blue" /> },
+                                                            cadeias: { title: 'Cadeias Produtivas', icon: <BarChart3 size={14} className="text-gov-green" /> },
+                                                            cursos: { title: 'Cursos de CT&I', icon: <GraduationCap size={14} className="text-gov-cyan" /> }
+                                                        }[type];
+                                                        return (
+                                                            <button key={type} onClick={() => {
+                                                                setExpandedLists(prev => [...prev, type]);
+                                                                setIsModalAddListOpen(false);
+                                                                if (isTutorialOpen) {
+                                                                    window.dispatchEvent(new Event('tutorial-next-step'));
+                                                                }
+                                                            }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
+                                                                {config.icon}
+                                                                {config.title}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                     <button onClick={handleCloseModal} className={`p-2 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`} title="Fechar"><Minimize size={18} /></button>
                                 </div>
                             </div>
@@ -514,7 +561,36 @@ function MainApp() {
                                             <div key={idx} onClick={() => setExpandedCadeia(apl)} className={`p-3 rounded-lg border flex flex-col transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
                                                 <div className="flex items-start justify-between mb-2">
                                                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-gov-green/10 text-green-400 border-gov-green/20' : 'bg-gov-green/10 text-gov-green-dark border-gov-green/20'}`}>{apl.segmento}</span>
-                                                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${getBadgeStyle(apl.tipo)}`}>{apl.tipo}</span>
+                                                        {apl.fonte && (
+                                                            <div className="relative group flex items-center justify-center z-50 shrink-0" onClick={e => e.stopPropagation()}>
+                                                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                                                                    <Info size={12} />
+                                                                </button>
+                                                                <div className="absolute right-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[99999] pointer-events-none group-hover:pointer-events-auto">
+                                                                    <div className={`p-2.5 rounded-lg text-[9px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'}`}>
+                                                                        <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
+                                                                        {(() => {
+                                                                            const info = resolveCadeiaFonte(apl);
+                                                                            return (
+                                                                                <a
+                                                                                    href={info.url}
+                                                                                    target="_blank"
+                                                                                    rel="noreferrer"
+                                                                                    className="group/link flex items-start gap-1 underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 font-semibold leading-relaxed break-words"
+                                                                                    onClick={e => e.stopPropagation()}
+                                                                                >
+                                                                                    <span className="line-clamp-4">{info.isArticle ? info.label : (info.originalFonte || info.label)}</span>
+                                                                                    <ExternalLink size={10} className="shrink-0 mt-0.5" />
+                                                                                </a>
+                                                                            );
+                                                                        })()}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                                 {apl.entidade && <div className="mb-2"><span className="block text-[7px] font-black uppercase tracking-widest opacity-50 mb-0.5 text-gov-blue dark:text-blue-400">Entidade Vinculada</span><span className={`block text-[11px] font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{fixWeirdCapitalization(apl.entidade)}</span></div>}
                                                 <div className={`p-2.5 rounded-md border mt-auto ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
@@ -724,25 +800,21 @@ function MainApp() {
                                                 <div className={`p-3 border-b flex items-center justify-between shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                                     <div className="flex items-center gap-1.5">
                                                         <h4 className={`font-bold text-xs ${darkMode ? 'text-white' : 'text-gray-800'}`}>{listTitle}</h4>
-                                                        <div className="relative group flex items-center justify-center z-40">
-                                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
-                                                                <Info size={12} />
-                                                            </button>
-                                                            <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
-                                                                <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
-                                                                    <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
-                                                                    {listType === 'cadeias' ? (
-                                                                        <Link to="/sobre" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                                                                            DataSebrae / Indicações Geográficas
-                                                                        </Link>
-                                                                    ) : (
+                                                        {listType !== 'cadeias' && (
+                                                            <div className="relative group flex items-center justify-center z-40">
+                                                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
+                                                                    <Info size={12} />
+                                                                </button>
+                                                                <div className="absolute left-0 top-full pt-1 w-max max-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[9999] pointer-events-none group-hover:pointer-events-auto">
+                                                                    <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
+                                                                        <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                         <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
                                                                             INEP / Censo da Educação Superior (2022)
                                                                         </a>
-                                                                    )}
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        )}
                                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${listType === 'cti' || listType === 'cursos' ? (darkMode ? 'bg-gov-cyan/20 text-cyan-400' : 'bg-gov-cyan/10 text-gov-cyan-dark') : (darkMode ? 'bg-gov-green/20 text-green-400' : 'bg-gov-green/10 text-gov-green-dark')}`}>{listData.length}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1">
@@ -772,50 +844,7 @@ function MainApp() {
                             </div>
                         </div>
 
-                        {/* BOTÃO FLUTUANTE AO LADO */}
-                        {availableListsToAdd.length > 0 && (
-                            <div data-tutorial="add-list-button" ref={modalAddListRef} className="absolute top-1/2 -translate-y-1/2 left-full ml-4">
-                                <button
-                                    onClick={() => {
-                                        setIsModalAddListOpen(prev => !prev);
-                                        if (isTutorialOpen) {
-                                            window.dispatchEvent(new Event('tutorial-next-step'));
-                                        }
-                                    }}
-                                    className={`w-[72px] h-[72px] rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-105 border ${darkMode
-                                        ? 'bg-gray-900/40 border-gray-700/30 text-gray-200 backdrop-blur-xl hover:bg-gray-800/60'
-                                        : 'bg-white/50 border-gray-200/60 text-gray-700 backdrop-blur-xl hover:bg-white/70'
-                                        }`}
-                                    aria-label="Adicionar nova lista"
-                                >
-                                    <Plus size={30} strokeWidth={3} />
-                                </button>
 
-                                {isModalAddListOpen && (
-                                    <div data-tutorial="add-list-dropdown" className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-20 flex flex-col gap-1 ${themeClasses.glass}`}>
-                                        {availableListsToAdd.map(type => {
-                                            const config = {
-                                                cti: { title: 'Ativos de CT&I', icon: <Database size={14} className="text-gov-blue" /> },
-                                                cadeias: { title: 'Cadeias Produtivas', icon: <BarChart3 size={14} className="text-gov-green" /> },
-                                                cursos: { title: 'Cursos de CT&I', icon: <GraduationCap size={14} className="text-gov-cyan" /> }
-                                            }[type];
-                                            return (
-                                                <button key={type} onClick={() => {
-                                                    setExpandedLists(prev => [...prev, type]);
-                                                    setIsModalAddListOpen(false);
-                                                    if (isTutorialOpen) {
-                                                        window.dispatchEvent(new Event('tutorial-next-step'));
-                                                    }
-                                                }} className={`w-full text-left px-3 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-2 ${darkMode ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-gray-100 text-gray-700'}`}>
-                                                    {config.icon}
-                                                    {config.title}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        )}
                     </div>
                 </div>
             )}
@@ -907,6 +936,20 @@ function MainApp() {
                                                 <span className="block text-[9px] font-black uppercase opacity-50 mb-0.5">Municípios Pertencentes:</span>
                                                 <p className={`text-xs font-medium leading-relaxed opacity-80 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{apl.municipiosPertencentes}</p>
                                             </div>
+                                            {apl.fonte && (
+                                                <div className={`pt-3 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
+                                                    <span className="block text-[9px] font-black uppercase opacity-50 mb-1">Fonte dos Dados:</span>
+                                                    {(() => {
+                                                        const info = resolveCadeiaFonte(apl);
+                                                        return (
+                                                            <a href={info.url} target="_blank" rel="noreferrer" className="inline-flex items-start gap-1.5 text-xs font-bold leading-relaxed underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-words" onClick={e => e.stopPropagation()}>
+                                                                <span>{info.isArticle ? info.label : (info.originalFonte || info.label)}</span>
+                                                                <ExternalLink size={12} className="shrink-0 mt-0.5" />
+                                                            </a>
+                                                        );
+                                                    })()}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 );
@@ -1303,81 +1346,83 @@ function MainApp() {
                     </div>
                 }>
                     <Routes>
-                    <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
-                    <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
+                        <Route path="/" element={<div className="animate-soft-fade h-full"><LandingHero onAccessDashboard={() => navigate('/territorios')} territoriosData={territoriosData} darkMode={darkMode} /></div>} />
+                        <Route path="/sobre" element={<SobrePage darkMode={darkMode} />} />
 
-                    <Route path="/territorios" element={
-                        <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
-                            <div className={`${themeClasses.glass} rounded-2xl p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
+                        <Route path="/territorios" element={
+                            <div className="animate-soft-fade relative p-2 lg:p-0 w-[96%] max-w-[1600px] mx-auto min-h-full">
+                                <div className={`${themeClasses.glass} rounded-2xl p-4 lg:p-6 flex flex-col gap-4 mt-6`}>
 
-                                {/* KPIs GLOBAIS */}
-                                <KpiSection
-                                    darkMode={darkMode}
-                                    selectedLocation={selectedLocation}
-                                    filtroSemiarido={filtroSemiarido}
-                                    lastUpdate={lastUpdate}
-                                    dashboardData={dashboardData}
-                                    onOpenExpandedList={(type) => setExpandedLists([type])}
-                                />
-
-                                {/* A "Ilha" Encaixada na tela */}
-                                <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
-
-                                    {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
-                                    <SubKpiPanel
+                                    {/* KPIs GLOBAIS */}
+                                    <KpiSection
                                         darkMode={darkMode}
                                         selectedLocation={selectedLocation}
-                                        dashboardData={dashboardData}
-                                        ctiFilters={ctiFilters}
-                                        setCtiFilters={setCtiFilters}
-                                    />
-
-                                    {/* COLUNA DO MAPA (40%) */}
-                                    <MapSection
-                                        mapSectionRef={mapSectionRef}
-                                        darkMode={darkMode}
-                                        territoriosData={territoriosData}
-                                        territoriesDynamicStats={territoriesDynamicStats}
                                         filtroSemiarido={filtroSemiarido}
-                                        selectedLocation={selectedLocation}
-                                        semiaridoMunicipios={semiaridoMunicipios}
-                                        handleSelectTerritory={handleSelectTerritory}
+                                        lastUpdate={lastUpdate}
                                         dashboardData={dashboardData}
-                                        ctiFilters={ctiFilters}
+                                        onOpenExpandedList={(type) => setExpandedLists([type])}
                                     />
 
-                                    {/* COLUNA DAS LISTAS (60%) */}
-                                    <ListSection
-                                        darkMode={darkMode}
-                                        dashboardData={dashboardData}
-                                        cursosFiltrados={cursosFiltrados}
-                                        cursoSearchTerm={cursoSearchTerm}
-                                        setCursoSearchTerm={setCursoSearchTerm}
-                                        areaGeralSummary={areaGeralSummary}
-                                        areaGeralFilter={areaGeralFilter}
-                                        setAreaGeralFilter={setAreaGeralFilter}
-                                        handleAreaGeralToggle={handleAreaGeralToggle}
-                                        expandedLists={expandedLists}
-                                        setExpandedLists={setExpandedLists}
-                                        fixWeirdCapitalization={fixWeirdCapitalization}
-                                        formatEntidadeTipo={formatEntidadeTipo}
-                                        getCtiBadgeStyle={getCtiBadgeStyle}
-                                        getBadgeStyle={getBadgeStyle}
-                                        getAreaStyles={getAreaStyles}
-                                        getAreaInfo={getAreaInfo}
-                                        setExpandedCti={setExpandedCti}
-                                        setExpandedCadeia={setExpandedCadeia}
-                                        setExpandedCourse={setExpandedCourse}
-                                        isAreaGeralOpen={isAreaGeralOpen}
-                                        setIsAreaGeralOpen={setIsAreaGeralOpen}
-                                        areaGeralRef={areaGeralRef}
-                                    />
+                                    {/* A "Ilha" Encaixada na tela */}
+                                    <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
+
+                                        {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
+                                        <SubKpiPanel
+                                            darkMode={darkMode}
+                                            selectedLocation={selectedLocation}
+                                            dashboardData={dashboardData}
+                                            ctiFilters={ctiFilters}
+                                            setCtiFilters={setCtiFilters}
+                                            isCtiFilterActive={isCtiFilterActive}
+                                            setIsCtiFilterActive={setIsCtiFilterActive}
+                                        />
+
+                                        {/* COLUNA DO MAPA (40%) */}
+                                        <MapSection
+                                            mapSectionRef={mapSectionRef}
+                                            darkMode={darkMode}
+                                            territoriosData={territoriosData}
+                                            territoriesDynamicStats={territoriesDynamicStats}
+                                            filtroSemiarido={filtroSemiarido}
+                                            selectedLocation={selectedLocation}
+                                            semiaridoMunicipios={semiaridoMunicipios}
+                                            handleSelectTerritory={handleSelectTerritory}
+                                            dashboardData={dashboardData}
+                                            ctiFilters={ctiFilters}
+                                        />
+
+                                        {/* COLUNA DAS LISTAS (60%) */}
+                                        <ListSection
+                                            darkMode={darkMode}
+                                            dashboardData={dashboardData}
+                                            cursosFiltrados={cursosFiltrados}
+                                            cursoSearchTerm={cursoSearchTerm}
+                                            setCursoSearchTerm={setCursoSearchTerm}
+                                            areaGeralSummary={areaGeralSummary}
+                                            areaGeralFilter={areaGeralFilter}
+                                            setAreaGeralFilter={setAreaGeralFilter}
+                                            handleAreaGeralToggle={handleAreaGeralToggle}
+                                            expandedLists={expandedLists}
+                                            setExpandedLists={setExpandedLists}
+                                            fixWeirdCapitalization={fixWeirdCapitalization}
+                                            formatEntidadeTipo={formatEntidadeTipo}
+                                            getCtiBadgeStyle={getCtiBadgeStyle}
+                                            getBadgeStyle={getBadgeStyle}
+                                            getAreaStyles={getAreaStyles}
+                                            getAreaInfo={getAreaInfo}
+                                            setExpandedCti={setExpandedCti}
+                                            setExpandedCadeia={setExpandedCadeia}
+                                            setExpandedCourse={setExpandedCourse}
+                                            isAreaGeralOpen={isAreaGeralOpen}
+                                            setIsAreaGeralOpen={setIsAreaGeralOpen}
+                                            areaGeralRef={areaGeralRef}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    } />
+                        } />
 
-                </Routes>
+                    </Routes>
                 </Suspense>
             </main>
 

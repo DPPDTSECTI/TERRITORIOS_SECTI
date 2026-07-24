@@ -81,6 +81,7 @@ export default function useTerritoriosData(filters) {
         semiMunsMax,
         cadeiaProdutivaFilter,
         ctiFilters,
+        isCtiFilterActive,
         areaGeralFilter,
         debouncedCursoSearchTerm,
         debouncedCadeiaSearchTerm,
@@ -216,7 +217,8 @@ export default function useTerritoriosData(filters) {
         const cursoTerm = normalize(debouncedCursoSearchTerm);
         const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
-        const isCtiFiltered = Object.values(ctiFilters).some(v => !v);
+        const activeCtiCategories = Object.keys(ctiFilters).filter(k => ctiFilters[k]);
+        const isCtiFiltered = Boolean(isCtiFilterActive) || activeCtiCategories.length < 8;
         const isCursoFiltered = cursoTerm !== '' || (areaGeralFilter && areaGeralFilter.length > 0);
         const isCadeiaFiltered = (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) || Boolean(debouncedCadeiaSearchTerm);
 
@@ -240,6 +242,32 @@ export default function useTerritoriosData(filters) {
             } else if (!filtroSemiarido && t.desenvolvimento?.ifdmTi) {
                 somaIfdmLocal = t.desenvolvimento.ifdmTi; 
                 qtdIfdmLocal = 1;
+            }
+
+            // LÓGICA E (AND): Se houver filtro ativado (menos de 8 categorias ativas),
+            // o território só é mantido se tiver pelo menos 1 entidade de CADA categoria selecionada.
+            let passesCtiAndLogic = true;
+            if (isCtiFiltered) {
+                if (activeCtiCategories.length === 0) {
+                    passesCtiAndLogic = false;
+                } else {
+                    passesCtiAndLogic = activeCtiCategories.every(cat => {
+                        return (t.entidadesDetalhadas || []).some(ent => {
+                            if (!isMunValid(ent.municipio)) return false;
+                            if (ent.categoria !== cat) return false;
+                            if (rawTerm && !isSearchTermATerritory) {
+                                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(t.nome)}`;
+                                if (!terms.every(term => searchString.includes(term))) return false;
+                            }
+                            if (debouncedCtiSearchTerm) {
+                                const cTerm = normalize(debouncedCtiSearchTerm);
+                                const searchString = `${normalize(ent.entidade)} ${normalize(ent.tipo)} ${normalize(ent.municipio)} ${normalize(ent.categoria || '')} ${normalize(t.nome)}`;
+                                if (!searchString.includes(cTerm)) return false;
+                            }
+                            return true;
+                        });
+                    });
+                }
             }
 
             const validCti = (t.entidadesDetalhadas || []).filter(ent => {
@@ -308,7 +336,7 @@ export default function useTerritoriosData(filters) {
                 matchesSearch = tMatches || mMatches || (!isSearchTermATerritory && (validCti.length > 0 || validCadeias.length > 0 || validCursos.length > 0));
             }
 
-            const hasDataForFilters = !( (isCtiFiltered && validCti.length === 0) || (isCursoFiltered && validCursos.length === 0) || (isCadeiaFiltered && validCadeias.length === 0) );
+            const hasDataForFilters = !( (!passesCtiAndLogic) || (isCursoFiltered && validCursos.length === 0) || (isCadeiaFiltered && validCadeias.length === 0) );
 
             stats[normalize(t.nome)] = {
                 ifdm: qtdIfdmLocal > 0 ? formatIFDM(somaIfdmLocal / qtdIfdmLocal) : "-",
@@ -320,7 +348,7 @@ export default function useTerritoriosData(filters) {
             };
         });
         return stats;
-    }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters, areaGeralFilter, debouncedCursoSearchTerm, cadeiaProdutivaFilter, debouncedCadeiaSearchTerm, debouncedCtiSearchTerm]);
+    }, [territoriosData, filtroSemiarido, debouncedSearchTerm, semiaridoMunicipios, ifdmMin, ifdmMax, ctiFilters, isCtiFilterActive, areaGeralFilter, debouncedCursoSearchTerm, cadeiaProdutivaFilter, debouncedCadeiaSearchTerm, debouncedCtiSearchTerm]);
 
     const dashboardData = useMemo(() => {
     if (!territoriosData || territoriosData.length === 0) {
@@ -453,7 +481,7 @@ export default function useTerritoriosData(filters) {
 
             aplIgsFlat.push({
                 id: cad.id || `${normalize(cad.segmento || '')}-${normalize(cad.tipo || '')}`, segmento: cad.segmento || 'Sem Segmento', entidade: cad.entidade, tipo: cad.tipo || 'N/A',
-                municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto
+                municipiosPertencentes: perts.join(', ') || sede, sede, territorioRef: t.nome, municipioSatelite: sateliteRobusto, fonte: cad.fonte
             });
             if (cad.id) globalCadeiasIds.add(cad.id);
         });
@@ -515,6 +543,7 @@ export default function useTerritoriosData(filters) {
         } else {
             const existing = aggregatedAplIgs.get(item.id);
             existing.territorios.push(item.territorioRef);
+            if (!existing.fonte && item.fonte) existing.fonte = item.fonte;
             const currentMuns = new Set((existing.municipiosPertencentes || '').split(', ').filter(Boolean));
             (item.municipiosPertencentes || '').split(', ').filter(Boolean).forEach(m => currentMuns.add(m));
             existing.municipiosPertencentes = [...currentMuns].sort().join(', ');

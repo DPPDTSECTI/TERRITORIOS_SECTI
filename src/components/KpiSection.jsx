@@ -105,6 +105,8 @@ export function SubKpiPanel(props) {
   const dashboardData = props.dashboardData ?? context.dashboardData;
   const ctiFilters = props.ctiFilters ?? context.ctiFilters ?? {};
   const setCtiFilters = props.setCtiFilters ?? context.setCtiFilters ?? (() => { });
+  const isCtiFilterActive = props.isCtiFilterActive ?? context.isCtiFilterActive ?? false;
+  const setIsCtiFilterActive = props.setIsCtiFilterActive ?? context.setIsCtiFilterActive ?? (() => { });
 
   const ctiFilterKeys = useMemo(() => [
     'campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal',
@@ -115,7 +117,14 @@ export function SubKpiPanel(props) {
     return ctiFilterKeys.every(key => ctiFilters[key]);
   }, [ctiFilters, ctiFilterKeys]);
 
+  const activeCtiCount = useMemo(() => {
+    return ctiFilterKeys.filter(key => ctiFilters[key]).length;
+  }, [ctiFilters, ctiFilterKeys]);
+
+  const isEffectiveFilterActive = isCtiFilterActive && activeCtiCount > 0;
+
   const toggleCtiFilter = (keyToToggle) => {
+    setIsCtiFilterActive(true);
     setCtiFilters(prev => ({ ...prev, [keyToToggle]: !prev[keyToToggle] }));
   };
 
@@ -123,21 +132,32 @@ export function SubKpiPanel(props) {
     const nextValue = !areAllCtiSelected;
     const newFilters = {};
     ctiFilterKeys.forEach(key => { newFilters[key] = nextValue; });
+    setIsCtiFilterActive(nextValue);
     setCtiFilters(newFilters);
   };
 
-  const handleCtiKpiClick = (clickedKey) => {
-    const activeKeys = ctiFilterKeys.filter(k => ctiFilters[k]);
-    const areAllCurrentlyActive = activeKeys.length === ctiFilterKeys.length;
+  const handleFilterToggleBtn = () => {
+    if (isCtiFilterActive) {
+      setIsCtiFilterActive(false);
+      const newFilters = {};
+      ctiFilterKeys.forEach(key => { newFilters[key] = true; });
+      setCtiFilters(newFilters);
+    } else {
+      setIsCtiFilterActive(true);
+      const newFilters = {};
+      ctiFilterKeys.forEach(key => { newFilters[key] = false; });
+      setCtiFilters(newFilters);
+    }
+  };
 
-    if (areAllCurrentlyActive) {
+  const handleCtiKpiClick = (clickedKey) => {
+    if (!isCtiFilterActive) {
+      setIsCtiFilterActive(true);
       const newFilters = {};
       ctiFilterKeys.forEach(key => { newFilters[key] = (key === clickedKey); });
       setCtiFilters(newFilters);
-    } else if (activeKeys.length === 1 && ctiFilters[clickedKey]) {
-      handleToggleAllCti();
     } else {
-      toggleCtiFilter(clickedKey);
+      setCtiFilters(prev => ({ ...prev, [clickedKey]: !prev[clickedKey] }));
     }
   };
 
@@ -167,20 +187,57 @@ export function SubKpiPanel(props) {
 
   return (
     <div data-tutorial="cti-panel" className={`relative z-30 hover:z-[999] w-full lg:w-52 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-      <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+      <div className={`px-3.5 py-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-          Ativos de CT&I
+          Ativos CT&I
         </h4>
+        <button
+          onClick={handleFilterToggleBtn}
+          className="flex items-center gap-1.5 cursor-pointer outline-none select-none group"
+          title={isCtiFilterActive ? "Filtro ativo — clique para resetar" : "Clique para ativar o filtro"}
+        >
+          <span className={`text-[7px] font-bold uppercase tracking-widest transition-colors duration-300 ${
+            isCtiFilterActive
+              ? (darkMode ? 'text-cyan-400' : 'text-gov-cyan-dark')
+              : (darkMode ? 'text-gray-500' : 'text-gray-400')
+          }`}>
+            Filtro
+          </span>
+          <div className={`w-8 h-[18px] rounded-full relative transition-all duration-300 ease-in-out ${
+            isCtiFilterActive
+              ? (darkMode ? 'bg-gov-cyan/80 shadow-[0_0_8px_rgba(23,162,184,0.4)]' : 'bg-gov-cyan shadow-[0_0_8px_rgba(23,162,184,0.25)]')
+              : (darkMode ? 'bg-gray-700' : 'bg-gray-300')
+          }`}>
+            <div className={`absolute top-[3px] w-3 h-3 rounded-full shadow-sm transition-all duration-300 ease-in-out ${
+              isCtiFilterActive
+                ? 'left-[17px] bg-white'
+                : 'left-[3px] bg-white/80'
+            }`} />
+          </div>
+        </button>
       </div>
 
       <div className="flex-1 min-h-0 overflow-visible p-3">
         <div className="flex flex-col gap-2">
-          {subKpisList.map(kpi => (
-            <div
-              key={kpi.id}
-              onClick={() => handleCtiKpiClick(kpi.id)}
-              className={`relative p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${ctiFilters[kpi.id] ?? true ? 'opacity-100' : 'opacity-40 grayscale'} ${darkMode ? 'bg-slate-800/40 border-slate-700' : 'bg-white/80 border-slate-200/50'}`}
-            >
+          {subKpisList.map(kpi => {
+            const isSelectedInFilterMode = isCtiFilterActive && ctiFilters[kpi.id];
+
+            return (
+              <div
+                key={kpi.id}
+                onClick={() => handleCtiKpiClick(kpi.id)}
+                className={`relative p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${
+                  isSelectedInFilterMode
+                    ? (darkMode
+                        ? 'bg-cyan-950/40 border-gov-cyan/50 shadow-[0_0_6px_rgba(23,162,184,0.15)] opacity-100'
+                        : 'bg-cyan-50/70 border-gov-cyan/40 shadow-sm opacity-100')
+                    : isCtiFilterActive
+                      ? (darkMode
+                          ? 'bg-slate-800/20 border-gray-800 opacity-30 hover:opacity-50'
+                          : 'bg-gray-50/40 border-gray-100 opacity-35 hover:opacity-55')
+                      : (darkMode ? 'bg-slate-800/40 border-slate-700 opacity-100' : 'bg-white/80 border-slate-200/50 opacity-100')
+                }`}
+              >
               <div className="min-w-0 flex-1 pr-1.5">
                 <div className="flex items-start justify-between gap-1">
                   <span className={`text-[9px] font-bold uppercase tracking-wider leading-tight opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
@@ -210,9 +267,11 @@ export function SubKpiPanel(props) {
                 <div className={`w-full ${kpi.b} transition-all duration-700 ease-out rounded-full`} style={{ height: `${Math.min(100, Math.max(0, kpi.pct))}%` }}></div>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
-  );
+  </div>
+);
 }
+

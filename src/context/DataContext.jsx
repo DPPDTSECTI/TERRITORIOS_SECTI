@@ -39,6 +39,7 @@ export function DataProvider({ children }) {
     parquesTecnologicos: true,
     incubadoras: true
   });
+  const [isCtiFilterActive, setIsCtiFilterActive] = useState(false);
 
   // Filtros de Área e Cadeias
   const [areaGeralFilter, setAreaGeralFilter] = useState([]);
@@ -92,6 +93,7 @@ export function DataProvider({ children }) {
       parquesTecnologicos: true,
       incubadoras: true
     });
+    setIsCtiFilterActive(false);
     setIsDropdownOpen(false);
   }, []);
 
@@ -113,6 +115,7 @@ export function DataProvider({ children }) {
     ifdmMax,
     cadeiaProdutivaFilter,
     ctiFilters,
+    isCtiFilterActive,
     areaGeralFilter,
     debouncedCursoSearchTerm,
     debouncedCadeiaSearchTerm,
@@ -132,6 +135,7 @@ export function DataProvider({ children }) {
     ifdmMin, setIfdmMin,
     ifdmMax, setIfdmMax,
     ctiFilters, setCtiFilters,
+    isCtiFilterActive, setIsCtiFilterActive,
     areaGeralFilter, setAreaGeralFilter,
     cadeiaProdutivaFilter, setCadeiaProdutivaFilter,
     cadeiaSearchTerm, setCadeiaSearchTerm, debouncedCadeiaSearchTerm,
