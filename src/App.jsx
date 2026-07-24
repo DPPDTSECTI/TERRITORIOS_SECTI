@@ -147,7 +147,7 @@ function MainApp() {
         setCursoSearchTerm('');
         setCtiSearchTerm('');
         setCtiFilters({
-            campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true, aceleradoras: true
+            campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadorasAceleradoras: true
         });
         setIsCtiFilterActive(false);
         setIsDropdownOpen(false);
@@ -656,7 +656,36 @@ function MainApp() {
                                                     </div>
                                                     <div className="relative" ref={modalCtiFilterRef}>
                                                         <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
-                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', campiInstitutoFederal: 'Campi Inst. Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacoDinamizadoress: 'Espaços Dinamizadores', parquesTecnologicos: 'Parques Tecnológicos', incubadoras: 'Incubadoras', aceleradoras: 'Aceleradoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
+                                                        {isModalCtiFilterOpen && (
+                                                            <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                                                                <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1">
+                                                                <label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1">
+                                                                    <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
+                                                                    <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
+                                                                </label>
+                                                                {ctiFilterKeys.map((key) => (
+                                                                    <label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
+                                                                    <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
+                                                                    <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>
+                                                                        {{ 
+                                                                        campiUniversidadePublica: 'Campi Universidade Pública', 
+                                                                        campiUniversidadePrivada: 'Campi Universidade Privada', 
+                                                                        campiInstitutoFederal: 'Campi Inst. Federais', 
+                                                                        icts: 'ICTs', 
+                                                                        centrosPesquisa: 'Centros de Pesquisa', 
+                                                                        espacoDinamizadoress: 'Espaços Dinamizadores', 
+                                                                        parquesTecnologicos: 'Parques Tecnológicos', 
+                                                                        incubadorasAceleradoras: 'Incubadoras & Aceleradoras' 
+                                                                        }[key]}
+                                                                    </span>
+                                                                    </label>
+                                                                ))}
+                                                                </div>
+                                                                {!areAllCtiSelected && (
+                                                                <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>
+                                                                )}
+                                                            </div>
+                                                            )}
                                                     </div>
                                                 </React.Fragment>
                                             );
