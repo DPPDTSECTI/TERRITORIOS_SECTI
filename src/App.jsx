@@ -458,6 +458,7 @@ function MainApp() {
         cadeiaSearchTerm !== '' ||
         cursoSearchTerm !== '' ||
         ctiSearchTerm !== '' ||
+        isCtiFilterActive ||
         !Object.values(ctiFilters).every(val => val === true);
 
     const availableListsToAdd = ['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type));

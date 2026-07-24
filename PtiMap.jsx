@@ -675,20 +675,31 @@ const PtiMap = React.memo(function PtiMap({
                                 let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
 
                                 if (blockClickAndColor && !selectedTerritory) {
-                                    // Bloqueio visual unificado: tudo o que estiver fora do filtro (seja Semiárido ou outros) fica cinza e opaco.
-                                    fillColor = darkMode ? '#374151' : '#E5E7EB'; // gray-700 / gray-200
+                                    fillColor = darkMode ? '#374151' : '#E5E7EB';
                                     opacity = 0.50;
                                 } else if (selectedTerritory) {
                                     if (isSelectedMap) {
                                         opacity = 1;
-                                        // A cor laranja do semiárido só se aplica se o filtro estiver ativo.
-                                        if (filtroSemiarido && isMunSemi) fillColor = '#FFC107'; // gov-yellow
+                                        if (filtroSemiarido && isMunSemi) fillColor = '#FFC107';
                                     } else {
-                                        fillColor = darkMode ? '#374151' : '#e5e7eb'; // gray-700 / gray-200
-                                        opacity = 0.25; // Reduz a opacidade para aumentar o contraste com o selecionado
+                                        fillColor = darkMode ? '#374151' : '#e5e7eb';
+                                        opacity = 0.25;
                                     }
                                 } else {
                                     if (isHovered) opacity = 1;
+                                }
+
+                                // No dark mode, clarear as cores dos territórios para ficarem visíveis
+                                if (darkMode && fillColor.startsWith('#') && fillColor !== '#374151') {
+                                    const hex = fillColor.replace('#', '');
+                                    const r = parseInt(hex.substring(0, 2), 16);
+                                    const g = parseInt(hex.substring(2, 4), 16);
+                                    const b = parseInt(hex.substring(4, 6), 16);
+                                    const lift = 0.35;
+                                    const nr = Math.min(255, Math.round(r + (255 - r) * lift));
+                                    const ng = Math.min(255, Math.round(g + (255 - g) * lift));
+                                    const nb = Math.min(255, Math.round(b + (255 - b) * lift));
+                                    fillColor = `#${nr.toString(16).padStart(2,'0')}${ng.toString(16).padStart(2,'0')}${nb.toString(16).padStart(2,'0')}`;
                                 }
 
                                 return (
@@ -697,7 +708,7 @@ const PtiMap = React.memo(function PtiMap({
                                         feat={feat}
                                         d={feat.d}
                                         fill={fillColor}
-                                        stroke={isSelectedMap || isHovered ? (darkMode ? '#000' : '#fff') : (darkMode ? '#111827' : '#F9FAFB')}
+                                        stroke={isSelectedMap || isHovered ? (darkMode ? '#000' : '#fff') : (darkMode ? '#1e293b' : '#F9FAFB')}
                                         strokeWidth={isSelectedMap ? 2 : isHovered ? 2 : 0.8}
                                         opacity={opacity}
                                         blockClickAndColor={blockClickAndColor}

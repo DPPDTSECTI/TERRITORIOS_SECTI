@@ -191,30 +191,7 @@ export function SubKpiPanel(props) {
         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
           Ativos CT&I
         </h4>
-        <button
-          onClick={handleFilterToggleBtn}
-          className="flex items-center gap-1.5 cursor-pointer outline-none select-none group"
-          title={isCtiFilterActive ? "Filtro ativo — clique para resetar" : "Clique para ativar o filtro"}
-        >
-          <span className={`text-[7px] font-bold uppercase tracking-widest transition-colors duration-300 ${
-            isCtiFilterActive
-              ? (darkMode ? 'text-cyan-400' : 'text-gov-cyan-dark')
-              : (darkMode ? 'text-gray-500' : 'text-gray-400')
-          }`}>
-            Filtro
-          </span>
-          <div className={`w-8 h-[18px] rounded-full relative transition-all duration-300 ease-in-out ${
-            isCtiFilterActive
-              ? (darkMode ? 'bg-gov-cyan/80 shadow-[0_0_8px_rgba(23,162,184,0.4)]' : 'bg-gov-cyan shadow-[0_0_8px_rgba(23,162,184,0.25)]')
-              : (darkMode ? 'bg-gray-700' : 'bg-gray-300')
-          }`}>
-            <div className={`absolute top-[3px] w-3 h-3 rounded-full shadow-sm transition-all duration-300 ease-in-out ${
-              isCtiFilterActive
-                ? 'left-[17px] bg-white'
-                : 'left-[3px] bg-white/80'
-            }`} />
-          </div>
-        </button>
+
       </div>
 
       <div className="flex-1 min-h-0 overflow-visible p-3">
