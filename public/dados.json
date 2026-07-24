@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T16:14:53.650Z",
+  "generatedAt": "2026-07-24T17:23:41.800Z",
   "territories": [
     {
       "territory": "Bacia do Jacuípe",
@@ -12,7 +12,9 @@
           "entidade": "Faculdade Regional do Jacuípe",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadecapimgrossofcg_capimgrosso",
@@ -20,7 +22,9 @@
           "entidade": "Faculdade Capim Grosso (FCG)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -32,7 +36,8 @@
           "entidade": "Ser do Sertão",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_bovinoculturadeleite_ipira_bovinoculturadeleiteterritoriobaciadojacuipe",
@@ -42,7 +47,8 @@
           "entidade": "Bovinocultura de Leite - Território Bacia do Jacuípe",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agricultura_feiradesantana_rededeprodutorasdabahia",
@@ -52,7 +58,8 @@
           "entidade": "Rede de Produtoras da Bahia",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_licuri_capimgrosso_producaodaregiaodopiemontedadiamantina",
@@ -62,7 +69,8 @@
           "entidade": "Produção da Região do Piemonte da Diamantina",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_leite_riachaodojacuipe_leitedovaledojacuipe",
@@ -72,7 +80,8 @@
           "entidade": "Leite do Vale do Jacuípe",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl |URL: https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
         },
         {
           "id": "cad_agricultura_irece_producaoaquisicaoeservicodoestadodabahia",
@@ -82,7 +91,8 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_alimentos_juazeiro_centraldecomercializacaodascooperativasdacaatinga",
@@ -92,7 +102,8 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_alimentos_pintadas_alimentosbahia",
@@ -102,7 +113,8 @@
           "entidade": "Alimentos Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_artesanatodecouro_ipira_associacaoipiracouro",
@@ -112,7 +124,8 @@
           "entidade": "Associação Ipirá Couro",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "MARQUES, Bartolomeu das Neves et al. Artefatos de couro de Ipirá: potencial de Indicação Geográfica no território da Bacia do Jacuípe - Bahia. Cadernos de Prospecção, Salvador, v. 12, n. 5, p. 1598-1611, 2019. |URL: https://doi.org/10.9771/cp.v12i5.31018"
+          "fonte": "MARQUES, Bartolomeu das Neves et al. Artefatos de couro de Ipirá: potencial de Indicação Geográfica no território da Bacia do Jacuípe - Bahia. Cadernos de Prospecção, Salvador, v. 12, n. 5, p. 1598-1611, 2019.",
+          "urlTarget": "https://doi.org/10.9771/cp.v12i5.31018"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -245,7 +258,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4990799999999999,
         "populacaoTotal": 276540,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -304,7 +317,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.5070875,
         "populacaoTotal": 141040,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -322,7 +335,9 @@
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -334,7 +349,8 @@
           "entidade": "Associação dos Cafeicultores do Oeste da Bahia",
           "tipo": "IG",
           "quantidade": 3,
-          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/ |URL: https://datasebrae.com.br/ig-oeste-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-oeste-da-bahia/"
         },
         {
           "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
@@ -344,7 +360,8 @@
           "entidade": "Associação Baiana de Produtores de Algodão",
           "tipo": "IG Potencial",
           "quantidade": 11,
-          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. |URL: https://doi.org/10.9771/cp.v16i1.50700"
+          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023.",
+          "urlTarget": "https://doi.org/10.9771/cp.v16i1.50700"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -408,7 +425,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.48486363636363633,
         "populacaoTotal": 209915,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -426,7 +443,9 @@
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 7
+          "quantidade": 7,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_barreiras",
@@ -434,7 +453,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes",
@@ -442,7 +463,9 @@
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_barreiras",
@@ -450,7 +473,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodoifbabarreiras_barreiras",
@@ -458,7 +483,9 @@
           "entidade": "Espaço Colaborar Parceiro do IFBA Barreiras",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradebasetecnologicadaufob_barreiras",
@@ -466,7 +493,9 @@
           "entidade": "Incubadora de Base Tecnológica da UFOB",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutodaassociacaodeagricultoreseirrigantesdabahia_barreiras",
@@ -474,7 +503,9 @@
           "entidade": "Instituto da Associação de Agricultores e Irrigantes da Bahia",
           "tipo": "Entidade de Pesquisa",
           "categoria": "centrosPesquisa",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitarioarnaldohoracioferreira_luiseduardomagalhaes",
@@ -482,7 +513,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariomauriciodenassauuninassau_barreiras",
@@ -490,7 +523,9 @@
           "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounirb_barreiras",
@@ -498,7 +533,9 @@
           "entidade": "Centro Universitário UNIRB",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadesulamericabahia_luiseduardomagalhaes",
@@ -506,7 +543,19 @@
           "entidade": "Faculdade Sulamérica Bahia",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
+        },
+        {
+          "id": "ent_cykloagritech_luiseduardomagalhaes",
+          "municipio": "Luís Eduardo Magalhães",
+          "entidade": "Cyklo Agritech",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Agronegócio e Agtechs (Hardware e Software para o campo)",
+          "site": "https://cykloagritech.com.br/"
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -518,7 +567,8 @@
           "entidade": "Associação dos Cafeicultores do Oeste da Bahia",
           "tipo": "IG",
           "quantidade": 8,
-          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/ |URL: https://datasebrae.com.br/ig-oeste-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-oeste-da-bahia/"
         },
         {
           "id": "cad_bovinoculturadeleite_barreiras_bovinoculturadeleiteterritoriobaciadoriogrande",
@@ -528,7 +578,8 @@
           "entidade": "Bovinocultura de Leite - Território Bacia do Rio Grande",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_mandiocultura_saodesiderio_mandiocultoresdesaodesiderio",
@@ -538,7 +589,8 @@
           "entidade": "Mandiocultores de São Desidério",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
@@ -548,7 +600,8 @@
           "entidade": "Associação Baiana de Produtores de Algodão",
           "tipo": "IG Potencial",
           "quantidade": 11,
-          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. |URL: https://doi.org/10.9771/cp.v16i1.50700"
+          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023.",
+          "urlTarget": "https://doi.org/10.9771/cp.v16i1.50700"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -964,7 +1017,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4988571428571428,
         "populacaoTotal": 511902,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -982,7 +1035,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_valenca",
@@ -990,7 +1045,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_valenca",
@@ -998,7 +1055,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldevalenca_valenca",
@@ -1006,7 +1065,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Valença",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedafraternidadedevalenca_valenca",
@@ -1014,7 +1075,9 @@
           "entidade": "Faculdade DA FRATERNIDADE DE VALENÇA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadezacariasdegoes_valenca",
@@ -1022,7 +1085,9 @@
           "entidade": "Faculdade ZACARIAS DE GÓES",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -1034,7 +1099,8 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 12,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_agricultura_itubera_agriculturafamiliardobaixosul",
@@ -1044,7 +1110,8 @@
           "entidade": "Agricultura Familiar do Baixo Sul",
           "tipo": "APL",
           "quantidade": 8,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_palmito_igrapiuna_producaodepalmitodobaixosuldabahia",
@@ -1054,7 +1121,8 @@
           "entidade": "Produção de Palmito do Baixo Sul da Bahia",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agricultura_mutuipe_agriculturafamiliareeconomiasolidariasustentaveldosterritoriosdovaledojiquiricaebaixosuldabahia",
@@ -1064,7 +1132,8 @@
           "entidade": "Agricultura Familiar e Economia Solidária Sustentável dos Territórios do Vale do Jiquiriçá e Baixo Sul da Bahia",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cacau_itabuna_agriculturafamiliareeconomiasolidariadabaciadoriosalgadoeadjacentes",
@@ -1074,7 +1143,8 @@
           "entidade": "Agricultura Familiar e Economia Solidária da Bacia do Rio Salgado e Adjacentes",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_ceramica_aratuipe_associacaodeauxiliomutuodosoleirosdemaragogipinho",
@@ -1084,7 +1154,8 @@
           "entidade": "Associação de Auxílio Mútuo dos Oleiros de Maragogipinho",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica das cerâmicas de Maragogipinho. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/3a-Diagnostico-Ceramica-de-Maragogipinho.pdf"
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica das cerâmicas de Maragogipinho. Brasília: SEBRAE, 2024.",
+          "urlTarget": "https://datasebrae.com.br/wp-content/uploads/2025/01/3a-Diagnostico-Ceramica-de-Maragogipinho.pdf"
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -1094,7 +1165,8 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
@@ -1104,7 +1176,8 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_guarana_taperoa_cooperativaagricolamistaltdadoprojetoonca",
@@ -1114,7 +1187,8 @@
           "entidade": "Cooperativa Agrícola Mista Ltda. do Projeto Onça",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "BAQUEIRO, Arminda Ursula Pereira et al. Potencial de Indicação Geográfica para o Guaraná de Taperoá - Bahia. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 21, n. 3, p. 1422-1441, 2023. DOI: 1696-8352. |URL: https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/413/300"
+          "fonte": "BAQUEIRO, Arminda Ursula Pereira et al. Potencial de Indicação Geográfica para o Guaraná de Taperoá - Bahia. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 21, n. 3, p. 1422-1441, 2023. DOI: 1696-8352.",
+          "urlTarget": "https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/413/300"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -1271,7 +1345,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4511866666666666,
         "populacaoTotal": 377728,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -1289,7 +1363,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 2
+          "quantidade": 2,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_seabra",
@@ -1297,7 +1373,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -1309,7 +1387,8 @@
           "entidade": "Aliança dos Cafeicultores da Chapada Diamantina",
           "tipo": "IG",
           "quantidade": 24,
-          "fonte": "https://datasebrae.com.br/ig-chapada-diamantina/ |URL: https://datasebrae.com.br/ig-chapada-diamantina/"
+          "fonte": "https://datasebrae.com.br/ig-chapada-diamantina/",
+          "urlTarget": "https://datasebrae.com.br/ig-chapada-diamantina/"
         },
         {
           "id": "cad_agricultura_irece_producaoaquisicaoeservicodoestadodabahia",
@@ -1319,7 +1398,8 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 23,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agricultura_seabra_agroecologiaterritoriochapadadiamantina",
@@ -1329,7 +1409,8 @@
           "entidade": "Agroecologia - Território Chapada Diamantina",
           "tipo": "APL",
           "quantidade": 14,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agricultura_mucuge_produtosruraisdachapadadiamantina",
@@ -1339,7 +1420,8 @@
           "entidade": "Produtos Rurais da Chapada Diamantina",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cachaca_abaira_associacaodosprodutoresdeaguardentedequalidadedamicrorregiaoabaira",
@@ -1349,7 +1431,8 @@
           "entidade": "Associação dos Produtores de Aguardente de Qualidade da Microrregião Abaíra",
           "tipo": "IG",
           "quantidade": 4,
-          "fonte": "https://datasebrae.com.br/ig-abaira/ |URL: https://datasebrae.com.br/ig-abaira/"
+          "fonte": "https://datasebrae.com.br/ig-abaira/",
+          "urlTarget": "https://datasebrae.com.br/ig-abaira/"
         },
         {
           "id": "cad_cafe_seabra_producaodeorganicosebiodinamicosdachapadadiamantina",
@@ -1359,7 +1442,8 @@
           "entidade": "Produção de Orgânicos e Biodinâmicos da Chapada Diamantina",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -1369,7 +1453,8 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+          "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_agropecuaria_miguelcalmon_producaoagropecuariadelagoadedentroeregiaodaserra",
@@ -1379,7 +1464,8 @@
           "entidade": "Produção Agropecuária de Lagoa de Dentro e Região da Serra",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cafe_piata_cafesespeciaiseagropecuariadepiata",
@@ -1389,7 +1475,8 @@
           "entidade": "Cafés Especiais e Agropecuária de Piatã",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cafe_piata_chapadadiamantinapiata",
@@ -1399,7 +1486,8 @@
           "entidade": "Chapada Diamantina (Piatã)",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_vinho_morrodochapeu_associacaodeagroturismodachapadadiamantina",
@@ -1409,7 +1497,8 @@
           "entidade": "Associação de Agroturismo da Chapada Diamantina",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SILVA, Rosilene Alves da et al. Potencialidade de Indicação Geográfica: Vinhos de Morro do Chapéu-BA. Revista de Gestão e Secretariado (GeSec), São José dos Pinhais, v. 16, n. 8, p. 01-24, 2025. |URL: https://ojs.revistagesec.org.br/secretariado/article/view/5056/3402"
+          "fonte": "SILVA, Rosilene Alves da et al. Potencialidade de Indicação Geográfica: Vinhos de Morro do Chapéu-BA. Revista de Gestão e Secretariado (GeSec), São José dos Pinhais, v. 16, n. 8, p. 01-24, 2025.",
+          "urlTarget": "https://ojs.revistagesec.org.br/secretariado/article/view/5056/3402"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -1538,7 +1627,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.48987916666666664,
         "populacaoTotal": 399628,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -1556,7 +1645,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldosuldabahiaufsb_portoseguro",
@@ -1564,7 +1655,9 @@
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_eunapolis",
@@ -1572,7 +1665,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_portoseguro",
@@ -1580,7 +1675,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldosuldabahiaufsb_eunapolis",
@@ -1588,7 +1685,9 @@
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -1600,7 +1699,8 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 8,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_apicultura_eunapolis_apiculturaterritoriocostadodescobrimento",
@@ -1610,7 +1710,8 @@
           "entidade": "Apicultura - Território Costa do Descobrimento",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cafe_barradochoca_cafeiculturadebarradochocaeregiao",
@@ -1620,7 +1721,8 @@
           "entidade": "Cafeicultura de Barra do Choça e Região",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -1630,7 +1732,8 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -1800,7 +1903,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.48985,
         "populacaoTotal": 420186,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -1818,7 +1921,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldosuldabahiaufsb_teixeiradefreitas",
@@ -1826,7 +1931,9 @@
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_teixeiradefreitas",
@@ -1834,7 +1941,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaufsbteixeiradefreitas_teixeiradefreitas",
@@ -1842,7 +1951,9 @@
           "entidade": "Espaço Colaborar Parceiro da UFSB Teixeira de Freitas",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeanhangueradeteixeiradefreitas_teixeiradefreitas",
@@ -1850,7 +1961,9 @@
           "entidade": "Faculdade ANHANGUERA DE TEIXEIRA DE FREITAS",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedecienciassociaisaplicadas_itamaraju",
@@ -1858,7 +1971,9 @@
           "entidade": "Faculdade DE CIÊNCIAS SOCIAIS APLICADAS",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -1870,7 +1985,8 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 7,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_mandiocultura_itamaraju_mandioculturaterritoriodoextremosul",
@@ -1880,7 +1996,8 @@
           "entidade": "Mandiocultura - Território do Extremo Sul",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_bovinoculturadeleite_medeirosneto_bovinoculturadeleiteterritorioextremosul",
@@ -1890,7 +2007,8 @@
           "entidade": "Bovinocultura de Leite - Território Extremo Sul",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_mel_alcobaca_associacaodeapicultoresderanchoqueimadoeigrejinha",
@@ -1900,7 +2018,8 @@
           "entidade": "Associação de Apicultores de Rancho Queimado e Igrejinha",
           "tipo": "IG Potencial",
           "quantidade": 4,
-          "fonte": "ANDRADE, Lanacris de Jesus et al. Potencialidade de indicação geográfica do mel do extremo sul da Bahia sob a ótica da metodologia do SEBRAE. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 8, n. 1, p. 2520-2532, 2024. DOI: 10.51722/Ingi.v8.i1.311. |URL: https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=viewFile&amp;path%5b%5d=311&amp;path%5b%5d=269"
+          "fonte": "ANDRADE, Lanacris de Jesus et al. Potencialidade de indicação geográfica do mel do extremo sul da Bahia sob a ótica da metodologia do SEBRAE. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 8, n. 1, p. 2520-2532, 2024. DOI: 10.51722/Ingi.v8.i1.311.",
+          "urlTarget": "https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=viewFile&amp;path%5b%5d=311&amp;path%5b%5d=269"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -2251,7 +2370,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.5072230769230769,
         "populacaoTotal": 452380,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2269,7 +2388,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 6
+          "quantidade": 6,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_xiquexique",
@@ -2277,7 +2398,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_xiquexique",
@@ -2285,7 +2408,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_irece",
@@ -2293,7 +2418,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldeirece_irece",
@@ -2301,7 +2428,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Irecê",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldemulungudomorro_mulungudomorro",
@@ -2309,7 +2438,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Mulungu do Morro",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeirece_irece",
@@ -2317,7 +2448,9 @@
           "entidade": "Faculdade IRECÊ",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeagesdemedicinadeirece_irece",
@@ -2325,7 +2458,9 @@
           "entidade": "Faculdade AGES de Medicina de Irecê",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -2337,7 +2472,8 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 20,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agricultura_irece_agroecologiaterritorioirece",
@@ -2347,7 +2483,8 @@
           "entidade": "Agroecologia - Território Irecê",
           "tipo": "APL",
           "quantidade": 16,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agropecuaria_irece_agropecuariamistadaregiaodeirece",
@@ -2357,7 +2494,8 @@
           "entidade": "Agropecuária Mista da Região De Irecê",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_mamona_irece_cooperativamistadeproducaoaquisicaoeservicodoestadodabahia",
@@ -2367,7 +2505,8 @@
           "entidade": "Cooperativa Mista de Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 2,
-          "fonte": "RIBEIRO, Bruno Bahia et al. Diagnóstico do potencial de indicação geográfica da mamona produzida na região centro-norte da Bahia. Revista Aracê, São José dos Pinhais, v. 7, n. 2, p. 5327-5347, 2025. |URL: https://periodicos.newsciencepubl.com/arace/article/view/3163/3902"
+          "fonte": "RIBEIRO, Bruno Bahia et al. Diagnóstico do potencial de indicação geográfica da mamona produzida na região centro-norte da Bahia. Revista Aracê, São José dos Pinhais, v. 7, n. 2, p. 5327-5347, 2025.",
+          "urlTarget": "https://periodicos.newsciencepubl.com/arace/article/view/3163/3902"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -2585,7 +2724,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.47702,
         "populacaoTotal": 430879,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2603,7 +2742,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 3
+          "quantidade": 3,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_pauloafonso",
@@ -2611,7 +2752,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldovaledosaofranciscounivasf_pauloafonso",
@@ -2619,7 +2762,9 @@
           "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariodoriosaofranciscounirios_pauloafonso",
@@ -2627,7 +2772,9 @@
           "entidade": "Centro Universitário do Rio São Francisco Unirios",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -2639,7 +2786,8 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 6,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+          "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_bovinoculturadeleite_pauloafonso_bovinoculturadeleiteterritorioitaparica",
@@ -2649,7 +2797,8 @@
           "entidade": "Bovinocultura de Leite - Território Itaparica",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -2749,7 +2898,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.47861666666666663,
         "populacaoTotal": 183046,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2767,7 +2916,9 @@
           "entidade": "Centro Universitário do Rio São Francisco Unirios",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [],
@@ -2825,7 +2976,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -2843,7 +2994,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_alagoinhas",
@@ -2851,7 +3004,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_catu",
@@ -2859,7 +3014,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldealagoinhas_alagoinhas",
@@ -2867,7 +3024,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Alagoinhas",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounirb_alagoinhas",
@@ -2875,7 +3034,9 @@
           "entidade": "Centro Universitário UNIRB",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariouniftc_alagoinhas",
@@ -2883,7 +3044,9 @@
           "entidade": "Centro Universitário UniFTC",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadesantoantonio_alagoinhas",
@@ -2891,7 +3054,9 @@
           "entidade": "Faculdade SANTO ANTONIO",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadesantissimosacramento_alagoinhas",
@@ -2899,7 +3064,9 @@
           "entidade": "Faculdade SANTÍSSIMO SACRAMENTO",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -2911,7 +3078,8 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_artesanatodepiacava_entrerios_cooperativadeartesanatodotrancadotupinamba",
@@ -2921,7 +3089,8 @@
           "entidade": "Cooperativa de Artesanato do Trançado Tupinambá",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024.",
+          "urlTarget": "https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
         },
         {
           "id": "cad_mel_alagoinhas_associacaodosapicultoresemeliponicultoresdaregiaonortedealagoinhas",
@@ -2931,7 +3100,8 @@
           "entidade": "Associação dos Apicultores e Meliponicultores da Região Norte de Alagoinhas",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "CONCEIÇÃO, Valdir Silva; SILVA, Dayana Ferraz; ROCHA, Angela Machado. Potencial de Indicação Geográfica para o mel produzido por abelha sem ferrão de Alagoinhas - Bahia. Cadernos de Prospecção, Salvador, v. 15, n. 2, p. 618-633, 2022. |URL: https://doi.org/10.9771/cp.v15i2.47406"
+          "fonte": "CONCEIÇÃO, Valdir Silva; SILVA, Dayana Ferraz; ROCHA, Angela Machado. Potencial de Indicação Geográfica para o mel produzido por abelha sem ferrão de Alagoinhas - Bahia. Cadernos de Prospecção, Salvador, v. 15, n. 2, p. 618-633, 2022.",
+          "urlTarget": "https://doi.org/10.9771/cp.v15i2.47406"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -3293,7 +3463,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.483915,
         "populacaoTotal": 566403,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -3311,7 +3481,9 @@
           "entidade": "Universidade Estadual de Santa Cruz (UESC)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 12
+          "quantidade": 12,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldosuldobahia_itabuna",
@@ -3319,7 +3491,9 @@
           "entidade": "Universidade Federal do Sul do Bahia",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_urucuca",
@@ -3327,7 +3501,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_ilheus",
@@ -3335,7 +3511,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_ubaitaba",
@@ -3343,7 +3521,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodauesc_ilheus",
@@ -3351,7 +3531,9 @@
           "entidade": "Espaço Colaborar Parceiro da UESC",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_brotoincubadoradebiotecnologiadauesc_ilheus",
@@ -3359,7 +3541,9 @@
           "entidade": "Broto Incubadora de Biotecnologia da UESC",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempresasdebasecientificaetecnologicadaufsb_itabuna",
@@ -3367,7 +3551,9 @@
           "entidade": "Incubadora de Empresas de Base Científica e Tecnológica da UFSB",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradetecnologiassociaiseeconomiasolidariadosuleextremosuldabahiadaufsb_itabuna",
@@ -3375,7 +3561,9 @@
           "entidade": "Incubadora de Tecnologias Sociais e Economia Solidária do Sul e Extremo Sul da Bahia da UFSB",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_preincubadoratecnologicadoifbaiano_urucuca",
@@ -3383,7 +3571,9 @@
           "entidade": "Pré-Incubadora Tecnológica do IFBaiano",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_comissaoexecutivadoplanodalavouracacaueiradabahia_ilheus",
@@ -3391,7 +3581,9 @@
           "entidade": "Comissão Executiva do Plano da Lavoura Cacaueira da Bahia",
           "tipo": "Entidade de Pesquisa",
           "categoria": "centrosPesquisa",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_parquecientificoetecnologicodosuldabahia_ilheus",
@@ -3399,7 +3591,9 @@
           "entidade": "Parque Científico e Tecnológico do Sul da Bahia",
           "tipo": "Parque Tecnológico",
           "categoria": "parquesTecnologicos",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrodeensinosuperiordeilheus_ilheus",
@@ -3407,7 +3601,9 @@
           "entidade": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeanhangueradeitabuna_itabuna",
@@ -3415,7 +3611,9 @@
           "entidade": "Faculdade ANHANGUERA DE ITABUNA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdademadrethais_ilheus",
@@ -3423,7 +3621,9 @@
           "entidade": "Faculdade MADRE THAIS",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedeexcelenciaunexdeitabuna_itabuna",
@@ -3431,7 +3631,9 @@
           "entidade": "Faculdade de Excelência UNEX de Itabuna",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
@@ -3439,7 +3641,9 @@
           "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
           "tipo": "Universidade - Pública Federal",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -3451,7 +3655,8 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 26,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_cacau_itabuna_agriculturafamiliareeconomiasolidariadabaciadoriosalgadoeadjacentes",
@@ -3461,7 +3666,8 @@
           "entidade": "Agricultura Familiar e Economia Solidária da Bacia do Rio Salgado e Adjacentes",
           "tipo": "APL",
           "quantidade": 9,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_bovinoculturadeleite_camacan_bovinoculturadeleiteterritoriolitoralsul",
@@ -3471,7 +3677,8 @@
           "entidade": "Bovinocultura de Leite - Território Litoral Sul",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cacau_itabuna_cacauiculturasafterritoriodolitoralsul",
@@ -3481,7 +3688,8 @@
           "entidade": "Cacauicultura - SAF - Território do Litoral Sul",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agricultura_itubera_agriculturafamiliardobaixosul",
@@ -3491,7 +3699,8 @@
           "entidade": "Agricultura Familiar do Baixo Sul",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cacau_ilheus_servicossustentaveisdabahia",
@@ -3501,7 +3710,8 @@
           "entidade": "Serviços Sustentáveis da Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_farinhademandioca_buerarema_cooperativamistadosprodutoresruraisdosuldabahia",
@@ -3511,7 +3721,8 @@
           "entidade": "Cooperativa Mista dos Produtores Rurais do Sul da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 4,
-          "fonte": "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 22, n. 6, p. 01-20, 2024. DOI: 10.55905/oelv22n6-111. |URL: https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/5218/3367"
+          "fonte": "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 22, n. 6, p. 01-20, 2024. DOI: 10.55905/oelv22n6-111.",
+          "urlTarget": "https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/5218/3367"
         },
         {
           "id": "cad_polenapicola_canavieiras_cooperativadeapicultoresdecanavieiras",
@@ -3521,7 +3732,8 @@
           "entidade": "Cooperativa de Apicultores de Canavieiras",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -3531,7 +3743,8 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -4187,7 +4400,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.46401153846153853,
         "populacaoTotal": 750979,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -4205,7 +4418,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadeestadualdosudoestedabahiauesb_jequie",
@@ -4213,7 +4428,9 @@
           "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_jequie",
@@ -4221,7 +4438,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodauesbjequie_jequie",
@@ -4229,7 +4448,9 @@
           "entidade": "Espaço Colaborar Parceiro da UESB Jequié",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeanhangueradejequie_jequie",
@@ -4237,7 +4458,9 @@
           "entidade": "Faculdade ANHANGUERA DE JEQUIÉ",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedeexcelenciaunexdejequie_jequie",
@@ -4245,7 +4468,9 @@
           "entidade": "Faculdade de Excelência UNEX de Jequié",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -4257,7 +4482,8 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 15,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_cacau_jequie_cacauiculturasafterritoriomedioriodecontas",
@@ -4267,7 +4493,8 @@
           "entidade": "Cacauicultura - SAF - Território  Médio Rio de Contas",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_caprinovinocultura_manoelvitorino_ovinocaprinoculturaterritoriodomedioriodecontas",
@@ -4277,7 +4504,8 @@
           "entidade": "Ovinocaprinocultura - Território do Médio Rio de Contas",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
@@ -4287,7 +4515,8 @@
           "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
           "tipo": "IG Potencial",
           "quantidade": 19,
-          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017. |URL: https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
+          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017.",
+          "urlTarget": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -4521,7 +4750,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.48881875,
         "populacaoTotal": 368106,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -4539,7 +4768,9 @@
           "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 3
+          "quantidade": 3,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_itapetinga",
@@ -4547,7 +4778,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldeitapetinga_itapetinga",
@@ -4555,7 +4788,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Itapetinga",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -4567,7 +4802,8 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 9,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_cacau_itabuna_agriculturafamiliareeconomiasolidariadabaciadoriosalgadoeadjacentes",
@@ -4577,7 +4813,8 @@
           "entidade": "Agricultura Familiar e Economia Solidária da Bacia do Rio Salgado e Adjacentes",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_carnedesol_itororo_itororo",
@@ -4587,7 +4824,8 @@
           "entidade": "Itororó",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
@@ -4597,7 +4835,8 @@
           "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
           "tipo": "IG Potencial",
           "quantidade": 19,
-          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017. |URL: https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
+          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017.",
+          "urlTarget": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -4744,7 +4983,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4815307692307692,
         "populacaoTotal": 236355,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -4762,7 +5001,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 29
+          "quantidade": 29,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldabahiaufba_salvador",
@@ -4770,7 +5011,9 @@
           "entidade": "Universidade Federal da Bahia (UFBA)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedaintegracaointernacionaldalusofoniaafrobrasileira_saofranciscodoconde",
@@ -4778,7 +5021,9 @@
           "entidade": "Universidade da Integração Internacional da Lusofonia Afro-Brasileira",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_salvador",
@@ -4786,7 +5031,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_salvador",
@@ -4794,7 +5041,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_camacari",
@@ -4802,7 +5051,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_laurodefreitas",
@@ -4810,7 +5061,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_camacari",
@@ -4818,7 +5071,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_laurodefreitas",
@@ -4826,7 +5081,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_simoesfilho",
@@ -4834,7 +5091,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldabahiaufba_camacari",
@@ -4842,7 +5101,9 @@
           "entidade": "Universidade Federal da Bahia (UFBA)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrodepesquisasedesenvolvimento_camacari",
@@ -4850,7 +5111,9 @@
           "entidade": "Centro de Pesquisas e Desenvolvimento",
           "tipo": "Entidade de Pesquisa",
           "categoria": "centrosPesquisa",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutobaianodetecnologiadasaguas_salvador",
@@ -4858,7 +5121,9 @@
           "entidade": "Instituto Baiano de Tecnologia das Águas",
           "tipo": "Entidade de Pesquisa",
           "categoria": "centrosPesquisa",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_fundacaooswaldocruzinstitutogoncalomoniz_salvador",
@@ -4866,7 +5131,9 @@
           "entidade": "Fundação Oswaldo Cruz - Instituto Gonçalo Moniz",
           "tipo": "ICT",
           "categoria": "icts",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacofazerparceirodoifbacamacari_camacari",
@@ -4874,7 +5141,9 @@
           "entidade": "Espaço Fazer Parceiro do IFBA Camaçari",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacofazerparceirodaprefeituramunicipaldecamacari_camacari",
@@ -4882,7 +5151,9 @@
           "entidade": "Espaço Fazer Parceiro da Prefeitura Municipal de Camaçari",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldeitaparica_itaparica",
@@ -4890,7 +5161,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Itaparica",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodasecretariadeculturadoestadodabahia_salvador",
@@ -4898,7 +5171,9 @@
           "entidade": "Espaço Colaborar Parceiro da Secretaria de Cultura do Estado da Bahia",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_parquetecnologicodabahia_salvador",
@@ -4906,7 +5181,9 @@
           "entidade": "Parque Tecnológico da Bahia",
           "tipo": "Parque Tecnológico",
           "categoria": "parquesTecnologicos",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempresasdebasetecnologicadoestadodabahia_salvador",
@@ -4914,7 +5191,9 @@
           "entidade": "Incubadora de Empresas de Base Tecnológica do Estado da Bahia",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempresasdebasetecnologicadoceped_camacari",
@@ -4922,7 +5201,9 @@
           "entidade": "Incubadora de Empresas de Base Tecnológica do CEPED",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempresasdebasetecnologicadaescolapolitecnicadaufba_salvador",
@@ -4930,7 +5211,9 @@
           "entidade": "Incubadora de Empresas de Base Tecnológica da Escola Politécnica da UFBA",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoratecnologicadeeconomiasolidariaegestaododesenvolvimentoterritorialdaufba_salvador",
@@ -4938,7 +5221,9 @@
           "entidade": "Incubadora Tecnológica de Economia Solidária e Gestão do Desenvolvimento Territorial da UFBA",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoratecnologicadecooperativaspopularesdauneb_salvador",
@@ -4946,7 +5231,9 @@
           "entidade": "Incubadora Tecnológica de Cooperativas Populares da UNEB",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoratecnologicadecooperativaspopularesdoifba_salvador",
@@ -4954,7 +5241,9 @@
           "entidade": "Incubadora Tecnológica de Cooperativas Populares do IFBA",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_preincubadoratecnologicadoifba_salvador",
@@ -4962,7 +5251,9 @@
           "entidade": "Pré-Incubadora Tecnológica do IFBA",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempreendimentoseredesdeeconomiasolidaria_salvador",
@@ -4970,7 +5261,9 @@
           "entidade": "Incubadora de Empreendimentos e Redes de Economia Solidária",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrodeempreendedorismoeinovacaodaunifacs_salvador",
@@ -4978,7 +5271,9 @@
           "entidade": "Centro de Empreendedorismo e Inovação da UNIFACS",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoratecnologicadecooperativaspopularesdaucsal_salvador",
@@ -4986,7 +5281,9 @@
           "entidade": "Incubadora Tecnológica de Cooperativas Populares da UCSal",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradebasetecnologicadosenaicimatec_salvador",
@@ -4994,7 +5291,9 @@
           "entidade": "Incubadora de Base Tecnológica do SENAI CIMATEC",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariodesalvador_salvador",
@@ -5002,7 +5301,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO DE SALVADOR",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariodompedroii_salvador",
@@ -5010,7 +5311,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariojorgeamado_salvador",
@@ -5018,7 +5321,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO JORGE AMADO",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounime_laurodefreitas",
@@ -5026,7 +5331,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO UNIME",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounirb_salvador",
@@ -5034,7 +5341,9 @@
           "entidade": "Centro Universitário UNIRB",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadeestaciodesa_salvador",
@@ -5042,7 +5351,9 @@
           "entidade": "Universidade Estácio de Sá",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariofamec_camacari",
@@ -5050,7 +5361,9 @@
           "entidade": "Centro Universitário FAMEC",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariomauriciodenassauuninassau_salvador",
@@ -5058,7 +5371,9 @@
           "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitarioruybarbosawyden_salvador",
@@ -5066,7 +5381,9 @@
           "entidade": "Centro Universitário Ruy Barbosa Wyden",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariouniftc_salvador",
@@ -5074,7 +5391,9 @@
           "entidade": "Centro Universitário UniFTC",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_escolabahianademedicinaesaudepublica_salvador",
@@ -5082,7 +5401,9 @@
           "entidade": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadecastroalves_salvador",
@@ -5090,7 +5411,9 @@
           "entidade": "Faculdade CASTRO ALVES",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadediplomata_salvador",
@@ -5098,7 +5421,9 @@
           "entidade": "Faculdade DIPLOMATA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedoisdejulho_salvador",
@@ -5106,7 +5431,9 @@
           "entidade": "Faculdade DOIS DE JULHO",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeheliorocha_salvador",
@@ -5114,7 +5441,9 @@
           "entidade": "Faculdade HÉLIO ROCHA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadesaosalvador_salvador",
@@ -5122,7 +5451,9 @@
           "entidade": "Faculdade SÃO SALVADOR",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounirb_camacari",
@@ -5130,7 +5461,9 @@
           "entidade": "Centro Universitário UNIRB",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeviscondedecairu_salvador",
@@ -5138,7 +5471,9 @@
           "entidade": "Faculdade VISCONDE DE CAIRÚ",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeintegradasipitanga_laurodefreitas",
@@ -5146,7 +5481,9 @@
           "entidade": "Faculdade INTEGRADAS IPITANGA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeanhangueraunimedesalvador_salvador",
@@ -5154,7 +5491,9 @@
           "entidade": "Faculdade Anhanguera Unime de Salvador",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeedufordesalvador_salvador",
@@ -5162,7 +5501,9 @@
           "entidade": "Faculdade Edufor de Salvador",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutosalvadordeensinoecultura_salvador",
@@ -5170,7 +5511,9 @@
           "entidade": "Instituto SALVADOR DE ENSINO E CULTURA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadecatolicadosalvadorucsal_salvador",
@@ -5178,7 +5521,9 @@
           "entidade": "Universidade Católica do Salvador (UCSAL)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadesalvadorunifacs_salvador",
@@ -5186,7 +5531,9 @@
           "entidade": "Universidade Salvador (UNIFACS)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvador",
@@ -5194,7 +5541,69 @@
           "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
+        },
+        {
+          "id": "ent_getinaceleradora_salvador",
+          "municipio": "Salvador",
+          "entidade": "GetIN Aceleradora",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Tecnologia e Modelagem de Negócios (SaaS, B2B)",
+          "site": "https://getin.inf.br/"
+        },
+        {
+          "id": "ent_senaicimatec_salvador",
+          "municipio": "Salvador",
+          "entidade": "SENAI CIMATEC",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Deeptechs, Biotecnologia, Hardware e Tecnologia Industrial",
+          "site": "https://senaicimatec.com.br/"
+        },
+        {
+          "id": "ent_cimatecpark_camacari",
+          "municipio": "Camaçari",
+          "entidade": "CIMATEC Park",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Deeptechs, Biotecnologia, Hardware e Tecnologia Industrial",
+          "site": "https://senaicimatec.com.br/"
+        },
+        {
+          "id": "ent_aityincubadoraunebsebrae_salvador",
+          "municipio": "Salvador",
+          "entidade": "Áity Incubadora (Uneb/Sebrae)",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Base tecnológica e transição para o mercado corporativo",
+          "site": "https://inovacao.uneb.br/aity-incubadora-de-empresas-ja-ouviu-falar/"
+        },
+        {
+          "id": "ent_valedodende_salvador",
+          "municipio": "Salvador",
+          "entidade": "Vale do dendê",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Economia criativa, negócios periféricos, tecnologia e inovação com forte pilar de diversidade (focada principalmente em empreendedores negros e periféricos).",
+          "site": "https://www.valedodende.org/"
+        },
+        {
+          "id": "ent_inventivos_salvador",
+          "municipio": "Salvador",
+          "entidade": "Inventivos",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Plataforma de formação, mentoria e aceleração de negócios, fundada por Monique Evelle.",
+          "site": "https://inventivos.co/"
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -5206,7 +5615,8 @@
           "entidade": "Pescados da Baía de Todos os Santos",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_textil_salvador_confeccoesbahiatextil",
@@ -5216,7 +5626,8 @@
           "entidade": "Confecções Bahia Têxtil",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_artesanatodepiacava_entrerios_cooperativadeartesanatodotrancadotupinamba",
@@ -5226,7 +5637,8 @@
           "entidade": "Cooperativa de Artesanato do Trançado Tupinambá",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024.",
+          "urlTarget": "https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
@@ -5236,7 +5648,8 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -7687,7 +8100,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.5897846153846154,
         "populacaoTotal": 3623330,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -7705,7 +8118,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariojorgeamado_salvadorsededaiesead",
@@ -7713,7 +8128,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO JORGE AMADO",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounirb_salvadorsededaiesead",
@@ -7721,7 +8138,9 @@
           "entidade": "Centro Universitário UNIRB",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_escolabahianademedicinaesaudepublica_salvadorsededaiesead",
@@ -7729,7 +8148,9 @@
           "entidade": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeviscondedecairu_salvadorsededaiesead",
@@ -7737,7 +8158,9 @@
           "entidade": "Faculdade VISCONDE DE CAIRÚ",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_salvadorsededaiesead",
@@ -7745,7 +8168,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal - Pública Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadecatolicadosalvadorucsal_salvadorsededaiesead",
@@ -7753,7 +8178,9 @@
           "entidade": "Universidade Católica do Salvador (UCSAL)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadesalvadorunifacs_salvadorsededaiesead",
@@ -7761,7 +8188,9 @@
           "entidade": "Universidade Salvador (UNIFACS)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_serviconacionaldeaprendizagemindustrialsenai_salvadorsededaiesead",
@@ -7769,7 +8198,9 @@
           "entidade": "Serviço Nacional de Aprendizagem Industrial (SENAI)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [],
@@ -8427,7 +8858,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8445,7 +8876,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 3
+          "quantidade": 3,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_jacobina",
@@ -8453,7 +8886,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldejacobina_jacobina",
@@ -8461,7 +8896,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Jacobina",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeagesdejacobina_jacobina",
@@ -8469,7 +8906,9 @@
           "entidade": "Faculdade AGES de Jacobina",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -8481,7 +8920,8 @@
           "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
           "tipo": "APL",
           "quantidade": 9,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -8491,7 +8931,8 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 6,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+          "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_bovinoculturadeleite_jacobina_bovinoculturadeleiteterritoriopiemontedadiamantina",
@@ -8501,7 +8942,8 @@
           "entidade": "Bovinocultura de Leite - Território Piemonte da Diamantina",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agropecuaria_varzeanova_producaoagropecuariadegiloeregiao",
@@ -8511,7 +8953,8 @@
           "entidade": "Produção Agropecuária de Giló e Região",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_marmore_ourolandia_marmorebegebahia",
@@ -8521,7 +8964,8 @@
           "entidade": "Mármore Bege Bahia",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agropecuaria_miguelcalmon_producaoagropecuariadelagoadedentroeregiaodaserra",
@@ -8531,7 +8975,8 @@
           "entidade": "Produção Agropecuária de Lagoa de Dentro e Região da Serra",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -8634,7 +9079,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.49085555555555566,
         "populacaoTotal": 211375,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8652,7 +9097,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 3
+          "quantidade": 3,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_itaberaba",
@@ -8660,7 +9107,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldepiritiba_piritiba",
@@ -8668,7 +9117,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Piritiba",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -8680,7 +9131,8 @@
           "entidade": "Bovinocultura de Leite - Território Piemonte do Paraguaçu",
           "tipo": "APL",
           "quantidade": 8,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agropecuaria_varzeanova_producaoagropecuariadegiloeregiao",
@@ -8690,7 +9142,8 @@
           "entidade": "Produção Agropecuária de Giló e Região",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_fruticultura_itaberaba_producaoeagroindustrializacao",
@@ -8700,7 +9153,8 @@
           "entidade": "Produção e Agroindustrialização",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_abacaxi_itaberaba_cooperativadosprodutoresdeabacaxideitaberaba",
@@ -8710,7 +9164,8 @@
           "entidade": "Cooperativa dos Produtores de Abacaxi de Itaberaba",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "BONFIM, Catarina Vilas Boas da Silva et al. Diagnóstico do potencial de indicação geográfica do abacaxi de Itaberaba-Bahia sob a ótica da metodologia do SEBRAE. Revista Aracê, São José dos Pinhais, v. 7, n. 3, p. 15075-15090, 2025. |URL: https://periodicos.newsciencepubl.com/arace/article/view/4122/5434"
+          "fonte": "BONFIM, Catarina Vilas Boas da Silva et al. Diagnóstico do potencial de indicação geográfica do abacaxi de Itaberaba-Bahia sob a ótica da metodologia do SEBRAE. Revista Aracê, São José dos Pinhais, v. 7, n. 3, p. 15075-15090, 2025.",
+          "urlTarget": "https://periodicos.newsciencepubl.com/arace/article/view/4122/5434"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -8784,7 +9239,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4983846153846153,
         "populacaoTotal": 257312,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8802,7 +9257,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_senhordobonfim",
@@ -8810,7 +9267,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_campoformoso",
@@ -8818,7 +9277,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldovaledosaofranciscounivasf_senhordobonfim",
@@ -8826,7 +9287,9 @@
           "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeagesdesenhordobonfim_senhordobonfim",
@@ -8834,7 +9297,9 @@
           "entidade": "Faculdade AGES de Senhor do Bonfim",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -8846,7 +9311,8 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -8856,7 +9322,8 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 2,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+          "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -8959,7 +9426,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4984111111111111,
         "populacaoTotal": 285067,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -8977,7 +9444,9 @@
           "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 5
+          "quantidade": 5,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_feiradesantana",
@@ -8985,7 +9454,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana",
@@ -8993,7 +9464,9 @@
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaufrbfeiradesantana_feiradesantana",
@@ -9001,7 +9474,9 @@
           "entidade": "Espaço Colaborar Parceiro da UFRB Feira de Santana",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempresasdebasetecnologicadasengenhariasdauefs_feiradesantana",
@@ -9009,7 +9484,9 @@
           "entidade": "Incubadora de Empresas de Base Tecnológica das Engenharias da UEFS",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariodeexcelencia_feiradesantana",
@@ -9017,7 +9494,9 @@
           "entidade": "Centro Universitário de Excelência",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadebrasileiradetecnologia_feiradesantana",
@@ -9025,7 +9504,9 @@
           "entidade": "Faculdade BRASILEIRA DE TECNOLOGIA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadesalvadorunifacs_feiradesantana",
@@ -9033,7 +9514,19 @@
           "entidade": "Universidade Salvador (UNIFACS)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
+        },
+        {
+          "id": "ent_novatores_feiradesantana",
+          "municipio": "Feira de Santana",
+          "entidade": "Novatores",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Capitaneado pela Universidade Estadual de Feira de Santana (UEFS) para acelerar ideias inovadoras no portal do sertão baiano.",
+          "site": "https://novatores.uefs.br/"
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -9045,7 +9538,8 @@
           "entidade": "Avicultura - Território Portal do Sertão",
           "tipo": "APL",
           "quantidade": 7,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_agricultura_feiradesantana_rededeprodutorasdabahia",
@@ -9055,7 +9549,8 @@
           "entidade": "Rede de Produtoras da Bahia",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
@@ -9065,7 +9560,8 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_alimentos_feiradesantana_panificacaoterritorioportaldosertao",
@@ -9075,7 +9571,8 @@
           "entidade": "Panificação - Território Portal do Sertão",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
@@ -9085,7 +9582,8 @@
           "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 21,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -9924,7 +10422,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.5065235294117647,
         "populacaoTotal": 1008990,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -9942,7 +10440,9 @@
           "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariodeexcelencia_feiradesantanasededaiesead",
@@ -9950,7 +10450,9 @@
           "entidade": "Centro Universitário de Excelência",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [],
@@ -10176,7 +10678,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -10197,7 +10699,8 @@
           "entidade": "Cooperativa Mista de Agricultores Familiares e Produtores de Leite de Santa Bárbara",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "ROCHA, Angela Machado; CALDAS, Alcides dos Santos; OLIVEIRA, Maria Cristina Idalina dos Santos de. Um estudo do requeijão de Santa Bárbara-BA para o reconhecimento de Indicação Geográfica (IG). Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 19821-19834, 2023. |URL: https://ojs.revistagesec.org.br/secretariado/article/view/2973/1887"
+          "fonte": "ROCHA, Angela Machado; CALDAS, Alcides dos Santos; OLIVEIRA, Maria Cristina Idalina dos Santos de. Um estudo do requeijão de Santa Bárbara-BA para o reconhecimento de Indicação Geográfica (IG). Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 19821-19834, 2023.",
+          "urlTarget": "https://ojs.revistagesec.org.br/secretariado/article/view/2973/1887"
         }
       ],
       "desenvolvimentoDetalhado": [],
@@ -10205,7 +10708,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -10223,7 +10726,9 @@
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 15
+          "quantidade": 15,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_santoantoniodejesus",
@@ -10231,7 +10736,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_governadormangabeira",
@@ -10239,7 +10746,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_santoamaro",
@@ -10247,7 +10756,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_santoantoniodejesus",
@@ -10255,7 +10766,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_cachoeira",
@@ -10263,7 +10776,9 @@
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoamaro",
@@ -10271,7 +10786,9 @@
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoantoniodejesus",
@@ -10279,7 +10796,9 @@
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_empresabrasileiradepesquisaagropecuariamandiocaefruticultura_cruzdasalmas",
@@ -10287,7 +10806,9 @@
           "entidade": "Empresa Brasileira de Pesquisa Agropecuária - Mandioca e Fruticultura",
           "tipo": "ICT",
           "categoria": "icts",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecachoeira_cachoeira",
@@ -10295,7 +10816,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Cachoeira",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecastroalves_castroalves",
@@ -10303,7 +10826,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Castro Alves",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecruzdasalmas_cruzdasalmas",
@@ -10311,7 +10836,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Cruz das Almas",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldesantoantoniodejesus_santoantoniodejesus",
@@ -10319,7 +10846,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Santo Antônio de Jesus",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempresasdebasetecnologicadoreconcavodaufrb_cruzdasalmas",
@@ -10327,7 +10856,9 @@
           "entidade": "Incubadora de Empresas de Base Tecnológica do Recôncavo da UFRB",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoradeempreendimentoseconomicossolidariosdaufrb_cruzdasalmas",
@@ -10335,7 +10866,9 @@
           "entidade": "Incubadora de Empreendimentos Econômicos Solidários da UFRB",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariomariamilza_cruzdasalmas",
@@ -10343,7 +10876,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitarioadventistadeensinodonordeste_cachoeira",
@@ -10351,7 +10886,9 @@
           "entidade": "Centro Universitário Adventista de Ensino do Nordeste",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus",
@@ -10359,7 +10896,9 @@
           "entidade": "Centro Universitário de Ciências e Empreendedorismo",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeanhangueradesantoantoniodejesus_santoantoniodejesus",
@@ -10367,7 +10906,9 @@
           "entidade": "Faculdade ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -10379,7 +10920,8 @@
           "entidade": "Mandiocultura - Território do Recôncavo",
           "tipo": "APL",
           "quantidade": 8,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_aquiculturaepesca_veracruz_pescadosdabaiadetodosossantos",
@@ -10389,7 +10931,8 @@
           "entidade": "Pescados da Baía de Todos os Santos",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_artesanato_saubara_associacaodosartesaosdesaubara",
@@ -10399,7 +10942,8 @@
           "entidade": "Associação dos Artesãos de Saubara",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf |URL: https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf"
+          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf",
+          "urlTarget": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf"
         },
         {
           "id": "cad_azeitededende_valenca_costadodende",
@@ -10409,7 +10953,8 @@
           "entidade": "Costa do Dendê",
           "tipo": "IG Potencial",
           "quantidade": 23,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_carnedefumeiro_maragogipe_associacaodosprodutoresdacarnesuinosdefumeirosdemaragogipe",
@@ -10419,7 +10964,8 @@
           "entidade": "Associação dos Produtores da Carne Suínos de Fumeiros de Maragogipe",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "FERRAZ, Luciana Alves Vieira; SILVA, Davi Santos da; SANTOS, Laiane da Silva; VENANCIO, Maria Fernanda Daltro; CONCEIÇÃO, Valdir Silva da; ARAÚJO, Marcio Luís Valença; SILVA, Marcelo Santana. Diagnóstico do potencial de indicação geográfica da carne de fumeiro de Maragogipe-Bahia sob a ótica da metodologia do SEBRAE. Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 20202-20220, 2023. |URL: https://ojs.revistagesec.org.br/secretariado/article/view/3173/1907"
+          "fonte": "FERRAZ, Luciana Alves Vieira; SILVA, Davi Santos da; SANTOS, Laiane da Silva; VENANCIO, Maria Fernanda Daltro; CONCEIÇÃO, Valdir Silva da; ARAÚJO, Marcio Luís Valença; SILVA, Marcelo Santana. Diagnóstico do potencial de indicação geográfica da carne de fumeiro de Maragogipe-Bahia sob a ótica da metodologia do SEBRAE. Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 20202-20220, 2023.",
+          "urlTarget": "https://ojs.revistagesec.org.br/secretariado/article/view/3173/1907"
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
@@ -10429,7 +10975,8 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
@@ -10439,7 +10986,8 @@
           "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 21,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_licor_cachoeira_associacaodefabricantesdelicordecachoeira",
@@ -10449,7 +10997,8 @@
           "entidade": "Associação de Fabricantes de Licor de Cachoeira",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SANTOS, Letícia Sena dos et al. Análise do potencial de Indicação Geográfica (IG) para o licor artesanal da cidade de Cachoeira no Recôncavo Baiano. Revista Caderno Pedagógico, Curitiba, v. 21, n. 10, p. 01-21, 2024. DOI: 10.54033/cadpedv21n10-401. |URL: https://ojs.studiespublicacoes.com.br/ojs/index.php/cadped/article/view/9938/5762"
+          "fonte": "SANTOS, Letícia Sena dos et al. Análise do potencial de Indicação Geográfica (IG) para o licor artesanal da cidade de Cachoeira no Recôncavo Baiano. Revista Caderno Pedagógico, Curitiba, v. 21, n. 10, p. 01-21, 2024. DOI: 10.54033/cadpedv21n10-401.",
+          "urlTarget": "https://ojs.studiespublicacoes.com.br/ojs/index.php/cadped/article/view/9938/5762"
         },
         {
           "id": "cad_mariscos_salinasdamargarida_associacaodepescadoreseaquicultoresdesalinasdamargarida",
@@ -10459,7 +11008,8 @@
           "entidade": "Associação de Pescadores e Aquicultores de Salinas da Margarida",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "CALDAS, Alcides dos Santos et al. Potential geographical indication study for Salinas da Margarida shellfish region: protection of cultural and economic identity analysis. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 7, n. 4, 2023. |URL: https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=view&amp;path%5B%5D=270"
+          "fonte": "CALDAS, Alcides dos Santos et al. Potential geographical indication study for Salinas da Margarida shellfish region: protection of cultural and economic identity analysis. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 7, n. 4, 2023.",
+          "urlTarget": "https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=view&amp;path%5B%5D=270"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -10972,7 +11522,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.5233842105263158,
         "populacaoTotal": 538200,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -10990,7 +11540,9 @@
           "entidade": "Centro Universitário de Ciências e Empreendedorismo",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [],
@@ -11048,7 +11600,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11066,7 +11618,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 3
+          "quantidade": 3,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_jeremoabo",
@@ -11074,7 +11628,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_euclidesdacunha",
@@ -11082,7 +11638,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitarioages_paripiranga",
@@ -11090,7 +11648,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO AGES",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedonordestedabahia_coroneljoaosa",
@@ -11098,7 +11658,9 @@
           "entidade": "Faculdade DO NORDESTE DA BAHIA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedompedroiiafya_ribeiradopombal",
@@ -11106,7 +11668,9 @@
           "entidade": "Faculdade Dom Pedro II AFYA",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -11118,7 +11682,8 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 13,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_bovinoculturadeleite_cicerodantas_bovinoculturadeleiteterritoriosemiaridonordesteii",
@@ -11128,7 +11693,8 @@
           "entidade": "Bovinocultura de Leite - Território Semiárido Nordeste II",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_bovinoculturadeleite_euclidesdacunha_bovinoculturadeleiteterritoriosemiaridonordesteiieuclidesdacunha",
@@ -11138,7 +11704,8 @@
           "entidade": "Bovinocultura de Leite - Território Semiárido Nordeste II - Euclides da Cunha",
           "tipo": "APL",
           "quantidade": 2,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
@@ -11148,7 +11715,8 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+          "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -11392,7 +11960,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4782111111111111,
         "populacaoTotal": 424096,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11410,7 +11978,9 @@
           "entidade": "CENTRO UNIVERSITÁRIO AGES",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [],
@@ -11564,7 +12134,7 @@
       "desenvolvimento": {
         "ifdmTi": null,
         "populacaoTotal": null,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11582,7 +12152,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 7
+          "quantidade": 7,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_canudos",
@@ -11590,7 +12162,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_juazeiro",
@@ -11598,7 +12172,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldovaledosaofranciscounivasf_juazeiro",
@@ -11606,7 +12182,9 @@
           "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldejuazeiro_juazeiro",
@@ -11614,7 +12192,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Juazeiro",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaunebjuazeiro_juazeiro",
@@ -11622,7 +12202,9 @@
           "entidade": "Espaço Colaborar Parceiro da UNEB Juazeiro",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_incubadoratecnologicadaunivasf_juazeiro",
@@ -11630,7 +12212,9 @@
           "entidade": "Incubadora Tecnológica da UNIVASF",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounirb_juazeiro",
@@ -11638,7 +12222,9 @@
           "entidade": "Centro Universitário UNIRB",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeunibrasjuazeiro_juazeiro",
@@ -11646,7 +12232,9 @@
           "entidade": "Faculdade UniBRAS Juazeiro",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariouniftc_juazeiro",
@@ -11654,7 +12242,9 @@
           "entidade": "Centro Universitário UniFTC",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -11666,7 +12256,8 @@
           "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
           "tipo": "IG",
           "quantidade": 8,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+          "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
         },
         {
           "id": "cad_alimentos_juazeiro_centraldecomercializacaodascooperativasdacaatinga",
@@ -11676,7 +12267,8 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_fruticultura_uaua_agropecuariafamiliardecanudosuauaecuraca",
@@ -11686,7 +12278,8 @@
           "entidade": "Agropecuária Familiar de Canudos, Uauá e Curaçá",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_caprinovinocultura_casanova_ovinocaprinoculturaterritoriodosertaodosaofranciscocasanova",
@@ -11696,7 +12289,8 @@
           "entidade": "Ovinocaprinocultura - Território do Sertão do São Francisco - Casa Nova",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_caprinovinocultura_juazeiro_ovinocaprinoculturaterritoriodosertaodosaofranciscojuazeiro",
@@ -11706,7 +12300,8 @@
           "entidade": "Ovinocaprinocultura - Território do Sertão do São Francisco - Juazeiro",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_vinho_petrolina_institutodovinhodovaledosaofrancisco",
@@ -11716,7 +12311,8 @@
           "entidade": "Instituto do Vinho do Vale do São Francisco",
           "tipo": "IG",
           "quantidade": 2,
-          "fonte": "https://datasebrae.com.br/ig-vale-do-sao-francisco/ |URL: https://datasebrae.com.br/ig-vale-do-sao-francisco/"
+          "fonte": "https://datasebrae.com.br/ig-vale-do-sao-francisco/",
+          "urlTarget": "https://datasebrae.com.br/ig-vale-do-sao-francisco/"
         },
         {
           "id": "cad_marmore_ourolandia_marmorebegebahia",
@@ -11726,7 +12322,8 @@
           "entidade": "Mármore Bege Bahia",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_fruticultura_sobradinho_agroindustrialvaledoparaiso",
@@ -11736,7 +12333,8 @@
           "entidade": "Agroindustrial Vale do Paraíso",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_docesegeleiasdeumbu_uaua_cooperativaagropecuariafamiliardecanudosuauaecuraca",
@@ -11746,7 +12344,8 @@
           "entidade": "Cooperativa Agropecuária Familiar de Canudos, Uauá e Curaçá",
           "tipo": "IG Potencial",
           "quantidade": 3,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -11902,7 +12501,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.4432600000000001,
         "populacaoTotal": 590594,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -11920,7 +12519,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 7
+          "quantidade": 7,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_guanambi",
@@ -11928,7 +12529,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_brumado",
@@ -11936,7 +12539,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_guanambi",
@@ -11944,7 +12549,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_brumado",
@@ -11952,7 +12559,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldebrumado_brumado",
@@ -11960,7 +12569,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Brumado",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecaetite_caetite",
@@ -11968,7 +12579,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Caetité",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariofg_guanambi",
@@ -11976,7 +12589,9 @@
           "entidade": "Centro Universitário FG",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -11988,7 +12603,8 @@
           "entidade": "Bovinocultura de Leite - Território Sertão Produtivo",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_apicultura_liciniodealmeida_produtosapicolasederivadoseprodutosdaagriculturafamiliareeconomiasolidariadaregiaodoriogaviaoeserrageral",
@@ -11998,7 +12614,8 @@
           "entidade": "Produtos Apícolas e Derivados e Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -12300,7 +12917,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.530295,
         "populacaoTotal": 501085,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -12318,7 +12935,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadedoestadodabahiauneb_conceicaodocoite",
@@ -12326,7 +12945,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_serrinha",
@@ -12334,7 +12955,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldearaci_araci",
@@ -12342,7 +12965,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Araci",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadesantoantoniodequeimadas_queimadas",
@@ -12350,7 +12975,9 @@
           "entidade": "Faculdade SANTO ANTONIO DE QUEIMADAS",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariounirb_serrinha",
@@ -12358,7 +12985,9 @@
           "entidade": "Centro Universitário UNIRB",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadedaregiaosisaleira_conceicaodocoite",
@@ -12366,7 +12995,9 @@
           "entidade": "Faculdade da Região Sisaleira",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -12378,7 +13009,8 @@
           "entidade": "Rede de Produtoras da Bahia",
           "tipo": "APL",
           "quantidade": 11,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
@@ -12388,7 +13020,8 @@
           "entidade": "Cajucultura Familiar do Nordeste da Bahia",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_sisal_conceicaodocoite_sisalterritoriodosisal",
@@ -12398,7 +13031,8 @@
           "entidade": "Sisal - Território do Sisal",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_alimentos_juazeiro_centraldecomercializacaodascooperativasdacaatinga",
@@ -12408,7 +13042,8 @@
           "entidade": "Central de Comercialização das Cooperativas da Caatinga",
           "tipo": "APL",
           "quantidade": 3,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_alimentos_serrinha_comercializacaodaagriculturafamiliareeconomiasolidaria",
@@ -12418,7 +13053,8 @@
           "entidade": "Comercialização da Agricultura Familiar e Economia Solidária",
           "tipo": "APL",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_sisal_valente_associacaodedesenvolvimentosustentavelesolidariodaregiaosisaleira",
@@ -12428,7 +13064,8 @@
           "entidade": "Associação de Desenvolvimento Sustentável e Solidário da Região Sisaleira",
           "tipo": "IG Potencial",
           "quantidade": 14,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -12610,7 +13247,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.48034999999999994,
         "populacaoTotal": 621161,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -12628,7 +13265,9 @@
           "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 6
+          "quantidade": 6,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_vitoriadaconquista",
@@ -12636,7 +13275,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldabahiaufba_vitoriadaconquista",
@@ -12644,7 +13285,9 @@
           "entidade": "Universidade Federal da Bahia (UFBA)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldevitoriadaconquista_vitoriadaconquista",
@@ -12652,7 +13295,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Vitória da Conquista",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodoifbavitoriadaconquista_vitoriadaconquista",
@@ -12660,7 +13305,9 @@
           "entidade": "Espaço Colaborar Parceiro do IFBA Vitória da Conquista",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_iincubadoradeempresasdauesb_vitoriadaconquista",
@@ -12668,7 +13315,9 @@
           "entidade": "IIncubadora de Empresas da UESB",
           "tipo": "Incubadora",
           "categoria": "incubadoras",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista",
@@ -12676,7 +13325,9 @@
           "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeindependentedonordeste_vitoriadaconquista",
@@ -12684,7 +13335,9 @@
           "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista",
@@ -12692,7 +13345,9 @@
           "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista",
@@ -12700,7 +13355,29 @@
           "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
           "tipo": "Universidade - Privada",
           "categoria": "campiUniversidadePrivada",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
+        },
+        {
+          "id": "ent_iebtinnovation_vitoriadaconquista",
+          "municipio": "Vitória da Conquista",
+          "entidade": "IEBT Innovation",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Viabiliza programas de inovação aberta, conexão corporativa e aceleração focada em editais como o Tecnova no estado",
+          "site": "https://www.iebtinnovation.com/"
+        },
+        {
+          "id": "ent_hubconquistaconquistastartups_vitoriadaconquista",
+          "municipio": "Vitória da Conquista",
+          "entidade": "Hub Conquista / Conquista Startups",
+          "tipo": "Aceleradora",
+          "categoria": "aceleradoras",
+          "quantidade": 1,
+          "descricao": "Programa de aceleração do ecossistema do Sudoeste, operado em conjunto com a aceleradora de abrangência nacional IEBT.",
+          "site": "https://hubconquista.com.br/"
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -12712,7 +13389,8 @@
           "entidade": "Produtos Apícolas e Derivados e Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_bovinoculturadeleite_pocoes_bovinoculturadeleiteterritoriosudoestebaiano",
@@ -12722,7 +13400,8 @@
           "entidade": "Bovinocultura de Leite - Território Sudoeste Baiano",
           "tipo": "APL",
           "quantidade": 5,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cafe_barradochoca_cafeiculturadebarradochocaeregiao",
@@ -12732,7 +13411,8 @@
           "entidade": "Cafeicultura de Barra do Choça e Região",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_mandiocultura_condeuba_produtosdaagriculturafamiliareeconomiasolidariadaregiaodoriogaviaoeserrageral",
@@ -12742,7 +13422,8 @@
           "entidade": "Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
           "tipo": "APL",
           "quantidade": 4,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
@@ -12752,7 +13433,8 @@
           "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
           "tipo": "IG Potencial",
           "quantidade": 19,
-          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017. |URL: https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
+          "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017.",
+          "urlTarget": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -13254,7 +13936,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.517475,
         "populacaoTotal": 786486,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -13272,7 +13954,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederaldabahiaifba_jaguaquara",
@@ -13280,7 +13964,9 @@
           "entidade": "Instituto Federal da Bahia (IFBA)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldoreconcavodabahiaufrb_amargosa",
@@ -13288,7 +13974,9 @@
           "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_espacocolaborarparceirodaprefeituramunicipaldeamargosa_amargosa",
@@ -13296,7 +13984,9 @@
           "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Amargosa",
           "tipo": "Espaço Dinamizador",
           "categoria": "espacoDinamizadoress",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -13308,7 +13998,8 @@
           "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
           "tipo": "IG",
           "quantidade": 6,
-          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/ |URL: https://datasebrae.com.br/ig-sul-da-bahia/"
+          "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+          "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
         },
         {
           "id": "cad_agricultura_mutuipe_agriculturafamiliareeconomiasolidariasustentaveldosterritoriosdovaledojiquiricaebaixosuldabahia",
@@ -13318,7 +14009,8 @@
           "entidade": "Agricultura Familiar e Economia Solidária Sustentável dos Territórios do Vale do Jiquiriçá e Baixo Sul da Bahia",
           "tipo": "APL",
           "quantidade": 6,
-          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl"
+          "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+          "urlTarget": ""
         },
         {
           "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
@@ -13328,7 +14020,8 @@
           "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 26,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         },
         {
           "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
@@ -13338,7 +14031,8 @@
           "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
           "tipo": "IG Potencial",
           "quantidade": 21,
-          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais |URL: https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+          "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+          "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -13472,7 +14166,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.47600499999999996,
         "populacaoTotal": 303629,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,
@@ -13490,7 +14184,9 @@
           "entidade": "Universidade do Estado da Bahia (UNEB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 4
+          "quantidade": 4,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldooestedabahiaufob_barra",
@@ -13498,7 +14194,9 @@
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_universidadefederaldooestedabahiaufob_bomjesusdalapa",
@@ -13506,7 +14204,9 @@
           "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
           "tipo": "Universidade - Pública",
           "categoria": "campiUniversidadePublica",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         },
         {
           "id": "ent_institutofederalbaianoifbaiano_bomjesusdalapa",
@@ -13514,7 +14214,9 @@
           "entidade": "Instituto Federal Baiano (IF BAIANO)",
           "tipo": "Instituto Federal",
           "categoria": "campiInstitutoFederal",
-          "quantidade": 1
+          "quantidade": 1,
+          "descricao": "",
+          "site": ""
         }
       ],
       "cadeiasProdutivasDetalhado": [
@@ -13526,7 +14228,8 @@
           "entidade": "Associação Frutas Oeste do Projeto Formoso A/H",
           "tipo": "IG",
           "quantidade": 1,
-          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/ |URL: https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/"
+          "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/",
+          "urlTarget": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/"
         },
         {
           "id": "cad_ceramica_barra_associacaocomunitarianossasenhoradefatima",
@@ -13536,7 +14239,8 @@
           "entidade": "Associação Comunitária Nossa Senhora de Fátima",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024. |URL: https://datasebrae.com.br/wp-content/uploads/2025/01/1a-Diagnostico-Ceramica-da-Barra.pdf"
+          "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024.",
+          "urlTarget": "https://datasebrae.com.br/wp-content/uploads/2025/01/1a-Diagnostico-Ceramica-da-Barra.pdf"
         },
         {
           "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
@@ -13546,7 +14250,8 @@
           "entidade": "Associação Baiana de Produtores de Algodão",
           "tipo": "IG Potencial",
           "quantidade": 11,
-          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023. |URL: https://doi.org/10.9771/cp.v16i1.50700"
+          "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023.",
+          "urlTarget": "https://doi.org/10.9771/cp.v16i1.50700"
         },
         {
           "id": "cad_cachaca_paratinga_associacaodosprodutoresdecachacaartesanaldovaledosantoonofre",
@@ -13556,7 +14261,8 @@
           "entidade": "Associação dos Produtores de Cachaça Artesanal do Vale do Santo Onofre",
           "tipo": "IG Potencial",
           "quantidade": 1,
-          "fonte": "SOUZA, Diego de Oliveira et al. Cachaça Rainha do Santo Onofre de Paratinga-Bahia: potencial de indicação geográfica de procedência. Revista INGI, [S. l.], v. 4, n. 3, p. 903-917, 2020. |URL: https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=viewFile&amp;path%5b%5d=124&amp;path%5b%5d=111"
+          "fonte": "SOUZA, Diego de Oliveira et al. Cachaça Rainha do Santo Onofre de Paratinga-Bahia: potencial de indicação geográfica de procedência. Revista INGI, [S. l.], v. 4, n. 3, p. 903-917, 2020.",
+          "urlTarget": "https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=viewFile&amp;path%5b%5d=124&amp;path%5b%5d=111"
         }
       ],
       "desenvolvimentoDetalhado": [
@@ -13718,7 +14424,7 @@
       "desenvolvimento": {
         "ifdmTi": 0.45249375000000003,
         "populacaoTotal": 394495,
-        "metodologia": "IFDM_TI = Média Aritmética Simples (soma(IFDM_municipio) / qtd_municipios_validos)"
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
       },
       "assistenciaPublica": {
         "existe": false,

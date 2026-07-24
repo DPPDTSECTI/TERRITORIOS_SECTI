@@ -110,7 +110,7 @@ export function SubKpiPanel(props) {
 
   const ctiFilterKeys = useMemo(() => [
     'campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal',
-    'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'
+    'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadorasAceleradoras'
   ], []);
 
   const areAllCtiSelected = useMemo(() => {
@@ -174,7 +174,7 @@ export function SubKpiPanel(props) {
       { id: 'centrosPesquisa', l: 'Centros de Pesquisa', v: totals.centrosPesquisa, c: singleColorClass, b: singleBarClass, sourceText: 'CNPq / Diretório dos Grupos de Pesquisa', sourceLink: 'http://dgp.cnpq.br/dgp/faces/consulta/consulta_parametrizada.jsf' },
       { id: 'espacoDinamizadoress', l: 'Espaços Dinamizadores', v: totals.espacoDinamizadoress, c: singleColorClass, b: singleBarClass, sourceText: 'SECTI BA / Mapeamento de Inovação', sourceLink: 'https://www.secti.ba.gov.br/' },
       { id: 'parquesTecnologicos', l: 'Parques Tecnológicos', v: totals.parquesTecnologicos, c: singleColorClass, b: singleBarClass, sourceText: 'Anprotec / Parque Tecnológico da Bahia', sourceLink: 'https://anprotec.org.br/' },
-      { id: 'incubadoras', l: 'Incubadoras de Empresas', v: totals.incubadoras, c: singleColorClass, b: singleBarClass, sourceText: 'Anprotec / Rede Baiana de Incubadoras', sourceLink: 'https://anprotec.org.br/' },
+      { id: 'incubadorasAceleradoras', l: 'Incubadoras & Acel.', v: totals.incubadorasAceleradoras, c: singleColorClass, b: singleBarClass, sourceText: 'Anprotec / Rede Baiana de Incubadoras', sourceLink: 'https://anprotec.org.br/' },
     ];
     const totalCTI = dashboardData?.topKpis?.capacidadeCtiNum || 1;
     return items.map(item => ({
@@ -241,7 +241,7 @@ export function SubKpiPanel(props) {
               <div className="min-w-0 flex-1 pr-1.5">
                 <div className="flex items-start justify-between gap-1">
                   <span className={`text-[9px] font-bold uppercase tracking-wider leading-tight opacity-80 ${darkMode ? 'text-slate-300' : 'text-slate-500'}`}>{kpi.l}</span>
-                  {kpi.sourceText && !['icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'].includes(kpi.id) && (
+                  {kpi.sourceText && !['icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadorasAceleradoras'].includes(kpi.id) && (
                     <div className="relative group flex items-center justify-center z-50 shrink-0 mt-0.5">
                       <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help outline-none">
                         <Info size={11} />
@@ -274,4 +274,3 @@ export function SubKpiPanel(props) {
   </div>
 );
 }
-

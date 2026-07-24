@@ -115,7 +115,16 @@ export default function useTerritoriosData(filters) {
                 const trueTotalMuns = territorioBase ? territorioBase.municipios.length : 0;
                 const truePctSemiarido = trueTotalMuns > 0 ? (trueQtdSemi / trueTotalMuns) * 100 : 0;
                 const trueIsSemiarido = trueQtdSemi > 0;
-                const entidadesCTI = Array.isArray(t.capacidadeDetalhada) ? t.capacidadeDetalhada : [];
+                
+                // MÁGICA AQUI: Unifica Incubadoras e Aceleradoras numa categoria só
+                const entidadesCTI = Array.isArray(t.capacidadeDetalhada) ? t.capacidadeDetalhada.map(ent => {
+                    let cat = ent.categoria;
+                    if (cat === 'incubadoras' || cat === 'aceleradoras') {
+                        cat = 'incubadorasAceleradoras';
+                    }
+                    return { ...ent, categoria: cat };
+                }) : [];
+
                 const cadeiasAPL = Array.isArray(t.cadeiasProdutivasDetalhado) ? t.cadeiasProdutivasDetalhado : [];
                 const cursosEnsino = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
 
@@ -218,6 +227,7 @@ export default function useTerritoriosData(filters) {
         const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
 
         const activeCtiCategories = Object.keys(ctiFilters).filter(k => ctiFilters[k]);
+        // Voltou para 8 porque agrupámos duas
         const isCtiFiltered = Boolean(isCtiFilterActive) || activeCtiCategories.length < 8;
         const isCursoFiltered = cursoTerm !== '' || (areaGeralFilter && areaGeralFilter.length > 0);
         const isCadeiaFiltered = (cadeiaProdutivaFilter && cadeiaProdutivaFilter.length > 0) || Boolean(debouncedCadeiaSearchTerm);
@@ -244,8 +254,6 @@ export default function useTerritoriosData(filters) {
                 qtdIfdmLocal = 1;
             }
 
-            // LÓGICA E (AND): Se houver filtro ativado (menos de 8 categorias ativas),
-            // o território só é mantido se tiver pelo menos 1 entidade de CADA categoria selecionada.
             let passesCtiAndLogic = true;
             if (isCtiFiltered) {
                 if (activeCtiCategories.length === 0) {
@@ -368,8 +376,9 @@ export default function useTerritoriosData(filters) {
     const rawTerm = normalize(debouncedSearchTerm); const terms = rawTerm.split(' ').filter(Boolean);
     const isSearchTermATerritory = territoriosData.some(t => normalize(t.nome) === rawTerm);
     
-    const kpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, campiInstitutoFederal: 0, icts: 0, centrosPesquisa: 0, espacoDinamizadoress: 0, parquesTecnologicos: 0, incubadoras: 0 };
-    const unfiltKpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, campiInstitutoFederal: 0, icts: 0, centrosPesquisa: 0, espacoDinamizadoress: 0, parquesTecnologicos: 0, incubadoras: 0 };
+    // ATUALIZADO AQUI TAMBÉM: Mapeamento interno das subkpis
+    const kpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, campiInstitutoFederal: 0, icts: 0, centrosPesquisa: 0, espacoDinamizadoress: 0, parquesTecnologicos: 0, incubadorasAceleradoras: 0 };
+    const unfiltKpisPanel = { campiUniversidadePublica: 0, campiUniversidadePrivada: 0, campiInstitutoFederal: 0, icts: 0, centrosPesquisa: 0, espacoDinamizadoress: 0, parquesTecnologicos: 0, incubadorasAceleradoras: 0 };
     
     const entidadesFlat = []; const aplIgsFlat = []; const cursosFlat = [];
     const globalIds = new Set(); const globalCadeiasIds = new Set();

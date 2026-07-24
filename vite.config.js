@@ -8,7 +8,7 @@ import path from 'path'
 let devCache = null;
 let devCacheExpiry = 0;
 const DEV_CACHE_TTL = 30 * 60 * 1000; // 30 minutos
-const CACHE_VERSION = 'v37_hyperlinks_coordenadas_robustas';
+const CACHE_VERSION = 'v38_aceleradoras_capacidade'; // Atualizado para limpar cache
 
 // ==================== PROCESSADOR DE EXCEL (DEV) ====================
 
@@ -33,7 +33,7 @@ function expandirNomeEntidade(nomeRaw, tipoRaw = '', isCadeia = false) {
   let nome = String(nomeRaw || '').trim();
   let tipoNorm = normalize(tipoRaw);
   
-  const isEcossistema = ['incubadora', 'parque', 'espacoDinamizadores', 'pesquisa', 'dinamizador', 'ict'].some(term => tipoNorm.includes(term));
+  const isEcossistema = ['incubadora', 'parque', 'espacoDinamizadores', 'pesquisa', 'dinamizador', 'ict', 'aceleradora'].some(term => tipoNorm.includes(term));
 
   if (!isEcossistema && !isCadeia) {
     let nomeNorm = normalize(nome).replace(/\b(campus|polo|unidade|centro de|ead|departamento)\b.*$/g, '').trim();
@@ -98,7 +98,6 @@ function parseSpreadsheet(buffer) {
     throw new Error("ACESSO NEGADO: O SharePoint retornou a página de Login (HTML). Verifique as permissões do ficheiro ou atualize os Cookies.");
   }
 
-  // IMPORTANTE: cellFormula DEVE estar true para ler =HYPERLINK()
   const workbook = XLSX.read(buffer, {
     type: 'buffer',
     cellFormula: true, 
@@ -164,16 +163,14 @@ function parseSpreadsheet(buffer) {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
 
-    // --- NOVA LÓGICA CIRÚRGICA (Procura TODAS as colunas possíveis de Fonte) ---
     const ref = sheet['!ref'];
-    let fonteCols = []; // Agora pode guardar mais de uma coluna
+    let fonteCols = []; 
     let headerRow = 0;
     
     if (ref) {
       const range = XLSX.utils.decode_range(ref);
       headerRow = range.s.r;
       
-      // Mapeia todas as colunas que parecem ser de fonte de dados/artigos
       for (let C = range.s.c; C <= range.e.c; ++C) {
         const cell = sheet[XLSX.utils.encode_cell({c: C, r: headerRow})];
         if (cell && cell.v) {
@@ -193,7 +190,8 @@ function parseSpreadsheet(buffer) {
     const isCadeiaSheet = ['cadeiaprodutiva', 'cadeiasprodutivas', 'igpotenciais', 'igspotenciais', 'potenciais', 'producao', 'apl', 'arranjoprodutivo'].some(term => sheetNorm.includes(term)) || sheetNorm === 'ig' || sheetNorm === 'igs';
     const isCursoSheet = ['curso', 'ensino', 'superior', 'graduacao', 'educacao'].some(term => sheetNorm.includes(term));
     const isIfdmSheet = ['ifdm', 'desenvolvimento', 'populacao', 'socioecon'].some(term => sheetNorm.includes(term));
-    const isCapacidadeSheet = (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('infraestrutura') || sheetNorm.includes('entidade')) && !isCadeiaSheet && !isCursoSheet && !isIfdmSheet;
+    // AQUI: Adicionado 'aceleradora' para incluir nas lógicas de Capacidade
+    const isCapacidadeSheet = (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('infraestrutura') || sheetNorm.includes('entidade') || sheetNorm.includes('aceleradora')) && !isCadeiaSheet && !isCursoSheet && !isIfdmSheet;
 
     if (!isCadeiaSheet && !isCursoSheet && !isIfdmSheet && !isCapacidadeSheet) return;
 
@@ -208,7 +206,6 @@ function parseSpreadsheet(buffer) {
 
     rawRows.forEach((rawRow, idx) => {
       const R = range.s.r + 1 + idx;
-      // Ignora linhas totalmente vazias
       if (Object.values(rawRow).every(v => v === '')) return;
 
       const row = {};
@@ -216,41 +213,35 @@ function parseSpreadsheet(buffer) {
           row[safeKey(key)] = rawRow[key];
       }
       
-      // ==== EXTRACTOR DO HIPERLINK VERDADEIRO NAS COLUNAS DE FONTE ====
       let urlTarget = '';
       if (fonteCols.length > 0 && isCadeiaSheet) {
-          const excelRow = headerRow + 1 + idx; // Calcula a linha exata
-          
+          const excelRow = headerRow + 1 + idx; 
           for (let colIndex of fonteCols) {
               const cellAddress = XLSX.utils.encode_cell({ c: colIndex, r: excelRow });
               const cell = sheet[cellAddress];
-              
               if (cell) {
                   if (cell.l && cell.l.Target) {
-                      urlTarget = cell.l.Target; // Hiperlink Nativo (inserido pelo botão direito)
-                      break; // Pára de procurar se achou
+                      urlTarget = cell.l.Target; 
+                      break; 
                   } else if (cell.f) {
                       const hMatch = String(cell.f).match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
                       if (hMatch) {
-                          urlTarget = hMatch[1]; // Fómula =HYPERLINK()
+                          urlTarget = hMatch[1]; 
                           break;
                       }
                   }
               }
           }
       }
-      // ==========================================================
 
       const territorioRaw = row['territoriodeidentidade'] || row['territorioidentidade'] || row['territoriosdeidentidade'] || row['territorio'] || row['territorios'];
       if (!territorioRaw) return;
 
       const territoryNamesList = splitList(territorioRaw);
-      
       const municipio = String(row['municipio'] || row['cidade'] || row['local'] || '').trim();
       const orgAcademica = String(row['orgacademica'] || '').trim();
       const categoriaAdm = String(row['categoriaadm'] || '').trim();
       const rede = String(row['rede'] || '').trim(); 
-      
       const cabeçalhoColunaA = Object.keys(rawRow)[0]; 
       const valorColunaA = String(rawRow[cabeçalhoColunaA] || '').trim(); 
       
@@ -264,8 +255,14 @@ function parseSpreadsheet(buffer) {
           entidadeRaw = String(row['entidadegestora'] || row['entidade'] || row['associacao'] || '').trim();
           tipoOriginal = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || '').trim();
       } else {
-          entidadeRaw = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || row['ies'] || row['sigla'] || valorColunaA).trim();
+          // AQUI: Adicionamos row['nome'] para mapear a coluna da nova planilha de Aceleradoras
+          entidadeRaw = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || row['ies'] || row['sigla'] || row['nome'] || valorColunaA).trim();
           tipoOriginal = String(row['tipo'] || row['categoria'] || row['natureza'] || '').trim();
+          
+          // Se for a aba Aceleradoras e não houver coluna "tipo", forçamos o tipo.
+          if (sheetNorm.includes('aceleradora') && !tipoOriginal) {
+              tipoOriginal = 'Aceleradoras';
+          }
       }
 
       const entidadesExpandida = expandirNomeEntidade(entidadeRaw, tipoOriginal, isCadeiaSheet);
@@ -274,10 +271,36 @@ function parseSpreadsheet(buffer) {
       let tipoFinal = tipoOriginal;
       let categoriaEntidade = null;
       let isCTI = false;
+      let descricaoExtraida = '';
+      let siteFinalExtraido = '';
       
       if (isCapacidadeSheet) {
           isCTI = true; 
           tipoFinal = tipoOriginal; 
+
+          // === EXTRAÇÃO DE DESCRIÇÃO E SITE (Exclusivo Capacidade/Aceleradoras) ===
+          descricaoExtraida = String(row['descricao'] || row['resumo'] || row['sobre'] || '').trim();
+          
+          let siteVisualBruto = String(row['site'] || row['website'] || row['link'] || '').trim();
+          let siteHyperlinkEmbutido = '';
+          
+          // Extrai Hiperlink direto da célula caso exista
+          const possibleSiteKeys = ['site', 'website', 'link'];
+          const matchedSiteKey = possibleSiteKeys.find(k => headerMap[k] !== undefined && row[k] !== undefined);
+          if (matchedSiteKey) {
+              const C = headerMap[matchedSiteKey];
+              const cell = sheet[XLSX.utils.encode_cell({ r: R, c: C })];
+              if (cell) {
+                  if (cell.l && cell.l.Target) siteHyperlinkEmbutido = cell.l.Target;
+                  else if (cell.f) {
+                      const hMatch = String(cell.f).match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
+                      if (hMatch) siteHyperlinkEmbutido = hMatch[1].trim();
+                  }
+              }
+          }
+          // Monta o URL final dando prioridade ao Hiperlink Nativo
+          siteFinalExtraido = siteHyperlinkEmbutido || (siteVisualBruto.startsWith('http') ? siteVisualBruto : (siteVisualBruto ? `http://${siteVisualBruto}` : ''));
+          // =========================================================================
 
           const tNorm = normalize(tipoOriginal);
           const isPrivadaCapacidade = tNorm.includes('privada') || tNorm.includes('particular');
@@ -292,6 +315,7 @@ function parseSpreadsheet(buffer) {
           else if (['centro de pesquisa', 'pesquisa'].some(c => tNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; }
           else if (['ict'].some(c => tNorm.includes(c))) { categoriaEntidade = 'icts'; }
           else if (['incubadora'].some(c => tNorm.includes(c))) { categoriaEntidade = 'incubadoras'; }
+          else if (['aceleradora'].some(c => tNorm.includes(c) || sheetNorm.includes('aceleradora'))) { categoriaEntidade = 'aceleradoras'; } // NOVA CATEGORIA
           else if (['espacoDinamizadores', 'dinamizador'].some(c => tNorm.includes(c))) { categoriaEntidade = 'espacoDinamizadoress'; }
           else if (['parque'].some(c => tNorm.includes(c))) { categoriaEntidade = 'parquesTecnologicos'; }
           else { categoriaEntidade = 'outros'; }
@@ -337,7 +361,9 @@ function parseSpreadsheet(buffer) {
                          entidade: entidadesExpandida,
                          tipo: tipoFinal || 'Instituição', 
                          categoria: categoriaEntidade || 'outros', 
-                         quantidade: qtd
+                         quantidade: qtd,
+                         descricao: descricaoExtraida, // NOVO CAMPO: Guardado na árvore!
+                         site: siteFinalExtraido       // NOVO CAMPO: Guardado na árvore!
                      });
                  }
              }
@@ -380,8 +406,8 @@ function parseSpreadsheet(buffer) {
                      entidade: entidadesExpandida, 
                      tipo: tipoOriginal,
                      quantidade: qtd,
-                     fonte: textoVisual,      
-                     urlTarget: urlTarget   // O Hiperlink exato guardado à parte
+                     fonte: String(fonteRaw).trim(),      
+                     urlTarget: urlTarget 
                  });
              }
          }
@@ -434,8 +460,8 @@ function parseSpreadsheet(buffer) {
   const ordenadasSheetNames = [...targetSheetNames].sort((a, b) => {
       const aKey = safeKey(a);
       const bKey = safeKey(b);
-      const aIsMain = aKey.includes('capacidade') || (aKey.includes('cti') && !aKey.includes('conecti'));
-      const bIsMain = bKey.includes('capacidade') || (bKey.includes('cti') && !bKey.includes('conecti'));
+      const aIsMain = aKey.includes('capacidade') || aKey.includes('aceleradora') || (aKey.includes('cti') && !aKey.includes('conecti'));
+      const bIsMain = bKey.includes('capacidade') || bKey.includes('aceleradora') || (bKey.includes('cti') && !bKey.includes('conecti'));
       if (aIsMain && !bIsMain) return -1;
       if (!aIsMain && bIsMain) return 1;
       return 0;

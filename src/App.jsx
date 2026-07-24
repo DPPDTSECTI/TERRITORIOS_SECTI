@@ -120,9 +120,9 @@ function MainApp() {
     const [ifdmMin, setIfdmMin] = useState('');
     const [ifdmMax, setIfdmMax] = useState('');
 
-    // Filtros de CTI
+    // Filtros de CTI (AGORA COM ACELERADORAS INCLUÍDO)
     const [ctiFilters, setCtiFilters] = useState({
-        campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
+        campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadorasAceleradoras: true
     });
     const [isCtiFilterActive, setIsCtiFilterActive] = useState(false);
 
@@ -147,7 +147,7 @@ function MainApp() {
         setCursoSearchTerm('');
         setCtiSearchTerm('');
         setCtiFilters({
-            campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true
+            campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadoras: true, aceleradoras: true
         });
         setIsCtiFilterActive(false);
         setIsDropdownOpen(false);
@@ -259,7 +259,9 @@ function MainApp() {
     const toggleCtiFilter = (key) => {
         setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
     };
-    const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal', 'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadoras'], []);
+    
+    // AQUI TAMBÉM INCLUI ACELERADORAS NAS CHAVES
+    const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal', 'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadorasAceleradoras'], []);
     const areAllCtiSelected = useMemo(() => ctiFilterKeys.every(key => ctiFilters[key]), [ctiFilters, ctiFilterKeys]);
 
     const handleToggleAllCti = () => {
@@ -473,7 +475,7 @@ function MainApp() {
             { id: 'centrosPesquisa', l: 'C. Pesquisa', c: singleColorClass, b: singleBarClass },
             { id: 'espacoDinamizadoress', l: 'Espaços Dinamizadores', c: singleColorClass, b: singleBarClass },
             { id: 'parquesTecnologicos', l: 'Parques Tec.', c: singleColorClass, b: singleBarClass },
-            { id: 'incubadoras', l: 'Incubadoras', c: singleColorClass, b: singleBarClass }
+            { id: 'incubadorasAceleradoras', l: 'Incub. & Acel.', c: singleColorClass, b: singleBarClass } // INCLUÍDO AQUI
         ];
 
         return kpiData.map(kpi => ({ ...kpi, v: dashboardData.subKpis[kpi.id] || 0, pct: (dashboardData.unfiltSubKpis[kpi.id] || 0) > 0 ? ((dashboardData.subKpis[kpi.id] || 0) / dashboardData.unfiltSubKpis[kpi.id]) * 100 : 0 }));
@@ -483,18 +485,16 @@ function MainApp() {
         <div className={`relative flex flex-col font-sans overflow-x-hidden min-h-screen w-full transition-colors duration-500 ${themeClasses.app}`}>
             {expandedLists.length > 0 && (
                 <div className={`fixed inset-0 z-[150] bg-gray-900/90 flex items-center p-4 animate-soft-fade transition-all duration-500 ${isTutorialOpen ? 'justify-start pl-4 xl:pl-6 pr-4 xl:pr-[440px]' : 'justify-center'}`} onClick={handleCloseModal}>
-                    {/* O stopPropagation foi retirado desta div invisível */}
                     <div className="relative w-full min-w-0 flex items-center justify-center">
                         <div
                             data-tutorial="expanded-lists-modal"
-                            onClick={e => e.stopPropagation()} // <- O stopPropagation foi movido exatamente para a caixa do modal
+                            onClick={e => e.stopPropagation()} 
                             className={`h-[85vh] ${isTutorialOpen ? 'w-full max-w-none' : 'w-[95vw] sm:w-[90vw]'} min-w-0 rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${isTutorialOpen ? '' : (expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]')}`}
                         >
                             {/* HEADER DO MODAL */}
                             <div className={`p-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                 <h3 className={`font-bold text-base ${darkMode ? 'text-white' : 'text-gray-800'}`}>Listas Expandidas</h3>
                                 <div className="flex items-center gap-2">
-                                    {/* BOTÃO ADICIONAR LISTA (movido para dentro do header) */}
                                     {availableListsToAdd.length > 0 && (
                                         <div data-tutorial="add-list-button" ref={modalAddListRef} className="relative">
                                             <button
@@ -545,9 +545,14 @@ function MainApp() {
                                     {expandedLists.map((listType, listIndex) => {
                                         let listData, renderItem, listTitle, filterControls, gridColsClass;
 
+                                        // MUDANÇA: RENDER CTI ITEM (Inclui indicador de Site e Descrição)
                                         const renderCtiItem = (ent, idx) => (
                                             <div key={idx} onClick={() => setExpandedCti(ent)} className={`p-3 rounded-lg border flex flex-col gap-1 transition-colors duration-200 ${themeClasses.cardHover} ${darkMode ? 'bg-gray-900/50 border-gray-700/50' : 'bg-white shadow-sm border-gray-100'} cursor-pointer`}>
-                                                <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
+                                                <div className="flex justify-between items-start gap-2">
+                                                    <span className="text-[11px] font-bold leading-tight">{fixWeirdCapitalization(ent.entidade)}</span>
+                                                    {ent.site && <ExternalLink size={10} className={`shrink-0 mt-0.5 opacity-50 ${darkMode ? 'text-blue-400' : 'text-gov-blue'}`} title="Possui site cadastrado" />}
+                                                </div>
+                                                {ent.descricao && <span className="text-[9px] line-clamp-2 opacity-70 leading-relaxed mt-0.5">{ent.descricao}</span>}
                                                 <div className="flex justify-between items-end mt-1">
                                                     <span className={`text-[8px] flex items-center font-black uppercase px-1.5 py-0.5 rounded border ${getCtiBadgeStyle(ent.categoria, darkMode)}`}>
                                                         {ent.tipo || "Instituição"}
@@ -651,7 +656,7 @@ function MainApp() {
                                                     </div>
                                                     <div className="relative" ref={modalCtiFilterRef}>
                                                         <button onClick={() => setIsModalCtiFilterOpen(!isModalCtiFilterOpen)} className={`h-7 px-2 rounded-md font-bold text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border shadow-sm ${isModalCtiFilterOpen || !areAllCtiSelected ? (darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200') : (darkMode ? 'bg-transparent border-gray-700 hover:bg-gray-700' : 'bg-transparent border-gray-200 hover:bg-gray-100')}`}><Filter size={12} /></button>
-                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', campiInstitutoFederal: 'Campi Inst. Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacoDinamizadoress: 'Espaços Dinamizadores', parquesTecnologicos: 'Parques Tecnológicos', incubadoras: 'Incubadoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
+                                                        {isModalCtiFilterOpen && <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}><div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1"><label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1"><input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span></label>{ctiFilterKeys.map((key) => (<label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1"><input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" /><span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>{{ campiUniversidadePublica: 'Campi Universidade Pública', campiUniversidadePrivada: 'Campi Universidade Privada', campiInstitutoFederal: 'Campi Inst. Federais', icts: 'ICTs', centrosPesquisa: 'Centros de Pesquisa', espacoDinamizadoress: 'Espaços Dinamizadores', parquesTecnologicos: 'Parques Tecnológicos', incubadoras: 'Incubadoras', aceleradoras: 'Aceleradoras' }[key]}</span></label>))}</div>{!areAllCtiSelected && <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>}</div>}
                                                     </div>
                                                 </React.Fragment>
                                             );
@@ -959,7 +964,7 @@ function MainApp() {
                 </div>
             )}
 
-            {/* MODAL DE CT&I EXPANDIDO */}
+            {/* MUDANÇA NO MODAL DE CT&I EXPANDIDO */}
             {expandedCti && (
                 <div className="fixed inset-0 z-[160] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-soft-fade" onClick={() => setExpandedCti(null)}>
                     <div
@@ -973,7 +978,7 @@ function MainApp() {
                                 <Minimize size={16} />
                             </button>
                         </div>
-                        <div className="p-4">
+                        <div className="p-4 max-h-[80vh] overflow-y-auto hide-scroll">
                             {(() => {
                                 const ent = expandedCti;
                                 return (
@@ -986,6 +991,14 @@ function MainApp() {
                                                 {formatEntidadeTipo(ent.tipo, ent.categoria)}
                                             </span>
                                         </div>
+
+                                        {/* CAIXA DE DESCRIÇÃO SE EXISTIR (Exclusivo para Aceleradoras/Algumas Capacidades) */}
+                                        {ent.descricao && (
+                                            <div className={`p-3 rounded-md border text-xs leading-relaxed opacity-90 ${darkMode ? 'bg-gray-800/50 border-gray-700 text-gray-300' : 'bg-gray-50/80 border-gray-200 text-gray-700'}`}>
+                                                <p>{ent.descricao}</p>
+                                            </div>
+                                        )}
+
                                         <div className={`p-3 rounded-md border mt-1 ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div>
@@ -997,6 +1010,17 @@ function MainApp() {
                                                     <p className={`text-xs font-bold leading-relaxed opacity-90 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{ent.territorioRef || 'N/A'}</p>
                                                 </div>
                                             </div>
+
+                                            {/* CAIXA DE SITE SE EXISTIR */}
+                                            {ent.site && (
+                                                <div className={`pt-3 mt-3 border-t ${darkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`}>
+                                                    <span className="block text-[9px] font-black uppercase opacity-50 mb-1">Site Oficial:</span>
+                                                    <a href={ent.site} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold underline hover:opacity-100 transition-opacity text-blue-500 dark:text-blue-400 break-all" onClick={e => e.stopPropagation()}>
+                                                        {ent.site.replace(/^https?:\/\//, '')}
+                                                        <ExternalLink size={12} className="shrink-0" />
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 );
@@ -1223,7 +1247,7 @@ function MainApp() {
                                         { id: 'campiUniversidadePublica', label: 'Campi Universidade Pública' }, { id: 'campiUniversidadePrivada', label: 'Campi Universidade Privada' }, { id: 'campiInstitutoFederal', label: 'Campi Institutos Federais' },
                                         { id: 'icts', label: 'ICTs' }, { id: 'centrosPesquisa', label: 'Centros de Pesquisa' },
                                         { id: 'espacoDinamizadoress', label: 'Espaços Dinamizadores' }, { id: 'parquesTecnologicos', label: 'Parques Tecnológicos' },
-                                        { id: 'incubadoras', label: 'Incubadoras' }
+                                        { id: 'incubadorasAceleradoras', label: 'Incubadoras & Aceleradoras' }
                                     ].map((f) => (
                                         <label key={f.id} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
                                             <input type="checkbox" checked={ctiFilters[f.id]} onChange={() => toggleCtiFilter(f.id)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
