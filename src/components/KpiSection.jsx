@@ -187,25 +187,31 @@ export function SubKpiPanel(props) {
 
   return (
     <div data-tutorial="cti-panel" className={`relative z-30 hover:z-[999] w-full lg:w-52 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
-      <div className={`p-4 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
+      <div className={`px-3.5 py-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
           Ativos CT&I
         </h4>
         <button
           onClick={handleFilterToggleBtn}
-          className="flex items-center gap-1.5 group cursor-pointer outline-none select-none"
-          title={isCtiFilterActive ? "Filtro ligado. Clique para desligar e resetar o mapa" : "Filtro desligado. Clique para ligar"}
+          className="flex items-center gap-1.5 cursor-pointer outline-none select-none group"
+          title={isCtiFilterActive ? "Filtro ativo — clique para resetar" : "Clique para ativar o filtro"}
         >
-          <span className={`text-[8px] font-black uppercase tracking-wider ${isCtiFilterActive ? (darkMode ? 'text-emerald-400' : 'text-emerald-600') : (darkMode ? 'text-gray-400' : 'text-gray-500')}`}>
-            {isCtiFilterActive ? 'Ligado' : 'Desligado'}
-          </span>
-          <div className={`w-7 h-4 rounded-full p-0.5 transition-colors duration-300 relative flex items-center ${
+          <span className={`text-[7px] font-bold uppercase tracking-widest transition-colors duration-300 ${
             isCtiFilterActive
-              ? 'bg-emerald-500'
-              : (darkMode ? 'bg-gray-700 border border-gray-600' : 'bg-gray-300')
+              ? (darkMode ? 'text-cyan-400' : 'text-gov-cyan-dark')
+              : (darkMode ? 'text-gray-500' : 'text-gray-400')
           }`}>
-            <div className={`w-3 h-3 rounded-full bg-white shadow-md transform transition-transform duration-300 ${
-              isCtiFilterActive ? 'translate-x-3' : 'translate-x-0'
+            Filtro
+          </span>
+          <div className={`w-8 h-[18px] rounded-full relative transition-all duration-300 ease-in-out ${
+            isCtiFilterActive
+              ? (darkMode ? 'bg-gov-cyan/80 shadow-[0_0_8px_rgba(23,162,184,0.4)]' : 'bg-gov-cyan shadow-[0_0_8px_rgba(23,162,184,0.25)]')
+              : (darkMode ? 'bg-gray-700' : 'bg-gray-300')
+          }`}>
+            <div className={`absolute top-[3px] w-3 h-3 rounded-full shadow-sm transition-all duration-300 ease-in-out ${
+              isCtiFilterActive
+                ? 'left-[17px] bg-white'
+                : 'left-[3px] bg-white/80'
             }`} />
           </div>
         </button>
@@ -214,7 +220,6 @@ export function SubKpiPanel(props) {
       <div className="flex-1 min-h-0 overflow-visible p-3">
         <div className="flex flex-col gap-2">
           {subKpisList.map(kpi => {
-            const isItemActive = isCtiFilterActive ? Boolean(ctiFilters[kpi.id]) : true;
             const isSelectedInFilterMode = isCtiFilterActive && ctiFilters[kpi.id];
 
             return (
@@ -223,9 +228,13 @@ export function SubKpiPanel(props) {
                 onClick={() => handleCtiKpiClick(kpi.id)}
                 className={`relative p-2.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all duration-300 cursor-pointer ${
                   isSelectedInFilterMode
-                    ? (darkMode ? 'bg-slate-800/90 border-emerald-500/60 shadow-sm opacity-100' : 'bg-emerald-50/60 border-emerald-400/80 shadow-sm opacity-100')
+                    ? (darkMode
+                        ? 'bg-cyan-950/40 border-gov-cyan/50 shadow-[0_0_6px_rgba(23,162,184,0.15)] opacity-100'
+                        : 'bg-cyan-50/70 border-gov-cyan/40 shadow-sm opacity-100')
                     : isCtiFilterActive
-                      ? 'opacity-35 grayscale border-transparent hover:opacity-70'
+                      ? (darkMode
+                          ? 'bg-slate-800/20 border-gray-800 opacity-30 hover:opacity-50'
+                          : 'bg-gray-50/40 border-gray-100 opacity-35 hover:opacity-55')
                       : (darkMode ? 'bg-slate-800/40 border-slate-700 opacity-100' : 'bg-white/80 border-slate-200/50 opacity-100')
                 }`}
               >
