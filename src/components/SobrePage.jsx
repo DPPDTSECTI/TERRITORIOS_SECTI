@@ -9,7 +9,7 @@ import { resolveCadeiaFonte } from '../utils/cadeiasUtils';
 const SobrePage = ({ darkMode }) => {
   const [showAllIgs, setShowAllIgs] = useState(false);
   const [showAllIncubadoras, setShowAllIncubadoras] = useState(false);
-  
+
   // Puxa a base de dados GERAL via Contexto
   const context = useContext(DataContext) || {};
   const territoriosData = context.territoriosData || [];
@@ -22,7 +22,7 @@ const SobrePage = ({ darkMode }) => {
     allCadeias.forEach(cad => {
       const tipoLower = (cad.tipo || '').toLowerCase();
       const isIgPotencial = tipoLower === 'ig potencial';
-      
+
       if (!isIgPotencial) return;
 
       const fonteInfo = resolveCadeiaFonte(cad);
@@ -61,15 +61,15 @@ const SobrePage = ({ darkMode }) => {
       const entidadeNome = item.entidade ? String(item.entidade).trim() : '';
 
       if (
-        cat.includes('incubadora') || 
-        cat.includes('aceleradora') || 
-        tipo.includes('incubadora') || 
+        cat.includes('incubadora') ||
+        cat.includes('aceleradora') ||
+        tipo.includes('incubadora') ||
         tipo.includes('aceleradora') ||
         cat === 'aceleradoras' ||
         cat === 'incubadoras'
       ) {
         const rawLink = item.site || item.fonte || '';
-        
+
         if (entidadeNome && rawLink && rawLink !== '#' && rawLink !== '' && !uniqueMap.has(entidadeNome)) {
           const finalLink = rawLink.startsWith('http') ? rawLink : `https://${rawLink}`;
 
@@ -232,7 +232,7 @@ const SobrePage = ({ darkMode }) => {
                           {(showAllIncubadoras ? incubadorasAceleradorasList : incubadorasAceleradorasList.slice(0, 4)).map((inc, idx) => {
                             const isClickable = inc.link && inc.link !== '#';
                             const Wrapper = isClickable ? 'a' : 'div';
-                            
+
                             return (
                               <Wrapper
                                 key={idx}
@@ -286,7 +286,7 @@ const SobrePage = ({ darkMode }) => {
                         {(showAllIgs ? igPotenciais : igPotenciais.slice(0, 4)).map((ig, idx) => {
                           const isClickable = ig.link && ig.link !== '#';
                           const Wrapper = isClickable ? 'a' : 'div';
-                          
+
                           return (
                             <Wrapper
                               key={idx}
@@ -321,7 +321,7 @@ const SobrePage = ({ darkMode }) => {
                         </div>
                       )}
                     </div>
-                  )}                
+                  )}
                 </div>
               ))}
             </div>
@@ -330,9 +330,9 @@ const SobrePage = ({ darkMode }) => {
           <div>
             <SectionTitle number="5" title="Metodologia e Tratamento dos Dados" />
             <ol className="list-decimal pl-5 space-y-3 text-base">
-              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Consolidação e Limpeza:</strong> Os dados brutos são coletados, higienizados e padronizados para garantir consistência.</li>
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Consolidação e Limpeza:</strong> Os dados brutos são coletados, tratados e padronizados para garantir consistência.</li>
               <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Georreferenciamento:</strong> As informações são associadas às suas respectivas coordenadas geográficas e vinculadas aos municípios e Territórios.</li>
-              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Cálculo de Indicadores Territoriais:</strong> Indicadores municipais, como o IFDM, são agregados para o nível territorial por meio de uma <strong className={darkMode ? 'text-slate-100' : 'text-slate-800'}>média ponderada pela população</strong> de cada município.</li>
+              <li><strong className={darkMode ? 'text-slate-100' : 'text-slate-900'}>Cálculo de Indicadores:</strong> Indicadores municipais, como o IFDM, que são calculados tendo em consideração os respectivo territórios.</li>
             </ol>
           </div>
 
