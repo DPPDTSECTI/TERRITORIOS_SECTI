@@ -469,9 +469,9 @@ function MainApp() {
         const singleBarClass = 'bg-gov-cyan';
 
         const kpiData = [
-            { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
-            { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
-            { id: 'campiInstitutoFederal', l: 'Campi Inst. Federais', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2022)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+            { id: 'campiUniversidadePublica', l: 'Campi Univ. Públicas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2024)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+            { id: 'campiUniversidadePrivada', l: 'Campi Univ. Privadas', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2024)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
+            { id: 'campiInstitutoFederal', l: 'Campi Inst. Federais', c: singleColorClass, b: singleBarClass, sourceText: 'INEP / Censo da Educação Superior (2024)', sourceLink: 'https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior' },
             { id: 'icts', l: 'ICTs', c: singleColorClass, b: singleBarClass },
             { id: 'centrosPesquisa', l: 'C. Pesquisa', c: singleColorClass, b: singleBarClass },
             { id: 'espacoDinamizadoress', l: 'Espaços Dinamizadores', c: singleColorClass, b: singleBarClass },
@@ -844,7 +844,7 @@ function MainApp() {
                                                                     <div className={`p-2.5 rounded-lg text-[10px] leading-snug shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-700 border-gray-200'}`}>
                                                                         <span className="block font-bold mb-0.5 opacity-70">Fonte dos Dados:</span>
                                                                         <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                                                                            INEP / Censo da Educação Superior (2022)
+                                                                            INEP / Censo da Educação Superior (2024)
                                                                         </a>
                                                                     </div>
                                                                 </div>

@@ -177,7 +177,7 @@ export default function ListSection(props) {
                 <div className={`w-max max-w-[220px] p-2 rounded-md text-[10px] leading-snug shadow-lg border ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-600' : 'bg-white text-gray-600 border-gray-200'}`}>
                   <span className="block font-bold mb-1 opacity-70">Fonte dos Dados:</span>
                   <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank" rel="noreferrer" className="block leading-tight opacity-80 hover:opacity-100 transition-opacity">
-                    INEP/ Censo de Educação Superior (2022)
+                    INEP/ Censo de Educação Superior (2024)
                   </a>
                 </div>
               </div>
