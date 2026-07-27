@@ -126,28 +126,6 @@ function MainApp() {
     });
     const [isCtiFilterActive, setIsCtiFilterActive] = useState(false);
 
-    // ==========================================
-    // NOVA LÓGICA DE AUTO-RESET PARA CTI FILTERS
-    // ==========================================
-    const handleSetCtiFilters = useCallback((updater) => {
-        setCtiFilters(prev => {
-            const newState = typeof updater === 'function' ? updater(prev) : updater;
-            const activeCount = Object.values(newState).filter(Boolean).length;
-            const totalKeys = Object.keys(newState).length;
-
-            // Se o usuário desmarcar todas, religa todas automaticamente
-            if (activeCount === 0) {
-                setIsCtiFilterActive(false);
-                const resetState = {};
-                Object.keys(newState).forEach(k => resetState[k] = true);
-                return resetState;
-            }
-
-            setIsCtiFilterActive(activeCount < totalKeys);
-            return newState;
-        });
-    }, []);
-
     const sideFilterRef = useRef(null);
     const searchDropdownRef = useRef(null);
     const areaGeralRef = useRef(null);
@@ -168,10 +146,10 @@ function MainApp() {
         setCadeiaSearchTerm('');
         setCursoSearchTerm('');
         setCtiSearchTerm('');
-        // Reseta via o handleSetCtiFilters para padronizar
-        handleSetCtiFilters({
+        setCtiFilters({
             campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadorasAceleradoras: true
         });
+        setIsCtiFilterActive(false);
         setIsDropdownOpen(false);
         setIsCardCadeiaFilterOpen(false);
     };
@@ -279,9 +257,9 @@ function MainApp() {
     }, []);
 
     const toggleCtiFilter = (key) => {
-        handleSetCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
+        setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
     };
-    
+
     // AQUI TAMBÉM INCLUI ACELERADORAS NAS CHAVES
     const ctiFilterKeys = useMemo(() => ['campiUniversidadePublica', 'campiUniversidadePrivada', 'campiInstitutoFederal', 'icts', 'centrosPesquisa', 'espacoDinamizadoress', 'parquesTecnologicos', 'incubadorasAceleradoras'], []);
     const areAllCtiSelected = useMemo(() => ctiFilterKeys.every(key => ctiFilters[key]), [ctiFilters, ctiFilterKeys]);
@@ -290,7 +268,7 @@ function MainApp() {
         const newValue = !areAllCtiSelected;
         const newFilters = {};
         ctiFilterKeys.forEach(key => { newFilters[key] = newValue; });
-        handleSetCtiFilters(newFilters);
+        setCtiFilters(newFilters);
     };
 
     const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
@@ -511,7 +489,7 @@ function MainApp() {
                     <div className="relative w-full min-w-0 flex items-center justify-center">
                         <div
                             data-tutorial="expanded-lists-modal"
-                            onClick={e => e.stopPropagation()} 
+                            onClick={e => e.stopPropagation()}
                             className={`h-[85vh] ${isTutorialOpen ? 'w-full max-w-none' : 'w-[95vw] sm:w-[90vw]'} min-w-0 rounded-2xl border shadow-2xl flex flex-col overflow-visible transition-all duration-500 ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-gray-200'} ${isTutorialOpen ? '' : (expandedLists.length === 1 ? 'max-w-4xl' : expandedLists.length === 2 ? 'max-w-7xl' : 'max-w-[1800px]')}`}
                         >
                             {/* HEADER DO MODAL */}
@@ -682,30 +660,30 @@ function MainApp() {
                                                         {isModalCtiFilterOpen && (
                                                             <div className={`absolute right-0 top-[100%] mt-2 w-60 max-w-[85vw] rounded-lg p-2 shadow-2xl border z-[150] flex flex-col gap-1 backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
                                                                 <div className="max-h-48 overflow-y-auto hide-scroll flex flex-col gap-1.5 pr-1">
-                                                                <label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1">
-                                                                    <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
-                                                                    <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
-                                                                </label>
-                                                                {ctiFilterKeys.map((key) => (
-                                                                    <label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
-                                                                        <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
-                                                                        <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>
-                                                                            {{ 
-                                                                                campiUniversidadePublica: 'Campi Universidade Pública', 
-                                                                                campiUniversidadePrivada: 'Campi Universidade Privada', 
-                                                                                campiInstitutoFederal: 'Campi Inst. Federais', 
-                                                                                icts: 'ICTs', 
-                                                                                centrosPesquisa: 'Centros de Pesquisa', 
-                                                                                espacoDinamizadoress: 'Espaços Dinamizadores', 
-                                                                                parquesTecnologicos: 'Parques Tecnológicos', 
-                                                                                incubadorasAceleradoras: 'Incubadoras & Aceleradoras' 
-                                                                            }[key]}
-                                                                        </span>
+                                                                    <label className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer border-b border-gray-500/10 pb-1.5 mb-1">
+                                                                        <input type="checkbox" checked={areAllCtiSelected} onChange={handleToggleAllCti} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
+                                                                        <span className={`font-bold ${areAllCtiSelected ? 'opacity-100' : 'opacity-50'}`}>Todos</span>
                                                                     </label>
-                                                                ))}
+                                                                    {ctiFilterKeys.map((key) => (
+                                                                        <label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
+                                                                            <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
+                                                                            <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>
+                                                                                {{
+                                                                                    campiUniversidadePublica: 'Campi Universidade Pública',
+                                                                                    campiUniversidadePrivada: 'Campi Universidade Privada',
+                                                                                    campiInstitutoFederal: 'Campi Inst. Federais',
+                                                                                    icts: 'ICTs',
+                                                                                    centrosPesquisa: 'Centros de Pesquisa',
+                                                                                    espacoDinamizadoress: 'Espaços Dinamizadores',
+                                                                                    parquesTecnologicos: 'Parques Tecnológicos',
+                                                                                    incubadorasAceleradoras: 'Incubadoras & Aceleradoras'
+                                                                                }[key]}
+                                                                            </span>
+                                                                        </label>
+                                                                    ))}
                                                                 </div>
                                                                 {!areAllCtiSelected && (
-                                                                <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>
+                                                                    <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>
                                                                 )}
                                                             </div>
                                                         )}
@@ -1197,18 +1175,18 @@ function MainApp() {
             </header>
 
             {/* NAVBAR LATERAL VERTICAL (Sempre visível em /territorios no Desktop) */}
-            <div className={`hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-[120] flex-col items-end gap-3 transition-all duration-500 ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
-                <div className={`flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
-                    <Link to="/" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Início">
+            <div className={`hidden lg:flex fixed right-4 sm:right-6 xl:right-10 2xl:right-14 top-1/2 -translate-y-1/2 z-[120] flex-col items-center gap-3 transition-all duration-500 ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
+                <div className={`flex flex-col items-center gap-2 p-2 rounded-xl border-2 shadow-xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 border-gov-cyan/60 shadow-gov-cyan/10' : 'bg-white/95 border-gov-cyan shadow-gov-cyan/15'}`}>
+                    <Link to="/" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'}`} title="Início">
                         <Home size={18} strokeWidth={2.5} />
                     </Link>
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
-                    <Link to="/sobre" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'}`} title="Sobre">
+                    <Link to="/sobre" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'}`} title="Sobre">
                         <Info size={18} strokeWidth={2.5} />
                     </Link>
                 </div>
 
-                <div data-tutorial="sidebar" ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border shadow-2xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                <div data-tutorial="sidebar" ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border-2 shadow-xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 border-gov-cyan/60 shadow-gov-cyan/10' : 'bg-white/95 border-gov-cyan shadow-gov-cyan/15'}`}>
                     <div className="relative flex items-center justify-end w-full" ref={searchDropdownRef}>
                         <div data-tutorial="search-input" className={`absolute right-[115%] transition-all duration-300 ${isVerticalSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
                             <input
@@ -1216,7 +1194,7 @@ function MainApp() {
                                 placeholder="Buscar no painel..."
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setIsDropdownOpen(true); }}
-                                className={`w-full h-10 px-4 rounded-lg text-[11px] font-medium outline-none border shadow-2xl backdrop-blur-xl transition-all ${darkMode ? 'bg-gray-900/95 border-gray-700 text-white focus:border-gov-blue' : 'bg-white/95 border-gray-200 text-gray-800 focus:border-gov-blue'}`}
+                                className={`w-full h-10 px-4 rounded-lg text-[11px] font-medium outline-none border shadow-2xl backdrop-blur-xl transition-all ${darkMode ? 'bg-gray-900/95 border-gray-700 text-white focus:border-gov-blue' : 'bg-white/95 border-gray-200 text-gray-800 focus:border-gov-cyan'}`}
                             />
                             {isDropdownOpen && searchTerm && isVerticalSearchOpen && (
                                 <div className={`absolute left-0 top-full mt-2 w-full max-h-64 overflow-y-auto hide-scroll rounded-lg border shadow-2xl z-[200] backdrop-blur-2xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
@@ -1233,7 +1211,7 @@ function MainApp() {
                                 </div>
                             )}
                         </div>
-                        <button data-tutorial="search-button" onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-blue/10 text-gov-blue') : ''}`} title="Pesquisar">
+                        <button data-tutorial="search-button" onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-cyan/15 text-gov-cyan') : ''}`} title="Pesquisar">
                             <Search size={18} strokeWidth={2.5} />
                         </button>
                     </div>
@@ -1257,14 +1235,20 @@ function MainApp() {
                             territoriosData={territoriosData}
                             variant="nav"
                             darkMode={darkMode}
+                            className={`p-2.5 rounded-lg transition-colors ${isLoadingPipeline ? 'opacity-50 cursor-not-allowed' : ''} ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-green-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-green'}`}
                         />
                     </Suspense>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
 
-                    <button data-tutorial="filter-button" onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-lg flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? 'bg-gov-blue text-white shadow-md' : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue')}`} title="Filtros Avançados">
-                        <Filter size={18} strokeWidth={2.5} />
+                    <button data-tutorial="filter-button" onClick={() => setIsSideFilterOpen(!isSideFilterOpen)} className={`py-4 px-2.5 rounded-lg flex flex-col items-center gap-3 transition-all ${isSideFilterOpen ? (darkMode ? 'bg-gov-blue text-white shadow-md' : 'bg-gov-cyan text-white shadow-md font-black') : (darkMode ? 'text-blue-400 hover:bg-gray-800 hover:text-blue-300' : 'text-gray-600 hover:bg-gray-100 hover:text-gov-cyan font-bold')}`} title="Filtros Avançados">
+                        <div className="relative">
+                            <Filter size={18} strokeWidth={2.5} />
+                            {hasActiveFilters && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-gov-yellow rounded-full border border-white dark:border-gray-900" title="Filtros ativos"></span>
+                            )}
+                        </div>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>Filtros</span>
                     </button>
 
@@ -1443,17 +1427,15 @@ function MainApp() {
                                     <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
 
                                         {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
-                                        <div className={`transition-all duration-500 flex-shrink-0 flex ${selectedLocation ? 'opacity-40 pointer-events-none grayscale-[30%]' : ''}`}>
-                                            <SubKpiPanel
-                                                darkMode={darkMode}
-                                                selectedLocation={selectedLocation}
-                                                dashboardData={dashboardData}
-                                                ctiFilters={ctiFilters}
-                                                setCtiFilters={handleSetCtiFilters}
-                                                isCtiFilterActive={isCtiFilterActive}
-                                                setIsCtiFilterActive={setIsCtiFilterActive}
-                                            />
-                                        </div>
+                                        <SubKpiPanel
+                                            darkMode={darkMode}
+                                            selectedLocation={selectedLocation}
+                                            dashboardData={dashboardData}
+                                            ctiFilters={ctiFilters}
+                                            setCtiFilters={setCtiFilters}
+                                            isCtiFilterActive={isCtiFilterActive}
+                                            setIsCtiFilterActive={setIsCtiFilterActive}
+                                        />
 
                                         {/* COLUNA DO MAPA (40%) */}
                                         <MapSection
@@ -1508,10 +1490,10 @@ function MainApp() {
             {location.pathname === '/territorios' && (
                 <button
                     onClick={() => setIsTutorialOpen(true)}
-                    className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform hover:scale-110 bg-gov-blue text-white hover:bg-gov-blue-dark"
+                    className="fixed bottom-6 right-4 sm:right-6 xl:right-10 2xl:right-14 z-[100] w-[52px] h-[52px] rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform hover:scale-110 bg-gov-blue text-white hover:bg-gov-blue-dark"
                     title="Tutorial de uso"
                 >
-                    <HelpCircle size={28} strokeWidth={2.5} />
+                    <HelpCircle size={26} strokeWidth={2.5} />
                 </button>
             )}
 
