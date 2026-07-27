@@ -259,7 +259,8 @@ export default function useTerritoriosData(filters) {
                 if (activeCtiCategories.length === 0) {
                     passesCtiAndLogic = false;
                 } else {
-                    passesCtiAndLogic = activeCtiCategories.every(cat => {
+                    // MUDANÇA AQUI: Alterado de .every() (E) para .some() (OU)
+                    passesCtiAndLogic = activeCtiCategories.some(cat => {
                         return (t.entidadesDetalhadas || []).some(ent => {
                             if (!isMunValid(ent.municipio)) return false;
                             if (ent.categoria !== cat) return false;

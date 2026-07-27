@@ -117,39 +117,9 @@ export function SubKpiPanel(props) {
     return ctiFilterKeys.every(key => ctiFilters[key]);
   }, [ctiFilters, ctiFilterKeys]);
 
-  const activeCtiCount = useMemo(() => {
-    return ctiFilterKeys.filter(key => ctiFilters[key]).length;
-  }, [ctiFilters, ctiFilterKeys]);
-
-  const isEffectiveFilterActive = isCtiFilterActive && activeCtiCount > 0;
-
-  const toggleCtiFilter = (keyToToggle) => {
-    setIsCtiFilterActive(true);
-    setCtiFilters(prev => ({ ...prev, [keyToToggle]: !prev[keyToToggle] }));
-  };
-
-  const handleToggleAllCti = () => {
-    const nextValue = !areAllCtiSelected;
-    const newFilters = {};
-    ctiFilterKeys.forEach(key => { newFilters[key] = nextValue; });
-    setIsCtiFilterActive(nextValue);
-    setCtiFilters(newFilters);
-  };
-
-  const handleFilterToggleBtn = () => {
-    if (isCtiFilterActive) {
-      setIsCtiFilterActive(false);
-      const newFilters = {};
-      ctiFilterKeys.forEach(key => { newFilters[key] = true; });
-      setCtiFilters(newFilters);
-    } else {
-      setIsCtiFilterActive(true);
-      const newFilters = {};
-      ctiFilterKeys.forEach(key => { newFilters[key] = false; });
-      setCtiFilters(newFilters);
-    }
-  };
-
+  // ==========================================
+  // NOVO: Lógica de Auto-Reset (Ao clicar no painel)
+  // ==========================================
   const handleCtiKpiClick = (clickedKey) => {
     if (!isCtiFilterActive) {
       setIsCtiFilterActive(true);
@@ -157,7 +127,18 @@ export function SubKpiPanel(props) {
       ctiFilterKeys.forEach(key => { newFilters[key] = (key === clickedKey); });
       setCtiFilters(newFilters);
     } else {
-      setCtiFilters(prev => ({ ...prev, [clickedKey]: !prev[clickedKey] }));
+      const activeKeys = ctiFilterKeys.filter(k => ctiFilters[k]);
+      
+      // Se apenas uma caixa está ativa e o utilizador clicou nela para a desmarcar -> AUTO RESET
+      if (activeKeys.length === 1 && activeKeys[0] === clickedKey) {
+        setIsCtiFilterActive(false);
+        const resetState = {};
+        ctiFilterKeys.forEach(k => resetState[k] = true);
+        setCtiFilters(resetState);
+      } else {
+        // Comportamento normal de ligar/desligar
+        setCtiFilters(prev => ({ ...prev, [clickedKey]: !prev[clickedKey] }));
+      }
     }
   };
 
@@ -183,15 +164,19 @@ export function SubKpiPanel(props) {
     }));
   }, [dashboardData, darkMode]);
 
-  if (selectedLocation || subKpisList.length === 0) return null;
+  // MUDANÇA AQUI: Removemos o selectedLocation desta trava, agora ele não desaparece!
+  if (subKpisList.length === 0) return null;
 
   return (
-    <div data-tutorial="cti-panel" className={`relative z-30 hover:z-[999] w-full lg:w-52 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all animate-soft-fade ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}>
+    <div 
+      data-tutorial="cti-panel" 
+      // MUDANÇA AQUI: Se um território for selecionado, ele fica translúcido, cinza e inclicável
+      className={`relative w-full lg:w-52 flex-shrink-0 h-auto lg:h-full rounded-2xl border shadow-sm flex flex-col overflow-visible transition-all duration-500 animate-soft-fade ${selectedLocation ? 'opacity-40 pointer-events-none grayscale-[30%] z-10' : 'z-30 hover:z-[999]'} ${darkMode ? 'bg-gray-800/40 border-gray-700' : 'bg-white border-gray-200/80'}`}
+    >
       <div className={`px-3.5 py-3 rounded-t-2xl border-b flex items-center justify-between shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50/50 border-gray-100'}`}>
         <h4 className={`text-[10px] font-black uppercase tracking-widest opacity-80 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
           Ativos CT&I
         </h4>
-
       </div>
 
       <div className="flex-1 min-h-0 overflow-visible p-3">
@@ -212,7 +197,7 @@ export function SubKpiPanel(props) {
                       ? (darkMode
                           ? 'bg-slate-800/20 border-gray-800 opacity-30 hover:opacity-50'
                           : 'bg-gray-50/40 border-gray-100 opacity-35 hover:opacity-55')
-                      : (darkMode ? 'bg-slate-800/40 border-slate-700 opacity-100' : 'bg-white/80 border-slate-200/50 opacity-100')
+                      : (darkMode ? 'bg-slate-800/40 border-slate-700 opacity-100 hover:bg-slate-800/70' : 'bg-white/80 border-slate-200/50 opacity-100 hover:bg-gray-50')
                 }`}
               >
               <div className="min-w-0 flex-1 pr-1.5">
@@ -246,8 +231,8 @@ export function SubKpiPanel(props) {
             </div>
           );
         })}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

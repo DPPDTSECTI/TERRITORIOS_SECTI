@@ -126,6 +126,28 @@ function MainApp() {
     });
     const [isCtiFilterActive, setIsCtiFilterActive] = useState(false);
 
+    // ==========================================
+    // NOVA LÓGICA DE AUTO-RESET PARA CTI FILTERS
+    // ==========================================
+    const handleSetCtiFilters = useCallback((updater) => {
+        setCtiFilters(prev => {
+            const newState = typeof updater === 'function' ? updater(prev) : updater;
+            const activeCount = Object.values(newState).filter(Boolean).length;
+            const totalKeys = Object.keys(newState).length;
+
+            // Se o usuário desmarcar todas, religa todas automaticamente
+            if (activeCount === 0) {
+                setIsCtiFilterActive(false);
+                const resetState = {};
+                Object.keys(newState).forEach(k => resetState[k] = true);
+                return resetState;
+            }
+
+            setIsCtiFilterActive(activeCount < totalKeys);
+            return newState;
+        });
+    }, []);
+
     const sideFilterRef = useRef(null);
     const searchDropdownRef = useRef(null);
     const areaGeralRef = useRef(null);
@@ -146,10 +168,10 @@ function MainApp() {
         setCadeiaSearchTerm('');
         setCursoSearchTerm('');
         setCtiSearchTerm('');
-        setCtiFilters({
+        // Reseta via o handleSetCtiFilters para padronizar
+        handleSetCtiFilters({
             campiUniversidadePublica: true, campiUniversidadePrivada: true, campiInstitutoFederal: true, icts: true, centrosPesquisa: true, espacoDinamizadoress: true, parquesTecnologicos: true, incubadorasAceleradoras: true
         });
-        setIsCtiFilterActive(false);
         setIsDropdownOpen(false);
         setIsCardCadeiaFilterOpen(false);
     };
@@ -257,7 +279,7 @@ function MainApp() {
     }, []);
 
     const toggleCtiFilter = (key) => {
-        setCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
+        handleSetCtiFilters(prev => ({ ...prev, [key]: !prev[key] }));
     };
     
     // AQUI TAMBÉM INCLUI ACELERADORAS NAS CHAVES
@@ -268,7 +290,7 @@ function MainApp() {
         const newValue = !areAllCtiSelected;
         const newFilters = {};
         ctiFilterKeys.forEach(key => { newFilters[key] = newValue; });
-        setCtiFilters(newFilters);
+        handleSetCtiFilters(newFilters);
     };
 
     const handleAreaGeralToggle = createArrayFilterToggleHandler(setAreaGeralFilter);
@@ -666,19 +688,19 @@ function MainApp() {
                                                                 </label>
                                                                 {ctiFilterKeys.map((key) => (
                                                                     <label key={key} className="flex items-center gap-2 text-[10px] font-semibold cursor-pointer pl-1">
-                                                                    <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
-                                                                    <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>
-                                                                        {{ 
-                                                                        campiUniversidadePublica: 'Campi Universidade Pública', 
-                                                                        campiUniversidadePrivada: 'Campi Universidade Privada', 
-                                                                        campiInstitutoFederal: 'Campi Inst. Federais', 
-                                                                        icts: 'ICTs', 
-                                                                        centrosPesquisa: 'Centros de Pesquisa', 
-                                                                        espacoDinamizadoress: 'Espaços Dinamizadores', 
-                                                                        parquesTecnologicos: 'Parques Tecnológicos', 
-                                                                        incubadorasAceleradoras: 'Incubadoras & Aceleradoras' 
-                                                                        }[key]}
-                                                                    </span>
+                                                                        <input type="checkbox" checked={ctiFilters[key]} onChange={() => toggleCtiFilter(key)} className="rounded border-gray-300 text-gov-blue focus:ring-gov-blue h-3 w-3" />
+                                                                        <span className={ctiFilters[key] ? 'opacity-100' : 'opacity-40'}>
+                                                                            {{ 
+                                                                                campiUniversidadePublica: 'Campi Universidade Pública', 
+                                                                                campiUniversidadePrivada: 'Campi Universidade Privada', 
+                                                                                campiInstitutoFederal: 'Campi Inst. Federais', 
+                                                                                icts: 'ICTs', 
+                                                                                centrosPesquisa: 'Centros de Pesquisa', 
+                                                                                espacoDinamizadoress: 'Espaços Dinamizadores', 
+                                                                                parquesTecnologicos: 'Parques Tecnológicos', 
+                                                                                incubadorasAceleradoras: 'Incubadoras & Aceleradoras' 
+                                                                            }[key]}
+                                                                        </span>
                                                                     </label>
                                                                 ))}
                                                                 </div>
@@ -686,7 +708,7 @@ function MainApp() {
                                                                 <button onClick={handleToggleAllCti} className={`mt-1.5 w-full h-7 rounded-md font-bold text-[8px] uppercase tracking-wider border transition-colors ${darkMode ? 'border-gov-red/30 text-red-400 hover:bg-gov-red/20' : 'border-gov-red/30 text-gov-red-dark hover:bg-gov-red/10'}`}>Limpar</button>
                                                                 )}
                                                             </div>
-                                                            )}
+                                                        )}
                                                     </div>
                                                 </React.Fragment>
                                             );
@@ -1421,15 +1443,17 @@ function MainApp() {
                                     <div className="flex flex-col lg:flex-row gap-4 items-stretch h-auto lg:h-[calc(100vh-180px)] lg:min-h-[500px] w-full mt-4 mb-3">
 
                                         {/* PAINEL VERTICAL DE KPIS (coluna da esquerda) */}
-                                        <SubKpiPanel
-                                            darkMode={darkMode}
-                                            selectedLocation={selectedLocation}
-                                            dashboardData={dashboardData}
-                                            ctiFilters={ctiFilters}
-                                            setCtiFilters={setCtiFilters}
-                                            isCtiFilterActive={isCtiFilterActive}
-                                            setIsCtiFilterActive={setIsCtiFilterActive}
-                                        />
+                                        <div className={`transition-all duration-500 flex-shrink-0 flex ${selectedLocation ? 'opacity-40 pointer-events-none grayscale-[30%]' : ''}`}>
+                                            <SubKpiPanel
+                                                darkMode={darkMode}
+                                                selectedLocation={selectedLocation}
+                                                dashboardData={dashboardData}
+                                                ctiFilters={ctiFilters}
+                                                setCtiFilters={handleSetCtiFilters}
+                                                isCtiFilterActive={isCtiFilterActive}
+                                                setIsCtiFilterActive={setIsCtiFilterActive}
+                                            />
+                                        </div>
 
                                         {/* COLUNA DO MAPA (40%) */}
                                         <MapSection
