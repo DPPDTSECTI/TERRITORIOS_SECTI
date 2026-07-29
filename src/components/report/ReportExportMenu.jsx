@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, Image, FileText, FileSpreadsheet, ChevronDown, Loader2 } from 'lucide-react';
-import { exportReportAsImage } from '../../../utils/reportExportService.js';
-import { generateAndDownloadReport } from '../../../utils/pdfReportService.js';
+import { Download, FileText, FileSpreadsheet, ChevronDown, Loader2, CheckSquare, Square } from 'lucide-react';
+import { CATEGORIAS_RELATORIO } from '../../../utils/reportCategorias.js';
+import { generateAndDownloadUnifiedReport } from '../../../utils/unifiedReportService.js';
 import { exportToExcel } from '../ExcelExportButton.jsx';
 
 export default function ReportExportMenu({
@@ -14,6 +14,9 @@ export default function ReportExportMenu({
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportStatus, setExportStatus] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState(() =>
+    CATEGORIAS_RELATORIO.map((c) => c.id)
+  );
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -26,45 +29,41 @@ export default function ReportExportMenu({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleExportPNG = async (elementId, prefix) => {
-    setIsExporting(true);
-    setExportStatus('Gerando imagem PNG...');
-    try {
-      await exportReportAsImage(elementId, prefix);
-    } catch (err) {
-      console.error('Erro ao exportar PNG:', err);
-      alert('Erro ao exportar imagem PNG. Verifique se o elemento está disponível.');
-    } finally {
-      setIsExporting(false);
-      setExportStatus(null);
-      setIsOpen(false);
+  const toggleCategory = (id) => {
+    setSelectedCategories((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAll = () => {
+    if (selectedCategories.length === CATEGORIAS_RELATORIO.length) {
+      setSelectedCategories([]);
+    } else {
+      setSelectedCategories(CATEGORIAS_RELATORIO.map((c) => c.id));
     }
   };
 
   const handleExportPDF = async () => {
+    if (selectedCategories.length === 0) {
+      alert('Selecione ao menos uma categoria para gerar o relatório PDF.');
+      return;
+    }
+
     setIsExporting(true);
     setExportStatus('Gerando PDF institucional...');
     try {
-      const munEl = document.getElementById('municipios-report-image');
-      const heatEl = document.getElementById('area-heatmap-image');
-
-      await generateAndDownloadReport({
+      await generateAndDownloadUnifiedReport({
+        categoriasSelecionadasIds: selectedCategories,
+        territoriosData,
+        filtros,
         title: 'Programa de Ciência, Tecnologia e Inovação',
-        subtitle: filtros.selectedLocation
-          ? `Relatório Agregado — ${filtros.selectedLocation.nome || filtros.selectedLocation.territory}`
-          : 'Relatório Institucional Agregado — Estado da Bahia',
-        municipiosData: territoriosData,
-        municipiosReportElement: munEl,
-        heatmapReportElement: heatEl,
-        includeMunicipiosReport: Boolean(munEl),
-        includeHeatmapReport: Boolean(heatEl),
-        includeMap: false,
-        includeStatistics: false,
-        includeData: false,
-        filename: `Relatorio_CTI_Bahia_${new Date().toISOString().split('T')[0]}.pdf`,
+        subtitle:
+          filtros?.selectedLocation
+            ? `Relatório Agregado — ${filtros.selectedLocation.nome || filtros.selectedLocation.territory}`
+            : 'Relatório Institucional Agregado — Estado da Bahia',
       });
     } catch (err) {
-      console.error('Erro ao gerar PDF:', err);
+      console.error('Erro ao gerar PDF unificado:', err);
       alert('Erro ao exportar relatório PDF. Verifique o console.');
     } finally {
       setIsExporting(false);
@@ -88,17 +87,18 @@ export default function ReportExportMenu({
     }
   };
 
-  const buttonStyle = variant === 'nav'
-    ? `p-2.5 rounded-lg transition-colors flex items-center justify-center ${
-        darkMode
-          ? 'text-gray-400 hover:bg-gray-800 hover:text-green-400'
-          : 'text-gray-500 hover:bg-gray-100 hover:text-gov-green'
-      }`
-    : `px-5 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg ${
-        darkMode
-          ? 'bg-gov-blue hover:bg-blue-600 text-white'
-          : 'bg-gov-green-600 hover:bg-gov-green-700 text-white'
-      }`;
+  const buttonStyle =
+    variant === 'nav'
+      ? `p-2.5 rounded-lg transition-colors flex items-center justify-center ${
+          darkMode
+            ? 'text-gray-400 hover:bg-gray-800 hover:text-green-400'
+            : 'text-gray-500 hover:bg-gray-100 hover:text-gov-green'
+        }`
+      : `px-5 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg ${
+          darkMode
+            ? 'bg-gov-blue hover:bg-blue-600 text-white'
+            : 'bg-gov-green-600 hover:bg-gov-green-700 text-white'
+        }`;
 
   return (
     <div className="relative inline-block text-left" ref={menuRef}>
@@ -107,7 +107,7 @@ export default function ReportExportMenu({
         onClick={() => setIsOpen(!isOpen)}
         disabled={isExporting}
         className={`${buttonStyle} ${className}`}
-        title="Exportar Relatórios Agregados (PNG / PDF / Excel)"
+        title="Exportar Relatórios Agregados (PDF / Excel)"
       >
         {isExporting ? (
           <Loader2 size={18} className="animate-spin text-gov-green-500" />
@@ -119,87 +119,98 @@ export default function ReportExportMenu({
             <span className="hidden md:inline">
               {isExporting ? exportStatus || 'Exportando...' : 'Exportar Relatório'}
             </span>
-            <ChevronDown size={13} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              size={13}
+              className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            />
           </>
         )}
       </button>
 
       {isOpen && (
         <div
-          className={`absolute right-0 mt-2 w-64 rounded-xl shadow-2xl border backdrop-blur-md z-50 overflow-hidden transform transition-all ${
+          className={`absolute right-0 mt-2 w-80 rounded-xl shadow-2xl border backdrop-blur-md z-50 overflow-hidden transform transition-all ${
             darkMode
               ? 'bg-gray-900/95 border-gray-700 text-gray-200'
               : 'bg-white/95 border-gray-200 text-gray-800'
           }`}
         >
           <div className="px-4 py-3 border-b border-gray-200/50 dark:border-gray-800">
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Opções de Exportação
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Seções do Relatório PDF
+              </p>
+              <button
+                type="button"
+                onClick={toggleAll}
+                className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {selectedCategories.length === CATEGORIAS_RELATORIO.length
+                  ? 'Desmarcar todas'
+                  : 'Marcar todas'}
+              </button>
+            </div>
             <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
-              Aplicável aos filtros atualmente selecionados
+              Escolha as categorias para compor o arquivo
             </p>
           </div>
 
-          <div className="py-1">
-            <button
-              onClick={() => handleExportPNG('municipios-report-image', 'relatorio_municipios_secti')}
-              disabled={isExporting}
-              className={`w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center gap-3 transition-colors ${
-                darkMode ? 'hover:bg-gray-800 text-gray-300' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Image size={16} className="text-blue-500 flex-shrink-0" />
-              <div>
-                <div className="font-bold">Exportar Imagem (PNG)</div>
-                <div className="text-[10px] text-gray-500 dark:text-gray-400">Mapa e Municípios com Ensino Superior</div>
-              </div>
-            </button>
+          <div className="px-4 py-2 space-y-2 max-h-64 overflow-y-auto">
+            {CATEGORIAS_RELATORIO.map((cat) => {
+              const checked = selectedCategories.includes(cat.id);
+              return (
+                <label
+                  key={cat.id}
+                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors text-xs ${
+                    darkMode
+                      ? 'hover:bg-gray-800/80 text-gray-200'
+                      : 'hover:bg-gray-100/80 text-gray-700'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => toggleCategory(cat.id)}
+                    className="sr-only"
+                  />
+                  {checked ? (
+                    <CheckSquare size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                  ) : (
+                    <Square size={16} className="text-gray-400 dark:text-gray-600 flex-shrink-0" />
+                  )}
+                  <span className="font-medium">{cat.label}</span>
+                </label>
+              );
+            })}
+          </div>
 
-            <button
-              onClick={() => handleExportPNG('area-heatmap-image', 'relatorio_heatmap_secti')}
-              disabled={isExporting}
-              className={`w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center gap-3 transition-colors ${
-                darkMode ? 'hover:bg-gray-800 text-gray-300' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Image size={16} className="text-indigo-500 flex-shrink-0" />
-              <div>
-                <div className="font-bold">Exportar Heatmap (PNG)</div>
-                <div className="text-[10px] text-gray-500 dark:text-gray-400">Matriz Município × Área do Conhecimento</div>
-              </div>
-            </button>
-
-            <div className="my-1 border-t border-gray-200/60 dark:border-gray-800"></div>
-
+          <div className="p-3 bg-gray-50 dark:bg-gray-900/80 border-t border-gray-200/50 dark:border-gray-800 space-y-2">
             <button
               onClick={handleExportPDF}
-              disabled={isExporting}
-              className={`w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center gap-3 transition-colors ${
-                darkMode ? 'hover:bg-gray-800 text-gray-300' : 'hover:bg-gray-50 text-gray-700'
+              disabled={isExporting || selectedCategories.length === 0}
+              className={`w-full py-2.5 px-4 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all shadow ${
+                selectedCategories.length === 0
+                  ? 'bg-gray-300 dark:bg-gray-800 text-gray-500 cursor-not-allowed'
+                  : darkMode
+                  ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/30'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
               }`}
             >
-              <FileText size={16} className="text-red-500 flex-shrink-0" />
-              <div>
-                <div className="font-bold">Exportar PDF Completo</div>
-                <div className="text-[10px] text-gray-500 dark:text-gray-400">Relatório institucional padrão ABNT</div>
-              </div>
+              <FileText size={16} />
+              <span>Gerar Relatório PDF</span>
             </button>
-
-            <div className="my-1 border-t border-gray-200/60 dark:border-gray-800"></div>
 
             <button
               onClick={handleExportExcel}
               disabled={isExporting}
-              className={`w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center gap-3 transition-colors ${
-                darkMode ? 'hover:bg-gray-800 text-gray-300' : 'hover:bg-gray-50 text-gray-700'
+              className={`w-full py-2.5 px-4 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-colors border ${
+                darkMode
+                  ? 'border-gray-700 hover:bg-gray-800 text-gray-300'
+                  : 'border-gray-300 hover:bg-gray-100 text-gray-700'
               }`}
             >
-              <FileSpreadsheet size={16} className="text-green-600 flex-shrink-0" />
-              <div>
-                <div className="font-bold">Exportar Planilha (Excel)</div>
-                <div className="text-[10px] text-gray-500 dark:text-gray-400">Dados consolidados em 5 abas (.xlsx)</div>
-              </div>
+              <FileSpreadsheet size={16} className="text-green-600" />
+              <span>Exportar Planilha (Excel)</span>
             </button>
           </div>
         </div>

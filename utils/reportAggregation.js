@@ -71,50 +71,75 @@ function isCourseMatchingFilters(t, curso, filtros = {}) {
 }
 
 /**
- * Monta lista de municípios com ensino superior PÚBLICO ordenados alfabeticamente.
- * Retorna: [{ numero: 1, municipio: "Nome", instituicoes: [{ sigla: "UFBA", categoria: "federal" }] }]
+ * Monta lista de municípios com instituições ordenados alfabeticamente.
+ * Suporta tanto o array de territórios (dados brutos) com filtros quanto uma lista direta de entidades já filtradas.
+ * Retorna: [{ numero: 1, municipio: "Nome", instituicoes: [{ sigla: "UFBA", nome: "...", categoria: "federal" }] }]
  */
-export function buildMunicipiosInstituicoesList(territoriosData = [], filtros = {}) {
-  if (!Array.isArray(territoriosData) || territoriosData.length === 0) {
+export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
+  if (!Array.isArray(inputData) || inputData.length === 0) {
     return [];
   }
 
+  const isTerritoryList = inputData.some(
+    item =>
+      item &&
+      (item.cursosDetalhado ||
+        item.capacidadeDetalhada ||
+        item.entidadesDetalhadas ||
+        item.territory ||
+        item.territories)
+  );
+
   const munMap = new Map();
 
-  territoriosData.forEach(t => {
-    const cursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
-    cursos.forEach(curso => {
-      if (!curso.municipio) return;
-      if (!isCourseMatchingFilters(t, curso, filtros)) return;
+  const addEntityToMap = (munName, ent, fallbackCat = '') => {
+    if (!munName) return;
+    const cleanMun = munName.trim();
+    const munNorm = normalize(cleanMun);
 
-      const info = classificarInstituicao(curso);
-      // Incluir apenas instituições públicas no relatório institucional
-      if (!info.isPublica || !info.categoria || info.categoria === 'privada') {
-        return;
-      }
+    if (!munMap.has(munNorm)) {
+      munMap.set(munNorm, {
+        municipio: cleanMun,
+        instMap: new Map(),
+      });
+    }
 
-      const munName = curso.municipio.trim();
-      const munNorm = normalize(munName);
+    const entry = munMap.get(munNorm);
+    const info = classificarInstituicao(ent);
+    const sigla = info.sigla || ent.sigla || ent.entidade || ent.nome || 'Não Informada';
+    const siglaNorm = normalize(sigla);
 
-      if (!munMap.has(munNorm)) {
-        munMap.set(munNorm, {
-          municipio: munName,
-          instMap: new Map(),
-        });
-      }
+    if (!entry.instMap.has(siglaNorm)) {
+      entry.instMap.set(siglaNorm, {
+        sigla,
+        nome: ent.entidade || ent.nome || sigla,
+        categoria: info.categoria || ent.categoria || fallbackCat || 'Não Informada',
+      });
+    }
+  };
 
-      const entry = munMap.get(munNorm);
-      const sigla = info.sigla || curso.entidade || 'Não Informada';
-      const siglaNorm = normalize(sigla);
+  if (isTerritoryList) {
+    inputData.forEach(t => {
+      const cursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
+      cursos.forEach(curso => {
+        if (!curso.municipio) return;
+        if (!isCourseMatchingFilters(t, curso, filtros)) return;
 
-      if (!entry.instMap.has(siglaNorm)) {
-        entry.instMap.set(siglaNorm, {
-          sigla,
-          categoria: info.categoria, // 'federal' | 'estadual' | 'institutoFederal'
-        });
-      }
+        const info = classificarInstituicao(curso);
+        // Compatibilidade com comportamento original se chamado sobre cursosDetalhado para relatório público
+        if (!info.isPublica || !info.categoria || info.categoria === 'privada') {
+          return;
+        }
+        addEntityToMap(curso.municipio, curso, info.categoria);
+      });
     });
-  });
+  } else {
+    // É uma lista direta de entidades já filtradas (públicas ou privadas)
+    inputData.forEach(ent => {
+      if (!ent || !ent.municipio) return;
+      addEntityToMap(ent.municipio, ent, ent.categoria);
+    });
+  }
 
   const munsSorted = Array.from(munMap.values()).sort((a, b) =>
     a.municipio.localeCompare(b.municipio, 'pt-BR')
@@ -237,4 +262,135 @@ export function buildTopMunicipiosRanking(territoriosData = [], filtros = {}, li
   });
 
   return topN;
+}
+
+/**
+ * Monta lista de cadeias produtivas ordenadas por segmento e sede.
+ * Retorna array de { segmento, sede, territorios, municipiosPertencentes, tipo, entidade }
+ */
+export function buildCadeiasPorSegmento(inputData = []) {
+  if (!Array.isArray(inputData) || inputData.length === 0) {
+    return [];
+  }
+
+  let cadeiasList = [];
+  const isTerritoryList = inputData.some(
+    item => item && (item.cadeiasProdutivasDetalhado || item.territory || item.territories)
+  );
+
+  if (isTerritoryList) {
+    inputData.forEach(t => {
+      const cads = Array.isArray(t.cadeiasProdutivasDetalhado)
+        ? t.cadeiasProdutivasDetalhado
+        : [];
+      cads.forEach(cad => {
+        if (cad) cadeiasList.push(cad);
+      });
+    });
+  } else {
+    cadeiasList = inputData.filter(Boolean);
+  }
+
+  const listFormatted = cadeiasList.map(cad => ({
+    segmento: cad.segmento || 'Não Informado',
+    sede: cad.sede || 'Não Informada',
+    territorios: Array.isArray(cad.territorios)
+      ? cad.territorios.join(', ')
+      : cad.territorios || cad.territorio || 'N/A',
+    municipiosPertencentes: cad.municipiosPertencentes || 'N/A',
+    tipo: cad.tipo || '',
+    entidade: cad.entidade || '',
+  }));
+
+  return listFormatted.sort((a, b) => {
+    const cmpSeg = a.segmento.localeCompare(b.segmento, 'pt-BR');
+    if (cmpSeg !== 0) return cmpSeg;
+    return a.sede.localeCompare(b.sede, 'pt-BR');
+  });
+}
+
+export const CTI_CATEGORY_LABELS = {
+  icts: 'ICTs',
+  centrosPesquisa: 'Centros de Pesquisa',
+  parquesTecnologicos: 'Parques Tecnológicos',
+  incubadoras: 'Incubadoras',
+  aceleradoras: 'Aceleradoras',
+  incubadorasAceleradoras: 'Incubadoras e Aceleradoras',
+  espacoDinamizadoress: 'Espaços Dinamizadores',
+  campiUniversidadePublica: 'Campi Universidade Pública',
+  campiInstitutoFederal: 'Campi Instituto Federal',
+  campiUniversidadePrivada: 'Campi Universidade Privada',
+};
+
+/**
+ * Monta agrupamento de entidades de CT&I por categoria.
+ * Retorna array ordenado de { categoria, label, total, entidades: [{ entidade, municipio, tipo, categoria }] }
+ */
+export function buildEntidadesPorCategoria(inputData = []) {
+  if (!Array.isArray(inputData) || inputData.length === 0) {
+    return [];
+  }
+
+  let entidadesList = [];
+  const isTerritoryList = inputData.some(
+    item =>
+      item &&
+      (item.capacidadeDetalhada ||
+        item.entidadesDetalhadas ||
+        item.territory ||
+        item.territories)
+  );
+
+  if (isTerritoryList) {
+    inputData.forEach(t => {
+      const ents = Array.isArray(t.capacidadeDetalhada)
+        ? t.capacidadeDetalhada
+        : Array.isArray(t.entidadesDetalhadas)
+          ? t.entidadesDetalhadas
+          : [];
+      ents.forEach(ent => {
+        if (ent) entidadesList.push(ent);
+      });
+    });
+  } else {
+    entidadesList = inputData.filter(Boolean);
+  }
+
+  const map = new Map();
+
+  entidadesList.forEach(ent => {
+    let cat = ent.categoria || 'outros';
+    if (cat === 'incubadoras' || cat === 'aceleradoras') {
+      cat = 'incubadorasAceleradoras';
+    }
+
+    if (!map.has(cat)) {
+      map.set(cat, {
+        categoria: cat,
+        label: CTI_CATEGORY_LABELS[cat] || cat,
+        total: 0,
+        entidades: [],
+      });
+    }
+
+    const group = map.get(cat);
+    group.total += 1;
+    group.entidades.push({
+      entidade: ent.entidade || ent.nome || 'Não Informada',
+      municipio: ent.municipio || 'Não Informado',
+      tipo: ent.tipo || CTI_CATEGORY_LABELS[cat] || cat,
+      categoria: cat,
+    });
+  });
+
+  const arrayResult = Array.from(map.values()).map(group => {
+    group.entidades.sort((a, b) =>
+      a.entidade.localeCompare(b.entidade, 'pt-BR')
+    );
+    return group;
+  });
+
+  return arrayResult.sort((a, b) =>
+    a.label.localeCompare(b.label, 'pt-BR')
+  );
 }

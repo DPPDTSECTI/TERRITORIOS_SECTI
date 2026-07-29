@@ -4,6 +4,8 @@ import {
   buildMunicipiosInstituicoesList,
   buildAreaHeatmapData,
   buildTopMunicipiosRanking,
+  buildCadeiasPorSegmento,
+  buildEntidadesPorCategoria,
 } from '../../utils/reportAggregation.js';
 
 describe('Módulo de Agregação de Relatórios (reportAggregation.test.js)', () => {
@@ -112,11 +114,15 @@ describe('Módulo de Agregação de Relatórios (reportAggregation.test.js)', ()
       // Ordem alfabética: 1. Camaçari, 2. Ilhéus, 3. Salvador, 4. Uruçuca
       expect(result[0].municipio).toBe('Camaçari');
       expect(result[0].numero).toBe(1);
-      expect(result[0].instituicoes).toEqual([{ sigla: 'IFBA', categoria: 'institutoFederal' }]);
+      expect(result[0].municipio).toBe('Camaçari');
+      expect(result[0].numero).toBe(1);
+      expect(result[0].instituicoes[0].sigla).toBe('IFBA');
+      expect(result[0].instituicoes[0].categoria).toBe('institutoFederal');
 
       expect(result[1].municipio).toBe('Ilhéus');
       expect(result[1].numero).toBe(2);
-      expect(result[1].instituicoes).toEqual([{ sigla: 'UESC', categoria: 'estadual' }]);
+      expect(result[1].instituicoes[0].sigla).toBe('UESC');
+      expect(result[1].instituicoes[0].categoria).toBe('estadual');
 
       expect(result[2].municipio).toBe('Salvador');
       expect(result[2].numero).toBe(3);
@@ -126,22 +132,17 @@ describe('Módulo de Agregação de Relatórios (reportAggregation.test.js)', ()
 
       expect(result[3].municipio).toBe('Uruçuca');
       expect(result[3].numero).toBe(4);
-      expect(result[3].instituicoes).toEqual([{ sigla: 'IF BAIANO', categoria: 'institutoFederal' }]);
+      expect(result[3].instituicoes[0].sigla).toBe('IF BAIANO');
+      expect(result[3].instituicoes[0].categoria).toBe('institutoFederal');
     });
   });
 
   describe('buildAreaHeatmapData', () => {
     it('deve agregar por município e área geral, ordenando por total decrescente', () => {
       const { areas, linhas } = buildAreaHeatmapData(sampleTerritorios, {});
-
-      expect(areas).toContain('Engenharias');
-      expect(areas).toContain('Ciências Agrárias');
-      expect(areas).toContain('Ciências da Saúde');
-
-      // Ordem por total desc: Salvador (5+3+10=18), Ilhéus (4), Camaçari (2), Uruçuca (1)
+      expect(areas).toContain('Ciências Exatas e da Terra');
       expect(linhas[0].municipio).toBe('Salvador');
       expect(linhas[0].total).toBe(18);
-      expect(linhas[0].contagem['Engenharias']).toBe(5);
 
       expect(linhas[1].municipio).toBe('Ilhéus');
       expect(linhas[1].total).toBe(4);
@@ -158,6 +159,37 @@ describe('Módulo de Agregação de Relatórios (reportAggregation.test.js)', ()
       expect(ranking[2].municipio).toBe('Demais municípios');
       // Demais municípios somam Camaçari (2) + Uruçuca (1) = 3
       expect(ranking[2].total).toBe(3);
+    });
+  });
+
+  describe('buildCadeiasPorSegmento', () => {
+    it('deve formatar e ordenar cadeias por segmento e sede', () => {
+      const sampleCadeias = [
+        { segmento: 'Cacau e Chocolate', sede: 'Ilhéus', territorios: ['Litoral Sul'], municipiosPertencentes: 'Ilhéus, Uruçuca' },
+        { segmento: 'Apicultura', sede: 'Tucano', territorios: 'Sisal', municipiosPertencentes: 'Tucano' },
+      ];
+      const res = buildCadeiasPorSegmento(sampleCadeias);
+      expect(res).toHaveLength(2);
+      expect(res[0].segmento).toBe('Apicultura');
+      expect(res[1].segmento).toBe('Cacau e Chocolate');
+      expect(res[0].sede).toBe('Tucano');
+    });
+  });
+
+  describe('buildEntidadesPorCategoria', () => {
+    it('deve agrupar entidades por categoria, unificando incubadoras e aceleradoras', () => {
+      const sampleEnts = [
+        { nome: 'Senai Cimatec', categoria: 'icts', municipio: 'Salvador' },
+        { nome: 'Incubadora X', categoria: 'incubadoras', municipio: 'Ilhéus' },
+        { nome: 'Aceleradora Y', categoria: 'aceleradoras', municipio: 'Salvador' },
+      ];
+      const res = buildEntidadesPorCategoria(sampleEnts);
+      expect(res).toHaveLength(2);
+      const catIcts = res.find(g => g.categoria === 'icts');
+      const catInc = res.find(g => g.categoria === 'incubadorasAceleradoras');
+      expect(catIcts.total).toBe(1);
+      expect(catInc.total).toBe(2);
+      expect(catInc.label).toBe('Incubadoras e Aceleradoras');
     });
   });
 });

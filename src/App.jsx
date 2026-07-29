@@ -10,10 +10,14 @@ import KpiSection, { SubKpiPanel } from './components/KpiSection';
 import MapSection from './components/MapSection';
 import ListSection from './components/ListSection';
 import { resolveCadeiaFonte } from './utils/cadeiasUtils';
-import { buildMunicipiosInstituicoesList, buildAreaHeatmapData } from '../utils/reportAggregation.js';
+import { buildMunicipiosInstituicoesList, buildAreaHeatmapData, buildCadeiasPorSegmento, classificarInstituicao } from '../utils/reportAggregation.js';
+import { getTerritoryArrayByFonte } from '../utils/reportCategorias.js';
 import ReportExportMenu from './components/report/ReportExportMenu';
 import MunicipiosReportImage from './components/report/MunicipiosReportImage';
 import AreaHeatmap from './components/report/AreaHeatmap';
+import MapaNumeradoMunicipios from './components/report/MapaNumeradoMunicipios';
+import HeatmapAreaConhecimento from './components/report/HeatmapAreaConhecimento';
+import MapaCadeiasProdutivas from './components/report/MapaCadeiasProdutivas';
 
 // Carregamento Preguiçoso (Lazy Loading) das Rotas e Componentes Pesados
 const LandingHero = lazy(() => import('./components/hero'));
@@ -493,6 +497,52 @@ function MainApp() {
 
     const reportHeatmapData = useMemo(() => {
         return buildAreaHeatmapData(territoriosData, reportFiltros);
+    }, [territoriosData, reportFiltros]);
+
+    const reportUnivPublicasList = useMemo(() => {
+        return buildMunicipiosInstituicoesList(territoriosData, reportFiltros).filter(m =>
+            m.instituicoes && m.instituicoes.some(i => ['federal', 'estadual', 'institutoFederal', 'campiUniversidadePublica', 'campiInstitutoFederal'].includes(i.categoria))
+        );
+    }, [territoriosData, reportFiltros]);
+
+    const reportUnivPrivadasList = useMemo(() => {
+        const privEntities = [];
+        territoriosData.forEach(t => {
+            const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
+            arrCap.forEach(ent => {
+                if (ent && ent.categoria === 'campiUniversidadePrivada') {
+                    privEntities.push(ent);
+                }
+            });
+            const arrCursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
+            arrCursos.forEach(c => {
+                const info = classificarInstituicao(c);
+                if (info.categoria === 'privada' || c.categoria === 'campiUniversidadePrivada') {
+                    privEntities.push(c);
+                }
+            });
+        });
+        return buildMunicipiosInstituicoesList(privEntities, reportFiltros);
+    }, [territoriosData, reportFiltros]);
+
+    const reportCadeiasList = useMemo(() => {
+        return buildCadeiasPorSegmento(territoriosData);
+    }, [territoriosData]);
+
+    const reportAtivosCtiList = useMemo(() => {
+        const ativos = [];
+        territoriosData.forEach(t => {
+            const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
+            arrCap.forEach(ent => {
+                if (ent && ['icts', 'centrosPesquisa', 'parquesTecnologicos', 'incubadoras', 'aceleradoras', 'espacoDinamizadoress'].includes(ent.categoria)) {
+                    ativos.push({
+                        ...ent,
+                        municipio: ent.municipio || t.territory
+                    });
+                }
+            });
+        });
+        return buildMunicipiosInstituicoesList(ativos, reportFiltros);
     }, [territoriosData, reportFiltros]);
 
     const subKpisList = useMemo(() => {
@@ -1554,15 +1604,33 @@ function MainApp() {
 
             {/* Contêiner offscreen com layout fixo (em px) para captura pelo html2canvas (PNG/PDF) */}
             <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none', zIndex: -1 }}>
-                <MunicipiosReportImage
-                    id="municipios-report-image"
-                    municipiosList={reportMunicipiosList}
-                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Público no Estado da Bahia"}
-                />
-                <AreaHeatmap
-                    id="area-heatmap-image"
+                <HeatmapAreaConhecimento
+                    id="report-image-cursos"
                     heatmapData={reportHeatmapData}
                     subtitle={selectedLocation ? `Distribuição de Cursos — ${selectedLocation.nome || selectedLocation.territory}` : "Distribuição de Cursos por Município e Área Geral do Conhecimento"}
+                />
+                <MapaNumeradoMunicipios
+                    id="report-image-univ_publicas"
+                    municipiosList={reportUnivPublicasList}
+                    title="Universidades Públicas na Bahia"
+                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Público no Estado da Bahia"}
+                />
+                <MapaNumeradoMunicipios
+                    id="report-image-univ_privadas"
+                    municipiosList={reportUnivPrivadasList}
+                    title="Universidades Privadas na Bahia"
+                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Privado no Estado da Bahia"}
+                />
+                <MapaCadeiasProdutivas
+                    id="report-image-cadeias"
+                    cadeiasList={reportCadeiasList}
+                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Mapeamento de Sedes e Municípios de Influência na Bahia"}
+                />
+                <MapaNumeradoMunicipios
+                    id="report-image-ativos_cti"
+                    municipiosList={reportAtivosCtiList}
+                    title="Ativos de CT&I na Bahia"
+                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Infraestrutura de Pesquisa, Inovação e Empreendedorismo"}
                 />
             </div>
         </div>

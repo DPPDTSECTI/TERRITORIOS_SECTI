@@ -39,7 +39,7 @@ const ABNT_CONFIG = {
  * Cria um novo documento PDF com padrão ABNT
  * @returns {jsPDF} Documento PDF
  */
-function createPDFDocument() {
+export function createPDFDocument() {
   const pdf = new jsPDF({
     orientation: ABNT_CONFIG.orientation,
     unit: ABNT_CONFIG.unit,
@@ -100,7 +100,7 @@ async function addInstitutionalHeader(pdf, sectiLogoBase64) {
  * @param {string} subtitle - Subtítulo
  * @param {string} date - Data do relatório
  */
-async function addCover(pdf, sectiLogoBase64, conectaLogoBase64, title, subtitle, date) {
+export async function addCover(pdf, sectiLogoBase64, conectaLogoBase64, title, subtitle, date) {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const { left, right } = ABNT_CONFIG.margins;
@@ -232,7 +232,7 @@ function addTableOfContents(pdf, sections) {
  * @param {number} level - Nível do título (1, 2, 3)
  * @returns {number} Nova posição Y
  */
-function addSection(pdf, yPos, title, level = 1) {
+export function addSection(pdf, yPos, title, level = 1) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageHeight = pdf.internal.pageSize.getHeight();
   const contentWidth = pdf.internal.pageSize.getWidth() - left - right;
@@ -286,7 +286,7 @@ function addSection(pdf, yPos, title, level = 1) {
  * @param {string} text - Texto do parágrafo
  * @returns {number} Nova posição Y
  */
-function addParagraph(pdf, yPos, text) {
+export function addParagraph(pdf, yPos, text) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageHeight = pdf.internal.pageSize.getHeight();
   const contentWidth = pdf.internal.pageSize.getWidth() - left - right;
@@ -315,7 +315,7 @@ function addParagraph(pdf, yPos, text) {
  * @param {Array} rows - Linhas da tabela
  * @returns {number} Nova posição Y
  */
-function addTable(pdf, yPos, headers, rows) {
+export function addTable(pdf, yPos, headers, rows) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageHeight = pdf.internal.pageSize.getHeight();
   const contentWidth = pdf.internal.pageSize.getWidth() - left - right;
@@ -383,7 +383,7 @@ function addTable(pdf, yPos, headers, rows) {
  * @param {number} width - Largura da imagem em mm
  * @returns {number} Nova posição Y
  */
-function addImage(pdf, yPos, imageBase64, caption, width = 150) {
+export function addImage(pdf, yPos, imageBase64, caption, width = 150) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -425,7 +425,7 @@ function addImage(pdf, yPos, imageBase64, caption, width = 150) {
  * Adiciona rodapé ao PDF
  * @param {jsPDF} pdf - Documento PDF
  */
-function addFooter(pdf) {
+export function addFooter(pdf) {
   const pageHeight = pdf.internal.pageSize.getHeight();
   const pageWidth = pdf.internal.pageSize.getWidth();
   const { left, right } = ABNT_CONFIG.margins;
