@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import autoTable from 'jspdf-autotable';
 
 /**
  * Configurações ABNT para PDF
@@ -315,63 +316,44 @@ export function addParagraph(pdf, yPos, text) {
  * @param {Array} rows - Linhas da tabela
  * @returns {number} Nova posição Y
  */
+/**
+ * Adiciona tabela estilizada ABNT com suporte a células multilinhas (Bug 4) via jspdf-autotable
+ * @param {jsPDF} pdf - Documento PDF
+ * @param {number} yPos - Posição Y atual
+ * @param {Array} headers - Cabeçalhos da tabela
+ * @param {Array} rows - Linhas da tabela
+ * @returns {number} Nova posição Y
+ */
 export function addTable(pdf, yPos, headers, rows) {
   const { left, right } = ABNT_CONFIG.margins;
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const contentWidth = pdf.internal.pageSize.getWidth() - left - right;
 
-  // Verificar espaço
-  if (yPos > pageHeight - 60) {
-    pdf.addPage();
-    yPos = ABNT_CONFIG.margins.top;
-  }
-
-  const columnWidth = contentWidth / headers.length;
-
-  // Cabeçalho da tabela
-  pdf.setFillColor(...ABNT_CONFIG.colors.primary);
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFont('Helvetica', 'bold');
-  pdf.setFontSize(ABNT_CONFIG.fontSize.body - 1);
-
-  headers.forEach((header, i) => {
-    const x = left + i * columnWidth;
-    pdf.rect(x, yPos - 5, columnWidth, 8, 'F');
-    pdf.text(header, x + 2, yPos, { maxWidth: columnWidth - 4 });
+  autoTable(pdf, {
+    startY: yPos,
+    head: [headers],
+    body: rows,
+    styles: {
+      font: 'helvetica',
+      fontSize: 8,
+      cellPadding: 2,
+      overflow: 'linebreak',
+      textColor: ABNT_CONFIG.colors.text,
+    },
+    headStyles: {
+      fillColor: ABNT_CONFIG.colors.primary,
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+    },
+    alternateRowStyles: {
+      fillColor: [245, 245, 245],
+    },
+    margin: { left, right },
   });
 
-  pdf.setTextColor(...ABNT_CONFIG.colors.text);
-  pdf.setFont('Helvetica', 'normal');
-  pdf.setFontSize(ABNT_CONFIG.fontSize.body - 1);
-
-  yPos += 10;
-  let rowIndex = 0;
-
-  // Linhas da tabela
-  rows.forEach((row) => {
-    // Alternância de cores
-    if (rowIndex % 2 === 0) {
-      pdf.setFillColor(245, 245, 245);
-      pdf.rect(left, yPos - 5, contentWidth, 7, 'F');
-    }
-
-    row.forEach((cell, i) => {
-      const x = left + i * columnWidth;
-      const cellText = String(cell || '').substring(0, 30);
-      pdf.text(cellText, x + 2, yPos, { maxWidth: columnWidth - 4 });
-    });
-
-    yPos += 7;
-    rowIndex++;
-
-    // Nova página se necessário
-    if (yPos > pageHeight - 20) {
-      pdf.addPage();
-      yPos = ABNT_CONFIG.margins.top;
-    }
-  });
-
-  return yPos + 5;
+  const finalY =
+    pdf.lastAutoTable && pdf.lastAutoTable.finalY
+      ? pdf.lastAutoTable.finalY
+      : yPos + rows.length * 8 + 10;
+  return finalY + 8;
 }
 
 /**

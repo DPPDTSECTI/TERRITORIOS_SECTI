@@ -45,7 +45,31 @@ function buildTableDataForCategory(categoryId, territoriosData = [], filtros = {
   }
 
   if (categoryId === 'univ_publicas') {
-    const list = buildMunicipiosInstituicoesList(territoriosData, filtros);
+    const pubEntities = [];
+    territoriosData.forEach(t => {
+      const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
+      arrCap.forEach(ent => {
+        if (ent) {
+          const info = classificarInstituicao(ent);
+          const cat = info.categoria || ent.categoria || '';
+          if (
+            info.isPublica ||
+            ['campiUniversidadePublica', 'campiInstitutoFederal', 'federal', 'estadual', 'institutoFederal'].includes(cat)
+          ) {
+            pubEntities.push(ent);
+          }
+        }
+      });
+      const arrCursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
+      arrCursos.forEach(c => {
+        const info = classificarInstituicao(c);
+        if (info.isPublica || ['federal', 'estadual', 'institutoFederal'].includes(info.categoria)) {
+          pubEntities.push(c);
+        }
+      });
+    });
+
+    const list = buildMunicipiosInstituicoesList(pubEntities, filtros);
     const headers = ['Nº', 'Município', 'Sigla', 'Instituição', 'Esfera'];
     const rows = [];
     let rowNum = 1;
@@ -69,14 +93,22 @@ function buildTableDataForCategory(categoryId, territoriosData = [], filtros = {
     territoriosData.forEach(t => {
       const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
       arrCap.forEach(ent => {
-        if (ent && ent.categoria === 'campiUniversidadePrivada') {
-          privEntities.push(ent);
+        if (ent) {
+          const info = classificarInstituicao(ent);
+          if (
+            ent.categoria === 'campiUniversidadePrivada' ||
+            ent.categoria === 'privada' ||
+            info.isPrivada ||
+            info.categoria === 'privada'
+          ) {
+            privEntities.push(ent);
+          }
         }
       });
       const arrCursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
       arrCursos.forEach(c => {
         const info = classificarInstituicao(c);
-        if (info.categoria === 'privada' || c.categoria === 'campiUniversidadePrivada') {
+        if (info.isPrivada || info.categoria === 'privada' || c.categoria === 'campiUniversidadePrivada') {
           privEntities.push(c);
         }
       });
@@ -168,8 +200,6 @@ export async function generateUnifiedReport(options = {}) {
   // 1. Capa simples (logo + título + subtítulo + data)
   await addCover(pdf, sectiLogo, conectaLogo, title, finalSubtitle, dateStr);
 
-  // Iniciar conteúdo em nova página
-  pdf.addPage();
   let yPos = ABNT_TOP_MARGIN;
 
   // 2. Para cada categoria selecionada no painel
@@ -198,9 +228,10 @@ export async function generateUnifiedReport(options = {}) {
 
     // Tabela textual
     const { headers, rows } = buildTableDataForCategory(id, territoriosData, filtros);
-    const finalRows = rows.length > 0
-      ? rows
-      : [['-', '-', 'Nenhum registro encontrado para o filtro atual', '-', '-'].slice(0, headers.length)];
+    const finalRows =
+      rows.length > 0
+        ? rows
+        : [['-', '-', 'Nenhum dado encontrado para o filtro atual', '-', '-'].slice(0, headers.length)];
 
     yPos = addTable(pdf, yPos, headers, finalRows);
     yPos += 15;

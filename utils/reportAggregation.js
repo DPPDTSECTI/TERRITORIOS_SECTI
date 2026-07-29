@@ -71,6 +71,17 @@ function isCourseMatchingFilters(t, curso, filtros = {}) {
 }
 
 /**
+ * Normaliza o nome do município removendo sufixos EAD / sede da IES (Bug 1).
+ */
+export function normalizarMunicipio(nome) {
+  if (!nome) return '';
+  return String(nome)
+    .replace(/\s*\((?:sede da IES|EAD).*?\)\s*/i, '')
+    .replace(/\s*-\s*EAD\s*$/i, '')
+    .trim();
+}
+
+/**
  * Monta lista de municípios com instituições ordenados alfabeticamente.
  * Suporta tanto o array de territórios (dados brutos) com filtros quanto uma lista direta de entidades já filtradas.
  * Retorna: [{ numero: 1, municipio: "Nome", instituicoes: [{ sigla: "UFBA", nome: "...", categoria: "federal" }] }]
@@ -94,7 +105,7 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
 
   const addEntityToMap = (munName, ent, fallbackCat = '') => {
     if (!munName) return;
-    const cleanMun = munName.trim();
+    const cleanMun = normalizarMunicipio(munName);
     const munNorm = normalize(cleanMun);
 
     if (!munMap.has(munNorm)) {
@@ -120,6 +131,23 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
 
   if (isTerritoryList) {
     inputData.forEach(t => {
+      const cap = Array.isArray(t.capacidadeDetalhada)
+        ? t.capacidadeDetalhada
+        : Array.isArray(t.entidadesDetalhadas)
+          ? t.entidadesDetalhadas
+          : [];
+      cap.forEach(ent => {
+        if (!ent || !ent.municipio) return;
+        const info = classificarInstituicao(ent);
+        const cat = info.categoria || ent.categoria || '';
+        if (
+          info.isPublica ||
+          ['federal', 'estadual', 'institutoFederal', 'campiUniversidadePublica', 'campiInstitutoFederal'].includes(cat)
+        ) {
+          addEntityToMap(ent.municipio, ent, cat);
+        }
+      });
+
       const cursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
       cursos.forEach(curso => {
         if (!curso.municipio) return;
@@ -178,7 +206,7 @@ export function buildAreaHeatmapData(territoriosData = [], filtros = {}) {
       const area = (curso.areaGeral || 'Não Informada').trim();
       areasSet.add(area);
 
-      const munName = curso.municipio.trim();
+      const munName = normalizarMunicipio(curso.municipio);
       const munNorm = normalize(munName);
 
       if (!munMap.has(munNorm)) {
@@ -266,7 +294,7 @@ export function buildTopMunicipiosRanking(territoriosData = [], filtros = {}, li
 
 /**
  * Monta lista de cadeias produtivas ordenadas por segmento e sede.
- * Retorna array de { segmento, sede, territorios, municipiosPertencentes, tipo, entidade }
+ * Retorna array de { id, segmento, sede, territorios, municipiosPertencentes, tipo, entidade } (resolve Bugs 2 e 3).
  */
 export function buildCadeiasPorSegmento(inputData = []) {
   if (!Array.isArray(inputData) || inputData.length === 0) {
@@ -283,23 +311,66 @@ export function buildCadeiasPorSegmento(inputData = []) {
       const cads = Array.isArray(t.cadeiasProdutivasDetalhado)
         ? t.cadeiasProdutivasDetalhado
         : [];
+      const territoryName = t.territory || t.nome || 'N/A';
       cads.forEach(cad => {
-        if (cad) cadeiasList.push(cad);
+        if (cad) {
+          cadeiasList.push({
+            ...cad,
+            territorioOrigem: cad.territorioOrigem || cad.territorio || territoryName,
+            territorio: cad.territorio || territoryName,
+          });
+        }
       });
     });
   } else {
     cadeiasList = inputData.filter(Boolean);
   }
 
-  const listFormatted = cadeiasList.map(cad => ({
-    segmento: cad.segmento || 'Não Informado',
-    sede: cad.sede || 'Não Informada',
-    territorios: Array.isArray(cad.territorios)
-      ? cad.territorios.join(', ')
-      : cad.territorios || cad.territorio || 'N/A',
-    municipiosPertencentes: cad.municipiosPertencentes || 'N/A',
-    tipo: cad.tipo || '',
-    entidade: cad.entidade || '',
+  const porChave = new Map();
+  cadeiasList.forEach(c => {
+    const chave = c.id ?? `${c.segmento || ''}::${c.sede || ''}`;
+    if (!porChave.has(chave)) {
+      porChave.set(chave, {
+        id: chave,
+        segmento: c.segmento || 'Não Informado',
+        sede: normalizarMunicipio(c.sede || 'Não Informada'),
+        territorios: new Set(),
+        municipios: new Set(),
+        tipo: c.tipo || '',
+        entidade: c.entidade || '',
+      });
+    }
+    const entry = porChave.get(chave);
+    const terr = c.territorioOrigem || c.territorio || c.territorios;
+    if (terr && terr !== 'N/A') {
+      if (Array.isArray(terr)) {
+        terr.forEach(t => t && entry.territorios.add(String(t).trim()));
+      } else {
+        String(terr)
+          .split(/[,;]/)
+          .forEach(t => t.trim() && entry.territorios.add(t.trim()));
+      }
+    }
+    const muns = c.municipiosPertencentes;
+    if (muns && muns !== 'N/A') {
+      if (Array.isArray(muns)) {
+        muns.forEach(m => m && entry.municipios.add(normalizarMunicipio(String(m))));
+      } else {
+        String(muns)
+          .split(/[,;]/)
+          .forEach(m => m.trim() && entry.municipios.add(normalizarMunicipio(m.trim())));
+      }
+    }
+  });
+
+  const listFormatted = Array.from(porChave.values()).map(e => ({
+    id: e.id,
+    segmento: e.segmento,
+    sede: e.sede,
+    territorios: Array.from(e.territorios).sort((a, b) => a.localeCompare(b, 'pt-BR')).join(', ') || 'N/A',
+    municipiosPertencentes: Array.from(e.municipios).sort((a, b) => a.localeCompare(b, 'pt-BR')).join('; ') || 'N/A',
+    tipo: e.tipo,
+    entidade: e.entidade,
   }));
 
   return listFormatted.sort((a, b) => {
@@ -356,12 +427,26 @@ export function buildEntidadesPorCategoria(inputData = []) {
     entidadesList = inputData.filter(Boolean);
   }
 
+  const CTI_TARGET_CATEGORIES = [
+    'icts',
+    'centrosPesquisa',
+    'parquesTecnologicos',
+    'incubadoras',
+    'aceleradoras',
+    'incubadorasAceleradoras',
+    'espacoDinamizadoress',
+  ];
+
   const map = new Map();
 
   entidadesList.forEach(ent => {
     let cat = ent.categoria || 'outros';
     if (cat === 'incubadoras' || cat === 'aceleradoras') {
       cat = 'incubadorasAceleradoras';
+    }
+
+    if (!CTI_TARGET_CATEGORIES.includes(cat)) {
+      return;
     }
 
     if (!map.has(cat)) {
@@ -377,7 +462,7 @@ export function buildEntidadesPorCategoria(inputData = []) {
     group.total += 1;
     group.entidades.push({
       entidade: ent.entidade || ent.nome || 'Não Informada',
-      municipio: ent.municipio || 'Não Informado',
+      municipio: normalizarMunicipio(ent.municipio || 'Não Informado'),
       tipo: ent.tipo || CTI_CATEGORY_LABELS[cat] || cat,
       categoria: cat,
     });

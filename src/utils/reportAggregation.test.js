@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   classificarInstituicao,
+  normalizarMunicipio,
   buildMunicipiosInstituicoesList,
   buildAreaHeatmapData,
   buildTopMunicipiosRanking,
@@ -192,4 +193,61 @@ describe('Módulo de Agregação de Relatórios (reportAggregation.test.js)', ()
       expect(catInc.label).toBe('Incubadoras e Aceleradoras');
     });
   });
+
+  describe('normalizarMunicipio (Bug 1)', () => {
+    it('deve remover sufixos EAD e sede da IES dos nomes dos municípios', () => {
+      expect(normalizarMunicipio('Salvador (sede da IES - EAD)')).toBe('Salvador');
+      expect(normalizarMunicipio('Feira de Santana (sede da IES)')).toBe('Feira de Santana');
+      expect(normalizarMunicipio('Paripiranga - EAD')).toBe('Paripiranga');
+      expect(normalizarMunicipio('Salvador')).toBe('Salvador');
+    });
+  });
+
+  describe('buildTopMunicipiosRanking com EAD (Bug 1)', () => {
+    it('deve somar curso com sufixo EAD ao município base no ranking', () => {
+      const terrComEad = [
+        {
+          territory: 'Metropolitano de Salvador',
+          cursosDetalhado: [
+            { curso: 'Engenharia', municipio: 'Salvador', quantidade: 10 },
+            { curso: 'Administração EAD', municipio: 'Salvador (sede da IES - EAD)', quantidade: 5 },
+          ],
+        },
+      ];
+      const ranking = buildTopMunicipiosRanking(terrComEad, {}, 10);
+      expect(ranking).toHaveLength(1);
+      expect(ranking[0].municipio).toBe('Salvador');
+      expect(ranking[0].total).toBe(15);
+    });
+  });
+
+  describe('buildCadeiasPorSegmento deduplicação (Bug 3)', () => {
+    it('deve deduplicar cadeia por território e unir municípios e territórios', () => {
+      const cadeiasDuplicadas = [
+        {
+          id: 'cad_apicultura_tucano',
+          segmento: 'Apicultura',
+          sede: 'Tucano',
+          territorioOrigem: 'Sisal',
+          municipiosPertencentes: 'Tucano; Araci',
+        },
+        {
+          id: 'cad_apicultura_tucano',
+          segmento: 'Apicultura',
+          sede: 'Tucano',
+          territorioOrigem: 'Bacia do Jacuípe',
+          municipiosPertencentes: 'Capim Grosso; Tucano',
+        },
+      ];
+      const res = buildCadeiasPorSegmento(cadeiasDuplicadas);
+      expect(res).toHaveLength(1);
+      expect(res[0].segmento).toBe('Apicultura');
+      expect(res[0].territorios).toContain('Sisal');
+      expect(res[0].territorios).toContain('Bacia do Jacuípe');
+      expect(res[0].municipiosPertencentes).toContain('Araci');
+      expect(res[0].municipiosPertencentes).toContain('Capim Grosso');
+      expect(res[0].municipiosPertencentes).toContain('Tucano');
+    });
+  });
 });
+

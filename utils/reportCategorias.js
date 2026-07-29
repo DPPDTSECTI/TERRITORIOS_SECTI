@@ -60,10 +60,18 @@ export const CATEGORIAS_RELATORIO = [
  */
 export function getTerritoryArrayByFonte(t, fonte) {
   if (!t) return [];
+  let list = [];
   if (fonte === 'capacidadeDetalhada') {
-    if (Array.isArray(t.capacidadeDetalhada)) return t.capacidadeDetalhada;
-    if (Array.isArray(t.entidadesDetalhadas)) return t.entidadesDetalhadas;
-    return [];
+    if (Array.isArray(t.capacidadeDetalhada)) list = t.capacidadeDetalhada;
+    else if (Array.isArray(t.entidadesDetalhadas)) list = t.entidadesDetalhadas;
+  } else {
+    list = Array.isArray(t[fonte]) ? t[fonte] : [];
   }
-  return Array.isArray(t[fonte]) ? t[fonte] : [];
+  const territoryName = t.territory || t.nome || 'N/A';
+  return list.map(item => ({
+    ...item,
+    territorioOrigem: item?.territorioOrigem || item?.territorio || territoryName,
+    territorio: item?.territorio || territoryName,
+  }));
 }
+
