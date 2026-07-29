@@ -218,7 +218,11 @@ export async function generateUnifiedReport(options = {}) {
       try {
         const imgBase64 = await htmlElementToBase64(element);
         if (imgBase64) {
-          yPos = addImage(pdf, yPos, imgBase64, config.label, 160);
+          const aspectRatio =
+            element.offsetHeight && element.offsetWidth
+              ? element.offsetHeight / element.offsetWidth
+              : 0.75;
+          yPos = addImage(pdf, yPos, imgBase64, config.label, 160, aspectRatio);
           yPos += 5;
         }
       } catch (errImg) {
@@ -226,15 +230,19 @@ export async function generateUnifiedReport(options = {}) {
       }
     }
 
-    // Tabela textual
-    const { headers, rows } = buildTableDataForCategory(id, territoriosData, filtros);
-    const finalRows =
-      rows.length > 0
-        ? rows
-        : [['-', '-', 'Nenhum dado encontrado para o filtro atual', '-', '-'].slice(0, headers.length)];
+    // Tabela textual (omitida para a categoria 'cursos' conforme solicitado: apenas gráfico de barras)
+    if (id !== 'cursos') {
+      const { headers, rows } = buildTableDataForCategory(id, territoriosData, filtros);
+      const finalRows =
+        rows.length > 0
+          ? rows
+          : [['-', '-', 'Nenhum dado encontrado para o filtro atual', '-', '-'].slice(0, headers.length)];
 
-    yPos = addTable(pdf, yPos, headers, finalRows);
-    yPos += 15;
+      yPos = addTable(pdf, yPos, headers, finalRows);
+      yPos += 15;
+    } else {
+      yPos += 10;
+    }
   }
 
   // 3. Adiciona paginação e rodapés padrão ABNT

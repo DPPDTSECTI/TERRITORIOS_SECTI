@@ -365,26 +365,27 @@ export function addTable(pdf, yPos, headers, rows) {
  * @param {number} width - Largura da imagem em mm
  * @returns {number} Nova posição Y
  */
-export function addImage(pdf, yPos, imageBase64, caption, width = 150) {
+export function addImage(pdf, yPos, imageBase64, caption, width = 150, aspectRatio = 0.75) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const contentWidth = pageWidth - left - right;
 
-  // Verificar espaço
-  if (yPos > pageHeight - 80) {
-    pdf.addPage();
-    yPos = ABNT_CONFIG.margins.top;
-  }
-
   try {
-    // Calcular altura proporcional
     const maxWidth = Math.min(width, contentWidth);
+    const calcHeight = maxWidth * aspectRatio;
+
+    // Verificar espaço disponível na página para a altura real da imagem
+    if (yPos + calcHeight + 15 > pageHeight - ABNT_CONFIG.margins.bottom) {
+      pdf.addPage();
+      yPos = ABNT_CONFIG.margins.top;
+    }
+
     const centerX = left + (contentWidth - maxWidth) / 2;
 
-    // Adicionar imagem
-    pdf.addImage(imageBase64, 'PNG', centerX, yPos, maxWidth, maxWidth * 0.75);
-    yPos += maxWidth * 0.75 + 5;
+    // Adicionar imagem com altura proporcional sem distorção
+    pdf.addImage(imageBase64, 'PNG', centerX, yPos, maxWidth, calcHeight);
+    yPos += calcHeight + 5;
 
     // Adicionar legenda
     if (caption) {

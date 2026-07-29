@@ -9,7 +9,7 @@ export const CATEGORIAS_RELATORIO = [
     label: 'Cursos de Ensino Superior',
     fonte: 'cursosDetalhado',
     filtro: null,
-    gerarImagem: 'HeatmapAreaConhecimento',
+    gerarImagem: 'StackedBarCursosMunicipios',
     gerarTexto: 'buildTopMunicipiosRanking',
   },
   {

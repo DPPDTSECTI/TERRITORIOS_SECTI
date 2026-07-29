@@ -16,7 +16,7 @@ import ReportExportMenu from './components/report/ReportExportMenu';
 import MunicipiosReportImage from './components/report/MunicipiosReportImage';
 import AreaHeatmap from './components/report/AreaHeatmap';
 import MapaNumeradoMunicipios from './components/report/MapaNumeradoMunicipios';
-import HeatmapAreaConhecimento from './components/report/HeatmapAreaConhecimento';
+import StackedBarCursosMunicipios from './components/report/StackedBarCursosMunicipios';
 import MapaCadeiasProdutivas from './components/report/MapaCadeiasProdutivas';
 
 // Carregamento Preguiçoso (Lazy Loading) das Rotas e Componentes Pesados
@@ -1604,10 +1604,10 @@ function MainApp() {
 
             {/* Contêiner offscreen com layout fixo (em px) para captura pelo html2canvas (PNG/PDF) */}
             <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none', zIndex: -1 }}>
-                <HeatmapAreaConhecimento
+                <StackedBarCursosMunicipios
                     id="report-image-cursos"
                     heatmapData={reportHeatmapData}
-                    subtitle={selectedLocation ? `Distribuição de Cursos — ${selectedLocation.nome || selectedLocation.territory}` : "Distribuição de Cursos por Município e Área Geral do Conhecimento"}
+                    subtitle={selectedLocation ? `Distribuição de Cursos — ${selectedLocation.nome || selectedLocation.territory}` : "Distribuição de Cursos por Município fatiada por Área Geral do Conhecimento"}
                 />
                 <MapaNumeradoMunicipios
                     id="report-image-univ_publicas"
