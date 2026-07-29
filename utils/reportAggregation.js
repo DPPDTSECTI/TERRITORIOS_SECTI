@@ -71,6 +71,18 @@ function isCourseMatchingFilters(t, curso, filtros = {}) {
 }
 
 /**
+ * Filtra a lista de territórios com base na seleção do usuário (apenas se for um Território).
+ */
+export function filterTerritoriosByLocation(territoriosData = [], filtros = {}) {
+  const { selectedLocation } = filtros;
+  if (selectedLocation && (selectedLocation.matchType === 'Território' || !selectedLocation.matchType)) {
+    const locName = normalize(selectedLocation.nome || selectedLocation.territory || selectedLocation.regiao || '');
+    return territoriosData.filter(t => normalize(t.nome || t.territory || '') === locName);
+  }
+  return territoriosData;
+}
+
+/**
  * Normaliza o nome do município removendo sufixos EAD / sede da IES (Bug 1).
  */
 export function normalizarMunicipio(nome) {
@@ -194,6 +206,9 @@ export function buildAreaHeatmapData(territoriosData = [], filtros = {}) {
     return { areas: [], linhas: [] };
   }
 
+  const { selectedLocation } = filtros;
+  const isGlobalView = !(selectedLocation && (selectedLocation.matchType === 'Território' || !selectedLocation.matchType));
+
   const areasSet = new Set();
   const munMap = new Map();
 
@@ -206,18 +221,18 @@ export function buildAreaHeatmapData(territoriosData = [], filtros = {}) {
       const area = (curso.areaGeral || 'Não Informada').trim();
       areasSet.add(area);
 
-      const munName = normalizarMunicipio(curso.municipio);
-      const munNorm = normalize(munName);
+      const groupName = isGlobalView ? (t.nome || t.territory || 'Sem Território') : normalizarMunicipio(curso.municipio);
+      const groupNorm = normalize(groupName);
 
-      if (!munMap.has(munNorm)) {
-        munMap.set(munNorm, {
-          municipio: munName,
+      if (!munMap.has(groupNorm)) {
+        munMap.set(groupNorm, {
+          municipio: groupName,
           total: 0,
           contagem: {},
         });
       }
 
-      const entry = munMap.get(munNorm);
+      const entry = munMap.get(groupNorm);
       entry.total += (curso.quantidade ? Number(curso.quantidade) : 1);
       entry.contagem[area] = (entry.contagem[area] || 0) + (curso.quantidade ? Number(curso.quantidade) : 1);
     });

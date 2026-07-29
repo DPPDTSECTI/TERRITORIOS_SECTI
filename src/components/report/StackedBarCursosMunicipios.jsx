@@ -46,8 +46,8 @@ export default function StackedBarCursosMunicipios({
 }) {
   const { areas = [], linhas = [] } = heatmapData;
 
-  // Limitar aos top 25 municípios ou mostrar todos se <= 25 para boa legibilidade
-  const displayLinhas = linhas.slice(0, 25);
+  // Limitar aos top 30 itens (para acomodar os 27 territórios no relatório estadual)
+  const displayLinhas = linhas.slice(0, 30);
   const numRows = displayLinhas.length;
 
   // Calcular valor máximo geral de cursos entre municípios exibidos
@@ -291,10 +291,10 @@ export default function StackedBarCursosMunicipios({
           pela SECTI-BA
         </span>
         <span>
-          Qtd. Total de Municípios Exibidos: {displayLinhas.length} (
-          {linhas.length > 25
-            ? `Top 25 de ${linhas.length} municípios`
-            : 'Todos os municípios com cursos'}
+          Qtd. Total Exibida: {displayLinhas.length} (
+          {linhas.length > 30
+            ? `Top 30 de ${linhas.length} locais`
+            : `Todos os ${linhas.length} locais com cursos`}
           )
         </span>
       </div>

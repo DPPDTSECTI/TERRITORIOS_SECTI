@@ -10,7 +10,7 @@ import KpiSection, { SubKpiPanel } from './components/KpiSection';
 import MapSection from './components/MapSection';
 import ListSection from './components/ListSection';
 import { resolveCadeiaFonte } from './utils/cadeiasUtils';
-import { buildMunicipiosInstituicoesList, buildAreaHeatmapData, buildCadeiasPorSegmento, classificarInstituicao } from '../utils/reportAggregation.js';
+import { buildMunicipiosInstituicoesList, buildAreaHeatmapData, buildCadeiasPorSegmento, classificarInstituicao, filterTerritoriosByLocation } from '../utils/reportAggregation.js';
 import { getTerritoryArrayByFonte } from '../utils/reportCategorias.js';
 import ReportExportMenu from './components/report/ReportExportMenu';
 import MunicipiosReportImage from './components/report/MunicipiosReportImage';
@@ -497,15 +497,17 @@ function MainApp() {
         return buildAreaHeatmapData(territoriosData, reportFiltros);
     }, [territoriosData, reportFiltros]);
 
+    const filteredForReports = useMemo(() => filterTerritoriosByLocation(territoriosData, reportFiltros), [territoriosData, reportFiltros]);
+
     const reportUnivPublicasList = useMemo(() => {
-        return buildMunicipiosInstituicoesList(territoriosData, reportFiltros).filter(m =>
+        return buildMunicipiosInstituicoesList(filteredForReports, reportFiltros).filter(m =>
             m.instituicoes && m.instituicoes.some(i => ['federal', 'estadual', 'institutoFederal', 'campiUniversidadePublica', 'campiInstitutoFederal'].includes(i.categoria))
         );
-    }, [territoriosData, reportFiltros]);
+    }, [filteredForReports, reportFiltros]);
 
     const reportUnivPrivadasList = useMemo(() => {
         const privEntities = [];
-        territoriosData.forEach(t => {
+        filteredForReports.forEach(t => {
             const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
             arrCap.forEach(ent => {
                 if (ent && ent.categoria === 'campiUniversidadePrivada') {
@@ -521,15 +523,15 @@ function MainApp() {
             });
         });
         return buildMunicipiosInstituicoesList(privEntities, reportFiltros);
-    }, [territoriosData, reportFiltros]);
+    }, [filteredForReports, reportFiltros]);
 
     const reportCadeiasList = useMemo(() => {
-        return buildCadeiasPorSegmento(territoriosData);
-    }, [territoriosData]);
+        return buildCadeiasPorSegmento(filteredForReports);
+    }, [filteredForReports]);
 
     const reportAtivosCtiList = useMemo(() => {
         const ativos = [];
-        territoriosData.forEach(t => {
+        filteredForReports.forEach(t => {
             const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
             arrCap.forEach(ent => {
                 if (ent && ['icts', 'centrosPesquisa', 'parquesTecnologicos', 'incubadoras', 'aceleradoras', 'espacoDinamizadoress'].includes(ent.categoria)) {
@@ -541,7 +543,7 @@ function MainApp() {
             });
         });
         return buildMunicipiosInstituicoesList(ativos, reportFiltros);
-    }, [territoriosData, reportFiltros]);
+    }, [filteredForReports, reportFiltros]);
 
     const subKpisList = useMemo(() => {
         if (!dashboardData?.subKpis || !dashboardData?.unfiltSubKpis) return [];
@@ -1605,7 +1607,7 @@ function MainApp() {
                 <StackedBarCursosMunicipios
                     id="report-image-cursos"
                     heatmapData={reportHeatmapData}
-                    subtitle={selectedLocation ? `Distribuição de Cursos — ${selectedLocation.nome || selectedLocation.territory}` : "Distribuição de Cursos por Município fatiada por Área Geral do Conhecimento"}
+                    subtitle={selectedLocation ? `Distribuição de Cursos — ${selectedLocation.nome || selectedLocation.territory}` : "Distribuição de Cursos por Território fatiada por Área Geral do Conhecimento"}
                 />
                 <MapaNumeradoMunicipios
                     id="report-image-univ_publicas"

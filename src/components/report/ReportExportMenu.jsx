@@ -76,7 +76,7 @@ export default function ReportExportMenu({
     setIsExporting(true);
     setExportStatus('Estruturando planilha Excel...');
     try {
-      exportToExcel(territoriosData);
+      exportToExcel(territoriosData, filtros);
     } catch (err) {
       console.error('Erro ao exportar Excel:', err);
       alert('Erro ao exportar planilha Excel. Verifique o console.');

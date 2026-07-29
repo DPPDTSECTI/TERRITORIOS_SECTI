@@ -15,6 +15,7 @@ import {
   buildCadeiasPorSegmento,
   buildEntidadesPorCategoria,
   classificarInstituicao,
+  filterTerritoriosByLocation,
 } from './reportAggregation.js';
 
 const ABNT_TOP_MARGIN = 30;
@@ -202,6 +203,9 @@ export async function generateUnifiedReport(options = {}) {
 
   let yPos = ABNT_TOP_MARGIN;
 
+  // Filtrar territórios baseados na localização selecionada
+  const filteredTerritoriosData = filterTerritoriosByLocation(territoriosData, filtros);
+
   // 2. Para cada categoria selecionada no painel
   for (const id of categoriasSelecionadasIds) {
     const config = CATEGORIAS_RELATORIO.find(c => c.id === id);
@@ -232,7 +236,7 @@ export async function generateUnifiedReport(options = {}) {
 
     // Tabela textual (omitida para a categoria 'cursos' conforme solicitado: apenas gráfico de barras)
     if (id !== 'cursos') {
-      const { headers, rows } = buildTableDataForCategory(id, territoriosData, filtros);
+      const { headers, rows } = buildTableDataForCategory(id, filteredTerritoriosData, filtros);
       const finalRows =
         rows.length > 0
           ? rows

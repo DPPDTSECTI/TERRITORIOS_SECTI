@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { Download, RefreshCw } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { filterTerritoriosByLocation } from '../../utils/reportAggregation.js';
 
 /**
  * Calcula dinamicamente as larguras ideais para cada coluna da planilha
@@ -46,8 +47,10 @@ function sortAlpha(a, b, key) {
   return String(a[key] || '').localeCompare(String(b[key] || ''), 'pt-BR');
 }
 
-export function exportToExcel(territoriosData = []) {
+export function exportToExcel(territoriosData = [], filtros = {}) {
   if (!territoriosData || !Array.isArray(territoriosData) || territoriosData.length === 0) return;
+
+  const filteredTerritoriosData = filterTerritoriosByLocation(territoriosData, filtros);
 
   // 1. ESTRUTURAR AS TABELAS DE DADOS
   const dataTerritorios = [];
@@ -56,7 +59,7 @@ export function exportToExcel(territoriosData = []) {
   const dataCursos = [];
   const dataMunicipios = [];
 
-  territoriosData.forEach(t => {
+  filteredTerritoriosData.forEach(t => {
     const ifdmVal = t.kpis?.ifdm !== "-" && t.kpis?.ifdm ? Number(t.kpis.ifdm) : (t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : "-");
     const semiaridoQtd = t.qtdSemiarido !== undefined ? t.qtdSemiarido : 0;
     const semiaridoPct = t.pctSemiarido !== undefined ? Number(t.pctSemiarido) : 0;
@@ -181,6 +184,7 @@ export function exportToExcel(territoriosData = []) {
 
 export default function ExcelExportButton({
   territoriosData: propTerritoriosData,
+  filtros: propFiltros,
   className = '',
   variant = 'solid',
   darkMode: propDarkMode
@@ -190,13 +194,14 @@ export default function ExcelExportButton({
   try { contextData = useData(); } catch (e) { contextData = null; }
 
   const territoriosData = (propTerritoriosData && propTerritoriosData.length > 0) ? propTerritoriosData : (contextData?.territoriosData || []);
+  const filtros = propFiltros || {};
   const darkMode = propDarkMode !== undefined ? propDarkMode : (contextData?.darkMode || false);
 
   const handleExportExcel = () => {
     setIsLoading(true);
 
     try {
-      exportToExcel(territoriosData);
+      exportToExcel(territoriosData, filtros);
     } catch (err) {
       console.error('Erro ao gerar Excel:', err);
       alert("Ocorreu um erro ao exportar a planilha. Verifique o console.");
