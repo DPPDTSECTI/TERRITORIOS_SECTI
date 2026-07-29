@@ -113,3 +113,64 @@ export function filterCursos(cursos = [], searchTerm = '', areaGeralFilters = []
     return true;
   });
 }
+
+/**
+ * Extrai a sigla da instituição (texto entre parênteses ou fallback)
+ */
+export function extractSigla(entidade) {
+  const str = String(entidade || '').trim();
+  const match = str.match(/\(([^)]+)\)/);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  return str;
+}
+
+/**
+ * Classifica uma instituição de ensino superior com base em orgAcademica, categoriaAdm e entidade.
+ * Retorna catCurso (para filtros KPI do painel) e categoria (para agregação em relatórios: 'federal' | 'estadual' | 'institutoFederal' | 'privada' | null).
+ */
+export function classificarInstituicao(curso = {}) {
+  const org = curso.orgAcademica || '';
+  const catAdm = curso.categoriaAdm || '';
+  const ent = curso.entidade || '';
+  const tipoNorm = normalize(`${org} ${catAdm} ${ent}`);
+
+  let catCurso = null;
+  const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
+
+  if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
+    catCurso = 'campiInstitutoFederal';
+  } else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
+    catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
+  }
+
+  let categoria = null;
+  if (isPrivada) {
+    categoria = 'privada';
+  } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
+    categoria = 'institutoFederal';
+  } else if (
+    tipoNorm.includes('estadual') ||
+    ['uneb', 'uesc', 'uesb', 'uefs', 'estado da bahia', 'santa cruz', 'sudoeste da bahia', 'feira de santana'].some(c => tipoNorm.includes(c))
+  ) {
+    categoria = 'estadual';
+  } else if (
+    tipoNorm.includes('federal') ||
+    ['ufba', 'ufrb', 'ufob', 'ufsb', 'univasf', 'reconcavo', 'oeste da bahia', 'sul da bahia', 'vale do sao francisco'].some(c => tipoNorm.includes(c))
+  ) {
+    categoria = 'federal';
+  } else if (catCurso === 'campiUniversidadePublica') {
+    categoria = 'federal'; // fallback para universidade pública federal/estadual genérica
+  }
+
+  const sigla = extractSigla(ent);
+
+  return {
+    catCurso,
+    categoria,
+    isPrivada,
+    isPublica: !isPrivada && (catCurso === 'campiUniversidadePublica' || catCurso === 'campiInstitutoFederal' || ['federal', 'estadual', 'institutoFederal'].includes(categoria)),
+    sigla
+  };
+}

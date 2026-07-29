@@ -46,6 +46,139 @@ function sortAlpha(a, b, key) {
   return String(a[key] || '').localeCompare(String(b[key] || ''), 'pt-BR');
 }
 
+export function exportToExcel(territoriosData = []) {
+  if (!territoriosData || !Array.isArray(territoriosData) || territoriosData.length === 0) return;
+
+  // 1. ESTRUTURAR AS TABELAS DE DADOS
+  const dataTerritorios = [];
+  const dataCTI = [];
+  const dataCadeias = [];
+  const dataCursos = [];
+  const dataMunicipios = [];
+
+  territoriosData.forEach(t => {
+    const ifdmVal = t.kpis?.ifdm !== "-" && t.kpis?.ifdm ? Number(t.kpis.ifdm) : (t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : "-");
+    const semiaridoQtd = t.qtdSemiarido !== undefined ? t.qtdSemiarido : 0;
+    const semiaridoPct = t.pctSemiarido !== undefined ? Number(t.pctSemiarido) : 0;
+
+    dataTerritorios.push({
+      "Território de Identidade": t.nome,
+      "Semiárido (Qtd. Municípios)": semiaridoQtd,
+      "Semiárido (%)": semiaridoPct,
+      "Total Entidades CT&I": t.kpis?.ctiCount ? Number(t.kpis.ctiCount) : 0,
+      "Total Cadeias & IGs": t.kpis?.cadeiasCount ? Number(t.kpis.cadeiasCount) : 0,
+      "Total Cursos Superiores": t.cursosDetalhado ? t.cursosDetalhado.length : 0,
+      "IFDM Território": ifdmVal,
+      "Pontos Conecta Bahia": t.iniciativas?.conectaBahia ? Number(t.iniciativas.conectaBahia) : 0
+    });
+
+    // ABA 2: ENTIDADES DE CT&I
+    if (t.capacidadeDetalhada && t.capacidadeDetalhada.length > 0) {
+      t.capacidadeDetalhada.forEach(item => {
+        dataCTI.push({
+          "Território de Identidade": t.nome,
+          "Município": item.municipio || "-",
+          "Instituição / Entidade": item.entidade || "-",
+          "Categoria": item.categoria || item.tipo || "-",
+          "Quantidade": item.quantidade ? Number(item.quantidade) : 1
+        });
+      });
+    }
+
+    // ABA 3: CADEIAS PRODUTIVAS E INDICAÇÕES GEOGRÁFICAS (IGs)
+    if (t.cadeiasProdutivasDetalhado && t.cadeiasProdutivasDetalhado.length > 0) {
+      t.cadeiasProdutivasDetalhado.forEach(cad => {
+        let munStr = "-";
+        if (typeof cad.municipioSatelite === 'string' && cad.municipioSatelite.trim() !== '') {
+          munStr = cad.municipioSatelite;
+        } else if (Array.isArray(cad.municipioSatelite)) {
+          munStr = cad.municipioSatelite.join(', ');
+        } else if (cad.municipiosPertencentes) {
+          munStr = cad.municipiosPertencentes;
+        }
+
+        dataCadeias.push({
+          "Território de Identidade": t.nome,
+          "Nome do Arranjo / IG": cad.entidade || cad.nome || "-",
+          "Tipo": cad.tipo || "-",
+          "Segmento": cad.segmento || "-",
+          "Município Sede": cad.sede || "-",
+          "Municípios Envolvidos": munStr,
+          "Fonte / Referência": cad.fonte || "-"
+        });
+      });
+    }
+
+    // ABA 4: CURSOS DE ENSINO SUPERIOR EM CT&I
+    if (t.cursosDetalhado && t.cursosDetalhado.length > 0) {
+      t.cursosDetalhado.forEach(curso => {
+        dataCursos.push({
+          "Território de Identidade": t.nome,
+          "Município": curso.municipio || "-",
+          "Instituição / Entidade": curso.entidade || "-",
+          "Nome do Curso": curso.curso || "-",
+          "Área Geral": curso.areaGeral || "-",
+          "Nível / Grau": curso.nivel || "-",
+          "Modalidade": curso.modalidade || "-",
+          "Org. Acadêmica": curso.orgAcademica || "-",
+          "Categoria Adm.": curso.categoriaAdm || "-",
+          "Quantidade": curso.quantidade ? Number(curso.quantidade) : 1
+        });
+      });
+    }
+
+    // ABA 5: MUNICÍPIOS, IFDM E POPULAÇÃO
+    if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
+      t.desenvolvimentoDetalhado.forEach(mun => {
+        dataMunicipios.push({
+          "Território de Identidade": t.nome,
+          "Município": mun.municipio || "-",
+          "IFDM Municipal": mun.ifdm ? Number(Number(mun.ifdm).toFixed(3)) : "-",
+          "Ano IFDM": mun.anoIfdm || "2016",
+          "População": mun.populacao ? Number(mun.populacao) : "-"
+        });
+      });
+    }
+  });
+
+  // 2. CRIAR AS WORKSHEETS
+  const wsTerritorios = XLSX.utils.json_to_sheet(dataTerritorios);
+  const wsCTI = XLSX.utils.json_to_sheet(dataCTI);
+  const wsCadeias = XLSX.utils.json_to_sheet(dataCadeias);
+  const wsCursos = XLSX.utils.json_to_sheet(dataCursos);
+  const wsMunicipios = XLSX.utils.json_to_sheet(dataMunicipios);
+
+  // 3. AUTO-AJUSTAR LARGURAS DAS COLUNAS
+  const fitColumns = (ws, data) => {
+    if (!data || data.length === 0) return;
+    const keys = Object.keys(data[0]);
+    ws['!cols'] = keys.map(key => {
+      const maxLen = Math.max(
+        key.length,
+        ...data.map(row => String(row[key] || '').length)
+      );
+      return { wch: Math.min(Math.max(maxLen + 3, 12), 60) };
+    });
+  };
+
+  fitColumns(wsTerritorios, dataTerritorios);
+  fitColumns(wsCTI, dataCTI);
+  fitColumns(wsCadeias, dataCadeias);
+  fitColumns(wsCursos, dataCursos);
+  fitColumns(wsMunicipios, dataMunicipios);
+
+  // 4. MONTAR E EXPORTAR O WORKBOOK
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, wsTerritorios, "1. Síntese Territórios");
+  XLSX.utils.book_append_sheet(workbook, wsCTI, "2. Infraestrutura CT&I");
+  XLSX.utils.book_append_sheet(workbook, wsCadeias, "3. Cadeias Produtivas e IGs");
+  XLSX.utils.book_append_sheet(workbook, wsCursos, "4. Cursos Ensino Superior");
+  XLSX.utils.book_append_sheet(workbook, wsMunicipios, "5. Municípios e IFDM");
+
+  const dataFormatada = new Date().toISOString().split('T')[0];
+  XLSX.writeFile(workbook, `Dados_Consolidados_CTI_Bahia_${dataFormatada}.xlsx`);
+}
+
 export default function ExcelExportButton({
   territoriosData: propTerritoriosData,
   className = '',
@@ -63,119 +196,7 @@ export default function ExcelExportButton({
     setIsLoading(true);
 
     try {
-      // 1. ESTRUTURAR AS TABELAS DE DADOS
-      const dataTerritorios = [];
-      const dataCTI = [];
-      const dataCadeias = [];
-      const dataCursos = [];
-      const dataMunicipios = [];
-
-      territoriosData.forEach(t => {
-        const ifdmVal = t.kpis?.ifdm !== "-" && t.kpis?.ifdm ? Number(t.kpis.ifdm) : (t.desenvolvimento?.ifdmTi ? Number(Number(t.desenvolvimento.ifdmTi).toFixed(3)) : "-");
-        const semiaridoQtd = t.qtdSemiarido !== undefined ? t.qtdSemiarido : 0;
-
-        // ABA 1: RESUMO DO TERRITÓRIO
-        dataTerritorios.push({
-          "Território de Identidade": t.nome || t.regiao || "-",
-          "Recorte Semiárido": t.isSemiarido ? "Pertencente" : "Não pertencente",
-          "Qtd. Municípios no Semiárido": semiaridoQtd,
-          "IFDM Territorial (Média)": ifdmVal,
-          "Total Entidades CT&I": Number(t.kpis?.capacidadeCti || (t.entidadesDetalhadas ? t.entidadesDetalhadas.length : 0)),
-          "Total Cadeias / IGs": Number(t.kpis?.cadeiasIgs || (t.cadeiasProdutivasDetalhado ? t.cadeiasProdutivasDetalhado.length : 0)),
-          "Total Cursos Superiores": t.cursosDetalhado ? t.cursosDetalhado.length : 0,
-          "Programa PTI (Assistência Pública)": t.kpis?.conectaBahia || t.kpis?.pti || (t.assistenciaPublica?.existe ? "Presente" : "Não mapeado")
-        });
-
-        // ABA 2: INFRAESTRUTURA DE CT&I
-        if (t.entidadesDetalhadas && t.entidadesDetalhadas.length > 0) {
-          t.entidadesDetalhadas.forEach(ent => {
-            dataCTI.push({
-              "Território de Identidade": t.nome,
-              "Município Sede": ent.municipio || "-",
-              "Categoria / Segmento": ent.tipo || ent.categoria || "-",
-              "Nome da Instituição": ent.entidade || "-"
-            });
-          });
-        }
-
-        // ABA 3: CADEIAS PRODUTIVAS E IGs
-        if (t.cadeiasProdutivasDetalhado && t.cadeiasProdutivasDetalhado.length > 0) {
-          t.cadeiasProdutivasDetalhado.forEach(cad => {
-            dataCadeias.push({
-              "Território de Identidade": t.nome,
-              "Segmento": cad.segmento || "-",
-              "Classificação / Tipo": cad.tipo || "-",
-              "Entidade / Produto": cad.entidade || "-",
-              "Sede / Satélite": cad.sede || cad.municipioSatelite || "-",
-              "Municípios Pertencentes": cad.municipiosPertencentes || "-",
-              "Fonte Oficial": cad.fonte || "-"
-            });
-          });
-        }
-
-        // ABA 4: CURSOS DE ENSINO SUPERIOR EM CT&I
-        if (t.cursosDetalhado && t.cursosDetalhado.length > 0) {
-          t.cursosDetalhado.forEach(curso => {
-            dataCursos.push({
-              "Território de Identidade": t.nome,
-              "Município": curso.municipio || "-",
-              "Instituição / Entidade": curso.entidade || "-",
-              "Nome do Curso": curso.curso || "-",
-              "Área Geral": curso.areaGeral || "-",
-              "Nível / Grau": curso.nivel || "-",
-              "Modalidade": curso.modalidade || "-",
-              "Org. Acadêmica": curso.orgAcademica || "-",
-              "Categoria Adm.": curso.categoriaAdm || "-",
-              "Quantidade": curso.quantidade ? Number(curso.quantidade) : 1
-            });
-          });
-        }
-
-        // ABA 5: MUNICÍPIOS, IFDM E POPULAÇÃO
-        if (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) {
-          t.desenvolvimentoDetalhado.forEach(mun => {
-            dataMunicipios.push({
-              "Território de Identidade": t.nome,
-              "Município": mun.municipio || "-",
-              "IFDM Municipal": mun.ifdm ? Number(Number(mun.ifdm).toFixed(3)) : "-",
-              "População Estimada": mun.populacao ? Number(mun.populacao) : "-"
-            });
-          });
-        }
-      });
-
-      if (dataTerritorios.length === 0) {
-        alert("Nenhum dado disponível para exportação no momento.");
-        setIsLoading(false);
-        return;
-      }
-
-      // 2. ORDENAR OS DADOS PARA UMA APRESENTAÇÃO LÓGICA E ORGANIZADA
-      dataTerritorios.sort((a, b) => sortAlpha(a, b, "Território de Identidade"));
-      dataCTI.sort((a, b) => sortAlpha(a, b, "Território de Identidade") || sortAlpha(a, b, "Município Sede") || sortAlpha(a, b, "Categoria / Segmento"));
-      dataCadeias.sort((a, b) => sortAlpha(a, b, "Território de Identidade") || sortAlpha(a, b, "Segmento"));
-      dataCursos.sort((a, b) => sortAlpha(a, b, "Território de Identidade") || sortAlpha(a, b, "Município") || sortAlpha(a, b, "Área Geral"));
-      dataMunicipios.sort((a, b) => sortAlpha(a, b, "Território de Identidade") || sortAlpha(a, b, "Município"));
-
-      // 3. CRIAR AS FOLHAS (Worksheets) FORMATADAS
-      const wsTerritorios = createOrganizedSheet(dataTerritorios);
-      const wsCTI = createOrganizedSheet(dataCTI);
-      const wsCadeias = createOrganizedSheet(dataCadeias);
-      const wsCursos = createOrganizedSheet(dataCursos);
-      const wsMunicipios = createOrganizedSheet(dataMunicipios);
-
-      // 4. MONTAR O LIVRO EXCEL (Workbook)
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, wsTerritorios, "1. Resumo Territorial");
-      XLSX.utils.book_append_sheet(workbook, wsCTI, "2. Infraestrutura CT&I");
-      XLSX.utils.book_append_sheet(workbook, wsCadeias, "3. Cadeias Produtivas e IGs");
-      XLSX.utils.book_append_sheet(workbook, wsCursos, "4. Cursos Ensino Superior");
-      XLSX.utils.book_append_sheet(workbook, wsMunicipios, "5. Municípios e IFDM");
-
-      // 5. EXPORTAR FICHEIRO FICANDO COM NOME CLARO E DATA
-      const dataFormatada = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(workbook, `Dados_Consolidados_CTI_Bahia_${dataFormatada}.xlsx`);
-
+      exportToExcel(territoriosData);
     } catch (err) {
       console.error('Erro ao gerar Excel:', err);
       alert("Ocorreu um erro ao exportar a planilha. Verifique o console.");

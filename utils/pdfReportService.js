@@ -474,13 +474,17 @@ export async function htmlElementToBase64(element) {
  */
 export async function generatePDFReport(options = {}) {
   const {
-    title = 'Programa PTI',
-    subtitle = 'Relatório de Pontos de Acesso à Internet',
+    title = 'Programa de Ciência, Tecnologia e Inovação',
+    subtitle = 'Relatório Institucional Agregado',
     municipiosData = [],
     mapElement = null,
+    municipiosReportElement = null,
+    heatmapReportElement = null,
     sectiLogo = null,
     conectaLogo = null,
     includeMap = true,
+    includeMunicipiosReport = true,
+    includeHeatmapReport = true,
     includeStatistics = true,
     includeData = true,
   } = options;
@@ -502,7 +506,9 @@ export async function generatePDFReport(options = {}) {
   // Sumário
   const sections = [];
   if (includeStatistics) sections.push('Estatísticas Gerais');
-  if (includeMap) sections.push('Mapa de Localização');
+  if (includeMap && mapElement) sections.push('Mapa de Localização');
+  if (includeMunicipiosReport && municipiosReportElement) sections.push('Visão Geográfica de Ensino Superior');
+  if (includeHeatmapReport && heatmapReportElement) sections.push('Matriz de Áreas do Conhecimento');
   if (includeData) sections.push('Dados dos Municípios');
   sections.push('Referências');
 
@@ -516,7 +522,7 @@ export async function generatePDFReport(options = {}) {
   yPos = addParagraph(
     pdf,
     yPos,
-    'O Programa PTI é uma iniciativa da Secretaria de Ciência, Tecnologia e Inovação do Governo do Estado da Bahia, destinado a democratizar o acesso à internet e promover a inclusão digital dos cidadãos baianos através da instalação de pontos de acesso Wi-Fi em praças e espaços públicos.'
+    'Este relatório apresenta uma síntese dos dados agregados sobre Ciência, Tecnologia e Inovação no Estado da Bahia, destacando a distribuição geográfica e a capacidade instalada de ensino superior público nos municípios baianos.'
   );
 
   // Estatísticas
@@ -530,15 +536,15 @@ export async function generatePDFReport(options = {}) {
     yPos = addParagraph(
       pdf,
       yPos,
-      `Este relatório apresenta uma análise dos ${totalMunicipios} municípios participantes do Programa PTI, com um total de ${totalPontos} pontos de acesso à internet, representando uma média de ${mediaPontos} pontos por município.`
+      `Este relatório apresenta uma análise dos ${totalMunicipios} municípios participantes, com um total de ${totalPontos} registros, representando uma média de ${mediaPontos} registros por município.`
     );
 
     // Tabela de estatísticas
     const stats = [
       ['Métrica', 'Valor'],
       ['Total de Municípios', totalMunicipios.toString()],
-      ['Total de Pontos de Acesso', totalPontos.toString()],
-      ['Média de Pontos por Município', mediaPontos],
+      ['Total de Registros', totalPontos.toString()],
+      ['Média por Município', mediaPontos],
       ['Data de Geração', dateStr],
     ];
 
@@ -556,16 +562,56 @@ export async function generatePDFReport(options = {}) {
     yPos = addParagraph(
       pdf,
       yPos,
-      'Abaixo apresenta-se o mapa geográfico dos pontos de acesso distribuídos no estado da Bahia:'
+      'Abaixo apresenta-se o mapa geográfico dos pontos e iniciativas distribuídos no estado da Bahia:'
     );
 
     const mapImage = await htmlElementToBase64(mapElement);
     if (mapImage) {
       // ocupar página inteira ajustando largura
-      yPos = addImage(pdf, yPos, mapImage, 'Distribuição dos pontos de acesso Wi-Fi no estado da Bahia', 180);
+      yPos = addImage(pdf, yPos, mapImage, 'Distribuição geográfica no estado da Bahia', 180);
     }
 
     // garantir quebra após mapa para não mesclar com próximos conteúdos
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+  }
+
+  // Relatório Geográfico e Institucional Agregado (MunicipiosReportImage)
+  if (includeMunicipiosReport && municipiosReportElement) {
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+
+    yPos = addSection(pdf, yPos, 'Visão Geográfica de Ensino Superior', 1);
+    yPos = addParagraph(
+      pdf,
+      yPos,
+      'O mapa numerado a seguir ilustra os municípios da Bahia que possuem presença de instituições públicas de ensino superior (Federal, Estadual ou Instituto Federal), seguidos da relação institucional correspondente.'
+    );
+
+    const munReportImg = await htmlElementToBase64(municipiosReportElement);
+    if (munReportImg) {
+      yPos = addImage(pdf, yPos, munReportImg, 'Municípios e Instituições Públicas de Ensino Superior na Bahia', 180);
+    }
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+  }
+
+  // Heatmap por Área do Conhecimento (AreaHeatmap)
+  if (includeHeatmapReport && heatmapReportElement) {
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+
+    yPos = addSection(pdf, yPos, 'Matriz de Áreas do Conhecimento', 1);
+    yPos = addParagraph(
+      pdf,
+      yPos,
+      'A matriz abaixo apresenta o cruzamento entre os municípios e as áreas gerais do conhecimento com maior volume de cursos superiores.'
+    );
+
+    const heatmapImg = await htmlElementToBase64(heatmapReportElement);
+    if (heatmapImg) {
+      yPos = addImage(pdf, yPos, heatmapImg, 'Matriz Município × Área Geral do Conhecimento', 180);
+    }
     pdf.addPage();
     yPos = ABNT_CONFIG.margins.top;
   }
@@ -613,7 +659,7 @@ export async function generatePDFReport(options = {}) {
 export async function generateAndDownloadReport(options = {}) {
   try {
     const pdf = await generatePDFReport(options);
-    const filename = `PTIBahia_Relatorio_${new Date().toISOString().split('T')[0]}.pdf`;
+    const filename = options.filename || `Relatorio_SECTI_Bahia_${new Date().toISOString().split('T')[0]}.pdf`;
     pdf.save(filename);
   } catch (error) {
     console.error('Erro ao gerar relatório:', error);

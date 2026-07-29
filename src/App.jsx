@@ -10,6 +10,10 @@ import KpiSection, { SubKpiPanel } from './components/KpiSection';
 import MapSection from './components/MapSection';
 import ListSection from './components/ListSection';
 import { resolveCadeiaFonte } from './utils/cadeiasUtils';
+import { buildMunicipiosInstituicoesList, buildAreaHeatmapData } from '../utils/reportAggregation.js';
+import ReportExportMenu from './components/report/ReportExportMenu';
+import MunicipiosReportImage from './components/report/MunicipiosReportImage';
+import AreaHeatmap from './components/report/AreaHeatmap';
 
 // Carregamento Preguiçoso (Lazy Loading) das Rotas e Componentes Pesados
 const LandingHero = lazy(() => import('./components/hero'));
@@ -462,6 +466,34 @@ function MainApp() {
         !Object.values(ctiFilters).every(val => val === true);
 
     const availableListsToAdd = ['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type));
+
+    const reportFiltros = useMemo(() => ({
+        selectedLocation,
+        filtroSemiarido,
+        semiaridoMunicipios,
+        areaGeralFilter,
+        debouncedCursoSearchTerm,
+        searchTerm: debouncedSearchTerm,
+        ctiFilters,
+        isCtiFilterActive
+    }), [
+        selectedLocation,
+        filtroSemiarido,
+        semiaridoMunicipios,
+        areaGeralFilter,
+        debouncedCursoSearchTerm,
+        debouncedSearchTerm,
+        ctiFilters,
+        isCtiFilterActive
+    ]);
+
+    const reportMunicipiosList = useMemo(() => {
+        return buildMunicipiosInstituicoesList(territoriosData, reportFiltros);
+    }, [territoriosData, reportFiltros]);
+
+    const reportHeatmapData = useMemo(() => {
+        return buildAreaHeatmapData(territoriosData, reportFiltros);
+    }, [territoriosData, reportFiltros]);
 
     const subKpisList = useMemo(() => {
         if (!dashboardData?.subKpis || !dashboardData?.unfiltSubKpis) return [];
@@ -1176,18 +1208,18 @@ function MainApp() {
 
             {/* NAVBAR LATERAL VERTICAL (Sempre visível em /territorios no Desktop) */}
             <div className={`hidden lg:flex fixed right-4 sm:right-6 xl:right-10 2xl:right-14 top-1/2 -translate-y-1/2 z-[120] flex-col items-center gap-3 transition-all duration-500 ${location.pathname === '/territorios' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 pointer-events-none'}`}>
-                <div className={`flex flex-col items-center gap-2 p-2 rounded-xl border-2 shadow-xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 border-gov-cyan/60 shadow-gov-cyan/10' : 'bg-white/95 border-gov-cyan shadow-gov-cyan/15'}`}>
-                    <Link to="/" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'}`} title="Início">
+                <div className={`w-[54px] flex flex-col items-center gap-2 p-2 rounded-xl border-2 shadow-xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 border-gov-cyan/60 shadow-gov-cyan/10' : 'bg-white/95 border-gov-cyan shadow-gov-cyan/15'}`}>
+                    <Link to="/" className={`p-2.5 rounded-lg transition-colors flex items-center justify-center ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'}`} title="Início">
                         <Home size={18} strokeWidth={2.5} />
                     </Link>
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
-                    <Link to="/sobre" className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'}`} title="Sobre">
+                    <Link to="/sobre" className={`p-2.5 rounded-lg transition-colors flex items-center justify-center ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'}`} title="Sobre">
                         <Info size={18} strokeWidth={2.5} />
                     </Link>
                 </div>
 
-                <div data-tutorial="sidebar" ref={sideFilterRef} className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border-2 shadow-xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 border-gov-cyan/60 shadow-gov-cyan/10' : 'bg-white/95 border-gov-cyan shadow-gov-cyan/15'}`}>
-                    <div className="relative flex items-center justify-end w-full" ref={searchDropdownRef}>
+                <div data-tutorial="sidebar" ref={sideFilterRef} className={`w-[54px] relative flex flex-col items-center gap-2 p-2 rounded-xl border-2 shadow-xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 border-gov-cyan/60 shadow-gov-cyan/10' : 'bg-white/95 border-gov-cyan shadow-gov-cyan/15'}`}>
+                    <div className="relative flex items-center justify-center w-full" ref={searchDropdownRef}>
                         <div data-tutorial="search-input" className={`absolute right-[115%] transition-all duration-300 ${isVerticalSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
                             <input
                                 type="text"
@@ -1211,33 +1243,32 @@ function MainApp() {
                                 </div>
                             )}
                         </div>
-                        <button data-tutorial="search-button" onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-lg transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-cyan/15 text-gov-cyan') : ''}`} title="Pesquisar">
+                        <button data-tutorial="search-button" onClick={() => setIsVerticalSearchOpen(!isVerticalSearchOpen)} className={`p-2.5 rounded-lg transition-colors flex items-center justify-center ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-cyan'} ${isVerticalSearchOpen ? (darkMode ? 'bg-gov-blue/20 text-blue-400' : 'bg-gov-cyan/15 text-gov-cyan') : ''}`} title="Pesquisar">
                             <Search size={18} strokeWidth={2.5} />
                         </button>
                     </div>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <button onClick={resetGlobalFilters} className={`p-2.5 rounded-lg transition-colors ${hasActiveFilters ? (darkMode ? 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20' : 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20') : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-200' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800')}`} title="Limpar todos os filtros">
+                    <button onClick={resetGlobalFilters} className={`p-2.5 rounded-lg transition-colors flex items-center justify-center ${hasActiveFilters ? (darkMode ? 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20' : 'text-gov-red bg-gov-red/10 hover:bg-gov-red/20') : (darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-200' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800')}`} title="Limpar todos os filtros">
                         <Eraser size={18} strokeWidth={2.5} />
                     </button>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <button onClick={() => carregarDadosDoSharePoint(true)} disabled={isLoadingPipeline} className={`p-2.5 rounded-lg transition-colors ${isLoadingPipeline ? 'opacity-50 cursor-not-allowed animate-pulse' : ''} ${darkMode ? 'text-gray-400 hover:bg-gov-green/20 hover:text-green-400' : 'text-gray-500 hover:bg-gov-green/10 hover:text-gov-green-dark'}`} title="Sincronizar Dados">
+                    <button onClick={() => carregarDadosDoSharePoint(true)} disabled={isLoadingPipeline} className={`p-2.5 rounded-lg transition-colors flex items-center justify-center ${isLoadingPipeline ? 'opacity-50 cursor-not-allowed animate-pulse' : ''} ${darkMode ? 'text-gray-400 hover:bg-gov-green/20 hover:text-green-400' : 'text-gray-500 hover:bg-gov-green/10 hover:text-gov-green-dark'}`} title="Sincronizar Dados">
                         <RefreshCw size={18} strokeWidth={2.5} className={isLoadingPipeline ? "animate-spin" : ""} />
                     </button>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <Suspense fallback={null}>
-                        <ExcelExportButton
-                            territoriosData={territoriosData}
-                            variant="nav"
-                            darkMode={darkMode}
-                            className={`p-2.5 rounded-lg transition-colors ${isLoadingPipeline ? 'opacity-50 cursor-not-allowed' : ''} ${darkMode ? 'text-gray-400 hover:bg-gray-800 hover:text-green-400' : 'text-gray-500 hover:bg-gray-100 hover:text-gov-green'}`}
-                        />
-                    </Suspense>
+                    <ReportExportMenu
+                        territoriosData={territoriosData}
+                        filtros={reportFiltros}
+                        darkMode={darkMode}
+                        variant="nav"
+                        className={isLoadingPipeline ? 'opacity-50 cursor-not-allowed' : ''}
+                    />
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
@@ -1520,6 +1551,20 @@ function MainApp() {
                     }}
                 />
             </Suspense>
+
+            {/* Contêiner offscreen com layout fixo (em px) para captura pelo html2canvas (PNG/PDF) */}
+            <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none', zIndex: -1 }}>
+                <MunicipiosReportImage
+                    id="municipios-report-image"
+                    municipiosList={reportMunicipiosList}
+                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Público no Estado da Bahia"}
+                />
+                <AreaHeatmap
+                    id="area-heatmap-image"
+                    heatmapData={reportHeatmapData}
+                    subtitle={selectedLocation ? `Distribuição de Cursos — ${selectedLocation.nome || selectedLocation.territory}` : "Distribuição de Cursos por Município e Área Geral do Conhecimento"}
+                />
+            </div>
         </div>
     );
 }
