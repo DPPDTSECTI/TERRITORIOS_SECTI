@@ -103,21 +103,26 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
     return [];
   }
 
+  const { selectedLocation } = filtros;
+  const isGlobalView = !(selectedLocation && (selectedLocation.matchType === 'Território' || !selectedLocation.matchType));
   const isTerritoryList = inputData.some(
     item =>
       item &&
       (item.cursosDetalhado ||
         item.capacidadeDetalhada ||
-        item.entidadesDetalhadas ||
-        item.territory ||
-        item.territories)
+        item.entidadesDetalhadas)
   );
 
   const munMap = new Map();
 
-  const addEntityToMap = (munName, ent, fallbackCat = '') => {
-    if (!munName) return;
-    const cleanMun = normalizarMunicipio(munName);
+  const addEntityToMap = (munName, ent, fallbackCat = '', territoryName = '') => {
+    // Se isGlobalView for true e um territoryName foi fornecido, agrupa pelo território.
+    // Senão, cai de volta pro município.
+    const groupName = isGlobalView && territoryName ? territoryName : munName;
+    if (!groupName) return;
+    
+    // Se agrupamos por território, o cleanMun é o território. Senão, é o município normalizado.
+    const cleanMun = isGlobalView && territoryName ? groupName : normalizarMunicipio(groupName);
     const munNorm = normalize(cleanMun);
 
     if (!munMap.has(munNorm)) {
@@ -156,7 +161,7 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
           info.isPublica ||
           ['federal', 'estadual', 'institutoFederal', 'campiUniversidadePublica', 'campiInstitutoFederal'].includes(cat)
         ) {
-          addEntityToMap(ent.municipio, ent, cat);
+          addEntityToMap(ent.municipio, ent, cat, t.nome || t.territory);
         }
       });
 
@@ -166,18 +171,23 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
         if (!isCourseMatchingFilters(t, curso, filtros)) return;
 
         const info = classificarInstituicao(curso);
-        // Compatibilidade com comportamento original se chamado sobre cursosDetalhado para relatório público
         if (!info.isPublica || !info.categoria || info.categoria === 'privada') {
           return;
         }
-        addEntityToMap(curso.municipio, curso, info.categoria);
+        addEntityToMap(curso.municipio, curso, info.categoria, t.nome || t.territory);
       });
     });
   } else {
     // É uma lista direta de entidades já filtradas (públicas ou privadas)
     inputData.forEach(ent => {
       if (!ent || !ent.municipio) return;
-      addEntityToMap(ent.municipio, ent, ent.categoria);
+      
+      // Aqui, se for visão global, queremos agrupar pelo território da entidade (se disponível)
+      // O addEntityToMap vai usar territoryName se isGlobalView for true, mas wait... 
+      // addEntityToMap usa isTerritoryList. Precisamos contornar isso.
+      const tName = ent.territory || ent.territorio || '';
+      
+      addEntityToMap(ent.municipio, ent, ent.categoria, tName);
     });
   }
 

@@ -511,14 +511,14 @@ function MainApp() {
             const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
             arrCap.forEach(ent => {
                 if (ent && ent.categoria === 'campiUniversidadePrivada') {
-                    privEntities.push(ent);
+                    privEntities.push({ ...ent, territory: t.nome || t.territory });
                 }
             });
             const arrCursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
             arrCursos.forEach(c => {
                 const info = classificarInstituicao(c);
                 if (info.categoria === 'privada' || c.categoria === 'campiUniversidadePrivada') {
-                    privEntities.push(c);
+                    privEntities.push({ ...c, territory: t.nome || t.territory });
                 }
             });
         });
@@ -537,7 +537,8 @@ function MainApp() {
                 if (ent && ['icts', 'centrosPesquisa', 'parquesTecnologicos', 'incubadoras', 'aceleradoras', 'espacoDinamizadoress'].includes(ent.categoria)) {
                     ativos.push({
                         ...ent,
-                        municipio: ent.municipio || t.territory
+                        municipio: ent.municipio || t.territory,
+                        territory: t.nome || t.territory
                     });
                 }
             });

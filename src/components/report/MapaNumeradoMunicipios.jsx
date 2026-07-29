@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import * as topojson from 'topojson-client';
 import { normalize } from '../../utils/normalization.js';
+import territorioMunicipios from '../../../utils/territorioMunicipios.json';
 
 const SVG_W = 750;
 const SVG_H = 750;
@@ -134,31 +135,77 @@ export default function MapaNumeradoMunicipios({
     return { features: processedFeatures, project: projectFn };
   }, [geoData]);
 
+  const isTerritoryMode = useMemo(() => {
+    return municipiosList.some(item => {
+      const k = normalize(item.municipio);
+      return k.includes('territorio') || k.includes('bacia') || k.includes('litoral') || k.includes('portal');
+    });
+  }, [municipiosList]);
+
   const mapMarkers = useMemo(() => {
-    const markers = [];
-    const munMap = new Map();
-    municipiosList.forEach((item, index) => {
-      munMap.set(normalize(item.municipio), {
-        numero: item.numero || index + 1,
-        municipio: item.municipio,
-        categoria: item.categoria || item.instituicoes?.[0]?.categoria || 'default',
-      });
-    });
-
-    features.forEach(feat => {
-      const match = munMap.get(normalize(feat.nome));
-      if (match) {
-        markers.push({
-          numero: match.numero,
-          municipio: match.municipio,
-          cx: feat.cx,
-          cy: feat.cy,
-          color: CATEGORY_COLORS[match.categoria] || CATEGORY_COLORS.default,
+    try {
+      const markers = [];
+      const munMap = new Map();
+      municipiosList.forEach((item, index) => {
+        munMap.set(normalize(item.municipio), {
+          numero: item.numero || index + 1,
+          municipio: item.municipio, // Pode ser município ou território
+          categoria: item.categoria || item.instituicoes?.[0]?.categoria || 'default',
         });
-      }
-    });
+      });
 
-    return markers;
+    // isTerritoryMode já foi computado no escopo acima
+
+    if (isTerritoryMode) {
+      // Se for modo território, a gente usa a lista importada
+      const terrList = territorioMunicipios.territorios_de_identidade;
+      
+      munMap.forEach((match, terrNorm) => {
+        // Encontrar o território no JSON
+        const terrData = terrList.find(t => normalize(t.nome) === terrNorm);
+        if (terrData && terrData.municipios) {
+          // Computar o centroide somando todos os cx, cy das cidades deste território
+          let sumCx = 0, sumCy = 0, count = 0;
+          terrData.municipios.forEach(mName => {
+            const feat = features.find(f => normalize(f.nome) === normalize(mName));
+            if (feat) {
+              sumCx += feat.cx;
+              sumCy += feat.cy;
+              count++;
+            }
+          });
+          
+          if (count > 0) {
+            markers.push({
+              numero: match.numero,
+              municipio: match.municipio,
+              cx: sumCx / count,
+              cy: sumCy / count,
+              color: CATEGORY_COLORS[match.categoria] || CATEGORY_COLORS.default,
+            });
+          }
+        }
+      });
+    } else {
+      features.forEach(feat => {
+        const match = munMap.get(normalize(feat.nome));
+        if (match) {
+          markers.push({
+            numero: match.numero,
+            municipio: match.municipio,
+            cx: feat.cx,
+            cy: feat.cy,
+            color: CATEGORY_COLORS[match.categoria] || CATEGORY_COLORS.default,
+          });
+        }
+      });
+      }
+
+      return markers;
+    } catch (error) {
+      console.error("Error in mapMarkers useMemo:", error);
+      return [];
+    }
   }, [features, municipiosList]);
 
   return (
@@ -219,7 +266,7 @@ export default function MapaNumeradoMunicipios({
 
         <div style={{ flex: 1 }}>
           <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1e3a8a', marginTop: 0, marginBottom: '16px' }}>
-            Municípios Mapeados ({municipiosList.length})
+            {isTerritoryMode ? 'Territórios Mapeados' : 'Municípios Mapeados'} ({municipiosList.length})
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
             {municipiosList.map((item, index) => (

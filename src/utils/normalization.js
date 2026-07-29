@@ -137,7 +137,11 @@ export function classificarInstituicao(curso = {}) {
   const tipoNorm = normalize(`${org} ${catAdm} ${ent}`);
 
   let catCurso = null;
-  const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
+  const isExplicitlyPublic = ['federal', 'estadual', 'publica', 'ufba', 'ufrb', 'ufob', 'ufsb', 'univasf', 'uneb', 'uesc', 'uesb', 'uefs', 'ifba'].some(c => tipoNorm.includes(c));
+  const isExplicitlyPrivate = ['privada', 'lucrativo', 'particular', 'uniftc', 'ftc', 'unirb', 'uninassau', 'nassau', 'ucsal', 'unifacs', 'estacio', 'fcg', 'adventista', 'famec', 'jacuipe', 'sisaleira', 'santissimo sacramento', 'santo antonio'].some(c => tipoNorm.includes(c));
+  
+  // Se não tem indicativo de ser pública, assumimos como privada por padrão se for faculdade/centro
+  const isPrivada = isExplicitlyPrivate || (!isExplicitlyPublic);
 
   if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
     catCurso = 'campiInstitutoFederal';
