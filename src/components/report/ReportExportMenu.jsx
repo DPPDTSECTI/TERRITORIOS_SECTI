@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, FileText, FileSpreadsheet, ChevronDown, Loader2, CheckSquare, Square } from 'lucide-react';
+import { Download, FileText, FileSpreadsheet, ChevronDown, Loader2 } from 'lucide-react';
 import { CATEGORIAS_RELATORIO } from '../../../utils/reportCategorias.js';
 import { generateAndDownloadUnifiedReport } from '../../../utils/unifiedReportService.js';
 import { exportToExcel } from '../ExcelExportButton.jsx';
@@ -90,9 +90,13 @@ export default function ReportExportMenu({
   const buttonStyle =
     variant === 'nav'
       ? `p-2.5 rounded-lg transition-colors flex items-center justify-center ${
-          darkMode
-            ? 'text-gray-400 hover:bg-gray-800 hover:text-green-400'
-            : 'text-gray-500 hover:bg-gray-100 hover:text-gov-green'
+          isOpen
+            ? darkMode
+              ? 'bg-gov-blue text-white shadow-md'
+              : 'bg-gov-blue text-white shadow-md'
+            : darkMode
+              ? 'text-gray-400 hover:bg-gray-800 hover:text-blue-400'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gov-blue'
         }`
       : `px-5 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg ${
           darkMode
@@ -110,7 +114,7 @@ export default function ReportExportMenu({
         title="Exportar Relatórios Agregados (PDF / Excel)"
       >
         {isExporting ? (
-          <Loader2 size={18} className="animate-spin text-gov-green-500" />
+          <Loader2 size={18} className="animate-spin text-blue-500" />
         ) : (
           <Download size={18} strokeWidth={2.2} />
         )}
@@ -129,42 +133,61 @@ export default function ReportExportMenu({
 
       {isOpen && (
         <div
-          className={`absolute right-0 mt-2 w-80 rounded-xl shadow-2xl border backdrop-blur-md z-50 overflow-hidden transform transition-all ${
+          className={`${
+            variant === 'nav'
+              ? 'absolute right-[125%] bottom-0'
+              : 'absolute right-0 top-full mt-2'
+          } w-80 sm:w-84 rounded-2xl shadow-2xl border backdrop-blur-xl z-[300] overflow-hidden transition-all animate-soft-fade ${
             darkMode
               ? 'bg-gray-900/95 border-gray-700 text-gray-200'
               : 'bg-white/95 border-gray-200 text-gray-800'
           }`}
         >
-          <div className="px-4 py-3 border-b border-gray-200/50 dark:border-gray-800">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Seções do Relatório PDF
-              </p>
+          <div className={`px-4 py-3.5 border-b ${darkMode ? 'border-gray-800' : 'border-gray-200/60'}`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <FileText size={15} className={darkMode ? 'text-blue-400' : 'text-gov-blue'} />
+                <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-blue-400' : 'text-gov-blue'}`}>
+                  Seções do Relatório PDF
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={toggleAll}
-                className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                className={`text-[10px] font-bold px-2 py-0.5 rounded transition-colors ${
+                  selectedCategories.length === CATEGORIAS_RELATORIO.length
+                    ? darkMode
+                      ? 'text-gray-400 hover:bg-gray-800'
+                      : 'text-gray-500 hover:bg-gray-100'
+                    : darkMode
+                      ? 'text-blue-400 hover:bg-blue-900/30'
+                      : 'text-gov-blue hover:bg-gov-blue/10'
+                }`}
               >
                 {selectedCategories.length === CATEGORIAS_RELATORIO.length
                   ? 'Desmarcar todas'
                   : 'Marcar todas'}
               </button>
             </div>
-            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+            <p className={`text-[11px] ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1 font-medium`}>
               Escolha as categorias para compor o arquivo
             </p>
           </div>
 
-          <div className="px-4 py-2 space-y-2 max-h-64 overflow-y-auto">
+          <div className="px-3 py-2 space-y-1 max-h-56 overflow-y-auto hide-scroll">
             {CATEGORIAS_RELATORIO.map((cat) => {
               const checked = selectedCategories.includes(cat.id);
               return (
                 <label
                   key={cat.id}
-                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors text-xs ${
-                    darkMode
-                      ? 'hover:bg-gray-800/80 text-gray-200'
-                      : 'hover:bg-gray-100/80 text-gray-700'
+                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl cursor-pointer transition-all select-none text-xs font-semibold ${
+                    checked
+                      ? darkMode
+                        ? 'bg-blue-950/40 text-gray-100 border border-blue-500/30'
+                        : 'bg-gov-blue/5 text-gray-900 border border-gov-blue/20'
+                      : darkMode
+                        ? 'hover:bg-gray-800/60 text-gray-400 border border-transparent'
+                        : 'hover:bg-gray-100/80 text-gray-600 border border-transparent'
                   }`}
                 >
                   <input
@@ -173,43 +196,62 @@ export default function ReportExportMenu({
                     onChange={() => toggleCategory(cat.id)}
                     className="sr-only"
                   />
-                  {checked ? (
-                    <CheckSquare size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                  ) : (
-                    <Square size={16} className="text-gray-400 dark:text-gray-600 flex-shrink-0" />
-                  )}
-                  <span className="font-medium">{cat.label}</span>
+                  <div
+                    className={`w-4 h-4 rounded-md flex items-center justify-center transition-colors flex-shrink-0 ${
+                      checked
+                        ? darkMode
+                          ? 'bg-blue-600 text-white border border-blue-500'
+                          : 'bg-gov-blue text-white border border-gov-blue'
+                        : darkMode
+                          ? 'border border-gray-600 bg-gray-800/80'
+                          : 'border border-gray-300 bg-white'
+                    }`}
+                  >
+                    {checked && (
+                      <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="truncate">{cat.label}</span>
                 </label>
               );
             })}
           </div>
 
-          <div className="p-3 bg-gray-50 dark:bg-gray-900/80 border-t border-gray-200/50 dark:border-gray-800 space-y-2">
+          <div className={`p-3 border-t space-y-2 ${darkMode ? 'bg-gray-900/95 border-gray-800' : 'bg-gray-50/80 border-gray-200/60'}`}>
             <button
               onClick={handleExportPDF}
               disabled={isExporting || selectedCategories.length === 0}
-              className={`w-full py-2.5 px-4 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all shadow ${
+              className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md ${
                 selectedCategories.length === 0
-                  ? 'bg-gray-300 dark:bg-gray-800 text-gray-500 cursor-not-allowed'
+                  ? darkMode
+                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed border border-gray-700'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   : darkMode
-                  ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/30'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/30'
+                    : 'bg-gov-blue hover:bg-gov-blue-dark text-white shadow-blue-500/15 hover:shadow-lg'
               }`}
             >
-              <FileText size={16} />
-              <span>Gerar Relatório PDF</span>
+              <FileText size={15} />
+              <span>{isExporting ? (exportStatus || 'Gerando...') : 'Gerar Relatório PDF'}</span>
+              {selectedCategories.length > 0 && !isExporting && (
+                <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded-full font-black ${darkMode ? 'bg-blue-700 text-blue-100' : 'bg-blue-800 text-blue-100'}`}>
+                  {selectedCategories.length}
+                </span>
+              )}
             </button>
 
             <button
               onClick={handleExportExcel}
               disabled={isExporting}
-              className={`w-full py-2.5 px-4 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-colors border ${
+              className={`w-full py-2 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all border ${
                 darkMode
-                  ? 'border-gray-700 hover:bg-gray-800 text-gray-300'
-                  : 'border-gray-300 hover:bg-gray-100 text-gray-700'
+                  ? 'border-gray-700 hover:bg-gray-800 text-gray-300 hover:text-white'
+                  : 'border-gray-300 hover:bg-gray-100 text-gray-700 hover:text-gray-900'
               }`}
             >
-              <FileSpreadsheet size={16} className="text-green-600" />
+              <FileSpreadsheet size={15} className={darkMode ? 'text-emerald-400' : 'text-emerald-600'} />
               <span>Exportar Planilha (Excel)</span>
             </button>
           </div>
@@ -218,3 +260,4 @@ export default function ReportExportMenu({
     </div>
   );
 }
+
