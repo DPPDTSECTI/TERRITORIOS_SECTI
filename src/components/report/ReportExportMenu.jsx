@@ -58,9 +58,9 @@ export default function ReportExportMenu({
         filtros,
         title: 'Programa de Ciência, Tecnologia e Inovação',
         subtitle:
-          filtros?.selectedLocation
-            ? `Relatório Agregado — ${filtros.selectedLocation.nome || filtros.selectedLocation.territory}`
-            : 'Relatório Institucional Agregado — Estado da Bahia',
+          filtros?.selectedLocation && (filtros.selectedLocation.matchType === 'Território' || !filtros.selectedLocation.matchType)
+            ? `Relatório Agregado — Território ${filtros.selectedLocation.nome || filtros.selectedLocation.territory}`
+            : 'Relatório Institucional Agregado — Todos os Territórios do Estado da Bahia',
       });
     } catch (err) {
       console.error('Erro ao gerar PDF unificado:', err);
@@ -172,6 +172,16 @@ export default function ReportExportMenu({
             <p className={`text-[11px] ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1 font-medium`}>
               Escolha as categorias para compor o arquivo
             </p>
+            <div className={`mt-2.5 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 text-[11px] font-semibold border ${
+              darkMode ? 'bg-blue-950/40 text-blue-300 border-blue-800/40' : 'bg-blue-50 text-blue-800 border-blue-200'
+            }`}>
+              <span>{filtros?.selectedLocation && (filtros.selectedLocation.matchType === 'Território' || !filtros.selectedLocation.matchType) ? '📍' : '🌐'}</span>
+              <span className="truncate">
+                {filtros?.selectedLocation && (filtros.selectedLocation.matchType === 'Território' || !filtros.selectedLocation.matchType)
+                  ? `Território: ${filtros.selectedLocation.nome || filtros.selectedLocation.territory}`
+                  : 'Escopo: Todos os Territórios da Bahia'}
+              </span>
+            </div>
           </div>
 
           <div className="px-3 py-2 space-y-1 max-h-56 overflow-y-auto hide-scroll">

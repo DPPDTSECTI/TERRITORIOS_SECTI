@@ -22,8 +22,8 @@ function isCourseMatchingFilters(t, curso, filtros = {}) {
     isCtiFilterActive = false,
   } = filtros;
 
-  // 1. Filtro de território selecionado
-  if (selectedLocation) {
+  // 1. Filtro de território selecionado no mapa (ignora seleção isolada de Município, filtrando pelos municípios apenas quando for Território)
+  if (selectedLocation && (selectedLocation.matchType === 'Território' || !selectedLocation.matchType)) {
     const locName = normalize(selectedLocation.nome || selectedLocation.territory || selectedLocation.regiao || '');
     if (normalize(t.nome || t.territory || '') !== locName) {
       return false;

@@ -472,12 +472,12 @@ function MainApp() {
     const availableListsToAdd = ['cti', 'cadeias', 'cursos'].filter(type => !expandedLists.includes(type));
 
     const reportFiltros = useMemo(() => ({
-        selectedLocation,
+        selectedLocation: selectedLocation && selectedLocation.matchType !== 'Município' ? selectedLocation : null,
         filtroSemiarido,
         semiaridoMunicipios,
         areaGeralFilter,
-        debouncedCursoSearchTerm,
-        searchTerm: debouncedSearchTerm,
+        debouncedCursoSearchTerm: '',
+        searchTerm: '',
         ctiFilters,
         isCtiFilterActive
     }), [
@@ -485,8 +485,6 @@ function MainApp() {
         filtroSemiarido,
         semiaridoMunicipios,
         areaGeralFilter,
-        debouncedCursoSearchTerm,
-        debouncedSearchTerm,
         ctiFilters,
         isCtiFilterActive
     ]);
