@@ -119,10 +119,6 @@ export function filterCursos(cursos = [], searchTerm = '', areaGeralFilters = []
  */
 export function extractSigla(entidade) {
   const str = String(entidade || '').trim();
-  const match = str.match(/\(([^)]+)\)/);
-  if (match && match[1]) {
-    return match[1].trim();
-  }
   const norm = normalize(str);
   if (norm.includes('sul da bahia') || norm.includes('ufsb')) return 'UFSB';
   if (norm.includes('lusofonia') || norm.includes('unilab')) return 'UNILAB';
@@ -137,6 +133,10 @@ export function extractSigla(entidade) {
   if (norm.includes('ifbaiano') || norm.includes('baiano')) return 'IF BAIANO';
   if (norm.includes('instituto federal da bahia') || norm.includes('ifba')) return 'IFBA';
   if (norm.includes('sertao pernambucano') || norm.includes('ifsertao')) return 'IF SERTÃO-PE';
+  const match = str.match(/\(([^)]+)\)/);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
   return str;
 }
 

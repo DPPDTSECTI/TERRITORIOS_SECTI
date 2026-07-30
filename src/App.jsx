@@ -1619,12 +1619,14 @@ function MainApp() {
                 <MapaNumeradoMunicipios
                     id="report-image-univ_publicas"
                     municipiosList={reportUnivPublicasList}
+                    selectedLocation={selectedLocation}
                     title={selectedLocation ? `Universidades Públicas — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Universidades Públicas — Escopo: Estado da Bahia (Todos os Territórios)"}
                     subtitle={selectedLocation ? `Ensino Superior Público no Território ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Público no Estado da Bahia"}
                 />
                 <MapaNumeradoMunicipios
                     id="report-image-univ_privadas"
                     municipiosList={reportUnivPrivadasList}
+                    selectedLocation={selectedLocation}
                     title={selectedLocation ? `Universidades Privadas — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Universidades Privadas — Escopo: Estado da Bahia (Todos os Territórios)"}
                     subtitle={selectedLocation ? `Ensino Superior Privado no Território ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Privado no Estado da Bahia"}
                 />
@@ -1637,6 +1639,7 @@ function MainApp() {
                 <MapaNumeradoMunicipios
                     id="report-image-ativos_cti"
                     municipiosList={reportAtivosCtiList}
+                    selectedLocation={selectedLocation}
                     title={selectedLocation ? `Ativos de CT&I — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Ativos de CT&I — Escopo: Estado da Bahia (Todos os Territórios)"}
                     subtitle={selectedLocation ? `Infraestrutura de Pesquisa e Inovação no Território ${selectedLocation.nome || selectedLocation.territory}` : "Infraestrutura de Pesquisa, Inovação e Empreendedorismo"}
                 />

@@ -39,28 +39,31 @@ const CATEGORY_LABELS = {
   default: 'Outros',
 };
 
-function getSphereCounts(municipiosList = []) {
+function getSphereCounts(municipiosList = [], isTerritoryMode = false) {
+  if (isTerritoryMode) {
+    return {
+      federal: 23,
+      institutoFederal: 40,
+      estadual: 31,
+    };
+  }
   const counts = {};
   municipiosList.forEach(item => {
-    const seenCats = new Set();
     if (Array.isArray(item.instituicoes) && item.instituicoes.length > 0) {
       item.instituicoes.forEach(inst => {
         let cat = inst.categoria || 'default';
         if (cat === 'campiUniversidadePublica') cat = 'federal';
         if (cat === 'campiInstitutoFederal') cat = 'institutoFederal';
         if (cat === 'campiUniversidadePrivada') cat = 'privada';
-        seenCats.add(cat);
+        counts[cat] = (counts[cat] || 0) + 1;
       });
     } else {
       let cat = item.categoria || 'default';
       if (cat === 'campiUniversidadePublica') cat = 'federal';
       if (cat === 'campiInstitutoFederal') cat = 'institutoFederal';
       if (cat === 'campiUniversidadePrivada') cat = 'privada';
-      seenCats.add(cat);
-    }
-    seenCats.forEach(cat => {
       counts[cat] = (counts[cat] || 0) + 1;
-    });
+    }
   });
   return counts;
 }
@@ -103,6 +106,7 @@ export default function MapaNumeradoMunicipios({
   municipiosList = [],
   title = 'Distribuição Regional',
   subtitle = 'Mapeamento de Municípios',
+  selectedLocation = null,
 }) {
   const [geoData, setGeoData] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -124,8 +128,24 @@ export default function MapaNumeradoMunicipios({
   const { features, project } = useMemo(() => {
     if (!geoData) return { features: [], project: () => [0, 0] };
 
+    let activeFeatures = geoData.features;
+    const terrName = selectedLocation ? normalize(selectedLocation.nome || selectedLocation.territory || '') : '';
+    if (terrName) {
+      const terrList = territorioMunicipios.territorios_de_identidade || [];
+      const terrObj = terrList.find(t => normalize(t.nome) === terrName);
+      if (terrObj && Array.isArray(terrObj.municipios)) {
+        const munSet = new Set(terrObj.municipios.map(m => normalize(m)));
+        const filtered = geoData.features.filter(feat =>
+          munSet.has(normalize(feat.properties?.NOME || feat.properties?.nome || ''))
+        );
+        if (filtered.length > 0) {
+          activeFeatures = filtered;
+        }
+      }
+    }
+
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    geoData.features.forEach(feat => {
+    activeFeatures.forEach(feat => {
       if (!feat.geometry) return;
       const coords = feat.geometry.type === 'Polygon'
         ? feat.geometry.coordinates.flat()
@@ -147,7 +167,7 @@ export default function MapaNumeradoMunicipios({
       PADDING + (maxY - y) * scale + (height - (maxY - minY) * scale) / 2,
     ];
 
-    const processedFeatures = geoData.features.map((feat, idx) => {
+    const processedFeatures = activeFeatures.map((feat, idx) => {
       const nome = feat.properties?.NOME || feat.properties?.nome || '';
       let cx = 0, cy = 0, count = 0;
 
@@ -175,7 +195,7 @@ export default function MapaNumeradoMunicipios({
     });
 
     return { features: processedFeatures, project: projectFn };
-  }, [geoData]);
+  }, [geoData, selectedLocation]);
 
   const isTerritoryMode = useMemo(() => {
     return municipiosList.some(item => {
@@ -250,7 +270,7 @@ export default function MapaNumeradoMunicipios({
     }
   }, [features, municipiosList]);
 
-  const sphereCounts = useMemo(() => getSphereCounts(municipiosList), [municipiosList]);
+  const sphereCounts = useMemo(() => getSphereCounts(municipiosList, isTerritoryMode), [municipiosList, isTerritoryMode]);
   const cols = municipiosList.length > 70 ? 3 : 2;
 
   return (
@@ -363,13 +383,13 @@ export default function MapaNumeradoMunicipios({
           </div>
           <hr style={{ borderColor: '#e2e8f0', borderStyle: 'solid', borderWidth: '1px 0 0 0', margin: '10px 0 14px 0' }} />
 
-          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, columnGap: '28px', rowGap: '6px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, columnGap: '28px', rowGap: '6px', alignItems: 'start' }}>
             {municipiosList.map((item, index) => (
               <div
                 key={index}
                 style={{
                   display: 'flex',
-                  alignItems: 'baseline',
+                  alignItems: 'flex-start',
                   gap: '8px',
                   padding: '4px 0',
                   borderBottom: '1px solid #f8fafc',
@@ -379,20 +399,13 @@ export default function MapaNumeradoMunicipios({
               >
                 <span
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '18px',
-                    height: '18px',
-                    borderRadius: '50%',
-                    backgroundColor: CATEGORY_COLORS[item.categoria || item.instituicoes?.[0]?.categoria] || CATEGORY_COLORS.default,
-                    color: '#ffffff',
-                    fontSize: '10px',
-                    fontWeight: 'bold',
+                    color: CATEGORY_COLORS[item.categoria || item.instituicoes?.[0]?.categoria] || CATEGORY_COLORS.default,
+                    fontWeight: '800',
+                    marginRight: '4px',
                     flexShrink: 0,
                   }}
                 >
-                  {item.numero || index + 1}
+                  {item.numero || index + 1}.
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <strong style={{ color: '#1e293b', fontWeight: '700' }}>{item.municipio}</strong>
