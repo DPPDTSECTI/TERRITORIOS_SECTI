@@ -512,17 +512,21 @@ function MainApp() {
 
     const reportUnivPrivadasList = useMemo(() => {
         const privEntities = [];
+        const isPublico = (nome) => {
+            const norm = normalize(String(nome || ''));
+            return ['ufba', 'ufsb', 'uneb', 'uesc', 'uesb', 'uefs', 'ufrb', 'ufob', 'univasf', 'unilab', 'ifba', 'if baiano', 'instituto federal', 'universidade federal', 'universidade estadual'].some(p => norm.includes(p));
+        };
         filteredForReports.forEach(t => {
             const arrCap = getTerritoryArrayByFonte(t, 'capacidadeDetalhada');
             arrCap.forEach(ent => {
-                if (ent && ent.categoria === 'campiUniversidadePrivada') {
+                if (ent && ent.categoria === 'campiUniversidadePrivada' && !isPublico(ent.entidade || ent.nome)) {
                     privEntities.push({ ...ent, territory: t.nome || t.territory });
                 }
             });
             const arrCursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
             arrCursos.forEach(c => {
                 const info = classificarInstituicao(c);
-                if (info.categoria === 'privada' || c.categoria === 'campiUniversidadePrivada') {
+                if ((info.categoria === 'privada' || c.categoria === 'campiUniversidadePrivada') && !isPublico(c.entidade || c.nome)) {
                     privEntities.push({ ...c, territory: t.nome || t.territory });
                 }
             });
