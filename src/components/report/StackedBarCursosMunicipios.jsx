@@ -41,8 +41,8 @@ export function getAreaColor(index) {
 export default function StackedBarCursosMunicipios({
   id = 'report-image-cursos',
   heatmapData = { areas: [], linhas: [] },
-  title = 'Cursos de Ensino Superior na Bahia',
-  subtitle = 'Distribuição de Cursos por Município fatiada por Área Geral do Conhecimento',
+  title = 'Cursos de Ensino Superior — Escopo: Estado da Bahia (Todos os Territórios)',
+  subtitle = 'Distribuição de Cursos por Território de Identidade fatiada por Área Geral do Conhecimento',
 }) {
   const { areas = [], linhas = [] } = heatmapData;
 
@@ -54,12 +54,22 @@ export default function StackedBarCursosMunicipios({
   const maxTotal = Math.max(1, ...displayLinhas.map((r) => r.total || 0));
   const chartWidth = SVG_WIDTH - LEFT_MARGIN - RIGHT_MARGIN;
 
-  // Cálculo da altura do bloco de Legenda (3 colunas)
-  const numRowsLegend = Math.ceil(areas.length / 3);
+  // Cálculo da altura do bloco de Legenda (2 colunas largas)
+  const numRowsLegend = Math.ceil(areas.length / 2);
   const legendHeight = areas.length > 0 ? numRowsLegend * 28 + 35 : 20;
 
   const chartTopY = TOP_MARGIN + legendHeight + 40;
-  const svgHeight = chartTopY + Math.max(1, numRows) * ROW_HEIGHT + BOTTOM_MARGIN;
+
+  // Altura alvo proporcional à página A4 vertical inteira (190mm x 277mm -> aspecto 1.458 -> ~1750px)
+  const targetSvgHeight = 1750;
+  const availableRowsHeight = Math.max(800, targetSvgHeight - chartTopY - BOTTOM_MARGIN);
+  const rowHeight = Math.min(80, Math.max(45, Math.floor(availableRowsHeight / Math.max(1, numRows))));
+  const barHeight = Math.max(26, Math.round(rowHeight * 0.65));
+  const barOffsetY = Math.round((rowHeight - barHeight) / 2);
+  const textOffsetY = Math.round(rowHeight / 2) + 5;
+  const barTextOffsetY = Math.round(barHeight / 2) + 4;
+
+  const svgHeight = Math.max(targetSvgHeight, chartTopY + Math.max(1, numRows) * rowHeight + BOTTOM_MARGIN);
 
   // Marcas de grade (0%, 25%, 50%, 75%, 100%)
   const gridTicks = [0, 0.25, 0.5, 0.75, 1.0].map((ratio) => ({
@@ -118,7 +128,7 @@ export default function StackedBarCursosMunicipios({
       >
         {/* LEGENDA - ÁREAS DO CONHECIMENTO */}
         {areas.length > 0 && (
-          <g transform={`translate(${LEFT_MARGIN}, ${TOP_MARGIN})`}>
+          <g transform={`translate(40, ${TOP_MARGIN})`}>
             <text
               x="0"
               y="-10"
@@ -129,9 +139,9 @@ export default function StackedBarCursosMunicipios({
               Legenda — Áreas do Conhecimento:
             </text>
             {areas.map((area, idx) => {
-              const col = idx % 3;
-              const row = Math.floor(idx / 3);
-              const xPos = col * 300;
+              const col = idx % 2;
+              const row = Math.floor(idx / 2);
+              const xPos = col * 550;
               const yPos = row * 26 + 8;
               return (
                 <g key={area} transform={`translate(${xPos}, ${yPos})`}>
@@ -165,7 +175,7 @@ export default function StackedBarCursosMunicipios({
               x1={tick.x}
               y1={chartTopY - 15}
               x2={tick.x}
-              y2={chartTopY + numRows * ROW_HEIGHT + 10}
+              y2={chartTopY + numRows * rowHeight + 10}
               stroke="#e5e7eb"
               strokeDasharray="4 4"
               strokeWidth="1.5"
@@ -185,7 +195,7 @@ export default function StackedBarCursosMunicipios({
 
         {/* BARRAS DOS MUNICÍPIOS */}
         {displayLinhas.map((row, rowIdx) => {
-          const y = chartTopY + rowIdx * ROW_HEIGHT;
+          const y = chartTopY + rowIdx * rowHeight;
           const totalLength = Math.max(2, (row.total / maxTotal) * chartWidth);
           let currentX = LEFT_MARGIN;
 
@@ -194,10 +204,10 @@ export default function StackedBarCursosMunicipios({
               {/* Rótulo do Município */}
               <text
                 x={LEFT_MARGIN - 15}
-                y={y + 16}
+                y={y + textOffsetY}
                 textAnchor="end"
                 fill="#1e3a8a"
-                fontSize="14"
+                fontSize="15"
                 fontWeight="bold"
               >
                 {row.municipio}
@@ -206,9 +216,9 @@ export default function StackedBarCursosMunicipios({
               {/* Trilha de fundo sutil */}
               <rect
                 x={LEFT_MARGIN}
-                y={y}
+                y={y + barOffsetY}
                 width={chartWidth}
-                height={BAR_HEIGHT}
+                height={barHeight}
                 fill="#f8fafc"
                 rx="4"
               />
@@ -226,9 +236,9 @@ export default function StackedBarCursosMunicipios({
                   <g key={area}>
                     <rect
                       x={sliceX}
-                      y={y}
+                      y={y + barOffsetY}
                       width={sliceWidth}
-                      height={BAR_HEIGHT}
+                      height={barHeight}
                       fill={getAreaColor(areaIdx)}
                       stroke="#ffffff"
                       strokeWidth="1.5"
@@ -236,10 +246,10 @@ export default function StackedBarCursosMunicipios({
                     {sliceWidth >= 26 && (
                       <text
                         x={sliceX + sliceWidth / 2}
-                        y={y + 15}
+                        y={y + barOffsetY + barTextOffsetY}
                         textAnchor="middle"
                         fill="#ffffff"
-                        fontSize="10"
+                        fontSize="11"
                         fontWeight="bold"
                       >
                         {count}
@@ -252,9 +262,9 @@ export default function StackedBarCursosMunicipios({
               {/* Contagem Total do Município ao final da barra */}
               <text
                 x={LEFT_MARGIN + totalLength + 10}
-                y={y + 16}
+                y={y + textOffsetY}
                 fill="#1e3a8a"
-                fontSize="14"
+                fontSize="15"
                 fontWeight="bold"
               >
                 {row.total}
@@ -266,9 +276,9 @@ export default function StackedBarCursosMunicipios({
         {/* Eixo de base inferior */}
         <line
           x1={LEFT_MARGIN}
-          y1={chartTopY + numRows * ROW_HEIGHT + 10}
+          y1={chartTopY + numRows * rowHeight + 10}
           x2={LEFT_MARGIN + chartWidth}
-          y2={chartTopY + numRows * ROW_HEIGHT + 10}
+          y2={chartTopY + numRows * rowHeight + 10}
           stroke="#9ca3af"
           strokeWidth="1.5"
         />

@@ -54,7 +54,6 @@ function buildTableDataForCategory(categoryId, territoriosData = [], filtros = {
           const info = classificarInstituicao(ent);
           const cat = info.categoria || ent.categoria || '';
           if (
-            info.isPublica ||
             ['campiUniversidadePublica', 'campiInstitutoFederal', 'federal', 'estadual', 'institutoFederal'].includes(cat)
           ) {
             pubEntities.push(ent);
@@ -64,7 +63,7 @@ function buildTableDataForCategory(categoryId, territoriosData = [], filtros = {
       const arrCursos = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
       arrCursos.forEach(c => {
         const info = classificarInstituicao(c);
-        if (info.isPublica || ['federal', 'estadual', 'institutoFederal'].includes(info.categoria)) {
+        if (['campiUniversidadePublica', 'campiInstitutoFederal', 'federal', 'estadual', 'institutoFederal'].includes(info.categoria)) {
           pubEntities.push(c);
         }
       });
@@ -174,12 +173,6 @@ function buildTableDataForCategory(categoryId, territoriosData = [], filtros = {
 export async function generateUnifiedReport(options = {}) {
   const {
     categoriasSelecionadasIds = ['cursos', 'univ_publicas', 'univ_privadas', 'cadeias', 'ativos_cti'],
-    territoriosData = [],
-    filtros = {},
-    title = 'Programa de Ciência, Tecnologia e Inovação',
-    subtitle = null,
-    sectiLogo = null,
-    conectaLogo = null,
   } = options;
 
   if (!Array.isArray(categoriasSelecionadasIds) || categoriasSelecionadasIds.length === 0) {
@@ -187,69 +180,34 @@ export async function generateUnifiedReport(options = {}) {
   }
 
   const pdf = createPDFDocument();
-  const dateStr = new Date().toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
 
-  const defaultSub = filtros?.selectedLocation
-    ? `Relatório Agregado — ${filtros.selectedLocation.nome || filtros.selectedLocation.territory}`
-    : 'Relatório Institucional Agregado — Estado da Bahia';
-  const finalSubtitle = subtitle || defaultSub;
-
-  // 1. Capa simples (logo + título + subtítulo + data)
-  await addCover(pdf, sectiLogo, conectaLogo, title, finalSubtitle, dateStr);
-
-  let yPos = ABNT_TOP_MARGIN;
-
-  // Filtrar territórios baseados na localização selecionada
-  const filteredTerritoriosData = filterTerritoriosByLocation(territoriosData, filtros);
-
-  // 2. Para cada categoria selecionada no painel
-  for (const id of categoriasSelecionadasIds) {
+  // 1. Sem capa e 1 página por categoria selecionada (cada relatório gráfico ocupa exatamente 1 página limpa)
+  for (let idx = 0; idx < categoriasSelecionadasIds.length; idx++) {
+    const id = categoriasSelecionadasIds[idx];
     const config = CATEGORIAS_RELATORIO.find(c => c.id === id);
     if (!config) continue;
 
-    // Título da categoria
-    yPos = addSection(pdf, yPos, config.label, 1);
-    yPos += 3;
+    // A primeira categoria usa a página 1 inicial do createPDFDocument(); as seguintes adicionam nova página
+    if (idx > 0) {
+      pdf.addPage();
+    }
 
-    // Tentar capturar o componente offscreen de imagem correspondente
     const elementId = `report-image-${id}`;
     const element = document.getElementById(elementId);
     if (element) {
       try {
         const imgBase64 = await htmlElementToBase64(element);
         if (imgBase64) {
-          const aspectRatio =
-            element.offsetHeight && element.offsetWidth
-              ? element.offsetHeight / element.offsetWidth
-              : 0.75;
-          yPos = addImage(pdf, yPos, imgBase64, config.label, 160, aspectRatio);
-          yPos += 5;
+          // Imagem ocupa 100% da largura útil (190mm) e altura 266mm, preservando margem em y=282mm para o rodapé ABNT
+          pdf.addImage(imgBase64, 'PNG', 10, 10, 190, 266);
         }
       } catch (errImg) {
         console.warn(`Aviso: não foi possível capturar imagem para a categoria ${id}:`, errImg);
       }
     }
-
-    // Tabela textual (omitida para a categoria 'cursos' conforme solicitado: apenas gráfico de barras)
-    if (id !== 'cursos') {
-      const { headers, rows } = buildTableDataForCategory(id, filteredTerritoriosData, filtros);
-      const finalRows =
-        rows.length > 0
-          ? rows
-          : [['-', '-', 'Nenhum dado encontrado para o filtro atual', '-', '-'].slice(0, headers.length)];
-
-      yPos = addTable(pdf, yPos, headers, finalRows);
-      yPos += 15;
-    } else {
-      yPos += 10;
-    }
   }
 
-  // 3. Adiciona paginação e rodapés padrão ABNT
+  // 2. Adiciona paginação e rodapés ABNT
   addFooter(pdf);
 
   return pdf;

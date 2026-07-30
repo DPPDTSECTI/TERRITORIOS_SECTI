@@ -8,11 +8,11 @@ const SVG_H = 750;
 const PADDING = 20;
 
 const CATEGORY_COLORS = {
-  federal: '#1d4ed8',
-  campiUniversidadePublica: '#1d4ed8',
-  estadual: '#dc2626',
-  institutoFederal: '#16a34a',
-  campiInstitutoFederal: '#16a34a',
+  federal: '#2563eb', // Azul
+  campiUniversidadePublica: '#2563eb',
+  estadual: '#9333ea', // Roxo
+  institutoFederal: '#059669', // Verde
+  campiInstitutoFederal: '#059669',
   privada: '#7e22ce',
   campiUniversidadePrivada: '#7e22ce',
   icts: '#0891b2',
@@ -22,6 +22,48 @@ const CATEGORY_COLORS = {
   espacoDinamizadoress: '#0d9488',
   default: '#4b5563',
 };
+
+const CATEGORY_LABELS = {
+  federal: 'Federal',
+  campiUniversidadePublica: 'Federal',
+  estadual: 'Estadual',
+  institutoFederal: 'Inst. Federal',
+  campiInstitutoFederal: 'Inst. Federal',
+  privada: 'Privada',
+  campiUniversidadePrivada: 'Privada',
+  icts: 'ICTs',
+  centrosPesquisa: 'Centros de Pesquisa',
+  parquesTecnologicos: 'Parques Tecnológicos',
+  incubadorasAceleradoras: 'Incubadoras / Aceleradoras',
+  espacoDinamizadoress: 'Espaços Dinamizadores',
+  default: 'Outros',
+};
+
+function getSphereCounts(municipiosList = []) {
+  const counts = {};
+  municipiosList.forEach(item => {
+    const seenCats = new Set();
+    if (Array.isArray(item.instituicoes) && item.instituicoes.length > 0) {
+      item.instituicoes.forEach(inst => {
+        let cat = inst.categoria || 'default';
+        if (cat === 'campiUniversidadePublica') cat = 'federal';
+        if (cat === 'campiInstitutoFederal') cat = 'institutoFederal';
+        if (cat === 'campiUniversidadePrivada') cat = 'privada';
+        seenCats.add(cat);
+      });
+    } else {
+      let cat = item.categoria || 'default';
+      if (cat === 'campiUniversidadePublica') cat = 'federal';
+      if (cat === 'campiInstitutoFederal') cat = 'institutoFederal';
+      if (cat === 'campiUniversidadePrivada') cat = 'privada';
+      seenCats.add(cat);
+    }
+    seenCats.forEach(cat => {
+      counts[cat] = (counts[cat] || 0) + 1;
+    });
+  });
+  return counts;
+}
 
 function buildSvgPath(geometry, projectFn) {
   if (!geometry) return '';
@@ -208,6 +250,9 @@ export default function MapaNumeradoMunicipios({
     }
   }, [features, municipiosList]);
 
+  const sphereCounts = useMemo(() => getSphereCounts(municipiosList), [municipiosList]);
+  const cols = municipiosList.length > 70 ? 3 : 2;
+
   return (
     <div
       id={id}
@@ -222,24 +267,24 @@ export default function MapaNumeradoMunicipios({
         color: '#1f2937',
       }}
     >
-      <div style={{ borderBottom: '3px solid #1e3a8a', paddingBottom: '16px', marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: 'bold', color: '#1e3a8a', margin: '0 0 6px 0' }}>
+      <div style={{ borderBottom: '3px solid #1e3a8a', paddingBottom: '14px', marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', color: '#1e3a8a', margin: '0 0 6px 0' }}>
           {title}
         </h2>
-        <p style={{ fontSize: '18px', color: '#4b5563', margin: 0 }}>
+        <p style={{ fontSize: '17px', color: '#4b5563', margin: 0 }}>
           {subtitle}
         </p>
       </div>
 
       <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
-        <div style={{ width: '750px', flexShrink: 0, border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', backgroundColor: '#f8fafc' }}>
+        <div style={{ width: '680px', flexShrink: 0, border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', backgroundColor: '#f8fafc' }}>
           <svg width={SVG_W} height={SVG_H} viewBox={`0 0 ${SVG_W} ${SVG_H}`} style={{ display: 'block', width: '100%', height: 'auto' }}>
             <g>
               {features.map(feat => (
                 <path
                   key={feat.id}
                   d={feat.dPath}
-                  fill="#e2e8f0"
+                  fill="#f1f5f9"
                   stroke="#cbd5e1"
                   strokeWidth="0.8"
                 />
@@ -262,50 +307,128 @@ export default function MapaNumeradoMunicipios({
               ))}
             </g>
           </svg>
+
+          {/* Legenda inferior de Esferas / Categorias no Mapa */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+            {Object.entries(sphereCounts).map(([cat, count]) => {
+              const label = CATEGORY_LABELS[cat] || 'Outros';
+              const color = CATEGORY_COLORS[cat] || CATEGORY_COLORS.default;
+              return (
+                <div key={cat} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '700', color: '#334155' }}>
+                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: color }} />
+                  <span>{label} ({count})</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div style={{ flex: 1 }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1e3a8a', marginTop: 0, marginBottom: '16px' }}>
-            {isTerritoryMode ? 'Territórios Mapeados' : 'Municípios Mapeados'} ({municipiosList.length})
-          </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1e293b', margin: 0 }}>
+              {isTerritoryMode ? 'Territórios' : 'Municípios'}
+            </h3>
+            <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '600' }}>
+              {municipiosList.length} {isTerritoryMode ? 'territórios' : 'municípios'}
+            </span>
+          </div>
+          <p style={{ fontSize: '15px', color: '#64748b', margin: '0 0 12px 0' }}>
+            <strong>{municipiosList.length}</strong> {isTerritoryMode ? 'territórios com presença mapeada em' : 'municípios com presença mapeada em'} {title.includes(' — ') ? title.split(' — ')[1] : title}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+            {Object.entries(sphereCounts).map(([cat, count]) => {
+              const label = CATEGORY_LABELS[cat] || 'Outros';
+              const color = CATEGORY_COLORS[cat] || CATEGORY_COLORS.default;
+              return (
+                <span
+                  key={cat}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '3px 10px',
+                    borderRadius: '16px',
+                    backgroundColor: `${color}15`,
+                    color: color,
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    border: `1px solid ${color}40`,
+                  }}
+                >
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: color }} />
+                  {count} {label}
+                </span>
+              );
+            })}
+          </div>
+          <hr style={{ borderColor: '#e2e8f0', borderStyle: 'solid', borderWidth: '1px 0 0 0', margin: '10px 0 14px 0' }} />
+
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, columnGap: '28px', rowGap: '6px' }}>
             {municipiosList.map((item, index) => (
               <div
                 key={index}
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '8px 12px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  backgroundColor: '#ffffff',
+                  alignItems: 'baseline',
+                  gap: '8px',
+                  padding: '4px 0',
+                  borderBottom: '1px solid #f8fafc',
+                  fontSize: cols === 3 ? '12px' : '13px',
+                  lineHeight: '1.4',
                 }}
               >
-                <div
+                <span
                   style={{
-                    width: '24px',
-                    height: '24px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '18px',
+                    height: '18px',
                     borderRadius: '50%',
                     backgroundColor: CATEGORY_COLORS[item.categoria || item.instituicoes?.[0]?.categoria] || CATEGORY_COLORS.default,
                     color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
+                    fontSize: '10px',
                     fontWeight: 'bold',
                     flexShrink: 0,
                   }}
                 >
                   {item.numero || index + 1}
-                </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: '#374151' }}>
-                  {item.municipio}
                 </span>
+                <div style={{ flex: 1, minWidth: 0, wordBreak: 'break-word' }}>
+                  <strong style={{ color: '#1e293b', fontWeight: '700' }}>{item.municipio}</strong>
+                  {item.instituicoes && item.instituicoes.length > 0 && (
+                    <span style={{ color: '#64748b', marginLeft: '4px' }}>
+                      — {item.instituicoes.map((inst, iIdx) => {
+                        const instCat = inst.categoria === 'campiUniversidadePublica' ? 'federal' :
+                                        inst.categoria === 'campiInstitutoFederal' ? 'institutoFederal' :
+                                        inst.categoria === 'campiUniversidadePrivada' ? 'privada' :
+                                        inst.categoria || 'default';
+                        const color = CATEGORY_COLORS[instCat] || '#475569';
+                        return (
+                          <span
+                            key={iIdx}
+                            style={{
+                              marginRight: '6px',
+                              color: color,
+                              fontWeight: '700',
+                            }}
+                          >
+                            •{inst.sigla}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e2e8f0', fontSize: '13px', color: '#64748b' }}>
+        <span>Fonte: INEP / Censo da Educação Superior 2022 — SECTI Bahia</span>
+        <span>{new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</span>
       </div>
     </div>
   );

@@ -133,8 +133,24 @@ export function extractSigla(entidade) {
 export function classificarInstituicao(curso = {}) {
   const org = curso.orgAcademica || '';
   const catAdm = curso.categoriaAdm || '';
-  const ent = curso.entidade || '';
-  const tipoNorm = normalize(`${org} ${catAdm} ${ent}`);
+  const ent = curso.entidade || curso.nome || '';
+  const catOriginal = curso.categoria || '';
+  const tipoNorm = normalize(`${org} ${catAdm} ${ent} ${catOriginal}`);
+
+  // Se for um ativo de CT&I não-acadêmico (incubadora, aceleradora, parque tecnológico, centro de pesquisa, espaço colaborar/dinamizador, ict, NIT, sebrae, etc.)
+  const isNonUniversityCti =
+    ['incubadoras', 'aceleradoras', 'parquesTecnologicos', 'centrosPesquisa', 'espacoDinamizadoress', 'icts'].includes(catOriginal) ||
+    ['incubadora', 'aceleradora', 'parque tecnologico', 'espaço colaborar', 'espaco colaborar', 'espaco fazer', 'espaço fazer', 'broto', 'pre incubadora', 'pre-incubadora', 'centro de pesquisa', 'nucleo de inovacao', 'nit', 'sebrae', 'cooperativas populares'].some(word => tipoNorm.includes(word));
+
+  if (isNonUniversityCti) {
+    return {
+      catCurso: null,
+      categoria: catOriginal || 'cti',
+      isPrivada: false,
+      isPublica: false,
+      sigla: extractSigla(ent)
+    };
+  }
 
   let catCurso = null;
   const isExplicitlyPublic = ['federal', 'estadual', 'publica', 'ufba', 'ufrb', 'ufob', 'ufsb', 'univasf', 'uneb', 'uesc', 'uesb', 'uefs', 'ifba'].some(c => tipoNorm.includes(c));

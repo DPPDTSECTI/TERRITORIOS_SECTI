@@ -500,9 +500,14 @@ function MainApp() {
     const filteredForReports = useMemo(() => filterTerritoriosByLocation(territoriosData, reportFiltros), [territoriosData, reportFiltros]);
 
     const reportUnivPublicasList = useMemo(() => {
-        return buildMunicipiosInstituicoesList(filteredForReports, reportFiltros).filter(m =>
-            m.instituicoes && m.instituicoes.some(i => ['federal', 'estadual', 'institutoFederal', 'campiUniversidadePublica', 'campiInstitutoFederal'].includes(i.categoria))
-        );
+        return buildMunicipiosInstituicoesList(filteredForReports, reportFiltros)
+            .map(m => ({
+                ...m,
+                instituicoes: (m.instituicoes || []).filter(i =>
+                    ['federal', 'estadual', 'institutoFederal', 'campiUniversidadePublica', 'campiInstitutoFederal'].includes(i.categoria)
+                )
+            }))
+            .filter(m => m.instituicoes && m.instituicoes.length > 0);
     }, [filteredForReports, reportFiltros]);
 
     const reportUnivPrivadasList = useMemo(() => {
@@ -1608,30 +1613,32 @@ function MainApp() {
                 <StackedBarCursosMunicipios
                     id="report-image-cursos"
                     heatmapData={reportHeatmapData}
-                    subtitle={selectedLocation ? `Distribuição de Cursos — ${selectedLocation.nome || selectedLocation.territory}` : "Distribuição de Cursos por Território fatiada por Área Geral do Conhecimento"}
+                    title={selectedLocation ? `Cursos de Ensino Superior — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Cursos de Ensino Superior — Escopo: Estado da Bahia (Todos os Territórios)"}
+                    subtitle={selectedLocation ? "Distribuição de Cursos por Município fatiada por Área Geral do Conhecimento" : "Distribuição de Cursos por Território fatiada por Área Geral do Conhecimento"}
                 />
                 <MapaNumeradoMunicipios
                     id="report-image-univ_publicas"
                     municipiosList={reportUnivPublicasList}
-                    title="Universidades Públicas na Bahia"
-                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Público no Estado da Bahia"}
+                    title={selectedLocation ? `Universidades Públicas — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Universidades Públicas — Escopo: Estado da Bahia (Todos os Territórios)"}
+                    subtitle={selectedLocation ? `Ensino Superior Público no Território ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Público no Estado da Bahia"}
                 />
                 <MapaNumeradoMunicipios
                     id="report-image-univ_privadas"
                     municipiosList={reportUnivPrivadasList}
-                    title="Universidades Privadas na Bahia"
-                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Privado no Estado da Bahia"}
+                    title={selectedLocation ? `Universidades Privadas — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Universidades Privadas — Escopo: Estado da Bahia (Todos os Territórios)"}
+                    subtitle={selectedLocation ? `Ensino Superior Privado no Território ${selectedLocation.nome || selectedLocation.territory}` : "Ensino Superior Privado no Estado da Bahia"}
                 />
                 <MapaCadeiasProdutivas
                     id="report-image-cadeias"
                     cadeiasList={reportCadeiasList}
-                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Mapeamento de Sedes e Municípios de Influência na Bahia"}
+                    title={selectedLocation ? `Cadeias Produtivas — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Cadeias Produtivas — Escopo: Estado da Bahia (Todos os Territórios)"}
+                    subtitle={selectedLocation ? `Mapeamento no Território ${selectedLocation.nome || selectedLocation.territory}` : "Mapeamento de Sedes e Municípios de Influência na Bahia"}
                 />
                 <MapaNumeradoMunicipios
                     id="report-image-ativos_cti"
                     municipiosList={reportAtivosCtiList}
-                    title="Ativos de CT&I na Bahia"
-                    subtitle={selectedLocation ? `Relatório Agregado — ${selectedLocation.nome || selectedLocation.territory}` : "Infraestrutura de Pesquisa, Inovação e Empreendedorismo"}
+                    title={selectedLocation ? `Ativos de CT&I — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Ativos de CT&I — Escopo: Estado da Bahia (Todos os Territórios)"}
+                    subtitle={selectedLocation ? `Infraestrutura de Pesquisa e Inovação no Território ${selectedLocation.nome || selectedLocation.territory}` : "Infraestrutura de Pesquisa, Inovação e Empreendedorismo"}
                 />
             </div>
         </div>

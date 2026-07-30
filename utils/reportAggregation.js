@@ -116,12 +116,9 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
   const munMap = new Map();
 
   const addEntityToMap = (munName, ent, fallbackCat = '', territoryName = '') => {
-    // Se isGlobalView for true e um territoryName foi fornecido, agrupa pelo território.
-    // Senão, cai de volta pro município.
     const groupName = isGlobalView && territoryName ? territoryName : munName;
     if (!groupName) return;
-    
-    // Se agrupamos por território, o cleanMun é o território. Senão, é o município normalizado.
+
     const cleanMun = isGlobalView && territoryName ? groupName : normalizarMunicipio(groupName);
     const munNorm = normalize(cleanMun);
 
@@ -158,7 +155,6 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
         const info = classificarInstituicao(ent);
         const cat = info.categoria || ent.categoria || '';
         if (
-          info.isPublica ||
           ['federal', 'estadual', 'institutoFederal', 'campiUniversidadePublica', 'campiInstitutoFederal'].includes(cat)
         ) {
           addEntityToMap(ent.municipio, ent, cat, t.nome || t.territory);
