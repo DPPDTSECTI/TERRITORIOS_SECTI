@@ -123,6 +123,20 @@ export function extractSigla(entidade) {
   if (match && match[1]) {
     return match[1].trim();
   }
+  const norm = normalize(str);
+  if (norm.includes('sul da bahia') || norm.includes('ufsb')) return 'UFSB';
+  if (norm.includes('lusofonia') || norm.includes('unilab')) return 'UNILAB';
+  if (norm.includes('vale do sao francisco') || norm.includes('univasf')) return 'UNIVASF';
+  if (norm.includes('oeste da bahia') || norm.includes('ufob')) return 'UFOB';
+  if (norm.includes('reconcavo') || norm.includes('ufrb')) return 'UFRB';
+  if (norm.includes('estado da bahia') || norm.includes('uneb')) return 'UNEB';
+  if (norm.includes('santa cruz') || norm.includes('uesc')) return 'UESC';
+  if (norm.includes('sudoeste da bahia') || norm.includes('uesb')) return 'UESB';
+  if (norm.includes('feira de santana') || norm.includes('uefs')) return 'UEFS';
+  if (norm.includes('federal da bahia') || norm.includes('ufba')) return 'UFBA';
+  if (norm.includes('ifbaiano') || norm.includes('baiano')) return 'IF BAIANO';
+  if (norm.includes('instituto federal da bahia') || norm.includes('ifba')) return 'IFBA';
+  if (norm.includes('sertao pernambucano') || norm.includes('ifsertao')) return 'IF SERTÃO-PE';
   return str;
 }
 

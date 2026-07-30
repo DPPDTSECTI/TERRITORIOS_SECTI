@@ -198,8 +198,12 @@ export async function generateUnifiedReport(options = {}) {
       try {
         const imgBase64 = await htmlElementToBase64(element);
         if (imgBase64) {
-          // Imagem ocupa 100% da largura útil (190mm) e altura 266mm, preservando margem em y=282mm para o rodapé ABNT
-          pdf.addImage(imgBase64, 'PNG', 10, 10, 190, 266);
+          // Calcula a proporção natural do elemento para NUNCA distorcer/esticar (aspect ratio original)
+          const rect = element.getBoundingClientRect();
+          const aspectRatio = rect.width && rect.height ? rect.height / rect.width : 0.62;
+          const imgWidth = 190;
+          const imgHeight = Math.min(imgWidth * aspectRatio, 266);
+          pdf.addImage(imgBase64, 'PNG', 10, 10, imgWidth, imgHeight);
         }
       } catch (errImg) {
         console.warn(`Aviso: não foi possível capturar imagem para a categoria ${id}:`, errImg);

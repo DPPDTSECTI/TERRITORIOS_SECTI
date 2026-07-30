@@ -119,7 +119,7 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
     const groupName = isGlobalView && territoryName ? territoryName : munName;
     if (!groupName) return;
 
-    const cleanMun = isGlobalView && territoryName ? groupName : normalizarMunicipio(groupName);
+    const cleanMun = normalizarMunicipio(groupName);
     const munNorm = normalize(cleanMun);
 
     if (!munMap.has(munNorm)) {

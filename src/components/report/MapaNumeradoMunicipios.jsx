@@ -394,7 +394,7 @@ export default function MapaNumeradoMunicipios({
                 >
                   {item.numero || index + 1}
                 </span>
-                <div style={{ flex: 1, minWidth: 0, wordBreak: 'break-word' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <strong style={{ color: '#1e293b', fontWeight: '700' }}>{item.municipio}</strong>
                   {item.instituicoes && item.instituicoes.length > 0 && (
                     <span style={{ color: '#64748b', marginLeft: '4px' }}>
@@ -408,6 +408,8 @@ export default function MapaNumeradoMunicipios({
                           <span
                             key={iIdx}
                             style={{
+                              display: 'inline-block',
+                              whiteSpace: 'nowrap',
                               marginRight: '6px',
                               color: color,
                               fontWeight: '700',
