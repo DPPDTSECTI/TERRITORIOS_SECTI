@@ -312,9 +312,15 @@ export default function MapaNumeradoMunicipios({
         });
         // Pegar os top itens (os que têm mais instituições) para preencher o espaço abaixo do mapa
         const maxBelowMap = Math.min(Math.max(3, Math.floor(municipiosList.length * 0.25)), 8);
-        const topItems = sorted.slice(0, maxBelowMap);
-        const topNums = new Set(topItems.map(t => t.numero || municipiosList.indexOf(t) + 1));
-        const restItems = municipiosList.filter((item, idx) => !topNums.has(item.numero || idx + 1));
+        let topItems = sorted.slice(0, maxBelowMap);
+        let topNums = new Set(topItems.map(t => t.numero || municipiosList.indexOf(t) + 1));
+        let restItems = municipiosList.filter((item, idx) => !topNums.has(item.numero || idx + 1));
+
+        // Se todos os itens seriam destaques (restItems vazio), não separar — mostra tudo normal
+        if (restItems.length === 0) {
+          topItems = [];
+          restItems = municipiosList;
+        }
 
         const renderItem = (item, index, fontSize = '13px') => {
           return (
