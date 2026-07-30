@@ -1637,6 +1637,7 @@ function MainApp() {
                 <MapaCadeiasProdutivas
                     id="report-image-cadeias"
                     cadeiasList={reportCadeiasList}
+                    selectedLocation={selectedLocation}
                     title={selectedLocation ? `Cadeias Produtivas — Escopo: Território ${selectedLocation.nome || selectedLocation.territory}` : "Cadeias Produtivas — Escopo: Estado da Bahia (Todos os Territórios)"}
                     subtitle={selectedLocation ? `Mapeamento no Território ${selectedLocation.nome || selectedLocation.territory}` : "Mapeamento de Sedes e Municípios de Influência na Bahia"}
                 />

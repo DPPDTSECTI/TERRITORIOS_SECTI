@@ -316,8 +316,8 @@ export default function MapaNumeradoMunicipios({
         let topNums = new Set(topItems.map(t => t.numero || municipiosList.indexOf(t) + 1));
         let restItems = municipiosList.filter((item, idx) => !topNums.has(item.numero || idx + 1));
 
-        // Se todos os itens seriam destaques (restItems vazio), não separar — mostra tudo normal
-        if (restItems.length === 0) {
+        // Não separar em destaques se há poucos itens (10 ou menos) ou se restaria vazio
+        if (restItems.length === 0 || municipiosList.length <= 10) {
           topItems = [];
           restItems = municipiosList;
         }
