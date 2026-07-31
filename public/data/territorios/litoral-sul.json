@@ -1,0 +1,938 @@
+{
+  "territory": "Litoral Sul",
+  "slug": "litoral-sul",
+  "isSemiarido": true,
+  "pctSemiarido": 4.081632653061225,
+  "desenvolvimento": {
+    "ifdmTi": 0.46401153846153853,
+    "populacaoTotal": 750979,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadeestadualdesantacruzuesc_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 12,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldosuldobahia_itabuna",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul do Bahia",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_urucuca",
+      "municipio": "Uruçuca",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_ubaitaba",
+      "municipio": "Ubaitaba",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodauesc_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "Espaço Colaborar Parceiro da UESC",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_brotoincubadoradebiotecnologiadauesc_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "Broto Incubadora de Biotecnologia da UESC",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_incubadoradeempresasdebasecientificaetecnologicadaufsb_itabuna",
+      "municipio": "Itabuna",
+      "entidade": "Incubadora de Empresas de Base Científica e Tecnológica da UFSB",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_incubadoradetecnologiassociaiseeconomiasolidariadosuleextremosuldabahiadaufsb_itabuna",
+      "municipio": "Itabuna",
+      "entidade": "Incubadora de Tecnologias Sociais e Economia Solidária do Sul e Extremo Sul da Bahia da UFSB",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_preincubadoratecnologicadoifbaiano_urucuca",
+      "municipio": "Uruçuca",
+      "entidade": "Pré-Incubadora Tecnológica do IFBaiano",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_comissaoexecutivadoplanodalavouracacaueiradabahia_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "Comissão Executiva do Plano da Lavoura Cacaueira da Bahia",
+      "tipo": "Entidade de Pesquisa",
+      "categoria": "centrosPesquisa",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_parquecientificoetecnologicodosuldabahia_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "Parque Científico e Tecnológico do Sul da Bahia",
+      "tipo": "Parque Tecnológico",
+      "categoria": "parquesTecnologicos",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrodeensinosuperiordeilheus_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadeanhangueradeitabuna_itabuna",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdademadrethais_ilheus",
+      "municipio": "Ilhéus",
+      "entidade": "Faculdade MADRE THAIS",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadedeexcelenciaunexdeitabuna_itabuna",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade de Excelência UNEX de Itabuna",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldosuldabahiaufsb_itabuna",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "tipo": "Universidade - Pública Federal",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_cacau_ilheus_associacaodosprodutoresdecacaudosuldabahia",
+      "segmento": "Cacau",
+      "sede": "Ilhéus",
+      "municipiosPertencentes": "Almadina, Arataca, Aurelino Leal, Barro Preto, Buerarema, Camacan, Canavieiras, Coaraci, Floresta Azul, Ibicaraí, Ilhéus, Itabuna, Itacaré, Itaju do Colônia, Itajuípe, Itapé, Itapitanga, Jussari, Maraú, Mascote, Pau-Brasil, Santa Luzia, São José da Vitória, Ubaitaba, Una, Uruçuca",
+      "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
+      "tipo": "IG",
+      "quantidade": 26,
+      "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+      "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
+    },
+    {
+      "id": "cad_cacau_itabuna_agriculturafamiliareeconomiasolidariadabaciadoriosalgadoeadjacentes",
+      "segmento": "Cacau",
+      "sede": "Itabuna",
+      "municipiosPertencentes": "Barro Preto, Buerarema, Coaraci, Floresta Azul, Ibicaraí, Itabuna, Santa Luzia, Ubaitaba, Uruçuca",
+      "entidade": "Agricultura Familiar e Economia Solidária da Bacia do Rio Salgado e Adjacentes",
+      "tipo": "APL",
+      "quantidade": 9,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_bovinoculturadeleite_camacan_bovinoculturadeleiteterritoriolitoralsul",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Camacan",
+      "municipiosPertencentes": "Camacan; Itaju do Colonia; Jussari; Pau Brasil",
+      "entidade": "Bovinocultura de Leite - Território Litoral Sul",
+      "tipo": "APL",
+      "quantidade": 4,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_cacau_itabuna_cacauiculturasafterritoriodolitoralsul",
+      "segmento": "Cacau",
+      "sede": "Itabuna",
+      "municipiosPertencentes": "Ipiaú; Jequié; Jitaúna",
+      "entidade": "Cacauicultura - SAF - Território do Litoral Sul",
+      "tipo": "APL",
+      "quantidade": 3,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_agricultura_itubera_agriculturafamiliardobaixosul",
+      "segmento": "Agricultura",
+      "sede": "Ituberá",
+      "municipiosPertencentes": "Ilhéus, Una",
+      "entidade": "Agricultura Familiar do Baixo Sul",
+      "tipo": "APL",
+      "quantidade": 2,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_cacau_ilheus_servicossustentaveisdabahia",
+      "segmento": "Cacau",
+      "sede": "Ilhéus",
+      "municipiosPertencentes": "Ilhéus",
+      "entidade": "Serviços Sustentáveis da Bahia",
+      "tipo": "APL",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_farinhademandioca_buerarema_cooperativamistadosprodutoresruraisdosuldabahia",
+      "segmento": "Farinha de Mandioca",
+      "sede": "Buerarema",
+      "municipiosPertencentes": "Buerarema; São José da Vitória; Una; Ilhéus",
+      "entidade": "Cooperativa Mista dos Produtores Rurais do Sul da Bahia",
+      "tipo": "IG Potencial",
+      "quantidade": 4,
+      "fonte": "MIDLEJ, Emanuel Marques; SALES, Jorge Henrique de Oliveira. A indicação geográfica (IG) para a farinha de Buerarema como estratégia de proteção aos produtores locais. Revista Observatorio de la Economia Latinoamericana, Curitiba, v. 22, n. 6, p. 01-20, 2024. DOI: 10.55905/oelv22n6-111.",
+      "urlTarget": "https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/5218/3367"
+    },
+    {
+      "id": "cad_polenapicola_canavieiras_cooperativadeapicultoresdecanavieiras",
+      "segmento": "Pólen Apícola",
+      "sede": "Canavieiras",
+      "municipiosPertencentes": "Canavieiras",
+      "entidade": "Cooperativa de Apicultores de Canavieiras",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+      "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+    },
+    {
+      "id": "cad_azeitededende_valenca_costadodende",
+      "segmento": "Azeite de Dendê",
+      "sede": "Valença",
+      "municipiosPertencentes": "Aratuípe; Belmonte; Cairu; Camamu; Coaraci; Igrapiúna; Ilhéus; Itacaré; Ituberá; Jaguaripe; Maraú; Muniz Ferreira; Nazaré; Nilo Peçanha; Porto Seguro; Presidente Tancredo Neves; Salinas da Margarida; Santo Amaro; Taperoá; Una; Uruçuca; Valença; Wenceslau Guimarães",
+      "entidade": "Costa do Dendê",
+      "tipo": "IG Potencial",
+      "quantidade": 23,
+      "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+      "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Itabuna",
+      "ifdm": 0.5703,
+      "populacao": 196344
+    },
+    {
+      "municipio": "Una",
+      "ifdm": 0.5309,
+      "populacao": 18254
+    },
+    {
+      "municipio": "Jussari",
+      "ifdm": 0.526,
+      "populacao": 6048
+    },
+    {
+      "municipio": "Ibicaraí",
+      "ifdm": 0.523,
+      "populacao": 22131
+    },
+    {
+      "municipio": "Floresta Azul",
+      "ifdm": 0.5193,
+      "populacao": 11455
+    },
+    {
+      "municipio": "Barro Preto",
+      "ifdm": 0.5175,
+      "populacao": 5936
+    },
+    {
+      "municipio": "Itapitanga",
+      "ifdm": 0.5105,
+      "populacao": 10640
+    },
+    {
+      "municipio": "Camacan",
+      "ifdm": 0.4857,
+      "populacao": 22485
+    },
+    {
+      "municipio": "Aurelino Leal",
+      "ifdm": 0.4781,
+      "populacao": 11339
+    },
+    {
+      "municipio": "Ilhéus",
+      "ifdm": 0.4756,
+      "populacao": 189149
+    },
+    {
+      "municipio": "Coaraci",
+      "ifdm": 0.4724,
+      "populacao": 17557
+    },
+    {
+      "municipio": "Itacaré",
+      "ifdm": 0.4667,
+      "populacao": 29496
+    },
+    {
+      "municipio": "Itapé",
+      "ifdm": 0.4585,
+      "populacao": 10649
+    },
+    {
+      "municipio": "Itaju do Colônia",
+      "ifdm": 0.4557,
+      "populacao": 6118
+    },
+    {
+      "municipio": "Mascote",
+      "ifdm": 0.4526,
+      "populacao": 13918
+    },
+    {
+      "municipio": "Arataca",
+      "ifdm": 0.4523,
+      "populacao": 10433
+    },
+    {
+      "municipio": "Itajuípe",
+      "ifdm": 0.4425,
+      "populacao": 19191
+    },
+    {
+      "municipio": "Almadina",
+      "ifdm": 0.437,
+      "populacao": 5296
+    },
+    {
+      "municipio": "Uruçuca",
+      "ifdm": 0.4368,
+      "populacao": 22155
+    },
+    {
+      "municipio": "Ubaitaba",
+      "ifdm": 0.4238,
+      "populacao": 17878
+    },
+    {
+      "municipio": "Maraú",
+      "ifdm": 0.4199,
+      "populacao": 25804
+    },
+    {
+      "municipio": "Canavieiras",
+      "ifdm": 0.418,
+      "populacao": 34392
+    },
+    {
+      "municipio": "Pau Brasil",
+      "ifdm": 0.4174,
+      "populacao": 9537
+    },
+    {
+      "municipio": "Buerarema",
+      "ifdm": 0.4026,
+      "populacao": 14950
+    },
+    {
+      "municipio": "São José da Vitória",
+      "ifdm": 0.3933,
+      "populacao": 5432
+    },
+    {
+      "municipio": "Santa Luzia",
+      "ifdm": 0.3779,
+      "populacao": 14392
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrodeensinosuperiordeilheus_ilheus_110",
+      "municipio": "Ilhéus",
+      "entidade": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_111",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_112",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_113",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_114",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_115",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_116",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_117",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradeitabuna_itabuna_118",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade ANHANGUERA DE ITABUNA",
+      "curso": "Radiologia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdademadrethais_ilheus_119",
+      "municipio": "Ilhéus",
+      "entidade": "Faculdade MADRE THAIS",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdademadrethais_ilheus_120",
+      "municipio": "Ilhéus",
+      "entidade": "Faculdade MADRE THAIS",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdademadrethais_ilheus_121",
+      "municipio": "Ilhéus",
+      "entidade": "Faculdade MADRE THAIS",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdademadrethais_ilheus_122",
+      "municipio": "Ilhéus",
+      "entidade": "Faculdade MADRE THAIS",
+      "curso": "Produção De Cacau E Chocolate",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdeitabuna_itabuna_123",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade de Excelência UNEX de Itabuna",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdeitabuna_itabuna_124",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade de Excelência UNEX de Itabuna",
+      "curso": "Engenharia Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdeitabuna_itabuna_125",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade de Excelência UNEX de Itabuna",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdeitabuna_itabuna_126",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade de Excelência UNEX de Itabuna",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdeitabuna_itabuna_127",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade de Excelência UNEX de Itabuna",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdeitabuna_itabuna_128",
+      "municipio": "Itabuna",
+      "entidade": "Faculdade de Excelência UNEX de Itabuna",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_urucuca_129",
+      "municipio": "Uruçuca",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Agroecologia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_urucuca_130",
+      "municipio": "Uruçuca",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Engenharia De Alimentos",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_131",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_132",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_133",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Ciência Da Computação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_134",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Ciências Biológicas",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_135",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_136",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_137",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_138",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_139",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Engenharia Química",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_140",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Física",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_141",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Matemática",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_142",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdesantacruzuesc_ilheus_143",
+      "municipio": "Ilhéus",
+      "entidade": "Universidade Estadual de Santa Cruz (UESC)",
+      "curso": "Química",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_144",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Engenharia Agrícola E Ambiental",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_145",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Engenharia Ambiental E Da Sustentabilidade",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_146",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Engenharia De Aquicultura",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_147",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Engenharia De Transportes E Logística",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_148",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Engenharia Florestal",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_149",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Engenharia Sanitaria E Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_150",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Interdisciplinar Em Ciências",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_151",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Interdisciplinar Em Saúde",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldosuldabahiaufsb_itabuna_152",
+      "municipio": "Itabuna",
+      "entidade": "Universidade Federal do Sul da Bahia (UFSB)",
+      "curso": "Produção De Cacau E Chocolate",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    }
+  ]
+}

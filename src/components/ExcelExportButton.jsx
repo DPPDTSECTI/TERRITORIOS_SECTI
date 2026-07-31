@@ -197,10 +197,13 @@ export default function ExcelExportButton({
   const filtros = propFiltros || {};
   const darkMode = propDarkMode !== undefined ? propDarkMode : (contextData?.darkMode || false);
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     setIsLoading(true);
 
     try {
+      if (contextData?.carregarTodosDetalhes) {
+        await contextData.carregarTodosDetalhes();
+      }
       exportToExcel(territoriosData, filtros);
     } catch (err) {
       console.error('Erro ao gerar Excel:', err);

@@ -12,7 +12,14 @@ const SobrePage = ({ darkMode }) => {
 
   // Puxa a base de dados GERAL via Contexto
   const context = useContext(DataContext) || {};
+  const { carregarTodosDetalhes } = context;
   const territoriosData = context.territoriosData || [];
+
+  React.useEffect(() => {
+    if (carregarTodosDetalhes) {
+      carregarTodosDetalhes();
+    }
+  }, [carregarTodosDetalhes]);
 
   // Extrai dinamicamente todos os artigos/referências mapeados no Excel
   const igPotenciais = useMemo(() => {

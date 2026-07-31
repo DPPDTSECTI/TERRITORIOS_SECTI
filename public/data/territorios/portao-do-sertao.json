@@ -1,0 +1,31 @@
+{
+  "territory": "Portão do Sertão",
+  "slug": "portao-do-sertao",
+  "isSemiarido": true,
+  "pctSemiarido": 100,
+  "desenvolvimento": {
+    "ifdmTi": null,
+    "populacaoTotal": null,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_requeijao_santabarbara_cooperativamistadeagricultoresfamiliareseprodutoresdeleitedesantabarbara",
+      "segmento": "Requeijão",
+      "sede": "Santa Bárbara",
+      "municipiosPertencentes": "Santa Bárbara",
+      "entidade": "Cooperativa Mista de Agricultores Familiares e Produtores de Leite de Santa Bárbara",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "ROCHA, Angela Machado; CALDAS, Alcides dos Santos; OLIVEIRA, Maria Cristina Idalina dos Santos de. Um estudo do requeijão de Santa Bárbara-BA para o reconhecimento de Indicação Geográfica (IG). Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 19821-19834, 2023.",
+      "urlTarget": "https://ojs.revistagesec.org.br/secretariado/article/view/2973/1887"
+    }
+  ],
+  "desenvolvimentoDetalhado": [],
+  "cursosDetalhado": []
+}

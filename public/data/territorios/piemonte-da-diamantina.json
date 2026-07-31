@@ -1,0 +1,222 @@
+{
+  "territory": "Piemonte da Diamantina",
+  "slug": "piemonte-da-diamantina",
+  "isSemiarido": true,
+  "pctSemiarido": 71.42857142857143,
+  "desenvolvimento": {
+    "ifdmTi": 0.49085555555555566,
+    "populacaoTotal": 211375,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_jacobina",
+      "municipio": "Jacobina",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 3,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_jacobina",
+      "municipio": "Jacobina",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldejacobina_jacobina",
+      "municipio": "Jacobina",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Jacobina",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadeagesdejacobina_jacobina",
+      "municipio": "Jacobina",
+      "entidade": "Faculdade AGES de Jacobina",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_agricultura_irece_producaoaquisicaoeservicodoestadodabahia",
+      "segmento": "Agricultura",
+      "sede": "Irecê",
+      "municipiosPertencentes": "Caém, Jacobina, Miguel Calmon, Mirangaba, Ourolândia, Saúde, Serrolândia, Umburanas, Várzea Nova",
+      "entidade": "Produção, Aquisição e Serviço do Estado da Bahia",
+      "tipo": "APL",
+      "quantidade": 9,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
+      "segmento": "Fruticultura",
+      "sede": "Petrolina",
+      "municipiosPertencentes": "Jacobina, Miguel Calmon, Mirangaba, Ourolândia, Umburanas, Várzea Nova",
+      "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
+      "tipo": "IG",
+      "quantidade": 6,
+      "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+      "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+    },
+    {
+      "id": "cad_bovinoculturadeleite_jacobina_bovinoculturadeleiteterritoriopiemontedadiamantina",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Jacobina",
+      "municipiosPertencentes": "Jacobina; Miguel Calmon; Mirangaba; Serrolândia ; Várzea Nova",
+      "entidade": "Bovinocultura de Leite - Território Piemonte da Diamantina",
+      "tipo": "APL",
+      "quantidade": 5,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_agropecuaria_varzeanova_producaoagropecuariadegiloeregiao",
+      "segmento": "Agropecuária",
+      "sede": "Várzea Nova",
+      "municipiosPertencentes": "Jacobina, Miguel Calmon, Várzea Nova",
+      "entidade": "Produção Agropecuária de Giló e Região",
+      "tipo": "APL",
+      "quantidade": 3,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_marmore_ourolandia_marmorebegebahia",
+      "segmento": "Mármore",
+      "sede": "Ourolândia",
+      "municipiosPertencentes": "Jacobina; Mirangaba; Ourolândia",
+      "entidade": "Mármore Bege Bahia",
+      "tipo": "APL",
+      "quantidade": 3,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_agropecuaria_miguelcalmon_producaoagropecuariadelagoadedentroeregiaodaserra",
+      "segmento": "Agropecuária",
+      "sede": "Miguel Calmon",
+      "municipiosPertencentes": "Miguel Calmon; Várzea Nova",
+      "entidade": "Produção Agropecuária de Lagoa de Dentro e Região da Serra",
+      "tipo": "APL",
+      "quantidade": 2,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Jacobina",
+      "ifdm": 0.5476,
+      "populacao": 86896
+    },
+    {
+      "municipio": "Serrolândia",
+      "ifdm": 0.5015,
+      "populacao": 13863
+    },
+    {
+      "municipio": "Umburanas",
+      "ifdm": 0.4974,
+      "populacao": 13785
+    },
+    {
+      "municipio": "Várzea Nova",
+      "ifdm": 0.4923,
+      "populacao": 13866
+    },
+    {
+      "municipio": "Miguel Calmon",
+      "ifdm": 0.4906,
+      "populacao": 25263
+    },
+    {
+      "municipio": "Caém",
+      "ifdm": 0.4895,
+      "populacao": 10733
+    },
+    {
+      "municipio": "Ourolândia",
+      "ifdm": 0.4876,
+      "populacao": 20141
+    },
+    {
+      "municipio": "Mirangaba",
+      "ifdm": 0.4672,
+      "populacao": 16167
+    },
+    {
+      "municipio": "Saúde",
+      "ifdm": 0.444,
+      "populacao": 10661
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_faculdadeagesdejacobina_jacobina_427",
+      "municipio": "Jacobina",
+      "entidade": "Faculdade AGES de Jacobina",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeagesdejacobina_jacobina_428",
+      "municipio": "Jacobina",
+      "entidade": "Faculdade AGES de Jacobina",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeagesdejacobina_jacobina_429",
+      "municipio": "Jacobina",
+      "entidade": "Faculdade AGES de Jacobina",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeagesdejacobina_jacobina_430",
+      "municipio": "Jacobina",
+      "entidade": "Faculdade AGES de Jacobina",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    }
+  ]
+}

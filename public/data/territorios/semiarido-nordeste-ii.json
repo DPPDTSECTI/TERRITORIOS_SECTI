@@ -1,0 +1,361 @@
+{
+  "territory": "Semiárido Nordeste II",
+  "slug": "semiarido-nordeste-ii",
+  "isSemiarido": true,
+  "pctSemiarido": 90,
+  "desenvolvimento": {
+    "ifdmTi": 0.4782111111111111,
+    "populacaoTotal": 424096,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_euclidesdacunha",
+      "municipio": "Euclides da Cunha",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 3,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadedoestadodabahiauneb_jeremoabo",
+      "municipio": "Jeremoabo",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_euclidesdacunha",
+      "municipio": "Euclides da Cunha",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitarioages_paripiranga",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadedonordestedabahia_coroneljoaosa",
+      "municipio": "Coronel João Sá",
+      "entidade": "Faculdade DO NORDESTE DA BAHIA",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadedompedroiiafya_ribeiradopombal",
+      "municipio": "Ribeira do Pombal",
+      "entidade": "Faculdade Dom Pedro II AFYA",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
+      "segmento": "Caju",
+      "sede": "Ribeira do Pombal",
+      "municipiosPertencentes": "Antas, Banzaê, Cícero Dantas, Cipó, Euclides da Cunha, Fátima, Heliópolis, Jeremoabo, Nova Soure, Novo Triunfo, Ribeira do Amparo, Ribeira do Pombal, Sítio do Quinto",
+      "entidade": "Cajucultura Familiar do Nordeste da Bahia",
+      "tipo": "APL",
+      "quantidade": 13,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_bovinoculturadeleite_cicerodantas_bovinoculturadeleiteterritoriosemiaridonordesteii",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Cícero Dantas",
+      "municipiosPertencentes": "Antas; Cicero Dantas ; Heliopolis; Jeremoabo  ; Santa Brigida   ; Sitio Do Quinto",
+      "entidade": "Bovinocultura de Leite - Território Semiárido Nordeste II",
+      "tipo": "APL",
+      "quantidade": 6,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_bovinoculturadeleite_euclidesdacunha_bovinoculturadeleiteterritoriosemiaridonordesteiieuclidesdacunha",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Euclides da Cunha",
+      "municipiosPertencentes": "Euclides da Cunha; Ribeira do Pombal",
+      "entidade": "Bovinocultura de Leite - Território Semiárido Nordeste II - Euclides da Cunha",
+      "tipo": "APL",
+      "quantidade": 2,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
+      "segmento": "Fruticultura",
+      "sede": "Petrolina",
+      "municipiosPertencentes": "Jeremoabo",
+      "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
+      "tipo": "IG",
+      "quantidade": 1,
+      "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+      "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Ribeira do Pombal",
+      "ifdm": 0.5502,
+      "populacao": 56316
+    },
+    {
+      "municipio": "Cícero Dantas",
+      "ifdm": 0.5425,
+      "populacao": 32292
+    },
+    {
+      "municipio": "Ribeira do Amparo",
+      "ifdm": 0.5221,
+      "populacao": 14528
+    },
+    {
+      "municipio": "Heliópolis",
+      "ifdm": 0.5184,
+      "populacao": 13055
+    },
+    {
+      "municipio": "Novo Triunfo",
+      "ifdm": 0.5086,
+      "populacao": 11060
+    },
+    {
+      "municipio": "Adustina",
+      "ifdm": 0.4997,
+      "populacao": 14510
+    },
+    {
+      "municipio": "Coronel João Sá",
+      "ifdm": 0.4975,
+      "populacao": 17598
+    },
+    {
+      "municipio": "Paripiranga",
+      "ifdm": 0.4955,
+      "populacao": 27860
+    },
+    {
+      "municipio": "Euclides da Cunha",
+      "ifdm": 0.4954,
+      "populacao": 64768
+    },
+    {
+      "municipio": "Banzaê",
+      "ifdm": 0.494,
+      "populacao": 12288
+    },
+    {
+      "municipio": "Jeremoabo",
+      "ifdm": 0.4772,
+      "populacao": 39539
+    },
+    {
+      "municipio": "Fátima",
+      "ifdm": 0.4632,
+      "populacao": 18480
+    },
+    {
+      "municipio": "Cipó",
+      "ifdm": 0.4464,
+      "populacao": 17875
+    },
+    {
+      "municipio": "Sítio do Quinto",
+      "ifdm": 0.4414,
+      "populacao": 14435
+    },
+    {
+      "municipio": "Nova Soure",
+      "ifdm": 0.4327,
+      "populacao": 24865
+    },
+    {
+      "municipio": "Pedro Alexandre",
+      "ifdm": 0.4157,
+      "populacao": 14226
+    },
+    {
+      "municipio": "Santa Brígida",
+      "ifdm": 0.4118,
+      "populacao": 15417
+    },
+    {
+      "municipio": "Antas",
+      "ifdm": 0.3955,
+      "populacao": 14984
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_549",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_550",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_551",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Ciência Da Computação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_552",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Engenharia Agronômica",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_553",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_554",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_555",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Gestão Da Tecnologia Da Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_556",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioages_paripiranga_557",
+      "municipio": "Paripiranga",
+      "entidade": "CENTRO UNIVERSITÁRIO AGES",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedonordestedabahia_coroneljoaosa_558",
+      "municipio": "Coronel João Sá",
+      "entidade": "Faculdade DO NORDESTE DA BAHIA",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedompedroiiafya_ribeiradopombal_559",
+      "municipio": "Ribeira do Pombal",
+      "entidade": "Faculdade Dom Pedro II AFYA",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_euclidesdacunha_560",
+      "municipio": "Euclides da Cunha",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Engenharia Agronômica",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    }
+  ]
+}

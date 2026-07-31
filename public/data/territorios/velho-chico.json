@@ -1,0 +1,259 @@
+{
+  "territory": "Velho Chico",
+  "slug": "velho-chico",
+  "isSemiarido": true,
+  "pctSemiarido": 96.15384615384616,
+  "desenvolvimento": {
+    "ifdmTi": 0.45249375000000003,
+    "populacaoTotal": 394495,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_bomjesusdalapa",
+      "municipio": "Bom Jesus da Lapa",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 4,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldooestedabahiaufob_barra",
+      "municipio": "Barra",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldooestedabahiaufob_bomjesusdalapa",
+      "municipio": "Bom Jesus da Lapa",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_bomjesusdalapa",
+      "municipio": "Bom Jesus da Lapa",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_fruticultura_bomjesusdalapa_associacaofrutasoestedoprojetoformosoah",
+      "segmento": "Fruticultura",
+      "sede": "Bom Jesus da Lapa",
+      "municipiosPertencentes": "Bom Jesus da Lapa",
+      "entidade": "Associação Frutas Oeste do Projeto Formoso A/H",
+      "tipo": "IG",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/",
+      "urlTarget": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/BomJesusdaLapa.pdf/"
+    },
+    {
+      "id": "cad_ceramica_barra_associacaocomunitarianossasenhoradefatima",
+      "segmento": "Cerâmica",
+      "sede": "Barra",
+      "municipiosPertencentes": "Barra",
+      "entidade": "Associação Comunitária Nossa Senhora de Fátima",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica da cerâmica da Barra. Brasília: SEBRAE, 2024.",
+      "urlTarget": "https://datasebrae.com.br/wp-content/uploads/2025/01/1a-Diagnostico-Ceramica-da-Barra.pdf"
+    },
+    {
+      "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
+      "segmento": "Algodão",
+      "sede": "Barreiras",
+      "municipiosPertencentes": "Luís Eduardo Magalhães; Formosa do Rio Preto; Riachão das Neves; Barreiras; São Desidério; Correntina; Jaborandi; Baianópolis; Wanderley; Cocos; Muquém do São Francisco",
+      "entidade": "Associação Baiana de Produtores de Algodão",
+      "tipo": "IG Potencial",
+      "quantidade": 11,
+      "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023.",
+      "urlTarget": "https://doi.org/10.9771/cp.v16i1.50700"
+    },
+    {
+      "id": "cad_cachaca_paratinga_associacaodosprodutoresdecachacaartesanaldovaledosantoonofre",
+      "segmento": "Cachaça",
+      "sede": "Paratinga",
+      "municipiosPertencentes": "Paratinga",
+      "entidade": "Associação dos Produtores de Cachaça Artesanal do Vale do Santo Onofre",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "SOUZA, Diego de Oliveira et al. Cachaça Rainha do Santo Onofre de Paratinga-Bahia: potencial de indicação geográfica de procedência. Revista INGI, [S. l.], v. 4, n. 3, p. 903-917, 2020.",
+      "urlTarget": "https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=viewFile&amp;path%5b%5d=124&amp;path%5b%5d=111"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Bom Jesus da Lapa",
+      "ifdm": 0.5693,
+      "populacao": 68866
+    },
+    {
+      "municipio": "Ibotirama",
+      "ifdm": 0.5262,
+      "populacao": 27723
+    },
+    {
+      "municipio": "Matina",
+      "ifdm": 0.52,
+      "populacao": 10611
+    },
+    {
+      "municipio": "Riacho de Santana",
+      "ifdm": 0.4953,
+      "populacao": 32060
+    },
+    {
+      "municipio": "Oliveira dos Brejinhos",
+      "ifdm": 0.4862,
+      "populacao": 21323
+    },
+    {
+      "municipio": "Igaporã",
+      "ifdm": 0.4807,
+      "populacao": 16069
+    },
+    {
+      "municipio": "Feira da Mata",
+      "ifdm": 0.4664,
+      "populacao": 5831
+    },
+    {
+      "municipio": "Brotas de Macaúbas",
+      "ifdm": 0.4629,
+      "populacao": 12180
+    },
+    {
+      "municipio": "Muquém do São Francisco",
+      "ifdm": 0.4561,
+      "populacao": 10803
+    },
+    {
+      "municipio": "Serra do Ramalho",
+      "ifdm": 0.4358,
+      "populacao": 36252
+    },
+    {
+      "municipio": "Morpará",
+      "ifdm": 0.42,
+      "populacao": 8220
+    },
+    {
+      "municipio": "Carinhanha",
+      "ifdm": 0.4167,
+      "populacao": 30439
+    },
+    {
+      "municipio": "Malhada",
+      "ifdm": 0.4166,
+      "populacao": 15814
+    },
+    {
+      "municipio": "Barra",
+      "ifdm": 0.4112,
+      "populacao": 53642
+    },
+    {
+      "municipio": "Sítio do Mato",
+      "ifdm": 0.3515,
+      "populacao": 13982
+    },
+    {
+      "municipio": "Paratinga",
+      "ifdm": 0.325,
+      "populacao": 30680
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_bomjesusdalapa_636",
+      "municipio": "Bom Jesus da Lapa",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Engenharia Agronômica",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_bomjesusdalapa_637",
+      "municipio": "Bom Jesus da Lapa",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Gestão Da Tecnologia Da Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barra_638",
+      "municipio": "Barra",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barra_639",
+      "municipio": "Barra",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_bomjesusdalapa_640",
+      "municipio": "Bom Jesus da Lapa",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_bomjesusdalapa_641",
+      "municipio": "Bom Jesus da Lapa",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    }
+  ]
+}

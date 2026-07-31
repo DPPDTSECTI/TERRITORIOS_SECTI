@@ -1,6 +1,16 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { get as idbGet, set as idbSet } from 'idb-keyval';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
 import { classificarInstituicao } from './utils/reportAggregation.js';
+
+export function territorySlug(name) {
+    return String(name || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
 
 // Otimização: Memoiza a função de normalização para evitar recalcular strings repetidamente.
 const normalize = (() => {
@@ -94,17 +104,26 @@ export default function useTerritoriosData(filters) {
     const [semiaridoMunicipios, setSemiaridoMunicipios] = useState([]);
     const [isLoadingPipeline, setIsLoadingPipeline] = useState(true);
     const [lastUpdate, setLastUpdate] = useState("Atualizando...");
+    const [metaLists, setMetaLists] = useState(null);
+    const globalGeneratedAtRef = useRef("");
 
     const carregarDadosDoSharePoint = async (forcarRefresh = false) => {
         setIsLoadingPipeline(true);
         try {
             const isDev = import.meta.env.DEV;
-            let url = isDev ? (forcarRefresh ? '/api/sharepoint?nocache=true' : '/api/sharepoint') : '/dados.json';
+            let url = isDev ? (forcarRefresh ? '/api/sharepoint?nocache=true' : '/api/sharepoint') : '/data/territorios/index.json';
             let response = await fetch(url);
-            if (!response.ok && !isDev) response = await fetch('/api/sharepoint');
+            if (!response.ok) {
+                // Fallback para arquivo único dados.json ou /api/sharepoint
+                response = await fetch('/dados.json');
+                if (!response.ok && !isDev) response = await fetch('/api/sharepoint');
+            }
             if (!response.ok) throw new Error('Falha ao comunicar com a base de dados');
 
             const data = await response.json();
+            globalGeneratedAtRef.current = data.generatedAt || "";
+            if (data.metaLists) setMetaLists(data.metaLists);
+
             const semiaridoNormList = (data.semiaridoMunicipiosList || []).map(m => normalize(m));
 
             const territoriosFormatados = data.territories.map((t, index) => {
@@ -128,19 +147,31 @@ export default function useTerritoriosData(filters) {
 
                 const cadeiasAPL = Array.isArray(t.cadeiasProdutivasDetalhado) ? t.cadeiasProdutivasDetalhado : [];
                 const cursosEnsino = Array.isArray(t.cursosDetalhado) ? t.cursosDetalhado : [];
+                const desDetalhado = Array.isArray(t.desenvolvimentoDetalhado) ? t.desenvolvimentoDetalhado : [];
+
+                const hasDetail = Boolean(
+                    (t.capacidadeDetalhada && t.capacidadeDetalhada.length > 0) ||
+                    (t.desenvolvimentoDetalhado && t.desenvolvimentoDetalhado.length > 0) ||
+                    (t.cursosDetalhado && t.cursosDetalhado.length > 0) ||
+                    (t.cadeiasProdutivasDetalhado && t.cadeiasProdutivasDetalhado.length > 0)
+                );
+                const slug = t.slug || territorySlug(t.territory);
 
                 return {
                     id: String(index + 1), nome: t.territory || "Desconhecido", tipo: 'Território', regiao: t.territory || "",
+                    slug,
+                    isDetailLoaded: hasDetail,
                     isSemiarido: trueIsSemiarido, pctSemiarido: truePctSemiarido, qtdSemiarido: trueQtdSemi,
                     entidadesDetalhadas: entidadesCTI, cadeiasProdutivasDetalhado: cadeiasAPL,
-                    desenvolvimentoDetalhado: Array.isArray(t.desenvolvimentoDetalhado) ? t.desenvolvimentoDetalhado : [],
+                    desenvolvimentoDetalhado: desDetalhado,
                     cursosDetalhado: cursosEnsino,
                     assistenciaPublica: t.assistenciaPublica || { iniciativas: [] },
                     desenvolvimento: t.desenvolvimento || { ifdmTi: 0, populacaoTotal: 0 },
                     kpis: {
-                        capacidadeCti: String(entidadesCTI.length), 
+                        capacidadeCti: String(t.resumo?.capacidadeCtiCount ?? entidadesCTI.length), 
                         ifdm: t.desenvolvimento?.ifdmTi ? formatIFDM(t.desenvolvimento.ifdmTi) : "-",
-                        conectaBahia: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado", cadeiasIgs: String(cadeiasAPL.length),
+                        conectaBahia: t.assistenciaPublica?.existe ? "Presente" : "Não mapeado", 
+                        cadeiasIgs: String(t.resumo?.cadeiasCount ?? cadeiasAPL.length),
                         coberturaSemiarido: trueIsSemiarido ? (truePctSemiarido >= 100 ? "Pertencente" : "") : "Exterior"
                     }
                 };
@@ -149,11 +180,88 @@ export default function useTerritoriosData(filters) {
             setTerritoriosData(territoriosFormatados);
             setGlobalStats(data.globalStats || { totalBahia: 417, totalSemiarido: 0, pctGlobalSemiarido: 0 });
             setSemiaridoMunicipios(semiaridoNormList);
-            setLastUpdate(new Date(data.generatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+            setLastUpdate(new Date(data.generatedAt || Date.now()).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
         } catch (error) {
             console.error("[Painel] Erro fatal:", error); setLastUpdate("Erro na Sincronização");
         } finally { setIsLoadingPipeline(false); }
     };
+
+    const carregarDetalheTerritorio = useCallback(async (loc) => {
+        if (!loc) return null;
+        const slug = loc.slug || territorySlug(loc.nome || loc.territory);
+        if (!slug) return null;
+
+        const target = territoriosData.find(t => t.slug === slug || normalize(t.nome) === normalize(loc.nome || loc.territory));
+        if (target && target.isDetailLoaded) {
+            return target;
+        }
+
+        const cacheKey = `territorio_detail_v1_${slug}`;
+        let detailData = null;
+
+        try {
+            const cached = await idbGet(cacheKey);
+            if (cached && cached.generatedAt && cached.generatedAt === globalGeneratedAtRef.current && cached.data) {
+                detailData = cached.data;
+            }
+        } catch (e) {
+            console.warn('[Cache IDB] Erro ao ler cache de território:', e);
+        }
+
+        if (!detailData) {
+            try {
+                const res = await fetch(`/data/territorios/${slug}.json`);
+                if (!res.ok) {
+                    return target || null;
+                }
+                detailData = await res.json();
+                try {
+                    await idbSet(cacheKey, { generatedAt: globalGeneratedAtRef.current, data: detailData });
+                } catch (e) {
+                    console.warn('[Cache IDB] Erro ao salvar cache de território:', e);
+                }
+            } catch (e) {
+                console.error(`[Painel] Erro ao carregar detalhe do território (${slug}):`, e);
+                return target || null;
+            }
+        }
+
+        const entidadesCTI = Array.isArray(detailData.capacidadeDetalhada) ? detailData.capacidadeDetalhada.map(ent => {
+            let cat = ent.categoria;
+            if (cat === 'incubadoras' || cat === 'aceleradoras') {
+                cat = 'incubadorasAceleradoras';
+            }
+            return { ...ent, categoria: cat };
+        }) : [];
+
+        const cadeiasAPL = Array.isArray(detailData.cadeiasProdutivasDetalhado) ? detailData.cadeiasProdutivasDetalhado : [];
+        const cursosEnsino = Array.isArray(detailData.cursosDetalhado) ? detailData.cursosDetalhado : [];
+        const desDetalhado = Array.isArray(detailData.desenvolvimentoDetalhado) ? detailData.desenvolvimentoDetalhado : [];
+
+        let updatedTerritorio = null;
+        setTerritoriosData(prev => prev.map(t => {
+            if (t.slug === slug || normalize(t.nome) === normalize(loc.nome || loc.territory)) {
+                updatedTerritorio = {
+                    ...t,
+                    entidadesDetalhadas: entidadesCTI,
+                    cadeiasProdutivasDetalhado: cadeiasAPL,
+                    desenvolvimentoDetalhado: desDetalhado,
+                    cursosDetalhado: cursosEnsino,
+                    isDetailLoaded: true
+                };
+                return updatedTerritorio;
+            }
+            return t;
+        }));
+
+        return updatedTerritorio || target || null;
+    }, [territoriosData]);
+
+    const carregarTodosDetalhes = useCallback(async () => {
+        const pendentes = territoriosData.filter(t => !t.isDetailLoaded);
+        if (pendentes.length === 0) return;
+        await Promise.all(pendentes.map(t => carregarDetalheTerritorio(t)));
+    }, [territoriosData, carregarDetalheTerritorio]);
 
     useEffect(() => { carregarDadosDoSharePoint(); }, []);
 
@@ -578,5 +686,8 @@ export default function useTerritoriosData(filters) {
         filteredOptions,
         dashboardData,
         territoriesDynamicStats,
+        metaLists,
+        carregarDetalheTerritorio,
+        carregarTodosDetalhes,
     };
 }

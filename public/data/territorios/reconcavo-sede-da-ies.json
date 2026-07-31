@@ -1,0 +1,79 @@
+{
+  "territory": "Recôncavo (sede da IES)",
+  "slug": "reconcavo-sede-da-ies",
+  "isSemiarido": false,
+  "pctSemiarido": 0,
+  "desenvolvimento": {
+    "ifdmTi": null,
+    "populacaoTotal": null,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesussededaiesead",
+      "municipio": "Santo Antônio de Jesus (sede da IES - EAD)",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [],
+  "desenvolvimentoDetalhado": [],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesussededaiesead_545",
+      "municipio": "Santo Antônio de Jesus (sede da IES - EAD)",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesussededaiesead_546",
+      "municipio": "Santo Antônio de Jesus (sede da IES - EAD)",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesussededaiesead_547",
+      "municipio": "Santo Antônio de Jesus (sede da IES - EAD)",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesussededaiesead_548",
+      "municipio": "Santo Antônio de Jesus (sede da IES - EAD)",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    }
+  ]
+}

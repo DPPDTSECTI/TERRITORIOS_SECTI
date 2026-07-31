@@ -1,0 +1,331 @@
+{
+  "territory": "Sisal",
+  "slug": "sisal",
+  "isSemiarido": true,
+  "pctSemiarido": 85.18518518518519,
+  "desenvolvimento": {
+    "ifdmTi": 0.48034999999999994,
+    "populacaoTotal": 621161,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_serrinha",
+      "municipio": "Serrinha",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 4,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadedoestadodabahiauneb_conceicaodocoite",
+      "municipio": "Conceição do Coité",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_serrinha",
+      "municipio": "Serrinha",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldearaci_araci",
+      "municipio": "Araci",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Araci",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadesantoantoniodequeimadas_queimadas",
+      "municipio": "Queimadas",
+      "entidade": "Faculdade SANTO ANTONIO DE QUEIMADAS",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariounirb_serrinha",
+      "municipio": "Serrinha",
+      "entidade": "Centro Universitário UNIRB",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadedaregiaosisaleira_conceicaodocoite",
+      "municipio": "Conceição do Coité",
+      "entidade": "Faculdade da Região Sisaleira",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_agricultura_feiradesantana_rededeprodutorasdabahia",
+      "segmento": "Agricultura",
+      "sede": "Feira de Santana",
+      "municipiosPertencentes": "Araci, Conceição do Coité, Biritinga, Lamarão, Quijingue, Retirolândia, Santaluz, Serrinha, Teofilândia, Tucano, Valente",
+      "entidade": "Rede de Produtoras da Bahia",
+      "tipo": "APL",
+      "quantidade": 11,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
+      "segmento": "Caju",
+      "sede": "Ribeira do Pombal",
+      "municipiosPertencentes": "Araci, Biritinga, Lamarão, Quijingue, Tucano",
+      "entidade": "Cajucultura Familiar do Nordeste da Bahia",
+      "tipo": "APL",
+      "quantidade": 5,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_sisal_conceicaodocoite_sisalterritoriodosisal",
+      "segmento": "Sisal",
+      "sede": "Conceição do Coité",
+      "municipiosPertencentes": "Conceição do Coité; Retirolândia; São Domingos; Santaluz; Valente",
+      "entidade": "Sisal - Território do Sisal",
+      "tipo": "APL",
+      "quantidade": 5,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_alimentos_juazeiro_centraldecomercializacaodascooperativasdacaatinga",
+      "segmento": "Alimentos",
+      "sede": "Juazeiro",
+      "municipiosPertencentes": "Itiúba, Monte Santo, Tucano",
+      "entidade": "Central de Comercialização das Cooperativas da Caatinga",
+      "tipo": "APL",
+      "quantidade": 3,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_alimentos_serrinha_comercializacaodaagriculturafamiliareeconomiasolidaria",
+      "segmento": "Alimentos",
+      "sede": "Serrinha",
+      "municipiosPertencentes": "Serrinha",
+      "entidade": "Comercialização da Agricultura Familiar e Economia Solidária",
+      "tipo": "APL",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_sisal_valente_associacaodedesenvolvimentosustentavelesolidariodaregiaosisaleira",
+      "segmento": "Sisal",
+      "sede": "Valente",
+      "municipiosPertencentes": "Araci; Barrocas; Cansanção; Conceição do Coité; Itiúba; Monte Santo; Nordestina; Queimadas; Quijingue; Retirolândia; Santa Luz; São Domingos; Teofilândia; Valente",
+      "entidade": "Associação de Desenvolvimento Sustentável e Solidário da Região Sisaleira",
+      "tipo": "IG Potencial",
+      "quantidade": 14,
+      "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+      "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Valente",
+      "ifdm": 0.5825,
+      "populacao": 25132
+    },
+    {
+      "municipio": "Barrocas",
+      "ifdm": 0.5796,
+      "populacao": 15780
+    },
+    {
+      "municipio": "Ichu",
+      "ifdm": 0.5527,
+      "populacao": 6428
+    },
+    {
+      "municipio": "Retirolândia",
+      "ifdm": 0.5295,
+      "populacao": 14174
+    },
+    {
+      "municipio": "Teofilândia",
+      "ifdm": 0.525,
+      "populacao": 21825
+    },
+    {
+      "municipio": "Serrinha",
+      "ifdm": 0.5247,
+      "populacao": 84690
+    },
+    {
+      "municipio": "São Domingos",
+      "ifdm": 0.5203,
+      "populacao": 8690
+    },
+    {
+      "municipio": "Santaluz",
+      "ifdm": 0.512,
+      "populacao": 40066
+    },
+    {
+      "municipio": "Conceição do Coité",
+      "ifdm": 0.4861,
+      "populacao": 71601
+    },
+    {
+      "municipio": "Itiúba",
+      "ifdm": 0.4772,
+      "populacao": 35490
+    },
+    {
+      "municipio": "Araci",
+      "ifdm": 0.466,
+      "populacao": 50308
+    },
+    {
+      "municipio": "Lamarão",
+      "ifdm": 0.4614,
+      "populacao": 9303
+    },
+    {
+      "municipio": "Tucano",
+      "ifdm": 0.4547,
+      "populacao": 51016
+    },
+    {
+      "municipio": "Quijingue",
+      "ifdm": 0.4431,
+      "populacao": 26443
+    },
+    {
+      "municipio": "Candeal",
+      "ifdm": 0.4403,
+      "populacao": 7940
+    },
+    {
+      "municipio": "Monte Santo",
+      "ifdm": 0.4195,
+      "populacao": 49807
+    },
+    {
+      "municipio": "Biritinga",
+      "ifdm": 0.4089,
+      "populacao": 15603
+    },
+    {
+      "municipio": "Queimadas",
+      "ifdm": 0.4089,
+      "populacao": 27429
+    },
+    {
+      "municipio": "Cansanção",
+      "ifdm": 0.4086,
+      "populacao": 39725
+    },
+    {
+      "municipio": "Nordestina",
+      "ifdm": 0.406,
+      "populacao": 19711
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_faculdadesantoantoniodequeimadas_queimadas_597",
+      "municipio": "Queimadas",
+      "entidade": "Faculdade SANTO ANTONIO DE QUEIMADAS",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_serrinha_598",
+      "municipio": "Serrinha",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedaregiaosisaleira_conceicaodocoite_599",
+      "municipio": "Conceição do Coité",
+      "entidade": "Faculdade da Região Sisaleira",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedaregiaosisaleira_conceicaodocoite_600",
+      "municipio": "Conceição do Coité",
+      "entidade": "Faculdade da Região Sisaleira",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedaregiaosisaleira_conceicaodocoite_601",
+      "municipio": "Conceição do Coité",
+      "entidade": "Faculdade da Região Sisaleira",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedaregiaosisaleira_conceicaodocoite_602",
+      "municipio": "Conceição do Coité",
+      "entidade": "Faculdade da Região Sisaleira",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    }
+  ]
+}

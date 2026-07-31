@@ -1,0 +1,109 @@
+{
+  "territory": "Bacia do Rio Corrente",
+  "slug": "bacia-do-rio-corrente",
+  "isSemiarido": true,
+  "pctSemiarido": 90,
+  "desenvolvimento": {
+    "ifdmTi": 0.48486363636363633,
+    "populacaoTotal": 209915,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadefederaldooestedabahiaufob_santamariadavitoria",
+      "municipio": "Santa Maria da Vitória",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_cafe_luiseduardomagalhaes_associacaodoscafeicultoresdooestedabahia",
+      "segmento": "Café",
+      "sede": "Luís Eduardo Magalhães",
+      "municipiosPertencentes": "Cocos, Correntina, Jaborandi",
+      "entidade": "Associação dos Cafeicultores do Oeste da Bahia",
+      "tipo": "IG",
+      "quantidade": 3,
+      "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/",
+      "urlTarget": "https://datasebrae.com.br/ig-oeste-da-bahia/"
+    },
+    {
+      "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
+      "segmento": "Algodão",
+      "sede": "Barreiras",
+      "municipiosPertencentes": "Luís Eduardo Magalhães; Formosa do Rio Preto; Riachão das Neves; Barreiras; São Desidério; Correntina; Jaborandi; Baianópolis; Wanderley; Cocos; Muquém do São Francisco",
+      "entidade": "Associação Baiana de Produtores de Algodão",
+      "tipo": "IG Potencial",
+      "quantidade": 11,
+      "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023.",
+      "urlTarget": "https://doi.org/10.9771/cp.v16i1.50700"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Jaborandi",
+      "ifdm": 0.633,
+      "populacao": 9600
+    },
+    {
+      "municipio": "Santa Maria da Vitória",
+      "ifdm": 0.5607,
+      "populacao": 40474
+    },
+    {
+      "municipio": "Correntina",
+      "ifdm": 0.5545,
+      "populacao": 34266
+    },
+    {
+      "municipio": "São Félix do Coribe",
+      "ifdm": 0.5501,
+      "populacao": 15780
+    },
+    {
+      "municipio": "Cocos",
+      "ifdm": 0.509,
+      "populacao": 19865
+    },
+    {
+      "municipio": "Santana",
+      "ifdm": 0.4538,
+      "populacao": 25521
+    },
+    {
+      "municipio": "Coribe",
+      "ifdm": 0.4423,
+      "populacao": 14463
+    },
+    {
+      "municipio": "Tabocas do Brejo Velho",
+      "ifdm": 0.4334,
+      "populacao": 12368
+    },
+    {
+      "municipio": "Canápolis",
+      "ifdm": 0.4198,
+      "populacao": 10641
+    },
+    {
+      "municipio": "Serra Dourada",
+      "ifdm": 0.393,
+      "populacao": 17574
+    },
+    {
+      "municipio": "Brejolândia",
+      "ifdm": 0.3839,
+      "populacao": 9363
+    }
+  ],
+  "cursosDetalhado": []
+}

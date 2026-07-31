@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import XLSX from 'xlsx';
+import { generateTerritoriesSplit } from './generateTerritoryFiles.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -167,6 +168,9 @@ async function main() {
   });
 
   fs.writeFileSync(OUTPUT, JSON.stringify(sorted, null, 2), 'utf-8');
+  if (sorted.territories) {
+    generateTerritoriesSplit(sorted, path.join(ROOT, 'public'));
+  }
   console.log(`\n✓ JSON gerado em: ${OUTPUT}`);
 }
 
