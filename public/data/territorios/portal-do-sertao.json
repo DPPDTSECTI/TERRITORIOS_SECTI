@@ -1,0 +1,997 @@
+{
+  "territory": "Portal do Sertão",
+  "slug": "portal-do-sertao",
+  "isSemiarido": true,
+  "pctSemiarido": 47.05882352941176,
+  "desenvolvimento": {
+    "ifdmTi": 0.5065235294117647,
+    "populacaoTotal": 1008990,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadeestadualdefeiradesantanauefs_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 5,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaufrbfeiradesantana_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Espaço Colaborar Parceiro da UFRB Feira de Santana",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_incubadoradeempresasdebasetecnologicadasengenhariasdauefs_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Incubadora de Empresas de Base Tecnológica das Engenharias da UEFS",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariodeexcelencia_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Centro Universitário de Excelência",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadebrasileiradetecnologia_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Faculdade BRASILEIRA DE TECNOLOGIA",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadesalvadorunifacs_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_novatores_feiradesantana",
+      "municipio": "Feira de Santana",
+      "entidade": "Novatores",
+      "tipo": "Aceleradoras",
+      "categoria": "aceleradoras",
+      "quantidade": 1,
+      "descricao": "Capitaneado pela Universidade Estadual de Feira de Santana (UEFS) para acelerar ideias inovadoras no portal do sertão baiano.",
+      "site": "https://novatores.uefs.br/"
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_avicultura_feiradesantana_aviculturaterritorioportaldosertao",
+      "segmento": "Avicultura",
+      "sede": "Feira de Santana",
+      "municipiosPertencentes": "Água Fria; Antonio Cardoso  ; Coração De Maria  ; Feira De Santana  ; Irará   ; Santa Bárbara  ; Santanópolis",
+      "entidade": "Avicultura - Território Portal do Sertão",
+      "tipo": "APL",
+      "quantidade": 7,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_agricultura_feiradesantana_rededeprodutorasdabahia",
+      "segmento": "Agricultura",
+      "sede": "Feira de Santana",
+      "municipiosPertencentes": "Conceição da Feira, Feira de Santana, Santanópolis, São Gonçalo dos Campos",
+      "entidade": "Rede de Produtoras da Bahia",
+      "tipo": "APL",
+      "quantidade": 4,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
+      "segmento": "Caju",
+      "sede": "Ribeira do Pombal",
+      "municipiosPertencentes": "Água Fria",
+      "entidade": "Cajucultura Familiar do Nordeste da Bahia",
+      "tipo": "APL",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_alimentos_feiradesantana_panificacaoterritorioportaldosertao",
+      "segmento": "Alimentos",
+      "sede": "Feira de Santana",
+      "municipiosPertencentes": "Feira de Santana",
+      "entidade": "Panificação - Território Portal do Sertão",
+      "tipo": "APL",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
+      "segmento": "Charuto",
+      "sede": "Cruz das Almas",
+      "municipiosPertencentes": "Amargosa; Cabaceiras do Paraguaçu; Cachoeira; Castro Alves; Conceição do Almeida; Cruz das Almas; Governador Mangabeira; Maragogipe; Muritiba; Santo Antônio de Jesus; Sapeaçu; São Felipe; São Félix; São Miguel das Matas; Santo Estêvão; Conceição da Feira; São Gonçalo dos Campos; Teodoro Sampaio; Pedrão; Irará; Conceição do Jacuípe",
+      "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
+      "tipo": "IG Potencial",
+      "quantidade": 21,
+      "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+      "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Conceição do Jacuípe",
+      "ifdm": 0.638,
+      "populacao": 37622
+    },
+    {
+      "municipio": "Feira de Santana",
+      "ifdm": 0.5696,
+      "populacao": 660806
+    },
+    {
+      "municipio": "Anguera",
+      "ifdm": 0.559,
+      "populacao": 11490
+    },
+    {
+      "municipio": "Conceição da Feira",
+      "ifdm": 0.5536,
+      "populacao": 21529
+    },
+    {
+      "municipio": "Santo Estêvão",
+      "ifdm": 0.5435,
+      "populacao": 55146
+    },
+    {
+      "municipio": "Amélia Rodrigues",
+      "ifdm": 0.5375,
+      "populacao": 24830
+    },
+    {
+      "municipio": "Teodoro Sampaio",
+      "ifdm": 0.5293,
+      "populacao": 7280
+    },
+    {
+      "municipio": "São Gonçalo dos Campos",
+      "ifdm": 0.518,
+      "populacao": 42171
+    },
+    {
+      "municipio": "Terra Nova",
+      "ifdm": 0.5147,
+      "populacao": 10976
+    },
+    {
+      "municipio": "Irará",
+      "ifdm": 0.5139,
+      "populacao": 29572
+    },
+    {
+      "municipio": "Coração de Maria",
+      "ifdm": 0.4738,
+      "populacao": 28408
+    },
+    {
+      "municipio": "Ipecaetá",
+      "ifdm": 0.4671,
+      "populacao": 14016
+    },
+    {
+      "municipio": "Tanquinho",
+      "ifdm": 0.4583,
+      "populacao": 7991
+    },
+    {
+      "municipio": "Água Fria",
+      "ifdm": 0.448,
+      "populacao": 14833
+    },
+    {
+      "municipio": "Santanópolis",
+      "ifdm": 0.4427,
+      "populacao": 9035
+    },
+    {
+      "municipio": "Antônio Cardoso",
+      "ifdm": 0.4252,
+      "populacao": 11498
+    },
+    {
+      "municipio": "Santa Bárbara",
+      "ifdm": 0.4187,
+      "populacao": 21787
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_431",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_432",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_433",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_434",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Computação",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_435",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Software",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_436",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_437",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_438",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelencia_feiradesantana_439",
+      "municipio": "Feira de Santana",
+      "entidade": "Centro Universitário de Excelência",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelencia_feiradesantana_440",
+      "municipio": "Feira de Santana",
+      "entidade": "Centro Universitário de Excelência",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelencia_feiradesantana_441",
+      "municipio": "Feira de Santana",
+      "entidade": "Centro Universitário de Excelência",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelencia_feiradesantana_442",
+      "municipio": "Feira de Santana",
+      "entidade": "Centro Universitário de Excelência",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelencia_feiradesantana_443",
+      "municipio": "Feira de Santana",
+      "entidade": "Centro Universitário de Excelência",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_444",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_445",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_446",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_447",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_448",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_449",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_450",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Redes De Computadores",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadebrasileiradetecnologia_feiradesantana_451",
+      "municipio": "Feira de Santana",
+      "entidade": "Faculdade BRASILEIRA DE TECNOLOGIA",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_452",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_453",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_454",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_455",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_456",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_457",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Química",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_458",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_459",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_460",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Radiologia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_461",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_462",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Agronômica",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_463",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_464",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_465",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Radiologia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_feiradesantana_466",
+      "municipio": "Feira de Santana",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_467",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_468",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Ciências Biológicas",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_469",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_470",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Alimentos",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_471",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Computação",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_472",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantana_473",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Física",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_474",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Alimentos",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_475",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia De Energias",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_476",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia De Materiais",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_477",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_478",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia De Tecnologia Assistiva E Acessibilidade",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_feiradesantana_479",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Interdisciplinar Em Energia E Sustentabilidade",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_480",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_481",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_482",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Ciência Da Computação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_483",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_484",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Engenharia De Computação",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_485",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_486",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_487",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Engenharia Mecatrônica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_488",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_489",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_490",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Gestão Da Tecnologia Da Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_491",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadesalvadorunifacs_feiradesantana_492",
+      "municipio": "Feira de Santana",
+      "entidade": "Universidade Salvador (UNIFACS)",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    }
+  ]
+}

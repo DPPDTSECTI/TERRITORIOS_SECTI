@@ -1,0 +1,1121 @@
+{
+  "generatedAt": "2026-07-31T18:19:19.951Z",
+  "semiaridoMunicipiosList": [
+    "abaira",
+    "abare",
+    "adustina",
+    "agua fria",
+    "erico cardoso",
+    "amargosa",
+    "america dourada",
+    "anage",
+    "andarai",
+    "andorinha",
+    "angical",
+    "anguera",
+    "antas",
+    "antonio cardoso",
+    "antonio goncalves",
+    "aracatu",
+    "araci",
+    "baianopolis",
+    "baixa grande",
+    "banzae",
+    "barra",
+    "barra da estiva",
+    "barra do choca",
+    "barra do mendes",
+    "barreiras",
+    "barro alto",
+    "barrocas",
+    "belo campo",
+    "biritinga",
+    "boa nova",
+    "boa vista do tupim",
+    "bom jesus da lapa",
+    "bom jesus da serra",
+    "boninal",
+    "bonito",
+    "boquira",
+    "botupora",
+    "brejoes",
+    "brejolandia",
+    "brotas de macaubas",
+    "brumado",
+    "buritirama",
+    "caatiba",
+    "cabaceiras do paraguacu",
+    "cacule",
+    "caem",
+    "caetanos",
+    "caetite",
+    "cafarnaum",
+    "caldeirao grande",
+    "campo alegre de lourdes",
+    "campo formoso",
+    "canapolis",
+    "canarana",
+    "candeal",
+    "candiba",
+    "candido sales",
+    "cansancao",
+    "canudos",
+    "capela do alto alegre",
+    "capim grosso",
+    "caraibas",
+    "carinhanha",
+    "casa nova",
+    "castro alves",
+    "catolandia",
+    "caturama",
+    "central",
+    "chorrocho",
+    "cicero dantas",
+    "cipo",
+    "cocos",
+    "conceicao do coite",
+    "condeuba",
+    "contendas do sincora",
+    "coracao de maria",
+    "cordeiros",
+    "coribe",
+    "coronel joao sa",
+    "correntina",
+    "cotegipe",
+    "cravolandia",
+    "crisopolis",
+    "cristopolis",
+    "curaca",
+    "dario meira",
+    "dom basilio",
+    "elisio medrado",
+    "encruzilhada",
+    "euclides da cunha",
+    "fatima",
+    "feira da mata",
+    "feira de santana",
+    "filadelfia",
+    "formosa do rio preto",
+    "gaviao",
+    "gentio do ouro",
+    "gloria",
+    "guajeru",
+    "guanambi",
+    "heliopolis",
+    "iacu",
+    "ibiassuce",
+    "ibicoara",
+    "ibipeba",
+    "ibipitanga",
+    "ibiquera",
+    "ibitiara",
+    "ibitita",
+    "ibotirama",
+    "ichu",
+    "igapora",
+    "iguai",
+    "inhambupe",
+    "ipecaeta",
+    "ipira",
+    "ipupiara",
+    "irajuba",
+    "iramaia",
+    "iraquara",
+    "irara",
+    "irece",
+    "itaberaba",
+    "itaete",
+    "itagi",
+    "itaguacu da bahia",
+    "itambe",
+    "itapetinga",
+    "itapicuru",
+    "itaquara",
+    "itarantim",
+    "itatim",
+    "itirucu",
+    "itiuba",
+    "itororo",
+    "ituacu",
+    "iuiu",
+    "jaborandi",
+    "jacaraci",
+    "jacobina",
+    "jaguaquara",
+    "jaguarari",
+    "jequie",
+    "jeremoabo",
+    "jitauna",
+    "joao dourado",
+    "juazeiro",
+    "jussara",
+    "jussiape",
+    "lafaiete coutinho",
+    "lagoa real",
+    "lajedinho",
+    "lajedo do tabocal",
+    "lamarao",
+    "lapao",
+    "lencois",
+    "licinio de almeida",
+    "livramento de nossa senhora",
+    "macajuba",
+    "macarani",
+    "macaubas",
+    "macurure",
+    "maetinga",
+    "maiquinique",
+    "mairi",
+    "malhada",
+    "malhada de pedras",
+    "manoel vitorino",
+    "mansidao",
+    "maracas",
+    "marcionilio souza",
+    "matina",
+    "miguel calmon",
+    "milagres",
+    "mirangaba",
+    "mirante",
+    "monte santo",
+    "morpara",
+    "morro do chapeu",
+    "mortugaba",
+    "mucuge",
+    "mulungu do morro",
+    "mundo novo",
+    "muquem do sao francisco",
+    "nordestina",
+    "nova canaa",
+    "nova fatima",
+    "nova itarana",
+    "nova redencao",
+    "nova soure",
+    "novo horizonte",
+    "novo triunfo",
+    "olindina",
+    "oliveira dos brejinhos",
+    "ourolandia",
+    "palmas de monte alto",
+    "palmeiras",
+    "paramirim",
+    "paratinga",
+    "paripiranga",
+    "paulo afonso",
+    "pe de serra",
+    "pedro alexandre",
+    "piata",
+    "pilao arcado",
+    "pindai",
+    "pindobacu",
+    "pintadas",
+    "piripa",
+    "piritiba",
+    "planaltino",
+    "planalto",
+    "pocoes",
+    "ponto novo",
+    "potiragua",
+    "presidente dutra",
+    "presidente janio quadros",
+    "queimadas",
+    "quijingue",
+    "quixabeira",
+    "rafael jambeiro",
+    "remanso",
+    "retirolandia",
+    "riachao das neves",
+    "riachao do jacuipe",
+    "riacho de santana",
+    "ribeira do amparo",
+    "ribeira do pombal",
+    "ribeirao do largo",
+    "rio de contas",
+    "rio do antonio",
+    "rio do pires",
+    "rodelas",
+    "ruy barbosa",
+    "santa barbara",
+    "santa brigida",
+    "santa ines",
+    "santaluz",
+    "santa maria da vitoria",
+    "santana",
+    "santanopolis",
+    "santa rita de cassia",
+    "santa terezinha",
+    "santo estevao",
+    "sao desiderio",
+    "sao domingos",
+    "sao felix do coribe",
+    "sao gabriel",
+    "sao goncalo dos campos",
+    "sao jose do jacuipe",
+    "satiro dias",
+    "saude",
+    "seabra",
+    "sebastiao laranjeiras",
+    "senhor do bonfim",
+    "serra do ramalho",
+    "sento se",
+    "serra dourada",
+    "serra preta",
+    "serrinha",
+    "serrolandia",
+    "sitio do mato",
+    "sitio do quinto",
+    "sobradinho",
+    "souto soares",
+    "tabocas do brejo velho",
+    "tanhacu",
+    "tanque novo",
+    "tanquinho",
+    "tapiramuta",
+    "teofilandia",
+    "tremedal",
+    "tucano",
+    "uaua",
+    "ubaira",
+    "uibai",
+    "umburanas",
+    "urandi",
+    "utinga",
+    "valente",
+    "varzea da roca",
+    "varzea do poco",
+    "varzea nova",
+    "vitoria da conquista",
+    "wagner",
+    "wanderley",
+    "xique xique"
+  ],
+  "globalStats": {
+    "totalBahia": 417,
+    "totalSemiarido": 287,
+    "pctGlobalSemiarido": 68.82494004796163
+  },
+  "summary": {
+    "territories": 33
+  },
+  "metaLists": {
+    "todasAsAreasGerais": [
+      "Agricultura, silvicultura, pesca e veterinária",
+      "Ciências naturais, matemática e estatística",
+      "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "Engenharia, produção e construção",
+      "Saúde e bem-estar"
+    ],
+    "todasAsCadeiasPorTipo": {
+      "APL": [
+        "Agricultura",
+        "Agropecuária",
+        "Alimentos",
+        "Apicultura",
+        "Aquicultura e Pesca",
+        "Avicultura",
+        "Bovinocultura de Leite",
+        "Cacau",
+        "Café",
+        "Caju",
+        "Caprinovinocultura",
+        "Fruticultura",
+        "Leite",
+        "Licuri",
+        "Mandiocultura",
+        "Mármore",
+        "Palmito",
+        "Sisal",
+        "Têxtil"
+      ],
+      "IG": [
+        "Abacaxi",
+        "Algodão",
+        "Artesanato",
+        "Artesanato de Couro",
+        "Artesanato de Piaçava",
+        "Azeite de Dendê",
+        "Cacau",
+        "Cachaça",
+        "Café",
+        "Carne de Fumeiro",
+        "Carne de Sol",
+        "Cerâmica",
+        "Charuto",
+        "Doces e Geleias de Umbu",
+        "Farinha de Copioba",
+        "Farinha de Mandioca",
+        "Fruticultura",
+        "Guaraná",
+        "Licor",
+        "Mamona",
+        "Mariscos",
+        "Mel",
+        "Pólen Apícola",
+        "Requeijão",
+        "Sisal",
+        "Vinho"
+      ]
+    }
+  },
+  "territories": [
+    {
+      "territory": "Bacia do Jacuípe",
+      "slug": "bacia-do-jacuipe",
+      "isSemiarido": true,
+      "pctSemiarido": 85.71428571428571,
+      "desenvolvimento": {
+        "ifdmTi": 0.4990799999999999,
+        "populacaoTotal": 276540,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4990799999999999,
+        "populacaoTotal": 276540,
+        "capacidadeCtiCount": 2,
+        "cadeiasCount": 9,
+        "cursosCount": 4,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Bacia do Paramirim",
+      "slug": "bacia-do-paramirim",
+      "isSemiarido": true,
+      "pctSemiarido": 100,
+      "desenvolvimento": {
+        "ifdmTi": 0.5070875,
+        "populacaoTotal": 141040,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.5070875,
+        "populacaoTotal": 141040,
+        "capacidadeCtiCount": 0,
+        "cadeiasCount": 0,
+        "cursosCount": 0,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Bacia do Rio Corrente",
+      "slug": "bacia-do-rio-corrente",
+      "isSemiarido": true,
+      "pctSemiarido": 90,
+      "desenvolvimento": {
+        "ifdmTi": 0.48486363636363633,
+        "populacaoTotal": 209915,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.48486363636363633,
+        "populacaoTotal": 209915,
+        "capacidadeCtiCount": 1,
+        "cadeiasCount": 2,
+        "cursosCount": 0,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Bacia do Rio Grande",
+      "slug": "bacia-do-rio-grande",
+      "isSemiarido": true,
+      "pctSemiarido": 89.47368421052632,
+      "desenvolvimento": {
+        "ifdmTi": 0.4988571428571428,
+        "populacaoTotal": 511902,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4988571428571428,
+        "populacaoTotal": 511902,
+        "capacidadeCtiCount": 12,
+        "cadeiasCount": 4,
+        "cursosCount": 28,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Baixo Sul",
+      "slug": "baixo-sul",
+      "isSemiarido": true,
+      "pctSemiarido": 5.769230769230769,
+      "desenvolvimento": {
+        "ifdmTi": 0.4511866666666666,
+        "populacaoTotal": 377728,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4511866666666666,
+        "populacaoTotal": 377728,
+        "capacidadeCtiCount": 6,
+        "cadeiasCount": 9,
+        "cursosCount": 6,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Chapada Diamantina",
+      "slug": "chapada-diamantina",
+      "isSemiarido": true,
+      "pctSemiarido": 86.66666666666667,
+      "desenvolvimento": {
+        "ifdmTi": 0.48987916666666664,
+        "populacaoTotal": 399628,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.48987916666666664,
+        "populacaoTotal": 399628,
+        "capacidadeCtiCount": 2,
+        "cadeiasCount": 11,
+        "cursosCount": 0,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Costa do Descobrimento",
+      "slug": "costa-do-descobrimento",
+      "isSemiarido": true,
+      "pctSemiarido": 3.225806451612903,
+      "desenvolvimento": {
+        "ifdmTi": 0.48985,
+        "populacaoTotal": 420186,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.48985,
+        "populacaoTotal": 420186,
+        "capacidadeCtiCount": 5,
+        "cadeiasCount": 4,
+        "cursosCount": 10,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Extremo Sul",
+      "slug": "extremo-sul",
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "desenvolvimento": {
+        "ifdmTi": 0.5072230769230769,
+        "populacaoTotal": 452380,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.5072230769230769,
+        "populacaoTotal": 452380,
+        "capacidadeCtiCount": 6,
+        "cadeiasCount": 4,
+        "cursosCount": 23,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Irecê",
+      "slug": "irece",
+      "isSemiarido": true,
+      "pctSemiarido": 95.23809523809523,
+      "desenvolvimento": {
+        "ifdmTi": 0.47702,
+        "populacaoTotal": 430879,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.47702,
+        "populacaoTotal": 430879,
+        "capacidadeCtiCount": 8,
+        "cadeiasCount": 4,
+        "cursosCount": 9,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Itaparica",
+      "slug": "itaparica",
+      "isSemiarido": true,
+      "pctSemiarido": 75,
+      "desenvolvimento": {
+        "ifdmTi": 0.47861666666666663,
+        "populacaoTotal": 183046,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.47861666666666663,
+        "populacaoTotal": 183046,
+        "capacidadeCtiCount": 4,
+        "cadeiasCount": 2,
+        "cursosCount": 5,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Itaparica (sede da IES)",
+      "slug": "itaparica-sede-da-ies",
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "desenvolvimento": {
+        "ifdmTi": null,
+        "populacaoTotal": null,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0,
+        "populacaoTotal": 0,
+        "capacidadeCtiCount": 1,
+        "cadeiasCount": 0,
+        "cursosCount": 4,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Litoral Norte e Agreste Baiano",
+      "slug": "litoral-norte-e-agreste-baiano",
+      "isSemiarido": true,
+      "pctSemiarido": 26.08695652173913,
+      "desenvolvimento": {
+        "ifdmTi": 0.483915,
+        "populacaoTotal": 566403,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.483915,
+        "populacaoTotal": 566403,
+        "capacidadeCtiCount": 8,
+        "cadeiasCount": 3,
+        "cursosCount": 21,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Litoral Sul",
+      "slug": "litoral-sul",
+      "isSemiarido": true,
+      "pctSemiarido": 4.081632653061225,
+      "desenvolvimento": {
+        "ifdmTi": 0.46401153846153853,
+        "populacaoTotal": 750979,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.46401153846153853,
+        "populacaoTotal": 750979,
+        "capacidadeCtiCount": 17,
+        "cadeiasCount": 9,
+        "cursosCount": 43,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Médio Rio de Contas",
+      "slug": "medio-rio-de-contas",
+      "isSemiarido": true,
+      "pctSemiarido": 54.761904761904766,
+      "desenvolvimento": {
+        "ifdmTi": 0.48881875,
+        "populacaoTotal": 368106,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.48881875,
+        "populacaoTotal": 368106,
+        "capacidadeCtiCount": 6,
+        "cadeiasCount": 4,
+        "cursosCount": 12,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Médio Sudoeste da Bahia",
+      "slug": "medio-sudoeste-da-bahia",
+      "isSemiarido": true,
+      "pctSemiarido": 78.125,
+      "desenvolvimento": {
+        "ifdmTi": 0.4815307692307692,
+        "populacaoTotal": 236355,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4815307692307692,
+        "populacaoTotal": 236355,
+        "capacidadeCtiCount": 3,
+        "cadeiasCount": 4,
+        "cursosCount": 6,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Metropolitano de Salvador",
+      "slug": "metropolitano-de-salvador",
+      "isSemiarido": true,
+      "pctSemiarido": 7.5,
+      "desenvolvimento": {
+        "ifdmTi": 0.5897846153846154,
+        "populacaoTotal": 3623330,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.5897846153846154,
+        "populacaoTotal": 3623330,
+        "capacidadeCtiCount": 61,
+        "cadeiasCount": 4,
+        "cursosCount": 198,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Metropolitano de Salvador (sede da IES)",
+      "slug": "metropolitano-de-salvador-sede-da-ies",
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "desenvolvimento": {
+        "ifdmTi": null,
+        "populacaoTotal": null,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0,
+        "populacaoTotal": 0,
+        "capacidadeCtiCount": 9,
+        "cadeiasCount": 0,
+        "cursosCount": 54,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Piemonte da Diamantina",
+      "slug": "piemonte-da-diamantina",
+      "isSemiarido": true,
+      "pctSemiarido": 71.42857142857143,
+      "desenvolvimento": {
+        "ifdmTi": 0.49085555555555566,
+        "populacaoTotal": 211375,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.49085555555555566,
+        "populacaoTotal": 211375,
+        "capacidadeCtiCount": 4,
+        "cadeiasCount": 6,
+        "cursosCount": 4,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Piemonte do Paraguaçu",
+      "slug": "piemonte-do-paraguacu",
+      "isSemiarido": true,
+      "pctSemiarido": 93.33333333333333,
+      "desenvolvimento": {
+        "ifdmTi": 0.4983846153846153,
+        "populacaoTotal": 257312,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4983846153846153,
+        "populacaoTotal": 257312,
+        "capacidadeCtiCount": 3,
+        "cadeiasCount": 4,
+        "cursosCount": 0,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Piemonte Norte do Itapicuru",
+      "slug": "piemonte-norte-do-itapicuru",
+      "isSemiarido": true,
+      "pctSemiarido": 76.92307692307693,
+      "desenvolvimento": {
+        "ifdmTi": 0.4984111111111111,
+        "populacaoTotal": 285067,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4984111111111111,
+        "populacaoTotal": 285067,
+        "capacidadeCtiCount": 5,
+        "cadeiasCount": 2,
+        "cursosCount": 4,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Portal do Sertão",
+      "slug": "portal-do-sertao",
+      "isSemiarido": true,
+      "pctSemiarido": 47.05882352941176,
+      "desenvolvimento": {
+        "ifdmTi": 0.5065235294117647,
+        "populacaoTotal": 1008990,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.5065235294117647,
+        "populacaoTotal": 1008990,
+        "capacidadeCtiCount": 9,
+        "cadeiasCount": 5,
+        "cursosCount": 62,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Portal do Sertão (sede da IES)",
+      "slug": "portal-do-sertao-sede-da-ies",
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "desenvolvimento": {
+        "ifdmTi": null,
+        "populacaoTotal": null,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0,
+        "populacaoTotal": 0,
+        "capacidadeCtiCount": 2,
+        "cadeiasCount": 0,
+        "cursosCount": 18,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Portão do Sertão",
+      "slug": "portao-do-sertao",
+      "isSemiarido": true,
+      "pctSemiarido": 100,
+      "desenvolvimento": {
+        "ifdmTi": null,
+        "populacaoTotal": null,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0,
+        "populacaoTotal": 0,
+        "capacidadeCtiCount": 0,
+        "cadeiasCount": 1,
+        "cursosCount": 0,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Recôncavo",
+      "slug": "reconcavo",
+      "isSemiarido": true,
+      "pctSemiarido": 11.538461538461538,
+      "desenvolvimento": {
+        "ifdmTi": 0.5233842105263158,
+        "populacaoTotal": 538200,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.5233842105263158,
+        "populacaoTotal": 538200,
+        "capacidadeCtiCount": 19,
+        "cadeiasCount": 9,
+        "cursosCount": 34,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Recôncavo (sede da IES)",
+      "slug": "reconcavo-sede-da-ies",
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "desenvolvimento": {
+        "ifdmTi": null,
+        "populacaoTotal": null,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0,
+        "populacaoTotal": 0,
+        "capacidadeCtiCount": 1,
+        "cadeiasCount": 0,
+        "cursosCount": 4,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Semiárido Nordeste II",
+      "slug": "semiarido-nordeste-ii",
+      "isSemiarido": true,
+      "pctSemiarido": 90,
+      "desenvolvimento": {
+        "ifdmTi": 0.4782111111111111,
+        "populacaoTotal": 424096,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4782111111111111,
+        "populacaoTotal": 424096,
+        "capacidadeCtiCount": 6,
+        "cadeiasCount": 4,
+        "cursosCount": 12,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Semiárido Nordeste II (sede da IES)",
+      "slug": "semiarido-nordeste-ii-sede-da-ies",
+      "isSemiarido": false,
+      "pctSemiarido": 0,
+      "desenvolvimento": {
+        "ifdmTi": null,
+        "populacaoTotal": null,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0,
+        "populacaoTotal": 0,
+        "capacidadeCtiCount": 1,
+        "cadeiasCount": 0,
+        "cursosCount": 12,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Sertão do São Francisco",
+      "slug": "sertao-do-sao-francisco",
+      "isSemiarido": true,
+      "pctSemiarido": 73.33333333333333,
+      "desenvolvimento": {
+        "ifdmTi": 0.4432600000000001,
+        "populacaoTotal": 590594,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.4432600000000001,
+        "populacaoTotal": 590594,
+        "capacidadeCtiCount": 10,
+        "cadeiasCount": 9,
+        "cursosCount": 8,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Sertão Produtivo",
+      "slug": "sertao-produtivo",
+      "isSemiarido": true,
+      "pctSemiarido": 91.30434782608695,
+      "desenvolvimento": {
+        "ifdmTi": 0.530295,
+        "populacaoTotal": 501085,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.530295,
+        "populacaoTotal": 501085,
+        "capacidadeCtiCount": 8,
+        "cadeiasCount": 2,
+        "cursosCount": 16,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Sisal",
+      "slug": "sisal",
+      "isSemiarido": true,
+      "pctSemiarido": 85.18518518518519,
+      "desenvolvimento": {
+        "ifdmTi": 0.48034999999999994,
+        "populacaoTotal": 621161,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.48034999999999994,
+        "populacaoTotal": 621161,
+        "capacidadeCtiCount": 7,
+        "cadeiasCount": 6,
+        "cursosCount": 6,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Sudoeste Baiano",
+      "slug": "sudoeste-baiano",
+      "isSemiarido": true,
+      "pctSemiarido": 93.75,
+      "desenvolvimento": {
+        "ifdmTi": 0.517475,
+        "populacaoTotal": 786486,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.517475,
+        "populacaoTotal": 786486,
+        "capacidadeCtiCount": 12,
+        "cadeiasCount": 5,
+        "cursosCount": 31,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Vale do Jiquiriçá",
+      "slug": "vale-do-jiquirica",
+      "isSemiarido": true,
+      "pctSemiarido": 39.62264150943396,
+      "desenvolvimento": {
+        "ifdmTi": 0.47600499999999996,
+        "populacaoTotal": 303629,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.47600499999999996,
+        "populacaoTotal": 303629,
+        "capacidadeCtiCount": 4,
+        "cadeiasCount": 4,
+        "cursosCount": 2,
+        "iniciativasCount": 0
+      }
+    },
+    {
+      "territory": "Velho Chico",
+      "slug": "velho-chico",
+      "isSemiarido": true,
+      "pctSemiarido": 96.15384615384616,
+      "desenvolvimento": {
+        "ifdmTi": 0.45249375000000003,
+        "populacaoTotal": 394495,
+        "metodologia": "IFDM_TI = Média Aritmética Simples"
+      },
+      "assistenciaPublica": {
+        "existe": false,
+        "iniciativas": []
+      },
+      "resumo": {
+        "ifdmTi": 0.45249375000000003,
+        "populacaoTotal": 394495,
+        "capacidadeCtiCount": 4,
+        "cadeiasCount": 4,
+        "cursosCount": 6,
+        "iniciativasCount": 0
+      }
+    }
+  ]
+}

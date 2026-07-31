@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import ExcelExportButton from './ExcelExportButton';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+const ExcelExportButton = lazy(() => import('./ExcelExportButton'));
 
 const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
     const images = [
@@ -75,11 +75,13 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
                         Acessar o Painel
                     </button>
 
-                    <ExcelExportButton 
-                        territoriosData={territoriosData} 
-                        variant={darkMode ? 'solid' : 'outline'} 
-                        className="w-full sm:w-auto" 
-                    />
+                    <Suspense fallback={<div className="w-full sm:w-auto h-11" />}>
+                        <ExcelExportButton 
+                            territoriosData={territoriosData} 
+                            variant={darkMode ? 'solid' : 'outline'} 
+                            className="w-full sm:w-auto" 
+                        />
+                    </Suspense>
                 </div>
 
                 <div className="flex gap-2.5 mt-12">
@@ -130,12 +132,18 @@ const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
                                     if (index === nextIndex) setCurrentImage(nextIndex);
                                 }}
                             >
-                                <img 
-                                    src={img.src} 
-                                    alt={`Paisagem da Bahia ${index + 1}`} 
-                                    className="w-full h-full object-cover transform-gpu antialiased"
-                                    style={{ imageRendering: 'high-quality' }}
-                                />
+                                <picture className="w-full h-full block">
+                                    <source srcSet={img.src.replace(/\.(png|jpg|jpeg|webp)$/i, '.avif')} type="image/avif" />
+                                    <source srcSet={img.src.replace(/\.(png|jpg|jpeg|webp)$/i, '.webp')} type="image/webp" />
+                                    <img 
+                                        src={img.src} 
+                                        alt={`Paisagem da Bahia ${index + 1}`} 
+                                        className="w-full h-full object-cover transform-gpu antialiased"
+                                        style={{ imageRendering: 'high-quality' }}
+                                        loading={index === 0 ? "eager" : "lazy"}
+                                        decoding={index === 0 ? "sync" : "async"}
+                                    />
+                                </picture>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                                 {img.credit && (
                                     <p className="absolute bottom-4 right-4 z-40 text-white text-[10px] font-light bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md opacity-60 hover:opacity-100 transition-opacity">

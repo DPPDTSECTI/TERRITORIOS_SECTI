@@ -1,0 +1,815 @@
+{
+  "territory": "Recôncavo",
+  "slug": "reconcavo",
+  "isSemiarido": true,
+  "pctSemiarido": 11.538461538461538,
+  "desenvolvimento": {
+    "ifdmTi": 0.5233842105263158,
+    "populacaoTotal": 538200,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 15,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadedoestadodabahiauneb_santoantoniodejesus",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_governadormangabeira",
+      "municipio": "Governador Mangabeira",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_santoamaro",
+      "municipio": "Santo Amaro",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_santoantoniodejesus",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldoreconcavodabahiaufrb_cachoeira",
+      "municipio": "Cachoeira",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoamaro",
+      "municipio": "Santo Amaro",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldoreconcavodabahiaufrb_santoantoniodejesus",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_empresabrasileiradepesquisaagropecuariamandiocaefruticultura_cruzdasalmas",
+      "municipio": "Cruz das Almas",
+      "entidade": "Empresa Brasileira de Pesquisa Agropecuária - Mandioca e Fruticultura",
+      "tipo": "ICT",
+      "categoria": "icts",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecachoeira_cachoeira",
+      "municipio": "Cachoeira",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Cachoeira",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecastroalves_castroalves",
+      "municipio": "Castro Alves",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Castro Alves",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecruzdasalmas_cruzdasalmas",
+      "municipio": "Cruz das Almas",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Cruz das Almas",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldesantoantoniodejesus_santoantoniodejesus",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Santo Antônio de Jesus",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_incubadoradeempresasdebasetecnologicadoreconcavodaufrb_cruzdasalmas",
+      "municipio": "Cruz das Almas",
+      "entidade": "Incubadora de Empresas de Base Tecnológica do Recôncavo da UFRB",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_incubadoradeempreendimentoseconomicossolidariosdaufrb_cruzdasalmas",
+      "municipio": "Cruz das Almas",
+      "entidade": "Incubadora de Empreendimentos Econômicos Solidários da UFRB",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariomariamilza_cruzdasalmas",
+      "municipio": "Cruz das Almas",
+      "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitarioadventistadeensinodonordeste_cachoeira",
+      "municipio": "Cachoeira",
+      "entidade": "Centro Universitário Adventista de Ensino do Nordeste",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadeanhangueradesantoantoniodejesus_santoantoniodejesus",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Faculdade ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_mandiocultura_santoantoniodejesus_mandioculturaterritoriodoreconcavo",
+      "segmento": "Mandiocultura",
+      "sede": "Santo Antônio de Jesus",
+      "municipiosPertencentes": "Cruz Das Almas; Governador Mangabeira  ; Maragogipe  ; Muritiba  ; Nazaré  ; Santo Antônio De Jesus  ; São Felipe  ; Sapeaçu",
+      "entidade": "Mandiocultura - Território do Recôncavo",
+      "tipo": "APL",
+      "quantidade": 8,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_aquiculturaepesca_veracruz_pescadosdabaiadetodosossantos",
+      "segmento": "Aquicultura e Pesca",
+      "sede": "Vera Cruz",
+      "municipiosPertencentes": "Maragogipe, Salinas da Margarida, Saubara",
+      "entidade": "Pescados da Baía de Todos os Santos",
+      "tipo": "APL",
+      "quantidade": 3,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_artesanato_saubara_associacaodosartesaosdesaubara",
+      "segmento": "Artesanato",
+      "sede": "Saubara",
+      "municipiosPertencentes": "Saubara",
+      "entidade": "Associação dos Artesãos de Saubara",
+      "tipo": "IG",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf",
+      "urlTarget": "https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas/arquivos/fichas-tecnicas-de-indicacoes-geograficas/SaubaraBA.pdf"
+    },
+    {
+      "id": "cad_azeitededende_valenca_costadodende",
+      "segmento": "Azeite de Dendê",
+      "sede": "Valença",
+      "municipiosPertencentes": "Aratuípe; Belmonte; Cairu; Camamu; Coaraci; Igrapiúna; Ilhéus; Itacaré; Ituberá; Jaguaripe; Maraú; Muniz Ferreira; Nazaré; Nilo Peçanha; Porto Seguro; Presidente Tancredo Neves; Salinas da Margarida; Santo Amaro; Taperoá; Una; Uruçuca; Valença; Wenceslau Guimarães",
+      "entidade": "Costa do Dendê",
+      "tipo": "IG Potencial",
+      "quantidade": 23,
+      "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+      "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+    },
+    {
+      "id": "cad_carnedefumeiro_maragogipe_associacaodosprodutoresdacarnesuinosdefumeirosdemaragogipe",
+      "segmento": "Carne de Fumeiro",
+      "sede": "Maragogipe",
+      "municipiosPertencentes": "Maragogipe",
+      "entidade": "Associação dos Produtores da Carne Suínos de Fumeiros de Maragogipe",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "FERRAZ, Luciana Alves Vieira; SILVA, Davi Santos da; SANTOS, Laiane da Silva; VENANCIO, Maria Fernanda Daltro; CONCEIÇÃO, Valdir Silva da; ARAÚJO, Marcio Luís Valença; SILVA, Marcelo Santana. Diagnóstico do potencial de indicação geográfica da carne de fumeiro de Maragogipe-Bahia sob a ótica da metodologia do SEBRAE. Revista de Gestão e Secretariado (GeSec), São Paulo, v. 14, n. 11, p. 20202-20220, 2023.",
+      "urlTarget": "https://ojs.revistagesec.org.br/secretariado/article/view/3173/1907"
+    },
+    {
+      "id": "cad_farinhadecopioba_saofelipe_cooperativadaagriculturafamiliardoterritoriodoreconcavodabahia",
+      "segmento": "Farinha de Copioba",
+      "sede": "São Felipe",
+      "municipiosPertencentes": "Amargosa; Aratuípe; Cabaceiras do Paraguaçu; Cachoeira; Castro Alves; Conceição do Almeida; Cruz das Almas; Dom Macedo Costa; Governador Mangabeira; Jaguaripe; Laje; Maragogipe; Muniz Ferreira; Muritiba; Nazaré; Salinas da Margarida; Santo Amaro; Santo Antônio de Jesus; Sapeaçu; Saubara; São Felipe; São Francisco do Conde; São Félix; São Miguel das Matas; São Sebastião do Passé; Varzedo",
+      "entidade": "Cooperativa da Agricultura Familiar do Território do Recôncavo da Bahia",
+      "tipo": "IG Potencial",
+      "quantidade": 26,
+      "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+      "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+    },
+    {
+      "id": "cad_charuto_cruzdasalmas_sindicatodaindustriadotabaconoestadodabahia",
+      "segmento": "Charuto",
+      "sede": "Cruz das Almas",
+      "municipiosPertencentes": "Amargosa; Cabaceiras do Paraguaçu; Cachoeira; Castro Alves; Conceição do Almeida; Cruz das Almas; Governador Mangabeira; Maragogipe; Muritiba; Santo Antônio de Jesus; Sapeaçu; São Felipe; São Félix; São Miguel das Matas; Santo Estêvão; Conceição da Feira; São Gonçalo dos Campos; Teodoro Sampaio; Pedrão; Irará; Conceição do Jacuípe",
+      "entidade": "Sindicato da Indústria do Tabaco no Estado da Bahia",
+      "tipo": "IG Potencial",
+      "quantidade": 21,
+      "fonte": "Mapa Interativo - Signos Distintivos Registrados e Produtos Potenciais",
+      "urlTarget": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/indicacao-geografica/dados-sobre-igs-registradas-e-produtos-tipicos-potenciais/mapa-interativo-1"
+    },
+    {
+      "id": "cad_licor_cachoeira_associacaodefabricantesdelicordecachoeira",
+      "segmento": "Licor",
+      "sede": "Cachoeira",
+      "municipiosPertencentes": "Cachoeira",
+      "entidade": "Associação de Fabricantes de Licor de Cachoeira",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "SANTOS, Letícia Sena dos et al. Análise do potencial de Indicação Geográfica (IG) para o licor artesanal da cidade de Cachoeira no Recôncavo Baiano. Revista Caderno Pedagógico, Curitiba, v. 21, n. 10, p. 01-21, 2024. DOI: 10.54033/cadpedv21n10-401.",
+      "urlTarget": "https://ojs.studiespublicacoes.com.br/ojs/index.php/cadped/article/view/9938/5762"
+    },
+    {
+      "id": "cad_mariscos_salinasdamargarida_associacaodepescadoreseaquicultoresdesalinasdamargarida",
+      "segmento": "Mariscos",
+      "sede": "Salinas da Margarida",
+      "municipiosPertencentes": "Salinas da Margarida",
+      "entidade": "Associação de Pescadores e Aquicultores de Salinas da Margarida",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "CALDAS, Alcides dos Santos et al. Potential geographical indication study for Salinas da Margarida shellfish region: protection of cultural and economic identity analysis. Revista INGI - Indicação Geográfica e Inovação, [S. l.], v. 7, n. 4, 2023.",
+      "urlTarget": "https://ingi.api.org.br/index.php?journal=INGI&amp;page=article&amp;op=view&amp;path%5B%5D=270"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Santo Antônio de Jesus",
+      "ifdm": 0.6261,
+      "populacao": 109791
+    },
+    {
+      "municipio": "Cruz das Almas",
+      "ifdm": 0.5964,
+      "populacao": 63326
+    },
+    {
+      "municipio": "Governador Mangabeira",
+      "ifdm": 0.5933,
+      "populacao": 21353
+    },
+    {
+      "municipio": "Nazaré",
+      "ifdm": 0.5536,
+      "populacao": 28427
+    },
+    {
+      "municipio": "Muniz Ferreira",
+      "ifdm": 0.5374,
+      "populacao": 7453
+    },
+    {
+      "municipio": "São Félix",
+      "ifdm": 0.5365,
+      "populacao": 11102
+    },
+    {
+      "municipio": "Castro Alves",
+      "ifdm": 0.5326,
+      "populacao": 25470
+    },
+    {
+      "municipio": "Muritiba",
+      "ifdm": 0.5308,
+      "populacao": 30180
+    },
+    {
+      "municipio": "Sapeaçu",
+      "ifdm": 0.5302,
+      "populacao": 18656
+    },
+    {
+      "municipio": "Saubara",
+      "ifdm": 0.5301,
+      "populacao": 11859
+    },
+    {
+      "municipio": "Dom Macedo Costa",
+      "ifdm": 0.5263,
+      "populacao": 4608
+    },
+    {
+      "municipio": "Cabaceiras do Paraguaçu",
+      "ifdm": 0.5179,
+      "populacao": 17024
+    },
+    {
+      "municipio": "Varzedo",
+      "ifdm": 0.4903,
+      "populacao": 10328
+    },
+    {
+      "municipio": "Maragogipe",
+      "ifdm": 0.4897,
+      "populacao": 37041
+    },
+    {
+      "municipio": "Conceição do Almeida",
+      "ifdm": 0.485,
+      "populacao": 16134
+    },
+    {
+      "municipio": "São Felipe",
+      "ifdm": 0.4845,
+      "populacao": 20923
+    },
+    {
+      "municipio": "Santo Amaro",
+      "ifdm": 0.4819,
+      "populacao": 58398
+    },
+    {
+      "municipio": "Cachoeira",
+      "ifdm": 0.4519,
+      "populacao": 30498
+    },
+    {
+      "municipio": "Salinas da Margarida",
+      "ifdm": 0.4498,
+      "populacao": 15629
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitariomariamilza_cruzdasalmas_511",
+      "municipio": "Cruz das Almas",
+      "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomariamilza_cruzdasalmas_512",
+      "municipio": "Cruz das Almas",
+      "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomariamilza_cruzdasalmas_513",
+      "municipio": "Cruz das Almas",
+      "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomariamilza_cruzdasalmas_514",
+      "municipio": "Cruz das Almas",
+      "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "curso": "Radiologia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomariamilza_cruzdasalmas_515",
+      "municipio": "Cruz das Almas",
+      "entidade": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "curso": "Sistemas Para Internet",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioadventistadeensinodonordeste_cachoeira_516",
+      "municipio": "Cachoeira",
+      "entidade": "Centro Universitário Adventista de Ensino do Nordeste",
+      "curso": "Gestão Da Tecnologia Da Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioadventistadeensinodonordeste_cachoeira_517",
+      "municipio": "Cachoeira",
+      "entidade": "Centro Universitário Adventista de Ensino do Nordeste",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus_518",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus_519",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus_520",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus_521",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodecienciaseempreendedorismo_santoantoniodejesus_522",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Centro Universitário de Ciências e Empreendedorismo",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradesantoantoniodejesus_santoantoniodejesus_523",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Faculdade ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_524",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_santoantoniodejesus_525",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_santoantoniodejesus_526",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Redes De Computadores",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_527",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Agroecologia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_528",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_529",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Biologia",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_530",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Ciências Exatas E Tecnológicas - Bi/Li",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_531",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_532",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia De Computação",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_533",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia De Pesca",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_534",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_535",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia Florestal",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_536",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_537",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Engenharia Sanitária E Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_538",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Física",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_539",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Gestão Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_540",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Interdisciplinar Em Ciências Ambientais",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_541",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Matemática",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_542",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_cruzdasalmas_543",
+      "municipio": "Cruz das Almas",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Zootecnia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldoreconcavodabahiaufrb_santoantoniodejesus_544",
+      "municipio": "Santo Antônio de Jesus",
+      "entidade": "Universidade Federal do Recôncavo da Bahia (UFRB)",
+      "curso": "Interdisciplinar Em Saúde",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    }
+  ]
+}

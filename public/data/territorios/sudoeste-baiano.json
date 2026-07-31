@@ -1,0 +1,690 @@
+{
+  "territory": "Sudoeste Baiano",
+  "slug": "sudoeste-baiano",
+  "isSemiarido": true,
+  "pctSemiarido": 93.75,
+  "desenvolvimento": {
+    "ifdmTi": 0.517475,
+    "populacaoTotal": 786486,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 6,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldabahiaufba_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Federal da Bahia (UFBA)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldevitoriadaconquista_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Vitória da Conquista",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodoifbavitoriadaconquista_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Espaço Colaborar Parceiro do IFBA Vitória da Conquista",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_iincubadoradeempresasdauesb_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "IIncubadora de Empresas da UESB",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadeindependentedonordeste_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_iebtinnovation_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "IEBT Innovation",
+      "tipo": "Aceleradoras",
+      "categoria": "aceleradoras",
+      "quantidade": 1,
+      "descricao": "Viabiliza programas de inovação aberta, conexão corporativa e aceleração focada em editais como o Tecnova no estado",
+      "site": "https://www.iebtinnovation.com/"
+    },
+    {
+      "id": "ent_hubconquistaconquistastartups_vitoriadaconquista",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Hub Conquista / Conquista Startups",
+      "tipo": "Aceleradoras",
+      "categoria": "aceleradoras",
+      "quantidade": 1,
+      "descricao": "Programa de aceleração do ecossistema do Sudoeste, operado em conjunto com a aceleradora de abrangência nacional IEBT.",
+      "site": "https://hubconquista.com.br/"
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_apicultura_liciniodealmeida_produtosapicolasederivadoseprodutosdaagriculturafamiliareeconomiasolidariadaregiaodoriogaviaoeserrageral",
+      "segmento": "Apicultura",
+      "sede": "Licínio de Almeida",
+      "municipiosPertencentes": "Anagé, Condeúba, Jacaraci, Licínio de Almeida, Mortugaba",
+      "entidade": "Produtos Apícolas e Derivados e Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
+      "tipo": "APL",
+      "quantidade": 5,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_bovinoculturadeleite_pocoes_bovinoculturadeleiteterritoriosudoestebaiano",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Poções",
+      "municipiosPertencentes": "Aracatu; Candido Sales; Condeúba; Planalto; Poções",
+      "entidade": "Bovinocultura de Leite - Território Sudoeste Baiano",
+      "tipo": "APL",
+      "quantidade": 5,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_cafe_barradochoca_cafeiculturadebarradochocaeregiao",
+      "segmento": "Café",
+      "sede": "Barra do Choça",
+      "municipiosPertencentes": "Barra do Choça; Encruzilhada; Planalto; Poções",
+      "entidade": "Cafeicultura de Barra do Choça e Região",
+      "tipo": "APL",
+      "quantidade": 4,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_mandiocultura_condeuba_produtosdaagriculturafamiliareeconomiasolidariadaregiaodoriogaviaoeserrageral",
+      "segmento": "Mandiocultura",
+      "sede": "Condeúba",
+      "municipiosPertencentes": "Belos Campos; Condeúba; Jacaraci; Licínio de Almeida",
+      "entidade": "Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
+      "tipo": "APL",
+      "quantidade": 4,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
+      "segmento": "Café",
+      "sede": "Vitória da Conquista",
+      "municipiosPertencentes": "Anagé; Barra do Choça; Belo Campo; Boa Nova; Bom Jesus da Serra; Caatiba; Cordeiros; Cândido Sales; Dário Meira; Encruzilhada; Iguaí; Itambé; Nova Canaã; Piripá; Planalto; Poções; Ribeirão do Largo; Tremedal; Vitória da Conquista",
+      "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
+      "tipo": "IG Potencial",
+      "quantidade": 19,
+      "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017.",
+      "urlTarget": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Vitória da Conquista",
+      "ifdm": 0.6268,
+      "populacao": 396613
+    },
+    {
+      "municipio": "Licínio de Almeida",
+      "ifdm": 0.5927,
+      "populacao": 12202
+    },
+    {
+      "municipio": "Mortugaba",
+      "ifdm": 0.5697,
+      "populacao": 11477
+    },
+    {
+      "municipio": "Piripá",
+      "ifdm": 0.5594,
+      "populacao": 9143
+    },
+    {
+      "municipio": "Aracatu",
+      "ifdm": 0.5541,
+      "populacao": 14440
+    },
+    {
+      "municipio": "Presidente Jânio Quadros",
+      "ifdm": 0.5476,
+      "populacao": 12963
+    },
+    {
+      "municipio": "Condeúba",
+      "ifdm": 0.5414,
+      "populacao": 17567
+    },
+    {
+      "municipio": "Caetanos",
+      "ifdm": 0.5408,
+      "populacao": 11432
+    },
+    {
+      "municipio": "Cordeiros",
+      "ifdm": 0.5348,
+      "populacao": 7748
+    },
+    {
+      "municipio": "Caraíbas",
+      "ifdm": 0.5339,
+      "populacao": 10259
+    },
+    {
+      "municipio": "Maetinga",
+      "ifdm": 0.5331,
+      "populacao": 7218
+    },
+    {
+      "municipio": "Barra do Choça",
+      "ifdm": 0.5228,
+      "populacao": 38581
+    },
+    {
+      "municipio": "Tremedal",
+      "ifdm": 0.5097,
+      "populacao": 16646
+    },
+    {
+      "municipio": "Anagé",
+      "ifdm": 0.5055,
+      "populacao": 26745
+    },
+    {
+      "municipio": "Poções",
+      "ifdm": 0.5025,
+      "populacao": 50773
+    },
+    {
+      "municipio": "Guajeru",
+      "ifdm": 0.5009,
+      "populacao": 8177
+    },
+    {
+      "municipio": "Planalto",
+      "ifdm": 0.5003,
+      "populacao": 24026
+    },
+    {
+      "municipio": "Jacaraci",
+      "ifdm": 0.4971,
+      "populacao": 14910
+    },
+    {
+      "municipio": "Bom Jesus da Serra",
+      "ifdm": 0.4785,
+      "populacao": 10018
+    },
+    {
+      "municipio": "Mirante",
+      "ifdm": 0.4716,
+      "populacao": 10526
+    },
+    {
+      "municipio": "Encruzilhada",
+      "ifdm": 0.4631,
+      "populacao": 19450
+    },
+    {
+      "municipio": "Cândido Sales",
+      "ifdm": 0.4579,
+      "populacao": 26469
+    },
+    {
+      "municipio": "Ribeirão do Largo",
+      "ifdm": 0.444,
+      "populacao": 10029
+    },
+    {
+      "municipio": "Belo Campo",
+      "ifdm": 0.4312,
+      "populacao": 19074
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista_603",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista_604",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista_605",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista_606",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelenciadevitoriadaconquista_vitoriadaconquista_607",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário de Excelência de Vitória da Conquista",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeindependentedonordeste_vitoriadaconquista_608",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeindependentedonordeste_vitoriadaconquista_609",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
+      "curso": "Engenharia De Computação",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeindependentedonordeste_vitoriadaconquista_610",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeindependentedonordeste_vitoriadaconquista_611",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeindependentedonordeste_vitoriadaconquista_612",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade INDEPENDENTE DO NORDESTE",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_613",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_614",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_615",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Engenharia De Computação",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_616",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_617",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_vitoriadaconquista_618",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista_619",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista_620",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista_621",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradevitoriadaconquista_vitoriadaconquista_622",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Faculdade Anhanguera De Vitória Da Conquista",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_623",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Engenharia Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_624",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_625",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_vitoriadaconquista_626",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_627",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_628",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Ciência Da Computação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_629",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Ciências Biológicas",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_vitoriadaconquista_630",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Engenharia Florestal",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldabahiaufba_vitoriadaconquista_631",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Federal da Bahia (UFBA)",
+      "curso": "Biotecnologia",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldabahiaufba_vitoriadaconquista_632",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Federal da Bahia (UFBA)",
+      "curso": "Ciências Biológicas",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldabahiaufba_vitoriadaconquista_633",
+      "municipio": "Vitória da Conquista",
+      "entidade": "Universidade Federal da Bahia (UFBA)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "territory": "Portal do Sertão (sede da IES)",
+  "slug": "portal-do-sertao-sede-da-ies",
+  "isSemiarido": false,
+  "pctSemiarido": 0,
+  "desenvolvimento": {
+    "ifdmTi": null,
+    "populacaoTotal": null,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariodeexcelencia_feiradesantanasededaiesead",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Centro Universitário de Excelência",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [],
+  "desenvolvimentoDetalhado": [],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_493",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_494",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_495",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_496",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_497",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Software",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_498",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_499",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_500",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_501",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Radiologia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Tecnológico",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_502",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Sistemas De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodeexcelencia_feiradesantanasededaiesead_503",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Centro Universitário de Excelência",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_504",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_505",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Ambiental E Sanitária",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_506",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_507",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_508",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_509",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Gestão Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Tecnológico",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdefeiradesantanauefs_feiradesantanasededaiesead_510",
+      "municipio": "Feira de Santana (sede da IES - EAD)",
+      "entidade": "Universidade Estadual de Feira de Santana (UEFS)",
+      "curso": "Gestão Da Tecnologia Da Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "EAD (a distancia)",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    }
+  ]
+}

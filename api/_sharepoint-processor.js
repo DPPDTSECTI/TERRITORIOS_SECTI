@@ -1,4 +1,5 @@
-const XLSX = require('xlsx');
+import * as XLSXModule from 'xlsx';
+const XLSX = XLSXModule.default ? XLSXModule.default : XLSXModule;
 
 function normalizeText(value) {
   return String(value || '')
@@ -428,4 +429,5 @@ function parseSpreadsheet(buffer) {
   };
 }
 
-module.exports = { parseSpreadsheet };
+export { parseSpreadsheet };
+export default parseSpreadsheet;

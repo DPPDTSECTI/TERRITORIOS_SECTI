@@ -12,7 +12,6 @@ import ListSection from './components/ListSection';
 import { resolveCadeiaFonte } from './utils/cadeiasUtils';
 import { buildMunicipiosInstituicoesList, buildAreaHeatmapData, buildCadeiasPorSegmento, classificarInstituicao, filterTerritoriosByLocation } from '../utils/reportAggregation.js';
 import { getTerritoryArrayByFonte } from '../utils/reportCategorias.js';
-import ReportExportMenu from './components/report/ReportExportMenu';
 import MunicipiosReportImage from './components/report/MunicipiosReportImage';
 import AreaHeatmap from './components/report/AreaHeatmap';
 import MapaNumeradoMunicipios from './components/report/MapaNumeradoMunicipios';
@@ -24,6 +23,7 @@ const LandingHero = lazy(() => import('./components/hero'));
 const SobrePage = lazy(() => import('./components/SobrePage'));
 const Tutorial = lazy(() => import('./components/Tutorial'));
 const ExcelExportButton = lazy(() => import('./components/ExcelExportButton'));
+const ReportExportMenu = lazy(() => import('./components/report/ReportExportMenu'));
 
 // ==========================================
 // FUNÇÕES UTILITÁRIAS
@@ -179,7 +179,9 @@ function MainApp() {
         filteredOptions,
         territoriesDynamicStats,
         dashboardData,
-        semiaridoMunicipios
+        semiaridoMunicipios,
+        metaLists,
+        carregarDetalheTerritorio
     } = useTerritoriosData({
         selectedLocation,
         filtroSemiarido,
@@ -199,6 +201,16 @@ function MainApp() {
         setSelectedLocation(loc);
         setSearchTerm('');
     }, []);
+
+    useEffect(() => {
+        if (selectedLocation && !selectedLocation.isDetailLoaded && carregarDetalheTerritorio) {
+            carregarDetalheTerritorio(selectedLocation).then((updated) => {
+                if (updated) {
+                    setSelectedLocation(updated);
+                }
+            });
+        }
+    }, [selectedLocation, carregarDetalheTerritorio]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -385,6 +397,9 @@ function MainApp() {
     }, [dashboardData.cursos, areaGeralFilter, debouncedCursoSearchTerm]);
 
     const todasAsAreasGerais = useMemo(() => {
+        if (metaLists?.todasAsAreasGerais) {
+            return metaLists.todasAsAreasGerais;
+        }
         const areas = new Set();
         territoriosData.forEach(t => {
             (t.cursosDetalhado || []).forEach(c => {
@@ -392,9 +407,12 @@ function MainApp() {
             });
         });
         return [...areas].sort();
-    }, [territoriosData]);
+    }, [territoriosData, metaLists]);
 
     const todasAsCadeiasPorTipo = useMemo(() => {
+        if (metaLists?.todasAsCadeiasPorTipo) {
+            return metaLists.todasAsCadeiasPorTipo;
+        }
         const aplSegments = new Set();
         const igSegments = new Set();
         territoriosData.forEach(t => {
@@ -413,7 +431,7 @@ function MainApp() {
             APL: Array.from(aplSegments).sort((a, b) => a.localeCompare(b, 'pt-BR')),
             IG: Array.from(igSegments).sort((a, b) => a.localeCompare(b, 'pt-BR'))
         };
-    }, [territoriosData]);
+    }, [territoriosData, metaLists]);
 
     const handleCadeiaParentToggle = (parentCategory) => {
         const subSegments = todasAsCadeiasPorTipo[parentCategory] || [];
@@ -1219,7 +1237,11 @@ function MainApp() {
                     <button onClick={() => setDarkMode(!darkMode)} aria-label="Alterar Tema" className={`p-2 rounded-lg transition-all border ${darkMode ? 'bg-gray-800 border-gray-700 text-yellow-400 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
                         {darkMode ? <Sun size={16} strokeWidth={2.5} /> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>}
                     </button>
-                    <img src={darkMode ? "/img/Brasao-Horizontal_Branco.png" : "/img/Brasao-Horizontal_Preto.png"} alt="GOV BA" className="h-6 object-contain hidden lg:block opacity-90" />
+                    <picture className="hidden lg:block opacity-90">
+                        <source srcSet={darkMode ? "/img/Brasao-Horizontal_Branco.avif" : "/img/Brasao-Horizontal_Preto.avif"} type="image/avif" />
+                        <source srcSet={darkMode ? "/img/Brasao-Horizontal_Branco.webp" : "/img/Brasao-Horizontal_Preto.webp"} type="image/webp" />
+                        <img src={darkMode ? "/img/Brasao-Horizontal_Branco.png" : "/img/Brasao-Horizontal_Preto.png"} alt="GOV BA" className="h-6 object-contain" />
+                    </picture>
 
                     {/* MOBILE MENU TOGGLE */}
                     <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className={`lg:hidden p-2 rounded-lg transition-all border ${isMobileMenuOpen ? 'bg-gov-blue text-white border-gov-blue' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50')}`}>
@@ -1322,13 +1344,15 @@ function MainApp() {
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 
-                    <ReportExportMenu
-                        territoriosData={territoriosData}
-                        filtros={reportFiltros}
-                        darkMode={darkMode}
-                        variant="nav"
-                        className={isLoadingPipeline ? 'opacity-50 cursor-not-allowed' : ''}
-                    />
+                    <Suspense fallback={<div className="p-2.5 w-10 h-10" />}>
+                        <ReportExportMenu
+                            territoriosData={territoriosData}
+                            filtros={reportFiltros}
+                            darkMode={darkMode}
+                            variant="nav"
+                            className={isLoadingPipeline ? 'opacity-50 cursor-not-allowed' : ''}
+                        />
+                    </Suspense>
 
                     <div className={`w-6 h-[1px] ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}></div>
 

@@ -1,0 +1,175 @@
+{
+  "territory": "Itaparica",
+  "slug": "itaparica",
+  "isSemiarido": true,
+  "pctSemiarido": 75,
+  "desenvolvimento": {
+    "ifdmTi": 0.47861666666666663,
+    "populacaoTotal": 183046,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_pauloafonso",
+      "municipio": "Paulo Afonso",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 3,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_pauloafonso",
+      "municipio": "Paulo Afonso",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldovaledosaofranciscounivasf_pauloafonso",
+      "municipio": "Paulo Afonso",
+      "entidade": "Universidade Federal do Vale do São Francisco (UNIVASF)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariodoriosaofranciscounirios_pauloafonso",
+      "municipio": "Paulo Afonso",
+      "entidade": "Centro Universitário do Rio São Francisco Unirios",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_fruticultura_petrolina_conselhodauniaodasassociacoesecooperativasdosprodutoresdeuvasdemesaemangasdovaledosubmediosaofrancisco",
+      "segmento": "Fruticultura",
+      "sede": "Petrolina",
+      "municipiosPertencentes": "Abaré, Chorrochó, Glória, Macururê, Paulo Afonso, Rodelas",
+      "entidade": "Conselho da União das Associações e Cooperativas dos Produtores de Uvas de Mesa e Mangas do Vale do Submédio São Francisco",
+      "tipo": "IG",
+      "quantidade": 6,
+      "fonte": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/",
+      "urlTarget": "https://datasebrae.com.br/ig-vale-do-submedio-sao-francisco/"
+    },
+    {
+      "id": "cad_bovinoculturadeleite_pauloafonso_bovinoculturadeleiteterritorioitaparica",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Paulo Afonso",
+      "municipiosPertencentes": "Glória; Paulo Afonso",
+      "entidade": "Bovinocultura de Leite - Território Itaparica",
+      "tipo": "APL",
+      "quantidade": 2,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Paulo Afonso",
+      "ifdm": 0.5233,
+      "populacao": 119418
+    },
+    {
+      "municipio": "Abaré",
+      "ifdm": 0.4978,
+      "populacao": 18269
+    },
+    {
+      "municipio": "Macururé",
+      "ifdm": 0.4707,
+      "populacao": 7435
+    },
+    {
+      "municipio": "Chorrochó",
+      "ifdm": 0.4696,
+      "populacao": 10933
+    },
+    {
+      "municipio": "Rodelas",
+      "ifdm": 0.463,
+      "populacao": 10884
+    },
+    {
+      "municipio": "Glória",
+      "ifdm": 0.4473,
+      "populacao": 16107
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitariodoriosaofranciscounirios_pauloafonso_80",
+      "municipio": "Paulo Afonso",
+      "entidade": "Centro Universitário do Rio São Francisco Unirios",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodoriosaofranciscounirios_pauloafonso_81",
+      "municipio": "Paulo Afonso",
+      "entidade": "Centro Universitário do Rio São Francisco Unirios",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariodoriosaofranciscounirios_pauloafonso_82",
+      "municipio": "Paulo Afonso",
+      "entidade": "Centro Universitário do Rio São Francisco Unirios",
+      "curso": "Sistema De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_pauloafonso_83",
+      "municipio": "Paulo Afonso",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_pauloafonso_84",
+      "municipio": "Paulo Afonso",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Engenharia De Pesca",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    }
+  ]
+}

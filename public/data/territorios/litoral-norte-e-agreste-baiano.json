@@ -1,0 +1,488 @@
+{
+  "territory": "Litoral Norte e Agreste Baiano",
+  "slug": "litoral-norte-e-agreste-baiano",
+  "isSemiarido": true,
+  "pctSemiarido": 26.08695652173913,
+  "desenvolvimento": {
+    "ifdmTi": 0.483915,
+    "populacaoTotal": 566403,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_alagoinhas",
+      "municipio": "Alagoinhas",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 4,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_alagoinhas",
+      "municipio": "Alagoinhas",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_catu",
+      "municipio": "Catu",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldealagoinhas_alagoinhas",
+      "municipio": "Alagoinhas",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Alagoinhas",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariounirb_alagoinhas",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariouniftc_alagoinhas",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UniFTC",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadesantoantonio_alagoinhas",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTO ANTONIO",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadesantissimosacramento_alagoinhas",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTÍSSIMO SACRAMENTO",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_caju_ribeiradopombal_cajuculturafamiliardonordestedabahia",
+      "segmento": "Caju",
+      "sede": "Ribeira do Pombal",
+      "municipiosPertencentes": "Itapicuru, Olindina, Sátiro Dias",
+      "entidade": "Cajucultura Familiar do Nordeste da Bahia",
+      "tipo": "APL",
+      "quantidade": 3,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_artesanatodepiacava_entrerios_cooperativadeartesanatodotrancadotupinamba",
+      "segmento": "Artesanato de Piaçava",
+      "sede": "Entre Rios",
+      "municipiosPertencentes": "Entre Rios; Itanagra; Mata de São João",
+      "entidade": "Cooperativa de Artesanato do Trançado Tupinambá",
+      "tipo": "IG Potencial",
+      "quantidade": 3,
+      "fonte": "SEBRAE. Avaliação da potencialidade para indicação geográfica do artesanato de piaçava de Porto de Sauípe. Brasília: SEBRAE, 2024.",
+      "urlTarget": "https://datasebrae.com.br/wp-content/uploads/2025/01/2a-Diagnostico-Artesanato-de-Piacava-de-Porto-do-Sauipe.pdf"
+    },
+    {
+      "id": "cad_mel_alagoinhas_associacaodosapicultoresemeliponicultoresdaregiaonortedealagoinhas",
+      "segmento": "Mel",
+      "sede": "Alagoinhas",
+      "municipiosPertencentes": "Alagoinhas",
+      "entidade": "Associação dos Apicultores e Meliponicultores da Região Norte de Alagoinhas",
+      "tipo": "IG Potencial",
+      "quantidade": 1,
+      "fonte": "CONCEIÇÃO, Valdir Silva; SILVA, Dayana Ferraz; ROCHA, Angela Machado. Potencial de Indicação Geográfica para o mel produzido por abelha sem ferrão de Alagoinhas - Bahia. Cadernos de Prospecção, Salvador, v. 15, n. 2, p. 618-633, 2022.",
+      "urlTarget": "https://doi.org/10.9771/cp.v15i2.47406"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Catu",
+      "ifdm": 0.617,
+      "populacao": 50109
+    },
+    {
+      "municipio": "Alagoinhas",
+      "ifdm": 0.5585,
+      "populacao": 161196
+    },
+    {
+      "municipio": "Itanagra",
+      "ifdm": 0.5389,
+      "populacao": 6078
+    },
+    {
+      "municipio": "Ouriçangas",
+      "ifdm": 0.5268,
+      "populacao": 7925
+    },
+    {
+      "municipio": "Crisópolis",
+      "ifdm": 0.4959,
+      "populacao": 20346
+    },
+    {
+      "municipio": "Entre Rios",
+      "ifdm": 0.4949,
+      "populacao": 39890
+    },
+    {
+      "municipio": "Acajutiba",
+      "ifdm": 0.4854,
+      "populacao": 14200
+    },
+    {
+      "municipio": "Aporá",
+      "ifdm": 0.4827,
+      "populacao": 16361
+    },
+    {
+      "municipio": "Rio Real",
+      "ifdm": 0.4811,
+      "populacao": 36966
+    },
+    {
+      "municipio": "Araçás",
+      "ifdm": 0.4795,
+      "populacao": 11953
+    },
+    {
+      "municipio": "Jandaíra",
+      "ifdm": 0.4779,
+      "populacao": 9508
+    },
+    {
+      "municipio": "Olindina",
+      "ifdm": 0.4768,
+      "populacao": 22956
+    },
+    {
+      "municipio": "Aramari",
+      "ifdm": 0.47,
+      "populacao": 10106
+    },
+    {
+      "municipio": "Cardeal da Silva",
+      "ifdm": 0.466,
+      "populacao": 8633
+    },
+    {
+      "municipio": "Itapicuru",
+      "ifdm": 0.4473,
+      "populacao": 33284
+    },
+    {
+      "municipio": "Sátiro Dias",
+      "ifdm": 0.4472,
+      "populacao": 16476
+    },
+    {
+      "municipio": "Conde",
+      "ifdm": 0.4435,
+      "populacao": 24460
+    },
+    {
+      "municipio": "Esplanada",
+      "ifdm": 0.4433,
+      "populacao": 34163
+    },
+    {
+      "municipio": "Inhambupe",
+      "ifdm": 0.4326,
+      "populacao": 35390
+    },
+    {
+      "municipio": "Pedrão",
+      "ifdm": 0.413,
+      "populacao": 6403
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_89",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_90",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia Agronômica",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_91",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_92",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia De Petróleo",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_93",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_94",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_95",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_alagoinhas_96",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariouniftc_alagoinhas_97",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UniFTC",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariouniftc_alagoinhas_98",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UniFTC",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariouniftc_alagoinhas_99",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UniFTC",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariouniftc_alagoinhas_100",
+      "municipio": "Alagoinhas",
+      "entidade": "Centro Universitário UniFTC",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesantoantonio_alagoinhas_101",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTO ANTONIO",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesantoantonio_alagoinhas_102",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTO ANTONIO",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesantoantonio_alagoinhas_103",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTO ANTONIO",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesantoantonio_alagoinhas_104",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTO ANTONIO",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesantissimosacramento_alagoinhas_105",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTÍSSIMO SACRAMENTO",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesantissimosacramento_alagoinhas_106",
+      "municipio": "Alagoinhas",
+      "entidade": "Faculdade SANTÍSSIMO SACRAMENTO",
+      "curso": "Sistema De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_catu_107",
+      "municipio": "Catu",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_alagoinhas_108",
+      "municipio": "Alagoinhas",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Engenharia De Software",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_alagoinhas_109",
+      "municipio": "Alagoinhas",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Engenharia Sanitária E Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    }
+  ]
+}

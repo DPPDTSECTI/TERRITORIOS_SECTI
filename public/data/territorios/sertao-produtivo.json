@@ -1,0 +1,417 @@
+{
+  "territory": "Sertão Produtivo",
+  "slug": "sertao-produtivo",
+  "isSemiarido": true,
+  "pctSemiarido": 91.30434782608695,
+  "desenvolvimento": {
+    "ifdmTi": 0.530295,
+    "populacaoTotal": 501085,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_caetite",
+      "municipio": "Caetité",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 7,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadedoestadodabahiauneb_guanambi",
+      "municipio": "Guanambi",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadedoestadodabahiauneb_brumado",
+      "municipio": "Brumado",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_guanambi",
+      "municipio": "Guanambi",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_brumado",
+      "municipio": "Brumado",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldebrumado_brumado",
+      "municipio": "Brumado",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Brumado",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldecaetite_caetite",
+      "municipio": "Caetité",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Caetité",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariofg_guanambi",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_bovinoculturadeleite_guanambi_bovinoculturadeleiteterritoriosertaoprodutivo",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Guanambi",
+      "municipiosPertencentes": "Candiba; Catité; Guanambi; Iuiu; Palmas de Monte Alto; Pindaí",
+      "entidade": "Bovinocultura de Leite - Território Sertão Produtivo",
+      "tipo": "APL",
+      "quantidade": 6,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_apicultura_liciniodealmeida_produtosapicolasederivadoseprodutosdaagriculturafamiliareeconomiasolidariadaregiaodoriogaviaoeserrageral",
+      "segmento": "Apicultura",
+      "sede": "Licínio de Almeida",
+      "municipiosPertencentes": "Caculé, Pindaí, Urandi",
+      "entidade": "Produtos Apícolas e Derivados e Produtos da Agricultura Familiar e Economia Solidária da Região do Rio Gavião e Serra Geral",
+      "tipo": "APL",
+      "quantidade": 3,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Brumado",
+      "ifdm": 0.6631,
+      "populacao": 74368
+    },
+    {
+      "municipio": "Caculé",
+      "ifdm": 0.6194,
+      "populacao": 23293
+    },
+    {
+      "municipio": "Malhada de Pedras",
+      "ifdm": 0.6175,
+      "populacao": 8982
+    },
+    {
+      "municipio": "Guanambi",
+      "ifdm": 0.603,
+      "populacao": 93488
+    },
+    {
+      "municipio": "Caetité",
+      "ifdm": 0.5768,
+      "populacao": 54730
+    },
+    {
+      "municipio": "Urandi",
+      "ifdm": 0.5694,
+      "populacao": 15776
+    },
+    {
+      "municipio": "Dom Basílio",
+      "ifdm": 0.5689,
+      "populacao": 12329
+    },
+    {
+      "municipio": "Ibiassucê",
+      "ifdm": 0.556,
+      "populacao": 10746
+    },
+    {
+      "municipio": "Livramento de Nossa Senhora",
+      "ifdm": 0.5259,
+      "populacao": 46376
+    },
+    {
+      "municipio": "Candiba",
+      "ifdm": 0.5147,
+      "populacao": 13417
+    },
+    {
+      "municipio": "Tanhaçu",
+      "ifdm": 0.5106,
+      "populacao": 21787
+    },
+    {
+      "municipio": "Tanque Novo",
+      "ifdm": 0.5077,
+      "populacao": 17812
+    },
+    {
+      "municipio": "Iuiu",
+      "ifdm": 0.5049,
+      "populacao": 11559
+    },
+    {
+      "municipio": "Sebastião Laranjeiras",
+      "ifdm": 0.4978,
+      "populacao": 9581
+    },
+    {
+      "municipio": "Ituaçu",
+      "ifdm": 0.4913,
+      "populacao": 18506
+    },
+    {
+      "municipio": "Rio do Antônio",
+      "ifdm": 0.4864,
+      "populacao": 13495
+    },
+    {
+      "municipio": "Pindaí",
+      "ifdm": 0.4814,
+      "populacao": 15125
+    },
+    {
+      "municipio": "Palmas de Monte Alto",
+      "ifdm": 0.4669,
+      "populacao": 20666
+    },
+    {
+      "municipio": "Contendas do Sincorá",
+      "ifdm": 0.4302,
+      "populacao": 4499
+    },
+    {
+      "municipio": "Lagoa Real",
+      "ifdm": 0.414,
+      "populacao": 14550
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_573",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_574",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_575",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Ciência Da Computação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_576",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_577",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_578",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_579",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_580",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_581",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Gestão Da Tecnologia Da Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_582",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariofg_guanambi_583",
+      "municipio": "Guanambi",
+      "entidade": "Centro Universitário FG",
+      "curso": "Radiologia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_guanambi_584",
+      "municipio": "Guanambi",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Agroindústria",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_guanambi_585",
+      "municipio": "Guanambi",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederalbaianoifbaiano_guanambi_586",
+      "municipio": "Guanambi",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_brumado_587",
+      "municipio": "Brumado",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Engenharia De Minas",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_caetite_588",
+      "municipio": "Caetité",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Engenharia De Minas",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    }
+  ]
+}

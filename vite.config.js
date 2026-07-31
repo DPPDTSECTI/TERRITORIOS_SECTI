@@ -4,6 +4,7 @@ import https from 'https'
 import * as XLSX from 'xlsx'
 import fs from 'fs'
 import path from 'path'
+import { generateTerritoriesSplit } from './scripts/generateTerritoryFiles.mjs'
 
 let devCache = null;
 let devCacheExpiry = 0;
@@ -537,7 +538,7 @@ function parseSpreadsheet(buffer) {
   try {
     const publicDir = path.join(process.cwd(), 'public');
     if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
-    fs.writeFileSync(path.join(publicDir, 'dados.json'), JSON.stringify(result, null, 2));
+    generateTerritoriesSplit(result, publicDir);
   } catch (err) {}
 
   return result;

@@ -1,0 +1,351 @@
+{
+  "territory": "Médio Rio de Contas",
+  "slug": "medio-rio-de-contas",
+  "isSemiarido": true,
+  "pctSemiarido": 54.761904761904766,
+  "desenvolvimento": {
+    "ifdmTi": 0.48881875,
+    "populacaoTotal": 368106,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_ipiau",
+      "municipio": "Ipiaú",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 4,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadeestadualdosudoestedabahiauesb_jequie",
+      "municipio": "Jequié",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_jequie",
+      "municipio": "Jequié",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodauesbjequie_jequie",
+      "municipio": "Jequié",
+      "entidade": "Espaço Colaborar Parceiro da UESB Jequié",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadeanhangueradejequie_jequie",
+      "municipio": "Jequié",
+      "entidade": "Faculdade ANHANGUERA DE JEQUIÉ",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadedeexcelenciaunexdejequie_jequie",
+      "municipio": "Jequié",
+      "entidade": "Faculdade de Excelência UNEX de Jequié",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_cacau_ilheus_associacaodosprodutoresdecacaudosuldabahia",
+      "segmento": "Cacau",
+      "sede": "Ilhéus",
+      "municipiosPertencentes": "Aiquara, Apuarema, Barra do Rocha, Boa Nova, Dário Meira, Gongogi, Ibirataia, Ipiaú, Itagi, Itagibá, Itamari, Jequié, Jitaúna, Nova Ibiá, Ubatã",
+      "entidade": "Associação dos Produtores de Cacau do Sul da Bahia",
+      "tipo": "IG",
+      "quantidade": 15,
+      "fonte": "https://datasebrae.com.br/ig-sul-da-bahia/",
+      "urlTarget": "https://datasebrae.com.br/ig-sul-da-bahia/"
+    },
+    {
+      "id": "cad_cacau_jequie_cacauiculturasafterritoriomedioriodecontas",
+      "segmento": "Cacau",
+      "sede": "Jequié",
+      "municipiosPertencentes": "Almadina; Buerarema  ; Floresta Azul  ; Itabuna  ; Maraú  ; Ubaitaba  ; Uruçuca",
+      "entidade": "Cacauicultura - SAF - Território  Médio Rio de Contas",
+      "tipo": "APL",
+      "quantidade": 7,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_caprinovinocultura_manoelvitorino_ovinocaprinoculturaterritoriodomedioriodecontas",
+      "segmento": "Caprinovinocultura",
+      "sede": "Manoel Vitorino",
+      "municipiosPertencentes": "Boa Nova; Manoel Vitorino",
+      "entidade": "Ovinocaprinocultura - Território do Médio Rio de Contas",
+      "tipo": "APL",
+      "quantidade": 2,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_cafe_vitoriadaconquista_associacaodoscafeicultoresdoplanaltodevitoriadaconquista",
+      "segmento": "Café",
+      "sede": "Vitória da Conquista",
+      "municipiosPertencentes": "Anagé; Barra do Choça; Belo Campo; Boa Nova; Bom Jesus da Serra; Caatiba; Cordeiros; Cândido Sales; Dário Meira; Encruzilhada; Iguaí; Itambé; Nova Canaã; Piripá; Planalto; Poções; Ribeirão do Largo; Tremedal; Vitória da Conquista",
+      "entidade": "Associação dos Cafeicultores do Planalto de Vitória da Conquista",
+      "tipo": "IG Potencial",
+      "quantidade": 19,
+      "fonte": "DUTRA NETO, Claudionor et al. Indicação geográfica do planalto de Vitória da Conquista, denominação de origem para o café. Revista Extensão & Cidadania, Vitória da Conquista, v. 4, n. 7, p. 103-114, 2017.",
+      "urlTarget": "https://periodicos2.uesb.br/recuesb/article/view/2414/1997"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Ipiaú",
+      "ifdm": 0.608,
+      "populacao": 42429
+    },
+    {
+      "municipio": "Itagibá",
+      "ifdm": 0.5846,
+      "populacao": 15796
+    },
+    {
+      "municipio": "Jequié",
+      "ifdm": 0.5419,
+      "populacao": 169201
+    },
+    {
+      "municipio": "Dário Meira",
+      "ifdm": 0.5233,
+      "populacao": 11054
+    },
+    {
+      "municipio": "Aiquara",
+      "ifdm": 0.503,
+      "populacao": 4583
+    },
+    {
+      "municipio": "Gongogi",
+      "ifdm": 0.5012,
+      "populacao": 5479
+    },
+    {
+      "municipio": "Ubatã",
+      "ifdm": 0.4931,
+      "populacao": 15839
+    },
+    {
+      "municipio": "Nova Ibiá",
+      "ifdm": 0.4892,
+      "populacao": 6696
+    },
+    {
+      "municipio": "Boa Nova",
+      "ifdm": 0.4877,
+      "populacao": 14008
+    },
+    {
+      "municipio": "Jitaúna",
+      "ifdm": 0.4693,
+      "populacao": 14824
+    },
+    {
+      "municipio": "Barra do Rocha",
+      "ifdm": 0.466,
+      "populacao": 5898
+    },
+    {
+      "municipio": "Itamari",
+      "ifdm": 0.4614,
+      "populacao": 7187
+    },
+    {
+      "municipio": "Apuarema",
+      "ifdm": 0.449,
+      "populacao": 7101
+    },
+    {
+      "municipio": "Manoel Vitorino",
+      "ifdm": 0.4484,
+      "populacao": 14287
+    },
+    {
+      "municipio": "Itagi",
+      "ifdm": 0.4035,
+      "populacao": 14347
+    },
+    {
+      "municipio": "Ibirataia",
+      "ifdm": 0.3915,
+      "populacao": 19377
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_faculdadeanhangueradejequie_jequie_405",
+      "municipio": "Jequié",
+      "entidade": "Faculdade ANHANGUERA DE JEQUIÉ",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradejequie_jequie_406",
+      "municipio": "Jequié",
+      "entidade": "Faculdade ANHANGUERA DE JEQUIÉ",
+      "curso": "Engenharia Elétrica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadeanhangueradejequie_jequie_407",
+      "municipio": "Jequié",
+      "entidade": "Faculdade ANHANGUERA DE JEQUIÉ",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdejequie_jequie_408",
+      "municipio": "Jequié",
+      "entidade": "Faculdade de Excelência UNEX de Jequié",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdejequie_jequie_409",
+      "municipio": "Jequié",
+      "entidade": "Faculdade de Excelência UNEX de Jequié",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadedeexcelenciaunexdejequie_jequie_410",
+      "municipio": "Jequié",
+      "entidade": "Faculdade de Excelência UNEX de Jequié",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_jequie_411",
+      "municipio": "Jequié",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Engenharia Mecânica",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_ipiau_412",
+      "municipio": "Ipiaú",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Engenharia Agroindustrial",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_413",
+      "municipio": "Jequié",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Ciências Biológicas",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_414",
+      "municipio": "Jequié",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_415",
+      "municipio": "Jequié",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Química",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadeestadualdosudoestedabahiauesb_jequie_416",
+      "municipio": "Jequié",
+      "entidade": "Universidade Estadual do Sudoeste da Bahia (UESB)",
+      "curso": "Sistema De Informação",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    }
+  ]
+}

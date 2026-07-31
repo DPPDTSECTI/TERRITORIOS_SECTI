@@ -106,7 +106,10 @@ export function DataProvider({ children }) {
     filteredOptions,
     territoriesDynamicStats,
     dashboardData,
-    semiaridoMunicipios
+    semiaridoMunicipios,
+    metaLists,
+    carregarDetalheTerritorio,
+    carregarTodosDetalhes
   } = useTerritoriosData({
     selectedLocation,
     filtroSemiarido,
@@ -121,6 +124,16 @@ export function DataProvider({ children }) {
     debouncedCadeiaSearchTerm,
     debouncedCtiSearchTerm
   });
+
+  useEffect(() => {
+    if (selectedLocation && !selectedLocation.isDetailLoaded && carregarDetalheTerritorio) {
+      carregarDetalheTerritorio(selectedLocation).then((updated) => {
+        if (updated) {
+          setSelectedLocation(updated);
+        }
+      });
+    }
+  }, [selectedLocation, carregarDetalheTerritorio]);
 
   const value = {
     // Tema e Nav
@@ -159,7 +172,10 @@ export function DataProvider({ children }) {
     filteredOptions,
     territoriesDynamicStats,
     dashboardData,
-    semiaridoMunicipios
+    semiaridoMunicipios,
+    metaLists,
+    carregarDetalheTerritorio,
+    carregarTodosDetalhes
   };
 
   return (

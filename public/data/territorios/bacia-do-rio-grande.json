@@ -1,0 +1,593 @@
+{
+  "territory": "Bacia do Rio Grande",
+  "slug": "bacia-do-rio-grande",
+  "isSemiarido": true,
+  "pctSemiarido": 89.47368421052632,
+  "desenvolvimento": {
+    "ifdmTi": 0.4988571428571428,
+    "populacaoTotal": 511902,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadefederaldooestedabahiaufob_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 7,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadedoestadodabahiauneb_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederaldabahiaifba_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodoifbabarreiras_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Espaço Colaborar Parceiro do IFBA Barreiras",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_incubadoradebasetecnologicadaufob_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Incubadora de Base Tecnológica da UFOB",
+      "tipo": "Incubadora",
+      "categoria": "incubadoras",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutodaassociacaodeagricultoreseirrigantesdabahia_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Instituto da Associação de Agricultores e Irrigantes da Bahia",
+      "tipo": "Entidade de Pesquisa",
+      "categoria": "centrosPesquisa",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitarioarnaldohoracioferreira_luiseduardomagalhaes",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariomauriciodenassauuninassau_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_centrouniversitariounirb_barreiras",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário UNIRB",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_faculdadesulamericabahia_luiseduardomagalhaes",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "Faculdade Sulamérica Bahia",
+      "tipo": "Universidade - Privada",
+      "categoria": "campiUniversidadePrivada",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_cykloagritech_luiseduardomagalhaes",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "Cyklo Agritech",
+      "tipo": "Aceleradoras",
+      "categoria": "aceleradoras",
+      "quantidade": 1,
+      "descricao": "Agronegócio e Agtechs (Hardware e Software para o campo)",
+      "site": "https://cykloagritech.com.br/"
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_cafe_luiseduardomagalhaes_associacaodoscafeicultoresdooestedabahia",
+      "segmento": "Café",
+      "sede": "Luís Eduardo Magalhães",
+      "municipiosPertencentes": "Baianópolis, Barreiras, Catolândia, Formosa do Rio Preto, Luís Eduardo Magalhães, Riachão das Neves, Santa Rita de Cássia, São Desidério",
+      "entidade": "Associação dos Cafeicultores do Oeste da Bahia",
+      "tipo": "IG",
+      "quantidade": 8,
+      "fonte": "https://datasebrae.com.br/ig-oeste-da-bahia/",
+      "urlTarget": "https://datasebrae.com.br/ig-oeste-da-bahia/"
+    },
+    {
+      "id": "cad_bovinoculturadeleite_barreiras_bovinoculturadeleiteterritoriobaciadoriogrande",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Barreiras",
+      "municipiosPertencentes": "Angical; Baianópolis  ; Barreiras ; Catolândia  ; Cotegipe  ; Riachão Das Neves  ; Wanderley",
+      "entidade": "Bovinocultura de Leite - Território Bacia do Rio Grande",
+      "tipo": "APL",
+      "quantidade": 7,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_mandiocultura_saodesiderio_mandiocultoresdesaodesiderio",
+      "segmento": "Mandiocultura",
+      "sede": "São Desidério",
+      "municipiosPertencentes": "São Desidério",
+      "entidade": "Mandiocultores de São Desidério",
+      "tipo": "APL",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_algodao_barreiras_associacaobaianadeprodutoresdealgodao",
+      "segmento": "Algodão",
+      "sede": "Barreiras",
+      "municipiosPertencentes": "Luís Eduardo Magalhães; Formosa do Rio Preto; Riachão das Neves; Barreiras; São Desidério; Correntina; Jaborandi; Baianópolis; Wanderley; Cocos; Muquém do São Francisco",
+      "entidade": "Associação Baiana de Produtores de Algodão",
+      "tipo": "IG Potencial",
+      "quantidade": 11,
+      "fonte": "SANTOS, Aline Teles; CAJAVILCA, Erick Samuel Rojas; BRITO, George Nathan Souza. Indicação Geográfica: potencialidade do algodão do Oeste da Bahia. Cadernos de Prospecção, Salvador, v. 16, n. 1, p. 344-359, 2023.",
+      "urlTarget": "https://doi.org/10.9771/cp.v16i1.50700"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Luís Eduardo Magalhães",
+      "ifdm": 0.6865,
+      "populacao": 118382
+    },
+    {
+      "municipio": "Barreiras",
+      "ifdm": 0.6603,
+      "populacao": 171634
+    },
+    {
+      "municipio": "São Desidério",
+      "ifdm": 0.5678,
+      "populacao": 34982
+    },
+    {
+      "municipio": "Formosa do Rio Preto",
+      "ifdm": 0.5494,
+      "populacao": 27567
+    },
+    {
+      "municipio": "Angical",
+      "ifdm": 0.5186,
+      "populacao": 14178
+    },
+    {
+      "municipio": "Wanderley",
+      "ifdm": 0.4936,
+      "populacao": 13460
+    },
+    {
+      "municipio": "Riachão das Neves",
+      "ifdm": 0.4858,
+      "populacao": 22329
+    },
+    {
+      "municipio": "Cristópolis",
+      "ifdm": 0.4696,
+      "populacao": 14549
+    },
+    {
+      "municipio": "Mansidão",
+      "ifdm": 0.4547,
+      "populacao": 14542
+    },
+    {
+      "municipio": "Catolândia",
+      "ifdm": 0.4417,
+      "populacao": 3567
+    },
+    {
+      "municipio": "Santa Rita de Cássia",
+      "ifdm": 0.4309,
+      "populacao": 28890
+    },
+    {
+      "municipio": "Cotegipe",
+      "ifdm": 0.4274,
+      "populacao": 13463
+    },
+    {
+      "municipio": "Baianópolis",
+      "ifdm": 0.4246,
+      "populacao": 14138
+    },
+    {
+      "municipio": "Buritirama",
+      "ifdm": 0.3731,
+      "populacao": 20221
+    }
+  ],
+  "cursosDetalhado": [
+    {
+      "id": "curso_ent_centrouniversitarioarnaldohoracioferreira_luiseduardomagalhaes_4",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitarioarnaldohoracioferreira_luiseduardomagalhaes_5",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_6",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_7",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Análise E Desenvolvimento De Sistemas",
+      "areaGeral": "Computação e Tecnologias da Informação e Comunicação (TIC)",
+      "nivel": "Tecnológico",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_8",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_9",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariomauriciodenassauuninassau_barreiras_10",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário Maurício de Nassau (UNINASSAU)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada sem fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_barreiras_11",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia Agronômica",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_barreiras_12",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_barreiras_13",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_barreiras_14",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_centrouniversitariounirb_barreiras_15",
+      "municipio": "Barreiras",
+      "entidade": "Centro Universitário UNIRB",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesulamericabahia_luiseduardomagalhaes_16",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "Faculdade Sulamérica Bahia",
+      "curso": "Agronomia",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_faculdadesulamericabahia_luiseduardomagalhaes_17",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "Faculdade Sulamérica Bahia",
+      "curso": "Biomedicina",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Privada com fins lucrativos",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_institutofederaldabahiaifba_barreiras_18",
+      "municipio": "Barreiras",
+      "entidade": "Instituto Federal da Bahia (IFBA)",
+      "curso": "Engenharia De Alimentos",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Instituto Federal",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_barreiras_19",
+      "municipio": "Barreiras",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Engenharia Agronômica",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadedoestadodabahiauneb_barreiras_20",
+      "municipio": "Barreiras",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "curso": "Medicina Veterinária",
+      "areaGeral": "Agricultura, silvicultura, pesca e veterinária",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Estadual",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_21",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Ciências Biológicas",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_22",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Engenharia Civil",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_23",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Engenharia Sanitaria E Ambiental",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_24",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Farmácia",
+      "areaGeral": "Saúde e bem-estar",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_25",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Física",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_26",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Geologia",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_27",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Interdisciplinar Em Ciência E Tecnologia",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_28",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Matemática",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_barreiras_29",
+      "municipio": "Barreiras",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Química",
+      "areaGeral": "Ciências naturais, matemática e estatística",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes_30",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Engenharia De Biotecnologia",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    },
+    {
+      "id": "curso_ent_universidadefederaldooestedabahiaufob_luiseduardomagalhaes_31",
+      "municipio": "Luís Eduardo Magalhães",
+      "entidade": "Universidade Federal do Oeste da Bahia (UFOB)",
+      "curso": "Engenharia De Produção",
+      "areaGeral": "Engenharia, produção e construção",
+      "nivel": "Bacharelado",
+      "modalidade": "Presencial",
+      "orgAcademica": "Universidade",
+      "categoriaAdm": "Publica Federal",
+      "quantidade": 1
+    }
+  ]
+}

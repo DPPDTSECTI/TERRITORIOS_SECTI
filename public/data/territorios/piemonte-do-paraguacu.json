@@ -1,0 +1,161 @@
+{
+  "territory": "Piemonte do Paraguaçu",
+  "slug": "piemonte-do-paraguacu",
+  "isSemiarido": true,
+  "pctSemiarido": 93.33333333333333,
+  "desenvolvimento": {
+    "ifdmTi": 0.4983846153846153,
+    "populacaoTotal": 257312,
+    "metodologia": "IFDM_TI = Média Aritmética Simples"
+  },
+  "assistenciaPublica": {
+    "existe": false,
+    "iniciativas": []
+  },
+  "capacidadeDetalhada": [
+    {
+      "id": "ent_universidadedoestadodabahiauneb_itaberaba",
+      "municipio": "Itaberaba",
+      "entidade": "Universidade do Estado da Bahia (UNEB)",
+      "tipo": "Universidade - Pública",
+      "categoria": "campiUniversidadePublica",
+      "quantidade": 3,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_institutofederalbaianoifbaiano_itaberaba",
+      "municipio": "Itaberaba",
+      "entidade": "Instituto Federal Baiano (IF BAIANO)",
+      "tipo": "Instituto Federal",
+      "categoria": "campiInstitutoFederal",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    },
+    {
+      "id": "ent_espacocolaborarparceirodaprefeituramunicipaldepiritiba_piritiba",
+      "municipio": "Piritiba",
+      "entidade": "Espaço Colaborar Parceiro da Prefeitura Municipal de Piritiba",
+      "tipo": "Espaço Dinamizador",
+      "categoria": "espacoDinamizadoress",
+      "quantidade": 1,
+      "descricao": "",
+      "site": ""
+    }
+  ],
+  "cadeiasProdutivasDetalhado": [
+    {
+      "id": "cad_bovinoculturadeleite_itaberaba_bovinoculturadeleiteterritoriopiemontedoparaguacu",
+      "segmento": "Bovinocultura de Leite",
+      "sede": "Itaberaba",
+      "municipiosPertencentes": "Boa Vista Do Tupim; Iaçu  ; Itaberaba  ; Macajuba  ; Mundo Novo  ; Piritiba  ; Ruy Barbosa  ; Tapiramutá",
+      "entidade": "Bovinocultura de Leite - Território Piemonte do Paraguaçu",
+      "tipo": "APL",
+      "quantidade": 8,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_agropecuaria_varzeanova_producaoagropecuariadegiloeregiao",
+      "segmento": "Agropecuária",
+      "sede": "Várzea Nova",
+      "municipiosPertencentes": "Piritiba, Tapiramutá",
+      "entidade": "Produção Agropecuária de Giló e Região",
+      "tipo": "APL",
+      "quantidade": 2,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_fruticultura_itaberaba_producaoeagroindustrializacao",
+      "segmento": "Fruticultura",
+      "sede": "Itaberaba",
+      "municipiosPertencentes": "Itaberaba",
+      "entidade": "Produção e Agroindustrialização",
+      "tipo": "APL",
+      "quantidade": 1,
+      "fonte": "https://www.gov.br/empresas-e-negocios/pt-br/portais-desconhecidos/observatorioapl",
+      "urlTarget": ""
+    },
+    {
+      "id": "cad_abacaxi_itaberaba_cooperativadosprodutoresdeabacaxideitaberaba",
+      "segmento": "Abacaxi",
+      "sede": "Itaberaba",
+      "municipiosPertencentes": "Itaberaba; Boa Vista do Tupim; Macajuba",
+      "entidade": "Cooperativa dos Produtores de Abacaxi de Itaberaba",
+      "tipo": "IG Potencial",
+      "quantidade": 3,
+      "fonte": "BONFIM, Catarina Vilas Boas da Silva et al. Diagnóstico do potencial de indicação geográfica do abacaxi de Itaberaba-Bahia sob a ótica da metodologia do SEBRAE. Revista Aracê, São José dos Pinhais, v. 7, n. 3, p. 15075-15090, 2025.",
+      "urlTarget": "https://periodicos.newsciencepubl.com/arace/article/view/4122/5434"
+    }
+  ],
+  "desenvolvimentoDetalhado": [
+    {
+      "municipio": "Itatim",
+      "ifdm": 0.5862,
+      "populacao": 16454
+    },
+    {
+      "municipio": "Itaberaba",
+      "ifdm": 0.5713,
+      "populacao": 68425
+    },
+    {
+      "municipio": "Iaçu",
+      "ifdm": 0.5607,
+      "populacao": 25315
+    },
+    {
+      "municipio": "Mundo Novo",
+      "ifdm": 0.5509,
+      "populacao": 17197
+    },
+    {
+      "municipio": "Tapiramutá",
+      "ifdm": 0.5221,
+      "populacao": 16226
+    },
+    {
+      "municipio": "Santa Terezinha",
+      "ifdm": 0.5008,
+      "populacao": 10882
+    },
+    {
+      "municipio": "Ruy Barbosa",
+      "ifdm": 0.4999,
+      "populacao": 29590
+    },
+    {
+      "municipio": "Macajuba",
+      "ifdm": 0.4691,
+      "populacao": 10740
+    },
+    {
+      "municipio": "Ibiquera",
+      "ifdm": 0.4615,
+      "populacao": 3833
+    },
+    {
+      "municipio": "Boa Vista do Tupim",
+      "ifdm": 0.4533,
+      "populacao": 17262
+    },
+    {
+      "municipio": "Piritiba",
+      "ifdm": 0.4475,
+      "populacao": 17697
+    },
+    {
+      "municipio": "Rafael Jambeiro",
+      "ifdm": 0.4348,
+      "populacao": 20081
+    },
+    {
+      "municipio": "Lajedinho",
+      "ifdm": 0.4209,
+      "populacao": 3610
+    }
+  ],
+  "cursosDetalhado": []
+}

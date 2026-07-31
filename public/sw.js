@@ -7,7 +7,6 @@ const STATIC_ASSETS = [
 ];
 
 const DATA_URLS = [
-  '/.netlify/functions/sharepoint',
   '/api/sharepoint',
 ];
 
