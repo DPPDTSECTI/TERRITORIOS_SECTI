@@ -4,13 +4,15 @@ Aplicação React que carrega um mapa da Bahia e destaca, por meio de marcadores
 
 ---
 
-## 🔐 Variáveis de Ambiente & Netlify Onboarding
+## 🔐 Variáveis de Ambiente & Vercel Onboarding
 
-Para rodar a aplicação localmente ou realizar o deploy no **Netlify**, as seguintes variáveis de ambiente devem ser configuradas:
+Para rodar a aplicação localmente ou realizar o deploy na **Vercel**, as seguintes variáveis de ambiente devem ser configuradas:
 
 | Variável | Escopo | Descrição | Exemplo / Valor Padrão |
 |---|---|---|---|
 | `VITE_SHAREPOINT_URL` | Build / Server / Client | URL do link de download direto da planilha oficial de dados no SharePoint. | `https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/...` |
+| `UPSTASH_REDIS_REST_URL` | Server (Vercel KV) | URL REST do banco Upstash Redis conectado via Marketplace da Vercel (ou `KV_REST_API_URL`). | `https://...upstash.io` |
+| `UPSTASH_REDIS_REST_TOKEN` | Server (Vercel KV) | Token de autenticação REST do banco Upstash Redis conectado via Marketplace da Vercel (ou `KV_REST_API_TOKEN`). | `AX...` |
 | `VITE_OPENROUTER_API_KEY` | Client (Opcional) | Chave da API OpenRouter utilizada pelos recursos de IA e assistente. | `sk-or-v1-...` |
 
 ### 🛠️ Configuração Local (`.env`)
@@ -20,18 +22,23 @@ Para rodar a aplicação localmente ou realizar o deploy no **Netlify**, as segu
    cp .env.example .env
    ```
 2. Abra o arquivo `.env` e preencha a URL do SharePoint ou sua API Key se necessário.
+3. Para testar o cache Upstash Redis localmente, adicione `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` com as credenciais do seu banco Upstash (ou use `vc env pull` via Vercel CLI).
 
 ---
 
-### 🚀 Configuração no Netlify (Deploy & Functions)
+### 🚀 Configuração na Vercel (Deploy & Serverless Functions)
 
-Ao realizar o onboarding do projeto no **Netlify**:
+Ao realizar o onboarding do projeto na **Vercel**:
 
-1. Acesse o painel do site no Netlify: **Site configuration** $\rightarrow$ **Environment variables**.
-2. Adicione as seguintes chaves:
+1. Acesse o painel do projeto na Vercel: **Project Settings** $\rightarrow$ **Environment Variables**.
+2. Adicione as seguintes chaves para os ambientes Production, Preview e Development:
    - **`VITE_SHAREPOINT_URL`**: `https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1`
-   - **`VITE_OPENROUTER_API_KEY`**: *(opcional - conforme o seu ambiente)*
-3. **Netlify Blobs**: Certifique-se de que a funcionalidade **Netlify Blobs** está habilitada no projeto para que as Netlify Functions (`sharepoint.js` e `sharepoint-refresh.js`) possam manter o cache de dados em produção.
+   - **`VITE_OPENROUTER_API_KEY`**: *(opcional)*
+3. **Integração com Upstash Redis (Vercel Marketplace)**:
+   - No painel da Vercel, acesse a aba **Storage** (ou **Marketplace** $\rightarrow$ procure por **"Upstash for Redis"**).
+   - Clique em **Install**, selecione seu projeto e crie/conecte uma instância do Upstash Redis.
+   - A própria Vercel criará e injetará automaticamente as variáveis **`UPSTASH_REDIS_REST_URL`** e **`UPSTASH_REDIS_REST_TOKEN`** (além das variáveis de compatibilidade `KV_REST_API_URL` e `KV_REST_API_TOKEN`).
+   - Nossas Serverless Functions (`api/sharepoint.js` e o agendador Cron `api/sharepoint-refresh.js`) identificarão automaticamente essas variáveis e manterão o cache sempre aquecido (TTL 90min, atualizado a cada 30min).
 
 ---
 

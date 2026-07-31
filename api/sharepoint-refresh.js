@@ -2,7 +2,7 @@ import { getSharePointData } from './_sharepoint-service.js';
 
 // Vercel Cron Function (/api/sharepoint-refresh)
 // Pré-aquece o cache do SharePoint a cada 30 minutos, executando download,
-// parse da planilha e gravando no Vercel KV (@vercel/kv) para que
+// parse da planilha e gravando no Upstash Redis (@upstash/redis) para que
 // os usuários nunca precisem esperar o processamento do Excel (~25s).
 // 
 // Configurado no vercel.json via:

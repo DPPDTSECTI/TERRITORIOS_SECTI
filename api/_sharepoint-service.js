@@ -2,7 +2,7 @@ import { parseSpreadsheet } from './_sharepoint-processor.js';
 import zlib from 'zlib';
 import { promisify } from 'util';
 import crypto from 'crypto';
-import { createClient } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 
 const KV_KEY = 'conecta-data';
 const KV_MAX_AGE_MS = 90 * 60 * 1000; // 90 minutos em ms
@@ -19,26 +19,29 @@ let cacheExpiry = 0;
 const CACHE_TTL = 0; // 0 para evitar dado antigo em memória entre requisições na produção
 
 /**
- * Cria ou retorna cliente do Vercel KV de forma segura (sem quebrar caso env vars não estejam setadas)
+ * Cria ou retorna cliente do Upstash Redis de forma segura
  */
-let _kvClient = undefined;
-function getKVClient() {
-  if (_kvClient !== undefined) return _kvClient;
-  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+let _redisClient = undefined;
+function getRedisClient() {
+  if (_redisClient !== undefined) return _redisClient;
 
-  if (!url || !token) {
-    console.warn('[Vercel KV] Variáveis KV_REST_API_URL / KV_REST_API_TOKEN não definidas no ambiente.');
-    _kvClient = null;
+  const hasEnv = Boolean(
+    (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) ||
+    (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN)
+  );
+
+  if (!hasEnv) {
+    console.warn('[Upstash Redis] Variáveis de ambiente (UPSTASH_REDIS_REST_URL/TOKEN ou KV_REST_API_URL/TOKEN) não definidas no ambiente. Operando em modo sem cache Redis.');
+    _redisClient = null;
     return null;
   }
 
   try {
-    _kvClient = createClient({ url, token });
-    return _kvClient;
+    _redisClient = Redis.fromEnv();
+    return _redisClient;
   } catch (err) {
-    console.warn('[Vercel KV] Falha ao criar cliente Vercel KV:', err.message);
-    _kvClient = null;
+    console.warn('[Upstash Redis] Falha ao criar cliente Upstash Redis:', err.message);
+    _redisClient = null;
     return null;
   }
 }
@@ -206,17 +209,17 @@ export async function getSharePointData({ nocache = false, requestAcceptEncoding
     console.log('[Vercel] Cache memória MISS - verificando Vercel KV...');
   }
 
-  // OTIMIZAÇÃO 2: Verificar Vercel KV (@vercel/kv) - chave 'conecta-data', TTL 90 min
+  // OTIMIZAÇÃO 2: Verificar Upstash Redis (@upstash/redis) - chave 'conecta-data', TTL 90 min
   if (!nocache) {
-    const kv = getKVClient();
-    if (kv) {
+    const redis = getRedisClient();
+    if (redis) {
       try {
-        const stored = await kv.get(KV_KEY);
+        const stored = await redis.get(KV_KEY);
         if (stored && stored.jsonString && stored.timestamp) {
           const ageMs = Date.now() - stored.timestamp;
           const ageSec = Math.round(ageMs / 1000);
           if (ageMs < KV_MAX_AGE_MS) {
-            console.log(`[Vercel KV] ✓ Cache HIT (${ageSec}s < 90min) → resposta instantânea`);
+            console.log(`[Upstash Redis] ✓ Cache HIT (${ageSec}s < 90min) → resposta instantânea`);
             
             if (acceptsGzip) {
               try {
@@ -229,12 +232,12 @@ export async function getSharePointData({ nocache = false, requestAcceptEncoding
                     'Access-Control-Allow-Origin': '*',
                     'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
                     'ETag': `"${stored.etag}"`,
-                    'X-Content-Source': 'vercel-kv-compressed',
+                    'X-Content-Source': 'upstash-redis-compressed',
                     'X-Cache-Age': String(ageSec),
                     'X-Geracao': String(stored.timestamp),
                   },
                   body: compressed,
-                  source: 'vercel-kv-compressed',
+                  source: 'upstash-redis-compressed',
                 };
               } catch (_) {
                 /* fallback sem compressão */
@@ -248,20 +251,20 @@ export async function getSharePointData({ nocache = false, requestAcceptEncoding
                 'Access-Control-Allow-Origin': '*',
                 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
                 'ETag': `"${stored.etag}"`,
-                'X-Content-Source': 'vercel-kv',
+                'X-Content-Source': 'upstash-redis',
                 'X-Cache-Age': String(ageSec),
                 'X-Geracao': String(stored.timestamp),
               },
               body: stored.jsonString,
-              source: 'vercel-kv',
+              source: 'upstash-redis',
             };
           }
-          console.log(`[Vercel KV] Cache stale (${ageSec}s ≥ 90min), buscando dados frescos...`);
+          console.log(`[Upstash Redis] Cache stale (${ageSec}s ≥ 90min), buscando dados frescos...`);
         } else {
-          console.log('[Vercel KV] Chave vazia ou ausente, buscando do SharePoint...');
+          console.log('[Upstash Redis] Chave vazia ou ausente, buscando do SharePoint...');
         }
-      } catch (kvReadErr) {
-        console.error('[Vercel KV] Erro ao ler chave:', kvReadErr.message);
+      } catch (redisReadErr) {
+        console.error('[Upstash Redis] Erro ao ler chave:', redisReadErr.message);
       }
     }
   }
@@ -322,18 +325,18 @@ export async function getSharePointData({ nocache = false, requestAcceptEncoding
             cachedData = { jsonString, etag };
             cacheExpiry = Date.now() + CACHE_TTL;
 
-            // Gravar no Vercel KV (@vercel/kv) com TTL de 90min (5400 segundos)
-            const kv = getKVClient();
-            if (kv) {
+            // Gravar no Upstash Redis (@upstash/redis) com TTL de 90min (5400 segundos)
+            const redis = getRedisClient();
+            if (redis) {
               try {
-                await kv.set(
+                await redis.set(
                   KV_KEY,
                   { jsonString, etag, timestamp: Date.now() },
                   { ex: KV_TTL_SEC }
                 );
-                console.log('[Vercel KV] ✓ Dados gravados no KV (chave conecta-data, TTL: 5400s)');
-              } catch (kvWriteErr) {
-                console.error('[Vercel KV] Erro ao gravar chave no KV:', kvWriteErr.message);
+                console.log('[Upstash Redis] ✓ Dados gravados no Redis (chave conecta-data, TTL: 5400s)');
+              } catch (redisWriteErr) {
+                console.error('[Upstash Redis] Erro ao gravar chave no Redis:', redisWriteErr.message);
               }
             }
 

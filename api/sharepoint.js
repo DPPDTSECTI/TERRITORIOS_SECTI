@@ -2,7 +2,7 @@ import { getSharePointData } from './_sharepoint-service.js';
 
 /**
  * Vercel Serverless Function (/api/sharepoint)
- * Serve o JSON processado da planilha SharePoint com cache Vercel KV (@vercel/kv)
+ * Serve o JSON processado da planilha SharePoint com cache Upstash Redis (@upstash/redis)
  */
 export default async function handler(req, res) {
   const nocache = String(req.query?.nocache) === 'true';
