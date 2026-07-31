@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import autoTable from 'jspdf-autotable';
 
 /**
  * Configurações ABNT para PDF
@@ -39,7 +40,7 @@ const ABNT_CONFIG = {
  * Cria um novo documento PDF com padrão ABNT
  * @returns {jsPDF} Documento PDF
  */
-function createPDFDocument() {
+export function createPDFDocument() {
   const pdf = new jsPDF({
     orientation: ABNT_CONFIG.orientation,
     unit: ABNT_CONFIG.unit,
@@ -100,7 +101,7 @@ async function addInstitutionalHeader(pdf, sectiLogoBase64) {
  * @param {string} subtitle - Subtítulo
  * @param {string} date - Data do relatório
  */
-async function addCover(pdf, sectiLogoBase64, conectaLogoBase64, title, subtitle, date) {
+export async function addCover(pdf, sectiLogoBase64, conectaLogoBase64, title, subtitle, date) {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const { left, right } = ABNT_CONFIG.margins;
@@ -232,7 +233,7 @@ function addTableOfContents(pdf, sections) {
  * @param {number} level - Nível do título (1, 2, 3)
  * @returns {number} Nova posição Y
  */
-function addSection(pdf, yPos, title, level = 1) {
+export function addSection(pdf, yPos, title, level = 1) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageHeight = pdf.internal.pageSize.getHeight();
   const contentWidth = pdf.internal.pageSize.getWidth() - left - right;
@@ -286,7 +287,7 @@ function addSection(pdf, yPos, title, level = 1) {
  * @param {string} text - Texto do parágrafo
  * @returns {number} Nova posição Y
  */
-function addParagraph(pdf, yPos, text) {
+export function addParagraph(pdf, yPos, text) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageHeight = pdf.internal.pageSize.getHeight();
   const contentWidth = pdf.internal.pageSize.getWidth() - left - right;
@@ -315,63 +316,44 @@ function addParagraph(pdf, yPos, text) {
  * @param {Array} rows - Linhas da tabela
  * @returns {number} Nova posição Y
  */
-function addTable(pdf, yPos, headers, rows) {
+/**
+ * Adiciona tabela estilizada ABNT com suporte a células multilinhas (Bug 4) via jspdf-autotable
+ * @param {jsPDF} pdf - Documento PDF
+ * @param {number} yPos - Posição Y atual
+ * @param {Array} headers - Cabeçalhos da tabela
+ * @param {Array} rows - Linhas da tabela
+ * @returns {number} Nova posição Y
+ */
+export function addTable(pdf, yPos, headers, rows) {
   const { left, right } = ABNT_CONFIG.margins;
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const contentWidth = pdf.internal.pageSize.getWidth() - left - right;
 
-  // Verificar espaço
-  if (yPos > pageHeight - 60) {
-    pdf.addPage();
-    yPos = ABNT_CONFIG.margins.top;
-  }
-
-  const columnWidth = contentWidth / headers.length;
-
-  // Cabeçalho da tabela
-  pdf.setFillColor(...ABNT_CONFIG.colors.primary);
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFont('Helvetica', 'bold');
-  pdf.setFontSize(ABNT_CONFIG.fontSize.body - 1);
-
-  headers.forEach((header, i) => {
-    const x = left + i * columnWidth;
-    pdf.rect(x, yPos - 5, columnWidth, 8, 'F');
-    pdf.text(header, x + 2, yPos, { maxWidth: columnWidth - 4 });
+  autoTable(pdf, {
+    startY: yPos,
+    head: [headers],
+    body: rows,
+    styles: {
+      font: 'helvetica',
+      fontSize: 8,
+      cellPadding: 2,
+      overflow: 'linebreak',
+      textColor: ABNT_CONFIG.colors.text,
+    },
+    headStyles: {
+      fillColor: ABNT_CONFIG.colors.primary,
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+    },
+    alternateRowStyles: {
+      fillColor: [245, 245, 245],
+    },
+    margin: { left, right },
   });
 
-  pdf.setTextColor(...ABNT_CONFIG.colors.text);
-  pdf.setFont('Helvetica', 'normal');
-  pdf.setFontSize(ABNT_CONFIG.fontSize.body - 1);
-
-  yPos += 10;
-  let rowIndex = 0;
-
-  // Linhas da tabela
-  rows.forEach((row) => {
-    // Alternância de cores
-    if (rowIndex % 2 === 0) {
-      pdf.setFillColor(245, 245, 245);
-      pdf.rect(left, yPos - 5, contentWidth, 7, 'F');
-    }
-
-    row.forEach((cell, i) => {
-      const x = left + i * columnWidth;
-      const cellText = String(cell || '').substring(0, 30);
-      pdf.text(cellText, x + 2, yPos, { maxWidth: columnWidth - 4 });
-    });
-
-    yPos += 7;
-    rowIndex++;
-
-    // Nova página se necessário
-    if (yPos > pageHeight - 20) {
-      pdf.addPage();
-      yPos = ABNT_CONFIG.margins.top;
-    }
-  });
-
-  return yPos + 5;
+  const finalY =
+    pdf.lastAutoTable && pdf.lastAutoTable.finalY
+      ? pdf.lastAutoTable.finalY
+      : yPos + rows.length * 8 + 10;
+  return finalY + 8;
 }
 
 /**
@@ -383,26 +365,27 @@ function addTable(pdf, yPos, headers, rows) {
  * @param {number} width - Largura da imagem em mm
  * @returns {number} Nova posição Y
  */
-function addImage(pdf, yPos, imageBase64, caption, width = 150) {
+export function addImage(pdf, yPos, imageBase64, caption, width = 150, aspectRatio = 0.75) {
   const { left, right } = ABNT_CONFIG.margins;
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const contentWidth = pageWidth - left - right;
 
-  // Verificar espaço
-  if (yPos > pageHeight - 80) {
-    pdf.addPage();
-    yPos = ABNT_CONFIG.margins.top;
-  }
-
   try {
-    // Calcular altura proporcional
     const maxWidth = Math.min(width, contentWidth);
+    const calcHeight = maxWidth * aspectRatio;
+
+    // Verificar espaço disponível na página para a altura real da imagem
+    if (yPos + calcHeight + 15 > pageHeight - ABNT_CONFIG.margins.bottom) {
+      pdf.addPage();
+      yPos = ABNT_CONFIG.margins.top;
+    }
+
     const centerX = left + (contentWidth - maxWidth) / 2;
 
-    // Adicionar imagem
-    pdf.addImage(imageBase64, 'PNG', centerX, yPos, maxWidth, maxWidth * 0.75);
-    yPos += maxWidth * 0.75 + 5;
+    // Adicionar imagem com altura proporcional sem distorção
+    pdf.addImage(imageBase64, 'PNG', centerX, yPos, maxWidth, calcHeight);
+    yPos += calcHeight + 5;
 
     // Adicionar legenda
     if (caption) {
@@ -425,7 +408,7 @@ function addImage(pdf, yPos, imageBase64, caption, width = 150) {
  * Adiciona rodapé ao PDF
  * @param {jsPDF} pdf - Documento PDF
  */
-function addFooter(pdf) {
+export function addFooter(pdf) {
   const pageHeight = pdf.internal.pageSize.getHeight();
   const pageWidth = pdf.internal.pageSize.getWidth();
   const { left, right } = ABNT_CONFIG.margins;
@@ -474,13 +457,17 @@ export async function htmlElementToBase64(element) {
  */
 export async function generatePDFReport(options = {}) {
   const {
-    title = 'Programa PTI',
-    subtitle = 'Relatório de Pontos de Acesso à Internet',
+    title = 'Programa de Ciência, Tecnologia e Inovação',
+    subtitle = 'Relatório Institucional Agregado',
     municipiosData = [],
     mapElement = null,
+    municipiosReportElement = null,
+    heatmapReportElement = null,
     sectiLogo = null,
     conectaLogo = null,
     includeMap = true,
+    includeMunicipiosReport = true,
+    includeHeatmapReport = true,
     includeStatistics = true,
     includeData = true,
   } = options;
@@ -502,7 +489,9 @@ export async function generatePDFReport(options = {}) {
   // Sumário
   const sections = [];
   if (includeStatistics) sections.push('Estatísticas Gerais');
-  if (includeMap) sections.push('Mapa de Localização');
+  if (includeMap && mapElement) sections.push('Mapa de Localização');
+  if (includeMunicipiosReport && municipiosReportElement) sections.push('Visão Geográfica de Ensino Superior');
+  if (includeHeatmapReport && heatmapReportElement) sections.push('Matriz de Áreas do Conhecimento');
   if (includeData) sections.push('Dados dos Municípios');
   sections.push('Referências');
 
@@ -516,7 +505,7 @@ export async function generatePDFReport(options = {}) {
   yPos = addParagraph(
     pdf,
     yPos,
-    'O Programa PTI é uma iniciativa da Secretaria de Ciência, Tecnologia e Inovação do Governo do Estado da Bahia, destinado a democratizar o acesso à internet e promover a inclusão digital dos cidadãos baianos através da instalação de pontos de acesso Wi-Fi em praças e espaços públicos.'
+    'Este relatório apresenta uma síntese dos dados agregados sobre Ciência, Tecnologia e Inovação no Estado da Bahia, destacando a distribuição geográfica e a capacidade instalada de ensino superior público nos municípios baianos.'
   );
 
   // Estatísticas
@@ -530,15 +519,15 @@ export async function generatePDFReport(options = {}) {
     yPos = addParagraph(
       pdf,
       yPos,
-      `Este relatório apresenta uma análise dos ${totalMunicipios} municípios participantes do Programa PTI, com um total de ${totalPontos} pontos de acesso à internet, representando uma média de ${mediaPontos} pontos por município.`
+      `Este relatório apresenta uma análise dos ${totalMunicipios} municípios participantes, com um total de ${totalPontos} registros, representando uma média de ${mediaPontos} registros por município.`
     );
 
     // Tabela de estatísticas
     const stats = [
       ['Métrica', 'Valor'],
       ['Total de Municípios', totalMunicipios.toString()],
-      ['Total de Pontos de Acesso', totalPontos.toString()],
-      ['Média de Pontos por Município', mediaPontos],
+      ['Total de Registros', totalPontos.toString()],
+      ['Média por Município', mediaPontos],
       ['Data de Geração', dateStr],
     ];
 
@@ -556,16 +545,56 @@ export async function generatePDFReport(options = {}) {
     yPos = addParagraph(
       pdf,
       yPos,
-      'Abaixo apresenta-se o mapa geográfico dos pontos de acesso distribuídos no estado da Bahia:'
+      'Abaixo apresenta-se o mapa geográfico dos pontos e iniciativas distribuídos no estado da Bahia:'
     );
 
     const mapImage = await htmlElementToBase64(mapElement);
     if (mapImage) {
       // ocupar página inteira ajustando largura
-      yPos = addImage(pdf, yPos, mapImage, 'Distribuição dos pontos de acesso Wi-Fi no estado da Bahia', 180);
+      yPos = addImage(pdf, yPos, mapImage, 'Distribuição geográfica no estado da Bahia', 180);
     }
 
     // garantir quebra após mapa para não mesclar com próximos conteúdos
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+  }
+
+  // Relatório Geográfico e Institucional Agregado (MunicipiosReportImage)
+  if (includeMunicipiosReport && municipiosReportElement) {
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+
+    yPos = addSection(pdf, yPos, 'Visão Geográfica de Ensino Superior', 1);
+    yPos = addParagraph(
+      pdf,
+      yPos,
+      'O mapa numerado a seguir ilustra os municípios da Bahia que possuem presença de instituições públicas de ensino superior (Federal, Estadual ou Instituto Federal), seguidos da relação institucional correspondente.'
+    );
+
+    const munReportImg = await htmlElementToBase64(municipiosReportElement);
+    if (munReportImg) {
+      yPos = addImage(pdf, yPos, munReportImg, 'Municípios e Instituições Públicas de Ensino Superior na Bahia', 180);
+    }
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+  }
+
+  // Heatmap por Área do Conhecimento (AreaHeatmap)
+  if (includeHeatmapReport && heatmapReportElement) {
+    pdf.addPage();
+    yPos = ABNT_CONFIG.margins.top;
+
+    yPos = addSection(pdf, yPos, 'Matriz de Áreas do Conhecimento', 1);
+    yPos = addParagraph(
+      pdf,
+      yPos,
+      'A matriz abaixo apresenta o cruzamento entre os municípios e as áreas gerais do conhecimento com maior volume de cursos superiores.'
+    );
+
+    const heatmapImg = await htmlElementToBase64(heatmapReportElement);
+    if (heatmapImg) {
+      yPos = addImage(pdf, yPos, heatmapImg, 'Matriz Município × Área Geral do Conhecimento', 180);
+    }
     pdf.addPage();
     yPos = ABNT_CONFIG.margins.top;
   }
@@ -613,7 +642,7 @@ export async function generatePDFReport(options = {}) {
 export async function generateAndDownloadReport(options = {}) {
   try {
     const pdf = await generatePDFReport(options);
-    const filename = `PTIBahia_Relatorio_${new Date().toISOString().split('T')[0]}.pdf`;
+    const filename = options.filename || `Relatorio_SECTI_Bahia_${new Date().toISOString().split('T')[0]}.pdf`;
     pdf.save(filename);
   } catch (error) {
     console.error('Erro ao gerar relatório:', error);

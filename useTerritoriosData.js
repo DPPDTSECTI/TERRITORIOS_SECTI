@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
+import { classificarInstituicao } from './utils/reportAggregation.js';
 
 // Otimização: Memoiza a função de normalização para evitar recalcular strings repetidamente.
 const normalize = (() => {
@@ -324,14 +325,7 @@ export default function useTerritoriosData(filters) {
                 if (cursoTerm && !normalize(curso.curso).includes(cursoTerm)) return false;
                 if (areaGeralFilter && areaGeralFilter.length > 0 && !areaGeralFilter.includes(curso.areaGeral || 'Não Informada')) return false;
 
-                const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-                let catCurso = null;
-                const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
-                if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                    catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
-                } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                    catCurso = 'campiInstitutoFederal';
-                }
+                const { catCurso } = classificarInstituicao(curso);
                 if (catCurso && !ctiFilters[catCurso]) return false;
 
                 return true;
@@ -432,14 +426,7 @@ export default function useTerritoriosData(filters) {
                 if (!terms.every(term => searchString.includes(term))) return;
             }
 
-            const tipoNorm = normalize(`${curso.orgAcademica} ${curso.categoriaAdm} ${curso.entidade}`);
-            let catCurso = null;
-            const isPrivada = tipoNorm.includes('privada') || tipoNorm.includes('lucrativo') || tipoNorm.includes('particular');
-            if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
-                catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
-            } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
-                catCurso = 'campiInstitutoFederal';
-            }
+            const { catCurso } = classificarInstituicao(curso);
             if (catCurso && !ctiFilters[catCurso]) return;
 
             cursosFlat.push({ ...curso, territorioRef: t.nome });

@@ -3,17 +3,17 @@ import ExcelExportButton from './ExcelExportButton';
 
 const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
     const images = [
-        { src: "/img/hero/55177617481_a2f52dd9f0_o.jpg", credit: "Amanda Ercília/GOVBA" },
-        { src: "/img/hero/55193881827_608169f0ec_o.jpg", credit: "Amanda Ercília/GOVBA" },
-        { src: "/img/hero/55280502368_f86e6bea57_o.jpg", credit: "Thuane Maria/GOVBA" },
-        { src: "/img/hero/55284715576_5c6c560a5c_o.jpg", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/55287787257_7b4ae60fbf_o.jpg", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/54208024118_e48b529bdd_o.jpg", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/54400089577_6b2f2c3fce_o.jpg", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/54446840370_c6fa9c1d3c_o.jpg", credit: "Matheus Landim/GOVBA" },
-        { src: "/img/hero/54492136003_c06ca3e046_o.jpg", credit: "Thuane Maria/GOVBA" },
-        { src: "/img/hero/54718163457_5a44dc81e3_o.jpg", credit: "Amanda Ercília/GOVBA" },
-        { src: "/img/hero/54893586223_d842cb4664_o.jpg", credit: "Matheus Landim/GOVBA" }
+        { src: "/img/hero/55177617481_a2f52dd9f0_o.webp", credit: "Amanda Ercília/GOVBA" },
+        { src: "/img/hero/55193881827_608169f0ec_o.webp", credit: "Amanda Ercília/GOVBA" },
+        { src: "/img/hero/55280502368_f86e6bea57_o.webp", credit: "Thuane Maria/GOVBA" },
+        { src: "/img/hero/55284715576_5c6c560a5c_o.webp", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/55287787257_7b4ae60fbf_o.webp", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/54208024118_e48b529bdd_o.webp", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/54400089577_6b2f2c3fce_o.webp", credit: "Feijão Almeida/GOVBA" },
+        { src: "/img/hero/54446840370_c6fa9c1d3c_o.webp", credit: "Matheus Landim/GOVBA" },
+        { src: "/img/hero/54492136003_c06ca3e046_o.webp", credit: "Thuane Maria/GOVBA" },
+        { src: "/img/hero/54718163457_5a44dc81e3_o.webp", credit: "Amanda Ercília/GOVBA" },
+        { src: "/img/hero/54893586223_d842cb4664_o.webp", credit: "Matheus Landim/GOVBA" }
     ];
 
     const [currentImage, setCurrentImage] = useState(0);

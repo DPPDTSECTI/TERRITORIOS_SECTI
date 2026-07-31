@@ -113,3 +113,98 @@ export function filterCursos(cursos = [], searchTerm = '', areaGeralFilters = []
     return true;
   });
 }
+
+/**
+ * Extrai a sigla da instituição (texto entre parênteses ou fallback)
+ */
+export function extractSigla(entidade) {
+  const str = String(entidade || '').trim();
+  const norm = normalize(str);
+  if (norm.includes('sul da bahia') || norm.includes('ufsb')) return 'UFSB';
+  if (norm.includes('lusofonia') || norm.includes('unilab')) return 'UNILAB';
+  if (norm.includes('vale do sao francisco') || norm.includes('univasf')) return 'UNIVASF';
+  if (norm.includes('oeste da bahia') || norm.includes('ufob')) return 'UFOB';
+  if (norm.includes('reconcavo') || norm.includes('ufrb')) return 'UFRB';
+  if (norm.includes('estado da bahia') || norm.includes('uneb')) return 'UNEB';
+  if (norm.includes('santa cruz') || norm.includes('uesc')) return 'UESC';
+  if (norm.includes('sudoeste da bahia') || norm.includes('uesb')) return 'UESB';
+  if (norm.includes('feira de santana') || norm.includes('uefs')) return 'UEFS';
+  if (norm.includes('federal da bahia') || norm.includes('ufba')) return 'UFBA';
+  if (norm.includes('ifbaiano') || norm.includes('baiano')) return 'IF BAIANO';
+  if (norm.includes('instituto federal da bahia') || norm.includes('ifba')) return 'IFBA';
+  if (norm.includes('sertao pernambucano') || norm.includes('ifsertao')) return 'IF SERTÃO-PE';
+  const match = str.match(/\(([^)]+)\)/);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  return str;
+}
+
+/**
+ * Classifica uma instituição de ensino superior com base em orgAcademica, categoriaAdm e entidade.
+ * Retorna catCurso (para filtros KPI do painel) e categoria (para agregação em relatórios: 'federal' | 'estadual' | 'institutoFederal' | 'privada' | null).
+ */
+export function classificarInstituicao(curso = {}) {
+  const org = curso.orgAcademica || '';
+  const catAdm = curso.categoriaAdm || '';
+  const ent = curso.entidade || curso.nome || '';
+  const catOriginal = curso.categoria || '';
+  const tipoNorm = normalize(`${org} ${catAdm} ${ent} ${catOriginal}`);
+
+  // Se for um ativo de CT&I não-acadêmico (incubadora, aceleradora, parque tecnológico, centro de pesquisa, espaço colaborar/dinamizador, ict, NIT, sebrae, etc.)
+  const isNonUniversityCti =
+    ['incubadoras', 'aceleradoras', 'parquesTecnologicos', 'centrosPesquisa', 'espacoDinamizadoress', 'icts'].includes(catOriginal) ||
+    ['incubadora', 'aceleradora', 'parque tecnologico', 'espaço colaborar', 'espaco colaborar', 'espaco fazer', 'espaço fazer', 'broto', 'pre incubadora', 'pre-incubadora', 'centro de pesquisa', 'nucleo de inovacao', 'nit', 'sebrae', 'cooperativas populares'].some(word => tipoNorm.includes(word));
+
+  if (isNonUniversityCti) {
+    return {
+      catCurso: null,
+      categoria: catOriginal || 'cti',
+      isPrivada: false,
+      isPublica: false,
+      sigla: extractSigla(ent)
+    };
+  }
+
+  let catCurso = null;
+  const isExplicitlyPublic = ['federal', 'estadual', 'publica', 'ufba', 'ufrb', 'ufob', 'ufsb', 'univasf', 'uneb', 'uesc', 'uesb', 'uefs', 'ifba'].some(c => tipoNorm.includes(c));
+  const isExplicitlyPrivate = ['privada', 'lucrativo', 'particular', 'uniftc', 'ftc', 'unirb', 'uninassau', 'nassau', 'ucsal', 'unifacs', 'estacio', 'fcg', 'adventista', 'famec', 'jacuipe', 'sisaleira', 'santissimo sacramento', 'santo antonio'].some(c => tipoNorm.includes(c));
+  
+  // Se não tem indicativo de ser pública, assumimos como privada por padrão se for faculdade/centro
+  const isPrivada = isExplicitlyPrivate || (!isExplicitlyPublic);
+
+  if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
+    catCurso = 'campiInstitutoFederal';
+  } else if (['universidade', 'faculdade', 'centro', 'superior'].some(c => tipoNorm.includes(c))) {
+    catCurso = isPrivada ? 'campiUniversidadePrivada' : 'campiUniversidadePublica';
+  }
+
+  let categoria = null;
+  if (isPrivada) {
+    categoria = 'privada';
+  } else if (['instituto federal', 'ifba', 'ifbaiano'].some(c => tipoNorm.includes(c))) {
+    categoria = 'institutoFederal';
+  } else if (
+    tipoNorm.includes('estadual') ||
+    ['uneb', 'uesc', 'uesb', 'uefs', 'estado da bahia', 'santa cruz', 'sudoeste da bahia', 'feira de santana'].some(c => tipoNorm.includes(c))
+  ) {
+    categoria = 'estadual';
+  } else if (
+    tipoNorm.includes('federal') ||
+    ['ufba', 'ufrb', 'ufob', 'ufsb', 'univasf', 'reconcavo', 'oeste da bahia', 'sul da bahia', 'vale do sao francisco'].some(c => tipoNorm.includes(c))
+  ) {
+    categoria = 'federal';
+  } else if (catCurso === 'campiUniversidadePublica') {
+    categoria = 'federal'; // fallback para universidade pública federal/estadual genérica
+  }
+
+  const sigla = extractSigla(ent);
+
+  return {
+    catCurso,
+    categoria,
+    isPrivada,
+    isPublica: !isPrivada && (catCurso === 'campiUniversidadePublica' || catCurso === 'campiInstitutoFederal' || ['federal', 'estadual', 'institutoFederal'].includes(categoria)),
+    sigla
+  };
+}
