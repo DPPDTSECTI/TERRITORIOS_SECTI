@@ -140,28 +140,55 @@ export default function MapaCadeiasProdutivas({
 
   // Lista final para renderizar
   const displayList = isTerritoryMode ? territoriosCadeias : (() => {
-    // No modo territorial específico, cada cadeia vira um item com sede como município
+    // No modo territorial específico, mostrar todos os municípios do território selecionado que participam das cadeias (como sede ou município pertencente)
+    const terrName = selectedLocation ? normalize(selectedLocation.nome || selectedLocation.territory || '') : '';
+    const terrList = territorioMunicipios.territorios_de_identidade || [];
+    const terrObj = terrList.find(t => normalize(t.nome) === terrName);
+    const validMuns = terrObj && Array.isArray(terrObj.municipios)
+      ? new Set(terrObj.municipios.map(m => normalize(m)))
+      : null;
+
     const munMap = new Map();
-    cadeiasList.forEach(cad => {
-      const sede = cad.sede || 'Não Informada';
-      const sedeNorm = normalize(sede);
-      if (!munMap.has(sedeNorm)) {
-        munMap.set(sedeNorm, { municipio: sede, segmentos: new Map() });
+
+    // Usar Set de IDs de cadeias por município para não contar a mesma cadeia duas vezes
+    const addMunicipioSeg = (munName, seg, cadId, isSede = false) => {
+      if (!munName || !seg) return;
+      const munNorm = normalize(munName);
+      if (validMuns && !validMuns.has(munNorm)) return;
+
+      if (!munMap.has(munNorm)) {
+        const formalName = terrObj?.municipios?.find(m => normalize(m) === munNorm) || munName.trim();
+        munMap.set(munNorm, { municipio: formalName, segmentos: new Map() });
       }
-      const seg = cad.segmento || 'Não Informado';
-      const entry = munMap.get(sedeNorm);
+      const entry = munMap.get(munNorm);
       if (!entry.segmentos.has(seg)) {
-        entry.segmentos.set(seg, { segmento: seg, count: 0 });
+        entry.segmentos.set(seg, { segmento: seg, cadeiaIds: new Set(), isSede: false });
       }
-      entry.segmentos.get(seg).count++;
+      entry.segmentos.get(seg).cadeiaIds.add(cadId);
+      if (isSede) entry.segmentos.get(seg).isSede = true;
+    };
+
+    cadeiasList.forEach((cad, idx) => {
+      const seg = cad.segmento || 'Não Informado';
+      const cadId = cad.id || `${seg}::${cad.sede}::${idx}`;
+      if (cad.sede) addMunicipioSeg(cad.sede, seg, cadId, true);
+      if (cad.municipiosPertencentes && cad.municipiosPertencentes !== 'N/A') {
+        const arr = Array.isArray(cad.municipiosPertencentes)
+          ? cad.municipiosPertencentes
+          : String(cad.municipiosPertencentes).split(/[,;]/);
+        arr.forEach(m => addMunicipioSeg(m, seg, cadId, false));
+      }
     });
 
     return Array.from(munMap.values())
       .map(t => ({
         municipio: t.municipio,
         instituicoes: Array.from(t.segmentos.values())
-          .sort((a, b) => b.count - a.count)
-          .map(s => ({ sigla: `${s.segmento} (${s.count})`, categoria: 'cadeia', segmento: s.segmento })),
+          .sort((a, b) => {
+            if (b.isSede !== a.isSede) return b.isSede ? 1 : -1;
+            return b.cadeiaIds.size - a.cadeiaIds.size;
+          })
+          .map(s => ({ sigla: `${s.segmento} (${s.cadeiaIds.size})`, categoria: 'cadeia', segmento: s.segmento, isSede: s.isSede })),
       }))
       .sort((a, b) => a.municipio.localeCompare(b.municipio, 'pt-BR'))
       .map((item, idx) => ({ ...item, numero: idx + 1 }));
@@ -275,7 +302,16 @@ export default function MapaCadeiasProdutivas({
     } else {
       // Modo municipal: posição do município no mapa
       features.forEach(feat => {
-        const match = munMap.get(normalize(feat.nome));
+        const featNorm = normalize(feat.nome);
+        let match = munMap.get(featNorm);
+        if (!match) {
+          for (const [key, val] of munMap.entries()) {
+            if (featNorm === key || featNorm.includes(key) || key.includes(featNorm)) {
+              match = val;
+              break;
+            }
+          }
+        }
         if (match) {
           markers.push({
             numero: match.numero,
@@ -354,12 +390,12 @@ export default function MapaCadeiasProdutivas({
                   key={iIdx}
                   style={{
                     display: 'inline',
-                    marginRight: '6px',
+                    marginRight: '8px',
                     color: color,
                     fontWeight: '700',
                   }}
                 >
-                  •{inst.sigla}
+                  •{inst.sigla}{inst.isSede && <span style={{ fontWeight: '400', fontStyle: 'italic', color: '#64748b' }}> (sede)</span>}
                 </span>
               );
             })}
