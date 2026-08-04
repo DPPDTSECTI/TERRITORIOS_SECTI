@@ -1,4 +1,5 @@
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { Analytics } from '@vercel/analytics/react';
 import React, { useState, useRef, useEffect, useMemo, useCallback, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import PtiMap from "../PtiMap";
@@ -1685,6 +1686,7 @@ export default function AppWrapper() {
                     <MainApp />
                 </DataProvider>
             </Router>
+            <Analytics />
         </HelmetProvider>
     );
 }
