@@ -22,7 +22,7 @@ export default function LandingHero() {
             <div className="w-[3px] h-5 bg-[#593FF7] rounded-full" />
           </div>
           <span className="font-sans font-bold text-lg tracking-[0.2em] text-white uppercase">
-            Territórios
+            Painel Territorial
           </span>
         </div>
 
@@ -93,7 +93,7 @@ export default function LandingHero() {
         <img
           src="/img/Brasao-Horizontal_Branco.webp"
           alt="Governo do Estado da Bahia"
-          className="h-8 sm:h-10 lg:h-20 object-contain opacity-80"
+          className="h-8 sm:h-10 lg:h-20 object-contain opacity-100"
         />
       </div>
 
