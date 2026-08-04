@@ -1,162 +1,102 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
-const ExcelExportButton = lazy(() => import('./ExcelExportButton'));
+import React from 'react';
+import { ArrowUpRight, User } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 
-const LandingHero = ({ onAccessDashboard, territoriosData, darkMode }) => {
-    const images = [
-        { src: "/img/hero/55177617481_a2f52dd9f0_o.webp", credit: "Amanda Ercília/GOVBA" },
-        { src: "/img/hero/55193881827_608169f0ec_o.webp", credit: "Amanda Ercília/GOVBA" },
-        { src: "/img/hero/55280502368_f86e6bea57_o.webp", credit: "Thuane Maria/GOVBA" },
-        { src: "/img/hero/55284715576_5c6c560a5c_o.webp", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/55287787257_7b4ae60fbf_o.webp", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/54208024118_e48b529bdd_o.webp", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/54400089577_6b2f2c3fce_o.webp", credit: "Feijão Almeida/GOVBA" },
-        { src: "/img/hero/54446840370_c6fa9c1d3c_o.webp", credit: "Matheus Landim/GOVBA" },
-        { src: "/img/hero/54492136003_c06ca3e046_o.webp", credit: "Thuane Maria/GOVBA" },
-        { src: "/img/hero/54718163457_5a44dc81e3_o.webp", credit: "Amanda Ercília/GOVBA" },
-        { src: "/img/hero/54893586223_d842cb4664_o.webp", credit: "Matheus Landim/GOVBA" }
-    ];
+export default function LandingHero() {
+  // Hook do React Router para fazer as transições de página sem recarregar o navegador
+  const navigate = useNavigate();
 
-    const [currentImage, setCurrentImage] = useState(0);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentImage((prev) => (prev + 1) % images.length);
-        }, 5000);
-        return () => clearInterval(timer);
-    }, [images.length]);
-
-    return (
-        <div className="relative w-full h-[90vh] font-sans flex flex-col lg:flex-row overflow-hidden touch-none pt-20 lg:pt-28 pb-6 bg-transparent">
-            
-            {/* CSS Animado para o Título */}
-            <style>{`
-                @keyframes textShimmer {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-                .animate-text-gradient {
-                    background-size: 200% auto;
-                    animation: textShimmer 4s ease-in-out infinite;
-                }
-            `}</style>
-
-            {/* COLUNA ESQUERDA: Conteúdo Principal */}
-            <main className="relative z-30 w-full lg:w-[55%] h-full flex flex-col justify-center items-start px-8 sm:px-12 lg:pl-24 lg:pr-8 py-4 lg:py-0">
-                
-                <h2 className="text-lg sm:text-xl tracking-widest uppercase font-black mb-3 drop-shadow-sm flex gap-2">
-                    <span className={darkMode ? 'text-white' : 'text-white'}>Painel</span>
-                    <span className={darkMode ? 'text-white' : 'text-white'}>Territorial</span>
-                </h2>
-                
-                <h1 className={`text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-black tracking-tighter mb-6 leading-[1.05] drop-shadow-sm bg-clip-text text-transparent animate-text-gradient ${
-                    darkMode 
-                        ? 'bg-gradient-to-r from-[#F26B5E] via-[#7FB77E] to-[#5B8FD9]'
-                        : 'bg-gradient-to-r from-[#D62828] via-[#2E7D4F] to-[#1B4F9C]'
-                }`}>
-                    Ciência, Tecnologia <br /> e Inovação
-                </h1>
-
-                <p className={`text-sm sm:text-base font-medium max-w-lg mb-10 leading-relaxed antialiased ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                    Uma plataforma interativa desenvolvida pela SECTI para a visualização das 
-                    características inerentes à ciência, tecnologia e inovação nos territórios de 
-                    identidade do Estado da Bahia.
-                </p>
-
-                <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
-                    <button
-                        onClick={onAccessDashboard}
-                        className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-black tracking-wider uppercase text-xs sm:text-sm transition-all duration-300 transform-gpu hover:-translate-y-1 ${
-                            darkMode 
-                                ? 'bg-[#1B4F9C] hover:bg-[#5B8FD9] text-white shadow-[0_0_20px_rgba(27,79,156,0.4)] hover:shadow-[0_0_30px_rgba(91,143,217,0.6)]'
-                                : 'bg-[#1B4F9C] hover:bg-[#0A2E5C] text-white shadow-xl hover:shadow-2xl'
-                        }`}
-                    >
-                        Acessar o Painel
-                    </button>
-
-                    <Suspense fallback={<div className="w-full sm:w-auto h-11" />}>
-                        <ExcelExportButton 
-                            territoriosData={territoriosData} 
-                            variant={darkMode ? 'solid' : 'outline'} 
-                            className="w-full sm:w-auto" 
-                        />
-                    </Suspense>
-                </div>
-
-                <div className="flex gap-2.5 mt-12">
-                    {images.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentImage(index)}
-                            aria-label={`Ir para a imagem ${index + 1}`}
-                            className={`h-1.5 transition-all duration-500 rounded-full ${
-                                index === currentImage 
-                                    ? (darkMode ? 'w-10 bg-[#5B8FD9] shadow-[0_0_10px_rgba(91,143,217,0.8)]' : 'w-10 bg-[#1B4F9C] shadow-md')
-                                    : (darkMode ? 'w-2.5 bg-slate-700 hover:bg-slate-500' : 'w-2.5 bg-slate-300 hover:bg-slate-400')
-                            }`}
-                        />
-                    ))}
-                </div>
-            </main>
-
-            {/* COLUNA DIREITA: Carrossel Vertical */}
-            <aside className="relative z-10 hidden md:flex w-full lg:w-[45%] h-full items-center justify-center pr-8 lg:pr-24 perspective-1000">
-                <div className="relative w-full max-w-sm xl:max-w-md h-full max-h-[70vh] aspect-[4/5] flex items-center justify-center">
-                    {images.map((img, index) => {
-                        const prevIndex = (currentImage - 1 + images.length) % images.length;
-                        const nextIndex = (currentImage + 1) % images.length;
-                        
-                        let positionClasses = '';
-                        const activeBorder = darkMode ? 'border-slate-800' : 'border-white';
-                        const inactiveBorder = darkMode ? 'border-slate-800/50' : 'border-white/50';
-                        
-                        if (index === currentImage) {
-                            positionClasses = `translate-x-0 scale-100 opacity-100 z-30 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[3px] ${activeBorder} cursor-default`;
-                        } else if (index === prevIndex) {
-                            positionClasses = `-translate-x-[25%] xl:-translate-x-[30%] scale-90 opacity-20 z-20 border-[1px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:-translate-x-[28%]`;
-                        } else if (index === nextIndex) {
-                            positionClasses = `translate-x-[25%] xl:translate-x-[30%] scale-90 opacity-20 z-20 border-[1px] ${inactiveBorder} cursor-pointer hover:opacity-50 hover:translate-x-[28%]`;
-                        } else {
-                            positionClasses = 'translate-x-0 scale-75 opacity-0 z-10 pointer-events-none';
-                        }
-
-                        return (
-                            <div
-                                key={index}
-                                /* A CORREÇÃO ESTÁ AQUI: bg-white ou bg-slate-800 impede o vazamento de sub-pixel da sombra */
-                                className={`absolute w-full h-full transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)] origin-center rounded-[1rem] overflow-hidden transform-gpu will-change-transform backface-hidden antialiased ${darkMode ? 'bg-slate-800' : 'bg-white'} ${positionClasses}`}
-                                style={{ WebkitBackfaceVisibility: 'hidden' }}
-                                onClick={() => {
-                                    if (index === prevIndex) setCurrentImage(prevIndex);
-                                    if (index === nextIndex) setCurrentImage(nextIndex);
-                                }}
-                            >
-                                <picture className="w-full h-full block">
-                                    <source srcSet={img.src.replace(/\.(png|jpg|jpeg|webp)$/i, '.avif')} type="image/avif" />
-                                    <source srcSet={img.src.replace(/\.(png|jpg|jpeg|webp)$/i, '.webp')} type="image/webp" />
-                                    <img 
-                                        src={img.src} 
-                                        alt={`Paisagem da Bahia ${index + 1}`} 
-                                        className="w-full h-full object-cover transform-gpu antialiased"
-                                        style={{ imageRendering: 'high-quality' }}
-                                        loading={index === 0 ? "eager" : "lazy"}
-                                        decoding={index === 0 ? "sync" : "async"}
-                                    />
-                                </picture>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                                {img.credit && (
-                                    <p className="absolute bottom-4 right-4 z-40 text-white text-[10px] font-light bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md opacity-60 hover:opacity-100 transition-opacity">
-                                        Foto: {img.credit}
-                                    </p>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            </aside>
+  return (
+    // min-h-screen garante que a aba inicial ocupe 100% da tela do usuário
+    <div className="relative w-full min-h-screen flex flex-col justify-center px-6 lg:px-16 overflow-hidden bg-[#1c1c1c]">
+      
+      {/* ================= NAVBAR ELEGANTE (FLUTUANTE) ================= */}
+      <header className="absolute top-0 left-0 w-full px-6 lg:px-16 py-8 flex items-center justify-between z-50 animate-soft-fade">
+        
+        {/* Logo Refinada */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-end gap-1 h-5">
+            {/* Barras do logo levemente arredondadas para maior sofisticação */}
+            <div className="w-[3px] h-2.5 bg-[#C8A1FC] rounded-full" />
+            <div className="w-[3px] h-4 bg-[#9170FA] rounded-full" />
+            <div className="w-[3px] h-5 bg-[#593FF7] rounded-full" />
+          </div>
+          <span className="font-sans font-bold text-lg tracking-[0.2em] text-white uppercase">
+            Territórios
+          </span>
         </div>
-    );
-};
 
-export default LandingHero;
+        {/* Links Centrais (Minimalistas) */}
+        <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-12">
+          {/* Usamos <Link> do react-router-dom para navegação suave */}
+          <Link to="/" className="text-xs font-semibold tracking-widest text-white uppercase relative after:content-[''] after:absolute after:-bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-white after:rounded-full transition-all">
+            Início
+          </Link>
+          <button onClick={() => navigate('/territorios')} className="text-xs font-semibold tracking-widest text-white/50 hover:text-white uppercase transition-colors duration-300">
+            Dashboard
+          </button>
+          <Link to="/sobre" className="text-xs font-semibold tracking-widest text-white/50 hover:text-white uppercase transition-colors duration-300">
+            Sobre
+          </Link>
+        </nav>
+
+        {/* Lado Direito: Usuário com Efeito Glassmorphism */}
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:block text-sm font-light tracking-wide text-white/70">
+            Olá, Gestor
+          </span>
+          <button className="w-10 h-10 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+            <User size={18} className="text-white/80" />
+          </button>
+        </div>
+      </header>
+
+      {/* A GRANDE CURVA (Vector 6) - Fixa com borda branca sutil */}
+      <div className="absolute top-[-10%] right-[-40%] lg:right-[-20%] w-[800px] h-[800px] lg:w-[1200px] lg:h-[1200px] border-[2px] rounded-full pointer-events-none border-white/10" />
+
+      {/* ================= CONTEÚDO DA HERO ================= */}
+      <div className="max-w-[800px] relative z-10 animate-soft-fade mt-16">
+        
+        {/* Subtítulo */}
+        <p className="font-mono font-light text-sm sm:text-lg lg:text-xl tracking-[0.4em] uppercase mb-4 text-gray-300">
+          Painel Territorial
+        </p>
+
+        {/* Título Principal */}
+        <h1 className="font-sans font-light text-5xl sm:text-6xl lg:text-[80px] leading-[1.1] mb-6 text-white tracking-tight">
+          Ciência, Tecnologia <br />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9170FA] via-[#C8A1FC] to-[#FFD2FF]">
+            & Inovação
+          </span>
+        </h1>
+
+        {/* Parágrafo Descritivo */}
+        <p className="font-mono font-light text-sm sm:text-base lg:text-lg leading-relaxed max-w-[700px] mb-12 text-gray-400">
+          Uma plataforma interativa desenvolvida pela SECTI para a visualização das características inerentes à ciência, tecnologia e inovação nos territórios de identidade do Estado da Bahia.
+        </p>
+
+        {/* Botão Call to Action */}
+        <button 
+          onClick={() => navigate('/territorios')}
+          className="px-6 lg:px-8 py-3 lg:py-4 rounded bg-gradient-to-r from-[#311f9c] to-[#6c48e8] flex items-center gap-3 hover:opacity-90 hover:scale-[1.02] transition-all duration-300 shadow-xl shadow-purple-900/40 text-white w-fit"
+        >
+          <span className="font-sans font-medium text-base lg:text-lg tracking-wide">
+            Explorar o painel
+          </span>
+          <ArrowUpRight size={20} strokeWidth={2.5} />
+        </button>
+
+      </div>
+
+      {/* ================= RODAPÉ DA HERO ================= */}
+      <div className="absolute bottom-8 right-6 lg:bottom-12 lg:right-16 z-20 animate-soft-fade pointer-events-none">
+        <img
+          src="/img/Brasao-Horizontal_Branco.webp"
+          alt="Governo do Estado da Bahia"
+          className="h-8 sm:h-10 lg:h-20 object-contain opacity-80"
+        />
+      </div>
+
+    </div>
+  );
+}
