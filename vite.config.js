@@ -191,7 +191,6 @@ function parseSpreadsheet(buffer) {
     const isCadeiaSheet = ['cadeiaprodutiva', 'cadeiasprodutivas', 'igpotenciais', 'igspotenciais', 'potenciais', 'producao', 'apl', 'arranjoprodutivo'].some(term => sheetNorm.includes(term)) || sheetNorm === 'ig' || sheetNorm === 'igs';
     const isCursoSheet = ['curso', 'ensino', 'superior', 'graduacao', 'educacao'].some(term => sheetNorm.includes(term));
     const isIfdmSheet = ['ifdm', 'desenvolvimento', 'populacao', 'socioecon'].some(term => sheetNorm.includes(term));
-    // AQUI: Adicionado 'aceleradora' para incluir nas lógicas de Capacidade
     const isCapacidadeSheet = (sheetNorm.includes('capacidade') || sheetNorm.includes('cti') || sheetNorm.includes('infraestrutura') || sheetNorm.includes('entidade') || sheetNorm.includes('aceleradora')) && !isCadeiaSheet && !isCursoSheet && !isIfdmSheet;
 
     if (!isCadeiaSheet && !isCursoSheet && !isIfdmSheet && !isCapacidadeSheet) return;
@@ -256,11 +255,9 @@ function parseSpreadsheet(buffer) {
           entidadeRaw = String(row['entidadegestora'] || row['entidade'] || row['associacao'] || '').trim();
           tipoOriginal = String(row['tipo'] || row['tipodecadeia'] || row['classificacao'] || '').trim();
       } else {
-          // AQUI: Adicionamos row['nome'] para mapear a coluna da nova planilha de Aceleradoras
           entidadeRaw = String(row['entidade'] || row['nomedaentidade'] || row['instituicao'] || row['ies'] || row['sigla'] || row['nome'] || valorColunaA).trim();
           tipoOriginal = String(row['tipo'] || row['categoria'] || row['natureza'] || '').trim();
           
-          // Se for a aba Aceleradoras e não houver coluna "tipo", forçamos o tipo.
           if (sheetNorm.includes('aceleradora') && !tipoOriginal) {
               tipoOriginal = 'Aceleradoras';
           }
@@ -279,13 +276,11 @@ function parseSpreadsheet(buffer) {
           isCTI = true; 
           tipoFinal = tipoOriginal; 
 
-          // === EXTRAÇÃO DE DESCRIÇÃO E SITE (Exclusivo Capacidade/Aceleradoras) ===
           descricaoExtraida = String(row['descricao'] || row['resumo'] || row['sobre'] || '').trim();
           
           let siteVisualBruto = String(row['site'] || row['website'] || row['link'] || '').trim();
           let siteHyperlinkEmbutido = '';
           
-          // Extrai Hiperlink direto da célula caso exista
           const possibleSiteKeys = ['site', 'website', 'link'];
           const matchedSiteKey = possibleSiteKeys.find(k => headerMap[k] !== undefined && row[k] !== undefined);
           if (matchedSiteKey) {
@@ -299,9 +294,7 @@ function parseSpreadsheet(buffer) {
                   }
               }
           }
-          // Monta o URL final dando prioridade ao Hiperlink Nativo
           siteFinalExtraido = siteHyperlinkEmbutido || (siteVisualBruto.startsWith('http') ? siteVisualBruto : (siteVisualBruto ? `http://${siteVisualBruto}` : ''));
-          // =========================================================================
 
           const tNorm = normalize(tipoOriginal);
           const isPrivadaCapacidade = tNorm.includes('privada') || tNorm.includes('particular');
@@ -316,7 +309,7 @@ function parseSpreadsheet(buffer) {
           else if (['centro de pesquisa', 'pesquisa'].some(c => tNorm.includes(c))) { categoriaEntidade = 'centrosPesquisa'; }
           else if (['ict'].some(c => tNorm.includes(c))) { categoriaEntidade = 'icts'; }
           else if (['incubadora'].some(c => tNorm.includes(c))) { categoriaEntidade = 'incubadoras'; }
-          else if (['aceleradora'].some(c => tNorm.includes(c) || sheetNorm.includes('aceleradora'))) { categoriaEntidade = 'aceleradoras'; } // NOVA CATEGORIA
+          else if (['aceleradora'].some(c => tNorm.includes(c) || sheetNorm.includes('aceleradora'))) { categoriaEntidade = 'aceleradoras'; } 
           else if (['espacoDinamizadores', 'dinamizador'].some(c => tNorm.includes(c))) { categoriaEntidade = 'espacoDinamizadoress'; }
           else if (['parque'].some(c => tNorm.includes(c))) { categoriaEntidade = 'parquesTecnologicos'; }
           else { categoriaEntidade = 'outros'; }
@@ -363,8 +356,8 @@ function parseSpreadsheet(buffer) {
                          tipo: tipoFinal || 'Instituição', 
                          categoria: categoriaEntidade || 'outros', 
                          quantidade: qtd,
-                         descricao: descricaoExtraida, // NOVO CAMPO: Guardado na árvore!
-                         site: siteFinalExtraido       // NOVO CAMPO: Guardado na árvore!
+                         descricao: descricaoExtraida, 
+                         site: siteFinalExtraido      
                      });
                  }
              }
@@ -633,6 +626,7 @@ export default defineConfig(({ mode }) => {
       target: 'es2015',
       minify: 'esbuild',
       rollupOptions: {
+        external: ['next/navigation'], // <--- ADICIONADO AQUI
         output: {
           manualChunks: {
             'vendor-react': ['react', 'react-dom'],
@@ -645,7 +639,7 @@ export default defineConfig(({ mode }) => {
     },
     server: { hmr: { overlay: true } },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'xlsx', 'topojson-client'],
+      include: ['react', 'react-dom', 'xlsx', 'topojson-client']
     },
   };
 });
