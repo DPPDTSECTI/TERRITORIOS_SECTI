@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Home, LayoutDashboard, FileText, Info } from 'lucide-react';
+import { User, Home, LayoutDashboard, FileText, Info, Settings, LogOut, ChevronDown, Search } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Sidebar({ username, navOnly = false }) {
@@ -13,67 +13,89 @@ export default function Sidebar({ username, navOnly = false }) {
   ];
 
   return (
-    <aside className="w-[200px] h-screen bg-[#18181B] rounded-r-[5px] flex flex-col py-6 p-3 px-[9.5px] shadow-2xl border-r border-white/5 flex-shrink-0 z-50">
+    <aside className="w-[250px] h-screen bg-[#141415] flex flex-col py-4 px-3 border-r border-white/5 flex-shrink-0 z-50 font-sans select-none relative">
       
-      {/* ================= TOPO: USUÁRIO ================= */}
-      <div className="w-full h-[55px] bg-[#232326] rounded-[5px] flex items-center px-3 gap-3 cursor-pointer hover:bg-[#2A2A2E] transition-colors shrink-0">
-        <div className="w-9 h-9 rounded-full bg-[#D9D9D9] flex items-center justify-center shrink-0">
-          <User size={18} className="text-[#18181B]" />
+      {/* ================= TOPO: WORKSPACE / USUÁRIO ================= */}
+      <div className="w-full px-2 py-1.5 rounded-md flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors duration-150 shrink-0 group">
+        <div className="flex items-center gap-2.5 overflow-hidden">
+          <div className="w-5 h-5 rounded-[4px] bg-[#593FF7] flex items-center justify-center shrink-0 text-white shadow-sm">
+            <span className="text-[10px] font-bold">BA</span>
+          </div>
+          <span className="text-[13px] font-medium text-white/90 truncate">
+            {username ? username : "Workspace GESTOR"}
+          </span>
         </div>
-        <span className="text-[11px] font-semibold text-white/80 truncate">
-          {username ? username : "Convidado"}
-        </span>
+        <ChevronDown size={14} className="text-white/30 group-hover:text-white/60 transition-colors" />
       </div>
 
-      <div className="w-full h-[1px] bg-[#2A2A2E] my-5 shrink-0" />
+      {/* ================= BUSCA GLOBAL (COMMAND PALETTE) ================= */}
+      <div className="mt-4 mb-2 px-2">
+        <button className="w-full h-[32px] px-2 bg-[#18181B] hover:bg-white/[0.04] border border-white/5 rounded-md flex items-center justify-between text-white/40 hover:text-white/70 transition-all duration-150 group">
+          <div className="flex items-center gap-2">
+            <Search size={14} strokeWidth={2} className="opacity-70 group-hover:opacity-100" />
+            <span className="text-[13px] font-medium tracking-wide">Buscar...</span>
+          </div>
+          <div className="flex items-center">
+            {/* Tag KBD para atalhos de teclado */}
+            <kbd className="h-[20px] px-1.5 bg-white/5 border border-white/10 rounded-[4px] text-[10px] font-mono font-medium text-white/40 group-hover:text-white/70 transition-colors flex items-center justify-center shadow-sm">
+              Ctrl K
+            </kbd>
+          </div>
+        </button>
+      </div>
 
       {/* ================= NAVEGAÇÃO ================= */}
-      <nav className="flex-1 w-full flex flex-col gap-1 overflow-y-auto hide-scroll">
-        
-        {/* GRUPO PRINCIPAL: Todas as páginas */}
+      <div className="mt-4 mb-2 px-2">
+        <span className="text-[11px] font-medium text-white/40">Seu Painel</span>
+      </div>
+
+      <nav className="flex-1 w-full flex flex-col gap-[2px] overflow-y-auto hide-scroll">
         {navItemsGroup1.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <Link key={item.path} to={item.path} className="relative w-full h-[36px] flex items-center group cursor-pointer rounded-[5px] hover:bg-[#232326] transition-colors">
-              {isActive && (
-                <div className="absolute left-[-9.5px] top-1/2 -translate-y-1/2 w-1 h-6 bg-[#3117ea] rounded-r-md shadow-[2px_0_8px_rgba(49,23,234,0.5)]" />
-              )}
-              <div className={`w-5 h-5 rounded-[5px] flex items-center justify-center ml-2 transition-colors ${isActive ? 'bg-[#3117ea]' : 'bg-[#232326] group-hover:bg-[#2A2A2E]'}`}>
-                <item.icon size={11} className={isActive ? 'text-white' : 'text-white/60'} />
-              </div>
-              <span className={`ml-3 text-[11px] font-medium transition-colors ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white/90'}`}>
+            <Link 
+              key={item.path} 
+              to={item.path} 
+              className={`w-full h-[32px] px-2 flex items-center gap-2.5 rounded-md transition-colors duration-150 ${
+                isActive ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white/90'
+              }`}
+            >
+              <item.icon size={15} className={isActive ? 'text-white' : 'text-white/50'} strokeWidth={isActive ? 2.5 : 2} />
+              <span className="text-[13px] font-medium tracking-wide">
                 {item.label}
               </span>
             </Link>
           );
         })}
 
-        {/* Renderiza Filtros/Rabiscos APENAS se navOnly for falso */}
+        {/* Módulos Futuros */}
         {!navOnly && (
-          <>
-            <div className="w-full h-[1px] bg-[#2A2A2E] my-3 shrink-0" />
-            <div className="relative w-full h-[36px] flex items-center opacity-60">
-              <div className="w-5 h-5 bg-[#232326] rounded-[5px] ml-2" />
-              <div className="ml-3 h-1.5 w-14 bg-[#232326] rounded-full" />
+          <div className="mt-6">
+            <div className="px-2 mb-2">
+              <span className="text-[11px] font-medium text-white/40">Módulos (Em breve)</span>
             </div>
-            <div className="relative w-full h-[36px] flex items-center opacity-60">
-              <div className="w-5 h-5 bg-[#232326] rounded-[5px] ml-2" />
-              <div className="ml-3 h-1.5 w-16 bg-[#232326] rounded-full" />
+            <div className="w-full h-[32px] px-2 flex items-center gap-2.5 opacity-40 cursor-wait hover:bg-white/[0.02] rounded-md transition-colors">
+              <div className="w-3.5 h-3.5 bg-white/10 rounded-sm" />
+              <div className="h-1.5 w-20 bg-white/10 rounded-full" />
             </div>
-            <div className="relative w-full h-[36px] flex items-center opacity-60">
-              <div className="w-5 h-5 bg-[#232326] rounded-[5px] ml-2" />
-              <div className="ml-3 h-1.5 w-10 bg-[#232326] rounded-full" />
+            <div className="w-full h-[32px] px-2 flex items-center gap-2.5 opacity-40 cursor-wait hover:bg-white/[0.02] rounded-md transition-colors">
+              <div className="w-3.5 h-3.5 bg-white/10 rounded-sm" />
+              <div className="h-1.5 w-16 bg-white/10 rounded-full" />
             </div>
-          </>
+          </div>
         )}
       </nav>
 
       {/* ================= RODAPÉ ================= */}
-      <div className="mt-4 w-full shrink-0">
-        <div className="w-full h-[122px] bg-[#232326] rounded-[5px] flex flex-col items-center justify-center p-3 opacity-60">
-           <div className="w-8 h-8 rounded-full bg-[#313136] mb-2" />
-           <div className="h-1.5 w-24 bg-[#313136] rounded-full mb-1" />
-           <div className="h-1 w-16 bg-[#313136] rounded-full" />
+      <div className="mt-auto pt-3 border-t border-white/5 flex flex-col gap-[2px] shrink-0">
+        <div className="w-full h-[32px] px-2 flex items-center gap-2.5 rounded-md cursor-pointer text-white/60 hover:bg-white/5 hover:text-white/90 transition-colors duration-150">
+          <Settings size={15} strokeWidth={2} />
+          <span className="text-[13px] font-medium tracking-wide">Configurações</span>
+        </div>
+        
+        <div className="w-full h-[32px] px-2 flex items-center gap-2.5 rounded-md cursor-pointer text-white/60 hover:bg-white/5 hover:text-red-400 transition-colors duration-150 group">
+          <LogOut size={15} strokeWidth={2} className="group-hover:text-red-400 transition-colors" />
+          <span className="text-[13px] font-medium tracking-wide">Sair da Sessão</span>
         </div>
       </div>
 

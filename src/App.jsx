@@ -14,11 +14,9 @@ const SobrePage = lazy(() => import('./components/SobrePage'));
 const DashboardPainel = lazy(() => import('./components/DashboardPainel'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
-// Salva e restaura a posição da tela ao navegar e ao dar F5
 function GlobalScroll() {
   const { pathname } = useLocation();
 
-  // Efeito 1: Lida com a navegação e a restauração pós-F5
   useEffect(() => {
     const savedScrollPosition = sessionStorage.getItem(`scroll-${pathname}`);
     
@@ -30,19 +28,15 @@ function GlobalScroll() {
         });
       }, 0);
     } else {
-      // Se for navegação comum, joga para o topo
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [pathname]);
 
-  // Efeito 2: Salva a posição exata 1 milissegundo antes do recarregamento
   useEffect(() => {
     const handleBeforeUnload = () => {
       sessionStorage.setItem(`scroll-${window.location.pathname}`, window.scrollY);
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
@@ -61,31 +55,36 @@ const PageWrapper = ({ children }) => {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="w-full h-full flex flex-col relative"
     >
-      {children}
+      {/* O SUSPENSE AGORA FICA AQUI: Abraça apenas o conteúdo da página! */}
+      <Suspense 
+        fallback={
+          <div className="flex flex-col items-center justify-center min-h-[60vh] w-full gap-4 bg-transparent">
+            <div className="w-8 h-8 border-2 border-white/10 border-t-[#9170FA] rounded-full animate-spin"></div>
+          </div>
+        }
+      >
+        {children}
+      </Suspense>
     </motion.div>
   );
 };
 
-// ROTAS ANIMADAS E LAYOUT
 function AnimatedRoutes() {
   const location = useLocation();
   const isHome = location.pathname === '/';
 
   return (
-    // Removido o overflow-hidden e h-screen daqui para permitir rolagem nativa
-    <div className="flex w-full min-h-screen bg-[#1c1c1c] text-white font-sans overflow-x-hidden">
+    <div className="flex w-full min-h-screen bg-[#1c1c1c] text-white font-sans overflow-x-clip">
       
-      {/* 
-        A Sidebar fica FIXA AQUI. 
-        Usando sticky top-0 ela acompanha a tela se a página rolar para baixo.
-      */}
-      <AnimatePresence>
+      {/* SIDEBAR: Fica de fora do sistema de Rotas, garantindo que nunca pisque */}
+      <AnimatePresence initial={false} mode="wait">
         {!isHome && (
           <motion.div
+            key="global-sidebar"
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -50, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
             className="h-screen sticky top-0 z-50 flex-shrink-0"
           >
             <Sidebar 
@@ -96,7 +95,7 @@ function AnimatedRoutes() {
         )}
       </AnimatePresence>
 
-      {/* O container flex-1 onde as páginas de fato trocam */}
+      {/* ROTEADOR: Onde as páginas são renderizadas */}
       <div className="flex-1 relative min-h-screen bg-transparent">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
@@ -117,19 +116,11 @@ function MainApp() {
         <title>Painel Territorial CT&I | Governo da Bahia</title>
       </Helmet>
       
-      {/* O gerenciador invisível entra aqui, pois tem acesso ao Router */}
       <GlobalScroll />
       <Analytics />
 
-      <Suspense 
-        fallback={
-          <div className="flex flex-col items-center justify-center min-h-screen w-full gap-4 bg-[#1c1c1c]">
-            <div className="w-8 h-8 border-2 border-white/10 border-t-[#9170FA] rounded-full animate-spin"></div>
-          </div>
-        }
-      >
-        <AnimatedRoutes />
-      </Suspense>
+      {/* O Suspense foi removido daqui e levado para o PageWrapper */}
+      <AnimatedRoutes />
     </>
   );
 }

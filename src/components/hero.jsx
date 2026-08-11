@@ -1,9 +1,44 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
-  ArrowUpRight, User, Map as MapIcon, Settings, Target, Eye, Users, Lightbulb, 
-  Database, MapPin, Calculator, Info, Zap, TrendingUp, GraduationCap, Milestone, Building2 
+  ArrowUpRight, User, Map as MapIcon, Target, Eye, Users, Lightbulb, 
+  Info, Zap, TrendingUp, GraduationCap, Milestone, Building2 
 } from 'lucide-react';
+
+// ================= COMPONENTE DE ANIMAÇÃO DOS NÚMEROS =================
+const AnimatedCounter = ({ value, duration = 2000 }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime = null;
+    const target = parseInt(value, 10);
+    
+    // Fallback caso o valor não seja um número
+    if (isNaN(target)) {
+      setCount(value);
+      return;
+    }
+
+    const animate = (currentTime) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      
+      // Curva de desaceleração suave (easeOutQuart)
+      const easeOut = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.floor(easeOut * target));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(target); // Garante que termine exatamente no alvo
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value, duration]);
+
+  return <>{count}</>;
+};
 
 // ================= PÁGINA PRINCIPAL =================
 export default function LandingHero() {
@@ -12,6 +47,24 @@ export default function LandingHero() {
   // Controle de Animação ao rolar a página
   const introRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Controle do Efeito de Digitação
+  const subtitleText = "Uma plataforma interativa desenvolvida pela SECTI para a visualização das características inerentes à ciência, tecnologia e inovação nos territórios de identidade do Estado da Bahia.";
+  const [typedText, setTypedText] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      if (i < subtitleText.length) {
+        setTypedText(subtitleText.slice(0, i + 1));
+        i++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 25); // Velocidade da digitação (25ms por letra)
+
+    return () => clearInterval(typingInterval);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
@@ -35,7 +88,7 @@ export default function LandingHero() {
   ];
 
   return (
-    <main className="w-full min-h-screen overflow-x-hidden font-sans relative text-white scroll-smooth bg-[#0a0a0f]">
+    <main className="w-full min-h-screen font-sans relative text-white scroll-smooth bg-[#0a0a0f] overflow-x-clip">
       
       {/* ================= FUNDO FIXO ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -107,9 +160,13 @@ export default function LandingHero() {
                 & Inovação
               </span>
             </h1>
-            <p className="font-mono font-light text-sm sm:text-base lg:text-lg leading-relaxed max-w-[700px] mb-10 text-gray-300">
-              Uma plataforma interativa desenvolvida pela SECTI para a visualização das características inerentes à ciência, tecnologia e inovação nos territórios de identidade do Estado da Bahia.
+            
+            {/* Texto com Efeito de Digitação e Cursor */}
+            <p className="font-mono font-light text-sm sm:text-base lg:text-lg leading-relaxed max-w-[700px] mb-10 text-gray-300 min-h-[100px] lg:min-h-[80px]">
+              {typedText}
+              <span className="inline-block w-1.5 h-4 lg:h-5 ml-1 bg-[#9170FA] animate-pulse align-middle" />
             </p>
+
             <button 
               onClick={() => navigate('/territorios')}
               className="px-6 lg:px-8 py-3.5 lg:py-4 rounded-xl bg-gradient-to-r from-brand-1 to-brand-3 flex items-center gap-3 hover:shadow-[0_0_30px_rgba(145,112,250,0.5)] hover:scale-[1.02] transition-all duration-300 text-white w-fit border border-white/10 backdrop-blur-md"
@@ -130,7 +187,10 @@ export default function LandingHero() {
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <h3 className="text-4xl lg:text-6xl font-light text-white mb-2 flex items-center font-sans tracking-tighter relative z-10 drop-shadow-md">
                   {kpi.prefix && <span className="text-[#FFD2FF] font-light text-2xl lg:text-4xl mr-1">{kpi.prefix}</span>}
-                  {kpi.number}
+                  
+                  {/* Utilização do contador animado */}
+                  <AnimatedCounter value={kpi.number} duration={2500} />
+                  
                 </h3>
                 <span className="text-[10px] lg:text-[13px] font-mono tracking-[0.15em] text-gray-400 uppercase z-10 group-hover:text-white transition-colors">
                   {kpi.label}
@@ -147,7 +207,6 @@ export default function LandingHero() {
 
         <div className="max-w-7xl w-full z-10 flex flex-col justify-start">
           
-          {/* Título Principal Centralizado */}
           <div className={`text-center flex flex-col items-center mb-24 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="px-4 py-1.5 rounded-full border text-xs font-bold tracking-widest uppercase flex items-center gap-2 bg-white/5 border-white/10 backdrop-blur-md text-[#FFD2FF] mb-6">
               <Info size={14} /> Documentação
@@ -162,9 +221,9 @@ export default function LandingHero() {
 
           <div className="space-y-32 pb-20">
 
-            {/* BLOCO 1: Nossos Objetivos (Texto na Esquerda, Grid na Direita) */}
+            {/* BLOCO 1: Nossos Objetivos */}
             <div className={`flex flex-col lg:flex-row items-start gap-12 lg:gap-20 transition-all duration-1000 delay-200 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-              <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4">
+              <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4 self-start">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/10 text-[#9170FA] shadow-lg mb-2">
                   <Target size={24} />
                 </div>
@@ -194,9 +253,9 @@ export default function LandingHero() {
               </div>
             </div>
 
-            {/* BLOCO 2: Definições e KPIs (Grid na Esquerda, Texto na Direita) */}
+            {/* BLOCO 2: Definições e KPIs */}
             <div className={`flex flex-col lg:flex-row-reverse items-start gap-12 lg:gap-20 transition-all duration-1000 delay-300 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-              <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4">
+              <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4 self-start">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/10 text-[#FFD2FF] shadow-lg mb-2">
                   <Zap size={24} />
                 </div>
@@ -223,6 +282,7 @@ export default function LandingHero() {
                 ))}
               </div>
             </div>
+
           </div>
         </div>
       </section>

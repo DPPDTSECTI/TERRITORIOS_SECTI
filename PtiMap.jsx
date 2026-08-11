@@ -1,89 +1,27 @@
-import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import { MapContainer, GeoJSON, TileLayer, Marker } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import * as topojson from 'topojson-client';
-import { forceSimulation, forceCollide, forceX, forceY } from 'd3-force';
 import territoriosMunicipios from './utils/territorioMunicipios.json';
 
-const SVG_W = 800;
-const SVG_H = 800;
-const PADDING = 20;
-
-// Constantes para o algoritmo de anti-colisão de rótulos
-const LABEL_COLLISION_PADDING = 2; // Espaçamento extra entre rótulos
-const LABEL_FORCE_STRENGTH = 0.45; // Força forte que mantém o rótulo próximo ao seu centroide
-const SIMULATION_ITERATIONS = 250; // Número de iterações da simulação
-
-// Paleta de cores moderna e harmoniosa, inspirada nas paisagens e cultura da Bahia.
-// Os tons possuem saturação média e brilho equilibrado para garantir contraste e elegância.
+// Paleta Categórica Linear UI
 const TERRITORY_COLORS = [
-    // Tons de Azul e Turquesa (Litoral)
-    '#005f73', // Azul Atlântico Escuro
-    '#0a9396', // Turquesa Escuro
-    '#94d2bd', // Turquesa Médio
-    '#e9d8a6', // Amarelo Areia (transição)
-
-    // Tons de Verde (Mata Atlântica e Chapada)
-    '#1b4332', // Verde Mata Escuro
-    '#2d6a4f', // Verde Mata
-    '#40916c', // Verde Médio
-    '#52b788', // Verde Claro
-    '#74c69d', // Verde Sálvia
-
-    // Tons Terrosos e Dourados (Sertão e Chapada)
-    '#bb9457', // Ocre Dourado
-    '#ca6702', // Laranja Queimado
-    '#c95c50', // Vermelho Terracota Suave
-    '#b5474b', // Vermelho Escuro Suave
-
-    // Tons de Púrpura e Rosa (Cultura, Flores, Pelourinho)
-    '#5a189a', // Roxo Açaí
-    '#7b2cbf', // Roxo Médio
-    '#9d4edd', // Lavanda
-    '#c77dff', // Lilás
-
-    // Cores de Destaque e Preenchimento (Vibrantes mas harmoniosas)
-    '#ee9b00', // Amarelo Dourado Vibrante
-    '#e76f51', // Coral
-    '#f4a261', // Laranja Pêssego
-    '#e5989b', // Rosa Antigo
-    '#b5838d', // Rosa Queimado
-
-    // Cores adicionais para garantir 27 tons distintos
-    '#003049', // Azul Petróleo
-    '#669bbc', // Azul Céu Suave
-    '#7f5539', // Marrom Café
-    '#dda15e', // Caramelo
-    '#d36a6d'  // Vermelho Cereja Suave
+    '#5E6AD2', '#26B5CE', '#F2A65A', '#E76E50', '#8D34F9', '#F94D67', 
+    '#24C38E', '#F0D45E', '#55A4F9', '#B574F2', '#4CBF99', '#E2805F', 
+    '#6875F5', '#D65B82', '#43A047', '#F4923C', '#3984DA', '#9E57E5', 
+    '#14B8A6', '#EF4444', '#8B5CF6', '#10B981', '#F59E0B', '#3B82F6', 
+    '#EC4899', '#6366F1', '#06B6D4' 
 ];
 
-// Ordem geográfica dos territórios para uma paleta de cores mais coesa
 const GEOGRAPHICAL_ORDER = [
-    'Bacia do Rio Grande',
-    'Bacia do Rio Corrente',
-    'Velho Chico',
-    'Sertão do São Francisco',
-    'Piemonte Norte do Itapicuru',
-    'Itaparica',
-    'Irecê',
-    'Chapada Diamantina',
-    'Piemonte da Diamantina',
-    'Sisal',
-    'Bacia do Jacuípe',
-    'Semiárido Nordeste II',
-    'Litoral Norte e Agreste Baiano',
-    'Portal do Sertão',
-    'Metropolitano de Salvador',
-    'Recôncavo',
-    'Baixo Sul',
-    'Vale do Jiquiriçá',
-    'Piemonte do Paraguaçu',
-    'Médio Rio de Contas',
-    'Sudoeste Baiano',
-    'Sertão Produtivo',
-    'Bacia do Paramirim',
-    'Médio Sudoeste da Bahia',
-    'Litoral Sul',
-    'Costa do Descobrimento',
-    'Extremo Sul'
+    'Bacia do Rio Grande', 'Bacia do Rio Corrente', 'Velho Chico', 'Sertão do São Francisco',
+    'Piemonte Norte do Itapicuru', 'Itaparica', 'Irecê', 'Chapada Diamantina',
+    'Piemonte da Diamantina', 'Sisal', 'Bacia do Jacuípe', 'Semiárido Nordeste II',
+    'Litoral Norte e Agreste Baiano', 'Portal do Sertão', 'Metropolitano de Salvador',
+    'Recôncavo', 'Baixo Sul', 'Vale do Jiquiriçá', 'Piemonte do Paraguaçu',
+    'Médio Rio de Contas', 'Sudoeste Baiano', 'Sertão Produtivo', 'Bacia do Paramirim',
+    'Médio Sudoeste da Bahia', 'Litoral Sul', 'Costa do Descobrimento', 'Extremo Sul'
 ];
 
 function normalizeName(value) {
@@ -91,29 +29,19 @@ function normalizeName(value) {
     return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-function wrapText(text) {
-    if (!text) return [];
-    const words = text.split(' ');
-    if (words.length <= 2) return [text];
-    if (words.length === 3) return [words[0] + ' ' + words[1], words[2]];
-    const half = Math.ceil(words.length / 2);
-    return [words.slice(0, half).join(' '), words.slice(half).join(' ')];
-}
-
 const getTerritoryKey = (value) => normalizeName(value);
 
-// Ordena os territórios geograficamente antes de atribuir as cores
 const sortedTerritories = [...territoriosMunicipios.territorios_de_identidade].sort((a, b) => {
     const indexA = GEOGRAPHICAL_ORDER.indexOf(a.nome);
     const indexB = GEOGRAPHICAL_ORDER.indexOf(b.nome);
-    if (indexA === -1) return 1; // Coloca territórios não listados no final
+    if (indexA === -1) return 1; 
     if (indexB === -1) return -1;
     return indexA - indexB;
 });
 
 const territoryColorMap = {};
 sortedTerritories.forEach((territorio, index) => {
-    territoryColorMap[getTerritoryKey(territorio.nome)] = TERRITORY_COLORS[index] || '#D1D5DB'; // gray-300
+    territoryColorMap[getTerritoryKey(territorio.nome)] = TERRITORY_COLORS[index] || '#333333';
 });
 
 const buildMunicipioTerritoryMap = () => {
@@ -124,461 +52,187 @@ const buildMunicipioTerritoryMap = () => {
     return m;
 };
 
-const getPathD = (geometry, project) => {
-    if (!geometry) return '';
-    if (geometry.type === 'Polygon') {
-        return geometry.coordinates.map((ring) => ring.map(([x, y], i) => {
-            const [px, py] = project([x, y]); return `${i === 0 ? 'M' : 'L'}${px.toFixed(2)},${py.toFixed(2)}`;
-        }).join(' ') + ' Z').join(' ');
-    }
-    if (geometry.type === 'MultiPolygon') {
-        return geometry.coordinates.flatMap((polygon) => polygon.map((ring) => ring.map(([x, y], i) => {
-            const [px, py] = project([x, y]); return `${i === 0 ? 'M' : 'L'}${px.toFixed(2)},${py.toFixed(2)}`;
-        }).join(' ') + ' Z')).join(' ');
-    }
-    return '';
-};
-
-// Componente memoizado para cada polígono de município. Evita re-renderizar
-// os ~400 <path> quando o pai re-renderiza por motivos que não afetam aquele
-// município específico (ex: hover em outro, mudança de tooltip, etc). Como
-// pan/zoom agora são throttled via rAF (ver PtiMap) e a simulação de
-// labels não depende mais de effectiveScale, o pai já re-renderiza bem menos —
-// este memo é uma segunda camada de proteção para quando ele ainda re-renderizar.
-const MunicipioPath = React.memo(function MunicipioPath({
-    feat, d, fill, stroke, strokeWidth, opacity, blockClickAndColor,
-    onEnter, onLeave, onClick,
-}) {
-    return (
-        <path
-            d={d}
-            fill={fill}
-            stroke={stroke}
-            strokeWidth={strokeWidth}
-            strokeLinejoin="round"
-            vectorEffect="non-scaling-stroke"
-            className="outline-none"
-            style={{
-                pointerEvents: blockClickAndColor ? 'none' : 'auto',
-                cursor: blockClickAndColor ? 'default' : 'pointer'
-            }}
-            opacity={opacity}
-            onMouseEnter={(e) => onEnter(e, feat)}
-            onMouseMove={(e) => onEnter(e, feat)}
-            onMouseLeave={onLeave}
-            onClick={(e) => { e.stopPropagation(); onClick(feat, blockClickAndColor); }}
-        />
-    );
-});
-
-const PtiMap = React.memo(function PtiMap({
+// ================= MAPA PRINCIPAL =================
+export default function PtiMap({
     territoriosData = [], territoriesDynamicStats = {}, searchTerm = '',
     filtroSemiarido = false, selectedTerritory = null,
-    onSelectTerritory = () => { }, semiaridoMunicipios = [], darkMode = false
+    onSelectTerritory = () => { }, semiaridoMunicipios = []
 }) {
-    const [mapFeatures, setMapFeatures] = useState([]);
-    const [territoryLabels, setTerritoryLabels] = useState([]);
+    const [geoJsonData, setGeoJsonData] = useState(null);
+    const [territoryCenters, setTerritoryCenters] = useState({});
+    const [loading, setLoading] = useState(true);
+    
+    // Estados do Hover e Tooltip
     const [hoveredTerritory, setHoveredTerritory] = useState(null);
     const [hoveredMunicipality, setHoveredMunicipality] = useState(null);
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
-    const [loading, setLoading] = useState(true);
-
-    const [userScale, setUserScale] = useState(1);
-    const [userPan, setUserPan] = useState({ x: 0, y: 0 });
-    const [isDragging, setIsDragging] = useState(false);
     const [isMunListExpanded, setIsMunListExpanded] = useState(false);
 
-    const svgRef = useRef(null);
-    const containerRef = useRef(null);
-    const lastMousePos = useRef({ x: 0, y: 0 });
-    const dragTotal = useRef(0);
     const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
-
-    // --- Throttle via requestAnimationFrame para pan (arraste) e zoom (scroll) ---
-    // Em vez de chamar setState a cada evento de mousemove/wheel (que pode disparar
-    // dezenas de re-renders por segundo, cada um reconciliando ~400 <path>), acumulamos
-    // o delta em refs e só sincronizamos o estado React uma vez por frame de animação
-    // (no máximo ~60x/s), mantendo a fluidez visual e o comportamento reativo idêntico.
-    const userPanRef = useRef(userPan);
-    const userScaleRef = useRef(userScale);
-    const pendingPan = useRef(null);
-    const pendingScale = useRef(null);
-    const rafPanId = useRef(null);
-    const rafScaleId = useRef(null);
-
-    useEffect(() => { userPanRef.current = userPan; }, [userPan]);
-    useEffect(() => { userScaleRef.current = userScale; }, [userScale]);
-
-    useEffect(() => () => {
-        if (rafPanId.current) cancelAnimationFrame(rafPanId.current);
-        if (rafScaleId.current) cancelAnimationFrame(rafScaleId.current);
-    }, []);
-
-    useEffect(() => {
-        setUserScale(1);
-        setUserPan({ x: 0, y: 0 });
-        setIsMunListExpanded(false);
-    }, [selectedTerritory]);
+    const geoJsonLayerRef = useRef(null);
+    const mapContainerRef = useRef(null);
+    const mapRef = useRef(null);
+    
+    // Dicionário de referências para destacar um território inteiro de uma vez
+    const layersByTerritory = useRef({});
 
     useEffect(() => {
         setLoading(true);
+        layersByTerritory.current = {}; 
+
         fetch('/BA_(1)9396399957704198.json')
             .then((resp) => resp.json())
             .then((topology) => {
-                const geo = topojson.feature(topology, topology.objects.BA);
-                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                const geojson = topojson.feature(topology, topology.objects.BA);
+                const groups = {};
 
-                geo.features.forEach((feat) => {
-                    if (!feat.geometry) return;
-                    const coords = feat.geometry.type === 'Polygon' ? feat.geometry.coordinates.flat() : feat.geometry.coordinates.flat(2);
-                    coords.forEach(([x, y]) => {
-                        if (x < minX) minX = x; if (x > maxX) maxX = x;
-                        if (y < minY) minY = y; if (y > maxY) maxY = y;
-                    });
-                });
-
-                const width = SVG_W - 2 * PADDING; const height = SVG_H - 2 * PADDING;
-                const scaleX = width / (maxX - minX); const scaleY = height / (maxY - minY);
-                const scale = Math.min(scaleX, scaleY);
-                const project = ([x, y]) => [PADDING + (x - minX) * scale + (width - (maxX - minX) * scale) / 2, PADDING + (maxY - y) * scale + (height - (maxY - minY) * scale) / 2];
-
-                const tLabelsData = {};
-
-                const features = geo.features.map((feat) => {
+                // Processar propriedades e agrupar para achar o centro de cada território
+                geojson.features.forEach(feat => {
                     const municipio = feat.properties?.NOME || feat.properties?.nome || '';
-                    const territoryName = municipioTerritoryMap[normalizeName(municipio)] || 'Sem Território';
-                    const tKey = getTerritoryKey(territoryName);
+                    const territory = municipioTerritoryMap[normalizeName(municipio)] || 'Sem Território';
+                    
+                    feat.properties.territory = territory;
+                    feat.properties.nome = municipio;
 
-                    let fMinX = Infinity, fMaxX = -Infinity, fMinY = Infinity, fMaxY = -Infinity;
-                    let bestCx = 0, bestCy = 0, maxArea = -1;
-
-                    if (feat.geometry) {
-                        let rings = [];
-                        if (feat.geometry.type === 'Polygon') {
-                            rings = [feat.geometry.coordinates[0]];
-                        } else if (feat.geometry.type === 'MultiPolygon') {
-                            rings = feat.geometry.coordinates.map(p => p[0]);
-                        } else {
-                            const coords = feat.geometry.coordinates.flat(2);
-                            rings = [coords];
-                        }
-
-                        rings.forEach(ring => {
-                            if (!ring || ring.length === 0) return;
-                            let rMinX = Infinity, rMaxX = -Infinity, rMinY = Infinity, rMaxY = -Infinity;
-                            let sumX = 0, sumY = 0, count = 0;
-
-                            ring.forEach(([x, y]) => {
-                                const [px, py] = project([x, y]);
-                                if (px < fMinX) fMinX = px; if (px > fMaxX) fMaxX = px;
-                                if (py < fMinY) fMinY = py; if (py > fMaxY) fMaxY = py;
-                                if (px < rMinX) rMinX = px; if (px > rMaxX) rMaxX = px;
-                                if (py < rMinY) rMinY = py; if (py > rMaxY) rMaxY = py;
-                                sumX += px; sumY += py; count++;
-                            });
-
-                            const area = (rMaxX - rMinX) * (rMaxY - rMinY);
-                            if (area > maxArea && count > 0) {
-                                maxArea = area;
-                                bestCx = sumX / count;
-                                bestCy = sumY / count;
-                            }
-                        });
+                    if (territory !== 'Sem Território') {
+                        if (!groups[territory]) groups[territory] = [];
+                        groups[territory].push(feat);
                     }
-
-                    const cx = bestCx || (fMinX + fMaxX) / 2;
-                    const cy = bestCy || (fMinY + fMaxY) / 2;
-
-                    if (!tLabelsData[tKey]) tLabelsData[tKey] = { sumX: 0, sumY: 0, count: 0, name: territoryName };
-                    tLabelsData[tKey].sumX += cx; tLabelsData[tKey].sumY += cy; tLabelsData[tKey].count += 1;
-
-                    const d = getPathD(feat.geometry, project);
-                    return { nome: municipio, territory: territoryName, d, cx, cy, fBounds: { minX: fMinX, maxX: fMaxX, minY: fMinY, maxY: fMaxY } };
                 });
 
-                const labels = Object.values(tLabelsData).map(t => ({ name: t.name, x: t.sumX / t.count, y: t.sumY / t.count }));
+                // Calculando o centro (Bounds) nativo do Leaflet para os nomes flutuantes
+                const centers = {};
+                Object.keys(groups).forEach(t => {
+                    const layerGroup = L.geoJSON(groups[t]);
+                    centers[t] = layerGroup.getBounds().getCenter();
+                });
 
-                setMapFeatures(features);
-                setTerritoryLabels(labels);
+                setTerritoryCenters(centers);
+                setGeoJsonData(geojson);
                 setLoading(false);
-            }).catch((err) => { console.error("Erro ao carregar mapa:", err); setLoading(false); });
+            })
+            .catch(err => {
+                console.error("Erro ao carregar mapa:", err);
+                setLoading(false);
+            });
     }, [municipioTerritoryMap]);
 
-    const { calcBoundsGlobal, calcBoundsSemi } = useMemo(() => {
-        const tB = {}; const tBS = {};
-        mapFeatures.forEach(feat => {
-            const tKey = getTerritoryKey(feat.territory);
-            const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
+    // ================= ESTILO DOS MUNICÍPIOS =================
+    const styleFeature = (feature) => {
+        const normalizedFeatName = getTerritoryKey(feature.properties.territory);
+        const dStats = territoriesDynamicStats[normalizedFeatName];
+        const matchesFilters = dStats ? dStats.matchesFilters : true;
+        const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
+        const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome));
+        const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
 
-            if (!tB[tKey]) tB[tKey] = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity, area: 0 };
-            if (!tBS[tKey]) tBS[tKey] = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+        let opacity = 0.85; 
+        let fillColor = territoryColorMap[normalizedFeatName] || '#333333';
+        let weight = 0.8; 
+        let color = 'rgba(255, 255, 255, 0.4)'; 
 
-            const updateBounds = (b) => {
-                if (feat.fBounds.minX < b.minX) b.minX = feat.fBounds.minX;
-                if (feat.fBounds.maxX > b.maxX) b.maxX = feat.fBounds.maxX;
-                if (feat.fBounds.minY < b.minY) b.minY = feat.fBounds.minY;
-                if (feat.fBounds.maxY > b.maxY) b.maxY = feat.fBounds.maxY;
-                // Recalcula a área do bounding box
-                b.area = (b.maxX - b.minX) * (b.maxY - b.minY);
-            };
-
-            updateBounds(tB[tKey]);
-            if (isMunSemi) updateBounds(tBS[tKey]);
-        });
-        return { calcBoundsGlobal: tB, calcBoundsSemi: tBS };
-    }, [mapFeatures, semiaridoMunicipios]);
-
-    // === CÂMERA INTELIGENTE ===
-    const baseTransform = useMemo(() => {
-        if (!selectedTerritory || Object.keys(calcBoundsGlobal).length === 0) return { tx: 0, ty: 0, scale: 1 };
-
-        const tKey = getTerritoryKey(selectedTerritory.nome);
-        let bounds = calcBoundsGlobal[tKey];
-
-        if (filtroSemiarido && calcBoundsSemi[tKey] && calcBoundsSemi[tKey].minX !== Infinity) {
-            bounds = calcBoundsSemi[tKey];
-        }
-
-        if (!bounds || bounds.minX === Infinity) return { tx: 0, ty: 0, scale: 1 };
-
-        const w = bounds.maxX - bounds.minX;
-        const h = bounds.maxY - bounds.minY;
-        const cx = bounds.minX + w / 2;
-        const cy = bounds.minY + h / 2;
-
-        const availableWidth = SVG_W - 280;
-        const scale = Math.min(availableWidth / w, SVG_H / h) * 0.88;
-        const clampedScale = Math.min(scale, 8);
-
-        const tx = (availableWidth / 2) - cx * clampedScale;
-        const ty = (SVG_H / 2) - cy * clampedScale;
-
-        return { tx, ty, scale: clampedScale };
-    }, [selectedTerritory, calcBoundsGlobal, calcBoundsSemi, filtroSemiarido]);
-
-    const effectiveScale = userScale * baseTransform.scale;
-
-    // Hook para calcular o layout dos rótulos com anti-colisão
-    // IMPORTANTE: usa baseTransform.scale (câmera/território selecionado), não effectiveScale.
-    // effectiveScale muda a cada tick da roda do mouse (zoom manual), o que faria a simulação
-    // de 250 iterações rodar em todo scroll, travando a interação. baseTransform.scale só
-    // muda quando o território selecionado muda, então o layout é recalculado raramente,
-    // mas o tamanho visual do texto continua reativo ao zoom (calculado fora do memo, no render).
-    const laidOutLabels = useMemo(() => {
-        if (territoryLabels.length === 0) return [];
-
-        const fontSize = 16 / baseTransform.scale;
-        const lineHeight = fontSize * 1.1;
-
-        // 1. Preparar nós para a simulação
-        const nodes = territoryLabels.map(label => {
-            const lines = wrapText(label.name);
-            const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), '');
-
-            // Estimar dimensões do rótulo
-            const width = longestLine.length * fontSize * 0.55 + LABEL_COLLISION_PADDING;
-            const height = lines.length * lineHeight + LABEL_COLLISION_PADDING;
-
-            return {
-                id: getTerritoryKey(label.name),
-                idealX: label.x, // Posição ideal (centroide)
-                idealY: label.y,
-                x: label.x, // Posição inicial
-                y: label.y,
-                width,
-                height,
-                radius: Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2)), // Raio para colisão
-                lines,
-                name: label.name,
-            };
-        });
-
-        // 2. Configurar e rodar a simulação de força
-        const simulation = forceSimulation(nodes)
-            .force('collide', forceCollide(d => d.radius).strength(1))
-            .force('x', forceX(d => d.idealX).strength(LABEL_FORCE_STRENGTH))
-            .force('y', forceY(d => d.idealY).strength(LABEL_FORCE_STRENGTH))
-            .stop();
-
-        // Rodar a simulação de forma síncrona
-        for (let i = 0; i < SIMULATION_ITERATIONS; ++i) {
-            simulation.tick();
-        }
-
-        // Limita o deslocamento máximo para impedir que o rótulo vá para longe de sua região
-        const maxDist = 20 / baseTransform.scale;
-        nodes.forEach(node => {
-            const dx = node.x - node.idealX;
-            const dy = node.y - node.idealY;
-            const dist = Math.hypot(dx, dy);
-            if (dist > maxDist) {
-                node.x = node.idealX + (dx / dist) * maxDist;
-                node.y = node.idealY + (dy / dist) * maxDist;
-            }
-        });
-
-        // 3. Retornar os nós com as posições finais calculadas
-        return nodes;
-    }, [territoryLabels, baseTransform.scale]);
-
-    // Hook para calcular o layout dos rótulos dos MUNICÍPIOS com anti-colisão
-    // Mesma correção: usa baseTransform.scale em vez de effectiveScale para não
-    // recalcular a simulação a cada tick de zoom manual (userScale).
-    const laidOutMunicipalityLabels = useMemo(() => {
-        if (!selectedTerritory || mapFeatures.length === 0) return [];
-
-        const fontSize = 14 / baseTransform.scale;
-        const lineHeight = fontSize * 1.1;
-
-        const visibleMunicipalities = mapFeatures.filter(f => {
-            const isSameTerritory = getTerritoryKey(f.territory) === getTerritoryKey(selectedTerritory.nome);
-            if (!isSameTerritory) return false;
-            const isMunSemi = semiaridoMunicipios.includes(normalizeName(f.nome));
-            if (filtroSemiarido && !isMunSemi) return false;
-            return true;
-        });
-
-        const nodes = visibleMunicipalities.map(feat => {
-            const lines = wrapText(feat.nome);
-            const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), '');
-            const width = longestLine.length * fontSize * 0.55 + LABEL_COLLISION_PADDING;
-            const height = lines.length * lineHeight + LABEL_COLLISION_PADDING;
-
-            return {
-                id: normalizeName(feat.nome),
-                idealX: feat.cx, idealY: feat.cy,
-                x: feat.cx, y: feat.cy,
-                width, height,
-                radius: Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2)),
-                lines, name: feat.nome,
-            };
-        });
-
-        const simulation = forceSimulation(nodes)
-            .force('collide', forceCollide(d => d.radius).strength(1))
-            .force('x', forceX(d => d.idealX).strength(LABEL_FORCE_STRENGTH))
-            .force('y', forceY(d => d.idealY).strength(LABEL_FORCE_STRENGTH))
-            .stop();
-
-        for (let i = 0; i < SIMULATION_ITERATIONS; ++i) {
-            simulation.tick();
-        }
-
-        const maxMunDist = 15 / baseTransform.scale;
-        nodes.forEach(node => {
-            const dx = node.x - node.idealX;
-            const dy = node.y - node.idealY;
-            const dist = Math.hypot(dx, dy);
-            if (dist > maxMunDist) {
-                node.x = node.idealX + (dx / dist) * maxMunDist;
-                node.y = node.idealY + (dy / dist) * maxMunDist;
-            }
-        });
-
-        return nodes;
-    }, [selectedTerritory, mapFeatures, baseTransform.scale, filtroSemiarido, semiaridoMunicipios]);
-
-    useEffect(() => {
-        const svg = svgRef.current;
-        if (!svg) return;
-        const handleNativeWheel = (e) => {
-            e.preventDefault();
-            const zoomFactor = 0.1;
-            const delta = e.deltaY < 0 ? 1 + zoomFactor : 1 - zoomFactor;
-            const base = pendingScale.current ?? userScaleRef.current;
-            pendingScale.current = Math.min(Math.max(base * delta, 0.5), 15);
-
-            // Só agenda 1 atualização de estado por frame de animação, mesmo que
-            // vários eventos de wheel cheguem entre um frame e outro (comum em trackpads).
-            if (rafScaleId.current == null) {
-                rafScaleId.current = requestAnimationFrame(() => {
-                    setUserScale(pendingScale.current);
-                    pendingScale.current = null;
-                    rafScaleId.current = null;
-                });
-            }
-        };
-        svg.addEventListener('wheel', handleNativeWheel, { passive: false });
-        return () => svg.removeEventListener('wheel', handleNativeWheel);
-    }, [loading]);
-
-    const handleMouseDown = (e) => { 
-        if (e.button === 0) {
-            window.getSelection()?.removeAllRanges();
-        }
-        setIsDragging(true); 
-        dragTotal.current = 0; 
-        lastMousePos.current = { x: e.clientX, y: e.clientY }; 
-    };
-    const handleMouseMoveSVG = (e) => {
-        if (!isDragging) return;
-        window.getSelection()?.removeAllRanges();
-        const dx = e.clientX - lastMousePos.current.x; const dy = e.clientY - lastMousePos.current.y;
-        dragTotal.current += Math.abs(dx) + Math.abs(dy);
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
-
-        const base = pendingPan.current ?? userPanRef.current;
-        pendingPan.current = { x: base.x + dx, y: base.y + dy };
-
-        // Mesma lógica de throttle do zoom: no máximo 1 setState por frame de animação,
-        // independente de quantos eventos de mousemove chegarem nesse intervalo.
-        if (rafPanId.current == null) {
-            rafPanId.current = requestAnimationFrame(() => {
-                setUserPan(pendingPan.current);
-                pendingPan.current = null;
-                rafPanId.current = null;
-            });
-        }
-    };
-    const handleMouseUp = () => setIsDragging(false);
-
-    // LÓGICA DE HOVER
-    const onMapHover = useCallback((e, feat) => {
-        if (feat.territory === 'Sem Território' || isDragging) return;
-
-        if (selectedTerritory) {
-            const isSameTerritory = getTerritoryKey(feat.territory) === getTerritoryKey(selectedTerritory.nome);
-            if (isSameTerritory) {
-                setHoveredMunicipality(feat.nome);
-                setHoveredTerritory(null);
+        if (blockClickAndColor && !selectedTerritory) {
+            fillColor = '#18181B'; 
+            opacity = 0.40;
+            color = 'rgba(255, 255, 255, 0.1)';
+        } else if (selectedTerritory) {
+            if (isSelectedMap) {
+                opacity = 0.95;
+                weight = 1.2;
+                color = '#FFFFFF';
+                if (filtroSemiarido && isMunSemi) fillColor = '#F59E0B'; 
             } else {
-                setTooltip(p => ({ ...p, visible: false }));
-                setHoveredMunicipality(null);
-                setHoveredTerritory(null);
-                return;
+                fillColor = '#18181B';
+                opacity = 0.15; 
+                weight = 0.4;
+                color = 'rgba(255, 255, 255, 0.1)'; 
             }
-        } else {
-            setHoveredTerritory(feat.territory);
-            setHoveredMunicipality(null);
         }
 
-        const rect = containerRef.current?.getBoundingClientRect();
+        return {
+            fillColor,
+            weight,
+            opacity: 1,
+            color,
+            fillOpacity: opacity,
+            className: 'outline-none' // Removido transition-all para não gerar lag no Zoom
+        };
+    };
+
+    // ================= CONTROLE DE HOVER =================
+    const onEachFeature = (feature, layer) => {
+        const tKey = getTerritoryKey(feature.properties.territory);
+        
+        if (!layersByTerritory.current[tKey]) {
+            layersByTerritory.current[tKey] = [];
+        }
+        layersByTerritory.current[tKey].push(layer);
+
+        layer.on({
+            mouseover: (e) => {
+                const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === tKey;
+                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome));
+                const blockClickAndColor = (filtroSemiarido && !isMunSemi);
+                
+                if (selectedTerritory && !isSelectedMap) return; 
+
+                if (!selectedTerritory) {
+                    setHoveredTerritory(feature.properties.territory);
+                    setHoveredMunicipality(null);
+                    
+                    layersByTerritory.current[tKey].forEach(l => {
+                        l.setStyle({ fillOpacity: 1, color: 'rgba(255, 255, 255, 0.8)' });
+                        l.bringToFront();
+                    });
+                } else {
+                    setHoveredMunicipality(feature.properties.nome);
+                    e.target.setStyle({ fillOpacity: 1, color: '#FFFFFF', weight: 1.5 });
+                    e.target.bringToFront();
+                }
+            },
+            mouseout: (e) => {
+                if (!selectedTerritory) {
+                    layersByTerritory.current[tKey].forEach(l => {
+                        if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(l);
+                    });
+                } else {
+                    if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(e.target);
+                }
+                
+                setHoveredTerritory(null);
+                setHoveredMunicipality(null);
+                setTooltip({ visible: false, x: 0, y: 0 });
+            },
+            click: (e) => {
+                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome));
+                const blockClick = (filtroSemiarido && !isMunSemi);
+
+                if (!blockClick && feature.properties.territory !== 'Sem Território') {
+                    const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === tKey);
+                    if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === tKey) {
+                        onSelectTerritory(null);
+                    } else {
+                        onSelectTerritory(foundData);
+                    }
+                }
+            }
+        });
+    };
+
+    const handleMouseMove = (e) => {
+        if (!hoveredTerritory && !hoveredMunicipality) return;
+        const rect = mapContainerRef.current?.getBoundingClientRect();
         if (!rect) return;
 
-        const tooltipWidth = 260; const tooltipHeight = 180; const offset = 15;
-        let x = e.clientX - rect.left + offset; let y = e.clientY - rect.top + offset;
+        const tooltipWidth = 220; const tooltipHeight = 160; const offset = 15;
+        let x = e.clientX - rect.left + offset; 
+        let y = e.clientY - rect.top + offset;
+        
         if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
 
         setTooltip({ visible: true, x, y });
-    }, [isDragging, selectedTerritory]);
-
-    // Handler de saída do hover, estável entre renders (usado pelo MunicipioPath memoizado)
-    const onMapLeave = useCallback(() => {
-        setTooltip({ visible: false, x: 0, y: 0 });
-        setHoveredTerritory(null);
-        setHoveredMunicipality(null);
-    }, []);
-
-    // Handler de clique num município, estável entre renders (usado pelo MunicipioPath memoizado)
-    const onMapClick = useCallback((feat, blockClickAndColor) => {
-        if (dragTotal.current > 10) return;
-        if (!blockClickAndColor && feat.territory !== 'Sem Território') {
-            const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(feat.territory));
-            if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === getTerritoryKey(feat.territory)) onSelectTerritory(null);
-            else onSelectTerritory(foundData);
-        }
-    }, [territoriosData, selectedTerritory, onSelectTerritory]);
+    };
 
     const hoveredData = hoveredTerritory ? territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(hoveredTerritory)) : null;
     const dynamicStats = hoveredTerritory ? territoriesDynamicStats[getTerritoryKey(hoveredTerritory)] : null;
@@ -586,287 +240,135 @@ const PtiMap = React.memo(function PtiMap({
     const hoveredMunData = useMemo(() => {
         if (!hoveredMunicipality || !selectedTerritory) return null;
         const munKey = normalizeName(hoveredMunicipality);
-
         const devData = selectedTerritory.desenvolvimentoDetalhado?.find(d => normalizeName(d.municipio) === munKey);
         const ifdm = devData?.ifdm ? Number(devData.ifdm).toFixed(3) : '-';
-
         const entidades = selectedTerritory.entidadesDetalhadas?.filter(e => normalizeName(e.municipio) === munKey) || [];
-
         const cadeias = selectedTerritory.cadeiasProdutivasDetalhado?.filter(c => {
             const sede = normalizeName(c.sede);
             let satelite = normalizeName(c.municipioSatelite || c.municipiosSatelites || c.satelite || '');
-            if (typeof c.municipioSatelite === 'object' || Array.isArray(c.municipioSatelite)) {
-                satelite = JSON.stringify(c.municipioSatelite).toLowerCase();
-            }
+            if (typeof c.municipioSatelite === 'object' || Array.isArray(c.municipioSatelite)) satelite = JSON.stringify(c.municipioSatelite).toLowerCase();
             const perts = String(c.municipiosPertencentes || '').split(/[,;\-]/).map(m => normalizeName(m));
             return sede === munKey || satelite.includes(munKey) || perts.includes(munKey);
         }) || [];
-
         const isSemi = semiaridoMunicipios.includes(munKey);
-
-        return {
-            nome: hoveredMunicipality,
-            ifdm,
-            entidadesCount: entidades.length,
-            cadeiasCount: cadeias.length,
-            isSemi
-        };
+        return { nome: hoveredMunicipality, ifdm, entidadesCount: entidades.length, cadeiasCount: cadeias.length, isSemi };
     }, [hoveredMunicipality, selectedTerritory, semiaridoMunicipios]);
 
     const selectedTerritoryMunicipalities = useMemo(() => {
         if (!selectedTerritory) return [];
         const tBase = territoriosMunicipios.territorios_de_identidade.find(t => getTerritoryKey(t.nome) === getTerritoryKey(selectedTerritory.nome));
         if (!tBase) return [];
-
         let muns = tBase.municipios;
-        if (filtroSemiarido) {
-            muns = muns.filter(m => semiaridoMunicipios.includes(normalizeName(m)));
-        }
+        if (filtroSemiarido) muns = muns.filter(m => semiaridoMunicipios.includes(normalizeName(m)));
         return muns.sort();
     }, [selectedTerritory, filtroSemiarido, semiaridoMunicipios]);
 
     const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
 
     return (
-        <div ref={containerRef} className="relative isolate w-full h-full min-h-[500px] flex items-center justify-center bg-transparent rounded-xl overflow-hidden select-none">
-
-            {loading ? (
-                <div className="flex flex-col items-center text-gov-blueDark-500">
-                    <svg className="animate-spin h-8 w-8 mb-3" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span className="text-xs font-semibold tracking-wider uppercase">Carregando Malha...</span>
+        <div 
+            ref={mapContainerRef} 
+            className="relative isolate w-full h-full min-h-[500px] flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
+        >
+            {loading || !geoJsonData ? (
+                <div className="flex flex-col items-center text-white/50">
+                    <svg className="animate-spin h-6 w-6 mb-2 text-[#8D34F9]" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span className="text-[10px] font-medium tracking-widest uppercase">Carregando Malha...</span>
                 </div>
             ) : (
-                <svg
-                    ref={svgRef}
-                    viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-                    className={`w-full h-full overflow-visible select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                    style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
-                    onMouseDown={handleMouseDown} onMouseMove={handleMouseMoveSVG}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={() => {
-                        handleMouseUp();
-                        setTooltip({ visible: false, x: 0, y: 0 });
-                        setHoveredTerritory(null);
-                        setHoveredMunicipality(null);
-                    }}
+                <MapContainer 
+                    ref={mapRef}
+                    center={[-12.5, -41.5]} 
+                    zoom={6} 
+                    zoomControl={false} 
+                    scrollWheelZoom={true}
+                    doubleClickZoom={false}
+                    className="w-full h-full outline-none z-0"
+                    style={{ background: '#141415' }} 
                 >
+                    <TileLayer
+                        url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
+                        opacity={0.8} 
+                    />
 
-                    <g style={{ transform: `translate(${userPan.x}px, ${userPan.y}px) scale(${userScale})`, transformOrigin: 'center', transition: isDragging ? 'none' : 'transform 0.1s ease-out' }}>
-                        <g style={{ transform: `translate(${baseTransform.tx}px, ${baseTransform.ty}px) scale(${baseTransform.scale})`, transformOrigin: '0 0', transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                    <GeoJSON 
+                        key={selectedTerritory?.nome || 'muns'}
+                        ref={geoJsonLayerRef}
+                        data={geoJsonData} 
+                        style={styleFeature}
+                        onEachFeature={onEachFeature}
+                    />
 
-                            {/* 1. MUNICÍPIOS (POLÍGONOS) */}
-                            {mapFeatures.map((feat, index) => {
-                                const normalizedFeatName = getTerritoryKey(feat.territory);
-
-                                // ACESSO AOS CÁLCULOS CRUZADOS DE FILTROS VINDOS DO APP.JSX
-                                const dStats = territoriesDynamicStats[normalizedFeatName];
-                                const matchesFilters = dStats ? dStats.matchesFilters : true;
-
-                                const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
-                                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feat.nome));
-
-                                // A lógica de bloqueio agora considera se um território está selecionado.
-                                // Se um território estiver selecionado, não bloqueamos os outros visualmente, apenas a interatividade.
-                                const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
-
-                                const isHovered = !blockClickAndColor && (hoveredTerritory === feat.territory || hoveredMunicipality === feat.nome);
-
-                                let opacity = 0.90;
-                                let fillColor = territoryColorMap[normalizedFeatName] || '#E2E8F0';
-
-                                if (blockClickAndColor && !selectedTerritory) {
-                                    fillColor = darkMode ? '#374151' : '#E5E7EB';
-                                    opacity = 0.50;
-                                } else if (selectedTerritory) {
-                                    if (isSelectedMap) {
-                                        opacity = 1;
-                                        if (filtroSemiarido && isMunSemi) fillColor = '#FFC107';
-                                    } else {
-                                        fillColor = darkMode ? '#374151' : '#e5e7eb';
-                                        opacity = 0.25;
-                                    }
-                                } else {
-                                    if (isHovered) opacity = 1;
-                                }
-
-                                // No dark mode, clarear as cores dos territórios para ficarem visíveis
-                                if (darkMode && fillColor.startsWith('#') && fillColor !== '#374151') {
-                                    const hex = fillColor.replace('#', '');
-                                    const r = parseInt(hex.substring(0, 2), 16);
-                                    const g = parseInt(hex.substring(2, 4), 16);
-                                    const b = parseInt(hex.substring(4, 6), 16);
-                                    const lift = 0.35;
-                                    const nr = Math.min(255, Math.round(r + (255 - r) * lift));
-                                    const ng = Math.min(255, Math.round(g + (255 - g) * lift));
-                                    const nb = Math.min(255, Math.round(b + (255 - b) * lift));
-                                    fillColor = `#${nr.toString(16).padStart(2,'0')}${ng.toString(16).padStart(2,'0')}${nb.toString(16).padStart(2,'0')}`;
-                                }
-
-                                return (
-                                    <MunicipioPath
-                                        key={`${feat.nome}-${index}`}
-                                        feat={feat}
-                                        d={feat.d}
-                                        fill={fillColor}
-                                        stroke={isSelectedMap || isHovered ? (darkMode ? '#000' : '#fff') : (darkMode ? '#1e293b' : '#F9FAFB')}
-                                        strokeWidth={isSelectedMap ? 2 : isHovered ? 2 : 0.8}
-                                        opacity={opacity}
-                                        blockClickAndColor={blockClickAndColor}
-                                        onEnter={onMapHover}
-                                        onLeave={onMapLeave}
-                                        onClick={onMapClick}
-                                    />
-                                );
-                            })}
-
-                            {/* 2. TEXTOS DOS TERRITÓRIOS (Sem seleção) */}
-                            {!selectedTerritory && (
-                                <g
-                                    className="territory-labels-container"
-                                    style={{ opacity: userScale > 1.05 ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}
-                                >
-                                    {laidOutLabels.map((node, i) => {
-                                        // Oculta o texto também se a região estiver bloqueada pelos filtros cruzados
-                                        const dStats = territoriesDynamicStats[node.id];
-                                        if (dStats && !dStats.matchesFilters) return null;
-
-                                        const { x, y, idealX, idealY, lines } = node;
-                                        const fontSize = 16 / effectiveScale;
-                                        const strokeW = 4 / effectiveScale;
-                                        const lineHeight = fontSize * 1.1;
-                                        const startY = y - ((lines.length - 1) * lineHeight) / 2;
-
-                                        // Verifica se precisa de uma leader line (apenas se o rótulo for afastado significativamente)
-                                        const dx = x - idealX;
-                                        const dy = y - idealY;
-                                        const distance = Math.hypot(dx, dy);
-                                        const needsLeaderLine = distance > 14 / baseTransform.scale;
-
-                                        return (
-                                            <g key={`t-lbl-${i}`}>
-                                                {needsLeaderLine && (
-                                                    <g opacity={0.9}>
-                                                        <line
-                                                            x1={idealX} y1={idealY} x2={x} y2={y}
-                                                            stroke={darkMode ? "rgba(255, 255, 255, 0.75)" : "rgba(15, 76, 129, 0.75)"}
-                                                            strokeWidth={1.8 / effectiveScale}
-                                                            strokeDasharray={`${3 / effectiveScale},${2 / effectiveScale}`}
-                                                        />
-                                                        <circle cx={idealX} cy={idealY} r={2.5 / effectiveScale} fill={darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(15, 76, 129, 0.9)"} />
-                                                    </g>
-                                                )}
-                                                <text
-                                                    x={x} y={y} textAnchor="middle" alignmentBaseline="middle"
-                                                    style={{
-                                                        paintOrder: 'stroke', stroke: darkMode ? 'rgba(17, 24, 39, 0.7)' : 'rgba(255, 255, 255, 0.7)', strokeWidth: `${strokeW * 0.8}px`, strokeLinejoin: 'round',
-                                                        fill: darkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0,0,0,0.85)', fontSize: `${fontSize}px`, fontWeight: '600',
-                                                    }}
-                                                >
-                                                    {lines.map((line, idx) => (
-                                                        <tspan key={idx} x={x} y={startY + (idx * lineHeight)}>{line}</tspan>
-                                                    ))}
-                                                </text>
-                                            </g>
-                                        );
-                                    })}
-                                </g>
-                            )}
-
-                            {/* TEXTOS DOS TERRITÓRIOS (QUANDO HÁ SELEÇÃO - para os não selecionados) */}
-                            {selectedTerritory && (
-                                <g style={{ pointerEvents: 'none' }}>
-                                    {territoryLabels.map((lbl, i) => {
-                                        const isSelectedLabel = getTerritoryKey(lbl.name) === getTerritoryKey(selectedTerritory.nome);
-                                        if (isSelectedLabel) return null; // Não renderiza o nome do território já selecionado
-
-                                        const lines = wrapText(lbl.name);
-                                        const fontSize = 14 / effectiveScale;
-                                        const lineHeight = fontSize * 1.1;
-                                        const startY = lbl.y - ((lines.length - 1) * lineHeight) / 2;
-
-                                        // Determina a cor do texto: mais sutil se não corresponder aos filtros
-                                        const dStats = territoriesDynamicStats[getTerritoryKey(lbl.name)];
-                                        const matchesFilters = !dStats || dStats.matchesFilters;
-                                        const fillColor = darkMode
-                                            ? (matchesFilters ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)')
-                                            : (matchesFilters ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)');
-
-                                        return (
-                                            <text key={`t-lbl-inactive-${i}`} x={lbl.x} y={lbl.y} textAnchor="middle" alignmentBaseline="middle" style={{ fill: fillColor, fontSize: `${fontSize}px`, fontWeight: '600' }}>
-                                                {lines.map((line, idx) => (
-                                                    <tspan key={idx} x={lbl.x} y={startY + (idx * lineHeight)}>{line}</tspan>
-                                                ))}
-                                            </text>
-                                        );
-                                    })}
-                                </g>
-                            )}
-
-                            {/* 3. TEXTOS DOS MUNICÍPIOS (Aparecem apenas quando um território é selecionado) */}
-                            {selectedTerritory && (
-                                <g style={{ opacity: 1, transition: 'opacity 0.4s ease', pointerEvents: 'none' }}>
-                                    {laidOutMunicipalityLabels.map((node, i) => {
-                                        const { x, y, idealX, idealY, lines } = node;
-                                        const fontSize = 14 / effectiveScale;
-                                        const strokeW = 3.5 / effectiveScale;
-                                        const lineHeight = fontSize * 1.1;
-                                        const startY = y - ((lines.length - 1) * lineHeight) / 2;
-
-                                        const dx = x - idealX;
-                                        const dy = y - idealY;
-                                        const distance = Math.hypot(dx, dy);
-                                        const needsLeaderLine = distance > 10 / baseTransform.scale;
-
-                                        return (
-                                            <g key={`m-lbl-${i}`}>
-                                                {needsLeaderLine && (
-                                                    <g opacity={0.9}>
-                                                        <line
-                                                            x1={idealX} y1={idealY} x2={x} y2={y}
-                                                            stroke={darkMode ? "rgba(255, 255, 255, 0.8)" : "rgba(15, 76, 129, 0.8)"}
-                                                            strokeWidth={1.5 / effectiveScale}
-                                                            strokeDasharray={`${2.5 / effectiveScale},${1.5 / effectiveScale}`}
-                                                        />
-                                                        <circle cx={idealX} cy={idealY} r={2 / effectiveScale} fill={darkMode ? "rgba(255, 255, 255, 0.95)" : "rgba(15, 76, 129, 0.95)"} />
-                                                    </g>
-                                                )}
-                                                <text
-                                                    x={x} y={y} textAnchor="middle" alignmentBaseline="middle"
-                                                    style={{
-                                                        paintOrder: 'stroke',
-                                                        stroke: darkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-                                                        strokeWidth: `${strokeW * 0.7}px`, strokeLinejoin: 'round',
-                                                        fill: darkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0,0,0,0.8)',
-                                                        fontSize: `${fontSize}px`, fontWeight: '500',
-                                                    }}
-                                                >
-                                                    {lines.map((line, idx) => (
-                                                        <tspan key={idx} x={x} y={startY + (idx * lineHeight)}>{line}</tspan>
-                                                    ))}
-                                                </text>
-                                            </g>
-                                        );
-                                    })}
-                                </g>
-                            )}
-                        </g>
-                    </g>
-                </svg>
+                    {/* TEXTOS DOS TERRITÓRIOS (Aparecem apenas se não tiver nada selecionado) */}
+                    {!selectedTerritory && Object.entries(territoryCenters).map(([name, center]) => (
+                        <Marker 
+                            key={name} 
+                            position={[center.lat, center.lng]} 
+                            icon={L.divIcon({
+                                className: 'bg-transparent border-0 shadow-none',
+                                html: `<div style="transform: translate(-50%, -50%); pointer-events: none;" class="px-2 py-1 rounded bg-[#18181B]/85 text-[#F9FAFB] text-[8px] font-bold uppercase tracking-widest border border-white/10 shadow-md backdrop-blur-sm whitespace-nowrap text-center">${name}</div>`,
+                                iconSize: [0, 0]
+                            })} 
+                            interactive={false} // Não bloqueia o mouse de tocar no município por baixo
+                        />
+                    ))}
+                </MapContainer>
             )}
 
-            {/* CAIXA LATERAL DE MUNICÍPIOS COM TRANSPARÊNCIA */}
+            {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
+            <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-[#141415]/90 backdrop-blur-md rounded-lg border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] overflow-hidden">
+                <button 
+                    onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
+                    className="w-9 h-9 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5"
+                    title="Aproximar"
+                >
+                    <span className="text-xl font-light leading-none mb-0.5">+</span>
+                </button>
+                <button 
+                    onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
+                    className="w-9 h-9 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5"
+                    title="Afastar"
+                >
+                    <span className="text-xl font-light leading-none mb-0.5">-</span>
+                </button>
+                <button 
+                    onClick={() => {
+                        mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8, easeLinearity: 0.25 });
+                        onSelectTerritory(null);
+                    }}
+                    className="w-9 h-9 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                    title="Resetar Mapa"
+                >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </svg>
+                </button>
+            </div>
+
+            {/* ================= CAIXA LATERAL DE MUNICÍPIOS (Aberta no Foco) ================= */}
             {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
-                <div className={`absolute top-5 right-5 z-30 w-56 md:w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[1.5rem] border backdrop-blur-xl shadow-2xl transition-all animate-soft-fade ${darkMode ? 'bg-gray-900/80 border-gray-700' : 'bg-white/80 border-white/60'}`}>
-                    <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 border-b pb-2 leading-tight ${darkMode ? 'text-gray-300 border-gray-700/50' : 'text-gray-500 border-gray-200/60'}`}>
-                        {selectedTerritory.nome}
-                    </h4>
-                    <ul className="flex flex-col gap-1.5">
+                <div className="absolute top-4 right-4 z-[400] w-56 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-3 rounded-md border bg-[#141415]/95 backdrop-blur-xl border-white/10 shadow-2xl transition-all animate-soft-fade pointer-events-auto">
+                    <div className="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
+                        <h4 className="text-[10px] font-bold text-[#8D34F9] uppercase tracking-widest leading-tight">
+                            {selectedTerritory.nome}
+                        </h4>
+                        <button 
+                            onClick={() => onSelectTerritory(null)}
+                            className="text-white/30 hover:text-red-400 transition-colors bg-white/5 hover:bg-white/10 rounded-sm p-1 ml-2"
+                        >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+                    <ul className="flex flex-col gap-[2px]">
                         {municipalitiesToShow.map((m, idx) => {
                             const isSemi = semiaridoMunicipios.includes(normalizeName(m));
                             return (
-                                <li key={idx} className={`text-[11px] font-medium flex items-center gap-2 leading-tight ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    <span className={`shrink-0 w-2 h-2 rounded-full border ${isSemi ? 'bg-gov-yellow border-yellow-600' : (darkMode ? 'bg-gray-300 border-gray-400' : 'bg-gray-200 border-gray-300')}`}></span>
-                                    {m}
+                                <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-white/80 py-1 hover:bg-white/5 rounded-sm px-1.5 cursor-default transition-colors">
+                                    <span className={`shrink-0 w-1.5 h-1.5 rounded-sm shadow-sm ${isSemi ? 'bg-[#F59E0B]' : 'bg-white/20'}`}></span>
+                                    <span className="truncate">{m}</span>
                                 </li>
                             );
                         })}
@@ -874,109 +376,77 @@ const PtiMap = React.memo(function PtiMap({
                     {selectedTerritoryMunicipalities.length > 4 && (
                         <button
                             onClick={() => setIsMunListExpanded(!isMunListExpanded)}
-                            className={`w-full mt-3 text-center text-[10px] font-bold uppercase tracking-wider py-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-800/70 hover:bg-gray-700/90 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}
+                            className="w-full mt-2 text-center text-[10px] font-semibold text-white/50 uppercase tracking-wider py-2 rounded-sm bg-white/5 hover:bg-white/10 hover:text-white transition-colors"
                         >
-                            {isMunListExpanded ? 'Ver menos' : `Ver mais ${selectedTerritoryMunicipalities.length - 4}...`}
+                            {isMunListExpanded ? 'Ver menos' : `Ver os ${selectedTerritoryMunicipalities.length} municípios`}
                         </button>
                     )}
                 </div>
             )}
 
-            {/* LEGENDA DO MAPA */}
-            {selectedTerritory && (
-                <div className={`absolute bottom-6 left-6 z-20 px-4 py-3.5 rounded-2xl border shadow-xl backdrop-blur-xl flex flex-col gap-2.5 pointer-events-none transition-all duration-500 animate-soft-fade ${darkMode ? 'bg-gray-900/60 border-gray-700/50' : 'bg-white/70 border-white/60'}`}>
-                    <div className="flex items-center gap-2.5">
-                        <span className="w-2 h-2 rounded-full bg-gov-yellow shadow-sm"></span>
-                        <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Pertencente ao Semiárido
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2.5 opacity-80">
-                        <span className={`w-2 h-2 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></span>
-                        <span className={`text-[10px] font-medium tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Não pertencente ao Semiárido
-                        </span>
-                    </div>
-                </div>
-            )}
-
-            {/* CONTROLES MANUAIS FLUTUANTES */}
-            <div className="absolute bottom-5 right-5 flex flex-col gap-2 z-20">
-                <button onClick={() => setUserScale(p => Math.min(p * 1.3, 10))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>+</button>
-                <button onClick={() => setUserScale(p => Math.max(p / 1.3, 0.5))} className={`w-8 h-8 rounded-lg shadow-md font-black text-lg flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>-</button>
-                <button onClick={() => { setUserScale(1); setUserPan({ x: 0, y: 0 }); onSelectTerritory(null); }} className={`w-8 h-8 rounded-lg shadow-md font-bold text-[10px] flex items-center justify-center transition-colors border ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-100'}`}>↺</button>
-            </div>
-
-            {/* TOOLTIP DO MOUSE DINÂMICO (Território OU Município) */}
-            {tooltip.visible && !isDragging && (hoveredTerritory || hoveredMunicipality) && (
+            {/* ================= TOOLTIP ================= */}
+            {tooltip.visible && (hoveredTerritory || hoveredMunicipality) && (
                 <div
-                    className={`absolute z-50 overflow-hidden rounded-2xl border backdrop-blur-md shadow-2xl pointer-events-none transition-opacity duration-200 ${darkMode ? 'bg-gray-900/90 border-gray-700' : 'bg-white/90 border-white/60'}`}
-                    style={{ top: tooltip.y, left: tooltip.x, width: 280 }}
+                    className="absolute z-[1000] overflow-hidden rounded-md border bg-[#18181B] border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.6)] pointer-events-none transition-opacity duration-150"
+                    style={{ top: tooltip.y, left: tooltip.x, width: 220 }}
                 >
-
-                    {/* CASO 1: HOVER NUM TERRITÓRIO GERAL */}
-                    {hoveredTerritory && hoveredData && dynamicStats && (
+                    {hoveredTerritory && hoveredData && dynamicStats && !selectedTerritory && (
                         <>
-                            <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredData.nome)] || '#0f766e' }}></div>
-                            <div className="p-4">
-                                <div className="flex justify-between items-start mb-3">
-                                    <h2 className={`font-bold text-[14px] uppercase tracking-tight leading-tight pr-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{hoveredData.nome}</h2>
+                            <div className="h-1 w-full" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredData.nome)] || '#8D34F9' }}></div>
+                            <div className="p-3">
+                                <div className="flex justify-between items-start mb-2">
+                                    <h2 className="font-semibold text-[12px] text-white/90 leading-tight pr-2">{hoveredData.nome}</h2>
                                     {dynamicStats.pctSemiarido > 0 && (
-                                        <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full uppercase flex-shrink-0 mt-0.5 ${dynamicStats.pctSemiarido >= 100 ? 'text-gov-red bg-gov-red/10 border border-gov-red/20' : 'text-yellow-600 bg-yellow-50 border border-yellow-100'}`}>
-                                            {dynamicStats.pctSemiarido >= 100 ? 'Semiárido' : `Semiárido: ${dynamicStats.pctSemiarido.toFixed(0)}%`}
+                                        <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-sm flex-shrink-0 ${dynamicStats.pctSemiarido >= 100 ? 'text-[#F59E0B] bg-[#F59E0B]/10' : 'text-[#F59E0B]/80 bg-[#F59E0B]/5'}`}>
+                                            {dynamicStats.pctSemiarido >= 100 ? '100%' : `${dynamicStats.pctSemiarido.toFixed(0)}%`} Semi
                                         </span>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-gray-400">Entidades CT&I</span>
-                                        <span className="block text-base font-black text-gov-blue">{dynamicStats.capacidadeCti}</span>
+                                <div className="grid grid-cols-2 gap-1 mb-1">
+                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
+                                        <span className="text-[9px] text-white/40 mb-0.5">Ativos</span>
+                                        <span className="text-[13px] font-semibold text-white/90">{dynamicStats.capacidadeCti}</span>
                                     </div>
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-gray-400">IFDM (Média)</span>
-                                        <span className="block text-base font-black text-gov-red">{dynamicStats.ifdm}</span>
+                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
+                                        <span className="text-[9px] text-white/40 mb-0.5">Média IFDM</span>
+                                        <span className="text-[13px] font-semibold text-[#8D34F9]">{dynamicStats.ifdm}</span>
                                     </div>
                                 </div>
-                                <div className={`rounded-lg p-2 border mb-2 ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
-                                    <span className="block text-[8px] font-bold uppercase text-gray-400">Iniciativas Estaduais</span>
-                                    <span className="block text-[11px] font-bold text-gov-cyan">{dynamicStats.conectaBahia}</span>
+                                <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex justify-between items-center mb-1">
+                                    <span className="text-[9px] text-white/40">Conecta Bahia</span>
+                                    <span className="text-[11px] font-semibold text-[#06B6D4]">{dynamicStats.conectaBahia}</span>
                                 </div>
-                                <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
-                                    <span className="block text-[8px] font-bold uppercase text-gray-400">Cadeias & IGs</span>
-                                    <span className={`block text-xs font-semibold truncate ${darkMode ? 'text-gray-300' : 'text-gray-700'}`} title={dynamicStats.cadeiasIgs}>{dynamicStats.cadeiasIgs}</span>
+                                <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
+                                    <span className="text-[9px] text-white/40 mb-0.5">Cadeias Produtivas</span>
+                                    <span className="text-[10px] text-white/70 truncate" title={dynamicStats.cadeiasIgs}>{dynamicStats.cadeiasIgs}</span>
                                 </div>
                             </div>
                         </>
                     )}
 
-                    {/* CASO 2: HOVER NUM MUNICÍPIO ESPECÍFICO */}
-                    {hoveredMunicipality && hoveredMunData && !hoveredTerritory && (
+                    {hoveredMunicipality && hoveredMunData && selectedTerritory && (
                         <>
-                            <div className="h-1.5 w-full" style={{ backgroundColor: '#0ea5e9' }}></div>
-                            <div className="p-4">
-                                <div className="flex justify-between items-start mb-3">
-                                    <h2 className={`font-bold text-[14px] uppercase tracking-tight leading-tight pr-2 ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>
-                                        {hoveredMunData.nome}
-                                    </h2>
+                            <div className="h-1 w-full bg-[#06B6D4]"></div>
+                            <div className="p-3">
+                                <div className="flex justify-between items-start mb-2">
+                                    <h2 className="font-semibold text-[12px] text-white/90 leading-tight pr-2">{hoveredMunData.nome}</h2>
                                     {hoveredMunData.isSemi && (
-                                        <span className="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase flex-shrink-0 mt-0.5 text-yellow-700 bg-gov-yellow/20 border border-gov-yellow/30">
-                                            Semiárido
-                                        </span>
+                                        <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-sm flex-shrink-0 text-[#F59E0B] bg-[#F59E0B]/10">Semi</span>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-gray-400">Entidades CT&I</span>
-                                        <span className="block text-base font-black text-gov-blue">{hoveredMunData.entidadesCount}</span>
+                                <div className="grid grid-cols-2 gap-1 mb-1">
+                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
+                                        <span className="text-[9px] text-white/40 mb-0.5">Ativos CT&I</span>
+                                        <span className="text-[13px] font-semibold text-white/90">{hoveredMunData.entidadesCount}</span>
                                     </div>
-                                    <div className={`rounded-lg p-2 border ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
-                                        <span className="block text-[8px] font-bold uppercase text-gray-400">Cadeias & IGs</span>
-                                        <span className="block text-base font-black text-gov-green">{hoveredMunData.cadeiasCount}</span>
+                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
+                                        <span className="text-[9px] text-white/40 mb-0.5">Cadeias/IGs</span>
+                                        <span className="text-[13px] font-semibold text-white/90">{hoveredMunData.cadeiasCount}</span>
                                     </div>
                                 </div>
-                                <div className={`rounded-lg p-2 border mb-2 ${darkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-gray-100/50 border-gray-200/50'}`}>
-                                    <span className="block text-[8px] font-bold uppercase text-gray-400">D. Territ. (IFDM)</span>
-                                    <span className="block text-[11px] font-bold text-gov-red">{hoveredMunData.ifdm}</span>
+                                <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex justify-between items-center">
+                                    <span className="text-[9px] text-white/40">Índice FIRJAN</span>
+                                    <span className="text-[11px] font-semibold text-[#8D34F9]">{hoveredMunData.ifdm}</span>
                                 </div>
                             </div>
                         </>
@@ -985,6 +455,4 @@ const PtiMap = React.memo(function PtiMap({
             )}
         </div>
     );
-});
-
-export default PtiMap;
+}
