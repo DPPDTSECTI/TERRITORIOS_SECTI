@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Minimalist Scrollbar matching Soft Blue UI */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #D6EAF8;
+  border-radius: 10px;
+  border: 2px solid #ffffff; /* Gives a padded look in some situations, but here background is transparent so border-right etc is better if needed. We will keep it simple. */
+}
+
+/* Redefine more cleanly */
+::-webkit-scrollbar-thumb {
+  background-color: #A8DADC;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #457B9D;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #A8DADC transparent;
+}
