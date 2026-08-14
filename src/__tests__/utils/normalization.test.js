@@ -5,7 +5,7 @@ import {
   fixWeirdCapitalization,
   expandirNomeEntidade,
   sortAlpha
-} from './normalization.js';
+} from '../../utils/normalization.js';
 
 describe('Funções de Normalização de Texto (normalization.js)', () => {
   describe('normalize()', () => {

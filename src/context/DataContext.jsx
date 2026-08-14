@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
-import useTerritoriosData from '../../useTerritoriosData.js';
+import useTerritoriosData from '../hooks/useTerritoriosData.js';
 
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);

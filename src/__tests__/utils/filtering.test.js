@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterCursos } from './normalization.js';
+import { filterCursos } from '../../utils/normalization.js';
 
 describe('Funções de Filtragem de Dados (filtering.test.js)', () => {
   const sampleCursos = [

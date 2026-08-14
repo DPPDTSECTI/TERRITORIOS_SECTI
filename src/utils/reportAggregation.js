@@ -3,7 +3,7 @@
  * Sem dependências de DOM ou React, para testes e geração de relatórios (PNG/PDF).
  */
 
-import { classificarInstituicao, extractSigla, normalize } from '../src/utils/normalization.js';
+import { classificarInstituicao, extractSigla, normalize } from './normalization.js';
 
 export { classificarInstituicao, extractSigla };
 

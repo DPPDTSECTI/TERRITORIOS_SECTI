@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { get as idbGet, set as idbSet } from 'idb-keyval';
-import territoriosMunicipios from './utils/territorioMunicipios.json';
-import { classificarInstituicao } from './utils/reportAggregation.js';
+import territoriosMunicipios from '../data/territorioMunicipios.json';
+import { classificarInstituicao } from '../utils/reportAggregation.js';
 
 export function territorySlug(name) {
     return String(name || '')

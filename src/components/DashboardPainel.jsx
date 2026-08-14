@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 
 // IMPORTAÇÃO DO MAPA
-import PtiMap from '../../PtiMap.jsx';
+import PtiMap from './PtiMap.jsx';
 import DonutChart from './DonutChart.jsx';
 
 export default function DashboardPainel() {
@@ -28,10 +28,30 @@ export default function DashboardPainel() {
 
 
 
-      {/* A LINHA DE KPIs FOI MOVIDA PARA O LADO DIREITO */}
+      {/* ================= GRID DE KPIs (MOVIDO PARA O TOPO) ================= */}
+      <div className="w-full relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
+          {kpis.map((kpi, index) => (
+            <div
+              key={index}
+              className="aspect-auto h-32 md:h-36 bg-white rounded-[24px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-2 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group overflow-hidden text-center p-4 cursor-default"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-2 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-3">
+                <kpi.icon size={22} strokeWidth={2.5} />
+              </div>
+              <span className="text-3xl xl:text-4xl font-extrabold text-[#1D3557] tracking-tight leading-none mb-1">
+                {kpi.value}
+              </span>
+              <span className="text-[#457B9D] text-[10px] uppercase font-bold tracking-widest mt-1">
+                {kpi.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* ================= GRID PRINCIPAL ================= */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-[550px]">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
         <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group">
@@ -77,28 +97,8 @@ export default function DashboardPainel() {
           </div>
         </div>
 
-        {/* LADO DIREITO: ESBOÇOS DOS GRÁFICOS E KPIs */}
+        {/* LADO DIREITO: ESBOÇOS DOS GRÁFICOS */}
         <div className="lg:col-span-7 flex flex-col gap-6">
-
-          {/* ================= GRID DE KPIs ================= */}
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
-            {kpis.map((kpi, index) => (
-              <div
-                key={index}
-                className="aspect-square bg-white rounded-[24px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-2 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group overflow-hidden text-center p-4 cursor-default"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-3 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-3">
-                  <kpi.icon size={22} strokeWidth={2.5} />
-                </div>
-                <span className="text-3xl xl:text-4xl font-extrabold text-[#1D3557] tracking-tight leading-none mb-1">
-                  {kpi.value}
-                </span>
-                <span className="text-[#457B9D] text-[10px] uppercase font-bold tracking-widest mt-1">
-                  {kpi.label}
-                </span>
-              </div>
-            ))}
-          </div>
 
           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[240px]">
             <DonutChart
@@ -155,3 +155,9 @@ export default function DashboardPainel() {
     </main>
   );
 }
+
+
+
+
+
+  

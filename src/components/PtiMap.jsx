@@ -3,7 +3,7 @@ import { MapContainer, GeoJSON, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
-import territoriosMunicipios from './utils/territorioMunicipios.json';
+import territoriosMunicipios from '../data/territorioMunicipios.json';
 
 // Paleta Categórica Linear UI
 const TERRITORY_COLORS = [
