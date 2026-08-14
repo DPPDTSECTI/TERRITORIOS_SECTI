@@ -5,13 +5,13 @@ import L from 'leaflet';
 import * as topojson from 'topojson-client';
 import territoriosMunicipios from '../data/territorioMunicipios.json';
 
-// Paleta Categórica Linear UI
+// Paleta Soft Blue & Teal (Variations of #1D3557, #457B9D, #A8DADC)
 const TERRITORY_COLORS = [
-    '#5E6AD2', '#26B5CE', '#F2A65A', '#E76E50', '#8D34F9', '#F94D67', 
-    '#24C38E', '#F0D45E', '#55A4F9', '#B574F2', '#4CBF99', '#E2805F', 
-    '#6875F5', '#D65B82', '#43A047', '#F4923C', '#3984DA', '#9E57E5', 
-    '#14B8A6', '#EF4444', '#8B5CF6', '#10B981', '#F59E0B', '#3B82F6', 
-    '#EC4899', '#6366F1', '#06B6D4' 
+    '#1D3557', '#2A4665', '#385874', '#457B9D', '#548FB4', '#64A4CB',
+    '#75B8E3', '#87CBEB', '#9FDDF3', '#A8DADC', '#96C6C8', '#85B2B4',
+    '#739DA0', '#62898D', '#507479', '#3F6065', '#2E4C51', '#213B40',
+    '#274D60', '#2C5E80', '#3270A0', '#3881C0', '#4293D8', '#4FA4EF',
+    '#26597A', '#336D96', '#3D81B2'
 ];
 
 const GEOGRAPHICAL_ORDER = [
@@ -127,14 +127,14 @@ export default function PtiMap({
         const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
 
         let opacity = 0.85; 
-        let fillColor = territoryColorMap[normalizedFeatName] || '#333333';
+        let fillColor = territoryColorMap[normalizedFeatName] || '#D6EAF8';
         let weight = 0.8; 
-        let color = 'rgba(255, 255, 255, 0.4)'; 
+        let color = '#FFFFFF'; 
 
         if (blockClickAndColor && !selectedTerritory) {
-            fillColor = '#18181B'; 
-            opacity = 0.40;
-            color = 'rgba(255, 255, 255, 0.1)';
+            fillColor = '#E2E8F0'; 
+            opacity = 0.50;
+            color = '#FFFFFF';
         } else if (selectedTerritory) {
             if (isSelectedMap) {
                 opacity = 0.95;
@@ -142,10 +142,10 @@ export default function PtiMap({
                 color = '#FFFFFF';
                 if (filtroSemiarido && isMunSemi) fillColor = '#F59E0B'; 
             } else {
-                fillColor = '#18181B';
-                opacity = 0.15; 
-                weight = 0.4;
-                color = 'rgba(255, 255, 255, 0.1)'; 
+                fillColor = '#E2E8F0';
+                opacity = 0.35; 
+                weight = 0.6;
+                color = '#FFFFFF'; 
             }
         }
 
@@ -181,12 +181,12 @@ export default function PtiMap({
                     setHoveredMunicipality(null);
                     
                     layersByTerritory.current[tKey].forEach(l => {
-                        l.setStyle({ fillOpacity: 1, color: 'rgba(255, 255, 255, 0.8)' });
+                        l.setStyle({ fillOpacity: 1, color: '#FFFFFF', weight: 1.5 });
                         l.bringToFront();
                     });
                 } else {
                     setHoveredMunicipality(feature.properties.nome);
-                    e.target.setStyle({ fillOpacity: 1, color: '#FFFFFF', weight: 1.5 });
+                    e.target.setStyle({ fillOpacity: 1, color: '#1D3557', weight: 2 });
                     e.target.bringToFront();
                 }
             },
@@ -231,7 +231,7 @@ export default function PtiMap({
         if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
 
-        setTooltip({ visible: true, x, y });
+        setTooltip({ visible: false, x, y });
     };
 
     const hoveredData = hoveredTerritory ? territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(hoveredTerritory)) : null;
@@ -273,9 +273,9 @@ export default function PtiMap({
             onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
         >
             {loading || !geoJsonData ? (
-                <div className="flex flex-col items-center text-white/50">
-                    <svg className="animate-spin h-6 w-6 mb-2 text-[#8D34F9]" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span className="text-[10px] font-medium tracking-widest uppercase">Carregando Malha...</span>
+                <div className="flex flex-col items-center text-[#457B9D]">
+                    <svg className="animate-spin h-6 w-6 mb-2 text-[#457B9D]" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span className="text-[10px] font-bold tracking-widest uppercase">Carregando Malha...</span>
                 </div>
             ) : (
                 <MapContainer 
@@ -286,11 +286,11 @@ export default function PtiMap({
                     scrollWheelZoom={true}
                     doubleClickZoom={false}
                     className="w-full h-full outline-none z-0"
-                    style={{ background: '#141415' }} 
+                    style={{ background: 'transparent' }} 
                 >
                     <TileLayer
-                        url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
-                        opacity={0.8} 
+                        url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
+                        opacity={0.6} 
                     />
 
                     <GeoJSON 
@@ -301,47 +301,35 @@ export default function PtiMap({
                         onEachFeature={onEachFeature}
                     />
 
-                    {/* TEXTOS DOS TERRITÓRIOS (Aparecem apenas se não tiver nada selecionado) */}
-                    {!selectedTerritory && Object.entries(territoryCenters).map(([name, center]) => (
-                        <Marker 
-                            key={name} 
-                            position={[center.lat, center.lng]} 
-                            icon={L.divIcon({
-                                className: 'bg-transparent border-0 shadow-none',
-                                html: `<div style="transform: translate(-50%, -50%); pointer-events: none;" class="px-2 py-1 rounded bg-[#18181B]/85 text-[#F9FAFB] text-[8px] font-bold uppercase tracking-widest border border-white/10 shadow-md backdrop-blur-sm whitespace-nowrap text-center">${name}</div>`,
-                                iconSize: [0, 0]
-                            })} 
-                            interactive={false} // Não bloqueia o mouse de tocar no município por baixo
-                        />
-                    ))}
+                    {/* REMOVIDO: TEXTOS DOS TERRITÓRIOS (Causava sobreposição e poluição visual, o tooltip já resolve isso) */}
                 </MapContainer>
             )}
 
             {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
-            <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-[#141415]/90 backdrop-blur-md rounded-lg border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-white/90 backdrop-blur-xl rounded-[18px] border border-white shadow-[0_8px_32px_rgba(29,53,87,0.1)] overflow-hidden">
                 <button 
                     onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-                    className="w-9 h-9 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5"
+                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40"
                     title="Aproximar"
                 >
-                    <span className="text-xl font-light leading-none mb-0.5">+</span>
+                    <span className="text-xl font-medium leading-none mb-0.5">+</span>
                 </button>
                 <button 
                     onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-                    className="w-9 h-9 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5"
+                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40"
                     title="Afastar"
                 >
-                    <span className="text-xl font-light leading-none mb-0.5">-</span>
+                    <span className="text-xl font-medium leading-none mb-0.5">-</span>
                 </button>
                 <button 
                     onClick={() => {
                         mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8, easeLinearity: 0.25 });
                         onSelectTerritory(null);
                     }}
-                    className="w-9 h-9 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors"
                     title="Resetar Mapa"
                 >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                         <path d="M3 3v5h5"/>
                     </svg>
@@ -350,24 +338,24 @@ export default function PtiMap({
 
             {/* ================= CAIXA LATERAL DE MUNICÍPIOS (Aberta no Foco) ================= */}
             {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
-                <div className="absolute top-4 right-4 z-[400] w-56 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-3 rounded-md border bg-[#141415]/95 backdrop-blur-xl border-white/10 shadow-2xl transition-all animate-soft-fade pointer-events-auto">
-                    <div className="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
-                        <h4 className="text-[10px] font-bold text-[#8D34F9] uppercase tracking-widest leading-tight">
+                <div className="absolute top-4 right-4 z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[20px] border bg-white/95 backdrop-blur-xl border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] transition-all animate-soft-fade pointer-events-auto">
+                    <div className="flex justify-between items-center mb-3 border-b border-[#D6EAF8] pb-3">
+                        <h4 className="text-[11px] font-bold text-[#1D3557] uppercase tracking-widest leading-tight">
                             {selectedTerritory.nome}
                         </h4>
                         <button 
                             onClick={() => onSelectTerritory(null)}
-                            className="text-white/30 hover:text-red-400 transition-colors bg-white/5 hover:bg-white/10 rounded-sm p-1 ml-2"
+                            className="text-[#457B9D] hover:text-red-500 transition-colors bg-[#D6EAF8]/30 hover:bg-red-50 rounded-full p-1.5 ml-2"
                         >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                     </div>
-                    <ul className="flex flex-col gap-[2px]">
+                    <ul className="flex flex-col gap-1">
                         {municipalitiesToShow.map((m, idx) => {
                             const isSemi = semiaridoMunicipios.includes(normalizeName(m));
                             return (
-                                <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-white/80 py-1 hover:bg-white/5 rounded-sm px-1.5 cursor-default transition-colors">
-                                    <span className={`shrink-0 w-1.5 h-1.5 rounded-sm shadow-sm ${isSemi ? 'bg-[#F59E0B]' : 'bg-white/20'}`}></span>
+                                <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-[#457B9D] py-1.5 hover:bg-[#D6EAF8]/40 rounded-lg px-2 cursor-default transition-colors">
+                                    <span className={`shrink-0 w-1.5 h-1.5 rounded-full shadow-sm ${isSemi ? 'bg-[#F59E0B]' : 'bg-[#A8DADC]'}`}></span>
                                     <span className="truncate">{m}</span>
                                 </li>
                             );
@@ -376,7 +364,7 @@ export default function PtiMap({
                     {selectedTerritoryMunicipalities.length > 4 && (
                         <button
                             onClick={() => setIsMunListExpanded(!isMunListExpanded)}
-                            className="w-full mt-2 text-center text-[10px] font-semibold text-white/50 uppercase tracking-wider py-2 rounded-sm bg-white/5 hover:bg-white/10 hover:text-white transition-colors"
+                            className="w-full mt-3 text-center text-[10px] font-bold text-[#457B9D] hover:text-[#1D3557] uppercase tracking-wider py-2.5 rounded-lg bg-[#D6EAF8]/30 hover:bg-[#D6EAF8]/70 transition-colors"
                         >
                             {isMunListExpanded ? 'Ver menos' : `Ver os ${selectedTerritoryMunicipalities.length} municípios`}
                         </button>
@@ -387,38 +375,38 @@ export default function PtiMap({
             {/* ================= TOOLTIP ================= */}
             {tooltip.visible && (hoveredTerritory || hoveredMunicipality) && (
                 <div
-                    className="absolute z-[1000] overflow-hidden rounded-md border bg-[#18181B] border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.6)] pointer-events-none transition-opacity duration-150"
-                    style={{ top: tooltip.y, left: tooltip.x, width: 220 }}
+                    className="absolute z-[1000] overflow-hidden rounded-[16px] border bg-white/95 backdrop-blur-md border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] pointer-events-none transition-opacity duration-150"
+                    style={{ top: tooltip.y, left: tooltip.x, width: 240 }}
                 >
                     {hoveredTerritory && hoveredData && dynamicStats && !selectedTerritory && (
                         <>
-                            <div className="h-1 w-full" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredData.nome)] || '#8D34F9' }}></div>
-                            <div className="p-3">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h2 className="font-semibold text-[12px] text-white/90 leading-tight pr-2">{hoveredData.nome}</h2>
+                            <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredData.nome)] || '#457B9D' }}></div>
+                            <div className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                    <h2 className="font-bold text-[13px] text-[#1D3557] leading-tight pr-2">{hoveredData.nome}</h2>
                                     {dynamicStats.pctSemiarido > 0 && (
-                                        <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-sm flex-shrink-0 ${dynamicStats.pctSemiarido >= 100 ? 'text-[#F59E0B] bg-[#F59E0B]/10' : 'text-[#F59E0B]/80 bg-[#F59E0B]/5'}`}>
+                                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${dynamicStats.pctSemiarido >= 100 ? 'text-[#D97706] bg-[#FEF3C7]' : 'text-[#D97706] bg-[#FEF3C7]/60'}`}>
                                             {dynamicStats.pctSemiarido >= 100 ? '100%' : `${dynamicStats.pctSemiarido.toFixed(0)}%`} Semi
                                         </span>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-2 gap-1 mb-1">
-                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
-                                        <span className="text-[9px] text-white/40 mb-0.5">Ativos</span>
-                                        <span className="text-[13px] font-semibold text-white/90">{dynamicStats.capacidadeCti}</span>
+                                <div className="grid grid-cols-2 gap-2 mb-2">
+                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
+                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Ativos</span>
+                                        <span className="text-[14px] font-bold text-[#1D3557]">{dynamicStats.capacidadeCti}</span>
                                     </div>
-                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
-                                        <span className="text-[9px] text-white/40 mb-0.5">Média IFDM</span>
-                                        <span className="text-[13px] font-semibold text-[#8D34F9]">{dynamicStats.ifdm}</span>
+                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
+                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Média IFDM</span>
+                                        <span className="text-[14px] font-bold text-[#1D3557]">{dynamicStats.ifdm}</span>
                                     </div>
                                 </div>
-                                <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex justify-between items-center mb-1">
-                                    <span className="text-[9px] text-white/40">Conecta Bahia</span>
-                                    <span className="text-[11px] font-semibold text-[#06B6D4]">{dynamicStats.conectaBahia}</span>
+                                <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex justify-between items-center mb-2">
+                                    <span className="text-[10px] text-[#457B9D] font-medium">Conecta Bahia</span>
+                                    <span className="text-[12px] font-bold text-[#1D3557]">{dynamicStats.conectaBahia}</span>
                                 </div>
-                                <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
-                                    <span className="text-[9px] text-white/40 mb-0.5">Cadeias Produtivas</span>
-                                    <span className="text-[10px] text-white/70 truncate" title={dynamicStats.cadeiasIgs}>{dynamicStats.cadeiasIgs}</span>
+                                <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
+                                    <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Cadeias Produtivas</span>
+                                    <span className="text-[11px] text-[#1D3557] font-medium truncate" title={dynamicStats.cadeiasIgs}>{dynamicStats.cadeiasIgs || '-'}</span>
                                 </div>
                             </div>
                         </>
@@ -426,27 +414,27 @@ export default function PtiMap({
 
                     {hoveredMunicipality && hoveredMunData && selectedTerritory && (
                         <>
-                            <div className="h-1 w-full bg-[#06B6D4]"></div>
-                            <div className="p-3">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h2 className="font-semibold text-[12px] text-white/90 leading-tight pr-2">{hoveredMunData.nome}</h2>
+                            <div className="h-1.5 w-full bg-[#457B9D]"></div>
+                            <div className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                    <h2 className="font-bold text-[13px] text-[#1D3557] leading-tight pr-2">{hoveredMunData.nome}</h2>
                                     {hoveredMunData.isSemi && (
-                                        <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-sm flex-shrink-0 text-[#F59E0B] bg-[#F59E0B]/10">Semi</span>
+                                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 text-[#D97706] bg-[#FEF3C7]">Semi</span>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-2 gap-1 mb-1">
-                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
-                                        <span className="text-[9px] text-white/40 mb-0.5">Ativos CT&I</span>
-                                        <span className="text-[13px] font-semibold text-white/90">{hoveredMunData.entidadesCount}</span>
+                                <div className="grid grid-cols-2 gap-2 mb-2">
+                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
+                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Ativos CT&I</span>
+                                        <span className="text-[14px] font-bold text-[#1D3557]">{hoveredMunData.entidadesCount}</span>
                                     </div>
-                                    <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex flex-col">
-                                        <span className="text-[9px] text-white/40 mb-0.5">Cadeias/IGs</span>
-                                        <span className="text-[13px] font-semibold text-white/90">{hoveredMunData.cadeiasCount}</span>
+                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
+                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Cadeias/IGs</span>
+                                        <span className="text-[14px] font-bold text-[#1D3557]">{hoveredMunData.cadeiasCount}</span>
                                     </div>
                                 </div>
-                                <div className="rounded-sm p-1.5 border bg-white/[0.02] border-white/5 flex justify-between items-center">
-                                    <span className="text-[9px] text-white/40">Índice FIRJAN</span>
-                                    <span className="text-[11px] font-semibold text-[#8D34F9]">{hoveredMunData.ifdm}</span>
+                                <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex justify-between items-center">
+                                    <span className="text-[10px] text-[#457B9D] font-medium">Índice FIRJAN</span>
+                                    <span className="text-[12px] font-bold text-[#1D3557]">{hoveredMunData.ifdm}</span>
                                 </div>
                             </div>
                         </>
