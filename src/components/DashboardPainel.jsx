@@ -7,6 +7,7 @@ import { PieChart, Pie, Cell, Sector } from 'recharts';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 // IMPORTAÇÃO DO MAPA
 import PtiMap from './PtiMap.jsx';
@@ -247,7 +248,7 @@ export default function DashboardPainel() {
         </div>
 
         {/* LADO DIREITO: DASHBOARD DE CURSOS E INDICADORES */}
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
@@ -393,8 +394,8 @@ export default function DashboardPainel() {
                 </p>
               </div>
 
-              {/* TOGGLE VERTICAL (TOP / MEDIUM / BOTTOM) */}
-              <div className="flex flex-col items-center justify-center gap-[2px] bg-gray-50 border border-gray-100 rounded-[8px] p-1">
+              {/* TOGGLE HORIZONTAL (TOP / MEDIUM / BOTTOM) */}
+              <div className="flex flex-row items-center justify-center gap-[2px] bg-gray-50 border border-gray-100 rounded-[8px] p-1 mr-7 relative z-40">
                 <button
                   onClick={() => setIfdmFilter('top')}
                   className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'top' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}

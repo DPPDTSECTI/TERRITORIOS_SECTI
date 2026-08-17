@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 function SortableSidebarItem({ item, isActive }) {
   const {
@@ -23,22 +24,31 @@ function SortableSidebarItem({ item, isActive }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`flex items-center gap-1 ${isDragging ? 'opacity-70 scale-105' : ''}`}>
-      <button {...attributes} {...listeners} className="p-1 cursor-grab active:cursor-grabbing text-[#A0AEC0] hover:text-[#1D3557] rounded-md hover:bg-gray-100 transition-colors shrink-0">
-        <GripVertical size={16} />
-      </button>
-
+    <div ref={setNodeRef} style={style} className={`relative flex items-center w-full ${isDragging ? 'opacity-70 scale-105' : ''}`}>
       <Link
         to={item.path}
-        className={`flex-1 h-[44px] px-3.5 flex items-center gap-3 rounded-[16px] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-95 ${isActive
+        className={`flex-1 h-[44px] pl-3.5 pr-1.5 flex items-center gap-3 rounded-[16px] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-95 ${isActive
           ? 'bg-[#457B9D] text-white shadow-lg shadow-[#457B9D]/30 translate-x-1'
           : 'text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557] hover:translate-x-1'
           }`}
       >
         <item.icon size={18} className={isActive ? 'text-white' : 'text-[#457B9D]'} strokeWidth={isActive ? 2.5 : 2} />
-        <span className={`text-[14px] tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}>
+        <span className={`text-[14px] tracking-wide flex-1 text-left ${isActive ? 'font-bold' : 'font-medium'}`}>
           {item.label}
         </span>
+
+        {/* DRAG HANDLE DENTRO DA CÉLULA (LADO DIREITO) */}
+        <div 
+          {...attributes} 
+          {...listeners} 
+          className={`p-1.5 cursor-grab active:cursor-grabbing rounded-lg transition-colors shrink-0 flex items-center justify-center ${isActive ? 'text-white/60 hover:text-white hover:bg-white/20' : 'text-[#A0AEC0] hover:text-[#1D3557] hover:bg-[#1D3557]/10'}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <GripVertical size={14} />
+        </div>
       </Link>
     </div>
   );
@@ -124,7 +134,9 @@ export default function Sidebar({ username, navOnly = false }) {
 
       <nav className="flex-1 flex flex-col gap-2 overflow-y-auto hide-scroll px-4 -mx-4 pt-1">
         {navItemsGroup1.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isDashboardItem = item.label === 'Dashboard';
+          const isModuleActive = INITIAL_MODULES.some(mod => mod.path === location.pathname);
+          const isActive = location.pathname === item.path || (isDashboardItem && isModuleActive);
           return (
             <Link
               key={item.path}
@@ -149,11 +161,7 @@ export default function Sidebar({ username, navOnly = false }) {
               <span className="text-[10px] font-bold text-[#457B9D]/60 uppercase tracking-widest">Módulos</span>
             </div>
 
-            <DndContext 
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
               <SortableContext 
                 items={modulesItems.map(i => i.path)}
                 strategy={verticalListSortingStrategy}
