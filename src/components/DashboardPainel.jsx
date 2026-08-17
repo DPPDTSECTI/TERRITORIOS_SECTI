@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Settings, GraduationCap, TrendingUp, Database, Building2,
-  ChevronDown, Map, MapPin, LogOut
+  ChevronDown, ChevronUp, Minus, Map, MapPin, LogOut
 } from 'lucide-react';
+import { PieChart, Pie, Cell, Sector } from 'recharts';
 
 // IMPORTAÇÃO DO MAPA
 import PtiMap from './PtiMap.jsx';
@@ -13,6 +14,22 @@ export default function DashboardPainel() {
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   // Estado que guarda o modo de visualização (território vs município)
   const [viewMode, setViewMode] = useState('territorio');
+  // Estado do filtro IFDM
+  const [ifdmFilter, setIfdmFilter] = useState('top');
+  // Estado do item hoverado no gráfico de pizza
+  const [hoveredPieIndex, setHoveredPieIndex] = useState(null);
+  const pieHoverTimeoutRef = useRef(null);
+
+  const handlePieMouseEnter = (index) => {
+    if (pieHoverTimeoutRef.current) clearTimeout(pieHoverTimeoutRef.current);
+    setHoveredPieIndex(index);
+  };
+
+  const handlePieMouseLeave = () => {
+    pieHoverTimeoutRef.current = setTimeout(() => {
+      setHoveredPieIndex(null);
+    }, 150); // Delay suave previne a piscada no texto e estabiliza a animação
+  };
 
   // Dados simulados baseados no seu print do Figma (estes depois virão do DataContext)
   const kpis = [
@@ -22,6 +39,19 @@ export default function DashboardPainel() {
     { label: 'Cadeias', value: '267', icon: Database },
     { label: 'Territórios', value: '88', icon: Building2 }
   ];
+
+  const ecosystemData = [
+    { region: 'Campi Univ. Privadas', value: 85, percent: '100%', colorHex: '#1D3557', tailwind: 'bg-[#1D3557]' },
+    { region: 'Campi Univ. Públicas', value: 54, percent: '63.5%', colorHex: '#2563EB', tailwind: 'bg-[#2563EB]' },
+    { region: 'Campi Inst. Federais', value: 40, percent: '47%', colorHex: '#457B9D', tailwind: 'bg-[#457B9D]' },
+    { region: 'Incubadoras & Acel.', value: 31, percent: '36.4%', colorHex: '#06B6D4', tailwind: 'bg-[#06B6D4]' },
+    { region: 'Espaços Dinamizadores', value: 28, percent: '32.9%', colorHex: '#10B981', tailwind: 'bg-[#10B981]' },
+    { region: 'Centros de Pesquisa', value: 4, percent: '4.7%', colorHex: '#F59E0B', tailwind: 'bg-[#F59E0B]' },
+    { region: 'ICTs Mapeadas', value: 2, percent: '2.3%', colorHex: '#EF4444', tailwind: 'bg-[#EF4444]' },
+    { region: 'Parques Tecnológicos', value: 2, percent: '2.3%', colorHex: '#8B5CF6', tailwind: 'bg-[#8B5CF6]' }
+  ];
+
+  const pieDataWithFill = ecosystemData.map(item => ({ ...item, fill: item.colorHex }));
 
   return (
     <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-6 bg-transparent font-sans w-full">
@@ -38,9 +68,9 @@ export default function DashboardPainel() {
           {/* PERFIL DO USUÁRIO */}
           <div className="flex items-center gap-3 cursor-pointer group">
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop" 
-                alt="Avatar do Usuário" 
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
+                alt="Avatar do Usuário"
                 className="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform"
               />
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
@@ -60,13 +90,13 @@ export default function DashboardPainel() {
 
           {/* BOTÕES DE CONFIGURAÇÃO E LOGOUT */}
           <div className="flex items-center gap-2">
-            <button 
+            <button
               title="Configurações"
               className="w-9 h-9 rounded-full bg-white text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 shadow-[0_2px_10px_rgba(29,53,87,0.04)]"
             >
               <Settings size={16} strokeWidth={2} />
             </button>
-            <button 
+            <button
               title="Sair da Sessão"
               className="w-9 h-9 rounded-full bg-white text-[#457B9D] hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 shadow-[0_2px_10px_rgba(29,53,87,0.04)]"
             >
@@ -80,19 +110,19 @@ export default function DashboardPainel() {
 
       {/* ================= GRID DE KPIs (MOVIDO PARA O TOPO) ================= */}
       <div className="w-full relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="aspect-auto h-32 md:h-36 bg-white rounded-[24px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-2 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group overflow-hidden text-center p-4 cursor-default"
+              className="aspect-auto h-20 md:h-24 bg-white rounded-[16px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_2px_12px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group overflow-hidden text-center p-2 cursor-default"
             >
-              <div className="w-12 h-12 rounded-2xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-2 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-3">
-                <kpi.icon size={22} strokeWidth={2.5} />
+              <div className="w-8 h-8 rounded-xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-3">
+                <kpi.icon size={16} strokeWidth={2.5} />
               </div>
-              <span className="text-3xl xl:text-4xl font-extrabold text-[#1D3557] tracking-tight leading-none mb-1">
+              <span className="text-xl xl:text-2xl font-extrabold text-[#1D3557] tracking-tight leading-none mb-0.5">
                 {kpi.value}
               </span>
-              <span className="text-[#457B9D] text-[10px] uppercase font-bold tracking-widest mt-1">
+              <span className="text-[#457B9D] text-[8px] uppercase font-bold tracking-widest">
                 {kpi.label}
               </span>
             </div>
@@ -147,60 +177,280 @@ export default function DashboardPainel() {
           </div>
         </div>
 
-        {/* LADO DIREITO: ESBOÇOS DOS GRÁFICOS */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
+        {/* LADO DIREITO: DASHBOARD DE CURSOS E INDICADORES */}
+        <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
 
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[240px]">
-            <DonutChart
-              title=""
-              totalLabel="Total de Cursos"
-              data={[
-                { label: 'Tecnologia da Informação', value: 340, color: '#1D3557' },
-                { label: 'Engenharias', value: 285, color: '#2563EB' },
-                { label: 'Saúde', value: 210, color: '#457B9D' },
-                { label: 'Ciências Humanas', value: 160, color: '#A8DADC' },
-                { label: 'Artes e Design', value: 95, color: '#F87171' },
-              ]}
-            />
+          {/* CARD 1: DONUT CHART (Cursos por Área) */}
+          <DonutChart
+            title=""
+            totalLabel="Total de Cursos"
+            data={[
+              { label: 'Tecnologia da Informação', value: 340, color: '#1D3557' },
+              { label: 'Engenharias', value: 285, color: '#2563EB' },
+              { label: 'Saúde', value: 210, color: '#457B9D' },
+              { label: 'Ciências Humanas', value: 160, color: '#A8DADC' },
+              { label: 'Artes e Design', value: 95, color: '#F87171' },
+            ]}
+          />
 
-            <div className="bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-6 relative flex flex-col items-center justify-center group cursor-default">
-              <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] group-hover:text-[#457B9D] transition-colors">
-                Novo Indicador
-              </p>
-              <span className="text-[#457B9D]/60 text-sm font-medium">Em breve</span>
+          {/* CARD 2: PIE CHART (Distribuição do Ecossistema) */}
+          <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default">
+            
+            {/* HEADER SECTION */}
+            <div className="flex justify-between items-start mb-3 relative z-10 w-full">
+              <div className="flex flex-col">
+                <h2 className="text-[#1D3557] font-extrabold text-[15px] tracking-tight">Distribuição do Ecossistema</h2>
+                <p className="text-[#457B9D]/60 text-[11px] font-medium mt-0.5">Visão geral das categorias e ranking</p>
+              </div>
+            </div>
+
+            <div className="flex flex-row items-center justify-between flex-1 gap-4">
+              {/* PIE CHART SVG */}
+              <div className="flex flex-col items-center justify-center w-[160px] shrink-0">
+                <div className="relative">
+                  <PieChart width={160} height={160} className="drop-shadow-sm">
+                    <Pie
+                      data={pieDataWithFill}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={0} // Buraco = 0 (Gráfico de Pizza completo)
+                      outerRadius={65} // Tamanho base
+                      paddingAngle={4} // O espaço/gap entre as fatias
+                      cornerRadius={5} // O tão desejado arredondamento de exatos 5px nas bordas!
+                      dataKey="value"
+                      stroke="none"
+                      minAngle={15} // Garante que fatias pequenas (valores 2, 5) tenham um tamanho mínimo visível perfeitamente matemático
+                      shape={(props) => {
+                        // Renderizamos um shape customizado para todas as fatias para poder aplicar CSS Transitions fluidas
+                        const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, cornerRadius, index } = props;
+                        const isHovered = hoveredPieIndex === index;
+                        const isOtherHovered = hoveredPieIndex !== null && !isHovered;
+                        
+                        return (
+                          <g 
+                            style={{ 
+                              transform: isHovered ? 'scale(1.08)' : 'scale(1)', 
+                              transformOrigin: `${cx}px ${cy}px`,
+                              transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)' 
+                            }}
+                          >
+                            <Sector
+                              cx={cx}
+                              cy={cy}
+                              innerRadius={innerRadius}
+                              outerRadius={outerRadius}
+                              startAngle={startAngle}
+                              endAngle={endAngle}
+                              fill={fill}
+                              cornerRadius={cornerRadius}
+                              className="cursor-pointer drop-shadow-sm transition-opacity duration-300 ease-in-out"
+                              style={{ opacity: isOtherHovered ? 0.3 : 1 }}
+                              onMouseEnter={() => handlePieMouseEnter(index)}
+                              onMouseLeave={handlePieMouseLeave}
+                            />
+                          </g>
+                        );
+                      }}
+                    />
+                  </PieChart>
+                </div>
+                {/* TEXT STATS */}
+                <div className="flex flex-col items-center justify-center text-center w-full mt-3 h-[42px]">
+                  <span className="text-[#1D3557] font-extrabold text-[22px] leading-none mb-1 tracking-tight transition-all duration-300">
+                    {hoveredPieIndex !== null
+                      ? ecosystemData[hoveredPieIndex].value
+                      : ecosystemData.reduce((acc, item) => acc + item.value, 0)}
+                  </span>
+                  <span className="text-[#457B9D]/80 font-semibold text-[11px] leading-tight transition-all duration-300 px-1 w-full truncate">
+                    {hoveredPieIndex !== null
+                      ? ecosystemData[hoveredPieIndex].region
+                      : 'Ativos Mapeados'}
+                  </span>
+                </div>
+              </div>
+
+              {/* TOP 5 TERRITORIOS */}
+              <div className="flex flex-col flex-1 pl-8 lg:pl-10 border-l border-[#E2E8F0]/50 ml-6 justify-center h-full py-1">
+                <h3 className="text-[#1D3557] font-extrabold text-[11px] tracking-widest uppercase mb-4">Top 5 Territórios</h3>
+
+                <div className="flex flex-col gap-3.5">
+                  {[
+                    { rank: 1, name: 'Metropolitano', count: 23, color: 'bg-[#1D3557]', text: 'text-white' },
+                    { rank: 2, name: 'Litoral Norte', count: 14, color: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
+                    { rank: 3, name: 'Sudoeste', count: 9, color: 'bg-[#457B9D]/10', text: 'text-[#457B9D]' },
+                    { rank: 4, name: 'Sul Baiano', count: 9, color: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
+                    { rank: 5, name: 'Chapada', count: 4, color: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
+                  ].map((terr) => (
+                    <div key={terr.rank} className="flex items-center justify-between group">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-[22px] h-[22px] rounded-md ${terr.color} ${terr.text} flex items-center justify-center font-bold text-[10px] shadow-sm`}>
+                          {terr.rank}º
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-[12px] font-bold text-[#2563EB] group-hover:text-[#1D3557] transition-colors line-clamp-1">{terr.name}</span>
+                        </div>
+                      </div>
+                      <span className="font-extrabold text-[#1D3557] text-[13px] ml-2">{terr.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[220px]">
-            <div className="bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-6 relative flex items-end justify-center gap-3 lg:gap-5 pb-8 group cursor-default">
-              <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] group-hover:text-[#457B9D] transition-colors">
-                Comparativo
-              </p>
-              <div className="w-6 lg:w-8 h-[40%] bg-[#457B9D] rounded-sm relative transition-transform duration-500 group-hover:scale-y-110 origin-bottom"><span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#1D3557]">A</span></div>
-              <div className="w-6 lg:w-8 h-[70%] bg-[#1D3557] rounded-sm relative transition-transform duration-500 group-hover:scale-y-110 origin-bottom"><span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#1D3557]">B</span></div>
-              <div className="w-6 lg:w-8 h-[30%] bg-[#A8DADC] rounded-sm relative transition-transform duration-500 group-hover:scale-y-110 origin-bottom"><span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#1D3557]">C</span></div>
-              <div className="w-6 lg:w-8 h-[90%] bg-[#457B9D] rounded-sm relative transition-transform duration-500 group-hover:scale-y-110 origin-bottom"><span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#1D3557]">D</span></div>
-              <div className="w-6 lg:w-8 h-[60%] bg-[#1D3557] rounded-sm relative transition-transform duration-500 group-hover:scale-y-110 origin-bottom"><span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#1D3557]">E</span></div>
+          {/* CARD 3: RANKING IFDM */}
+          <div className="flex-1 bg-white rounded-[24px] border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col group cursor-default h-full">
+
+            {/* CABEÇALHO INSPIRADO NA REFERÊNCIA */}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-[#1A202C] font-bold text-[15px] tracking-tight">Ranking IFDM</h3>
+                <p className="text-[#A0AEC0] font-medium text-[11px] mt-0.5">
+                  {ifdmFilter === 'top' ? 'Top 5 melhores' : ifdmFilter === 'medium' ? '5 na média' : 'Top 5 piores'}
+                </p>
+              </div>
+
+              {/* TOGGLE VERTICAL (TOP / MEDIUM / BOTTOM) */}
+              <div className="flex flex-col items-center justify-center gap-[2px] bg-gray-50 border border-gray-100 rounded-[8px] p-1">
+                <button
+                  onClick={() => setIfdmFilter('top')}
+                  className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'top' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}
+                  title="Top 5 melhores"
+                >
+                  <ChevronUp size={14} strokeWidth={3.5} />
+                </button>
+                <button
+                  onClick={() => setIfdmFilter('medium')}
+                  className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'medium' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}
+                  title="5 na média"
+                >
+                  <Minus size={14} strokeWidth={3.5} />
+                </button>
+                <button
+                  onClick={() => setIfdmFilter('bottom')}
+                  className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'bottom' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}
+                  title="Top 5 piores"
+                >
+                  <ChevronDown size={14} strokeWidth={3.5} />
+                </button>
+              </div>
             </div>
 
-            <div className="bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-6 relative flex flex-col justify-end gap-5 group cursor-default">
-              <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] group-hover:text-[#457B9D] transition-colors">
-                Regiões
-              </p>
-              <div className="flex flex-col gap-1.5 group-hover:translate-x-1 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
-                <span className="text-[10px] font-bold text-[#1D3557]">Produto A</span>
-                <div className="h-4 w-[85%] bg-[#1D3557] rounded-sm" />
+            {/* GRÁFICO DE BARRAS STYLE "CUSTOMER HABBITS" */}
+            <div className="flex-1 flex items-end justify-between gap-2 lg:gap-6 mt-4 px-2 pb-1 relative min-h-[140px]">
+
+              {/* Linhas de grade (Opcional, sutil) */}
+              <div className="absolute inset-0 flex flex-col justify-between pointer-events-none border-b border-gray-50 pb-6">
+                <div className="w-full h-px bg-gray-50"></div>
+                <div className="w-full h-px bg-gray-50"></div>
+                <div className="w-full h-px bg-gray-50"></div>
               </div>
-              <div className="flex flex-col gap-1.5 group-hover:translate-x-1 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-75">
-                <span className="text-[10px] font-bold text-[#1D3557]">Produto B</span>
-                <div className="h-4 w-[65%] bg-[#457B9D] rounded-sm" />
-              </div>
-              <div className="flex flex-col gap-1.5 group-hover:translate-x-1 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-150">
-                <span className="text-[10px] font-bold text-[#1D3557]">Produto C</span>
-                <div className="h-4 w-[45%] bg-[#A8DADC] rounded-sm" />
-              </div>
+
+              {(() => {
+                let data = [];
+                if (ifdmFilter === 'top') {
+                  data = [
+                    { name: 'Metropolitano', apls: 18, igs: 5, ifdm: 0.820 },
+                    { name: 'Litoral Norte', apls: 12, igs: 2, ifdm: 0.750 },
+                    { name: 'Sudoeste', apls: 8, igs: 1, ifdm: 0.710 },
+                    { name: 'Sul Baiano', apls: 6, igs: 3, ifdm: 0.690 },
+                    { name: 'Chapada', apls: 4, igs: 0, ifdm: 0.650 },
+                  ];
+                } else if (ifdmFilter === 'medium') {
+                  data = [
+                    { name: 'Portal Sertão', apls: 4, igs: 1, ifdm: 0.580 },
+                    { name: 'Sertão do S.F.', apls: 5, igs: 0, ifdm: 0.560 },
+                    { name: 'Bacia Grande', apls: 2, igs: 1, ifdm: 0.550 },
+                    { name: 'Recôncavo', apls: 3, igs: 2, ifdm: 0.540 },
+                    { name: 'Irecê', apls: 1, igs: 0, ifdm: 0.520 },
+                  ];
+                } else {
+                  data = [
+                    { name: 'Velho Chico', apls: 1, igs: 0, ifdm: 0.450 },
+                    { name: 'Bacia Jacuípe', apls: 0, igs: 0, ifdm: 0.430 },
+                    { name: 'Piemonte', apls: 2, igs: 0, ifdm: 0.410 },
+                    { name: 'Sisal', apls: 1, igs: 1, ifdm: 0.390 },
+                    { name: 'Semiárido', apls: 0, igs: 0, ifdm: 0.350 },
+                  ];
+                }
+
+                return data.map((item, idx) => {
+                  const ifdmPercent = item.ifdm * 100; // altura máxima 100% = IFDM 1.0
+
+                  return (
+                    <div key={idx} className="flex flex-col items-center gap-3 group/col flex-1 h-full justify-end relative z-10">
+
+                      {/* BARRA ÚNICA (PILL) */}
+                      <div className="flex items-end justify-center w-full h-[85%] relative transition-transform duration-300">
+
+                        <div
+                          className="w-full max-w-[22px] bg-[#4361EE] rounded-full relative flex justify-center transition-all duration-500 ease-out group-hover/col:opacity-90 group-hover/col:shadow-[0_0_15px_rgba(67,97,238,0.3)]"
+                          style={{ height: `${ifdmPercent}%` }}
+                        >
+                          {/* DOT FLUTUANTE (VISÍVEL NO HOVER) */}
+                          <div className="absolute -top-1 w-2.5 h-2.5 bg-gray-200 rounded-full border-[2px] border-white opacity-0 group-hover/col:opacity-100 transition-opacity duration-300 z-20 shadow-sm flex items-center justify-center">
+                            <div className="w-1 h-1 bg-[#1A202C] rounded-full"></div>
+                          </div>
+
+                          {/* IFDM NO TOPO DA BARRA */}
+                          <span className="absolute -top-7 text-[10px] font-bold text-[#A0AEC0] group-hover/col:opacity-0 transition-opacity">
+                            {item.ifdm.toFixed(3)}
+                          </span>
+
+                          {/* TOOLTIP ON HOVER (DARK MODE) */}
+                          <div className="absolute bottom-[calc(100%+14px)] bg-[#1A202C] shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-[12px] px-3 py-2.5 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[105px] left-1/2 -translate-x-1/2">
+                            <div className="flex items-center mb-2">
+                              <div className="w-2 h-2 rounded-full bg-white mr-2"></div>
+                              <span className="text-[11px] font-bold text-white leading-none">{item.apls} <span className="text-[#A0AEC0] font-medium ml-0.5">APLs</span></span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 rounded-full bg-[#4361EE] mr-2"></div>
+                              <span className="text-[11px] font-bold text-white leading-none">{item.igs} <span className="text-[#A0AEC0] font-medium ml-0.5">IGs</span></span>
+                            </div>
+
+                            {/* Seta do Tooltip */}
+                            <div className="absolute -bottom-[4px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#1A202C] rotate-45 rounded-sm"></div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* NOME DO TERRITÓRIO */}
+                      <div className="text-[10px] font-medium text-[#A0AEC0] text-center leading-tight truncate w-full group-hover/col:text-[#1A202C] transition-colors mt-1">
+                        {item.name}
+                      </div>
+
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
+
+          {/* CARD 4: MAPEAMENTO GERAL (GRÁFICO COMPACTO) */}
+          <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-between cursor-default h-full">
+            <div className="mb-2 flex items-start justify-between">
+              <div>
+                <h2 className="text-[#1D3557] font-extrabold text-[14px] tracking-tight">Mapeamento Geral</h2>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-between flex-1 w-full gap-2 mt-1">
+              {ecosystemData.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2 group">
+                  <span className="text-[9px] font-bold text-[#1D3557] group-hover:text-[#2563EB] transition-colors w-[110px] truncate text-right">{item.region}</span>
+                  <div className="flex-1 bg-[#E2E8F0]/40 h-1.5 rounded-full overflow-hidden flex items-center">
+                    <div
+                      className={`h-full ${item.tailwind} rounded-full transition-all duration-1000 ease-out`}
+                      style={{ width: item.percent }}
+                    />
+                  </div>
+                  <span className="text-[9px] font-extrabold text-[#457B9D] w-[20px]">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -212,4 +462,4 @@ export default function DashboardPainel() {
 
 
 
-  
+
