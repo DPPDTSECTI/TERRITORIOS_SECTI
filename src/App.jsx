@@ -13,6 +13,9 @@ const LandingHero = lazy(() => import('./components/hero'));
 const SobrePage = lazy(() => import('./components/SobrePage'));
 const DashboardPainel = lazy(() => import('./components/DashboardPainel'));
 const AdminPage = lazy(() => import('./components/AdminPage'));
+const AtivosPage = lazy(() => import('./components/AtivosPage'));
+const CadeiaPage = lazy(() => import('./components/CadeiaPage'));
+const CursosPage = lazy(() => import('./components/CursosPage'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -103,6 +106,9 @@ function AnimatedRoutes() {
             <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />
             <Route path="/sobre" element={<PageWrapper><SobrePage /></PageWrapper>} />
             <Route path="/territorios" element={<PageWrapper><DashboardPainel /></PageWrapper>} />
+            <Route path="/ativos" element={<PageWrapper><AtivosPage /></PageWrapper>} />
+            <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
+            <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
             <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
           </Routes>
         </AnimatePresence>

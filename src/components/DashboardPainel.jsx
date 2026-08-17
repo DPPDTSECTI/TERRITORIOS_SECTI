@@ -1,13 +1,50 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Settings, GraduationCap, TrendingUp, Database, Building2,
-  ChevronDown, ChevronUp, Minus, Map, MapPin, LogOut
+  ChevronDown, ChevronUp, Minus, Map, MapPin, LogOut, GripHorizontal
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Sector } from 'recharts';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 // IMPORTAÇÃO DO MAPA
 import PtiMap from './PtiMap.jsx';
 import DonutChart from './DonutChart.jsx';
+
+function SortableCard({ id, children }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 'auto',
+    position: 'relative',
+    height: '100%',
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className={`relative h-full ${isDragging ? 'opacity-80 scale-105 shadow-2xl' : ''}`}>
+      {/* DRAG HANDLE */}
+      <button 
+        {...attributes} 
+        {...listeners} 
+        className="absolute top-4 right-4 z-50 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-colors"
+        title="Arrastar card"
+      >
+        <GripHorizontal size={18} />
+      </button>
+      {children}
+    </div>
+  );
+}
 
 export default function DashboardPainel() {
   // Estado que guarda qual território foi clicado no mapa
@@ -18,6 +55,38 @@ export default function DashboardPainel() {
   const [ifdmFilter, setIfdmFilter] = useState('top');
   // Estado do item hoverado no gráfico de pizza
   const [hoveredPieIndex, setHoveredPieIndex] = useState(null);
+  
+  // DND KIt state para a ordem dos cards
+  const INITIAL_CARDS = ['card-donut', 'card-pie', 'card-ranking', 'card-mapeamento'];
+  const [cardsOrder, setCardsOrder] = useState(() => {
+    const saved = localStorage.getItem('dashboard-cards-order');
+    if (saved) {
+      try {
+        const order = JSON.parse(saved);
+        if (order.length === INITIAL_CARDS.length) return order;
+      } catch(e) {}
+    }
+    return INITIAL_CARDS;
+  });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      setCardsOrder((items) => {
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+        const newArray = arrayMove(items, oldIndex, newIndex);
+        localStorage.setItem('dashboard-cards-order', JSON.stringify(newArray));
+        return newArray;
+      });
+    }
+  };
+
   const pieHoverTimeoutRef = useRef(null);
 
   const handlePieMouseEnter = (index) => {
@@ -178,7 +247,13 @@ export default function DashboardPainel() {
         </div>
 
         {/* LADO DIREITO: DASHBOARD DE CURSOS E INDICADORES */}
-        <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
+            <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
+              {cardsOrder.map(cardId => (
+                <React.Fragment key={cardId}>
+                  {cardId === 'card-donut' && (
+                    <SortableCard id="card-donut">
 
           {/* CARD 1: DONUT CHART (Cursos por Área) */}
           <DonutChart
@@ -193,7 +268,11 @@ export default function DashboardPainel() {
             ]}
           />
 
-          {/* CARD 2: PIE CHART (Distribuição do Ecossistema) */}
+                    </SortableCard>
+                  )}
+                  {cardId === 'card-pie' && (
+                    <SortableCard id="card-pie">
+                      {/* CARD 2: PIE CHART (Distribuição do Ecossistema) */}
           <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default">
             
             {/* HEADER SECTION */}
@@ -298,7 +377,11 @@ export default function DashboardPainel() {
             </div>
           </div>
 
-          {/* CARD 3: RANKING IFDM */}
+                    </SortableCard>
+                  )}
+                  {cardId === 'card-ranking' && (
+                    <SortableCard id="card-ranking">
+                      {/* CARD 3: RANKING IFDM */}
           <div className="flex-1 bg-white rounded-[24px] border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col group cursor-default h-full">
 
             {/* CABEÇALHO INSPIRADO NA REFERÊNCIA */}
@@ -427,7 +510,11 @@ export default function DashboardPainel() {
             </div>
           </div>
 
-          {/* CARD 4: MAPEAMENTO GERAL (GRÁFICO COMPACTO) */}
+                    </SortableCard>
+                  )}
+                  {cardId === 'card-mapeamento' && (
+                    <SortableCard id="card-mapeamento">
+                      {/* CARD 4: MAPEAMENTO GERAL (GRÁFICO COMPACTO) */}
           <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-between cursor-default h-full">
             <div className="mb-2 flex items-start justify-between">
               <div>
@@ -450,16 +537,14 @@ export default function DashboardPainel() {
               ))}
             </div>
           </div>
-
-        </div>
-
+                    </SortableCard>
+                  )}
+                </React.Fragment>
+              ))}
+            </SortableContext>
+          </div>
+        </DndContext>
       </div>
     </main>
   );
 }
-
-
-
-
-
-
