@@ -124,7 +124,7 @@ export default function DashboardPainel() {
   const pieDataWithFill = ecosystemData.map(item => ({ ...item, fill: item.colorHex }));
 
   return (
-    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-6 bg-transparent font-sans w-full">
+    <main className="flex-1 h-screen overflow-hidden relative py-6 px-6 lg:px-8 flex flex-col gap-6 bg-transparent font-sans w-full">
 
       {/* HEADER DA PÁGINA */}
       <div className="flex items-center justify-between w-full">
@@ -227,7 +227,7 @@ export default function DashboardPainel() {
       </div>
 
       {/* ================= GRID PRINCIPAL ================= */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-[500px]">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-0">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
         <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group">

@@ -268,7 +268,7 @@ export default function PtiMap({
     return (
         <div 
             ref={mapContainerRef} 
-            className="relative isolate w-full h-full min-h-[500px] flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10"
+            className="relative isolate w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10"
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
         >
