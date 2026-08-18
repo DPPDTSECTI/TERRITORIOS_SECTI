@@ -74,31 +74,15 @@ function SortableSidebarItem({ item, isActive, isCollapsed }) {
 export default function Sidebar({ username, navOnly = false }) {
   const location = useLocation();
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const collapseTimeoutRef = useRef(null);
-
-  const startCollapseTimer = () => {
-    if (collapseTimeoutRef.current) clearTimeout(collapseTimeoutRef.current);
-    collapseTimeoutRef.current = setTimeout(() => {
-      setIsCollapsed(true);
-    }, 2200);
-  };
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const handleMouseEnter = () => {
-    if (collapseTimeoutRef.current) clearTimeout(collapseTimeoutRef.current);
     setIsCollapsed(false);
   };
 
   const handleMouseLeave = () => {
-    startCollapseTimer();
+    setIsCollapsed(true);
   };
-
-  useEffect(() => {
-    startCollapseTimer();
-    return () => {
-      if (collapseTimeoutRef.current) clearTimeout(collapseTimeoutRef.current);
-    };
-  }, []);
 
   const navItemsGroup1 = [
     { path: '/', label: 'Início', icon: Home },

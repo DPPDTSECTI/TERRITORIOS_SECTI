@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Building2, Microscope, BookOpen, GraduationCap, MapPin, GripHorizontal, BarChart3, ListOrdered, Layers } from 'lucide-react';
+import { Building2, Microscope, BookOpen, GraduationCap, MapPin, GripHorizontal, BarChart3, ListOrdered, Layers, Filter, ChevronDown, Check } from 'lucide-react';
 import { DndContext, DragOverlay, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { restrictToWindowEdges, snapCenterToCursor } from '@dnd-kit/modifiers';
@@ -16,44 +16,68 @@ const ATIVOS_MOCK = [
   { id: 3, nome: "Centro de Pesquisa do Cacau (CEPEC)", tipo: "Centro de Pesquisa", municipio: "Ilhéus", ifdm: 0.697, lat: -14.7891, lng: -39.0494, icone: Microscope, cor: "bg-[#457B9D]", textCor: "text-[#457B9D]", corHex: "#457B9D" },
   { id: 4, nome: "Univ. Estadual de Feira de Santana (UEFS)", tipo: "Universidade Pública", municipio: "Feira de Santana", ifdm: 0.712, lat: -12.1965, lng: -38.9712, icone: GraduationCap, cor: "bg-[#2563EB]", textCor: "text-[#2563EB]", corHex: "#2563EB" },
   { id: 5, nome: "SENAI CIMATEC", tipo: "ICT", municipio: "Salvador", ifdm: 0.759, lat: -12.9324, lng: -38.3685, icone: Microscope, cor: "bg-[#457B9D]", textCor: "text-[#457B9D]", corHex: "#457B9D" },
-  { id: 6, nome: "Incubadora INBATECS", tipo: "Incubadora", municipio: "Vitória da Conquista", ifdm: 0.702, lat: -14.8617, lng: -40.8396, icone: Building2, cor: "bg-[#1D3557]", textCor: "text-[#1D3557]", corHex: "#1D3557" },
-  { id: 7, nome: "Instituto Federal Baiano", tipo: "Instituto Federal", municipio: "Uruçuca", ifdm: 0.598, lat: -14.5937, lng: -39.2842, icone: BookOpen, cor: "bg-[#E63946]", textCor: "text-[#E63946]", corHex: "#E63946" },
-  { id: 8, nome: "Polo de Inovação IFBA", tipo: "ICT", municipio: "Salvador", ifdm: 0.759, lat: -12.9649, lng: -38.5085, icone: Microscope, cor: "bg-[#457B9D]", textCor: "text-[#457B9D]", corHex: "#457B9D" }
+  { id: 6, nome: "Incubadora INBATECS", tipo: "Incubadora", municipio: "Vitória da Conquista", ifdm: 0.702, lat: -14.8617, lng: -40.8396, icone: Building2, cor: "bg-[#38BDF8]", textCor: "text-[#0284C7]", corHex: "#38BDF8" },
+  { id: 7, nome: "Instituto Federal Baiano (IF Baiano)", tipo: "Instituto Federal", municipio: "Uruçuca", ifdm: 0.598, lat: -14.5937, lng: -39.2842, icone: BookOpen, cor: "bg-[#0284C7]", textCor: "text-[#0284C7]", corHex: "#0284C7" },
+  { id: 8, nome: "Polo de Inovação IFBA", tipo: "ICT", municipio: "Salvador", ifdm: 0.759, lat: -12.9649, lng: -38.5085, icone: Microscope, cor: "bg-[#457B9D]", textCor: "text-[#457B9D]", corHex: "#457B9D" },
+  { id: 9, nome: "Univ. Estadual de Santa Cruz (UESC)", tipo: "Universidade Pública", municipio: "Ilhéus", ifdm: 0.697, lat: -14.7963, lng: -39.1736, icone: GraduationCap, cor: "bg-[#2563EB]", textCor: "text-[#2563EB]", corHex: "#2563EB" },
+  { id: 10, nome: "Instituto Federal da Bahia (IFBA)", tipo: "Instituto Federal", municipio: "Feira de Santana", ifdm: 0.712, lat: -12.2472, lng: -38.9374, icone: BookOpen, cor: "bg-[#0284C7]", textCor: "text-[#0284C7]", corHex: "#0284C7" },
+  { id: 11, nome: "Incubadora Casulo UEFS", tipo: "Incubadora", municipio: "Feira de Santana", ifdm: 0.712, lat: -12.1980, lng: -38.9730, icone: Building2, cor: "bg-[#38BDF8]", textCor: "text-[#0284C7]", corHex: "#38BDF8" },
+  { id: 12, nome: "Polo Industrial e Tecnológico", tipo: "Parque Tecnológico", municipio: "Camaçari", ifdm: 0.725, lat: -12.6975, lng: -38.3244, icone: Building2, cor: "bg-[#1D3557]", textCor: "text-[#1D3557]", corHex: "#1D3557" }
 ];
 
-const MUNICIPALITIES_IFDM_DATA = [
-  { municipio: "Salvador", ifdm: 0.759 },
-  { municipio: "Lauro de Freitas", ifdm: 0.742 },
-  { municipio: "Camaçari", ifdm: 0.725 },
-  { municipio: "Feira de Santana", ifdm: 0.712 },
-  { municipio: "Vitória da Conquista", ifdm: 0.702 },
-  { municipio: "Ilhéus", ifdm: 0.697 },
-  { municipio: "Itabuna", ifdm: 0.685 },
-  { municipio: "Luís Eduardo Magalhães", ifdm: 0.671 },
-  { municipio: "Barreiras", ifdm: 0.665 },
-  { municipio: "Juazeiro", ifdm: 0.658 },
-  { municipio: "Alagoinhas", ifdm: 0.643 },
-  { municipio: "Jequié", ifdm: 0.634 },
-  { municipio: "Porto Seguro", ifdm: 0.628 },
-  { municipio: "Paulo Afonso", ifdm: 0.612 },
-  { municipio: "Santo Antônio de Jesus", ifdm: 0.605 },
-  { municipio: "Simões Filho", ifdm: 0.598 },
-  { municipio: "Eunápolis", ifdm: 0.589 },
-  { municipio: "Teixeira de Freitas", ifdm: 0.580 },
-  { municipio: "Valença", ifdm: 0.572 },
-  { municipio: "Guanambi", ifdm: 0.564 },
-  { municipio: "Jacobina", ifdm: 0.548 },
-  { municipio: "Serrinha", ifdm: 0.532 },
-  { municipio: "Irecê", ifdm: 0.520 },
-  { municipio: "Senhor do Bonfim", ifdm: 0.510 },
-  { municipio: "Cruz das Almas", ifdm: 0.505 },
-  { municipio: "Seabra", ifdm: 0.498 },
-  { municipio: "Bom Jesus da Lapa", ifdm: 0.485 }
+// === OPÇÕES DE FILTRO POR TIPO ===
+const TYPE_FILTER_OPTIONS = [
+  { key: 'todos', label: 'Todos', dotColor: null },
+  { key: 'Universidade Pública', label: 'Universidades', dotColor: '#2563EB' },
+  { key: 'Instituto Federal', label: 'Inst. Federais', dotColor: '#0284C7' },
+  { key: 'ICT', label: 'Centros & ICTs', dotColor: '#457B9D' },
+  { key: 'Parque Tecnológico', label: 'Parques', dotColor: '#1D3557' },
+  { key: 'Incubadora', label: 'Incubadoras', dotColor: '#38BDF8' },
 ];
 
-const averageIFDM = (
-  MUNICIPALITIES_IFDM_DATA.reduce((acc, curr) => acc + curr.ifdm, 0) / MUNICIPALITIES_IFDM_DATA.length
-).toFixed(3);
+// === TIPOS DE ATIVOS DE CTI ===
+const ASSET_TYPES = [
+  { key: 'universidades', label: 'Universidades', corHex: '#2563EB', bgClass: 'bg-[#2563EB]' },
+  { key: 'institutos', label: 'Inst. Federais', corHex: '#0284C7', bgClass: 'bg-[#0284C7]' },
+  { key: 'icts', label: 'Centros & ICTs', corHex: '#457B9D', bgClass: 'bg-[#457B9D]' },
+  { key: 'parques', label: 'Parques & Polos', corHex: '#1D3557', bgClass: 'bg-[#1D3557]' },
+  { key: 'incubadoras', label: 'Incubadoras & Hubs', corHex: '#38BDF8', bgClass: 'bg-[#38BDF8]' },
+];
+
+// === DADOS DE ATIVOS POR REGIÃO (27 TERRITÓRIOS DE IDENTIDADE DA BAHIA) ===
+const REGIOES_ATIVOS_DATA = [
+  { regiao: "Metropolitano de Salvador", total: 32, universidades: 12, institutos: 6, icts: 7, parques: 3, incubadoras: 4 },
+  { regiao: "Portal do Sertão", total: 20, universidades: 7, institutos: 4, icts: 4, parques: 2, incubadoras: 3 },
+  { regiao: "Litoral Sul", total: 17, universidades: 6, institutos: 4, icts: 3, parques: 2, incubadoras: 2 },
+  { regiao: "Sudoeste Baiano", total: 16, universidades: 6, institutos: 3, icts: 3, parques: 2, incubadoras: 2 },
+  { regiao: "Bacia do Rio Grande", total: 14, universidades: 5, institutos: 3, icts: 3, parques: 1, incubadoras: 2 },
+  { regiao: "Sertão do São Francisco", total: 13, universidades: 4, institutos: 3, icts: 3, parques: 1, incubadoras: 2 },
+  { regiao: "Litoral Norte e Agreste", total: 12, universidades: 4, institutos: 3, icts: 2, parques: 1, incubadoras: 2 },
+  { regiao: "Médio Rio de Contas", total: 11, universidades: 4, institutos: 3, icts: 2, parques: 1, incubadoras: 1 },
+  { regiao: "Costa do Descobrimento", total: 10, universidades: 3, institutos: 3, icts: 2, parques: 1, incubadoras: 1 },
+  { regiao: "Recôncavo", total: 10, universidades: 4, institutos: 2, icts: 2, parques: 1, incubadoras: 1 },
+  { regiao: "Itaparica", total: 9, universidades: 3, institutos: 3, icts: 1, parques: 1, incubadoras: 1 },
+  { regiao: "Extremo Sul", total: 8, universidades: 3, institutos: 2, icts: 1, parques: 1, incubadoras: 1 },
+  { regiao: "Baixo Sul", total: 7, universidades: 2, institutos: 2, icts: 1, parques: 1, incubadoras: 1 },
+  { regiao: "Sertão Produtivo", total: 7, universidades: 2, institutos: 2, icts: 1, parques: 1, incubadoras: 1 },
+  { regiao: "Piemonte da Diamantina", total: 6, universidades: 2, institutos: 2, icts: 1, parques: 0, incubadoras: 1 },
+  { regiao: "Sisal", total: 6, universidades: 2, institutos: 2, icts: 1, parques: 0, incubadoras: 1 },
+  { regiao: "Irecê", total: 5, universidades: 2, institutos: 1, icts: 1, parques: 0, incubadoras: 1 },
+  { regiao: "Piemonte N. do Itapicuru", total: 5, universidades: 1, institutos: 2, icts: 1, parques: 0, incubadoras: 1 },
+  { regiao: "Chapada Diamantina", total: 5, universidades: 1, institutos: 2, icts: 1, parques: 0, incubadoras: 1 },
+  { regiao: "Velho Chico", total: 4, universidades: 1, institutos: 1, icts: 1, parques: 0, incubadoras: 1 },
+  { regiao: "Bacia do Paramirim", total: 4, universidades: 1, institutos: 1, icts: 1, parques: 0, incubadoras: 1 },
+  { regiao: "Bacia do Jacuípe", total: 3, universidades: 1, institutos: 1, icts: 0, parques: 0, incubadoras: 1 },
+  { regiao: "Piemonte do Paraguaçu", total: 3, universidades: 1, institutos: 1, icts: 0, parques: 0, incubadoras: 1 },
+  { regiao: "Semiárido Nordeste II", total: 3, universidades: 1, institutos: 1, icts: 0, parques: 0, incubadoras: 1 },
+  { regiao: "Médio Sudoeste da Bahia", total: 3, universidades: 1, institutos: 1, icts: 0, parques: 0, incubadoras: 1 },
+  { regiao: "Vale do Jiquiriçá", total: 2, universidades: 1, institutos: 1, icts: 0, parques: 0, incubadoras: 0 },
+  { regiao: "Rio Corrente", total: 2, universidades: 1, institutos: 1, icts: 0, parques: 0, incubadoras: 0 }
+];
+
+const totalAtivosGeral = REGIOES_ATIVOS_DATA.reduce((acc, curr) => acc + curr.total, 0);
+const averageAtivos = (totalAtivosGeral / REGIOES_ATIVOS_DATA.length).toFixed(1);
+const maxAtivosScale = 36;
 
 // === CUSTOM MARKER ICON ===
 const createCustomIcon = (colorHex) => L.divIcon({
@@ -108,8 +132,13 @@ function SortableCard({ id, className = '', children }) {
 export default function AtivosPage() {
   const [focusedAsset, setFocusedAsset] = useState(null);
   const [activeId, setActiveId] = useState(null);
+  const [hoveredSlice, setHoveredSlice] = useState(null);
 
-  // Filtro no modo minimizado: 'acima' ou 'abaixo'
+  // Filtro por Tipo de Ativo na Lista de Ativos: 'todos' | 'Universidade Pública' | 'Instituto Federal' | 'ICT' | 'Parque Tecnológico' | 'Incubadora'
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState('todos');
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+
+  // Filtro no modo minimizado do gráfico: 'acima' ou 'abaixo'
   const [minimizedFilter, setMinimizedFilter] = useState('acima');
 
   // Ordem dos cards em 4 slots (3 cards reais + 1 slot vazio invisível)
@@ -159,10 +188,10 @@ export default function AtivosPage() {
   const isChartAlone = getIsAlone('card-chart-ifdm');
   const isChartMinimized = !isChartAlone;
 
-  // Filtragem de dados para o modo minimizado
+  // Filtragem de dados para o modo minimizado (Acima / Abaixo da média)
   const filteredData = minimizedFilter === 'acima'
-    ? MUNICIPALITIES_IFDM_DATA.filter((m) => m.ifdm >= Number(averageIFDM))
-    : MUNICIPALITIES_IFDM_DATA.filter((m) => m.ifdm < Number(averageIFDM));
+    ? REGIOES_ATIVOS_DATA.filter((r) => r.total >= Number(averageAtivos))
+    : REGIOES_ATIVOS_DATA.filter((r) => r.total < Number(averageAtivos));
 
   return (
     <main className="flex-1 h-screen overflow-hidden relative py-6 px-6 lg:px-8 flex flex-col gap-6 bg-transparent w-full">
@@ -268,45 +297,151 @@ export default function AtivosPage() {
                 // 1. LISTA DE ATIVOS
                 if (cardId === 'card-ativos-list') {
                   const isAlone = getIsAlone('card-ativos-list');
+                  const filteredAtivosList = selectedTypeFilter === 'todos'
+                    ? ATIVOS_MOCK
+                    : ATIVOS_MOCK.filter(a => {
+                        if (selectedTypeFilter === 'ICT') {
+                          return a.tipo === 'ICT' || a.tipo === 'Centro de Pesquisa';
+                        }
+                        return a.tipo === selectedTypeFilter;
+                      });
+
                   return (
                     <SortableCard
                       key="card-ativos-list"
                       id="card-ativos-list"
                       className={isAlone ? 'md:col-span-2' : ''}
                     >
-                      <div className="bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default min-h-0 overflow-hidden">
-                        <h3 className="text-[#1D3557] font-extrabold text-[13px] tracking-tight mb-3 flex items-center gap-2 shrink-0 pr-8">
-                          <MapPin size={15} className="text-[#457B9D]" />
-                          Lista de Ativos
-                        </h3>
+                      <div className="bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default min-h-0">
+                        
+                        {/* CABEÇALHO DA LISTA DE ATIVOS COM BOTÃO E DROPDOWN DE FILTRO */}
+                        <div className="flex items-center justify-between gap-2 mb-3 shrink-0 pr-8 relative z-30">
+                          <div className="flex items-center gap-2">
+                            <MapPin size={15} className="text-[#457B9D]" />
+                            <h3 className="text-[#1D3557] font-extrabold text-[13px] tracking-tight">
+                              Lista de Ativos
+                            </h3>
+                            <span className="text-[10px] font-bold text-[#457B9D] bg-[#F1F5F9] px-2 py-0.5 rounded-full border border-[#E2E8F0]">
+                              {filteredAtivosList.length}
+                            </span>
+                          </div>
 
+                          {/* BOTÃO E MENU DROPDOWN DE FILTRO */}
+                          <div className="relative">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsFilterDropdownOpen(!isFilterDropdownOpen);
+                              }}
+                              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all duration-200 border cursor-pointer select-none active:scale-95 ${
+                                selectedTypeFilter !== 'todos'
+                                  ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-sm'
+                                  : 'bg-[#F8FAFC] text-[#1D3557] border-[#E2E8F0] hover:bg-[#F1F5F9]'
+                              }`}
+                            >
+                              <Filter size={12} className={selectedTypeFilter !== 'todos' ? 'text-white' : 'text-[#457B9D]'} />
+                              <span>
+                                {TYPE_FILTER_OPTIONS.find(o => o.key === selectedTypeFilter)?.label || 'Filtrar'}
+                              </span>
+                              <ChevronDown size={12} className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {/* MENU FLUTUANTE DROPDOWN */}
+                            {isFilterDropdownOpen && (
+                              <>
+                                {/* Backdrop transparente para fechar ao clicar fora */}
+                                <div 
+                                  className="fixed inset-0 z-40" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsFilterDropdownOpen(false);
+                                  }}
+                                />
+
+                                <div 
+                                  className="absolute right-0 mt-1.5 w-52 bg-white rounded-2xl shadow-[0_12px_32px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 flex flex-col gap-0.5"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <div className="px-2.5 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#A0AEC0] border-b border-[#F1F5F9] mb-1">
+                                    Filtrar por Tipo
+                                  </div>
+
+                                  {TYPE_FILTER_OPTIONS.map((opt) => {
+                                    const isSelected = selectedTypeFilter === opt.key;
+                                    const count = opt.key === 'todos' 
+                                      ? ATIVOS_MOCK.length 
+                                      : ATIVOS_MOCK.filter(a => opt.key === 'ICT' ? (a.tipo === 'ICT' || a.tipo === 'Centro de Pesquisa') : a.tipo === opt.key).length;
+
+                                    return (
+                                      <button
+                                        key={opt.key}
+                                        type="button"
+                                        onClick={() => {
+                                          setSelectedTypeFilter(opt.key);
+                                          setIsFilterDropdownOpen(false);
+                                        }}
+                                        className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-[11px] font-semibold transition-all duration-150 text-left cursor-pointer ${
+                                          isSelected
+                                            ? 'bg-[#F1F5F9] text-[#1D3557] font-bold'
+                                            : 'text-[#457B9D] hover:bg-[#F8FAFC] hover:text-[#1D3557]'
+                                        }`}
+                                      >
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          {opt.dotColor ? (
+                                            <span className="w-2 h-2 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: opt.dotColor }}></span>
+                                          ) : (
+                                            <span className="w-2 h-2 rounded-full shrink-0 bg-[#457B9D]/30"></span>
+                                          )}
+                                          <span className="truncate">{opt.label}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                          <span className="text-[10px] text-[#A0AEC0] font-bold">({count})</span>
+                                          {isSelected && <Check size={13} className="text-[#2563EB]" />}
+                                        </div>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* LISTAGEM DE ATIVOS */}
                         <div className={`flex-1 overflow-y-auto pr-1 hide-scroll min-h-0 relative z-10 pb-4 ${
                           isAlone
                             ? 'grid grid-cols-1 md:grid-cols-2 gap-2.5 content-start'
                             : 'flex flex-col gap-2'
                         }`}>
-                          {ATIVOS_MOCK.map((ativo) => (
-                            <div
-                              key={ativo.id}
-                              onClick={() => setFocusedAsset([ativo.lat, ativo.lng])}
-                              className="flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-[#F8FAFC] transition-all duration-300 cursor-pointer border border-transparent hover:border-[#E2E8F0] hover:-translate-y-0.5 group shrink-0"
-                            >
-                              <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${ativo.cor}/10 group-hover:scale-110 transition-transform duration-300`}>
-                                <ativo.icone size={16} className={ativo.textCor} />
-                              </div>
-                              <div className="flex flex-col flex-1 min-w-0">
-                                <span className="text-[12px] font-bold text-[#1D3557] leading-tight mb-0.5 group-hover:text-[#2563EB] transition-colors line-clamp-1 truncate">
-                                  {ativo.nome}
-                                </span>
-                                <div className="flex items-center justify-between mt-0.5 gap-1.5">
-                                  <span className="text-[9px] font-semibold text-[#A0AEC0] bg-gray-50 px-1.5 py-0.5 rounded-full border border-gray-100 truncate max-w-[120px]">
-                                    {ativo.tipo}
+                          {filteredAtivosList.length === 0 ? (
+                            <div className="col-span-full py-8 text-center text-[11px] font-semibold text-[#A0AEC0]">
+                              Nenhum ativo encontrado para esta categoria.
+                            </div>
+                          ) : (
+                            filteredAtivosList.map((ativo) => (
+                              <div
+                                key={ativo.id}
+                                onClick={() => setFocusedAsset([ativo.lat, ativo.lng])}
+                                className="flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-[#F8FAFC] transition-all duration-300 cursor-pointer border border-transparent hover:border-[#E2E8F0] hover:-translate-y-0.5 group shrink-0"
+                              >
+                                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${ativo.cor}/10 group-hover:scale-110 transition-transform duration-300`}>
+                                  <ativo.icone size={16} className={ativo.textCor} />
+                                </div>
+                                <div className="flex flex-col flex-1 min-w-0">
+                                  <span className="text-[12px] font-bold text-[#1D3557] leading-tight mb-0.5 group-hover:text-[#2563EB] transition-colors line-clamp-1 truncate">
+                                    {ativo.nome}
                                   </span>
-                                  <span className="text-[10px] font-bold text-[#457B9D] truncate">{ativo.municipio}</span>
+                                  <div className="flex items-center justify-between mt-0.5 gap-1.5">
+                                    <span className="text-[9px] font-semibold text-[#A0AEC0] bg-gray-50 px-1.5 py-0.5 rounded-full border border-gray-100 truncate max-w-[120px]">
+                                      {ativo.tipo}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-[#457B9D] truncate">{ativo.municipio}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            ))
+                          )}
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-[24px] z-20" />
                       </div>
@@ -330,7 +465,7 @@ export default function AtivosPage() {
                   );
                 }
 
-                // 3. GRÁFICO IFDM
+                // 3. GRÁFICO DE ATIVOS POR REGIÃO (STACKED BARS)
                 if (cardId === 'card-chart-ifdm') {
                   return (
                     <SortableCard
@@ -344,129 +479,161 @@ export default function AtivosPage() {
                         <div className="flex items-center justify-between gap-2 mb-3 shrink-0 pr-8">
                           <div className="flex flex-col">
                             <h3 className="text-[#1D3557] font-extrabold text-[13px] tracking-tight flex items-center gap-2">
-                              Índice IFDM
+                              Ativos por Região
                             </h3>
-                            <span className="text-[10px] font-semibold text-[#457B9D]">Média: {averageIFDM}</span>
+                            <span className="text-[10px] font-semibold text-[#457B9D]">27 Territórios de Identidade</span>
                           </div>
 
                           {/* CONTROLES DO CABEÇALHO */}
                           <div className="flex items-center gap-2">
                             {/* TOGGLE NO MODO MINIMIZADO (QUANDO HÁ OUTRO CARD AO LADO) */}
                             {isChartMinimized ? (
-                              <div className="flex items-center bg-[#F1F5F9] p-0.5 rounded-lg border border-[#E2E8F0]">
+                              <div className="flex items-center bg-[#F1F5F9] p-0.5 rounded-full border border-[#E2E8F0]">
                                 <button
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); setMinimizedFilter('acima'); }}
-                                  className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1 ${
+                                  className={`px-2.5 py-1 text-[10px] font-bold rounded-full transition-all flex items-center gap-1 ${
                                     minimizedFilter === 'acima'
                                       ? 'bg-[#2563EB] text-white shadow-sm'
                                       : 'text-[#457B9D] hover:text-[#1D3557]'
                                   }`}
                                 >
                                   <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-                                  Acima ({MUNICIPALITIES_IFDM_DATA.filter(m => m.ifdm >= Number(averageIFDM)).length})
+                                  Top 10 Regiões
                                 </button>
                                 <button
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); setMinimizedFilter('abaixo'); }}
-                                  className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1 ${
+                                  className={`px-2.5 py-1 text-[10px] font-bold rounded-full transition-all flex items-center gap-1 ${
                                     minimizedFilter === 'abaixo'
                                       ? 'bg-[#1D3557] text-white shadow-sm'
                                       : 'text-[#457B9D] hover:text-[#1D3557]'
                                   }`}
                                 >
                                   <span className="w-1.5 h-1.5 rounded-full bg-[#A8DADC]"></span>
-                                  Abaixo ({MUNICIPALITIES_IFDM_DATA.filter(m => m.ifdm < Number(averageIFDM)).length})
+                                  Demais 17
                                 </button>
                               </div>
                             ) : (
                               /* LEGENDA NO MODO NORMAL (QUANDO ESTÁ SOZINHO NA LINHA) */
-                              <div className="flex items-center gap-3 text-[10px] font-bold">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>
-                                  <span className="text-[#1D3557]">Acima da Média</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="w-2.5 h-2.5 rounded-full bg-[#1D3557]"></span>
-                                  <span className="text-[#457B9D]">Abaixo da Média</span>
-                                </div>
+                              <div className="flex items-center flex-wrap gap-2.5 text-[10px] font-bold">
+                                {ASSET_TYPES.map((t) => (
+                                  <div key={t.key} className="flex items-center gap-1.5">
+                                    <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: t.corHex }}></span>
+                                    <span className="text-[#1D3557]">{t.label}</span>
+                                  </div>
+                                ))}
                               </div>
                             )}
                           </div>
                         </div>
 
-                        {/* ÁREA DO GRÁFICO COM BARRAS CAPSULE E LINHA DE MÉDIA */}
+                        {/* ÁREA DO GRÁFICO COM BARRAS STACKED CAPSULE */}
                         <div className="flex-1 w-full h-full relative min-h-0 pt-4 pb-1 px-1">
                           <div className="relative w-full h-full">
-                            
-                            {/* LINHA DE MÉDIA ESTADUAL (HORIZONTAL) */}
-                            {(() => {
-                              const avgNum = Number(averageIFDM);
-                              const avgPercent = (avgNum / 0.85) * 100;
-                              return (
-                                <div 
-                                  className="absolute left-0 right-0 border-b-2 border-dashed border-[#457B9D]/60 pointer-events-none z-20 flex items-center justify-end pr-1 transition-all duration-500"
-                                  style={{ bottom: `${avgPercent}%` }}
-                                >
-                                  <div className="bg-[#457B9D] text-white px-2 py-0.5 rounded-full shadow-sm text-[9px] font-extrabold tracking-wider uppercase -translate-y-1/2 flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                                    Média: {averageIFDM}
-                                  </div>
-                                </div>
-                              );
-                            })()}
 
                             {/* LINHAS DE GRADE SUTIS DE FUNDO */}
-                            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
+                            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 z-0">
                               <div className="w-full h-px bg-[#D6EAF8]"></div>
                               <div className="w-full h-px bg-[#D6EAF8]"></div>
                               <div className="w-full h-px bg-[#D6EAF8]"></div>
                             </div>
 
-                            {/* BARRAS CAPSULE PILL */}
+                            {/* BARRAS CAPSULE EMPILHADAS (STACKED PILL) */}
                             <div className="w-full h-full flex items-end justify-between gap-1 sm:gap-1.5 relative z-10">
-                              {(isChartMinimized ? filteredData : MUNICIPALITIES_IFDM_DATA).map((item, index) => {
-                                const isAboveAvg = item.ifdm >= Number(averageIFDM);
-                                const heightPercent = Math.min(100, (item.ifdm / 0.85) * 100);
+                              {(isChartMinimized ? filteredData : REGIOES_ATIVOS_DATA).map((item, index) => {
+                                const heightPercent = Math.min(100, (item.total / maxAtivosScale) * 100);
+                                const listLength = (isChartMinimized ? filteredData : REGIOES_ATIVOS_DATA).length;
+                                const isRightEdge = index >= listLength - 7;
+                                const isLeftEdge = index < 3;
+                                const isTall = heightPercent > 45;
 
                                 return (
                                   <div
                                     key={index}
-                                    className="flex-1 h-full flex flex-col items-center justify-end group/bar relative cursor-pointer"
+                                    onMouseLeave={() => setHoveredSlice(null)}
+                                    className="flex-1 h-full flex flex-col items-center justify-end group/bar relative cursor-pointer hover:z-50"
                                   >
-                                    {/* TOOLTIP FLUTUANTE (APENAS NO HOVER) */}
-                                    <div className="absolute bottom-[calc(100%+8px)] bg-[#1D3557] text-white shadow-[0_8px_20px_rgba(29,53,87,0.25)] rounded-xl px-3 py-2 opacity-0 group-hover/bar:opacity-100 transition-all duration-300 pointer-events-none z-50 whitespace-nowrap translate-y-2 group-hover/bar:translate-y-0 text-center flex flex-col items-center border border-white/10">
-                                      <span className="text-[11px] font-bold text-white leading-tight">
-                                        {item.municipio}
-                                      </span>
-                                      <div className="flex items-center gap-1.5 mt-1">
-                                        <span className={`w-1.5 h-1.5 rounded-full ${isAboveAvg ? 'bg-[#38BDF8]' : 'bg-[#A0AEC0]'}`}></span>
-                                        <span className="text-[10px] font-extrabold text-[#A8DADC]">
-                                          IFDM: {item.ifdm.toFixed(3)}
-                                        </span>
-                                      </div>
-                                      {/* Seta do tooltip */}
-                                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1D3557] rotate-45"></div>
-                                    </div>
+                                    {/* TOOLTIP LATERAL ULTRA-COMPACTO ESPECÍFICO DA FATIA */}
+                                    {hoveredSlice && hoveredSlice.regiao === item.regiao && (
+                                      <div 
+                                        className={`absolute bg-[#1D3557] text-white shadow-[0_10px_28px_rgba(29,53,87,0.4)] rounded-xl p-2 pointer-events-none z-50 whitespace-nowrap text-left flex flex-col gap-1 border border-white/15 w-max max-w-[175px] ${
+                                          isRightEdge
+                                            ? 'right-[calc(100%+8px)]'
+                                            : 'left-[calc(100%+8px)]'
+                                        }`}
+                                        style={{
+                                          bottom: `${Math.max(4, Math.min(60, heightPercent - 5))}%`
+                                        }}
+                                      >
+                                        {/* CABEÇALHO COMPACTO */}
+                                        <div className="flex items-center justify-between border-b border-white/10 pb-1 gap-2">
+                                          <span className="text-[10px] font-bold text-white truncate max-w-[110px]">
+                                            {hoveredSlice.regiao}
+                                          </span>
+                                          <span className="text-[9px] font-semibold text-[#A8DADC] bg-white/10 px-1.5 py-0.5 rounded-full shrink-0">
+                                            {hoveredSlice.total} total
+                                          </span>
+                                        </div>
 
-                                    {/* BARRA CAPSULE (PILL) */}
+                                        {/* TIPO + VALOR DA FATIA */}
+                                        <div className="flex items-center justify-between gap-3 pt-0.5">
+                                          <div className="flex items-center gap-1.5 min-w-0">
+                                            <span className="w-2 h-2 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: hoveredSlice.corHex }}></span>
+                                            <span className="text-[10px] font-medium text-white/90 truncate">{hoveredSlice.typeLabel}</span>
+                                          </div>
+                                          <span className="text-[11px] font-black text-white px-1.5 py-0.5 rounded bg-white/10 shrink-0">
+                                            {hoveredSlice.count}
+                                          </span>
+                                        </div>
+
+                                        {/* SETA LATERAL APONTANDO PARA A BARRA */}
+                                        <div className={`absolute bottom-3 w-2 h-2 bg-[#1D3557] rotate-45 border-white/15 ${
+                                          isRightEdge
+                                            ? '-right-1 border-r border-t'
+                                            : '-left-1 border-l border-b'
+                                        }`}></div>
+                                      </div>
+                                    )}
+
+                                    {/* BARRA CAPSULE (PILL) SEGMENTADA */}
                                     <div className="w-full flex items-end justify-center h-full relative">
                                       <div
-                                        className={`w-full max-w-[14px] sm:max-w-[18px] rounded-full relative flex items-start justify-center transition-all duration-500 ease-out group-hover/bar:scale-105 ${
-                                          isAboveAvg
-                                            ? 'bg-[#2563EB] group-hover/bar:bg-[#1D4ED8] shadow-[0_2px_10px_rgba(37,99,235,0.25)]'
-                                            : 'bg-[#1D3557] group-hover/bar:bg-[#2A4665]'
-                                        }`}
+                                        className="w-full max-w-[14px] sm:max-w-[18px] rounded-full relative flex flex-col-reverse overflow-hidden transition-all duration-500 ease-out group-hover/bar:scale-105 group-hover/bar:ring-2 group-hover/bar:ring-[#2563EB]/40 shadow-sm"
                                         style={{ height: `${heightPercent}%` }}
                                       >
-                                        {/* ANEL / PONTO DESTAQUE NO TOPO (VISÍVEL NO HOVER) */}
-                                        <div
-                                          className={`absolute -top-1 w-2.5 h-2.5 rounded-full border-2 border-white opacity-0 group-hover/bar:opacity-100 transition-opacity duration-300 z-30 shadow-md flex items-center justify-center ${
-                                            isAboveAvg ? 'bg-[#38BDF8]' : 'bg-[#CBD5E1]'
-                                          }`}
-                                        >
-                                          <div className="w-1 h-1 rounded-full bg-white"></div>
-                                        </div>
+                                        {ASSET_TYPES.map((t) => {
+                                          const count = item[t.key] || 0;
+                                          if (count === 0) return null;
+                                          const segPercent = (count / item.total) * 100;
+                                          const isThisSliceHovered = hoveredSlice?.regiao === item.regiao && hoveredSlice?.typeKey === t.key;
+
+                                          return (
+                                            <div
+                                              key={t.key}
+                                              onMouseEnter={(e) => {
+                                                e.stopPropagation();
+                                                setHoveredSlice({
+                                                  regiao: item.regiao,
+                                                  typeKey: t.key,
+                                                  typeLabel: t.label,
+                                                  corHex: t.corHex,
+                                                  count: count,
+                                                  total: item.total,
+                                                });
+                                              }}
+                                              className={`w-full transition-all duration-200 cursor-pointer min-h-[3px] ${
+                                                isThisSliceHovered
+                                                  ? 'brightness-125 saturate-150 ring-1 ring-white'
+                                                  : 'hover:brightness-110'
+                                              }`}
+                                              style={{
+                                                height: `${segPercent}%`,
+                                                backgroundColor: t.corHex,
+                                              }}
+                                            />
+                                          );
+                                        })}
                                       </div>
                                     </div>
                                   </div>
@@ -498,7 +665,7 @@ export default function AtivosPage() {
                 <span className="text-[13px] font-extrabold text-[#1D3557] tracking-tight">
                   {activeId === 'card-ativos-list' && 'Lista de Ativos'}
                   {activeId === 'card-empty' && 'Card Vazio'}
-                  {activeId === 'card-chart-ifdm' && 'Gráfico IFDM'}
+                  {activeId === 'card-chart-ifdm' && 'Gráfico de Ativos por Região'}
                 </span>
                 <span className="text-[11px] font-medium text-[#457B9D]/80 mt-0.5">Solte no local desejado</span>
               </div>
