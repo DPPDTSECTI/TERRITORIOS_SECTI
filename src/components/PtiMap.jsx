@@ -1,4 +1,3 @@
-// src/components/PtiMap.jsx
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { MapContainer, GeoJSON, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -297,6 +296,18 @@ export default function PtiMap({
                     ref={mapRef}
                     center={[-12.5, -41.5]} 
                     zoom={6} 
+                    
+                    // ==========================================
+                    // NOVAS TRAVAS DE LIMITES (BAHIA)
+                    // ==========================================
+                    minZoom={6} 
+                    maxBounds={[
+                        [-18.5, -47.0], // Canto Inferior Esquerdo (Sudoeste)
+                        [-8.0, -37.0]   // Canto Superior Direito (Nordeste)
+                    ]}
+                    maxBoundsViscosity={1.0}
+                    // ==========================================
+
                     zoomControl={false} 
                     scrollWheelZoom={true}
                     doubleClickZoom={false}
@@ -304,8 +315,8 @@ export default function PtiMap({
                     style={{ background: 'transparent' }} 
                 >
                     <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" opacity={0.6} />
-
-                    <GeoJSON 
+                    
+                    <GeoJSON
                         key={selectedTerritory?.id_territorio || 'muns'}
                         ref={geoJsonLayerRef}
                         data={geoJsonData} 
@@ -403,7 +414,9 @@ export default function PtiMap({
                             <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
                                 <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Média IFDM</span>
                                 <span className="text-[14px] font-bold text-[#1D3557]">
-                                    {hoveredData?.media_ifdm ? Number(hoveredData.media_ifdm).toFixed(3) : '0.000'}
+                                    {hoveredData?.media_ifdm 
+                                        ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3) 
+                                        : '0.000'}
                                 </span>
                             </div>
                         </div>
