@@ -38,7 +38,7 @@ export default function DonutChart({ data, title = "Cursos por Área", totalLabe
   const displayLabel = hoveredIndex !== null ? normalizedData[hoveredIndex].label : totalLabel;
 
   return (
-    <div className="flex-1 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default">
+    <div className="flex-1 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default">
 
       {/* HEADER SECTION */}
       <div className="flex justify-between items-start mb-3 relative z-10 w-full">
@@ -133,7 +133,7 @@ export default function DonutChart({ data, title = "Cursos por Área", totalLabe
           <div className="flex flex-col flex-1 pl-6 lg:pl-8 border-l border-[#E2E8F0]/50 ml-6 lg:ml-8 justify-center h-full py-1">
             <h3 className="text-[#1D3557] font-extrabold text-[10px] tracking-widest uppercase mb-3">Top 5 Universidades</h3>
 
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-6">
               {[
                 { rank: 1, name: 'Universidade Federal da Bahia', sigla: 'UFBA', count: 184, color: 'bg-[#1D3557]', text: 'text-white' },
                 { rank: 2, name: 'Univ. Estadual de Feira de Santana', sigla: 'UEFS', count: 142, color: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
@@ -143,7 +143,7 @@ export default function DonutChart({ data, title = "Cursos por Área", totalLabe
               ].map((uni) => (
                 <div key={uni.rank} className="flex items-center justify-between group">
                   <div className="flex items-center gap-2.5">
-                    <div className={`w-5 h-5 rounded-md ${uni.color} ${uni.text} flex items-center justify-center font-bold text-[9px] shadow-sm`}>
+                    <div className={`w-5 h-5 rounded-full ${uni.color} ${uni.text} flex items-center justify-center font-bold text-[9px] shadow-sm`}>
                       {uni.rank}º
                     </div>
                     <div className="flex items-center">
