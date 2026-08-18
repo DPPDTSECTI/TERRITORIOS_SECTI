@@ -103,7 +103,7 @@ function AnimatedRoutes() {
   const isHome = location.pathname === '/';
 
   return (
-    <div className={`flex w-full min-h-screen ${isHome ? 'bg-[#1c1c1c] text-white' : 'bg-[#F1FAEE] text-[#1D3557]'} font-sans overflow-x-clip`}>
+    <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#1c1c1c] text-white overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans`}>
       
       {/* SIDEBAR: Fica de fora do sistema de Rotas, garantindo que nunca pisque */}
       <AnimatePresence initial={false} mode="wait">
@@ -125,7 +125,7 @@ function AnimatedRoutes() {
       </AnimatePresence>
 
       {/* ROTEADOR: Onde as páginas são renderizadas */}
-      <div className="flex-1 relative min-h-screen bg-transparent">
+      <div className={`flex-1 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent`}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />

@@ -7,11 +7,13 @@ import { PieChart, Pie, Cell, Sector } from 'recharts';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 // IMPORTAÇÃO DOS DADOS E MAPA
 import { DataContext } from '../context/DataContext';
 import PtiMap from './PtiMap.jsx';
 import DonutChart from './DonutChart.jsx';
+import UserHeaderProfile from './UserHeaderProfile.jsx';
 
 function SortableCard({ id, children }) {
   const {
@@ -32,12 +34,12 @@ function SortableCard({ id, children }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`relative h-full ${isDragging ? 'opacity-80 scale-105 shadow-2xl' : ''}`}>
+    <div ref={setNodeRef} style={style} className={`relative h-full group ${isDragging ? 'opacity-80 scale-105 shadow-2xl' : ''}`}>
       {/* DRAG HANDLE */}
-      <button 
-        {...attributes} 
-        {...listeners} 
-        className="absolute top-4 right-4 z-50 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-colors"
+      <button
+        {...attributes}
+        {...listeners}
+        className="absolute top-4 right-4 z-50 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-translate-y-1"
         title="Arrastar card"
       >
         <GripHorizontal size={18} />
@@ -66,7 +68,7 @@ export default function DashboardPainel() {
   const [ifdmFilter, setIfdmFilter] = useState('top');
   // Estado do item hoverado no gráfico de pizza
   const [hoveredPieIndex, setHoveredPieIndex] = useState(null);
-  
+
   // DND KIt state para a ordem dos cards
   const INITIAL_CARDS = ['card-donut', 'card-pie', 'card-ranking', 'card-mapeamento'];
   const [cardsOrder, setCardsOrder] = useState(() => {
@@ -75,7 +77,7 @@ export default function DashboardPainel() {
       try {
         const order = JSON.parse(saved);
         if (order.length === INITIAL_CARDS.length) return order;
-      } catch(e) {}
+      } catch (e) { }
     }
     return INITIAL_CARDS;
   });
@@ -108,7 +110,7 @@ export default function DashboardPainel() {
   const handlePieMouseLeave = () => {
     pieHoverTimeoutRef.current = setTimeout(() => {
       setHoveredPieIndex(null);
-    }, 150); // Delay suave previne a piscada no texto e estabiliza a animação
+    }, 150);
   };
 
   // =========================================================================
@@ -122,7 +124,7 @@ export default function DashboardPainel() {
     { label: 'Territórios', value: loadingStats ? '...' : kpisGlobais.territorios, icon: Building2 }
   ];
 
-  // Dados simulados baseados no seu print do Figma (depois substituiremos também)
+  // Dados simulados baseados no seu print do Figma (Ecossistema)
   const ecosystemData = [
     { region: 'Campi Univ. Privadas', value: 85, percent: '100%', colorHex: '#1D3557', tailwind: 'bg-[#1D3557]' },
     { region: 'Campi Univ. Públicas', value: 54, percent: '63.5%', colorHex: '#2563EB', tailwind: 'bg-[#2563EB]' },
@@ -137,7 +139,7 @@ export default function DashboardPainel() {
   const pieDataWithFill = ecosystemData.map(item => ({ ...item, fill: item.colorHex }));
 
   return (
-    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-6 bg-transparent font-sans w-full">
+    <main className="flex-1 h-screen overflow-hidden relative py-6 px-6 lg:px-8 flex flex-col gap-6 bg-transparent font-sans w-full">
 
       {/* HEADER DA PÁGINA */}
       <div className="flex items-center justify-between w-full">
@@ -147,36 +149,32 @@ export default function DashboardPainel() {
         </div>
 
         {/* AÇÕES E PERFIL DO USUÁRIO */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 cursor-pointer group">
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
-                alt="Avatar do Usuário"
-                className="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform"
-              />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
-            </div>
-            <div className="flex flex-col text-left hidden sm:flex">
-              <span className="text-[14px] font-bold text-[#1D3557] leading-tight group-hover:text-[#457B9D] transition-colors">
-                Usuario
-              </span>
-              <span className="text-[12px] font-medium text-[#457B9D] mt-0.5">
-                Admin SECTI
-              </span>
-            </div>
+        <div className="flex items-center gap-6">
+          {/* ================= TOGGLE MAPA/PIN (HORIZONTAL) ================= */}
+          <div className="flex items-center p-1 bg-white/80 rounded-full border border-[#D6EAF8] shadow-sm relative">
+            <button
+              onClick={() => setViewMode('territorio')}
+              className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-500 active:scale-95 ${viewMode === 'territorio' ? 'text-[#1D3557] font-bold' : 'text-[#457B9D] hover:text-[#1D3557]'}`}
+              title="Território"
+            >
+              <Map size={18} strokeWidth={2} />
+            </button>
+            <button
+              onClick={() => setViewMode('municipio')}
+              className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-500 active:scale-95 ${viewMode === 'municipio' ? 'text-[#1D3557] font-bold' : 'text-[#457B9D] hover:text-[#1D3557]'}`}
+              title="Município"
+            >
+              <MapPin size={18} strokeWidth={2} />
+            </button>
+
+            {/* Fundo indicador animado */}
+            <div
+              className="absolute top-1 left-1 w-10 h-10 bg-[#D6EAF8] rounded-full transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm pointer-events-none"
+              style={{ transform: viewMode === 'municipio' ? 'translateX(100%)' : 'translateX(0)' }}
+            />
           </div>
 
-          <div className="h-6 w-[1px] bg-[#D6EAF8] hidden sm:block"></div>
-
-          <div className="flex items-center gap-2">
-            <button className="w-9 h-9 rounded-full bg-white text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 shadow-[0_2px_10px_rgba(29,53,87,0.04)]">
-              <Settings size={16} strokeWidth={2} />
-            </button>
-            <button className="w-9 h-9 rounded-full bg-white text-[#457B9D] hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 shadow-[0_2px_10px_rgba(29,53,87,0.04)]">
-              <LogOut size={16} strokeWidth={2} />
-            </button>
-          </div>
+          <UserHeaderProfile />
         </div>
       </div>
 
@@ -203,35 +201,13 @@ export default function DashboardPainel() {
       </div>
 
       {/* ================= GRID PRINCIPAL ================= */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-[500px]">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-0">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
         <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group">
           <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] z-20 pointer-events-none group-hover:text-[#457B9D] transition-colors">
             Mapa Territorial
           </p>
-
-          <div className="absolute top-4 right-4 z-50 flex items-center p-1 bg-white/80 rounded-full border border-[#D6EAF8] backdrop-blur-md shadow-sm">
-            <button
-              onClick={() => setViewMode('territorio')}
-              className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-500 active:scale-95 ${viewMode === 'territorio' ? 'text-[#1D3557] font-bold' : 'text-[#457B9D] hover:text-[#1D3557]'}`}
-              title="Território"
-            >
-              <Map size={18} strokeWidth={2} />
-            </button>
-            <button
-              onClick={() => setViewMode('municipio')}
-              className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-500 active:scale-95 ${viewMode === 'municipio' ? 'text-[#1D3557] font-bold' : 'text-[#457B9D] hover:text-[#1D3557]'}`}
-              title="Município"
-            >
-              <MapPin size={18} strokeWidth={2} />
-            </button>
-
-            <div
-              className="absolute top-1 left-1 w-10 h-10 bg-[#D6EAF8] rounded-full transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm pointer-events-none"
-              style={{ transform: viewMode === 'municipio' ? 'translateX(100%)' : 'translateX(0)' }}
-            />
-          </div>
 
           {/* MAPA AGORA CONECTADO AO CONTEXTO */}
           <div className="flex-1 w-full h-full relative">
@@ -247,13 +223,14 @@ export default function DashboardPainel() {
         </div>
 
         {/* LADO DIREITO: DASHBOARD DE CURSOS E INDICADORES */}
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
                 <React.Fragment key={cardId}>
                   {cardId === 'card-donut' && (
                     <SortableCard id="card-donut">
+                      {/* CARD 1: DONUT CHART (Cursos por Área) */}
                       <DonutChart
                         title=""
                         totalLabel="Total de Cursos"
@@ -269,8 +246,10 @@ export default function DashboardPainel() {
                   )}
                   {cardId === 'card-pie' && (
                     <SortableCard id="card-pie">
+                      {/* CARD 2: PIE CHART (Distribuição do Ecossistema) */}
                       <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default">
-                        
+
+                        {/* HEADER SECTION */}
                         <div className="flex justify-between items-start mb-3 relative z-10 w-full">
                           <div className="flex flex-col">
                             <h2 className="text-[#1D3557] font-extrabold text-[15px] tracking-tight">Distribuição do Ecossistema</h2>
@@ -279,6 +258,7 @@ export default function DashboardPainel() {
                         </div>
 
                         <div className="flex flex-row items-center justify-between flex-1 gap-4">
+                          {/* PIE CHART SVG */}
                           <div className="flex flex-col items-center justify-center w-[160px] shrink-0">
                             <div className="relative">
                               <PieChart width={160} height={160} className="drop-shadow-sm">
@@ -286,24 +266,25 @@ export default function DashboardPainel() {
                                   data={pieDataWithFill}
                                   cx="50%"
                                   cy="50%"
-                                  innerRadius={0}
-                                  outerRadius={65}
-                                  paddingAngle={4}
-                                  cornerRadius={5}
+                                  innerRadius={0} // Buraco = 0 (Gráfico de Pizza completo)
+                                  outerRadius={65} // Tamanho base
+                                  paddingAngle={4} // O espaço/gap entre as fatias
+                                  cornerRadius={5} // O tão desejado arredondamento de exatos 5px nas bordas!
                                   dataKey="value"
                                   stroke="none"
-                                  minAngle={15}
+                                  minAngle={15} // Garante que fatias pequenas (valores 2, 5) tenham um tamanho mínimo visível perfeitamente matemático
                                   shape={(props) => {
+                                    // Renderizamos um shape customizado para todas as fatias para poder aplicar CSS Transitions fluidas
                                     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, cornerRadius, index } = props;
                                     const isHovered = hoveredPieIndex === index;
                                     const isOtherHovered = hoveredPieIndex !== null && !isHovered;
-                                    
+
                                     return (
-                                      <g 
-                                        style={{ 
-                                          transform: isHovered ? 'scale(1.08)' : 'scale(1)', 
+                                      <g
+                                        style={{
+                                          transform: isHovered ? 'scale(1.08)' : 'scale(1)',
                                           transformOrigin: `${cx}px ${cy}px`,
-                                          transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)' 
+                                          transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)'
                                         }}
                                       >
                                         <Sector
@@ -326,6 +307,7 @@ export default function DashboardPainel() {
                                 />
                               </PieChart>
                             </div>
+                            {/* TEXT STATS */}
                             <div className="flex flex-col items-center justify-center text-center w-full mt-3 h-[42px]">
                               <span className="text-[#1D3557] font-extrabold text-[22px] leading-none mb-1 tracking-tight transition-all duration-300">
                                 {hoveredPieIndex !== null
@@ -340,9 +322,12 @@ export default function DashboardPainel() {
                             </div>
                           </div>
 
+                          {/* TOP 5 TERRITORIOS */}
                           <div className="flex flex-col flex-1 pl-8 lg:pl-10 border-l border-[#E2E8F0]/50 ml-6 justify-center h-full py-1">
                             <h3 className="text-[#1D3557] font-extrabold text-[11px] tracking-widest uppercase mb-4">Top 5 Territórios</h3>
-                            <div className="flex flex-col gap-3.5">
+
+                            <div className="flex flex-col gap-4">
+                              {/* Isso ainda é estático, conectaremos depois se precisar */}
                               {[
                                 { rank: 1, name: 'Metropolitano', count: 23, color: 'bg-[#1D3557]', text: 'text-white' },
                                 { rank: 2, name: 'Litoral Norte', count: 14, color: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
@@ -352,7 +337,7 @@ export default function DashboardPainel() {
                               ].map((terr) => (
                                 <div key={terr.rank} className="flex items-center justify-between group">
                                   <div className="flex items-center gap-3">
-                                    <div className={`w-[22px] h-[22px] rounded-md ${terr.color} ${terr.text} flex items-center justify-center font-bold text-[10px] shadow-sm`}>
+                                    <div className={`w-[22px] h-[22px] rounded-full ${terr.color} ${terr.text} flex items-center justify-center font-bold text-[10px] shadow-sm`}>
                                       {terr.rank}º
                                     </div>
                                     <div className="flex items-center">
@@ -370,7 +355,10 @@ export default function DashboardPainel() {
                   )}
                   {cardId === 'card-ranking' && (
                     <SortableCard id="card-ranking">
+                      {/* CARD 3: RANKING IFDM - AGORA 100% DINÂMICO E COM TOFIXED */}
                       <div className="flex-1 bg-white rounded-[24px] border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col group cursor-default h-full">
+
+                        {/* CABEÇALHO INSPIRADO NA REFERÊNCIA */}
                         <div className="flex justify-between items-start mb-6">
                           <div>
                             <h3 className="text-[#1A202C] font-bold text-[15px] tracking-tight">Ranking IFDM</h3>
@@ -379,7 +367,8 @@ export default function DashboardPainel() {
                             </p>
                           </div>
 
-                          <div className="flex flex-col items-center justify-center gap-[2px] bg-gray-50 border border-gray-100 rounded-[8px] p-1">
+                          {/* TOGGLE HORIZONTAL (TOP / MEDIUM / BOTTOM) */}
+                          <div className="flex flex-row items-center justify-center gap-[2px] bg-gray-50 border border-gray-100 rounded-[8px] p-1 mr-7 relative z-40">
                             <button
                               onClick={() => setIfdmFilter('top')}
                               className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'top' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}
@@ -404,7 +393,10 @@ export default function DashboardPainel() {
                           </div>
                         </div>
 
+                        {/* GRÁFICO DE BARRAS DINÂMICO */}
                         <div className="flex-1 flex items-end justify-between gap-2 lg:gap-6 mt-4 px-2 pb-1 relative min-h-[140px]">
+
+                          {/* Linhas de grade (Opcional, sutil) */}
                           <div className="absolute inset-0 flex flex-col justify-between pointer-events-none border-b border-gray-50 pb-6">
                             <div className="w-full h-px bg-gray-50"></div>
                             <div className="w-full h-px bg-gray-50"></div>
@@ -421,29 +413,25 @@ export default function DashboardPainel() {
 
                             if (territoriosOrdenados.length > 0) {
                               if (ifdmFilter === 'top') {
-                                // Pega os 5 MAIORES (índices 0 a 4)
                                 data = territoriosOrdenados.slice(0, 5);
                               } else if (ifdmFilter === 'bottom') {
-                                // Pega os 5 MENORES (últimos do array)
                                 data = territoriosOrdenados.slice(-5).reverse();
                               } else if (ifdmFilter === 'medium') {
-                                // Pega os 5 exatamente do MEIO da tabela
                                 const meio = Math.floor(territoriosOrdenados.length / 2);
                                 data = territoriosOrdenados.slice(Math.max(0, meio - 2), meio + 3);
                               }
                             }
 
-                            // 2. Mapeamos os dados reais para o formato exato que o seu gráfico de barras espera!
+                            // 2. Mapeamos os dados reais para o formato exato
                             const chartData = data.map(t => ({
                               name: t.territorio.replace('Território de Identidade ', ''), // Limpa nomes longos
-                              apls: Number(t.cadeias_produtivas || 0), // Usando o total de cadeias da nossa View
-                              igs: 0, // Se no futuro separar IGs no banco, é só puxar a coluna t.qtd_igs aqui
+                              apls: Number(t.cadeias_produtivas || 0), 
+                              igs: 0, 
                               ifdm: Number(t.media_ifdm)
                             }));
 
                             // 3. Renderiza as barrinhas
                             return chartData.map((item, idx) => {
-                              // Se IFDM for 0.820, a barra sobe 82% da altura máxima
                               const ifdmPercent = item.ifdm * 100;
 
                               return (
@@ -453,18 +441,22 @@ export default function DashboardPainel() {
                                       className="w-full max-w-[22px] bg-[#4361EE] rounded-full relative flex justify-center transition-all duration-500 ease-out group-hover/col:opacity-90 group-hover/col:shadow-[0_0_15px_rgba(67,97,238,0.3)]"
                                       style={{ height: `${ifdmPercent}%` }}
                                     >
+                                      {/* DOT FLUTUANTE */}
                                       <div className="absolute -top-1 w-2.5 h-2.5 bg-gray-200 rounded-full border-[2px] border-white opacity-0 group-hover/col:opacity-100 transition-opacity duration-300 z-20 shadow-sm flex items-center justify-center">
                                         <div className="w-1 h-1 bg-[#1A202C] rounded-full"></div>
                                       </div>
+
+                                      {/* TEXTO IFDM COM TOFIXED */}
                                       <span className="absolute -top-7 text-[10px] font-bold text-[#A0AEC0] group-hover/col:opacity-0 transition-opacity">
-                                        {item.ifdm.toFixed(3)}
+                                        {Number(item.ifdm).toFixed(3)}
                                       </span>
+
+                                      {/* TOOLTIP DO GRÁFICO */}
                                       <div className="absolute bottom-[calc(100%+14px)] bg-[#1A202C] shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-[12px] px-3 py-2.5 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[105px] left-1/2 -translate-x-1/2">
                                         <div className="flex items-center mb-2">
                                           <div className="w-2 h-2 rounded-full bg-white mr-2"></div>
                                           <span className="text-[11px] font-bold text-white leading-none">{item.apls} <span className="text-[#A0AEC0] font-medium ml-0.5">Cadeias</span></span>
                                         </div>
-                                        {/* A parte de IGs fica escondida até você separar no banco */}
                                         <div className="absolute -bottom-[4px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#1A202C] rotate-45 rounded-sm"></div>
                                       </div>
                                     </div>
@@ -482,6 +474,7 @@ export default function DashboardPainel() {
                   )}
                   {cardId === 'card-mapeamento' && (
                     <SortableCard id="card-mapeamento">
+                      {/* CARD 4: MAPEAMENTO GERAL (GRÁFICO COMPACTO) */}
                       <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-between cursor-default h-full">
                         <div className="mb-2 flex items-start justify-between">
                           <div>
