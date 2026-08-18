@@ -7,6 +7,8 @@ import { DndContext, DragOverlay, closestCenter, KeyboardSensor, PointerSensor, 
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { restrictToWindowEdges, snapCenterToCursor } from '@dnd-kit/modifiers';
 
+import UserHeaderProfile from './UserHeaderProfile';
+
 // === DADOS MOCKADOS ===
 const ATIVOS_MOCK = [
   { id: 1, nome: "Parque Tecnológico da Bahia", tipo: "Parque Tecnológico", municipio: "Salvador", ifdm: 0.759, lat: -12.9372, lng: -38.4068, icone: Building2, cor: "bg-[#1D3557]", textCor: "text-[#1D3557]", corHex: "#1D3557" },
@@ -174,11 +176,12 @@ export default function AtivosPage() {
             Explore os institutos, universidades e parques tecnológicos pelo estado
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <div className="bg-white px-4 py-2 rounded-full shadow-sm border border-[#E2E8F0] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span>
             <span className="text-[13px] font-bold text-[#1D3557]">{ATIVOS_MOCK.length} Ativos</span>
           </div>
+          <UserHeaderProfile />
         </div>
       </div>
 
