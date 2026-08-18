@@ -12,6 +12,10 @@ import Sidebar from './components/Sidebar';
 const LandingHero = lazy(() => import('./components/hero'));
 const SobrePage = lazy(() => import('./components/SobrePage'));
 const DashboardPainel = lazy(() => import('./components/DashboardPainel'));
+const AdminPage = lazy(() => import('./components/AdminPage'));
+const AtivosPage = lazy(() => import('./components/AtivosPage'));
+const CadeiaPage = lazy(() => import('./components/CadeiaPage'));
+const CursosPage = lazy(() => import('./components/CursosPage'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -74,7 +78,7 @@ function AnimatedRoutes() {
   const isHome = location.pathname === '/';
 
   return (
-    <div className="flex w-full min-h-screen bg-[#1c1c1c] text-white font-sans overflow-x-clip">
+    <div className={`flex w-full min-h-screen ${isHome ? 'bg-[#1c1c1c] text-white' : 'bg-[#F1FAEE] text-[#1D3557]'} font-sans overflow-x-clip`}>
       
       {/* SIDEBAR: Fica de fora do sistema de Rotas, garantindo que nunca pisque */}
       <AnimatePresence initial={false} mode="wait">
@@ -100,8 +104,12 @@ function AnimatedRoutes() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />
-            <Route path="/sobre" element={<PageWrapper><SobrePage darkMode={true} /></PageWrapper>} />
+            <Route path="/sobre" element={<PageWrapper><SobrePage /></PageWrapper>} />
             <Route path="/territorios" element={<PageWrapper><DashboardPainel /></PageWrapper>} />
+            <Route path="/ativos" element={<PageWrapper><AtivosPage /></PageWrapper>} />
+            <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
+            <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
+            <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>
