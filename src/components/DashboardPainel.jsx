@@ -1,29 +1,22 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useContext, useMemo } from 'react';
 import {
   Settings, GraduationCap, TrendingUp, Database, Building2,
-  ChevronDown, ChevronUp, Minus, Map, MapPin, LogOut, GripHorizontal
+  ChevronDown, ChevronUp, Minus, Map, MapPin, GripHorizontal
 } from 'lucide-react';
-import { PieChart, Pie, Cell, Sector } from 'recharts';
+import { PieChart, Pie, Sector } from 'recharts';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
-// IMPORTAÇÃO DOS DADOS E MAPA
+// IMPORTAÇÃO DOS DADOS E COMPONENTES
 import { DataContext } from '../context/DataContext';
 import PtiMap from './PtiMap.jsx';
 import DonutChart from './DonutChart.jsx';
 import UserHeaderProfile from './UserHeaderProfile.jsx';
 
 function SortableCard({ id, children }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -35,7 +28,6 @@ function SortableCard({ id, children }) {
 
   return (
     <div ref={setNodeRef} style={style} className={`relative h-full group ${isDragging ? 'opacity-80 scale-105 shadow-2xl' : ''}`}>
-      {/* DRAG HANDLE */}
       <button
         {...attributes}
         {...listeners}
@@ -51,25 +43,160 @@ function SortableCard({ id, children }) {
 
 export default function DashboardPainel() {
   // =========================================================================
-  // CONSUMINDO O NOSSO CONTEXTO GLOBAL (SUPER RÁPIDO)
+  // CONSUMINDO O CONTEXTO GLOBAL DA API
   // =========================================================================
   const { 
     kpisGlobais, 
     loadingStats, 
     territoriosData, 
+    ativosData, 
+    cursosData, 
     territoriesDynamicStats, 
     selectedTerritory, 
     setSelectedTerritory 
   } = useContext(DataContext);
 
-  // Estado que guarda o modo de visualização (território vs município)
   const [viewMode, setViewMode] = useState('territorio');
-  // Estado do filtro IFDM
   const [ifdmFilter, setIfdmFilter] = useState('top');
-  // Estado do item hoverado no gráfico de pizza
   const [hoveredPieIndex, setHoveredPieIndex] = useState(null);
 
-  // DND KIt state para a ordem dos cards
+  // =========================================================================
+  // PROCESSAMENTO DE DADOS REAIS PARA OS GRÁFICOS
+  // =========================================================================
+
+  // 1. Dados para o DonutChart (Cursos)
+  const donutChartData = useMemo(() => {
+    if (!cursosData || cursosData.length === 0) return [];
+    const counts = {};
+    cursosData.forEach(c => {
+      const cat = c.categoria || 'Outras Áreas';
+      counts[cat] = (counts[cat] || 0) + 1;
+    });
+
+    const palette = ['#1D3557', '#2563EB', '#457B9D', '#A8DADC', '#F87171', '#F59E0B'];
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, value], idx) => ({
+        label, value, color: palette[idx % palette.length]
+      }));
+  }, [cursosData]);
+
+  // Top 5 Entidades que mais oferecem cursos (USANDO A SIGLA DO BANCO EM UPPERCASE)
+  const topEntidadesCursos = useMemo(() => {
+    if (!cursosData || cursosData.length === 0) return [];
+    
+    const mapEntidades = {};
+
+    cursosData.forEach(c => {
+      const ent = c.entidade || 'Não informada';
+      
+      if (!mapEntidades[ent]) {
+        // Puxa a sigla oficial do banco e tira os espaços
+        const siglaDB = c.sigla ? String(c.sigla).toUpperCase().trim() : '';
+
+        // A REGRA: Se tiver sigla no banco, usa ela. Se não tiver, usa o nome por extenso!
+        const textoParaExibir = siglaDB !== '' ? siglaDB : ent;
+
+        mapEntidades[ent] = {
+          name: ent,
+          sigla: textoParaExibir,
+          count: 0
+        };
+      }
+      mapEntidades[ent].count += 1;
+    });
+
+    const styles = [
+      { bg: 'bg-[#1D3557]', text: 'text-white' },
+      { bg: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
+      { bg: 'bg-[#457B9D]/10', text: 'text-[#457B9D]' },
+      { bg: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
+      { bg: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
+    ];
+
+    return Object.values(mapEntidades)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5)
+      .map((item, idx) => ({
+        rank: idx + 1, 
+        name: item.name, 
+        sigla: item.sigla, // Aqui vai a sigla ou o nome extenso
+        count: item.count,
+        color: styles[idx % styles.length].bg,
+        text: styles[idx % styles.length].text
+      }));
+  }, [cursosData]);
+
+  // 2. Dados para o PieChart e Mapeamento (Distribuição do Ecossistema)
+  const ecosystemData = useMemo(() => {
+    if (!ativosData || ativosData.length === 0) return [];
+    const counts = {};
+    ativosData.forEach(a => {
+      const tipo = a.tipo || a.nome_tipo || 'Outros';
+      counts[tipo] = (counts[tipo] || 0) + 1;
+    });
+
+    // Encontra a Categoria que tem MAIS ativos para basear o 100% da barra horizontal nela
+    const maxCount = Math.max(...Object.values(counts), 1);
+
+    const palette = [
+      { hex: '#1D3557', tailwind: 'bg-[#1D3557]' },
+      { hex: '#2563EB', tailwind: 'bg-[#2563EB]' },
+      { hex: '#457B9D', tailwind: 'bg-[#457B9D]' },
+      { hex: '#06B6D4', tailwind: 'bg-[#06B6D4]' },
+      { hex: '#10B981', tailwind: 'bg-[#10B981]' },
+      { hex: '#F59E0B', tailwind: 'bg-[#F59E0B]' },
+      { hex: '#EF4444', tailwind: 'bg-[#EF4444]' },
+      { hex: '#8B5CF6', tailwind: 'bg-[#8B5CF6]' }
+    ];
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([region, value], idx) => ({
+        region, 
+        value,
+        // Proporção baseada no Máximo (para as barras horizontais preencherem 100%)
+        percentMax: `${((value / maxCount) * 100).toFixed(1)}%`,
+        colorHex: palette[idx % palette.length].hex,
+        tailwind: palette[idx % palette.length].tailwind
+      }));
+  }, [ativosData]);
+
+  const pieDataWithFill = ecosystemData.map(item => ({ ...item, fill: item.colorHex }));
+
+  // Top 5 Territórios com mais Ativos
+  const topTerritoriosAtivos = useMemo(() => {
+    if (!ativosData || ativosData.length === 0) return [];
+    const counts = {};
+    ativosData.forEach(a => {
+      const terr = a.territorio_identidade || 'Não identificado';
+      counts[terr] = (counts[terr] || 0) + 1;
+    });
+
+    const styles = [
+      { bg: 'bg-[#1D3557]', text: 'text-white' },
+      { bg: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
+      { bg: 'bg-[#457B9D]/10', text: 'text-[#457B9D]' },
+      { bg: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
+      { bg: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
+    ];
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([terr, count], idx) => ({
+        rank: idx + 1,
+        name: terr.replace('Território de Identidade ', ''),
+        count,
+        color: styles[idx % styles.length].bg,
+        text: styles[idx % styles.length].text
+      }));
+  }, [ativosData]);
+
+
+  // =========================================================================
+  // CONFIGURAÇÕES DO DRAG & DROP
+  // =========================================================================
   const INITIAL_CARDS = ['card-donut', 'card-pie', 'card-ranking', 'card-mapeamento'];
   const [cardsOrder, setCardsOrder] = useState(() => {
     const saved = localStorage.getItem('dashboard-cards-order');
@@ -101,21 +228,14 @@ export default function DashboardPainel() {
   };
 
   const pieHoverTimeoutRef = useRef(null);
-
   const handlePieMouseEnter = (index) => {
     if (pieHoverTimeoutRef.current) clearTimeout(pieHoverTimeoutRef.current);
     setHoveredPieIndex(index);
   };
-
   const handlePieMouseLeave = () => {
-    pieHoverTimeoutRef.current = setTimeout(() => {
-      setHoveredPieIndex(null);
-    }, 150);
+    pieHoverTimeoutRef.current = setTimeout(() => setHoveredPieIndex(null), 150);
   };
 
-  // =========================================================================
-  // ALIMENTANDO OS KPIs COM OS DADOS REAIS DA API
-  // =========================================================================
   const kpis = [
     { label: 'Ativos', value: loadingStats ? '...' : kpisGlobais.ativos, icon: Settings },
     { label: 'Cursos', value: loadingStats ? '...' : kpisGlobais.cursos, icon: GraduationCap },
@@ -124,33 +244,17 @@ export default function DashboardPainel() {
     { label: 'Territórios', value: loadingStats ? '...' : kpisGlobais.territorios, icon: Building2 }
   ];
 
-  // Dados simulados baseados no seu print do Figma (Ecossistema)
-  const ecosystemData = [
-    { region: 'Campi Univ. Privadas', value: 85, percent: '100%', colorHex: '#1D3557', tailwind: 'bg-[#1D3557]' },
-    { region: 'Campi Univ. Públicas', value: 54, percent: '63.5%', colorHex: '#2563EB', tailwind: 'bg-[#2563EB]' },
-    { region: 'Campi Inst. Federais', value: 40, percent: '47%', colorHex: '#457B9D', tailwind: 'bg-[#457B9D]' },
-    { region: 'Incubadoras & Acel.', value: 31, percent: '36.4%', colorHex: '#06B6D4', tailwind: 'bg-[#06B6D4]' },
-    { region: 'Espaços Dinamizadores', value: 28, percent: '32.9%', colorHex: '#10B981', tailwind: 'bg-[#10B981]' },
-    { region: 'Centros de Pesquisa', value: 4, percent: '4.7%', colorHex: '#F59E0B', tailwind: 'bg-[#F59E0B]' },
-    { region: 'ICTs Mapeadas', value: 2, percent: '2.3%', colorHex: '#EF4444', tailwind: 'bg-[#EF4444]' },
-    { region: 'Parques Tecnológicos', value: 2, percent: '2.3%', colorHex: '#8B5CF6', tailwind: 'bg-[#8B5CF6]' }
-  ];
-
-  const pieDataWithFill = ecosystemData.map(item => ({ ...item, fill: item.colorHex }));
-
   return (
-    <main className="flex-1 h-screen overflow-hidden relative py-6 px-6 lg:px-8 flex flex-col gap-6 bg-transparent font-sans w-full">
+    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-6 bg-transparent font-sans w-full">
 
       {/* HEADER DA PÁGINA */}
       <div className="flex items-center justify-between w-full">
         <div>
           <h1 className="text-3xl font-bold text-[#1D3557] tracking-tight">Visão Geral</h1>
-          <p className="text-sm text-[#457B9D] mt-1.5 font-medium">Sexta-feira, 14 de Agosto de 2026</p>
+          <p className="text-sm text-[#457B9D] mt-1.5 font-medium">Dashboard Integrado de CTI</p>
         </div>
 
-        {/* AÇÕES E PERFIL DO USUÁRIO */}
         <div className="flex items-center gap-6">
-          {/* ================= TOGGLE MAPA/PIN (HORIZONTAL) ================= */}
           <div className="flex items-center p-1 bg-white/80 rounded-full border border-[#D6EAF8] shadow-sm relative">
             <button
               onClick={() => setViewMode('territorio')}
@@ -166,14 +270,11 @@ export default function DashboardPainel() {
             >
               <MapPin size={18} strokeWidth={2} />
             </button>
-
-            {/* Fundo indicador animado */}
             <div
               className="absolute top-1 left-1 w-10 h-10 bg-[#D6EAF8] rounded-full transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm pointer-events-none"
               style={{ transform: viewMode === 'municipio' ? 'translateX(100%)' : 'translateX(0)' }}
             />
           </div>
-
           <UserHeaderProfile />
         </div>
       </div>
@@ -201,15 +302,14 @@ export default function DashboardPainel() {
       </div>
 
       {/* ================= GRID PRINCIPAL ================= */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group">
+        <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group min-h-[400px]">
           <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] z-20 pointer-events-none group-hover:text-[#457B9D] transition-colors">
             Mapa Territorial
           </p>
 
-          {/* MAPA AGORA CONECTADO AO CONTEXTO */}
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}
@@ -222,34 +322,29 @@ export default function DashboardPainel() {
           </div>
         </div>
 
-        {/* LADO DIREITO: DASHBOARD DE CURSOS E INDICADORES */}
+        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
                 <React.Fragment key={cardId}>
+                  
                   {cardId === 'card-donut' && (
                     <SortableCard id="card-donut">
-                      {/* CARD 1: DONUT CHART (Cursos por Área) */}
                       <DonutChart
-                        title=""
+                        title="Cursos por Área"
+                        subtitle="Distribuição oficial de cursos no estado"
                         totalLabel="Total de Cursos"
-                        data={[
-                          { label: 'Tecnologia da Informação', value: 340, color: '#1D3557' },
-                          { label: 'Engenharias', value: 285, color: '#2563EB' },
-                          { label: 'Saúde', value: 210, color: '#457B9D' },
-                          { label: 'Ciências Humanas', value: 160, color: '#A8DADC' },
-                          { label: 'Artes e Design', value: 95, color: '#F87171' },
-                        ]}
+                        listTitle="Top 5 Instituições"
+                        data={donutChartData.length > 0 ? donutChartData : [{ label: 'Carregando...', value: 1, color: '#E2E8F0' }]}
+                        topList={topEntidadesCursos}
                       />
                     </SortableCard>
                   )}
+
                   {cardId === 'card-pie' && (
                     <SortableCard id="card-pie">
-                      {/* CARD 2: PIE CHART (Distribuição do Ecossistema) */}
                       <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default">
-
-                        {/* HEADER SECTION */}
                         <div className="flex justify-between items-start mb-3 relative z-10 w-full">
                           <div className="flex flex-col">
                             <h2 className="text-[#1D3557] font-extrabold text-[15px] tracking-tight">Distribuição do Ecossistema</h2>
@@ -257,48 +352,27 @@ export default function DashboardPainel() {
                           </div>
                         </div>
 
-                        <div className="flex flex-row items-center justify-between flex-1 gap-3">
-                          {/* PIE CHART SVG */}
-                          <div className="flex flex-col items-center justify-center w-[130px] shrink-0">
+                        <div className="flex flex-row items-center justify-between flex-1 gap-4 min-w-0">
+                          <div className="flex flex-col items-center justify-center w-[140px] shrink-0">
                             <div className="relative">
-                              <PieChart width={130} height={130} className="drop-shadow-sm">
+                              <PieChart width={140} height={140} className="drop-shadow-sm">
                                 <Pie
-                                  data={pieDataWithFill}
-                                  cx="50%"
-                                  cy="50%"
-                                  innerRadius={0} // Buraco = 0 (Gráfico de Pizza completo)
-                                  outerRadius={56} // Tamanho base equilibrado
-                                  paddingAngle={4} // O espaço/gap entre as fatias
-                                  cornerRadius={4} // Arredondamento suave nas bordas
-                                  dataKey="value"
-                                  stroke="none"
-                                  minAngle={15} // Garante que fatias pequenas tenham tamanho mínimo visível
+                                  data={pieDataWithFill.length > 0 ? pieDataWithFill : [{ value: 1, fill: '#E2E8F0' }]}
+                                  cx="50%" cy="50%" innerRadius={0} outerRadius={60} paddingAngle={4} cornerRadius={5}
+                                  dataKey="value" stroke="none" minAngle={15}
                                   shape={(props) => {
                                     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, cornerRadius, index } = props;
                                     const isHovered = hoveredPieIndex === index;
                                     const isOtherHovered = hoveredPieIndex !== null && !isHovered;
-
+                                    
                                     return (
-                                      <g
-                                        style={{
-                                          transform: isHovered ? 'scale(1.08)' : 'scale(1)',
-                                          transformOrigin: `${cx}px ${cy}px`,
-                                          transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)'
-                                        }}
-                                      >
+                                      <g style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)', transformOrigin: `${cx}px ${cy}px`, transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)' }}>
                                         <Sector
-                                          cx={cx}
-                                          cy={cy}
-                                          innerRadius={innerRadius}
-                                          outerRadius={outerRadius}
-                                          startAngle={startAngle}
-                                          endAngle={endAngle}
-                                          fill={fill}
-                                          cornerRadius={cornerRadius}
+                                          cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius}
+                                          startAngle={startAngle} endAngle={endAngle} fill={fill} cornerRadius={cornerRadius}
                                           className="cursor-pointer drop-shadow-sm transition-opacity duration-300 ease-in-out"
                                           style={{ opacity: isOtherHovered ? 0.3 : 1 }}
-                                          onMouseEnter={() => handlePieMouseEnter(index)}
-                                          onMouseLeave={handlePieMouseLeave}
+                                          onMouseEnter={() => handlePieMouseEnter(index)} onMouseLeave={handlePieMouseLeave}
                                         />
                                       </g>
                                     );
@@ -306,41 +380,26 @@ export default function DashboardPainel() {
                                 />
                               </PieChart>
                             </div>
-                            {/* TEXT STATS */}
-                            <div className="flex flex-col items-center justify-center text-center w-full mt-2 h-[38px]">
+                            <div className="flex flex-col items-center justify-center text-center w-full mt-3 h-[38px]">
                               <span className="text-[#1D3557] font-extrabold text-[20px] leading-none mb-1 tracking-tight transition-all duration-300">
-                                {hoveredPieIndex !== null
-                                  ? ecosystemData[hoveredPieIndex].value
-                                  : ecosystemData.reduce((acc, item) => acc + item.value, 0)}
+                                {hoveredPieIndex !== null ? ecosystemData[hoveredPieIndex].value : ecosystemData.reduce((acc, item) => acc + item.value, 0)}
                               </span>
-                              <span className="text-[#457B9D]/80 font-semibold text-[10px] leading-tight transition-all duration-300 px-1 w-[130px] truncate">
-                                {hoveredPieIndex !== null
-                                  ? ecosystemData[hoveredPieIndex].region
-                                  : 'Ativos Mapeados'}
+                              <span className="text-[#457B9D]/80 font-semibold text-[10px] leading-tight transition-all duration-300 px-1 w-full truncate">
+                                {hoveredPieIndex !== null ? ecosystemData[hoveredPieIndex].region : 'Ativos Mapeados'}
                               </span>
                             </div>
                           </div>
 
-                          {/* TOP 5 TERRITORIOS (COM ESPAÇAMENTO RESPONSIVO E ZERO VAZAMENTO) */}
-                          <div className="flex flex-col flex-1 pl-4 lg:pl-5 border-l border-[#E2E8F0]/60 justify-center h-full py-1 min-w-0 pr-1">
+                          <div className="flex flex-col flex-1 pl-4 lg:pl-6 border-l border-[#E2E8F0]/50 justify-center h-full py-1 min-w-0">
                             <h3 className="text-[#1D3557] font-extrabold text-[10px] tracking-widest uppercase mb-3 truncate">Top 5 Territórios</h3>
-
                             <div className="flex flex-col gap-3.5 w-full">
-                              {[
-                                { rank: 1, name: 'Metropolitano', count: 23, color: 'bg-[#1D3557]', text: 'text-white' },
-                                { rank: 2, name: 'Litoral Norte', count: 14, color: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
-                                { rank: 3, name: 'Sudoeste', count: 9, color: 'bg-[#457B9D]/10', text: 'text-[#457B9D]' },
-                                { rank: 4, name: 'Sul Baiano', count: 9, color: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
-                                { rank: 5, name: 'Chapada', count: 4, color: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
-                              ].map((terr) => (
-                                <div key={terr.rank} className="flex items-center justify-between gap-2 group w-full min-w-0">
+                              {topTerritoriosAtivos.map((terr) => (
+                                <div key={terr.rank} className="flex items-center justify-between group min-w-0 gap-2">
                                   <div className="flex items-center gap-2 min-w-0 flex-1">
-                                    <div className={`w-5 h-5 rounded-full ${terr.color} ${terr.text} flex items-center justify-center font-bold text-[9px] shadow-sm shrink-0`}>
+                                    <div className={`w-[20px] h-[20px] rounded-md ${terr.color} ${terr.text} flex items-center justify-center font-bold text-[9px] shadow-sm shrink-0`}>
                                       {terr.rank}º
                                     </div>
-                                    <span className="text-[11px] font-bold text-[#2563EB] group-hover:text-[#1D3557] transition-colors truncate">
-                                      {terr.name}
-                                    </span>
+                                    <span className="text-[11px] font-bold text-[#2563EB] group-hover:text-[#1D3557] transition-colors truncate" title={terr.name}>{terr.name}</span>
                                   </div>
                                   <span className="font-extrabold text-[#1D3557] text-[12px] shrink-0">{terr.count}</span>
                                 </div>
@@ -351,51 +410,26 @@ export default function DashboardPainel() {
                       </div>
                     </SortableCard>
                   )}
+
                   {cardId === 'card-ranking' && (
                     <SortableCard id="card-ranking">
-                      {/* CARD 3: RANKING IFDM - AGORA 100% DINÂMICO E COM TOFIXED */}
                       <div className="flex-1 bg-white rounded-[24px] border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col group cursor-default h-full">
-
-                        {/* CABEÇALHO INSPIRADO NA REFERÊNCIA */}
-                        <div className="flex justify-between items-start mb-6">
+                        <div className="flex justify-between items-start mb-4">
                           <div>
                             <h3 className="text-[#1A202C] font-bold text-[15px] tracking-tight">Ranking IFDM</h3>
                             <p className="text-[#A0AEC0] font-medium text-[11px] mt-0.5">
                               {ifdmFilter === 'top' ? 'Top 5 melhores' : ifdmFilter === 'medium' ? '5 na média' : 'Top 5 piores'}
                             </p>
                           </div>
-
-                          {/* TOGGLE HORIZONTAL (TOP / MEDIUM / BOTTOM) */}
                           <div className="flex flex-row items-center justify-center gap-[2px] bg-gray-50 border border-gray-100 rounded-[8px] p-1 mr-7 relative z-40">
-                            <button
-                              onClick={() => setIfdmFilter('top')}
-                              className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'top' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}
-                              title="Top 5 melhores"
-                            >
-                              <ChevronUp size={14} strokeWidth={3.5} />
-                            </button>
-                            <button
-                              onClick={() => setIfdmFilter('medium')}
-                              className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'medium' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}
-                              title="5 na média"
-                            >
-                              <Minus size={14} strokeWidth={3.5} />
-                            </button>
-                            <button
-                              onClick={() => setIfdmFilter('bottom')}
-                              className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'bottom' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`}
-                              title="Top 5 piores"
-                            >
-                              <ChevronDown size={14} strokeWidth={3.5} />
-                            </button>
+                            <button onClick={() => setIfdmFilter('top')} className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'top' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`} title="Top 5 melhores"><ChevronUp size={14} strokeWidth={3.5} /></button>
+                            <button onClick={() => setIfdmFilter('medium')} className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'medium' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`} title="5 na média"><Minus size={14} strokeWidth={3.5} /></button>
+                            <button onClick={() => setIfdmFilter('bottom')} className={`p-0.5 rounded transition-all duration-300 ${ifdmFilter === 'bottom' ? 'text-[#4361EE] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)]' : 'text-[#A0AEC0] hover:text-[#4A5568]'}`} title="Top 5 piores"><ChevronDown size={14} strokeWidth={3.5} /></button>
                           </div>
                         </div>
 
-                        {/* GRÁFICO DE BARRAS DINÂMICO */}
-                        <div className="flex-1 flex items-end justify-between gap-2 lg:gap-6 mt-4 px-2 pb-1 relative min-h-[140px]">
-
-                          {/* Linhas de grade (Opcional, sutil) */}
-                          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none border-b border-gray-50 pb-6">
+                        <div className="flex-1 flex items-end justify-between gap-1.5 lg:gap-4 mt-2 px-1 pb-2 relative min-h-[140px]">
+                          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none border-b border-gray-50 pb-6 z-0">
                             <div className="w-full h-px bg-gray-50"></div>
                             <div className="w-full h-px bg-gray-50"></div>
                             <div className="w-full h-px bg-gray-50"></div>
@@ -403,53 +437,41 @@ export default function DashboardPainel() {
 
                           {(() => {
                             let data = [];
-                            
-                            // 1. Clonamos e ordenamos os dados reais da API pelo IFDM (Maior para o Menor)
                             const territoriosOrdenados = [...territoriosData]
-                              .filter(t => t.media_ifdm !== null) // Tira quem não tem IFDM calculado
+                              .filter(t => t.media_ifdm !== null)
                               .sort((a, b) => Number(b.media_ifdm) - Number(a.media_ifdm));
 
                             if (territoriosOrdenados.length > 0) {
-                              if (ifdmFilter === 'top') {
-                                data = territoriosOrdenados.slice(0, 5);
-                              } else if (ifdmFilter === 'bottom') {
-                                data = territoriosOrdenados.slice(-5).reverse();
-                              } else if (ifdmFilter === 'medium') {
+                              if (ifdmFilter === 'top') data = territoriosOrdenados.slice(0, 5);
+                              else if (ifdmFilter === 'bottom') data = territoriosOrdenados.slice(-5).reverse();
+                              else if (ifdmFilter === 'medium') {
                                 const meio = Math.floor(territoriosOrdenados.length / 2);
                                 data = territoriosOrdenados.slice(Math.max(0, meio - 2), meio + 3);
                               }
                             }
 
-                            // 2. Mapeamos os dados reais para o formato exato
                             const chartData = data.map(t => ({
-                              name: t.territorio.replace('Território de Identidade ', ''), // Limpa nomes longos
+                              name: t.territorio.replace('Território de Identidade ', ''),
                               apls: Number(t.cadeias_produtivas || 0), 
                               igs: 0, 
                               ifdm: Number(t.media_ifdm)
                             }));
 
-                            // 3. Renderiza as barrinhas
                             return chartData.map((item, idx) => {
                               const ifdmPercent = item.ifdm * 100;
-
                               return (
-                                <div key={idx} className="flex flex-col items-center gap-3 group/col flex-1 h-full justify-end relative z-10">
-                                  <div className="flex items-end justify-center w-full h-[85%] relative transition-transform duration-300">
+                                <div key={idx} className="flex flex-col items-center flex-1 h-full justify-end relative z-10 min-w-0 group/col">
+                                  <div className="flex items-end justify-center w-full h-[80%] relative transition-transform duration-300">
                                     <div
-                                      className="w-full max-w-[22px] bg-[#4361EE] rounded-full relative flex justify-center transition-all duration-500 ease-out group-hover/col:opacity-90 group-hover/col:shadow-[0_0_15px_rgba(67,97,238,0.3)]"
+                                      className="w-full max-w-[20px] bg-[#4361EE] rounded-full relative flex justify-center transition-all duration-500 ease-out group-hover/col:opacity-90 group-hover/col:shadow-[0_0_15px_rgba(67,97,238,0.3)]"
                                       style={{ height: `${ifdmPercent}%` }}
                                     >
-                                      {/* DOT FLUTUANTE */}
                                       <div className="absolute -top-1 w-2.5 h-2.5 bg-gray-200 rounded-full border-[2px] border-white opacity-0 group-hover/col:opacity-100 transition-opacity duration-300 z-20 shadow-sm flex items-center justify-center">
                                         <div className="w-1 h-1 bg-[#1A202C] rounded-full"></div>
                                       </div>
-
-                                      {/* TEXTO IFDM COM TOFIXED */}
-                                      <span className="absolute -top-7 text-[10px] font-bold text-[#A0AEC0] group-hover/col:opacity-0 transition-opacity">
-                                        {Number(item.ifdm).toFixed(3)}
+                                      <span className="absolute -top-6 text-[9px] font-bold text-[#A0AEC0] group-hover/col:opacity-0 transition-opacity">
+                                        {(Math.trunc(Number(item.ifdm) * 1000) / 1000).toFixed(3)}
                                       </span>
-
-                                      {/* TOOLTIP DO GRÁFICO */}
                                       <div className="absolute bottom-[calc(100%+14px)] bg-[#1A202C] shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-[12px] px-3 py-2.5 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[105px] left-1/2 -translate-x-1/2">
                                         <div className="flex items-center mb-2">
                                           <div className="w-2 h-2 rounded-full bg-white mr-2"></div>
@@ -459,7 +481,7 @@ export default function DashboardPainel() {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="text-[10px] font-medium text-[#A0AEC0] text-center leading-tight truncate w-full group-hover/col:text-[#1A202C] transition-colors mt-1" title={item.name}>
+                                  <div className="text-[9px] font-medium text-[#A0AEC0] text-center leading-tight truncate w-full group-hover/col:text-[#1A202C] transition-colors mt-2 px-0.5" title={item.name}>
                                     {item.name}
                                   </div>
                                 </div>
@@ -470,27 +492,29 @@ export default function DashboardPainel() {
                       </div>
                     </SortableCard>
                   )}
+
                   {cardId === 'card-mapeamento' && (
                     <SortableCard id="card-mapeamento">
-                      {/* CARD 4: MAPEAMENTO GERAL (GRÁFICO COMPACTO) */}
                       <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-between cursor-default h-full">
-                        <div className="mb-2 flex items-start justify-between">
+                        <div className="mb-3 flex items-start justify-between">
                           <div>
                             <h2 className="text-[#1D3557] font-extrabold text-[14px] tracking-tight">Mapeamento Geral</h2>
+                            <p className="text-[#457B9D]/60 text-[10px] font-medium mt-0.5">Proporção total baseada na categoria líder</p>
                           </div>
                         </div>
-
                         <div className="flex flex-col justify-between flex-1 w-full gap-2 mt-1">
                           {ecosystemData.map((item, idx) => (
-                            <div key={idx} className="flex items-center gap-2 group">
-                              <span className="text-[9px] font-bold text-[#1D3557] group-hover:text-[#2563EB] transition-colors w-[110px] truncate text-right">{item.region}</span>
-                              <div className="flex-1 bg-[#E2E8F0]/40 h-1.5 rounded-full overflow-hidden flex items-center">
-                                <div
-                                  className={`h-full ${item.tailwind} rounded-full transition-all duration-1000 ease-out`}
-                                  style={{ width: item.percent }}
-                                />
+                            <div key={idx} className="flex items-center gap-3 group min-w-0">
+                              <span className="text-[10px] font-bold text-[#1D3557] group-hover:text-[#2563EB] transition-colors w-[120px] truncate text-right shrink-0" title={item.region}>
+                                {item.region}
+                              </span>
+                              <div className="flex-1 bg-[#E2E8F0]/40 h-1.5 rounded-full overflow-hidden flex items-center min-w-0">
+                                {/* BARRA PREENCHIDA COM BASE NO VALOR MÁXIMO E NÃO NO TOTAL */}
+                                <div className={`h-full ${item.tailwind} rounded-full transition-all duration-1000 ease-out`} style={{ width: item.percentMax }} />
                               </div>
-                              <span className="text-[9px] font-extrabold text-[#457B9D] w-[20px]">{item.value}</span>
+                              <span className="text-[10px] font-extrabold text-[#457B9D] w-[24px] text-left shrink-0">
+                                {item.value}
+                              </span>
                             </div>
                           ))}
                         </div>
