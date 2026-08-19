@@ -1,9 +1,34 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DataProvider } from './context/DataContext';
 import { Analytics } from '@vercel/analytics/react';
+import { supabase } from './services/supabase';
+
+export function useDadosSupabase() {
+  const [dados, setDados] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    async function carregar() {
+      const { data, error } = await supabase
+        .from('stats_ti') 
+        .select('*');
+
+      if (error) {
+        console.error("Erro ao buscar no Supabase:", error);
+      } else {
+        setDados(data);
+      }
+      setCarregando(false);
+    }
+    
+    carregar();
+  }, []);
+
+  return { dados, carregando };
+}
 
 // Importa a Sidebar globalmente
 import Sidebar from './components/Sidebar';

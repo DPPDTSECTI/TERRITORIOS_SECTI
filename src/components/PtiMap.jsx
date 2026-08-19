@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { MapContainer, GeoJSON, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, GeoJSON, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
-import territoriosMunicipios from '../data/territorioMunicipios.json';
 
-// Paleta Soft Blue & Teal (Variations of #1D3557, #457B9D, #A8DADC)
+// IMPORTANDO A NOSSA NOVA BASE DE IDs
+import { municipiosDB } from '../data/municipiosDB';
+
+// Paleta Soft Blue & Teal
 const TERRITORY_COLORS = [
     '#1D3557', '#2A4665', '#385874', '#457B9D', '#548FB4', '#64A4CB',
     '#75B8E3', '#87CBEB', '#9FDDF3', '#A8DADC', '#96C6C8', '#85B2B4',
@@ -26,12 +28,36 @@ const GEOGRAPHICAL_ORDER = [
 
 function normalizeName(value) {
     if (!value) return '';
-    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+    let norm = String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    // Dicionário de Correção (O que vem do GeoJSON -> O que está no nosso Banco)
+    // 🚨 OLHE O CONSOLE (F12) E ADICIONE OS MUNICÍPIOS FALTANTES AQUI:
+    const correcoes = {
+        'dias davila': 'dias d avila',
+        'santa teresinha': 'santa terezinha',
+        'camaca': 'camacan',
+        'xique xique': 'xiquexique',
+        'muquem de sao francisco': 'muquem do sao francisco'
+    };
+
+    return correcoes[norm] || norm;
 }
 
-const getTerritoryKey = (value) => normalizeName(value);
-
-const sortedTerritories = [...territoriosMunicipios.territorios_de_identidade].sort((a, b) => {
+// 1. Mapeamos os Territórios únicos direto do nosso DB estático
+const uniqueTerritories = Object.values(
+    municipiosDB.reduce((acc, row) => {
+        if (!acc[row.id_territorio]) {
+            acc[row.id_territorio] = { id: row.id_territorio, nome: row.nome_territorio };
+        }
+        return acc;
+    }, {})
+).sort((a, b) => {
     const indexA = GEOGRAPHICAL_ORDER.indexOf(a.nome);
     const indexB = GEOGRAPHICAL_ORDER.indexOf(b.nome);
     if (indexA === -1) return 1; 
@@ -39,32 +65,42 @@ const sortedTerritories = [...territoriosMunicipios.territorios_de_identidade].s
     return indexA - indexB;
 });
 
+// 2. Agora as cores são indexadas pelo ID DO TERRITÓRIO (Zero chance de falha!)
 const territoryColorMap = {};
-sortedTerritories.forEach((territorio, index) => {
-    territoryColorMap[getTerritoryKey(territorio.nome)] = TERRITORY_COLORS[index] || '#333333';
+uniqueTerritories.forEach((territorio, index) => {
+    territoryColorMap[territorio.id] = TERRITORY_COLORS[index] || '#333333';
 });
 
+// 3. Ponte de cruzamento: Nome do GeoJSON -> Objeto de IDs do Supabase
 const buildMunicipioTerritoryMap = () => {
     const m = {};
-    territoriosMunicipios.territorios_de_identidade.forEach((territorio) => {
-        territorio.municipios.forEach((municipio) => { m[normalizeName(municipio)] = territorio.nome; });
+    municipiosDB.forEach((row) => {
+        m[normalizeName(row.nome_municipio)] = {
+            id_municipio: row.id_municipio,
+            id_territorio: row.id_territorio,
+            nome_territorio: row.nome_territorio
+        };
     });
     return m;
 };
 
 // ================= MAPA PRINCIPAL =================
 export default function PtiMap({
-    territoriosData = [], territoriesDynamicStats = {}, searchTerm = '',
-    filtroSemiarido = false, selectedTerritory = null,
-    onSelectTerritory = () => { }, semiaridoMunicipios = []
+    territoriosData = [], 
+    territoriesDynamicStats = {}, 
+    searchTerm = '',
+    filtroSemiarido = false, 
+    selectedTerritory = null,
+    onSelectTerritory = () => { }, 
+    semiaridoMunicipios = []
 }) {
     const [geoJsonData, setGeoJsonData] = useState(null);
-    const [territoryCenters, setTerritoryCenters] = useState({});
     const [loading, setLoading] = useState(true);
     
-    // Estados do Hover e Tooltip
-    const [hoveredTerritory, setHoveredTerritory] = useState(null);
-    const [hoveredMunicipality, setHoveredMunicipality] = useState(null);
+    // Estados do Hover e Tooltip usam IDs
+    const [hoveredTerritoryId, setHoveredTerritoryId] = useState(null);
+    const [hoveredMunicipalityId, setHoveredMunicipalityId] = useState(null);
+    
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
     const [isMunListExpanded, setIsMunListExpanded] = useState(false);
 
@@ -72,8 +108,6 @@ export default function PtiMap({
     const geoJsonLayerRef = useRef(null);
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
-    
-    // Dicionário de referências para destacar um território inteiro de uma vez
     const layersByTerritory = useRef({});
 
     useEffect(() => {
@@ -86,28 +120,25 @@ export default function PtiMap({
                 const geojson = topojson.feature(topology, topology.objects.BA);
                 const groups = {};
 
-                // Processar propriedades e agrupar para achar o centro de cada território
                 geojson.features.forEach(feat => {
-                    const municipio = feat.properties?.NOME || feat.properties?.nome || '';
-                    const territory = municipioTerritoryMap[normalizeName(municipio)] || 'Sem Território';
+                    const nome = feat.properties?.NOME || feat.properties?.nome || '';
+                    const dbInfo = municipioTerritoryMap[normalizeName(nome)];
                     
-                    feat.properties.territory = territory;
-                    feat.properties.nome = municipio;
+                    if (dbInfo) {
+                        feat.properties.id_municipio = dbInfo.id_municipio;
+                        feat.properties.id_territorio = dbInfo.id_territorio;
+                        feat.properties.nome_territorio = dbInfo.nome_territorio;
+                        feat.properties.nome_municipio_oficial = dbInfo.nome_municipio;
 
-                    if (territory !== 'Sem Território') {
-                        if (!groups[territory]) groups[territory] = [];
-                        groups[territory].push(feat);
+                        if (!groups[dbInfo.id_territorio]) groups[dbInfo.id_territorio] = [];
+                        groups[dbInfo.id_territorio].push(feat);
+                    } else {
+                        // 🚨 DETETIVE DE BURACOS NO MAPA:
+                        console.warn(`Buraco no mapa! A cidade "${nome}" do GeoJSON não achou par no BD.`);
+                        feat.properties.id_territorio = null; 
                     }
                 });
 
-                // Calculando o centro (Bounds) nativo do Leaflet para os nomes flutuantes
-                const centers = {};
-                Object.keys(groups).forEach(t => {
-                    const layerGroup = L.geoJSON(groups[t]);
-                    centers[t] = layerGroup.getBounds().getCenter();
-                });
-
-                setTerritoryCenters(centers);
                 setGeoJsonData(geojson);
                 setLoading(false);
             })
@@ -119,100 +150,94 @@ export default function PtiMap({
 
     // ================= ESTILO DOS MUNICÍPIOS =================
     const styleFeature = (feature) => {
-        const normalizedFeatName = getTerritoryKey(feature.properties.territory);
-        const dStats = territoriesDynamicStats[normalizedFeatName];
+        const idTer = feature.properties.id_territorio;
+        if (!idTer) return { fillOpacity: 0.1, weight: 1, color: '#f87171', fillColor: '#fee2e2' }; // Destaca buracos em vermelho claro
+
+        const dStats = territoriesDynamicStats[idTer];
         const matchesFilters = dStats ? dStats.matchesFilters : true;
-        const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === normalizedFeatName;
-        const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome));
+        const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
+        const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome_municipio_oficial));
         const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
 
         let opacity = 0.85; 
-        let fillColor = territoryColorMap[normalizedFeatName] || '#D6EAF8';
+        let fillColor = territoryColorMap[idTer] || '#D6EAF8';
         let weight = 0.8; 
         let color = '#FFFFFF'; 
 
         if (blockClickAndColor && !selectedTerritory) {
             fillColor = '#E2E8F0'; 
             opacity = 0.50;
-            color = '#FFFFFF';
         } else if (selectedTerritory) {
             if (isSelectedMap) {
                 opacity = 0.95;
                 weight = 1.2;
-                color = '#FFFFFF';
                 if (filtroSemiarido && isMunSemi) fillColor = '#F59E0B'; 
             } else {
                 fillColor = '#E2E8F0';
                 opacity = 0.35; 
                 weight = 0.6;
-                color = '#FFFFFF'; 
             }
         }
 
-        return {
-            fillColor,
-            weight,
-            opacity: 1,
-            color,
-            fillOpacity: opacity,
-            className: 'outline-none' // Removido transition-all para não gerar lag no Zoom
-        };
+        return { fillColor, weight, opacity: 1, color, fillOpacity: opacity, className: 'outline-none' };
     };
 
     // ================= CONTROLE DE HOVER =================
     const onEachFeature = (feature, layer) => {
-        const tKey = getTerritoryKey(feature.properties.territory);
+        const idTer = feature.properties.id_territorio;
+        if (!idTer) return;
         
-        if (!layersByTerritory.current[tKey]) {
-            layersByTerritory.current[tKey] = [];
+        if (!layersByTerritory.current[idTer]) {
+            layersByTerritory.current[idTer] = [];
         }
-        layersByTerritory.current[tKey].push(layer);
+        layersByTerritory.current[idTer].push(layer);
 
         layer.on({
             mouseover: (e) => {
-                const isSelectedMap = selectedTerritory && getTerritoryKey(selectedTerritory.nome) === tKey;
-                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome));
-                const blockClickAndColor = (filtroSemiarido && !isMunSemi);
+                const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
                 
                 if (selectedTerritory && !isSelectedMap) return; 
 
                 if (!selectedTerritory) {
-                    setHoveredTerritory(feature.properties.territory);
-                    setHoveredMunicipality(null);
+                    setHoveredTerritoryId(idTer);
+                    setHoveredMunicipalityId(null);
                     
-                    layersByTerritory.current[tKey].forEach(l => {
+                    layersByTerritory.current[idTer].forEach(l => {
                         l.setStyle({ fillOpacity: 1, color: '#FFFFFF', weight: 1.5 });
                         l.bringToFront();
                     });
                 } else {
-                    setHoveredMunicipality(feature.properties.nome);
+                    setHoveredMunicipalityId(feature.properties.id_municipio);
                     e.target.setStyle({ fillOpacity: 1, color: '#1D3557', weight: 2 });
                     e.target.bringToFront();
                 }
             },
             mouseout: (e) => {
                 if (!selectedTerritory) {
-                    layersByTerritory.current[tKey].forEach(l => {
+                    layersByTerritory.current[idTer].forEach(l => {
                         if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(l);
                     });
                 } else {
                     if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(e.target);
                 }
                 
-                setHoveredTerritory(null);
-                setHoveredMunicipality(null);
+                setHoveredTerritoryId(null);
+                setHoveredMunicipalityId(null);
                 setTooltip({ visible: false, x: 0, y: 0 });
             },
             click: (e) => {
-                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome));
+                const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome_municipio_oficial));
                 const blockClick = (filtroSemiarido && !isMunSemi);
 
-                if (!blockClick && feature.properties.territory !== 'Sem Território') {
-                    const foundData = territoriosData.find(t => getTerritoryKey(t.nome) === tKey);
-                    if (selectedTerritory && getTerritoryKey(selectedTerritory.nome) === tKey) {
+                if (!blockClick) {
+                    const foundData = territoriosData.find(t => t.id_territorio === idTer);
+                    if (selectedTerritory && selectedTerritory.id_territorio === idTer) {
                         onSelectTerritory(null);
-                    } else {
+                    } else if (foundData) {
                         onSelectTerritory(foundData);
+                    } else {
+                        // Se clicar num território que não voltou da API, manda só o básico
+                        onSelectTerritory({ id_territorio: idTer, nome_territorio: feature.properties.nome_territorio });
                     }
                 }
             }
@@ -220,7 +245,7 @@ export default function PtiMap({
     };
 
     const handleMouseMove = (e) => {
-        if (!hoveredTerritory && !hoveredMunicipality) return;
+        if (!hoveredTerritoryId && !hoveredMunicipalityId) return;
         const rect = mapContainerRef.current?.getBoundingClientRect();
         if (!rect) return;
 
@@ -231,35 +256,24 @@ export default function PtiMap({
         if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
 
-        setTooltip({ visible: false, x, y });
+        setTooltip({ visible: true, x, y });
     };
 
-    const hoveredData = hoveredTerritory ? territoriosData.find(t => getTerritoryKey(t.nome) === getTerritoryKey(hoveredTerritory)) : null;
-    const dynamicStats = hoveredTerritory ? territoriesDynamicStats[getTerritoryKey(hoveredTerritory)] : null;
-
-    const hoveredMunData = useMemo(() => {
-        if (!hoveredMunicipality || !selectedTerritory) return null;
-        const munKey = normalizeName(hoveredMunicipality);
-        const devData = selectedTerritory.desenvolvimentoDetalhado?.find(d => normalizeName(d.municipio) === munKey);
-        const ifdm = devData?.ifdm ? Number(devData.ifdm).toFixed(3) : '-';
-        const entidades = selectedTerritory.entidadesDetalhadas?.filter(e => normalizeName(e.municipio) === munKey) || [];
-        const cadeias = selectedTerritory.cadeiasProdutivasDetalhado?.filter(c => {
-            const sede = normalizeName(c.sede);
-            let satelite = normalizeName(c.municipioSatelite || c.municipiosSatelites || c.satelite || '');
-            if (typeof c.municipioSatelite === 'object' || Array.isArray(c.municipioSatelite)) satelite = JSON.stringify(c.municipioSatelite).toLowerCase();
-            const perts = String(c.municipiosPertencentes || '').split(/[,;\-]/).map(m => normalizeName(m));
-            return sede === munKey || satelite.includes(munKey) || perts.includes(munKey);
-        }) || [];
-        const isSemi = semiaridoMunicipios.includes(munKey);
-        return { nome: hoveredMunicipality, ifdm, entidadesCount: entidades.length, cadeiasCount: cadeias.length, isSemi };
-    }, [hoveredMunicipality, selectedTerritory, semiaridoMunicipios]);
+    const hoveredData = hoveredTerritoryId ? territoriosData.find(t => t.id_territorio === hoveredTerritoryId) : null;
+    
+    // Dados temporários pro tooltip quando não tem dados da API
+    const fallbackName = hoveredTerritoryId ? uniqueTerritories.find(t => t.id === hoveredTerritoryId)?.nome : '';
 
     const selectedTerritoryMunicipalities = useMemo(() => {
-        if (!selectedTerritory) return [];
-        const tBase = territoriosMunicipios.territorios_de_identidade.find(t => getTerritoryKey(t.nome) === getTerritoryKey(selectedTerritory.nome));
-        if (!tBase) return [];
-        let muns = tBase.municipios;
-        if (filtroSemiarido) muns = muns.filter(m => semiaridoMunicipios.includes(normalizeName(m)));
+        if (!selectedTerritory || !selectedTerritory.id_territorio) return [];
+        
+        let muns = municipiosDB
+            .filter(m => m.id_territorio === selectedTerritory.id_territorio)
+            .map(m => m.nome_municipio);
+
+        if (filtroSemiarido) {
+            muns = muns.filter(m => semiaridoMunicipios.includes(normalizeName(m)));
+        }
         return muns.sort();
     }, [selectedTerritory, filtroSemiarido, semiaridoMunicipios]);
 
@@ -275,33 +289,40 @@ export default function PtiMap({
             {loading || !geoJsonData ? (
                 <div className="flex flex-col items-center text-[#457B9D]">
                     <svg className="animate-spin h-6 w-6 mb-2 text-[#457B9D]" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span className="text-[10px] font-bold tracking-widest uppercase">Carregando Malha...</span>
+                    <span className="text-[10px] font-bold tracking-widest uppercase">Processando Malha...</span>
                 </div>
             ) : (
                 <MapContainer 
                     ref={mapRef}
                     center={[-12.5, -41.5]} 
                     zoom={6} 
+                    
+                    // ==========================================
+                    // NOVAS TRAVAS DE LIMITES (BAHIA)
+                    // ==========================================
+                    minZoom={6} 
+                    maxBounds={[
+                        [-18.5, -47.0], // Canto Inferior Esquerdo (Sudoeste)
+                        [-8.0, -37.0]   // Canto Superior Direito (Nordeste)
+                    ]}
+                    maxBoundsViscosity={1.0}
+                    // ==========================================
+
                     zoomControl={false} 
                     scrollWheelZoom={true}
                     doubleClickZoom={false}
                     className="w-full h-full outline-none z-0"
                     style={{ background: 'transparent' }} 
                 >
-                    <TileLayer
-                        url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-                        opacity={0.6} 
-                    />
-
-                    <GeoJSON 
-                        key={selectedTerritory?.nome || 'muns'}
+                    <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" opacity={0.6} />
+                    
+                    <GeoJSON
+                        key={selectedTerritory?.id_territorio || 'muns'}
                         ref={geoJsonLayerRef}
                         data={geoJsonData} 
                         style={styleFeature}
                         onEachFeature={onEachFeature}
                     />
-
-                    {/* REMOVIDO: TEXTOS DOS TERRITÓRIOS (Causava sobreposição e poluição visual, o tooltip já resolve isso) */}
                 </MapContainer>
             )}
 
@@ -336,12 +357,12 @@ export default function PtiMap({
                 </button>
             </div>
 
-            {/* ================= CAIXA LATERAL DE MUNICÍPIOS (Aberta no Foco) ================= */}
+            {/* ================= CAIXA LATERAL DE MUNICÍPIOS ================= */}
             {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
                 <div className="absolute top-4 right-4 z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[20px] border bg-white/95 backdrop-blur-xl border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] transition-all animate-soft-fade pointer-events-auto">
                     <div className="flex justify-between items-center mb-3 border-b border-[#D6EAF8] pb-3">
                         <h4 className="text-[11px] font-bold text-[#1D3557] uppercase tracking-widest leading-tight">
-                            {selectedTerritory.nome}
+                            {selectedTerritory.nome_territorio || selectedTerritory.territorio}
                         </h4>
                         <button 
                             onClick={() => onSelectTerritory(null)}
@@ -373,72 +394,33 @@ export default function PtiMap({
             )}
 
             {/* ================= TOOLTIP ================= */}
-            {tooltip.visible && (hoveredTerritory || hoveredMunicipality) && (
+            {tooltip.visible && hoveredTerritoryId && !selectedTerritory && (
                 <div
                     className="absolute z-[1000] overflow-hidden rounded-[16px] border bg-white/95 backdrop-blur-md border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] pointer-events-none transition-opacity duration-150"
                     style={{ top: tooltip.y, left: tooltip.x, width: 240 }}
                 >
-                    {hoveredTerritory && hoveredData && dynamicStats && !selectedTerritory && (
-                        <>
-                            <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[getTerritoryKey(hoveredData.nome)] || '#457B9D' }}></div>
-                            <div className="p-4">
-                                <div className="flex justify-between items-start mb-3">
-                                    <h2 className="font-bold text-[13px] text-[#1D3557] leading-tight pr-2">{hoveredData.nome}</h2>
-                                    {dynamicStats.pctSemiarido > 0 && (
-                                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${dynamicStats.pctSemiarido >= 100 ? 'text-[#D97706] bg-[#FEF3C7]' : 'text-[#D97706] bg-[#FEF3C7]/60'}`}>
-                                            {dynamicStats.pctSemiarido >= 100 ? '100%' : `${dynamicStats.pctSemiarido.toFixed(0)}%`} Semi
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
-                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Ativos</span>
-                                        <span className="text-[14px] font-bold text-[#1D3557]">{dynamicStats.capacidadeCti}</span>
-                                    </div>
-                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
-                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Média IFDM</span>
-                                        <span className="text-[14px] font-bold text-[#1D3557]">{dynamicStats.ifdm}</span>
-                                    </div>
-                                </div>
-                                <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex justify-between items-center mb-2">
-                                    <span className="text-[10px] text-[#457B9D] font-medium">Conecta Bahia</span>
-                                    <span className="text-[12px] font-bold text-[#1D3557]">{dynamicStats.conectaBahia}</span>
-                                </div>
-                                <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
-                                    <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Cadeias Produtivas</span>
-                                    <span className="text-[11px] text-[#1D3557] font-medium truncate" title={dynamicStats.cadeiasIgs}>{dynamicStats.cadeiasIgs || '-'}</span>
-                                </div>
+                    <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[hoveredTerritoryId] || '#457B9D' }}></div>
+                    <div className="p-4">
+                        <div className="flex justify-between items-start mb-3">
+                            <h2 className="font-bold text-[13px] text-[#1D3557] leading-tight pr-2">
+                                {hoveredData ? hoveredData.territorio : fallbackName}
+                            </h2>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 mb-2">
+                            <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
+                                <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Ativos</span>
+                                <span className="text-[14px] font-bold text-[#1D3557]">{hoveredData?.ativos_cti || 0}</span>
                             </div>
-                        </>
-                    )}
-
-                    {hoveredMunicipality && hoveredMunData && selectedTerritory && (
-                        <>
-                            <div className="h-1.5 w-full bg-[#457B9D]"></div>
-                            <div className="p-4">
-                                <div className="flex justify-between items-start mb-3">
-                                    <h2 className="font-bold text-[13px] text-[#1D3557] leading-tight pr-2">{hoveredMunData.nome}</h2>
-                                    {hoveredMunData.isSemi && (
-                                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 text-[#D97706] bg-[#FEF3C7]">Semi</span>
-                                    )}
-                                </div>
-                                <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
-                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Ativos CT&I</span>
-                                        <span className="text-[14px] font-bold text-[#1D3557]">{hoveredMunData.entidadesCount}</span>
-                                    </div>
-                                    <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
-                                        <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Cadeias/IGs</span>
-                                        <span className="text-[14px] font-bold text-[#1D3557]">{hoveredMunData.cadeiasCount}</span>
-                                    </div>
-                                </div>
-                                <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex justify-between items-center">
-                                    <span className="text-[10px] text-[#457B9D] font-medium">Índice FIRJAN</span>
-                                    <span className="text-[12px] font-bold text-[#1D3557]">{hoveredMunData.ifdm}</span>
-                                </div>
+                            <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
+                                <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Média IFDM</span>
+                                <span className="text-[14px] font-bold text-[#1D3557]">
+                                    {hoveredData?.media_ifdm 
+                                        ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3) 
+                                        : '0.000'}
+                                </span>
                             </div>
-                        </>
-                    )}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

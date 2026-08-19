@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
   Settings, GraduationCap, TrendingUp, Database, Building2,
   ChevronDown, ChevronUp, Minus, Map, MapPin, LogOut, GripHorizontal
@@ -9,7 +9,8 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStr
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
-// IMPORTAÇÃO DO MAPA
+// IMPORTAÇÃO DOS DADOS E MAPA
+import { DataContext } from '../context/DataContext';
 import PtiMap from './PtiMap.jsx';
 import DonutChart from './DonutChart.jsx';
 import UserHeaderProfile from './UserHeaderProfile.jsx';
@@ -49,8 +50,18 @@ function SortableCard({ id, children }) {
 }
 
 export default function DashboardPainel() {
-  // Estado que guarda qual território foi clicado no mapa
-  const [selectedTerritory, setSelectedTerritory] = useState(null);
+  // =========================================================================
+  // CONSUMINDO O NOSSO CONTEXTO GLOBAL (SUPER RÁPIDO)
+  // =========================================================================
+  const { 
+    kpisGlobais, 
+    loadingStats, 
+    territoriosData, 
+    territoriesDynamicStats, 
+    selectedTerritory, 
+    setSelectedTerritory 
+  } = useContext(DataContext);
+
   // Estado que guarda o modo de visualização (território vs município)
   const [viewMode, setViewMode] = useState('territorio');
   // Estado do filtro IFDM
@@ -99,18 +110,21 @@ export default function DashboardPainel() {
   const handlePieMouseLeave = () => {
     pieHoverTimeoutRef.current = setTimeout(() => {
       setHoveredPieIndex(null);
-    }, 150); // Delay suave previne a piscada no texto e estabiliza a animação
+    }, 150);
   };
 
-  // Dados simulados baseados no seu print do Figma (estes depois virão do DataContext)
+  // =========================================================================
+  // ALIMENTANDO OS KPIs COM OS DADOS REAIS DA API
+  // =========================================================================
   const kpis = [
-    { label: 'Ativos', value: '287', icon: Settings },
-    { label: 'Cursos', value: '642', icon: GraduationCap },
-    { label: 'Índice', value: '0.492', icon: TrendingUp },
-    { label: 'Cadeias', value: '267', icon: Database },
-    { label: 'Territórios', value: '88', icon: Building2 }
+    { label: 'Ativos', value: loadingStats ? '...' : kpisGlobais.ativos, icon: Settings },
+    { label: 'Cursos', value: loadingStats ? '...' : kpisGlobais.cursos, icon: GraduationCap },
+    { label: 'Índice', value: loadingStats ? '...' : kpisGlobais.ifdmMedio, icon: TrendingUp },
+    { label: 'Cadeias', value: loadingStats ? '...' : kpisGlobais.cadeias, icon: Database },
+    { label: 'Territórios', value: loadingStats ? '...' : kpisGlobais.territorios, icon: Building2 }
   ];
 
+  // Dados simulados baseados no seu print do Figma (Ecossistema)
   const ecosystemData = [
     { region: 'Campi Univ. Privadas', value: 85, percent: '100%', colorHex: '#1D3557', tailwind: 'bg-[#1D3557]' },
     { region: 'Campi Univ. Públicas', value: 54, percent: '63.5%', colorHex: '#2563EB', tailwind: 'bg-[#2563EB]' },
@@ -164,9 +178,7 @@ export default function DashboardPainel() {
         </div>
       </div>
 
-
-
-      {/* ================= GRID DE KPIs (MOVIDO PARA O TOPO) ================= */}
+      {/* ================= GRID DE KPIs ================= */}
       <div className="w-full relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           {kpis.map((kpi, index) => (
@@ -197,16 +209,13 @@ export default function DashboardPainel() {
             Mapa Territorial
           </p>
 
-
-
-          {/* Aqui chamamos o componente do Mapa. 
-              Por enquanto arrays vazios nas props de dados para não quebrar até ligarmos o contexto. */}
+          {/* MAPA AGORA CONECTADO AO CONTEXTO */}
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}
               onSelectTerritory={setSelectedTerritory}
-              territoriosData={[]}
-              territoriesDynamicStats={{}}
+              territoriosData={territoriosData}
+              territoriesDynamicStats={territoriesDynamicStats}
               semiaridoMunicipios={[]}
               filtroSemiarido={false}
             />
@@ -221,7 +230,6 @@ export default function DashboardPainel() {
                 <React.Fragment key={cardId}>
                   {cardId === 'card-donut' && (
                     <SortableCard id="card-donut">
-
                       {/* CARD 1: DONUT CHART (Cursos por Área) */}
                       <DonutChart
                         title=""
@@ -234,7 +242,6 @@ export default function DashboardPainel() {
                           { label: 'Artes e Design', value: 95, color: '#F87171' },
                         ]}
                       />
-
                     </SortableCard>
                   )}
                   {cardId === 'card-pie' && (
@@ -342,12 +349,11 @@ export default function DashboardPainel() {
                           </div>
                         </div>
                       </div>
-
                     </SortableCard>
                   )}
                   {cardId === 'card-ranking' && (
                     <SortableCard id="card-ranking">
-                      {/* CARD 3: RANKING IFDM */}
+                      {/* CARD 3: RANKING IFDM - AGORA 100% DINÂMICO E COM TOFIXED */}
                       <div className="flex-1 bg-white rounded-[24px] border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col group cursor-default h-full">
 
                         {/* CABEÇALHO INSPIRADO NA REFERÊNCIA */}
@@ -385,7 +391,7 @@ export default function DashboardPainel() {
                           </div>
                         </div>
 
-                        {/* GRÁFICO DE BARRAS STYLE "CUSTOMER HABBITS" */}
+                        {/* GRÁFICO DE BARRAS DINÂMICO */}
                         <div className="flex-1 flex items-end justify-between gap-2 lg:gap-6 mt-4 px-2 pb-1 relative min-h-[140px]">
 
                           {/* Linhas de grade (Opcional, sutil) */}
@@ -397,85 +403,71 @@ export default function DashboardPainel() {
 
                           {(() => {
                             let data = [];
-                            if (ifdmFilter === 'top') {
-                              data = [
-                                { name: 'Metropolitano', apls: 18, igs: 5, ifdm: 0.820 },
-                                { name: 'Litoral Norte', apls: 12, igs: 2, ifdm: 0.750 },
-                                { name: 'Sudoeste', apls: 8, igs: 1, ifdm: 0.710 },
-                                { name: 'Sul Baiano', apls: 6, igs: 3, ifdm: 0.690 },
-                                { name: 'Chapada', apls: 4, igs: 0, ifdm: 0.650 },
-                              ];
-                            } else if (ifdmFilter === 'medium') {
-                              data = [
-                                { name: 'Portal Sertão', apls: 4, igs: 1, ifdm: 0.580 },
-                                { name: 'Sertão do S.F.', apls: 5, igs: 0, ifdm: 0.560 },
-                                { name: 'Bacia Grande', apls: 2, igs: 1, ifdm: 0.550 },
-                                { name: 'Recôncavo', apls: 3, igs: 2, ifdm: 0.540 },
-                                { name: 'Irecê', apls: 1, igs: 0, ifdm: 0.520 },
-                              ];
-                            } else {
-                              data = [
-                                { name: 'Velho Chico', apls: 1, igs: 0, ifdm: 0.450 },
-                                { name: 'Bacia Jacuípe', apls: 0, igs: 0, ifdm: 0.430 },
-                                { name: 'Piemonte', apls: 2, igs: 0, ifdm: 0.410 },
-                                { name: 'Sisal', apls: 1, igs: 1, ifdm: 0.390 },
-                                { name: 'Semiárido', apls: 0, igs: 0, ifdm: 0.350 },
-                              ];
+                            
+                            // 1. Clonamos e ordenamos os dados reais da API pelo IFDM (Maior para o Menor)
+                            const territoriosOrdenados = [...territoriosData]
+                              .filter(t => t.media_ifdm !== null) // Tira quem não tem IFDM calculado
+                              .sort((a, b) => Number(b.media_ifdm) - Number(a.media_ifdm));
+
+                            if (territoriosOrdenados.length > 0) {
+                              if (ifdmFilter === 'top') {
+                                data = territoriosOrdenados.slice(0, 5);
+                              } else if (ifdmFilter === 'bottom') {
+                                data = territoriosOrdenados.slice(-5).reverse();
+                              } else if (ifdmFilter === 'medium') {
+                                const meio = Math.floor(territoriosOrdenados.length / 2);
+                                data = territoriosOrdenados.slice(Math.max(0, meio - 2), meio + 3);
+                              }
                             }
 
-                            return data.map((item, idx) => {
-                              const ifdmPercent = item.ifdm * 100; // altura máxima 100% = IFDM 1.0
+                            // 2. Mapeamos os dados reais para o formato exato
+                            const chartData = data.map(t => ({
+                              name: t.territorio.replace('Território de Identidade ', ''), // Limpa nomes longos
+                              apls: Number(t.cadeias_produtivas || 0), 
+                              igs: 0, 
+                              ifdm: Number(t.media_ifdm)
+                            }));
+
+                            // 3. Renderiza as barrinhas
+                            return chartData.map((item, idx) => {
+                              const ifdmPercent = item.ifdm * 100;
 
                               return (
                                 <div key={idx} className="flex flex-col items-center gap-3 group/col flex-1 h-full justify-end relative z-10">
-
-                                  {/* BARRA ÚNICA (PILL) */}
                                   <div className="flex items-end justify-center w-full h-[85%] relative transition-transform duration-300">
-
                                     <div
                                       className="w-full max-w-[22px] bg-[#4361EE] rounded-full relative flex justify-center transition-all duration-500 ease-out group-hover/col:opacity-90 group-hover/col:shadow-[0_0_15px_rgba(67,97,238,0.3)]"
                                       style={{ height: `${ifdmPercent}%` }}
                                     >
-                                      {/* DOT FLUTUANTE (VISÍVEL NO HOVER) */}
+                                      {/* DOT FLUTUANTE */}
                                       <div className="absolute -top-1 w-2.5 h-2.5 bg-gray-200 rounded-full border-[2px] border-white opacity-0 group-hover/col:opacity-100 transition-opacity duration-300 z-20 shadow-sm flex items-center justify-center">
                                         <div className="w-1 h-1 bg-[#1A202C] rounded-full"></div>
                                       </div>
 
-                                      {/* IFDM NO TOPO DA BARRA */}
+                                      {/* TEXTO IFDM COM TOFIXED */}
                                       <span className="absolute -top-7 text-[10px] font-bold text-[#A0AEC0] group-hover/col:opacity-0 transition-opacity">
-                                        {item.ifdm.toFixed(3)}
+                                        {Number(item.ifdm).toFixed(3)}
                                       </span>
 
-                                      {/* TOOLTIP ON HOVER (DARK MODE) */}
+                                      {/* TOOLTIP DO GRÁFICO */}
                                       <div className="absolute bottom-[calc(100%+14px)] bg-[#1A202C] shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-[12px] px-3 py-2.5 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[105px] left-1/2 -translate-x-1/2">
                                         <div className="flex items-center mb-2">
                                           <div className="w-2 h-2 rounded-full bg-white mr-2"></div>
-                                          <span className="text-[11px] font-bold text-white leading-none">{item.apls} <span className="text-[#A0AEC0] font-medium ml-0.5">APLs</span></span>
+                                          <span className="text-[11px] font-bold text-white leading-none">{item.apls} <span className="text-[#A0AEC0] font-medium ml-0.5">Cadeias</span></span>
                                         </div>
-                                        <div className="flex items-center">
-                                          <div className="w-2 h-2 rounded-full bg-[#4361EE] mr-2"></div>
-                                          <span className="text-[11px] font-bold text-white leading-none">{item.igs} <span className="text-[#A0AEC0] font-medium ml-0.5">IGs</span></span>
-                                        </div>
-
-                                        {/* Seta do Tooltip */}
                                         <div className="absolute -bottom-[4px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#1A202C] rotate-45 rounded-sm"></div>
                                       </div>
                                     </div>
-
                                   </div>
-
-                                  {/* NOME DO TERRITÓRIO */}
-                                  <div className="text-[10px] font-medium text-[#A0AEC0] text-center leading-tight truncate w-full group-hover/col:text-[#1A202C] transition-colors mt-1">
+                                  <div className="text-[10px] font-medium text-[#A0AEC0] text-center leading-tight truncate w-full group-hover/col:text-[#1A202C] transition-colors mt-1" title={item.name}>
                                     {item.name}
                                   </div>
-
                                 </div>
                               );
                             });
                           })()}
                         </div>
                       </div>
-
                     </SortableCard>
                   )}
                   {cardId === 'card-mapeamento' && (

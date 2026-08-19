@@ -6,13 +6,12 @@ Aplicação React que carrega um mapa da Bahia e destaca, por meio de marcadores
 
 ## 🔐 Variáveis de Ambiente & Vercel Onboarding
 
-Para rodar a aplicação localmente ou realizar o deploy na **Vercel**, as seguintes variáveis de ambiente devem ser configuradas:
+Para rodar a aplicação localmente ou realizar o deploy na **Vercel**, as seguintes variáveis de ambiente, obtidas no painel do seu projeto Supabase, devem ser configuradas:
 
 | Variável | Escopo | Descrição | Exemplo / Valor Padrão |
 |---|---|---|---|
-| `VITE_SHAREPOINT_URL` | Build / Server / Client | URL do link de download direto da planilha oficial de dados no SharePoint. | `https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/...` |
-| `UPSTASH_REDIS_REST_URL` | Server (Vercel KV) | URL REST do banco Upstash Redis conectado via Marketplace da Vercel (ou `KV_REST_API_URL`). | `https://...upstash.io` |
-| `UPSTASH_REDIS_REST_TOKEN` | Server (Vercel KV) | Token de autenticação REST do banco Upstash Redis conectado via Marketplace da Vercel (ou `KV_REST_API_TOKEN`). | `AX...` |
+| `VITE_SUPABASE_URL` | Client | URL do seu projeto Supabase. | `https://[id-projeto].supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | Client | Chave pública (anônima) do seu projeto Supabase. | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 | `VITE_OPENROUTER_API_KEY` | Client (Opcional) | Chave da API OpenRouter utilizada pelos recursos de IA e assistente. | `sk-or-v1-...` |
 
 ### 🛠️ Configuração Local (`.env`)
@@ -21,24 +20,19 @@ Para rodar a aplicação localmente ou realizar o deploy na **Vercel**, as segui
    ```bash
    cp .env.example .env
    ```
-2. Abra o arquivo `.env` e preencha a URL do SharePoint ou sua API Key se necessário.
-3. Para testar o cache Upstash Redis localmente, adicione `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` com as credenciais do seu banco Upstash (ou use `vc env pull` via Vercel CLI).
+2. Abra o arquivo `.env` e preencha as variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` com as credenciais do seu projeto Supabase.
 
 ---
 
-### 🚀 Configuração na Vercel (Deploy & Serverless Functions)
+### 🚀 Configuração na Vercel (Deploy)
 
 Ao realizar o onboarding do projeto na **Vercel**:
 
 1. Acesse o painel do projeto na Vercel: **Project Settings** $\rightarrow$ **Environment Variables**.
 2. Adicione as seguintes chaves para os ambientes Production, Preview e Development:
-   - **`VITE_SHAREPOINT_URL`**: `https://prodeboffice365-my.sharepoint.com/:x:/g/personal/sdc_secti_ba_gov_br/IQCUmr5J0kxUQLKb9lRqZkT_AVOgJRieO_TN9lJiRxUzXI8?download=1`
+   - **`VITE_SUPABASE_URL`**: *(cole a URL do seu projeto Supabase)*
+   - **`VITE_SUPABASE_ANON_KEY`**: *(cole a chave anônima do seu projeto Supabase)*
    - **`VITE_OPENROUTER_API_KEY`**: *(opcional)*
-3. **Integração com Upstash Redis (Vercel Marketplace)**:
-   - No painel da Vercel, acesse a aba **Storage** (ou **Marketplace** $\rightarrow$ procure por **"Upstash for Redis"**).
-   - Clique em **Install**, selecione seu projeto e crie/conecte uma instância do Upstash Redis.
-   - A própria Vercel criará e injetará automaticamente as variáveis **`UPSTASH_REDIS_REST_URL`** e **`UPSTASH_REDIS_REST_TOKEN`** (além das variáveis de compatibilidade `KV_REST_API_URL` e `KV_REST_API_TOKEN`).
-   - Nossas Serverless Functions (`api/sharepoint.js` e o agendador Cron `api/sharepoint-refresh.js`) identificarão automaticamente essas variáveis e manterão o cache sempre aquecido (TTL 90min, atualizado a cada 30min).
 
 ---
 
