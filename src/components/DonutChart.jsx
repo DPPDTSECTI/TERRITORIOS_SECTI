@@ -130,10 +130,10 @@ export default function DonutChart({ data, title = "Cursos por Área", totalLabe
         {children ? (
           children
         ) : showTopList ? (
-          <div className="flex flex-col flex-1 pl-6 lg:pl-8 border-l border-[#E2E8F0]/50 ml-6 lg:ml-8 justify-center h-full py-1">
-            <h3 className="text-[#1D3557] font-extrabold text-[10px] tracking-widest uppercase mb-3">Top 5 Universidades</h3>
+          <div className="flex flex-col flex-1 pl-4 lg:pl-5 border-l border-[#E2E8F0]/60 justify-center h-full py-1 min-w-0 pr-1">
+            <h3 className="text-[#1D3557] font-extrabold text-[10px] tracking-widest uppercase mb-3 truncate">Top 5 Universidades</h3>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3.5 w-full">
               {[
                 { rank: 1, name: 'Universidade Federal da Bahia', sigla: 'UFBA', count: 184, color: 'bg-[#1D3557]', text: 'text-white' },
                 { rank: 2, name: 'Univ. Estadual de Feira de Santana', sigla: 'UEFS', count: 142, color: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
@@ -141,16 +141,14 @@ export default function DonutChart({ data, title = "Cursos por Área", totalLabe
                 { rank: 4, name: 'Universidade do Estado da Bahia', sigla: 'UNEB', count: 85, color: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
                 { rank: 5, name: 'Univ. Estadual de Santa Cruz', sigla: 'UESC', count: 62, color: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
               ].map((uni) => (
-                <div key={uni.rank} className="flex items-center justify-between group">
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-5 h-5 rounded-full ${uni.color} ${uni.text} flex items-center justify-center font-bold text-[9px] shadow-sm`}>
+                <div key={uni.rank} className="flex items-center justify-between gap-2 group w-full min-w-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className={`w-5 h-5 rounded-full ${uni.color} ${uni.text} flex items-center justify-center font-bold text-[9px] shadow-sm shrink-0`}>
                       {uni.rank}º
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-[11px] font-bold text-[#1D3557] group-hover:text-[#2563EB] transition-colors line-clamp-1">{uni.sigla}</span>
-                    </div>
+                    <span className="text-[11px] font-bold text-[#1D3557] group-hover:text-[#2563EB] transition-colors truncate">{uni.sigla}</span>
                   </div>
-                  <span className="font-extrabold text-[#1D3557] text-[12px] ml-2">{uni.count}</span>
+                  <span className="font-extrabold text-[#1D3557] text-[12px] shrink-0">{uni.count}</span>
                 </div>
               ))}
             </div>

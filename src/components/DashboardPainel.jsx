@@ -250,24 +250,23 @@ export default function DashboardPainel() {
                           </div>
                         </div>
 
-                        <div className="flex flex-row items-center justify-between flex-1 gap-4">
+                        <div className="flex flex-row items-center justify-between flex-1 gap-3">
                           {/* PIE CHART SVG */}
-                          <div className="flex flex-col items-center justify-center w-[160px] shrink-0">
+                          <div className="flex flex-col items-center justify-center w-[130px] shrink-0">
                             <div className="relative">
-                              <PieChart width={160} height={160} className="drop-shadow-sm">
+                              <PieChart width={130} height={130} className="drop-shadow-sm">
                                 <Pie
                                   data={pieDataWithFill}
                                   cx="50%"
                                   cy="50%"
                                   innerRadius={0} // Buraco = 0 (Gráfico de Pizza completo)
-                                  outerRadius={65} // Tamanho base
+                                  outerRadius={56} // Tamanho base equilibrado
                                   paddingAngle={4} // O espaço/gap entre as fatias
-                                  cornerRadius={5} // O tão desejado arredondamento de exatos 5px nas bordas!
+                                  cornerRadius={4} // Arredondamento suave nas bordas
                                   dataKey="value"
                                   stroke="none"
-                                  minAngle={15} // Garante que fatias pequenas (valores 2, 5) tenham um tamanho mínimo visível perfeitamente matemático
+                                  minAngle={15} // Garante que fatias pequenas tenham tamanho mínimo visível
                                   shape={(props) => {
-                                    // Renderizamos um shape customizado para todas as fatias para poder aplicar CSS Transitions fluidas
                                     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, cornerRadius, index } = props;
                                     const isHovered = hoveredPieIndex === index;
                                     const isOtherHovered = hoveredPieIndex !== null && !isHovered;
@@ -301,13 +300,13 @@ export default function DashboardPainel() {
                               </PieChart>
                             </div>
                             {/* TEXT STATS */}
-                            <div className="flex flex-col items-center justify-center text-center w-full mt-3 h-[42px]">
-                              <span className="text-[#1D3557] font-extrabold text-[22px] leading-none mb-1 tracking-tight transition-all duration-300">
+                            <div className="flex flex-col items-center justify-center text-center w-full mt-2 h-[38px]">
+                              <span className="text-[#1D3557] font-extrabold text-[20px] leading-none mb-1 tracking-tight transition-all duration-300">
                                 {hoveredPieIndex !== null
                                   ? ecosystemData[hoveredPieIndex].value
                                   : ecosystemData.reduce((acc, item) => acc + item.value, 0)}
                               </span>
-                              <span className="text-[#457B9D]/80 font-semibold text-[11px] leading-tight transition-all duration-300 px-1 w-full truncate">
+                              <span className="text-[#457B9D]/80 font-semibold text-[10px] leading-tight transition-all duration-300 px-1 w-[130px] truncate">
                                 {hoveredPieIndex !== null
                                   ? ecosystemData[hoveredPieIndex].region
                                   : 'Ativos Mapeados'}
@@ -315,11 +314,11 @@ export default function DashboardPainel() {
                             </div>
                           </div>
 
-                          {/* TOP 5 TERRITORIOS */}
-                          <div className="flex flex-col flex-1 pl-8 lg:pl-10 border-l border-[#E2E8F0]/50 ml-6 justify-center h-full py-1">
-                            <h3 className="text-[#1D3557] font-extrabold text-[11px] tracking-widest uppercase mb-4">Top 5 Territórios</h3>
+                          {/* TOP 5 TERRITORIOS (COM ESPAÇAMENTO RESPONSIVO E ZERO VAZAMENTO) */}
+                          <div className="flex flex-col flex-1 pl-4 lg:pl-5 border-l border-[#E2E8F0]/60 justify-center h-full py-1 min-w-0 pr-1">
+                            <h3 className="text-[#1D3557] font-extrabold text-[10px] tracking-widest uppercase mb-3 truncate">Top 5 Territórios</h3>
 
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-3.5 w-full">
                               {[
                                 { rank: 1, name: 'Metropolitano', count: 23, color: 'bg-[#1D3557]', text: 'text-white' },
                                 { rank: 2, name: 'Litoral Norte', count: 14, color: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
@@ -327,16 +326,16 @@ export default function DashboardPainel() {
                                 { rank: 4, name: 'Sul Baiano', count: 9, color: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
                                 { rank: 5, name: 'Chapada', count: 4, color: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
                               ].map((terr) => (
-                                <div key={terr.rank} className="flex items-center justify-between group">
-                                  <div className="flex items-center gap-3">
-                                    <div className={`w-[22px] h-[22px] rounded-full ${terr.color} ${terr.text} flex items-center justify-center font-bold text-[10px] shadow-sm`}>
+                                <div key={terr.rank} className="flex items-center justify-between gap-2 group w-full min-w-0">
+                                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    <div className={`w-5 h-5 rounded-full ${terr.color} ${terr.text} flex items-center justify-center font-bold text-[9px] shadow-sm shrink-0`}>
                                       {terr.rank}º
                                     </div>
-                                    <div className="flex items-center">
-                                      <span className="text-[12px] font-bold text-[#2563EB] group-hover:text-[#1D3557] transition-colors line-clamp-1">{terr.name}</span>
-                                    </div>
+                                    <span className="text-[11px] font-bold text-[#2563EB] group-hover:text-[#1D3557] transition-colors truncate">
+                                      {terr.name}
+                                    </span>
                                   </div>
-                                  <span className="font-extrabold text-[#1D3557] text-[13px] ml-2">{terr.count}</span>
+                                  <span className="font-extrabold text-[#1D3557] text-[12px] shrink-0">{terr.count}</span>
                                 </div>
                               ))}
                             </div>
