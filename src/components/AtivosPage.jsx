@@ -86,26 +86,28 @@ export default function AtivosPage() {
     });
   };
 
-  // Processamento dos dados de ativos com coordenadas georreferenciadas exatas
+  // Processamento dos dados de ativos utilizando as coordenadas exatas da view lista_ativos_cti do Supabase
   const ativosProcessados = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
-
-    const cityCount = {};
 
     return ativosData.map((a, idx) => {
       const nomeTipoColuna = a.tipo || a.nome_tipo || 'Outros';
       const configEstilo = getDynamicAssetTypeConfig(nomeTipoColuna);
-      const munKey = String(a.municipio || '').trim();
-      const baseCoords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()] || [-12.9714, -38.5014];
 
-      cityCount[munKey] = (cityCount[munKey] || 0) + 1;
-      const offsetIndex = cityCount[munKey] - 1;
+      // Coordenadas exatas da view do Supabase
+      const rawLat = a.latitude != null && a.latitude !== '' ? Number(a.latitude) : null;
+      const rawLng = a.longitude != null && a.longitude !== '' ? Number(a.longitude) : null;
 
-      // Espalhamento em espiral suave para múltiplos ativos no mesmo município (ao dar zoom)
-      const angle = offsetIndex * 1.3;
-      const radius = offsetIndex === 0 ? 0 : 0.005 + (offsetIndex * 0.002);
-      const lat = baseCoords[0] + Math.sin(angle) * radius;
-      const lng = baseCoords[1] + Math.cos(angle) * radius;
+      let lat = rawLat;
+      let lng = rawLng;
+
+      // Fallback caso a linha não possua latitude/longitude preenchida
+      if (lat == null || lng == null || isNaN(lat) || isNaN(lng) || lat === 0) {
+        const munKey = String(a.municipio || '').trim();
+        const fallback = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()] || [-12.9714, -38.5014];
+        lat = fallback[0];
+        lng = fallback[1];
+      }
 
       return {
         id: a.id_ativo || idx + 1,
@@ -119,8 +121,8 @@ export default function AtivosPage() {
         territorio: a.territorio_identidade || '',
         lat,
         lng,
-        cor: configEstilo.cor,
-        textCor: configEstilo.textCor,
+        cor: configEstilo.bgClass,
+        textCor: configEstilo.textClass,
         corHex: configEstilo.corHex,
         urlReferencia: a.url_referencia || '',
         tituloReferencia: a.titulo_referencia || ''
