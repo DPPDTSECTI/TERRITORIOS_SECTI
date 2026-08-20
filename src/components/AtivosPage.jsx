@@ -10,21 +10,23 @@ import SideMap from './maps/SideMap';
 import StackedBarChart from './graph/StackedBarChart';
 import CardLista from './graph/CardLista';
 
-// === MAPEAMENTO DINÂMICO DOS TIPOS DE ATIVOS ===
+import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
+
+// === MAPEAMENTO DINÂMICO DOS TIPOS DE ATIVOS COM A PALETA ANTERIOR ===
 export const getDynamicAssetTypeConfig = (nomeTipo) => {
   const str = String(nomeTipo || '').toLowerCase();
   
-  if (str.includes('privada')) return { id: 9, shortLabel: 'Univ. Privada', cor: 'bg-[#60A5FA]', textCor: 'text-[#2563EB]', corHex: '#60A5FA' };
-  if (str.includes('estadual')) return { id: 7, shortLabel: 'Univ. Estadual', cor: 'bg-[#2563EB]', textCor: 'text-[#2563EB]', corHex: '#2563EB' };
-  if (str.includes('federal') && str.includes('universidade')) return { id: 8, shortLabel: 'Univ. Federal', cor: 'bg-[#1E40AF]', textCor: 'text-[#1E40AF]', corHex: '#1E40AF' };
-  if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if baiano')) return { id: 5, shortLabel: 'Inst. Federal', cor: 'bg-[#0EA5E9]', textCor: 'text-[#0284C7]', corHex: '#0EA5E9' };
-  if (str.includes('aceleradora')) return { id: 10, shortLabel: 'Aceleradora', cor: 'bg-[#10B981]', textCor: 'text-[#059669]', corHex: '#10B981' };
-  if (str.includes('dinamizador')) return { id: 2, shortLabel: 'Espaço Dinamizador', cor: 'bg-[#06B6D4]', textCor: 'text-[#0891B2]', corHex: '#06B6D4' };
-  if (str.includes('incubadora')) return { id: 4, shortLabel: 'Incubadora', cor: 'bg-[#38BDF8]', textCor: 'text-[#0284C7]', corHex: '#38BDF8' };
-  if (str.includes('parque')) return { id: 6, shortLabel: 'Parque Tecnológico', cor: 'bg-[#1D3557]', textCor: 'text-[#1D3557]', corHex: '#1D3557' };
-  if (str.includes('ict')) return { id: 3, shortLabel: 'ICT', cor: 'bg-[#0284C7]', textCor: 'text-[#0284C7]', corHex: '#0284C7' };
+  if (str.includes('privada')) return { id: 9, key: 'univ_privada', shortLabel: 'Univ. Privada', cor: 'bg-[#60A5FA]', textCor: 'text-[#2563EB]', corHex: '#60A5FA' };
+  if (str.includes('estadual')) return { id: 7, key: 'univ_estadual', shortLabel: 'Univ. Estadual', cor: 'bg-[#2563EB]', textCor: 'text-[#2563EB]', corHex: '#2563EB' };
+  if (str.includes('federal') && str.includes('universidade')) return { id: 8, key: 'univ_federal', shortLabel: 'Univ. Federal', cor: 'bg-[#1E40AF]', textCor: 'text-[#1E40AF]', corHex: '#1E40AF' };
+  if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if baiano')) return { id: 5, key: 'inst_federal', shortLabel: 'Inst. Federal', cor: 'bg-[#0EA5E9]', textCor: 'text-[#0284C7]', corHex: '#0EA5E9' };
+  if (str.includes('aceleradora')) return { id: 10, key: 'aceleradora', shortLabel: 'Aceleradora', cor: 'bg-[#10B981]', textCor: 'text-[#059669]', corHex: '#10B981' };
+  if (str.includes('dinamizador')) return { id: 2, key: 'espaco_dinamizador', shortLabel: 'Espaço Dinamizador', cor: 'bg-[#06B6D4]', textCor: 'text-[#0891B2]', corHex: '#06B6D4' };
+  if (str.includes('incubadora')) return { id: 4, key: 'incubadora', shortLabel: 'Incubadora', cor: 'bg-[#38BDF8]', textCor: 'text-[#0284C7]', corHex: '#38BDF8' };
+  if (str.includes('parque')) return { id: 6, key: 'parque', shortLabel: 'Parque Tecnológico', cor: 'bg-[#1D3557]', textCor: 'text-[#1D3557]', corHex: '#1D3557' };
+  if (str.includes('ict')) return { id: 3, key: 'ict', shortLabel: 'ICT', cor: 'bg-[#0284C7]', textCor: 'text-[#0284C7]', corHex: '#0284C7' };
   
-  return { id: 1, shortLabel: nomeTipo || 'Entidade Pesquisa', cor: 'bg-[#457B9D]', textCor: 'text-[#457B9D]', corHex: '#457B9D' };
+  return { id: 1, key: 'pesquisa', shortLabel: 'Entidade Pesquisa', cor: 'bg-[#457B9D]', textCor: 'text-[#457B9D]', corHex: '#457B9D' };
 };
 
 // === COMPONENTE SORTABLE CARD ===
@@ -100,13 +102,26 @@ export default function AtivosPage() {
     });
   };
 
-  // Processamento dos dados de ativos
+  // Processamento dos dados de ativos com coordenadas georreferenciadas exatas
   const ativosProcessados = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
+
+    const cityCount = {};
 
     return ativosData.map((a, idx) => {
       const nomeTipoColuna = a.tipo || a.nome_tipo || 'Outros';
       const configEstilo = getDynamicAssetTypeConfig(nomeTipoColuna);
+      const munKey = String(a.municipio || '').trim();
+      const baseCoords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()] || [-12.9714, -38.5014];
+
+      cityCount[munKey] = (cityCount[munKey] || 0) + 1;
+      const offsetIndex = cityCount[munKey] - 1;
+
+      // Espalhamento em espiral suave para múltiplos ativos no mesmo município (ao dar zoom)
+      const angle = offsetIndex * 1.3;
+      const radius = offsetIndex === 0 ? 0 : 0.005 + (offsetIndex * 0.002);
+      const lat = baseCoords[0] + Math.sin(angle) * radius;
+      const lng = baseCoords[1] + Math.cos(angle) * radius;
 
       return {
         id: a.id_ativo || idx + 1,
@@ -114,11 +129,12 @@ export default function AtivosPage() {
         nome: a.nome_ativo || a.sigla || 'Ativo de CTI',
         sigla: a.sigla || '',
         tipo: nomeTipoColuna,
+        idTipoAtivo: configEstilo.id,
         shortTipo: configEstilo.shortLabel,
         municipio: a.municipio || 'Bahia',
         territorio: a.territorio_identidade || '',
-        lat: Number(a.latitude || a.lat || 0),
-        lng: Number(a.longitude || a.lng || 0),
+        lat,
+        lng,
         cor: configEstilo.cor,
         textCor: configEstilo.textCor,
         corHex: configEstilo.corHex,
@@ -224,10 +240,6 @@ export default function AtivosPage() {
 
         {/* LEFT COLUMN: MAPA SIDEMAP */}
         <div className="lg:col-span-5 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group h-full min-h-0">
-          <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] z-20 pointer-events-none group-hover:text-[#457B9D] transition-colors">
-            Mapa Territorial & Ativos ({filteredAtivosList.length})
-          </p>
-
           <SideMap
             territoriosData={territoriosData}
             territoriesDynamicStats={territoriesDynamicStats}
