@@ -10,22 +10,8 @@ import SideMap from './maps/SideMap';
 import StackedBarChart from './graph/StackedBarChart';
 import CardLista from './graph/CardLista';
 
-// === MAPEAMENTO DINÂMICO DOS TIPOS DE ATIVOS ===
-export const getDynamicAssetTypeConfig = (nomeTipo) => {
-  const str = String(nomeTipo || '').toLowerCase();
-  
-  if (str.includes('privada')) return { id: 9, shortLabel: 'Univ. Privada', cor: 'bg-[#60A5FA]', textCor: 'text-[#2563EB]', corHex: '#60A5FA' };
-  if (str.includes('estadual')) return { id: 7, shortLabel: 'Univ. Estadual', cor: 'bg-[#2563EB]', textCor: 'text-[#2563EB]', corHex: '#2563EB' };
-  if (str.includes('federal') && str.includes('universidade')) return { id: 8, shortLabel: 'Univ. Federal', cor: 'bg-[#1E40AF]', textCor: 'text-[#1E40AF]', corHex: '#1E40AF' };
-  if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if baiano')) return { id: 5, shortLabel: 'Inst. Federal', cor: 'bg-[#0EA5E9]', textCor: 'text-[#0284C7]', corHex: '#0EA5E9' };
-  if (str.includes('aceleradora')) return { id: 10, shortLabel: 'Aceleradora', cor: 'bg-[#10B981]', textCor: 'text-[#059669]', corHex: '#10B981' };
-  if (str.includes('dinamizador')) return { id: 2, shortLabel: 'Espaço Dinamizador', cor: 'bg-[#06B6D4]', textCor: 'text-[#0891B2]', corHex: '#06B6D4' };
-  if (str.includes('incubadora')) return { id: 4, shortLabel: 'Incubadora', cor: 'bg-[#38BDF8]', textCor: 'text-[#0284C7]', corHex: '#38BDF8' };
-  if (str.includes('parque')) return { id: 6, shortLabel: 'Parque Tecnológico', cor: 'bg-[#1D3557]', textCor: 'text-[#1D3557]', corHex: '#1D3557' };
-  if (str.includes('ict')) return { id: 3, shortLabel: 'ICT', cor: 'bg-[#0284C7]', textCor: 'text-[#0284C7]', corHex: '#0284C7' };
-  
-  return { id: 1, shortLabel: nomeTipo || 'Entidade Pesquisa', cor: 'bg-[#457B9D]', textCor: 'text-[#457B9D]', corHex: '#457B9D' };
-};
+import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
+import { getDynamicAssetTypeConfig, TIPOS_ATIVOS_CATALOG } from '../constants/assetTypes';
 
 // === COMPONENTE SORTABLE CARD ===
 function SortableCard({ id, className = '', children }) {
@@ -100,7 +86,7 @@ export default function AtivosPage() {
     });
   };
 
-  // Processamento dos dados de ativos
+  // Processamento dos dados de ativos utilizando as coordenadas exatas da view lista_ativos_cti do Supabase
   const ativosProcessados = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
 
@@ -108,19 +94,35 @@ export default function AtivosPage() {
       const nomeTipoColuna = a.tipo || a.nome_tipo || 'Outros';
       const configEstilo = getDynamicAssetTypeConfig(nomeTipoColuna);
 
+      // Coordenadas exatas da view do Supabase
+      const rawLat = a.latitude != null && a.latitude !== '' ? Number(a.latitude) : null;
+      const rawLng = a.longitude != null && a.longitude !== '' ? Number(a.longitude) : null;
+
+      let lat = rawLat;
+      let lng = rawLng;
+
+      // Fallback caso a linha não possua latitude/longitude preenchida
+      if (lat == null || lng == null || isNaN(lat) || isNaN(lng) || lat === 0) {
+        const munKey = String(a.municipio || '').trim();
+        const fallback = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()] || [-12.9714, -38.5014];
+        lat = fallback[0];
+        lng = fallback[1];
+      }
+
       return {
         id: a.id_ativo || idx + 1,
         id_territorio: a.id_territorio,
         nome: a.nome_ativo || a.sigla || 'Ativo de CTI',
         sigla: a.sigla || '',
         tipo: nomeTipoColuna,
+        idTipoAtivo: configEstilo.id,
         shortTipo: configEstilo.shortLabel,
         municipio: a.municipio || 'Bahia',
         territorio: a.territorio_identidade || '',
-        lat: Number(a.latitude || a.lat || 0),
-        lng: Number(a.longitude || a.lng || 0),
-        cor: configEstilo.cor,
-        textCor: configEstilo.textCor,
+        lat,
+        lng,
+        cor: configEstilo.bgClass,
+        textCor: configEstilo.textClass,
         corHex: configEstilo.corHex,
         urlReferencia: a.url_referencia || '',
         tituloReferencia: a.titulo_referencia || ''
@@ -215,10 +217,6 @@ export default function AtivosPage() {
 
         {/* LEFT COLUMN: MAPA SIDEMAP */}
         <div className="lg:col-span-5 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group h-full min-h-0">
-          <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] z-20 pointer-events-none group-hover:text-[#457B9D] transition-colors">
-            Mapa Territorial & Ativos ({filteredAtivosList.length})
-          </p>
-
           <SideMap
             territoriosData={territoriosData}
             territoriesDynamicStats={territoriesDynamicStats}
