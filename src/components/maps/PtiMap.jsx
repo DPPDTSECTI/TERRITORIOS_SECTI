@@ -294,6 +294,7 @@ export default function PtiMap({
             ) : (
                 <MapContainer 
                     ref={mapRef}
+                    preferCanvas={true}
                     center={[-12.5, -41.5]} 
                     zoom={6} 
                     

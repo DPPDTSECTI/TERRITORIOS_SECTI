@@ -1,8 +1,8 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect, useState, useRef, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence, motion } from 'framer-motion';
-import { DataProvider } from './context/DataContext';
+import { DataProvider, DataContext } from './context/DataContext';
 import { Analytics } from '@vercel/analytics/react';
 import { supabase } from './services/supabase';
 
@@ -30,8 +30,9 @@ export function useDadosSupabase() {
   return { dados, carregando };
 }
 
-// Importa a Sidebar globalmente
+// Importações Globais
 import Sidebar from './components/Sidebar';
+import UserHeaderProfile from './components/UserHeaderProfile';
 
 // CARREGAMENTO PREGUIÇOSO (LAZY LOADING)
 const LandingHero = lazy(() => import('./components/hero'));
@@ -48,7 +49,6 @@ function GlobalScroll() {
 
   useEffect(() => {
     const savedScrollPosition = sessionStorage.getItem(`scroll-${pathname}`);
-    
     if (savedScrollPosition) {
       setTimeout(() => {
         window.scrollTo({
@@ -66,29 +66,116 @@ function GlobalScroll() {
       sessionStorage.setItem(`scroll-${window.location.pathname}`, window.scrollY);
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
   return null;
 }
 
-// COMPONENTE DE TRANSIÇÃO (Área Principal)
+// ================= ROLAGEM BASEADA NA ORDEM DINÂMICA DA SIDEBAR =================
+const DEFAULT_MODULES_ORDER = ['/cursos', '/territorios', '/ativos', '/cadeia'];
+
+function getDynamicRoutesOrder() {
+  try {
+    // Busca no localStorage pela chave da Sidebar (caso exista ordenação customizada)
+    const saved = localStorage.getItem('sidebar-modules-order') || localStorage.getItem('sidebar_order');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const routes = parsed.map(item => {
+        if (typeof item === 'string') return item.startsWith('/') ? item : `/${item}`;
+        return item.path || item.route || '';
+      }).filter(Boolean);
+
+      if (routes.length > 0) return routes;
+    }
+  } catch (e) {
+    // Fallback padrão
+  }
+  return DEFAULT_MODULES_ORDER;
+}
+
+function PageScrollNavigator() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isTransitioningRef = useRef(false);
+
+  useEffect(() => {
+    const handleWheel = (e) => {
+      // Ignora rotas livres
+      if (location.pathname === '/' || location.pathname === '/admin' || location.pathname === '/sobre') return;
+
+      // Se estiver rolando dentro de um card/lista com scroll, preserva a rolagem interna
+      const isInsideScrollable = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
+      if (isInsideScrollable) {
+        const atTop = isInsideScrollable.scrollTop === 0;
+        const atBottom = Math.abs(isInsideScrollable.scrollHeight - isInsideScrollable.clientHeight - isInsideScrollable.scrollTop) <= 3;
+        
+        if (e.deltaY > 0 && !atBottom) return;
+        if (e.deltaY < 0 && !atTop) return;
+      }
+
+      // Obtém as rotas ordenadas dinamicamente
+      const currentOrder = getDynamicRoutesOrder();
+      const currentIndex = currentOrder.indexOf(location.pathname);
+      if (currentIndex === -1) return;
+
+      // Limiar de força do scroll para evitar trocas acidentais
+      if (Math.abs(e.deltaY) < 45) return;
+
+      if (isTransitioningRef.current) return;
+
+      if (e.deltaY > 0) {
+        // Descer scroll: Próxima rota conforme a Sidebar reordenada
+        if (currentIndex < currentOrder.length - 1) {
+          isTransitioningRef.current = true;
+          navigate(currentOrder[currentIndex + 1]);
+          setTimeout(() => { isTransitioningRef.current = false; }, 850);
+        }
+      } else if (e.deltaY < 0) {
+        // Subir scroll: Rota anterior conforme a Sidebar
+        if (currentIndex > 0) {
+          isTransitioningRef.current = true;
+          navigate(currentOrder[currentIndex - 1]);
+          setTimeout(() => { isTransitioningRef.current = false; }, 850);
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [location.pathname, navigate]);
+
+  return null;
+}
+
+// HEADER SUPERIOR FIXO (Badge e Perfil do Usuário)
+function TopFixedBar() {
+  const { kpisGlobais, loadingStats } = useContext(DataContext);
+  const location = useLocation();
+
+  if (location.pathname === '/' || location.pathname === '/admin') return null;
+
+  return (
+    <div className="fixed top-6 right-6 lg:top-8 lg:right-8 z-[100] flex items-center gap-3 pointer-events-auto select-none">
+      <UserHeaderProfile />
+    </div>
+  );
+}
+
+// COMPONENTE DE TRANSIÇÃO
 const PageWrapper = ({ children }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
       className="w-full h-full flex flex-col relative"
     >
-      {/* O SUSPENSE AGORA FICA AQUI: Abraça apenas o conteúdo da página! */}
       <Suspense 
         fallback={
           <div className="flex flex-col items-center justify-center min-h-[60vh] w-full gap-4 bg-transparent">
-            <div className="w-8 h-8 border-2 border-white/10 border-t-[#9170FA] rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-2 border-white/10 border-t-[#2563EB] rounded-full animate-spin"></div>
           </div>
         }
       >
@@ -105,7 +192,7 @@ function AnimatedRoutes() {
   return (
     <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#1c1c1c] text-white overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans`}>
       
-      {/* SIDEBAR: Fica de fora do sistema de Rotas, garantindo que nunca pisque */}
+      {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">
         {!isHome && (
           <motion.div
@@ -124,8 +211,10 @@ function AnimatedRoutes() {
         )}
       </AnimatePresence>
 
-      {/* ROTEADOR: Onde as páginas são renderizadas */}
+      {/* ÁREA PRINCIPAL COM HEADER FIXO */}
       <div className={`flex-1 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent`}>
+        {!isHome && <TopFixedBar />}
+
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />
@@ -150,9 +239,9 @@ function MainApp() {
       </Helmet>
       
       <GlobalScroll />
+      <PageScrollNavigator />
       <Analytics />
 
-      {/* O Suspense foi removido daqui e levado para o PageWrapper */}
       <AnimatedRoutes />
     </>
   );

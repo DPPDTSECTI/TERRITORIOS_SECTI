@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
@@ -51,22 +51,17 @@ const createCustomIcon = (colorHex) => L.divIcon({
   popupAnchor: [0, -11]
 });
 
-// Camada de Tile dinâmica que exibe os nomes de cidades/estados apenas com zoom avançado (>= 10)
+// Camada dinâmica: rótulos aparecem após zoom avançado (>= 10)
 function ZoomDependentTileLayer() {
   const map = useMap();
   const [zoom, setZoom] = useState(map.getZoom());
 
   useEffect(() => {
-    const handleZoomEnd = () => {
-      setZoom(map.getZoom());
-    };
+    const handleZoomEnd = () => setZoom(map.getZoom());
     map.on('zoomend', handleZoomEnd);
-    return () => {
-      map.off('zoomend', handleZoomEnd);
-    };
+    return () => map.off('zoomend', handleZoomEnd);
   }, [map]);
 
-  // Se zoom for menor que 10 (3 níveis acima do inicial 7), usa mapa sem rótulos. Caso contrário, exibe os nomes.
   const showLabels = zoom >= 10;
   const url = showLabels
     ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
@@ -75,19 +70,38 @@ function ZoomDependentTileLayer() {
   return <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url={url} />;
 }
 
-// Componente para centralizar o mapa quando um ativo da lista lateral é focado
+// Manipulador de clique no mapa vazio (desfixa o ativo e recua o zoom)
+function MapClickHandler({ onClearPinned }) {
+  const map = useMap();
+  useMapEvents({
+    click: (e) => {
+      onClearPinned();
+      if (e.originalEvent.target.classList.contains('leaflet-container') || e.originalEvent.target.tagName === 'path') {
+        const currentZoom = map.getZoom();
+        if (currentZoom > 6) {
+          map.flyTo(map.getCenter(), Math.max(6, currentZoom - 2), { duration: 0.8 });
+        }
+      }
+    }
+  });
+  return null;
+}
+
+// Centraliza a visão quando um ativo é focado externamente
 function ChangeMapView({ coords }) {
   const map = useMap();
   useEffect(() => {
     if (coords && coords[0] !== 0) {
-      map.flyTo(coords, 14, { duration: 1.5 });
+      const currentZoom = map.getZoom();
+      const targetZoom = Math.max(currentZoom, 13);
+      map.flyTo(coords, targetZoom, { duration: 1.2 });
     }
   }, [coords, map]);
   return null;
 }
 
-// Componente para renderizar os marcadores com evento de aproximação ao clicar
-function AssetMarkers({ processedAtivos }) {
+// Componente de Marcadores com Hover Popup, Fixação ao Clique e Zoom Inteligente
+function AssetMarkers({ processedAtivos, pinnedAssetId, setPinnedAssetId }) {
   const map = useMap();
 
   return (
@@ -95,21 +109,37 @@ function AssetMarkers({ processedAtivos }) {
       {processedAtivos.map((ativo) => {
         if (ativo.lat === 0 || ativo.lng === 0 || isNaN(ativo.lat) || isNaN(ativo.lng)) return null;
 
+        const isPinned = pinnedAssetId === ativo.id;
+
         return (
           <Marker 
             key={ativo.id} 
             position={[ativo.lat, ativo.lng]} 
             icon={createCustomIcon(ativo.corHex)}
             eventHandlers={{
-              click: () => {
-                // Aproxima o zoom suavemente ao clicar na bolinha do ativo
-                map.flyTo([ativo.lat, ativo.lng], 13, { duration: 1.0 });
+              mouseover: (e) => {
+                e.target.openPopup();
+              },
+              mouseout: (e) => {
+                // Só fecha no mouseout se o ativo não estiver fixado
+                if (pinnedAssetId !== ativo.id) {
+                  e.target.closePopup();
+                }
+              },
+              click: (e) => {
+                L.DomEvent.stopPropagation(e);
+                setPinnedAssetId(ativo.id);
+                e.target.openPopup();
+
+                const currentZoom = map.getZoom();
+                const targetZoom = Math.max(currentZoom, 13);
+                map.flyTo([ativo.lat, ativo.lng], targetZoom, { duration: 0.8 });
               }
             }}
           >
-            <Popup className="custom-popup">
-              <div className="p-1 max-w-[240px]">
-                <div className="flex items-center gap-2 mb-1.5">
+            <Popup className="custom-popup" autoPan={false} closeButton={isPinned}>
+              <div className="p-1 max-w-[240px] relative">
+                <div className="flex items-center gap-2 mb-1.5 pr-4">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${ativo.cor}/10`}>
                     <span className={`w-2.5 h-2.5 rounded-full ${ativo.cor}`}></span>
                   </div>
@@ -157,9 +187,10 @@ export default function SideMap({
 }) {
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
+  const [pinnedAssetId, setPinnedAssetId] = useState(null);
   const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
 
-  // Mescla os municípios para criar polígonos únicos por Território de Identidade
+  // Processa as divisas mesclando os municípios em polígonos por território
   useEffect(() => {
     fetch('/BA_(1)9396399957704198.json')
       .then((resp) => resp.json())
@@ -201,7 +232,6 @@ export default function SideMap({
       .catch((err) => console.error('Erro ao processar divisas dos territórios:', err));
   }, [municipioTerritoryMap]);
 
-  // Estilo das divisas dos territórios
   const territoryBorderStyle = () => ({
     fillColor: 'transparent',
     fillOpacity: 0,
@@ -217,6 +247,7 @@ export default function SideMap({
     <div className="relative w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10 flex-1">
       <MapContainer
         ref={mapRef}
+        preferCanvas={true}
         center={[-12.5, -41.5]}
         zoom={6}
         minZoom={6}
@@ -230,10 +261,10 @@ export default function SideMap({
         zoomControl={false}
         style={{ background: 'transparent' }}
       >
-        {/* CAMADA DE TILE DINÂMICA (OCULTA NOMES EM ZOOM BAIXO) */}
         <ZoomDependentTileLayer />
+        <MapClickHandler onClearPinned={() => setPinnedAssetId(null)} />
 
-        {/* CAMADA DE DIVISAS DOS TERRITÓRIOS DE IDENTIDADE */}
+        {/* CAMADA DE DIVISAS DOS TERRITÓRIOS */}
         {territoriosGeoJson && (
           <GeoJSON
             key="territorios-layer"
@@ -244,8 +275,12 @@ export default function SideMap({
 
         {focusedAsset && <ChangeMapView coords={focusedAsset} />}
 
-        {/* MARCADORES DOS ATIVOS COM ZOOM AO CLIQUE */}
-        <AssetMarkers processedAtivos={processedAtivos} />
+        {/* MARCADORES COM FIXAÇÃO E HOVER */}
+        <AssetMarkers 
+          processedAtivos={processedAtivos} 
+          pinnedAssetId={pinnedAssetId} 
+          setPinnedAssetId={setPinnedAssetId} 
+        />
       </MapContainer>
 
       {/* LEGENDA FLUTUANTE */}
@@ -288,6 +323,7 @@ export default function SideMap({
         </button>
         <button 
           onClick={() => {
+            setPinnedAssetId(null);
             mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
             onSelectTerritory(null);
           }}

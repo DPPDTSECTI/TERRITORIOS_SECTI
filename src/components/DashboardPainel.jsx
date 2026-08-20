@@ -258,34 +258,10 @@ export default function DashboardPainel() {
     <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-6 bg-transparent font-sans w-full">
 
       {/* HEADER DA PÁGINA */}
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full pr-[340px]">
         <div>
           <h1 className="text-3xl font-bold text-[#1D3557] tracking-tight">Visão Geral</h1>
           <p className="text-sm text-[#457B9D] mt-1.5 font-medium">Dashboard Integrado de CTI</p>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <div className="flex items-center p-1 bg-white/80 rounded-full border border-[#D6EAF8] shadow-sm relative">
-            <button
-              onClick={() => setViewMode('territorio')}
-              className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-500 active:scale-95 ${viewMode === 'territorio' ? 'text-[#1D3557] font-bold' : 'text-[#457B9D] hover:text-[#1D3557]'}`}
-              title="Território"
-            >
-              <Map size={18} strokeWidth={2} />
-            </button>
-            <button
-              onClick={() => setViewMode('municipio')}
-              className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-500 active:scale-95 ${viewMode === 'municipio' ? 'text-[#1D3557] font-bold' : 'text-[#457B9D] hover:text-[#1D3557]'}`}
-              title="Município"
-            >
-              <MapPin size={18} strokeWidth={2} />
-            </button>
-            <div
-              className="absolute top-1 left-1 w-10 h-10 bg-[#D6EAF8] rounded-full transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm pointer-events-none"
-              style={{ transform: viewMode === 'municipio' ? 'translateX(100%)' : 'translateX(0)' }}
-            />
-          </div>
-          <UserHeaderProfile />
         </div>
       </div>
 

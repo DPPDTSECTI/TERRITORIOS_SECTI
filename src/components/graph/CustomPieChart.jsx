@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { PieChart, Pie, Sector } from 'recharts';
 
+
 /**
  * Componente genérico de Pizza com ranking lateral.
  *

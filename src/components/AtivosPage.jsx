@@ -199,7 +199,7 @@ export default function AtivosPage() {
   return (
     <main className="flex-1 h-screen overflow-hidden relative py-6 px-6 lg:px-8 flex flex-col gap-6 bg-transparent w-full">
       {/* HEADER */}
-      <div className="flex items-center justify-between w-full shrink-0">
+      <div className="flex items-center justify-between w-full shrink-0 pr-[340px]">
         <div className="flex flex-col">
           <h1 className="text-[28px] font-extrabold text-[#1D3557] tracking-tight leading-none mb-1">
             Ativos de CTI
@@ -207,15 +207,6 @@ export default function AtivosPage() {
           <p className="text-[#457B9D] font-medium text-[14px]">
             Explore os institutos, universidades, ICTs e parques tecnológicos pelo estado
           </p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="bg-white px-4 py-2 rounded-full shadow-sm border border-[#E2E8F0] flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span>
-            <span className="text-[13px] font-bold text-[#1D3557]">
-              {loadingStats ? 'Carregando...' : `${ativosProcessados.length} Ativos Mapeados`}
-            </span>
-          </div>
-          <UserHeaderProfile />
         </div>
       </div>
 
