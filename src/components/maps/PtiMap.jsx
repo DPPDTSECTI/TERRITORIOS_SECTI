@@ -5,7 +5,7 @@ import L from 'leaflet';
 import * as topojson from 'topojson-client';
 
 // IMPORTANDO A NOSSA NOVA BASE DE IDs
-import { municipiosDB } from '../data/municipiosDB';
+import { municipiosDB } from '../../data/municipiosDB';
 
 // Paleta Soft Blue & Teal
 const TERRITORY_COLORS = [

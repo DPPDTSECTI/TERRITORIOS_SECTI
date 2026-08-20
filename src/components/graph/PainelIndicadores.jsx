@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { DataContext } from '../context/DataContext';
-import { KpiCard } from './KpiCard';
+import { DataContext } from '../../context/DataContext';
+import { KpiCard } from '../KpiCard';
 import { FaBuilding, FaGraduationCap, FaTractor } from 'react-icons/fa'; // Ícones de exemplo
 
 export const PainelIndicadores = ({ territorioSelecionado }) => {
