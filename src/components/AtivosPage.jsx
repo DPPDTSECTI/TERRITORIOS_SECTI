@@ -11,23 +11,7 @@ import StackedBarChart from './graph/StackedBarChart';
 import CardLista from './graph/CardLista';
 
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
-
-// === MAPEAMENTO DINÂMICO DOS TIPOS DE ATIVOS COM A PALETA ANTERIOR ===
-export const getDynamicAssetTypeConfig = (nomeTipo) => {
-  const str = String(nomeTipo || '').toLowerCase();
-  
-  if (str.includes('privada')) return { id: 9, key: 'univ_privada', shortLabel: 'Univ. Privada', cor: 'bg-[#60A5FA]', textCor: 'text-[#2563EB]', corHex: '#60A5FA' };
-  if (str.includes('estadual')) return { id: 7, key: 'univ_estadual', shortLabel: 'Univ. Estadual', cor: 'bg-[#2563EB]', textCor: 'text-[#2563EB]', corHex: '#2563EB' };
-  if (str.includes('federal') && str.includes('universidade')) return { id: 8, key: 'univ_federal', shortLabel: 'Univ. Federal', cor: 'bg-[#1E40AF]', textCor: 'text-[#1E40AF]', corHex: '#1E40AF' };
-  if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if baiano')) return { id: 5, key: 'inst_federal', shortLabel: 'Inst. Federal', cor: 'bg-[#0EA5E9]', textCor: 'text-[#0284C7]', corHex: '#0EA5E9' };
-  if (str.includes('aceleradora')) return { id: 10, key: 'aceleradora', shortLabel: 'Aceleradora', cor: 'bg-[#10B981]', textCor: 'text-[#059669]', corHex: '#10B981' };
-  if (str.includes('dinamizador')) return { id: 2, key: 'espaco_dinamizador', shortLabel: 'Espaço Dinamizador', cor: 'bg-[#06B6D4]', textCor: 'text-[#0891B2]', corHex: '#06B6D4' };
-  if (str.includes('incubadora')) return { id: 4, key: 'incubadora', shortLabel: 'Incubadora', cor: 'bg-[#38BDF8]', textCor: 'text-[#0284C7]', corHex: '#38BDF8' };
-  if (str.includes('parque')) return { id: 6, key: 'parque', shortLabel: 'Parque Tecnológico', cor: 'bg-[#1D3557]', textCor: 'text-[#1D3557]', corHex: '#1D3557' };
-  if (str.includes('ict')) return { id: 3, key: 'ict', shortLabel: 'ICT', cor: 'bg-[#0284C7]', textCor: 'text-[#0284C7]', corHex: '#0284C7' };
-  
-  return { id: 1, key: 'pesquisa', shortLabel: 'Entidade Pesquisa', cor: 'bg-[#457B9D]', textCor: 'text-[#457B9D]', corHex: '#457B9D' };
-};
+import { getDynamicAssetTypeConfig, TIPOS_ATIVOS_CATALOG } from '../constants/assetTypes';
 
 // === COMPONENTE SORTABLE CARD ===
 function SortableCard({ id, className = '', children }) {
