@@ -6,7 +6,7 @@ export const DataContext = createContext();
 // =========================================================================
 // CONFIGURAÇÕES DO CACHE DO SUPER-CÉREBRO
 // =========================================================================
-const CACHE_KEY = '@SectiPainel_Data_V6'; // V5: Inclusão do Ecossistema Completo (Cadeias, Cursos e Tipos)
+const CACHE_KEY = '@SectiPainel_Data'; // V5: Inclusão do Ecossistema Completo (Cadeias, Cursos e Tipos)
 const CACHE_TIME_MS = 15 * 60 * 1000; // 15 minutos
 
 export const DataProvider = ({ children }) => {
