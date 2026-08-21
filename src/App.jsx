@@ -72,12 +72,11 @@ function GlobalScroll() {
   return null;
 }
 
-// ================= ROLAGEM BASEADA NA ORDEM DINÂMICA DA SIDEBAR =================
-const DEFAULT_MODULES_ORDER = ['/cursos', '/territorios', '/ativos', '/cadeia'];
+// ================= ROLAGEM GLOBAL ENTRE MÓDULOS (EXCETO SOBRE LISTAS/TABELAS/MAPA) =================
+const DEFAULT_MODULES_ORDER = ['/territorios', '/ativos', '/cadeia', '/cursos'];
 
 function getDynamicRoutesOrder() {
   try {
-    // Busca no localStorage pela chave da Sidebar (caso exista ordenação customizada)
     const saved = localStorage.getItem('sidebar-modules-order') || localStorage.getItem('sidebar_order');
     if (saved) {
       const parsed = JSON.parse(saved);
@@ -101,42 +100,47 @@ function PageScrollNavigator() {
 
   useEffect(() => {
     const handleWheel = (e) => {
-      // Ignora rotas livres
+      // 1. Ignora páginas fora do fluxo de módulos
       if (location.pathname === '/' || location.pathname === '/admin' || location.pathname === '/sobre') return;
 
-      // Se estiver rolando dentro de um card/lista com scroll, preserva a rolagem interna
-      const isInsideScrollable = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
-      if (isInsideScrollable) {
-        const atTop = isInsideScrollable.scrollTop === 0;
-        const atBottom = Math.abs(isInsideScrollable.scrollHeight - isInsideScrollable.clientHeight - isInsideScrollable.scrollTop) <= 3;
-        
-        if (e.deltaY > 0 && !atBottom) return;
-        if (e.deltaY < 0 && !atTop) return;
+      // 2. REGRA ESTRITA: Se o cursor estiver sobre QUALQUER lista interna, tabela, catálogo ou mapa, NUNCA troca de página!
+      const target = e.target;
+      if (target) {
+        // Se estiver dentro do mapa Leaflet
+        if (target.closest('.leaflet-container, .leaflet-pane')) {
+          return;
+        }
+
+        // Se estiver dentro de um container com scroll interno (excluindo o <main> da página)
+        const scrollable = target.closest('.overflow-y-auto, .overflow-y-scroll, .overflow-auto, .overflow-scroll, table, tbody, [data-scrollable="true"]');
+        if (scrollable && scrollable.tagName.toLowerCase() !== 'main') {
+          return;
+        }
       }
 
-      // Obtém as rotas ordenadas dinamicamente
+      // 3. Se estiver rolando no fundo da página / áreas gerais / KPIs / cabeçalho, permite transição entre módulos
       const currentOrder = getDynamicRoutesOrder();
       const currentIndex = currentOrder.indexOf(location.pathname);
       if (currentIndex === -1) return;
 
       // Limiar de força do scroll para evitar trocas acidentais
-      if (Math.abs(e.deltaY) < 45) return;
+      if (Math.abs(e.deltaY) < 35) return;
 
       if (isTransitioningRef.current) return;
 
       if (e.deltaY > 0) {
-        // Descer scroll: Próxima rota conforme a Sidebar reordenada
+        // Descer scroll no fundo: Próximo módulo
         if (currentIndex < currentOrder.length - 1) {
           isTransitioningRef.current = true;
           navigate(currentOrder[currentIndex + 1]);
-          setTimeout(() => { isTransitioningRef.current = false; }, 850);
+          setTimeout(() => { isTransitioningRef.current = false; }, 750);
         }
       } else if (e.deltaY < 0) {
-        // Subir scroll: Rota anterior conforme a Sidebar
+        // Subir scroll no fundo: Módulo anterior
         if (currentIndex > 0) {
           isTransitioningRef.current = true;
           navigate(currentOrder[currentIndex - 1]);
-          setTimeout(() => { isTransitioningRef.current = false; }, 850);
+          setTimeout(() => { isTransitioningRef.current = false; }, 750);
         }
       }
     };

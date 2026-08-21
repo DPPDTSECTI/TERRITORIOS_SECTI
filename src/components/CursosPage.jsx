@@ -10,7 +10,8 @@ import {
   Sparkles, 
   ExternalLink,
   Filter,
-  Database
+  Database,
+  Check
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import SideMap, { getHeatColor } from './maps/SideMap';
@@ -27,8 +28,18 @@ export default function CursosPage() {
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedIES, setSelectedIES] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'areas' | 'ranking' | 'ies'
+
+  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  // Cursos restritos ao território selecionado (quando houver seleção de região)
+  const territoryCursos = useMemo(() => {
+    if (!cursosData || cursosData.length === 0) return [];
+    if (!selectedTerritory) return cursosData;
+    return cursosData.filter(c => Number(c.id_territorio) === Number(selectedTerritory.id_territorio));
+  }, [cursosData, selectedTerritory]);
 
   // 1. Filtragem Geral dos Cursos (Direto do DataContext)
   const filteredCursos = useMemo(() => {
@@ -37,6 +48,14 @@ export default function CursosPage() {
 
     if (selectedCategory !== 'todas') {
       list = list.filter(c => c.categoria === selectedCategory);
+    }
+
+    if (selectedIES) {
+      list = list.filter(c => {
+        const sigla = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
+        const ent = c.entidade ? String(c.entidade).trim() : '';
+        return sigla === selectedIES.toUpperCase() || ent === selectedIES;
+      });
     }
 
     if (selectedTerritory) {
@@ -55,15 +74,25 @@ export default function CursosPage() {
     }
 
     return list;
-  }, [cursosData, selectedCategory, selectedTerritory, searchQuery]);
+  }, [cursosData, selectedCategory, selectedIES, selectedTerritory, searchQuery]);
 
-  // 2. Mapeamento e Estatísticas de Categorias (Áreas) 100% Dinâmicas
+  // Cursos alimentados no Mapa (Se IES estiver selecionada, filtra o mapa apenas para ela)
+  const cursosDataForMap = useMemo(() => {
+    if (!selectedIES) return cursosData;
+    return cursosData.filter(c => {
+      const sigla = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
+      const ent = c.entidade ? String(c.entidade).trim() : '';
+      return sigla === selectedIES.toUpperCase() || ent === selectedIES;
+    });
+  }, [cursosData, selectedIES]);
+
+  // 2. Mapeamento e Estatísticas de Categorias (Áreas) - REAGE AO TERRITÓRIO SELECIONADO
   const categoryStats = useMemo(() => {
-    if (!cursosData || cursosData.length === 0) return [];
+    if (!territoryCursos || territoryCursos.length === 0) return [];
     const counts = {};
-    const total = cursosData.length;
+    const total = territoryCursos.length;
 
-    cursosData.forEach(c => {
+    territoryCursos.forEach(c => {
       const cat = c.categoria || 'Outras Áreas';
       counts[cat] = (counts[cat] || 0) + 1;
     });
@@ -77,12 +106,11 @@ export default function CursosPage() {
           count, 
           percent, 
           color,
-          bgLight: 'bg-[#F1F5F9]',
           shortName: name
         };
       })
       .sort((a, b) => b.count - a.count);
-  }, [cursosData]);
+  }, [territoryCursos]);
 
   // Mapa rápido de cores por categoria
   const categoryColorMap = useMemo(() => {
@@ -93,7 +121,7 @@ export default function CursosPage() {
     return map;
   }, [categoryStats]);
 
-  // 3. Ranking de Territórios por Contagem de Cursos
+  // 3A. Ranking de Territórios (Quando nenhum território está selecionado)
   const territoryRanking = useMemo(() => {
     if (!cursosData || cursosData.length === 0) return [];
     const counts = {};
@@ -119,25 +147,49 @@ export default function CursosPage() {
       }));
   }, [cursosData]);
 
-  // 4. Ranking de Instituições Ofertantes (IES)
-  const iesRanking = useMemo(() => {
-    if (!cursosData || cursosData.length === 0) return [];
+  // 3B. Ranking de Municípios (Quando um território ESTÁ selecionado)
+  const municipalityRanking = useMemo(() => {
+    if (!selectedTerritory || !territoryCursos || territoryCursos.length === 0) return [];
     const counts = {};
 
-    cursosData.forEach(c => {
+    territoryCursos.forEach(c => {
+      const mun = c.municipio || 'Não identificado';
+      counts[mun] = (counts[mun] || 0) + 1;
+    });
+
+    const maxCount = Math.max(...Object.values(counts), 1);
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, count], idx) => ({
+        name,
+        count,
+        rank: idx + 1,
+        percentBar: Math.min(100, (count / maxCount) * 100),
+        heatColor: getHeatColor(count)
+      }));
+  }, [selectedTerritory, territoryCursos]);
+
+  // 4. Ranking de Instituições Ofertantes (IES) - REAGE AO TERRITÓRIO SELECIONADO
+  const iesRanking = useMemo(() => {
+    if (!territoryCursos || territoryCursos.length === 0) return [];
+    const counts = {};
+
+    territoryCursos.forEach(c => {
       const entName = c.entidade || 'Outra';
       const sigla = c.sigla ? String(c.sigla).toUpperCase().trim() : entName;
       if (!counts[sigla]) {
-        counts[sigla] = { sigla, fullName: entName, count: 0, municipios: new Set() };
+        counts[sigla] = { sigla, fullName: entName, count: 0, municipios: new Set(), territorios: new Set() };
       }
       counts[sigla].count += 1;
       if (c.municipio) counts[sigla].municipios.add(c.municipio);
+      if (c.territorio_identidade) counts[sigla].territorios.add(c.territorio_identidade);
     });
 
     return Object.values(counts)
       .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
-  }, [cursosData]);
+      .slice(0, 15);
+  }, [territoryCursos]);
 
   // 5. Contagem de IES Únicas
   const totalIesUnicas = useMemo(() => {
@@ -247,9 +299,11 @@ export default function CursosPage() {
         <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[460px]">
           <SideMap
             mode="cursos"
-            cursosData={cursosData}
+            cursosData={cursosDataForMap}
             selectedTerritory={selectedTerritory}
             onSelectTerritory={setSelectedTerritory}
+            selectedIES={selectedIES}
+            onSelectIES={setSelectedIES}
           />
         </div>
 
@@ -299,7 +353,7 @@ export default function CursosPage() {
                 }`}
               >
                 <TrendingUp size={13} />
-                Ranking Territórios
+                {selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios'}
               </button>
 
               <button
@@ -312,7 +366,7 @@ export default function CursosPage() {
                 }`}
               >
                 <Building2 size={13} />
-                Top Instituições
+                Top Instituições {selectedIES && <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>}
               </button>
             </div>
 
@@ -348,19 +402,27 @@ export default function CursosPage() {
                 <div className="flex items-center justify-between mb-3 shrink-0">
                   <div className="flex items-center gap-2">
                     <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                      Cursos de Ciência, Tecnologia e Inovação
+                      {selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos de Ciência, Tecnologia e Inovação'}
                     </h3>
                     <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black px-2 py-0.5 rounded-full">
                       {filteredCursos.length} resultados
                     </span>
                   </div>
                   
-                  {selectedTerritory && (
-                    <span className="text-[10.5px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <MapPin size={11} className="text-[#2563EB]" />
-                      {selectedTerritory.nome_territorio || selectedTerritory.territorio}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {selectedIES && (
+                      <span className="text-[10px] font-bold text-[#1D3557] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <Building2 size={11} className="text-[#2563EB]" />
+                        {selectedIES}
+                      </span>
+                    )}
+                    {selectedTerritory && (
+                      <span className="text-[10.5px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <MapPin size={11} className="text-[#2563EB]" />
+                        {territoryName}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* LISTAGEM SCROLLÁVEL */}
@@ -421,115 +483,183 @@ export default function CursosPage() {
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
                       <GraduationCap size={32} className="mb-2 opacity-40 text-[#457B9D]" />
                       <p className="text-[12px] font-bold text-[#1D3557]">Nenhum curso encontrado</p>
-                      <p className="text-[10px] mt-1 text-[#457B9D]">Tente ajustar os filtros de categoria ou termo de busca.</p>
+                      <p className="text-[10px] mt-1 text-[#457B9D]">Tente ajustar os filtros de categoria, instituição ou busca.</p>
                     </div>
                   )}
                 </div>
               </div>
             )}
 
-            {/* ABA 2: DISTRIBUIÇÃO POR ÁREAS DE CONHECIMENTO */}
+            {/* ABA 2: DISTRIBUIÇÃO POR ÁREAS DE CONHECIMENTO (DINÂMICO AO TERRITÓRIO) */}
             {activeTab === 'areas' && (
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="mb-3 shrink-0">
-                  <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                    Distribuição por Áreas de Conhecimento
-                  </h3>
-                  <p className="text-[10.5px] text-[#457B9D] font-medium">
-                    Clique em uma categoria para filtrar o catálogo e o mapa
-                  </p>
+                <div className="mb-3 shrink-0 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                      {selectedTerritory 
+                        ? `Áreas de Conhecimento em ${territoryName}` 
+                        : 'Distribuição por Áreas de Conhecimento'
+                      }
+                    </h3>
+                    <p className="text-[10.5px] text-[#457B9D] font-medium">
+                      {selectedTerritory 
+                        ? `Exibindo a proporção dos ${territoryCursos.length} cursos ofertados neste território`
+                        : 'Clique em uma categoria para filtrar o catálogo e o mapa'
+                      }
+                    </p>
+                  </div>
+                  {selectedTerritory && (
+                    <span className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
+                      <MapPin size={11} className="text-[#2563EB]" />
+                      {territoryName}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0">
-                  {categoryStats.map((cat) => {
-                    const isSelected = selectedCategory === cat.name;
+                  {categoryStats.length > 0 ? (
+                    categoryStats.map((cat) => {
+                      const isSelected = selectedCategory === cat.name;
 
-                    return (
-                      <div
-                        key={cat.name}
-                        onClick={() => setSelectedCategory(isSelected ? 'todas' : cat.name)}
-                        className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20'
-                            : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span
-                              className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
-                              style={{ backgroundColor: cat.color }}
-                            ></span>
-                            <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
-                              {cat.name}
-                            </span>
+                      return (
+                        <div
+                          key={cat.name}
+                          onClick={() => setSelectedCategory(isSelected ? 'todas' : cat.name)}
+                          className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20'
+                              : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span
+                                className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
+                                style={{ backgroundColor: cat.color }}
+                              ></span>
+                              <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
+                                {cat.name}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[12px] font-black text-[#1D3557]">
+                                {cat.count} {cat.count === 1 ? 'curso' : 'cursos'}
+                              </span>
+                              <span
+                                className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
+                                style={{ backgroundColor: `${cat.color}15`, color: cat.color }}
+                              >
+                                {cat.percent}%
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[12px] font-black text-[#1D3557]">
-                              {cat.count} cursos
-                            </span>
-                            <span
-                              className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
-                              style={{ backgroundColor: `${cat.color}15`, color: cat.color }}
-                            >
-                              {cat.percent}%
-                            </span>
+
+                          {/* BARRA DE PROGRESSO */}
+                          <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{
+                                width: `${cat.percent}%`,
+                                backgroundColor: cat.color
+                              }}
+                            ></div>
                           </div>
                         </div>
-
-                        {/* BARRA DE PROGRESSO */}
-                        <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
-                          <div
-                            className="h-full rounded-full transition-all duration-500"
-                            style={{
-                              width: `${cat.percent}%`,
-                              backgroundColor: cat.color
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  ) : (
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
+                      <Filter size={28} className="mb-2 opacity-40 text-[#457B9D]" />
+                      <p className="text-[12px] font-bold text-[#1D3557]">Nenhuma área de ensino registrada neste território</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* ABA 3: RANKING DE TERRITÓRIOS */}
+            {/* ABA 3: RANKING DE TERRITÓRIOS OU RANKING DE MUNICÍPIOS */}
             {activeTab === 'ranking' && (
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="mb-3 shrink-0 flex items-center justify-between">
                   <div>
                     <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                      Ranking Territorial de Oferta de Cursos
+                      {selectedTerritory 
+                        ? `Ranking de Municípios · ${territoryName}` 
+                        : 'Ranking Territorial de Oferta de Cursos'
+                      }
                     </h3>
                     <p className="text-[10.5px] text-[#457B9D] font-medium">
-                      Densidade total de cursos em cada Território de Identidade da Bahia
+                      {selectedTerritory 
+                        ? 'Distribuição da quantidade de cursos nos municípios deste território'
+                        : 'Densidade total de cursos em cada Território de Identidade da Bahia'
+                      }
                     </p>
                   </div>
                   <span className="text-[10px] font-black text-[#457B9D] bg-[#F1F5F9] px-2.5 py-1 rounded-full">
-                    {territoryRanking.length} territórios
+                    {selectedTerritory 
+                      ? `${municipalityRanking.length} municípios com oferta`
+                      : `${territoryRanking.length} territórios`
+                    }
                   </span>
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
-                  {territoryRanking.map((t) => {
-                    const isSelected = selectedTerritory && Number(selectedTerritory.id_territorio) === Number(t.id);
+                  {/* SE TEM TERRITÓRIO SELECIONADO: RANKING DE MUNICÍPIOS */}
+                  {selectedTerritory ? (
+                    municipalityRanking.length > 0 ? (
+                      municipalityRanking.map((m) => (
+                        <div
+                          key={m.name}
+                          className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
+                              m.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                            }`}>
+                              {m.rank}
+                            </span>
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <span className="text-[11px] font-extrabold text-[#1D3557] truncate">
+                                {m.name}
+                              </span>
+                              <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden mt-1">
+                                <div
+                                  className="h-full rounded-full transition-all duration-300"
+                                  style={{
+                                    width: `${m.percentBar}%`,
+                                    backgroundColor: m.heatColor === '#E2E8F0' ? '#64748B' : m.heatColor
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
 
-                    return (
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span
+                              className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs"
+                              style={{ backgroundColor: m.heatColor === '#E2E8F0' ? '#64748B' : m.heatColor }}
+                            >
+                              {m.count} {m.count === 1 ? 'curso' : 'cursos'}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
+                        <MapPin size={28} className="mb-2 opacity-40 text-[#457B9D]" />
+                        <p className="text-[12px] font-bold text-[#1D3557]">Nenhum município com cursos cadastrados neste território</p>
+                      </div>
+                    )
+                  ) : (
+                    /* SE NÃO TEM TERRITÓRIO SELECIONADO: RANKING GERAL DE TERRITÓRIOS */
+                    territoryRanking.map((t) => (
                       <div
                         key={t.id}
                         onClick={() => {
-                          if (isSelected) setSelectedTerritory(null);
-                          else {
-                            const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
-                            setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
-                          }
+                          const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
+                          setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
                         }}
-                        className={`rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                          isSelected
-                            ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20'
-                            : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
-                        }`}
+                        className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs"
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
@@ -562,54 +692,100 @@ export default function CursosPage() {
                           </span>
                         </div>
                       </div>
-                    );
-                  })}
+                    ))
+                  )}
                 </div>
               </div>
             )}
 
-            {/* ABA 4: TOP INSTITUIÇÕES (IES) */}
+            {/* ABA 4: TOP INSTITUIÇÕES (IES) - FILTRÁVEIS NO MAPA E REATIVAS AO TERRITÓRIO */}
             {activeTab === 'ies' && (
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="mb-3 shrink-0">
-                  <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                    Top Instituições Ofertantes de Cursos de CT&I
-                  </h3>
-                  <p className="text-[10.5px] text-[#457B9D] font-medium">
-                    Universidades, faculdades e institutos federais com maior catálogo no estado
-                  </p>
+                <div className="mb-3 shrink-0 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                      {selectedTerritory 
+                        ? `Top Instituições em ${territoryName}` 
+                        : 'Top Instituições Ofertantes de Cursos de CT&I'
+                      }
+                    </h3>
+                    <p className="text-[10.5px] text-[#457B9D] font-medium">
+                      {selectedTerritory 
+                        ? `Instituições de ensino superior com catálogo ativo neste território`
+                        : 'Clique em uma instituição para filtrar e exibir no mapa apenas as regiões com presença dela'
+                      }
+                    </p>
+                  </div>
+                  {selectedIES && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedIES(null)}
+                      className="text-[10px] font-bold text-red-500 hover:text-red-700 bg-red-50 px-2.5 py-1 rounded-full cursor-pointer transition-colors"
+                    >
+                      Limpar Filtro
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
-                  {iesRanking.map((ies, idx) => (
-                    <div
-                      key={ies.sigla}
-                      className="bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent rounded-2xl p-3 flex items-center justify-between gap-3 shadow-2xs hover:shadow-xs transition-all duration-200"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-8 h-8 rounded-xl bg-[#2563EB]/10 text-[#2563EB] flex items-center justify-center font-black text-[11px] shrink-0">
-                          #{idx + 1}
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <h4 className="text-[12px] font-black text-[#1D3557] truncate">
-                            {ies.sigla}
-                          </h4>
-                          <span className="text-[10px] text-[#457B9D] font-medium truncate">
-                            {ies.fullName}
-                          </span>
-                        </div>
-                      </div>
+                  {iesRanking.length > 0 ? (
+                    iesRanking.map((ies, idx) => {
+                      const isSelected = selectedIES && (
+                        (ies.sigla && selectedIES.toUpperCase() === ies.sigla.toUpperCase()) ||
+                        selectedIES === ies.fullName
+                      );
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[9.5px] font-bold text-[#457B9D] bg-[#E2E8F0]/50 px-2 py-0.5 rounded-full">
-                          {ies.municipios.size} {ies.municipios.size === 1 ? 'cidade' : 'cidades'}
-                        </span>
-                        <span className="text-[11px] font-black text-[#1D3557] bg-[#D6EAF8] px-2.5 py-0.5 rounded-full">
-                          {ies.count} cursos
-                        </span>
-                      </div>
+                      return (
+                        <div
+                          key={ies.sigla}
+                          onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
+                          className={`rounded-2xl p-3 flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer ${
+                            isSelected
+                              ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20 border'
+                              : 'bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent shadow-2xs'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-[11px] shrink-0 transition-colors ${
+                              isSelected ? 'bg-[#2563EB] text-white' : 'bg-[#2563EB]/10 text-[#2563EB]'
+                            }`}>
+                              #{idx + 1}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <h4 className="text-[12px] font-black text-[#1D3557] truncate">
+                                  {ies.sigla}
+                                </h4>
+                                {isSelected && (
+                                  <span className="bg-[#2563EB] text-white text-[8.5px] font-extrabold px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
+                                    <Check size={9} strokeWidth={3} />
+                                    Ativa no Mapa
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-[#457B9D] font-medium truncate">
+                                {ies.fullName}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[9.5px] font-bold text-[#457B9D] bg-[#E2E8F0]/50 px-2 py-0.5 rounded-full">
+                              {ies.municipios.size} {ies.municipios.size === 1 ? 'cidade' : 'cidades'}
+                            </span>
+                            <span className="text-[11px] font-black text-[#1D3557] bg-[#D6EAF8] px-2.5 py-0.5 rounded-full">
+                              {ies.count} {ies.count === 1 ? 'curso' : 'cursos'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
+                      <Building2 size={28} className="mb-2 opacity-40 text-[#457B9D]" />
+                      <p className="text-[12px] font-bold text-[#1D3557]">Nenhuma instituição cadastrada neste território</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             )}

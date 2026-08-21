@@ -159,16 +159,45 @@ function ZoomDependentTileLayer() {
   );
 }
 
-function MapClickHandler({ onClearPinned }) {
+function MapClickHandler({ onClearPinned, onClearTerritory }) {
+  const map = useMap();
   useMapEvents({
     click: (e) => {
       const target = e.originalEvent?.target;
-      if (target && (target.closest('.custom-cluster-marker') || target.closest('.custom-single-asset-marker') || target.closest('.leaflet-popup'))) {
+      if (target && (target.closest('.custom-cluster-marker') || target.closest('.custom-single-asset-marker') || target.closest('.leaflet-popup') || target.closest('.leaflet-interactive'))) {
         return;
       }
-      onClearPinned();
+      onClearPinned?.();
+      if (onClearTerritory) {
+        onClearTerritory();
+        map.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
+      }
     }
   });
+  return null;
+}
+
+function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryRef }) {
+  const map = useMap();
+  const prevTerritoryRef = useRef(selectedTerritory);
+
+  useEffect(() => {
+    if (selectedTerritory) {
+      const idTerr = selectedTerritory.id_territorio;
+      const nome = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+      const layer = (idTerr && geoJsonLayersByTerritoryRef.current[idTerr]) || geoJsonLayersByTerritoryRef.current[nome];
+
+      if (layer) {
+        const bounds = layer.getBounds();
+        map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.8 });
+      }
+    } else if (prevTerritoryRef.current && !selectedTerritory) {
+      // Saiu de uma região: volta para a posição original com zoom out suave
+      map.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
+    }
+    prevTerritoryRef.current = selectedTerritory;
+  }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
+
   return null;
 }
 
@@ -439,7 +468,9 @@ export default function SideMap({
   mode = 'ativos', // 'ativos' | 'cursos' (Heatmap)
   focusedAsset = null,
   selectedTerritory = null,
-  onSelectTerritory = () => {}
+  onSelectTerritory = () => {},
+  selectedIES = null,
+  onSelectIES = () => {}
 }) {
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
@@ -687,19 +718,28 @@ export default function SideMap({
     };
   };
 
+  const geoJsonLayersByTerritoryRef = useRef({});
+
   const onEachTerritoryFeature = (feature, layer) => {
     const rawNome = feature?.properties?.nome_territorio || '';
     const nome = rawNome.replace(/^Território de Identidade\s+/i, '').trim();
     const idTerr = feature?.properties?.id_territorio;
+    const norm = normalizeName(nome);
+
+    if (idTerr) geoJsonLayersByTerritoryRef.current[idTerr] = layer;
+    if (norm) geoJsonLayersByTerritoryRef.current[norm] = layer;
 
     layer.on({
       mouseover: () => setHoveredTerritory(nome),
       mouseout: () => setHoveredTerritory(null),
-      click: () => {
-        const bounds = layer.getBounds();
-        mapRef.current?.fitBounds(bounds, { padding: [30, 30], maxZoom: 10 });
-        
-        if (selectedTerritory && (String(selectedTerritory.id_territorio) === String(idTerr) || normalizeName(selectedTerritory.nome_territorio) === normalizeName(nome))) {
+      click: (e) => {
+        L.DomEvent.stopPropagation(e);
+        const isCurrentSelected = selectedTerritory && (
+          (selectedTerritory.id_territorio && String(selectedTerritory.id_territorio) === String(idTerr)) ||
+          normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '') === norm
+        );
+
+        if (isCurrentSelected) {
           onSelectTerritory(null);
         } else {
           onSelectTerritory({ id_territorio: idTerr, nome_territorio: nome, territorio: nome });
@@ -718,6 +758,7 @@ export default function SideMap({
   const hasActiveFilter = Boolean(
     pinnedAssetId ||
     selectedTerritory ||
+    selectedIES ||
     (allCategories.length > 0 && activeCategoryKeys.size < allCategories.length)
   );
 
@@ -740,7 +781,14 @@ export default function SideMap({
         style={{ background: 'transparent' }}
       >
         <ZoomDependentTileLayer />
-        <MapClickHandler onClearPinned={() => setPinnedAssetId(null)} />
+        <MapClickHandler 
+          onClearPinned={() => setPinnedAssetId(null)} 
+          onClearTerritory={() => onSelectTerritory(null)}
+        />
+        <TerritoryFocusController 
+          selectedTerritory={selectedTerritory} 
+          geoJsonLayersByTerritoryRef={geoJsonLayersByTerritoryRef} 
+        />
 
         {territoriosGeoJson && (
           <GeoJSON
@@ -932,6 +980,7 @@ export default function SideMap({
             setActiveCategoryKeys(new Set(allCategories.map((c) => c.key)));
             mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
             onSelectTerritory(null);
+            onSelectIES?.(null);
           }}
           className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
             hasActiveFilter
