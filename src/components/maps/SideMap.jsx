@@ -127,6 +127,23 @@ export const getHeatColor = (count) => {
   return '#0F1D30';
 };
 
+// Escala de Cadeias Produtivas & IGs por Território
+export const CADEIAS_HEAT_LEVELS = [
+  { min: 0, max: 0, label: '0 cadeias', color: '#E2E8F0', text: '#64748B' },
+  { min: 1, max: 1, label: '1 cadeia', color: '#BAE6FD', text: '#0369A1' },
+  { min: 2, max: 2, label: '2 cadeias', color: '#38BDF8', text: '#0284C7' },
+  { min: 3, max: 4, label: '3 a 4', color: '#2563EB', text: '#FFFFFF' },
+  { min: 5, max: Infinity, label: '5+ cadeias', color: '#1D4ED8', text: '#FFFFFF' },
+];
+
+export const getCadeiasHeatColor = (count) => {
+  if (count === 0) return '#E2E8F0';
+  if (count === 1) return '#BAE6FD';
+  if (count === 2) return '#38BDF8';
+  if (count <= 4) return '#2563EB';
+  return '#1D4ED8';
+};
+
 function ZoomDependentTileLayer() {
   const map = useMap();
   const [zoom, setZoom] = useState(map.getZoom());
@@ -465,12 +482,15 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
 export default function SideMap({
   processedAtivos = [],
   cursosData = [],
-  mode = 'ativos', // 'ativos' | 'cursos' (Heatmap)
+  cadeiasData = [],
+  mode = 'ativos', // 'ativos' | 'cursos' | 'cadeias'
   focusedAsset = null,
   selectedTerritory = null,
   onSelectTerritory = () => {},
   selectedIES = null,
-  onSelectIES = () => {}
+  onSelectIES = () => {},
+  selectedSegmento = null,
+  onSelectSegmento = () => {}
 }) {
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
@@ -527,7 +547,34 @@ export default function SideMap({
     return Object.values(map).sort((a, b) => b.count - a.count);
   }, [cursosData, mode]);
 
-  const allCategories = mode === 'cursos' ? allCursosCategories : allAtivosCategories;
+  // =========================================================================
+  // 3. MODO CADEIAS: Categorias e Contagens (APL, IG, IG POTENCIAL)
+  // =========================================================================
+  const allCadeiasCategories = useMemo(() => {
+    if (mode !== 'cadeias') return [];
+    const map = {};
+    const colors = {
+      'APL': '#2563EB',
+      'IG': '#10B981',
+      'IG POTENCIAL': '#F59E0B'
+    };
+
+    cadeiasData.forEach((c) => {
+      const tipo = c.tipo || 'APL';
+      if (!map[tipo]) {
+        map[tipo] = {
+          key: tipo,
+          label: tipo === 'APL' ? 'APL (Arranjo Produtivo)' : tipo === 'IG' ? 'Indicação Geográfica' : tipo,
+          corHex: colors[tipo] || '#6366F1',
+          count: 0
+        };
+      }
+      map[tipo].count += 1;
+    });
+    return Object.values(map).sort((a, b) => b.count - a.count);
+  }, [cadeiasData, mode]);
+
+  const allCategories = mode === 'cursos' ? allCursosCategories : mode === 'cadeias' ? allCadeiasCategories : allAtivosCategories;
   const [activeCategoryKeys, setActiveCategoryKeys] = useState(new Set());
 
   useEffect(() => {
@@ -554,17 +601,50 @@ export default function SideMap({
   };
 
   // =========================================================================
-  // 3. DADOS FILTRADOS (ATIVOS OU CURSOS)
+  // 4. DADOS FILTRADOS (ATIVOS, CURSOS OU CADEIAS)
   // =========================================================================
   const visibleAtivos = useMemo(() => {
     if (mode !== 'ativos') return [];
-    return processedAtivos.filter((a) => activeCategoryKeys.has(a.tipo || 'Outros'));
-  }, [processedAtivos, activeCategoryKeys, mode]);
+    let list = processedAtivos.filter((a) => activeCategoryKeys.has(a.tipo || 'Outros'));
+
+    if (selectedTerritory) {
+      const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+      list = list.filter((a) => {
+        if (tid && String(a.id_territorio) === tid) return true;
+        if (tNorm && normalizeName(a.territorio || a.territorio_identidade || '') === tNorm) return true;
+        return false;
+      });
+    }
+
+    return list;
+  }, [processedAtivos, activeCategoryKeys, selectedTerritory, mode]);
 
   const visibleCursos = useMemo(() => {
     if (mode !== 'cursos') return [];
     return cursosData.filter((c) => activeCategoryKeys.has(c.categoria || 'Outras Áreas'));
   }, [cursosData, activeCategoryKeys, mode]);
+
+  const visibleCadeias = useMemo(() => {
+    if (mode !== 'cadeias') return [];
+    let list = cadeiasData.filter((c) => activeCategoryKeys.has(c.tipo || 'APL'));
+
+    if (selectedSegmento) {
+      list = list.filter((c) => c.segmento === selectedSegmento);
+    }
+
+    if (selectedTerritory) {
+      const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+      list = list.filter((c) => {
+        if (tid && String(c.id_territorio) === tid) return true;
+        if (tNorm && normalizeName(c.territorio_identidade || c.territorio || '') === tNorm) return true;
+        return false;
+      });
+    }
+
+    return list;
+  }, [cadeiasData, activeCategoryKeys, selectedSegmento, selectedTerritory, mode]);
 
   // Estatísticas de Cursos por Território para o Heatmap
   const cursosStatsByTerritory = useMemo(() => {
@@ -591,6 +671,32 @@ export default function SideMap({
 
     return stats;
   }, [visibleCursos, mode]);
+
+  // Estatísticas de Cadeias por Território para o Heatmap
+  const cadeiasStatsByTerritory = useMemo(() => {
+    if (mode !== 'cadeias') return {};
+    const stats = {};
+
+    visibleCadeias.forEach((c) => {
+      const rawTerr = (c.territorio_identidade || '').replace(/^Território de Identidade\s+/i, '').trim();
+      const tid = c.id_territorio ? String(c.id_territorio) : null;
+
+      const keysToRegister = [];
+      if (rawTerr) keysToRegister.push(normalizeName(rawTerr));
+      if (tid) keysToRegister.push(`id_${tid}`);
+
+      keysToRegister.forEach(k => {
+        if (!stats[k]) {
+          stats[k] = { count: 0, nome: c.territorio_identidade, categories: {} };
+        }
+        stats[k].count += 1;
+        const cat = c.tipo || 'APL';
+        stats[k].categories[cat] = (stats[k].categories[cat] || 0) + 1;
+      });
+    });
+
+    return stats;
+  }, [visibleCadeias, mode]);
 
   const territoryStats = useMemo(() => {
     if (mode === 'cursos') return {};
@@ -705,7 +811,7 @@ export default function SideMap({
       };
     }
 
-    // MODO ATIVOS: DIVISAS LIMPAS
+    // MODO ATIVOS / CADEIAS: DIVISAS LIMPAS COM PONTOS
     return {
       fillColor: isHovered ? '#2563EB' : 'transparent',
       fillOpacity: isHovered ? 0.08 : 0,
@@ -755,10 +861,18 @@ export default function SideMap({
     return stat ? stat.count : 0;
   }, [mode, hoveredTerritory, cursosStatsByTerritory]);
 
+  const hoveredCadeiasCount = useMemo(() => {
+    if (mode !== 'cadeias' || !hoveredTerritory) return null;
+    const norm = normalizeName(hoveredTerritory);
+    const stat = cadeiasStatsByTerritory[norm];
+    return stat ? stat.count : 0;
+  }, [mode, hoveredTerritory, cadeiasStatsByTerritory]);
+
   const hasActiveFilter = Boolean(
     pinnedAssetId ||
     selectedTerritory ||
     selectedIES ||
+    selectedSegmento ||
     (allCategories.length > 0 && activeCategoryKeys.size < allCategories.length)
   );
 
@@ -801,9 +915,9 @@ export default function SideMap({
 
         {focusedAsset && <ChangeMapView coords={focusedAsset} />}
 
-        {mode === 'ativos' && (
+        {(mode === 'ativos' || mode === 'cadeias') && (
           <SuperclusteredMarkers 
-            processedAtivos={visibleAtivos} 
+            processedAtivos={mode === 'cadeias' ? visibleCadeias : visibleAtivos} 
             pinnedAssetId={pinnedAssetId} 
             setPinnedAssetId={setPinnedAssetId} 
           />
@@ -822,6 +936,10 @@ export default function SideMap({
           {mode === 'cursos' ? (
             <span className="text-[#2563EB] font-black text-[11px] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
               {hoveredCursosCount} {hoveredCursosCount === 1 ? 'curso' : 'cursos'}
+            </span>
+          ) : mode === 'cadeias' ? (
+            <span className="text-[#2563EB] font-extrabold text-[10.5px]">
+              · {territoryStats[hoveredTerritory]?.count || 0} {(territoryStats[hoveredTerritory]?.count || 0) === 1 ? 'cadeia / IG' : 'cadeias e IGs'}
             </span>
           ) : (
             territoryStats[hoveredTerritory] && (
@@ -875,7 +993,7 @@ export default function SideMap({
           }`}
         >
           <Layers size={13} className={isLayerControlOpen ? 'text-white' : 'text-[#2563EB]'} />
-          <span>{mode === 'cursos' ? 'Áreas' : 'Camadas'}</span>
+          <span>{mode === 'cursos' ? 'Áreas' : mode === 'cadeias' ? 'Tipos' : 'Camadas'}</span>
           <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${
             isLayerControlOpen ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-[#457B9D]'
           }`}>
@@ -888,7 +1006,7 @@ export default function SideMap({
           <div className="mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-1 px-1">
               <span className="text-[9.5px] font-extrabold text-[#A0AEC0] uppercase tracking-wider">
-                {mode === 'cursos' ? 'Filtrar por Área' : `Filtrar Tipos (${visibleAtivos.length} ativos)`}
+                {mode === 'cursos' ? 'Filtrar por Área' : mode === 'cadeias' ? `Filtrar por Tipo (${visibleCadeias.length} cadeias)` : `Filtrar Tipos (${visibleAtivos.length} ativos)`}
               </span>
               <div className="flex items-center gap-1">
                 <button
@@ -981,6 +1099,7 @@ export default function SideMap({
             mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
             onSelectTerritory(null);
             onSelectIES?.(null);
+            onSelectSegmento?.(null);
           }}
           className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
             hasActiveFilter
