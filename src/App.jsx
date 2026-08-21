@@ -190,7 +190,7 @@ function AnimatedRoutes() {
   const isHome = location.pathname === '/';
 
   return (
-    <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#1c1c1c] text-white overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans`}>
+    <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#F0F7FD] text-[#1D3557] overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans`}>
       
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">

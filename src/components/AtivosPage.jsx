@@ -33,9 +33,8 @@ function SortableCard({ id, className = '', children }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative h-full flex flex-col min-h-0 transform-gpu backface-hidden will-change-transform ${className} ${
-        isDragging ? 'opacity-40 scale-[1.02] shadow-2xl' : ''
-      }`}
+      className={`relative h-full flex flex-col min-h-0 transform-gpu backface-hidden will-change-transform ${className} ${isDragging ? 'opacity-40 scale-[1.02] shadow-2xl' : ''
+        }`}
     >
       <button
         {...attributes}
@@ -209,7 +208,7 @@ export default function AtivosPage() {
 
       {/* MAIN CONTENT GRID */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-0">
-        
+
         {/* LADO ESQUERDO: MAPA COM ÍCONES */}
         <div className="lg:col-span-5 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group h-full min-h-0">
           <SideMap

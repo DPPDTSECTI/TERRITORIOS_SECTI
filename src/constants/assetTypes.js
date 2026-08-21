@@ -16,20 +16,20 @@ import {
  * Single Source of Truth para Tailwind, Mapas, Gráficos e Listas
  */
 export const ASSET_THEME_COLORS = {
-  privada: '#60A5FA',
-  estadual: '#2563EB',
-  federal: '#1E40AF',
-  if: '#0EA5E9',
-  aceleradora: '#10B981',
-  dinamizador: '#06B6D4',
-  incubadora: '#38BDF8',
-  parque: '#1D3557',
-  ict: '#0284C7',
-  pesquisa: '#457B9D',
-  hub: '#8B5CF6',           // Nova: Hubs / Coworkings / FabLabs
-  centro_pd: '#F59E0B',     // Nova: Centros de P&D / Inovação Empresarial
-  investimento: '#EC4899',  // Nova: Fundos de Investimento / Venture Capital
-  outro: '#64748B'
+  privada: '#38BDF8',       // Sky Blue / Ciano Claro Luminoso
+  estadual: '#2563EB',      // Royal Blue Vibrante
+  federal: '#1E3A8A',       // Azul Marinho / Indigo Profundo
+  if: '#0284C7',            // Azul Oceano Médio
+  aceleradora: '#10B981',   // Esmeralda Vibrante
+  dinamizador: '#06B6D4',   // Turquesa Intenso
+  incubadora: '#6366F1',    // Índigo Suave
+  parque: '#0F172A',        // Midnight Navy / Preto Azulado
+  ict: '#0D9488',           // Verde Petróleo / Teal
+  pesquisa: '#64748B',      // Slate / Cinza Aço
+  hub: '#8B5CF6',           // Violeta Claro
+  centro_pd: '#F59E0B',     // Âmbar
+  investimento: '#EC4899',  // Rosa / Magenta
+  outro: '#94A3B8'
 };
 
 export const TIPOS_ATIVOS_CATALOG = [

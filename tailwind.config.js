@@ -38,27 +38,27 @@ module.exports = {
 
         // === PALETA DE ATIVOS CTI (EFEITO CASCATA) ===
         asset: {
-          privada: '#60A5FA',
+          privada: '#38BDF8',
           estadual: '#2563EB',
-          federal: '#1E40AF',
-          if: '#0EA5E9',
+          federal: '#1E3A8A',
+          if: '#0284C7',
           aceleradora: '#10B981',
           dinamizador: '#06B6D4',
-          incubadora: '#38BDF8',
-          parque: '#1D3557',
-          ict: '#0284C7',
-          pesquisa: '#457B9D',
+          incubadora: '#6366F1',
+          parque: '#0F172A',
+          ict: '#0D9488',
+          pesquisa: '#64748B',
         },
 
-        // Brand legacy
+        // === PALETA BRAND SECTI (AZUIS & CIANOS MODERNOS) ===
         'brand': {
-          1: '#3117ea',
-          2: '#5f3bef',
-          3: '#8d5ef5',
-          4: '#bb82fa',
-          5: '#e9a6ff',
+          1: '#1D3557', // Deep Navy
+          2: '#1E40AF', // Blue Real
+          3: '#2563EB', // Royal Blue
+          4: '#38BDF8', // Cyan Claro
+          5: '#A8DADC', // Gelo / Ice
         },
-        'neon-purple': '#3117ea',
+        'neon-blue': '#2563EB',
       },
       boxShadow: {
         'glass': '0 8px 32px 0 rgba(15, 23, 42, 0.05)',
