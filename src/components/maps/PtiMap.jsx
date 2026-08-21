@@ -60,7 +60,7 @@ const uniqueTerritories = Object.values(
 ).sort((a, b) => {
     const indexA = GEOGRAPHICAL_ORDER.indexOf(a.nome);
     const indexB = GEOGRAPHICAL_ORDER.indexOf(b.nome);
-    if (indexA === -1) return 1; 
+    if (indexA === -1) return 1;
     if (indexB === -1) return -1;
     return indexA - indexB;
 });
@@ -86,21 +86,21 @@ const buildMunicipioTerritoryMap = () => {
 
 // ================= MAPA PRINCIPAL =================
 export default function PtiMap({
-    territoriosData = [], 
-    territoriesDynamicStats = {}, 
+    territoriosData = [],
+    territoriesDynamicStats = {},
     searchTerm = '',
-    filtroSemiarido = false, 
+    filtroSemiarido = false,
     selectedTerritory = null,
-    onSelectTerritory = () => { }, 
+    onSelectTerritory = () => { },
     semiaridoMunicipios = []
 }) {
     const [geoJsonData, setGeoJsonData] = useState(null);
     const [loading, setLoading] = useState(true);
-    
+
     // Estados do Hover e Tooltip usam IDs
     const [hoveredTerritoryId, setHoveredTerritoryId] = useState(null);
     const [hoveredMunicipalityId, setHoveredMunicipalityId] = useState(null);
-    
+
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
     const [isMunListExpanded, setIsMunListExpanded] = useState(false);
 
@@ -112,7 +112,7 @@ export default function PtiMap({
 
     useEffect(() => {
         setLoading(true);
-        layersByTerritory.current = {}; 
+        layersByTerritory.current = {};
 
         fetch('/BA_(1)9396399957704198.json')
             .then((resp) => resp.json())
@@ -123,7 +123,7 @@ export default function PtiMap({
                 geojson.features.forEach(feat => {
                     const nome = feat.properties?.NOME || feat.properties?.nome || '';
                     const dbInfo = municipioTerritoryMap[normalizeName(nome)];
-                    
+
                     if (dbInfo) {
                         feat.properties.id_municipio = dbInfo.id_municipio;
                         feat.properties.id_territorio = dbInfo.id_territorio;
@@ -135,7 +135,7 @@ export default function PtiMap({
                     } else {
                         // 🚨 DETETIVE DE BURACOS NO MAPA:
                         console.warn(`Buraco no mapa! A cidade "${nome}" do GeoJSON não achou par no BD.`);
-                        feat.properties.id_territorio = null; 
+                        feat.properties.id_territorio = null;
                     }
                 });
 
@@ -159,22 +159,22 @@ export default function PtiMap({
         const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome_municipio_oficial));
         const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
 
-        let opacity = 0.85; 
+        let opacity = 0.85;
         let fillColor = territoryColorMap[idTer] || '#D6EAF8';
-        let weight = 0.8; 
-        let color = '#FFFFFF'; 
+        let weight = 0.8;
+        let color = '#FFFFFF';
 
         if (blockClickAndColor && !selectedTerritory) {
-            fillColor = '#E2E8F0'; 
+            fillColor = '#E2E8F0';
             opacity = 0.50;
         } else if (selectedTerritory) {
             if (isSelectedMap) {
                 opacity = 0.95;
                 weight = 1.2;
-                if (filtroSemiarido && isMunSemi) fillColor = '#F59E0B'; 
+                if (filtroSemiarido && isMunSemi) fillColor = '#F59E0B';
             } else {
                 fillColor = '#E2E8F0';
-                opacity = 0.35; 
+                opacity = 0.35;
                 weight = 0.6;
             }
         }
@@ -186,7 +186,7 @@ export default function PtiMap({
     const onEachFeature = (feature, layer) => {
         const idTer = feature.properties.id_territorio;
         if (!idTer) return;
-        
+
         if (!layersByTerritory.current[idTer]) {
             layersByTerritory.current[idTer] = [];
         }
@@ -195,13 +195,13 @@ export default function PtiMap({
         layer.on({
             mouseover: (e) => {
                 const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
-                
-                if (selectedTerritory && !isSelectedMap) return; 
+
+                if (selectedTerritory && !isSelectedMap) return;
 
                 if (!selectedTerritory) {
                     setHoveredTerritoryId(idTer);
                     setHoveredMunicipalityId(null);
-                    
+
                     layersByTerritory.current[idTer].forEach(l => {
                         l.setStyle({ fillOpacity: 1, color: '#FFFFFF', weight: 1.5 });
                         l.bringToFront();
@@ -220,7 +220,7 @@ export default function PtiMap({
                 } else {
                     if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(e.target);
                 }
-                
+
                 setHoveredTerritoryId(null);
                 setHoveredMunicipalityId(null);
                 setTooltip({ visible: false, x: 0, y: 0 });
@@ -250,9 +250,9 @@ export default function PtiMap({
         if (!rect) return;
 
         const tooltipWidth = 220; const tooltipHeight = 160; const offset = 15;
-        let x = e.clientX - rect.left + offset; 
+        let x = e.clientX - rect.left + offset;
         let y = e.clientY - rect.top + offset;
-        
+
         if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
         if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
 
@@ -260,13 +260,13 @@ export default function PtiMap({
     };
 
     const hoveredData = hoveredTerritoryId ? territoriosData.find(t => t.id_territorio === hoveredTerritoryId) : null;
-    
+
     // Dados temporários pro tooltip quando não tem dados da API
     const fallbackName = hoveredTerritoryId ? uniqueTerritories.find(t => t.id === hoveredTerritoryId)?.nome : '';
 
     const selectedTerritoryMunicipalities = useMemo(() => {
         if (!selectedTerritory || !selectedTerritory.id_territorio) return [];
-        
+
         let muns = municipiosDB
             .filter(m => m.id_territorio === selectedTerritory.id_territorio)
             .map(m => m.nome_municipio);
@@ -280,8 +280,8 @@ export default function PtiMap({
     const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
 
     return (
-        <div 
-            ref={mapContainerRef} 
+        <div
+            ref={mapContainerRef}
             className="relative isolate w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10"
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
@@ -292,16 +292,16 @@ export default function PtiMap({
                     <span className="text-[10px] font-bold tracking-widest uppercase">Processando Malha...</span>
                 </div>
             ) : (
-                <MapContainer 
+                <MapContainer
                     ref={mapRef}
                     preferCanvas={true}
-                    center={[-12.5, -41.5]} 
-                    zoom={6} 
-                    
+                    center={[-12.5, -41.5]}
+                    zoom={6}
+
                     // ==========================================
                     // NOVAS TRAVAS DE LIMITES (BAHIA)
                     // ==========================================
-                    minZoom={6} 
+                    minZoom={6}
                     maxBounds={[
                         [-18.5, -47.0], // Canto Inferior Esquerdo (Sudoeste)
                         [-8.0, -37.0]   // Canto Superior Direito (Nordeste)
@@ -309,18 +309,18 @@ export default function PtiMap({
                     maxBoundsViscosity={1.0}
                     // ==========================================
 
-                    zoomControl={false} 
+                    zoomControl={false}
                     scrollWheelZoom={true}
                     doubleClickZoom={false}
                     className="w-full h-full outline-none z-0"
-                    style={{ background: 'transparent' }} 
+                    style={{ background: 'transparent' }}
                 >
                     <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" opacity={0.6} />
-                    
+
                     <GeoJSON
                         key={selectedTerritory?.id_territorio || 'muns'}
                         ref={geoJsonLayerRef}
-                        data={geoJsonData} 
+                        data={geoJsonData}
                         style={styleFeature}
                         onEachFeature={onEachFeature}
                     />
@@ -329,31 +329,36 @@ export default function PtiMap({
 
             {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
             <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-white/90 backdrop-blur-xl rounded-[18px] border border-white shadow-[0_8px_32px_rgba(29,53,87,0.1)] overflow-hidden">
-                <button 
+                <button
                     onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40"
+                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40 cursor-pointer"
                     title="Aproximar"
                 >
-                    <span className="text-xl font-medium leading-none mb-0.5">+</span>
+                    <span className="text-lg font-medium leading-none">+</span>
                 </button>
-                <button 
+                <button
                     onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40"
+                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40 cursor-pointer"
                     title="Afastar"
                 >
-                    <span className="text-xl font-medium leading-none mb-0.5">-</span>
+                    <span className="text-lg font-medium leading-none">−</span>
                 </button>
-                <button 
+                <button
                     onClick={() => {
                         mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8, easeLinearity: 0.25 });
                         onSelectTerritory(null);
                     }}
-                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors"
-                    title="Resetar Mapa"
+                    className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
+                        selectedTerritory
+                            ? 'text-red-500 bg-red-50 hover:bg-red-100'
+                            : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+                    }`}
+                    title="Limpar seleção"
                 >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                        <path d="M3 3v5h5"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
+                        <path d="M22 21H7"/>
+                        <path d="m5 11 9 9"/>
                     </svg>
                 </button>
             </div>
@@ -365,7 +370,7 @@ export default function PtiMap({
                         <h4 className="text-[11px] font-bold text-[#1D3557] uppercase tracking-widest leading-tight">
                             {selectedTerritory.nome_territorio || selectedTerritory.territorio}
                         </h4>
-                        <button 
+                        <button
                             onClick={() => onSelectTerritory(null)}
                             className="text-[#457B9D] hover:text-red-500 transition-colors bg-[#D6EAF8]/30 hover:bg-red-50 rounded-full p-1.5 ml-2"
                         >
@@ -415,8 +420,8 @@ export default function PtiMap({
                             <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
                                 <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Média IFDM</span>
                                 <span className="text-[14px] font-bold text-[#1D3557]">
-                                    {hoveredData?.media_ifdm 
-                                        ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3) 
+                                    {hoveredData?.media_ifdm
+                                        ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3)
                                         : '0.000'}
                                 </span>
                             </div>

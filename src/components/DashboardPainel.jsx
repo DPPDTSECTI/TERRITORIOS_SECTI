@@ -38,9 +38,8 @@ function SortableCard({ id, className = '', children }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative h-full flex flex-col min-h-0 transform-gpu backface-hidden will-change-transform ${className} ${
-        isDragging ? 'opacity-40 scale-[1.02] shadow-2xl' : ''
-      }`}
+      className={`relative h-full flex flex-col min-h-0 transform-gpu backface-hidden will-change-transform ${className} ${isDragging ? 'opacity-40 scale-[1.02] shadow-2xl' : ''
+        }`}
     >
       <button
         {...attributes}
@@ -56,13 +55,13 @@ function SortableCard({ id, className = '', children }) {
 }
 
 export default function DashboardPainel() {
-  const { 
-    kpisGlobais, 
-    loadingStats, 
-    territoriosData, 
-    ativosData, 
-    cursosData, 
-    territoriesDynamicStats, 
+  const {
+    kpisGlobais,
+    loadingStats,
+    territoriosData,
+    ativosData,
+    cursosData,
+    territoriesDynamicStats,
     selectedTerritory,
     setSelectedTerritory
   } = useContext(DataContext);
@@ -100,7 +99,7 @@ export default function DashboardPainel() {
 
   const topEntidadesCursos = useMemo(() => {
     if (!cursosData || cursosData.length === 0) return [];
-    
+
     const mapEntidades = {};
     cursosData.forEach(c => {
       const ent = c.entidade || 'Não informada';
@@ -124,8 +123,8 @@ export default function DashboardPainel() {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5)
       .map((item, idx) => ({
-        rank: idx + 1, 
-        name: item.name, 
+        rank: idx + 1,
+        name: item.name,
         sigla: item.sigla,
         count: item.count,
         color: styles[idx % styles.length].bg,
@@ -147,7 +146,7 @@ export default function DashboardPainel() {
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .map(([region, value], idx) => ({
-        region, 
+        region,
         value,
         colorHex: palette[idx % palette.length]
       }));
@@ -252,10 +251,10 @@ export default function DashboardPainel() {
     { label: 'Cursos de CT&I', value: loadingStats ? '...' : kpisGlobais.cursos, icon: GraduationCap },
     { label: 'D. Territorial (IFDM)', value: loadingStats ? '...' : kpisGlobais.ifdmMedio, icon: TrendingUp },
     { label: 'Cadeias Produtivas', value: loadingStats ? '...' : kpisGlobais.cadeias, icon: Database },
-    { 
-      label: 'Municípios Semiárido', 
-      value: loadingStats ? '...' : `${semiaridoStats.semiarido}`, 
-      icon: Building2 
+    {
+      label: 'Municípios Semiárido',
+      value: loadingStats ? '...' : `${semiaridoStats.semiarido}`,
+      icon: Building2
     }
   ];
 
@@ -294,10 +293,10 @@ export default function DashboardPainel() {
       </div>
 
       {/* GRID PRINCIPAL */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 relative z-10 min-h-[500px]">
+      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
-        {/* LADO ESQUERDO: MAPA INTEGRADO (OCUPA 5 DE 12 COLUNAS) */}
-        <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[400px]">
+        {/* LADO ESQUERDO: MAPA INTEGRADO (alinhado com 2 KPIs: 2cols + 1gap do grid-cols-5 gap-5) */}
+        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[400px]">
           <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] z-20 pointer-events-none group-hover:text-[#457B9D] transition-colors">
             Mapa Territorial
           </p>
@@ -314,13 +313,13 @@ export default function DashboardPainel() {
           </div>
         </div>
 
-        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) (OCUPA 7 DE 12 COLUNAS) */}
+        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
                 <React.Fragment key={cardId}>
-                  
+
                   {/* CARD 1: DONUT CHART */}
                   {cardId === 'card-donut' && (
                     <SortableCard id="card-donut">
