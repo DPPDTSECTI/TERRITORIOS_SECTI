@@ -1,7 +1,6 @@
 import React, { useState, useContext, useMemo } from 'react';
 import {
-  Settings, GraduationCap, TrendingUp, Database, Building2,
-  Map, MapPin, GripHorizontal
+  Settings, GraduationCap, TrendingUp, Database, Building2, GripHorizontal
 } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
@@ -11,7 +10,6 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 // IMPORTAÇÃO DOS DADOS E COMPONENTES
 import { DataContext } from '../context/DataContext';
 import PtiMap from './maps/PtiMap.jsx';
-import UserHeaderProfile from './UserHeaderProfile.jsx';
 
 // COMPONENTES DE GRÁFICOS MODULARIZADOS
 import DonutChart from './graph/DonutChart.jsx';
@@ -58,9 +56,6 @@ function SortableCard({ id, className = '', children }) {
 }
 
 export default function DashboardPainel() {
-  // =========================================================================
-  // CONSUMINDO O CONTEXTO GLOBAL DA API
-  // =========================================================================
   const { 
     kpisGlobais, 
     loadingStats, 
@@ -72,13 +67,7 @@ export default function DashboardPainel() {
     setSelectedTerritory
   } = useContext(DataContext);
 
-  const [viewMode, setViewMode] = useState('territorio');
-
-  // =========================================================================
-  // PROCESSAMENTO DE DADOS REAIS PARA OS GRÁFICOS E KPIS
-  // =========================================================================
-
-  // Cálculo da contagem total de municípios do Semiárido vs Total Estadual
+  // Cálculo de municípios do Semiárido
   const semiaridoStats = useMemo(() => {
     if (!territoriosData || territoriosData.length === 0) return { semiarido: 0, total: 0 };
 
@@ -92,7 +81,7 @@ export default function DashboardPainel() {
     };
   }, [territoriosData]);
 
-  // 1. Dados para o DonutChart (Cursos)
+  // 1. DonutChart (Cursos)
   const donutChartData = useMemo(() => {
     if (!cursosData || cursosData.length === 0) return [];
     const counts = {};
@@ -109,24 +98,16 @@ export default function DashboardPainel() {
       }));
   }, [cursosData]);
 
-  // Top 5 Entidades que mais oferecem cursos
   const topEntidadesCursos = useMemo(() => {
     if (!cursosData || cursosData.length === 0) return [];
     
     const mapEntidades = {};
-
     cursosData.forEach(c => {
       const ent = c.entidade || 'Não informada';
-      
       if (!mapEntidades[ent]) {
         const siglaDB = c.sigla ? String(c.sigla).toUpperCase().trim() : '';
         const textoParaExibir = siglaDB !== '' ? siglaDB : ent;
-
-        mapEntidades[ent] = {
-          name: ent,
-          sigla: textoParaExibir,
-          count: 0
-        };
+        mapEntidades[ent] = { name: ent, sigla: textoParaExibir, count: 0 };
       }
       mapEntidades[ent].count += 1;
     });
@@ -152,7 +133,7 @@ export default function DashboardPainel() {
       }));
   }, [cursosData]);
 
-  // 2. Dados para o CustomPieChart (Distribuição dos Ativos de CT&I)
+  // 2. CustomPieChart (Ativos CT&I)
   const ecosystemData = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
     const counts = {};
@@ -172,7 +153,6 @@ export default function DashboardPainel() {
       }));
   }, [ativosData]);
 
-  // Top 5 Territórios com mais Ativos
   const topTerritoriosAtivos = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
     const counts = {};
@@ -201,7 +181,7 @@ export default function DashboardPainel() {
       }));
   }, [ativosData]);
 
-  // 3. Cálculo da Infraestrutura RNP para o ProportionBarChart
+  // 3. Infraestrutura RNP
   const rnpComparisonData = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
 
@@ -223,11 +203,8 @@ export default function DashboardPainel() {
 
       if (categoria) {
         const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || a.rnp === 't';
-        if (hasRnp) {
-          stats[categoria].com += 1;
-        } else {
-          stats[categoria].sem += 1;
-        }
+        if (hasRnp) stats[categoria].com += 1;
+        else stats[categoria].sem += 1;
       }
     });
 
@@ -239,9 +216,7 @@ export default function DashboardPainel() {
     }));
   }, [ativosData]);
 
-  // =========================================================================
-  // CONFIGURAÇÕES DO DRAG & DROP
-  // =========================================================================
+  // Configurações DnD
   const INITIAL_CARDS = ['card-donut', 'card-pie', 'card-ranking', 'card-mapeamento'];
   const [cardsOrder, setCardsOrder] = useState(() => {
     const saved = localStorage.getItem('dashboard-cards-order');
@@ -285,31 +260,32 @@ export default function DashboardPainel() {
   ];
 
   return (
-    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-6 bg-transparent font-sans w-full">
+    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
       {/* HEADER DA PÁGINA */}
-      <div className="flex items-center justify-between w-full pr-[340px]">
+      <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-[#1D3557] tracking-tight">Visão Geral</h1>
-          <p className="text-sm text-[#457B9D] mt-1.5 font-medium">Dashboard Integrado de CTI</p>
+          <p className="text-sm text-[#457B9D] mt-1 font-medium">Dashboard Integrado de CTI</p>
         </div>
       </div>
 
-      {/* ================= GRID DE KPIs ================= */}
-      <div className="w-full relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+      {/* GRID DE KPIs COM ALINHAMENTO PROPORCIONAL AO GRID INFERIOR (12 COLUNAS) */}
+      <div className="w-full relative z-10 shrink-0">
+        {/* Layout sincronizado: 5 colunas estritamente proporcionais */}
+        <div className="grid grid-cols-5 gap-5 items-stretch w-full">
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="aspect-auto h-20 md:h-24 bg-white rounded-[16px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_2px_12px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group overflow-hidden text-center p-2 cursor-default"
+              className="h-[88px] bg-white rounded-[22px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/60 shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-300 group overflow-hidden text-center px-3 py-2 cursor-default"
             >
-              <div className="w-8 h-8 rounded-xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-3">
-                <kpi.icon size={16} strokeWidth={2.5} />
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110">
+                <kpi.icon size={15} strokeWidth={2.5} />
               </div>
-              <span className="text-lg xl:text-xl font-extrabold text-[#1D3557] tracking-tight leading-none mb-0.5 whitespace-nowrap">
+              <span className="text-xl font-black text-[#1D3557] tracking-tight leading-none mb-1 whitespace-nowrap">
                 {kpi.value}
               </span>
-              <span className="text-[#457B9D] text-[8px] uppercase font-bold tracking-widest truncate max-w-full px-1">
+              <span className="text-[#457B9D] text-[8.5px] uppercase font-extrabold tracking-widest truncate max-w-full">
                 {kpi.label}
               </span>
             </div>
@@ -317,11 +293,11 @@ export default function DashboardPainel() {
         </div>
       </div>
 
-      {/* ================= GRID PRINCIPAL ================= */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-[500px]">
+      {/* GRID PRINCIPAL */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 relative z-10 min-h-[500px]">
 
-        {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group min-h-[400px]">
+        {/* LADO ESQUERDO: MAPA INTEGRADO (OCUPA 5 DE 12 COLUNAS) */}
+        <div className="lg:col-span-5 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[400px]">
           <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] z-20 pointer-events-none group-hover:text-[#457B9D] transition-colors">
             Mapa Territorial
           </p>
@@ -338,7 +314,7 @@ export default function DashboardPainel() {
           </div>
         </div>
 
-        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) */}
+        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) (OCUPA 7 DE 12 COLUNAS) */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
