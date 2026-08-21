@@ -19,23 +19,35 @@ import CustomPieChart from './graph/CustomPieChart.jsx';
 import RankingBarChart from './graph/RankingBarChart.jsx';
 import ProportionBarChart from './graph/ProportionBarChart.jsx';
 
-function SortableCard({ id, children }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+function SortableCard({ id, className = '', children }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 50 : 'auto',
+    transform: CSS?.Transform?.toString(transform) ?? undefined,
+    transition: isDragging ? undefined : transition,
+    zIndex: isDragging ? 50 : 1,
     position: 'relative',
-    height: '100%',
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`relative h-full group ${isDragging ? 'opacity-80 scale-105 shadow-2xl' : ''}`}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`relative h-full flex flex-col min-h-0 transform-gpu backface-hidden will-change-transform ${className} ${
+        isDragging ? 'opacity-40 scale-[1.02] shadow-2xl' : ''
+      }`}
+    >
       <button
         {...attributes}
         {...listeners}
-        className="absolute top-4 right-4 z-50 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-translate-y-1"
+        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-colors duration-200 group-hover:text-[#1D3557]"
         title="Arrastar card"
       >
         <GripHorizontal size={18} />
@@ -63,8 +75,22 @@ export default function DashboardPainel() {
   const [viewMode, setViewMode] = useState('territorio');
 
   // =========================================================================
-  // PROCESSAMENTO DE DADOS REAIS PARA OS GRÁFICOS
+  // PROCESSAMENTO DE DADOS REAIS PARA OS GRÁFICOS E KPIS
   // =========================================================================
+
+  // Cálculo da contagem total de municípios do Semiárido vs Total Estadual
+  const semiaridoStats = useMemo(() => {
+    if (!territoriosData || territoriosData.length === 0) return { semiarido: 0, total: 0 };
+
+    const semiarido = territoriosData.reduce((acc, t) => acc + Number(t.qtd_mun_semiarido || 0), 0);
+    const naoSemiarido = territoriosData.reduce((acc, t) => acc + Number(t.qtd_mun_nao_semiarido || 0), 0);
+    const total = semiarido + naoSemiarido;
+
+    return {
+      semiarido,
+      total: total > 0 ? total : 417
+    };
+  }, [territoriosData]);
 
   // 1. Dados para o DonutChart (Cursos)
   const donutChartData = useMemo(() => {
@@ -247,11 +273,15 @@ export default function DashboardPainel() {
   };
 
   const kpis = [
-    { label: 'Ativos', value: loadingStats ? '...' : kpisGlobais.ativos, icon: Settings },
-    { label: 'Cursos', value: loadingStats ? '...' : kpisGlobais.cursos, icon: GraduationCap },
-    { label: 'Índice', value: loadingStats ? '...' : kpisGlobais.ifdmMedio, icon: TrendingUp },
-    { label: 'Cadeias', value: loadingStats ? '...' : kpisGlobais.cadeias, icon: Database },
-    { label: 'Territórios', value: loadingStats ? '...' : kpisGlobais.territorios, icon: Building2 }
+    { label: 'Ativos de CT&I', value: loadingStats ? '...' : kpisGlobais.ativos, icon: Settings },
+    { label: 'Cursos de CT&I', value: loadingStats ? '...' : kpisGlobais.cursos, icon: GraduationCap },
+    { label: 'D. Territorial (IFDM)', value: loadingStats ? '...' : kpisGlobais.ifdmMedio, icon: TrendingUp },
+    { label: 'Cadeias Produtivas', value: loadingStats ? '...' : kpisGlobais.cadeias, icon: Database },
+    { 
+      label: 'Municípios Semiárido', 
+      value: loadingStats ? '...' : `${semiaridoStats.semiarido}`, 
+      icon: Building2 
+    }
   ];
 
   return (
@@ -276,10 +306,10 @@ export default function DashboardPainel() {
               <div className="w-8 h-8 rounded-xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-3">
                 <kpi.icon size={16} strokeWidth={2.5} />
               </div>
-              <span className="text-xl xl:text-2xl font-extrabold text-[#1D3557] tracking-tight leading-none mb-0.5">
+              <span className="text-lg xl:text-xl font-extrabold text-[#1D3557] tracking-tight leading-none mb-0.5 whitespace-nowrap">
                 {kpi.value}
               </span>
-              <span className="text-[#457B9D] text-[8px] uppercase font-bold tracking-widest">
+              <span className="text-[#457B9D] text-[8px] uppercase font-bold tracking-widest truncate max-w-full px-1">
                 {kpi.label}
               </span>
             </div>

@@ -4,9 +4,8 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
-import { MapPin, ExternalLink, Layers, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, ExternalLink, Layers, Check, ChevronDown, ChevronUp, Building } from 'lucide-react';
 
-// BASE DE MUNICÍPIOS E MAPEAMENTO
 import { municipiosDB } from '../../data/municipiosDB';
 
 function normalizeName(value) {
@@ -43,10 +42,10 @@ const buildMunicipioTerritoryMap = () => {
   return m;
 };
 
-// 1. ÍCONE DE CLUSTER CLEAN
+// Ícone do Cluster
 const createClusterIcon = (count) => {
-  const size = count >= 50 ? 30 : count >= 10 ? 26 : 22;
-  const fontSize = count >= 50 ? 11.5 : count >= 10 ? 10.5 : 9.5;
+  const size = count >= 50 ? 32 : count >= 10 ? 28 : 24;
+  const fontSize = count >= 50 ? 12 : count >= 10 ? 11 : 10;
 
   return L.divIcon({
     className: 'custom-clean-cluster-marker',
@@ -66,7 +65,7 @@ const createClusterIcon = (count) => {
         font-family: inherit;
         cursor: pointer;
         user-select: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        box-shadow: 0 3px 10px rgba(29,53,87,0.35);
         transition: transform 0.15s ease;
       ">
         ${count}
@@ -77,27 +76,31 @@ const createClusterIcon = (count) => {
   });
 };
 
-// 2. ÍCONE DE PONTO INDIVIDUAL COMPACTO (13px)
-const createSingleAssetIcon = (colorHex) => L.divIcon({
+// Ícone do Ativo com SVG do Tipo Embarcado
+const createSingleAssetIconWithSvg = (colorHex, iconSvg) => L.divIcon({
   className: 'custom-clean-asset-dot',
   html: `
     <div style="
       background-color: ${colorHex || '#2563EB'};
-      width: 13px;
-      height: 13px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      border: 1.5px solid #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      border: 2px solid #ffffff;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: transform 0.15s ease;
       cursor: pointer;
-    "></div>
+    " class="hover:scale-125 active:scale-95">
+      ${iconSvg || `<span style="width:5px;height:5px;background:#fff;border-radius:50%"></span>`}
+    </div>
   `,
-  iconSize: [13, 13],
-  iconAnchor: [6.5, 6.5],
-  popupAnchor: [0, -6.5]
+  iconSize: [22, 22],
+  iconAnchor: [11, 11],
+  popupAnchor: [0, -11]
 });
 
-// Camada dinâmica de Tiles (rótulos aparecem em zoom >= 10)
 function ZoomDependentTileLayer() {
   const map = useMap();
   const [zoom, setZoom] = useState(map.getZoom());
@@ -116,7 +119,6 @@ function ZoomDependentTileLayer() {
   return <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url={url} />;
 }
 
-// Manipulador de clique no mapa vazio (desfixa e recua zoom)
 function MapClickHandler({ onClearPinned }) {
   const map = useMap();
   useMapEvents({
@@ -133,7 +135,6 @@ function MapClickHandler({ onClearPinned }) {
   return null;
 }
 
-// Centraliza a visão quando um ativo é focado externamente
 function ChangeMapView({ coords }) {
   const map = useMap();
   useEffect(() => {
@@ -146,37 +147,113 @@ function ChangeMapView({ coords }) {
   return null;
 }
 
-// Componente de Marcadores Clusterizados e Individuais
+function SingleAssetPopupContent({ ativo }) {
+  if (!ativo) return null;
+
+  const IconComp = ativo.icone;
+
+  return (
+    <div className="p-2 min-w-[230px] max-w-[280px] flex flex-col gap-2 font-sans">
+      <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-1.5">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div 
+            className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-sm"
+            style={{ backgroundColor: ativo.corHex || '#2563EB' }}
+          >
+            {IconComp && <IconComp size={11} className="text-white" />}
+          </div>
+          <span className="text-[10px] font-extrabold text-[#1D3557] tracking-wider uppercase truncate">
+            {ativo.shortTipo || ativo.tipo}
+          </span>
+        </div>
+        {ativo.sigla && (
+          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-[#F1F5F9] text-[#457B9D] rounded-md shrink-0">
+            {ativo.sigla}
+          </span>
+        )}
+      </div>
+
+      <h4 className="font-extrabold text-[#1D3557] text-[13px] leading-tight tracking-tight mt-0.5">
+        {ativo.nome}
+      </h4>
+
+      <div className="flex flex-col gap-1 bg-[#F8FAFC] p-2 rounded-xl border border-[#E2E8F0]/70 text-[10.5px]">
+        <div className="flex items-center gap-1.5 text-[#457B9D]">
+          <MapPin size={12} className="text-[#2563EB] shrink-0" />
+          <span className="font-semibold text-[#1D3557] truncate">{ativo.municipio}</span>
+        </div>
+        {ativo.territorio && (
+          <div className="flex items-center gap-1.5 text-[#457B9D]">
+            <Building size={12} className="text-[#457B9D] shrink-0" />
+            <span className="font-medium text-[#457B9D] truncate">
+              {ativo.territorio.replace(/^Território de Identidade\s+/i, '')}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {ativo.urlReferencia && (
+        <a
+          href={ativo.urlReferencia}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center justify-center gap-1.5 w-full py-1.5 mt-0.5 rounded-lg bg-[#2563EB]/10 hover:bg-[#2563EB] text-[#2563EB] hover:text-white transition-all text-[10px] font-bold shadow-xs active:scale-98"
+        >
+          <ExternalLink size={11} />
+          <span>Acessar Informações</span>
+        </a>
+      )}
+    </div>
+  );
+}
+
 function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId }) {
   const map = useMap();
   const [bounds, setBounds] = useState(null);
   const [zoom, setZoom] = useState(map.getZoom());
 
+  const deduplicatedAtivos = useMemo(() => {
+    const seen = new Map();
+
+    processedAtivos.forEach((a) => {
+      if (!a.lat || !a.lng || isNaN(a.lat) || isNaN(a.lng) || a.lat === 0) return;
+
+      const normNome = normalizeName(a.nome || a.nome_ativo || '');
+      const latKey = Number(a.lat).toFixed(5);
+      const lngKey = Number(a.lng).toFixed(5);
+      const key = `${normNome}_${latKey}_${lngKey}_${a.tipo || ''}`;
+
+      if (!seen.has(key)) {
+        seen.set(key, a);
+      }
+    });
+
+    return Array.from(seen.values());
+  }, [processedAtivos]);
+
   const superclusterIndex = useMemo(() => {
-    const points = processedAtivos
-      .filter((a) => a.lat && a.lng && !isNaN(a.lat) && !isNaN(a.lng) && a.lat !== 0)
-      .map((a) => ({
-        type: 'Feature',
-        properties: {
-          cluster: false,
-          ativoId: a.id,
-          ativoData: a
-        },
-        geometry: {
-          type: 'Point',
-          coordinates: [a.lng, a.lat]
-        }
-      }));
+    const points = deduplicatedAtivos.map((a) => ({
+      type: 'Feature',
+      properties: {
+        cluster: false,
+        ativoId: a.id,
+        ativoData: a
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [a.lng, a.lat]
+      }
+    }));
 
     const sc = new Supercluster({
-      radius: 45,
-      maxZoom: 15,
+      radius: 40,
+      maxZoom: 14,
       minPoints: 2
     });
 
     sc.load(points);
     return sc;
-  }, [processedAtivos]);
+  }, [deduplicatedAtivos]);
 
   const updateMapState = useCallback(() => {
     const b = map.getBounds();
@@ -199,51 +276,129 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
     };
   }, [map, updateMapState]);
 
-  const clusters = useMemo(() => {
+  const renderedElements = useMemo(() => {
     if (!bounds || !superclusterIndex) return [];
-    return superclusterIndex.getClusters(bounds, Math.floor(zoom));
+    const currentZoomLevel = Math.floor(zoom);
+    const rawClusters = superclusterIndex.getClusters(bounds, currentZoomLevel);
+    const elements = [];
+    const unclusteredPoints = [];
+
+    rawClusters.forEach((cluster) => {
+      const [lng, lat] = cluster.geometry.coordinates;
+      const isCluster = cluster.properties.cluster;
+
+      if (isCluster) {
+        const pointCount = cluster.properties.point_count;
+        const clusterId = cluster.id;
+
+        if (currentZoomLevel >= 15 || pointCount <= 1) {
+          const leaves = superclusterIndex.getLeaves(clusterId, 100, 0);
+          leaves.forEach((leaf) => {
+            unclusteredPoints.push({
+              lng: leaf.geometry.coordinates[0],
+              lat: leaf.geometry.coordinates[1],
+              ativo: leaf.properties.ativoData,
+              id: leaf.properties.ativoId
+            });
+          });
+        } else {
+          elements.push({
+            isCluster: true,
+            lng,
+            lat,
+            pointCount,
+            clusterId,
+            key: `cluster-${clusterId}`
+          });
+        }
+      } else {
+        unclusteredPoints.push({
+          lng,
+          lat,
+          ativo: cluster.properties.ativoData,
+          id: cluster.properties.ativoId
+        });
+      }
+    });
+
+    const locationGroups = {};
+    unclusteredPoints.forEach((p) => {
+      const locKey = `${p.lat.toFixed(4)}_${p.lng.toFixed(4)}`;
+      if (!locationGroups[locKey]) {
+        locationGroups[locKey] = [];
+      }
+      locationGroups[locKey].push(p);
+    });
+
+    Object.values(locationGroups).forEach((group) => {
+      const total = group.length;
+
+      group.forEach((item, idx) => {
+        let finalLat = item.lat;
+        let finalLng = item.lng;
+
+        if (total > 1) {
+          const spreadDistance = 0.00048; // ~50 metros de separação visual
+
+          if (total === 2) {
+            const offset = (idx === 0 ? -1 : 1) * spreadDistance;
+            finalLng += offset;
+          } else if (total === 3) {
+            const angles = [Math.PI / 2, (7 * Math.PI) / 6, (11 * Math.PI) / 6];
+            finalLat += spreadDistance * Math.sin(angles[idx]);
+            finalLng += spreadDistance * Math.cos(angles[idx]);
+          } else {
+            const angle = (idx / total) * 2 * Math.PI;
+            finalLat += spreadDistance * Math.sin(angle);
+            finalLng += spreadDistance * Math.cos(angle);
+          }
+        }
+
+        elements.push({
+          isCluster: false,
+          lng: finalLng,
+          lat: finalLat,
+          ativo: item.ativo,
+          key: `ativo-${item.id}-${idx}`
+        });
+      });
+    });
+
+    return elements;
   }, [bounds, zoom, superclusterIndex]);
 
   return (
     <>
-      {clusters.map((cluster) => {
-        const [lng, lat] = cluster.geometry.coordinates;
-        const isCluster = cluster.properties.cluster;
-
-        // CASO 1: É UM CLUSTER
-        if (isCluster) {
-          const pointCount = cluster.properties.point_count;
-          const clusterId = cluster.id;
-
+      {renderedElements.map((elem) => {
+        if (elem.isCluster) {
           return (
             <Marker
-              key={`cluster-${clusterId}`}
-              position={[lat, lng]}
-              icon={createClusterIcon(pointCount)}
+              key={elem.key}
+              position={[elem.lat, elem.lng]}
+              icon={createClusterIcon(elem.pointCount)}
               eventHandlers={{
                 click: () => {
                   const expansionZoom = Math.min(
-                    superclusterIndex.getClusterExpansionZoom(clusterId),
-                    15
+                    superclusterIndex.getClusterExpansionZoom(elem.clusterId),
+                    16
                   );
-                  map.flyTo([lat, lng], expansionZoom, { duration: 0.8 });
+                  map.flyTo([elem.lat, elem.lng], expansionZoom, { duration: 0.8 });
                 }
               }}
             />
           );
         }
 
-        // CASO 2: É UM ATIVO INDIVIDUAL
-        const ativo = cluster.properties.ativoData;
+        const ativo = elem.ativo;
         if (!ativo) return null;
 
         const isPinned = pinnedAssetId === ativo.id;
 
         return (
           <Marker
-            key={`ativo-${ativo.id}`}
-            position={[lat, lng]}
-            icon={createSingleAssetIcon(ativo.corHex)}
+            key={elem.key}
+            position={[elem.lat, elem.lng]}
+            icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg)}
             eventHandlers={{
               mouseover: (e) => {
                 e.target.openPopup();
@@ -259,45 +414,13 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
                 e.target.openPopup();
 
                 const currentZoom = map.getZoom();
-                const targetZoom = Math.max(currentZoom, 13);
-                map.flyTo([ativo.lat, ativo.lng], targetZoom, { duration: 0.8 });
+                const targetZoom = Math.max(currentZoom, 14);
+                map.flyTo([elem.lat, elem.lng], targetZoom, { duration: 0.8 });
               }
             }}
           >
-            <Popup className="custom-popup" autoPan={false} closeButton={isPinned}>
-              <div className="p-1 max-w-[240px] relative">
-                <div className="flex items-center gap-2 mb-1.5 pr-4">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${ativo.cor ? `${ativo.cor}/10` : 'bg-blue-50'}`}>
-                    <span className={`w-2.5 h-2.5 rounded-full ${ativo.cor || 'bg-[#2563EB]'}`}></span>
-                  </div>
-                  <span className="text-[10px] font-bold text-[#A0AEC0] uppercase tracking-wider truncate">
-                    {ativo.tipo}
-                  </span>
-                </div>
-                <h4 className="font-extrabold text-[#1D3557] text-[12.5px] leading-snug mb-1">
-                  {ativo.nome}
-                </h4>
-                <div className="flex items-center justify-between mt-2 bg-gray-50 p-2 rounded-lg border border-gray-100 text-[11px]">
-                  <span className="font-bold text-[#457B9D] flex items-center gap-1 truncate">
-                    <MapPin size={12} className="shrink-0" /> {ativo.municipio}
-                  </span>
-                  {ativo.territorio && (
-                    <span className="font-bold text-[#1D3557] truncate max-w-[90px]" title={ativo.territorio}>
-                      {ativo.territorio}
-                    </span>
-                  )}
-                </div>
-                {ativo.urlReferencia && (
-                  <a
-                    href={ativo.urlReferencia}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1 text-[10px] font-bold text-[#2563EB] hover:underline mt-2"
-                  >
-                    <ExternalLink size={10} /> Fonte dos dados
-                  </a>
-                )}
-              </div>
+            <Popup className="custom-premium-popup" autoPan={false} closeButton={isPinned}>
+              <SingleAssetPopupContent ativo={ativo} />
             </Popup>
           </Marker>
         );
@@ -306,7 +429,6 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
   );
 }
 
-// ================= MAPA PRINCIPAL =================
 export default function SideMap({
   processedAtivos = [],
   focusedAsset = null,
@@ -320,7 +442,6 @@ export default function SideMap({
 
   const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
 
-  // Extração das categorias disponíveis para o Layer Control
   const allCategories = useMemo(() => {
     const map = {};
     processedAtivos.forEach((a) => {
@@ -330,6 +451,7 @@ export default function SideMap({
           key: tipo,
           label: a.shortTipo || tipo,
           corHex: a.corHex || '#2563EB',
+          icone: a.icone,
           count: 0
         };
       }
@@ -338,10 +460,8 @@ export default function SideMap({
     return Object.values(map).sort((a, b) => b.count - a.count);
   }, [processedAtivos]);
 
-  // Conjunto de categorias ativas
   const [activeCategoryKeys, setActiveCategoryKeys] = useState(new Set());
 
-  // Inicializa com todas as categorias ativas
   useEffect(() => {
     if (allCategories.length > 0) {
       setActiveCategoryKeys(new Set(allCategories.map((c) => c.key)));
@@ -365,12 +485,10 @@ export default function SideMap({
     setActiveCategoryKeys(new Set());
   };
 
-  // Ativos filtrados pelo painel de camadas
   const visibleAtivos = useMemo(() => {
     return processedAtivos.filter((a) => activeCategoryKeys.has(a.tipo || 'Outros'));
   }, [processedAtivos, activeCategoryKeys]);
 
-  // Estatísticas de ativos por território
   const territoryStats = useMemo(() => {
     const stats = {};
     visibleAtivos.forEach((a) => {
@@ -383,7 +501,6 @@ export default function SideMap({
     return stats;
   }, [visibleAtivos]);
 
-  // Processa as divisas por território
   useEffect(() => {
     fetch('/BA_(1)9396399957704198.json')
       .then((resp) => resp.json())
@@ -425,7 +542,6 @@ export default function SideMap({
       .catch((err) => console.error('Erro ao processar divisas dos territórios:', err));
   }, [municipioTerritoryMap]);
 
-  // Estilo fluido das divisas dos territórios
   const territoryBorderStyle = (feature) => {
     const rawNome = feature?.properties?.nome_territorio || '';
     const nome = rawNome.replace(/^Território de Identidade\s+/i, '').trim();
@@ -479,7 +595,6 @@ export default function SideMap({
         <ZoomDependentTileLayer />
         <MapClickHandler onClearPinned={() => setPinnedAssetId(null)} />
 
-        {/* CAMADA DE DIVISAS DOS TERRITÓRIOS COM HOVER FLUIDO */}
         {territoriosGeoJson && (
           <GeoJSON
             key={`territorios-layer-${hoveredTerritory || 'none'}`}
@@ -491,7 +606,6 @@ export default function SideMap({
 
         {focusedAsset && <ChangeMapView coords={focusedAsset} />}
 
-        {/* MARCADORES COM SUPERCLUSTER E POPUP FIXÁVEL */}
         <SuperclusteredMarkers 
           processedAtivos={visibleAtivos} 
           pinnedAssetId={pinnedAssetId} 
@@ -499,7 +613,6 @@ export default function SideMap({
         />
       </MapContainer>
 
-      {/* NOME DO TERRITÓRIO NO HOVER */}
       {hoveredTerritory && (
         <div className="absolute top-3 left-3.5 z-[400] pointer-events-none select-none flex items-center gap-1.5">
           <span
@@ -523,7 +636,7 @@ export default function SideMap({
         </div>
       )}
 
-      {/* CONTROLE DE CAMADAS (LAYER CONTROL) */}
+      {/* CONTROLE DE CAMADAS COM ÍCONES */}
       <div className="absolute top-3 right-3 z-[400] flex flex-col items-end">
         <button
           type="button"
@@ -544,7 +657,6 @@ export default function SideMap({
           {isLayerControlOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
         </button>
 
-        {/* PAINEL DE CONTROLE DE CAMADAS */}
         {isLayerControlOpen && (
           <div className="mt-1.5 w-[230px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1">
             <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-1 px-1">
@@ -573,6 +685,7 @@ export default function SideMap({
             <div className="flex flex-col gap-0.5 pt-0.5">
               {allCategories.map((cat) => {
                 const isActive = activeCategoryKeys.has(cat.key);
+                const IconComponent = cat.icone;
 
                 return (
                   <button
@@ -596,9 +709,12 @@ export default function SideMap({
                       >
                         {isActive && <Check size={10} strokeWidth={3} />}
                       </div>
-                      <span className={`truncate ${isActive ? 'font-bold text-[#1D3557]' : 'font-normal'}`}>
-                        {cat.label}
-                      </span>
+                      <div className="flex items-center gap-1.5 truncate">
+                        {IconComponent && <IconComponent size={12} style={{ color: cat.corHex }} className="shrink-0" />}
+                        <span className={`truncate ${isActive ? 'font-bold text-[#1D3557]' : 'font-normal'}`}>
+                          {cat.label}
+                        </span>
+                      </div>
                     </div>
                     <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${
                       isActive ? 'text-[#457B9D]' : 'text-gray-300'
@@ -613,7 +729,7 @@ export default function SideMap({
         )}
       </div>
 
-      {/* CONTROLES DE ZOOM E RESET */}
+      {/* CONTROLES DE ZOOM */}
       <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-white/95 backdrop-blur-md rounded-[14px] border border-[#CBD5E1] shadow-sm overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}

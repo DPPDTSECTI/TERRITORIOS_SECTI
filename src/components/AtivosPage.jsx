@@ -1,38 +1,46 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo, useContext, useDeferredValue } from 'react';
 import { GripHorizontal } from 'lucide-react';
-import { DndContext, DragOverlay, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-
+import { CSS } from '@dnd-kit/utilities';
 import { DataContext } from '../context/DataContext';
-import UserHeaderProfile from './UserHeaderProfile';
 import SideMap from './maps/SideMap';
 import StackedBarChart from './graph/StackedBarChart';
 import CardLista from './graph/CardLista';
 
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
-import { getDynamicAssetTypeConfig, TIPOS_ATIVOS_CATALOG } from '../constants/assetTypes';
+import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
 
-// === COMPONENTE SORTABLE CARD ===
 function SortableCard({ id, className = '', children }) {
   const {
     attributes,
     listeners,
     setNodeRef,
+    transform,
+    transition,
     isDragging,
   } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition: isDragging ? undefined : transition,
+    zIndex: isDragging ? 50 : 1,
+    position: 'relative',
+  };
 
   return (
     <div
       ref={setNodeRef}
-      className={`relative h-full flex flex-col min-h-0 group ${className} ${
-        isDragging ? 'opacity-30' : ''
+      style={style}
+      className={`relative h-full flex flex-col min-h-0 transform-gpu backface-hidden will-change-transform ${className} ${
+        isDragging ? 'opacity-40 scale-[1.02] shadow-2xl' : ''
       }`}
     >
       <button
         {...attributes}
         {...listeners}
-        className="absolute top-4 right-4 z-50 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-all duration-300 group-hover:text-[#1D3557]"
+        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-colors duration-200 group-hover:text-[#1D3557]"
         title="Arrastar card"
       >
         <GripHorizontal size={18} />
@@ -46,13 +54,10 @@ export default function AtivosPage() {
   const { ativosData, territoriosData, territoriesDynamicStats, loadingStats } = useContext(DataContext);
 
   const [focusedAsset, setFocusedAsset] = useState(null);
-  const [activeId, setActiveId] = useState(null);
   const [selectedTerritory, setSelectedTerritory] = useState(null);
-
-  // Filtro por string exata vinda da coluna nome_tipo / tipo
   const [selectedTipoFilter, setSelectedTipoFilter] = useState('todos');
+  const deferredTipoFilter = useDeferredValue(selectedTipoFilter);
 
-  // Ordem dos cards
   const INITIAL_CARDS = ['card-ativos-list', 'card-empty', 'card-chart-ifdm', 'slot-empty'];
   const [cardsOrder, setCardsOrder] = useState(() => {
     const saved = localStorage.getItem('ativos-cards-order-v10');
@@ -70,10 +75,7 @@ export default function AtivosPage() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const handleDragStart = (event) => setActiveId(event.active.id);
-
   const handleDragEnd = (event) => {
-    setActiveId(null);
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
@@ -86,7 +88,6 @@ export default function AtivosPage() {
     });
   };
 
-  // Processamento dos dados de ativos utilizando as coordenadas exatas da view lista_ativos_cti do Supabase
   const ativosProcessados = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
 
@@ -94,14 +95,12 @@ export default function AtivosPage() {
       const nomeTipoColuna = a.tipo || a.nome_tipo || 'Outros';
       const configEstilo = getDynamicAssetTypeConfig(nomeTipoColuna);
 
-      // Coordenadas exatas da view do Supabase
       const rawLat = a.latitude != null && a.latitude !== '' ? Number(a.latitude) : null;
       const rawLng = a.longitude != null && a.longitude !== '' ? Number(a.longitude) : null;
 
       let lat = rawLat;
       let lng = rawLng;
 
-      // Fallback caso a linha não possua latitude/longitude preenchida
       if (lat == null || lng == null || isNaN(lat) || isNaN(lng) || lat === 0) {
         const munKey = String(a.municipio || '').trim();
         const fallback = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()] || [-12.9714, -38.5014];
@@ -121,6 +120,8 @@ export default function AtivosPage() {
         territorio: a.territorio_identidade || '',
         lat,
         lng,
+        icone: configEstilo.icone,
+        iconSvg: configEstilo.iconSvg,
         cor: configEstilo.bgClass,
         textCor: configEstilo.textClass,
         corHex: configEstilo.corHex,
@@ -130,16 +131,12 @@ export default function AtivosPage() {
     });
   }, [ativosData]);
 
-  // Tipos únicos para o dropdown
   const tiposUnicosDisponiveis = useMemo(() => {
     const tiposSet = new Set();
-    ativosProcessados.forEach(a => {
-      if (a.tipo) tiposSet.add(a.tipo);
-    });
+    ativosProcessados.forEach(a => { if (a.tipo) tiposSet.add(a.tipo); });
     return Array.from(tiposSet).sort();
   }, [ativosProcessados]);
 
-  // Configuração das legendas/fatias do gráfico StackedBarChart
   const categoriesConfig = useMemo(() => {
     return tiposUnicosDisponiveis.map(tName => {
       const conf = getDynamicAssetTypeConfig(tName);
@@ -152,19 +149,17 @@ export default function AtivosPage() {
     });
   }, [tiposUnicosDisponiveis]);
 
-  // Lista de ativos filtrada por tipo e território
   const filteredAtivosList = useMemo(() => {
     let lista = ativosProcessados;
-    if (selectedTipoFilter !== 'todos') {
-      lista = lista.filter(a => a.tipo === selectedTipoFilter);
+    if (deferredTipoFilter !== 'todos') {
+      lista = lista.filter(a => a.tipo === deferredTipoFilter);
     }
     if (selectedTerritory) {
       lista = lista.filter(a => a.id_territorio === selectedTerritory.id_territorio);
     }
     return lista;
-  }, [ativosProcessados, selectedTipoFilter, selectedTerritory]);
+  }, [ativosProcessados, deferredTipoFilter, selectedTerritory]);
 
-  // Agregação dos dados para o StackedBarChart
   const regioesStackedData = useMemo(() => {
     if (!ativosProcessados.length) return [];
 
@@ -214,8 +209,8 @@ export default function AtivosPage() {
 
       {/* MAIN CONTENT GRID */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 min-h-0">
-
-        {/* LEFT COLUMN: MAPA SIDEMAP */}
+        
+        {/* LADO ESQUERDO: MAPA COM ÍCONES */}
         <div className="lg:col-span-5 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 relative overflow-hidden flex flex-col group h-full min-h-0">
           <SideMap
             territoriosData={territoriosData}
@@ -227,11 +222,10 @@ export default function AtivosPage() {
           />
         </div>
 
-        {/* RIGHT COLUMN: CARDS DND */}
+        {/* LADO DIREITO: CARDS DND */}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           modifiers={[restrictToWindowEdges]}
         >
@@ -240,7 +234,6 @@ export default function AtivosPage() {
               {cardsOrder.map((cardId) => {
                 if (cardId === 'slot-empty') return null;
 
-                // 1. CARD LISTA MODULARIZADO
                 if (cardId === 'card-ativos-list') {
                   return (
                     <SortableCard
@@ -266,7 +259,6 @@ export default function AtivosPage() {
                   );
                 }
 
-                // 2. CARD VAZIO
                 if (cardId === 'card-empty') {
                   const isAlone = getIsAlone('card-empty');
                   return (
@@ -278,7 +270,6 @@ export default function AtivosPage() {
                   );
                 }
 
-                // 3. GRÁFICO STACKED BAR CHART MODULARIZADO
                 if (cardId === 'card-chart-ifdm') {
                   return (
                     <SortableCard key="card-chart-ifdm" id="card-chart-ifdm" className={isChartAlone ? 'md:col-span-2' : ''}>
