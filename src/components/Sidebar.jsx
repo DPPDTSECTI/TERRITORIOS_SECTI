@@ -1,69 +1,6 @@
 import React, { useState } from 'react';
-import { Home, LayoutDashboard, FileText, Info, Database, GraduationCap, GitPullRequest, GripVertical } from 'lucide-react';
+import { Home, LayoutDashboard, FileText, Info, Database, GraduationCap, GitPullRequest } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-
-function SortableSidebarItem({ item, isActive, isCollapsed }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.path });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 50 : 'auto',
-    position: 'relative',
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} className={`relative flex items-center w-full ${isDragging ? 'opacity-70' : ''}`}>
-      <Link
-        to={item.path}
-        className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${
-          isActive
-            ? `bg-[#457B9D] text-white shadow-sm shadow-[#457B9D]/20`
-            : `text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557]`
-        }`}
-        title={isCollapsed ? item.label : undefined}
-      >
-        <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
-          <item.icon size={18} className={isActive ? 'text-white' : 'text-[#457B9D]'} strokeWidth={isActive ? 2.5 : 2} />
-        </div>
-        
-        <span className={`text-[13px] tracking-tight flex-1 text-left whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-          isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-1'
-        } ${isActive ? 'font-bold' : 'font-medium'}`}>
-          {item.label}
-        </span>
-
-        {/* DRAG HANDLE DISCRETO */}
-        {!isCollapsed && (
-          <div 
-            {...attributes} 
-            {...listeners} 
-            className={`p-1 mr-2 cursor-grab active:cursor-grabbing rounded-md transition-opacity shrink-0 flex items-center justify-center opacity-30 hover:opacity-100 ${
-              isActive ? 'text-white hover:bg-white/20' : 'text-[#A0AEC0] hover:text-[#1D3557] hover:bg-[#1D3557]/10'
-            }`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-          >
-            <GripVertical size={14} />
-          </div>
-        )}
-      </Link>
-    </div>
-  );
-}
 
 export default function Sidebar({ username, navOnly = false }) {
   const location = useLocation();
@@ -76,55 +13,16 @@ export default function Sidebar({ username, navOnly = false }) {
     { path: '/sobre', label: 'Sobre', icon: Info },
   ];
 
-  const INITIAL_MODULES = [
+  const modulesItems = [
     { path: '/territorios', label: 'Visão Geral', icon: LayoutDashboard },
     { path: '/ativos', label: 'Ativos', icon: Database },
     { path: '/cadeia', label: 'Cadeia', icon: GitPullRequest },
     { path: '/cursos', label: 'Cursos', icon: GraduationCap },
   ];
 
-  const [modulesItems, setModulesItems] = useState(() => {
-    const saved = localStorage.getItem('sidebar-modules-order');
-    if (saved) {
-      try {
-        const order = JSON.parse(saved);
-        const restored = order.map(path => INITIAL_MODULES.find(i => i.path === path)).filter(Boolean);
-        const missing = INITIAL_MODULES.filter(i => !order.includes(i.path));
-        return [...restored, ...missing];
-      } catch (e) {
-        return INITIAL_MODULES;
-      }
-    }
-    return INITIAL_MODULES;
-  });
-
   const adminItems = [
     { path: '/admin', label: 'Ativos de CTI', icon: Database },
   ];
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      setModulesItems((items) => {
-        const oldIndex = items.findIndex(i => i.path === active.id);
-        const newIndex = items.findIndex(i => i.path === over.id);
-        const newArray = arrayMove(items, oldIndex, newIndex);
-        localStorage.setItem('sidebar-modules-order', JSON.stringify(newArray.map(i => i.path)));
-        return newArray;
-      });
-    }
-  };
 
   return (
     <aside 
@@ -164,7 +62,7 @@ export default function Sidebar({ username, navOnly = false }) {
 
         {navItemsGroup1.map((item) => {
           const isDashboardItem = item.label === 'Dashboard';
-          const isModuleActive = INITIAL_MODULES.some(mod => mod.path === location.pathname);
+          const isModuleActive = modulesItems.some(mod => mod.path === location.pathname);
           const isActive = location.pathname === item.path || (isDashboardItem && isModuleActive);
           return (
             <div key={item.path} className="w-full flex items-center shrink-0">
@@ -191,7 +89,7 @@ export default function Sidebar({ username, navOnly = false }) {
           );
         })}
 
-        {/* SEÇÃO: MÓDULOS (DRAGGABLE) */}
+        {/* SEÇÃO: MÓDULOS */}
         {!navOnly && (
           <div className="mt-2 flex flex-col gap-1 w-full shrink-0">
             {/* ALTURA FIXA h-[18px] SEMPRE RESERVADA */}
@@ -203,21 +101,32 @@ export default function Sidebar({ username, navOnly = false }) {
               </span>
             </div>
 
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-              <SortableContext 
-                items={modulesItems.map(i => i.path)}
-                strategy={verticalListSortingStrategy}
-              >
-                {modulesItems.map((item) => (
-                  <SortableSidebarItem 
-                    key={item.path} 
-                    item={item} 
-                    isActive={location.pathname === item.path} 
-                    isCollapsed={isCollapsed}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
+            {modulesItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <div key={item.path} className="w-full flex items-center shrink-0">
+                  <Link
+                    to={item.path}
+                    className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${
+                      isActive
+                        ? `bg-[#457B9D] text-white shadow-sm shadow-[#457B9D]/20`
+                        : `text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557]`
+                    }`}
+                    title={isCollapsed ? item.label : undefined}
+                  >
+                    <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
+                      <item.icon size={18} className={isActive ? 'text-white' : 'text-[#457B9D]'} strokeWidth={isActive ? 2.5 : 2} />
+                    </div>
+                    
+                    <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                      isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2'
+                    } ${isActive ? 'font-bold' : 'font-medium'}`}>
+                      {item.label}
+                    </span>
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         )}
 

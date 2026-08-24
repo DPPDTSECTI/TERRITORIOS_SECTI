@@ -76,20 +76,6 @@ function GlobalScroll() {
 const DEFAULT_MODULES_ORDER = ['/territorios', '/ativos', '/cadeia', '/cursos'];
 
 function getDynamicRoutesOrder() {
-  try {
-    const saved = localStorage.getItem('sidebar-modules-order') || localStorage.getItem('sidebar_order');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      const routes = parsed.map(item => {
-        if (typeof item === 'string') return item.startsWith('/') ? item : `/${item}`;
-        return item.path || item.route || '';
-      }).filter(Boolean);
-
-      if (routes.length > 0) return routes;
-    }
-  } catch (e) {
-    // Fallback padrão
-  }
   return DEFAULT_MODULES_ORDER;
 }
 
