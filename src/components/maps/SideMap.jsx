@@ -613,7 +613,7 @@ export default function SideMap({
       if (!map[tipo]) {
         map[tipo] = {
           key: tipo,
-          label: tipo === 'APL' ? 'APL (Arranjo Produtivo)' : tipo === 'IG' ? 'Indicação Geográfica' : tipo,
+          label: tipo === 'APL' ? 'APL' : tipo === 'IG' ? 'IG' : tipo,
           corHex: colors[tipo] || '#6366F1',
           count: 0
         };
