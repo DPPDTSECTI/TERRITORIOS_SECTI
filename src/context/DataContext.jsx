@@ -3,37 +3,28 @@ import { supabase } from '../services/supabase';
 
 export const DataContext = createContext();
 
-// =========================================================================
-// CONFIGURAÇÕES DO CACHE DO SUPER-CÉREBRO
-// =========================================================================
-const CACHE_KEY = '@SectiPainel_Data'; // V5: Inclusão do Ecossistema Completo (Cadeias, Cursos e Tipos)
-const CACHE_TIME_MS = 15 * 60 * 1000; // 15 minutos
+// Força nova versão do cache
+const CACHE_KEY = '@SectiPainel_Data_v7_FULL'; 
+const CACHE_TIME_MS = 15 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
-  // 1. ESTADOS DE DADOS (Tabelas e Views)
   const [territoriosData, setTerritoriosData] = useState([]);
   const [ativosData, setAtivosData] = useState([]);
-  
-  // Novos estados para o Ecossistema Completo
   const [cursosData, setCursosData] = useState([]);
   const [distribuicaoCadeias, setDistribuicaoCadeias] = useState([]);
   const [listaCadeias, setListaCadeias] = useState([]);
   const [municipiosTerritorios, setMunicipiosTerritorios] = useState([]);
   
-  // Novos estados para as Tabelas de Tipos (Filtros)
   const [tiposAtivos, setTiposAtivos] = useState([]);
   const [tiposCursos, setTiposCursos] = useState([]);
   const [tiposCadeias, setTiposCadeias] = useState([]);
 
-  // Estados de Controle da Interface
   const [loadingStats, setLoadingStats] = useState(true);
   const [selectedTerritory, setSelectedTerritory] = useState(null);
 
   useEffect(() => {
     const carregarEstatisticas = async () => {
-      // =================================================================
-      // 1. TENTA LER O CACHE PRIMEIRO
-      // =================================================================
+      // 1. TENTA LER DO CACHE
       const cachedDataStr = localStorage.getItem(CACHE_KEY);
       let isCacheValid = false;
 
@@ -42,9 +33,10 @@ export const DataProvider = ({ children }) => {
           const cache = JSON.parse(cachedDataStr);
           const idadeDoCache = Date.now() - cache.timestamp;
 
-          if (cache.stats && cache.stats.length > 0) {
-            // Injeta tudo na tela instantaneamente
-            setTerritoriosData(cache.stats);
+          // Só considera válido se distCadeias tiver mais de 88 registros (ou seja, a relação 1:N real)
+          if (cache.distCadeias && cache.distCadeias.length > 88 && idadeDoCache < CACHE_TIME_MS) {
+            console.log(`⚡ Cache V7 Carregado com Sucesso: ${cache.distCadeias.length} linhas de distribuição.`);
+            setTerritoriosData(cache.stats || []);
             setAtivosData(cache.ativos || []);
             setCursosData(cache.cursos || []);
             setDistribuicaoCadeias(cache.distCadeias || []);
@@ -54,25 +46,22 @@ export const DataProvider = ({ children }) => {
             setTiposCursos(cache.tiposCursos || []);
             setTiposCadeias(cache.tiposCadeias || []);
             setLoadingStats(false);
-          }
-
-          if (idadeDoCache < CACHE_TIME_MS) {
-            console.log("⚡ Painel carregado do Cache V5 (Dados Completos)!");
             isCacheValid = true;
-            return; 
+            return;
           }
         } catch (e) {
-          console.warn("Erro ao ler o cache V5, buscando do zero...", e);
+          console.warn("Limpando cache inconsistente...", e);
+          localStorage.removeItem(CACHE_KEY);
         }
       }
 
-      if (!isCacheValid && territoriosData.length === 0) {
+      if (!isCacheValid) {
         setLoadingStats(true);
       }
 
-      // =================================================================
-      // 2. MEGA BUSCA NO SUPABASE EM PARALELO (PROMISE.ALL)
-      // =================================================================
+      // 2. BUSCA DO SUPABASE COM RANGE EXPLÍCITO (IGNORA LIMITE DE 1000 LINHAS)
+      console.log("🌐 Buscando dados completos do Supabase...");
+      
       const [
         statsRes, 
         ativosRes, 
@@ -85,24 +74,22 @@ export const DataProvider = ({ children }) => {
         tCadeiasRes
       ] = await Promise.all([
         supabase.from('stats_ti').select('*'),
-        supabase.from('lista_ativos_cti').select('*'),
-        supabase.from('lista_cursos_cti').select('*'),
-        supabase.from('distribuicao_cadeias').select('*'),
-        supabase.from('lista_cadeia_produtiva').select('*'),
-        supabase.from('lista_municipioxterritorio').select('*'), // Letras minúsculas previnem bugs de API
+        supabase.from('lista_ativos_cti').select('*').range(0, 3000),
+        supabase.from('lista_cursos_cti').select('*').range(0, 3000),
+        supabase.from('distribuicao_cadeias').select('*').range(0, 4999), // <-- Força a leitura completa de todas as linhas da relação 1:N
+        supabase.from('lista_cadeia_produtiva').select('*').range(0, 1000),
+        supabase.from('lista_municipioxterritorio').select('*').range(0, 1000),
         supabase.from('tipo_ativos').select('*'),
         supabase.from('tipo_cursos').select('*'),
         supabase.from('tipo_cadeia').select('*')
       ]);
 
-      // Verifica se houve falha crítica
-      if (statsRes.error) {
-        console.error("Erro fatal ao puxar do Supabase", statsRes.error);
-        setLoadingStats(false);
-        return;
-      }
+      // LOG DE DIAGNÓSTICO DIRETO NO SEU NAVEGADOR
+      console.log("📊 RESUMO DAS RESPOSTAS DO BANCO:");
+      console.log("-> distribuicao_cadeias:", distCadeiasRes.data?.length || 0, "linhas", distCadeiasRes.error ? `[ERRO: ${distCadeiasRes.error.message}]` : "OK");
+      console.log("-> lista_cadeia_produtiva:", listaCadeiasRes.data?.length || 0, "linhas", listaCadeiasRes.error ? `[ERRO: ${listaCadeiasRes.error.message}]` : "OK");
 
-      // Tratamento do IFDM na raiz
+      // Tratamento do IFDM
       const dadosTratados = (statsRes.data || []).map(t => {
         let ifdmFormatado = null;
         if (t.media_ifdm) {
@@ -112,9 +99,7 @@ export const DataProvider = ({ children }) => {
         return { ...t, media_ifdm: ifdmFormatado };
       });
 
-      // =================================================================
-      // 3. SALVA OS DADOS NOVOS NO CACHE DO NAVEGADOR
-      // =================================================================
+      // 3. GRAVA NO CACHE
       const novoCache = {
         stats: dadosTratados,
         ativos: ativosRes.data || [],
@@ -128,9 +113,12 @@ export const DataProvider = ({ children }) => {
         timestamp: Date.now()
       };
 
-      localStorage.setItem(CACHE_KEY, JSON.stringify(novoCache));
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(novoCache));
+      } catch (err) {
+        console.warn("LocalStorage lotado, rodando sem cache.");
+      }
 
-      // Atualiza os estados
       setTerritoriosData(novoCache.stats);
       setAtivosData(novoCache.ativos);
       setCursosData(novoCache.cursos);
@@ -147,9 +135,7 @@ export const DataProvider = ({ children }) => {
     carregarEstatisticas();
   }, []);
 
-  // =========================================================================
-  // KPIs DINÂMICOS PRÉ-CALCULADOS (Mantidos Intactos para o Mapa e Cards)
-  // =========================================================================
+  // KPIs DINÂMICOS
   const territoriesDynamicStats = useMemo(() => {
     const stats = {};
     territoriosData.forEach(t => {
@@ -188,7 +174,6 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider value={{ 
-      // Dados Brutos e Tabelas de Tipos
       territoriosData, 
       ativosData, 
       cursosData,
@@ -198,10 +183,8 @@ export const DataProvider = ({ children }) => {
       tiposAtivos,
       tiposCursos,
       tiposCadeias,
-
-      // KPIs e Estados Dinâmicos
       territoriesDynamicStats,
-      kpisGlobais,             
+      kpisGlobais,            
       loadingStats,
       selectedTerritory,
       setSelectedTerritory 
