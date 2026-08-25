@@ -189,16 +189,14 @@ export default function RankingBarChart({
             <div key={idx} className="flex flex-col items-center flex-1 h-full justify-end relative z-10 min-w-0 group/col">
               <div className="flex items-end justify-center w-full h-[80%] relative transition-transform duration-300">
                 <div
-                  className={`w-full max-w-[20px] rounded-full relative flex justify-center transition-all duration-500 ease-out ${
-                    isSelected
+                  className={`w-full max-w-[20px] rounded-full relative flex justify-center transition-all duration-500 ease-out ${isSelected
                       ? 'bg-[#00B4D8] shadow-[0_0_16px_rgba(0,180,216,0.6)] ring-2 ring-[#00B4D8]/30'
                       : 'bg-[#4361EE] group-hover/col:opacity-90 group-hover/col:shadow-[0_0_15px_rgba(67,97,238,0.3)]'
-                  }`}
+                    }`}
                   style={{ height: `${barHeightPercent}%` }}
                 >
-                  <div className={`absolute -top-1 w-2.5 h-2.5 rounded-full border-[2px] border-white transition-opacity duration-300 z-20 shadow-sm flex items-center justify-center ${
-                    isSelected ? 'opacity-100 bg-[#00B4D8]' : 'bg-gray-200 opacity-0 group-hover/col:opacity-100'
-                  }`}>
+                  <div className={`absolute -top-1 w-2.5 h-2.5 rounded-full border-[2px] border-white transition-opacity duration-300 z-20 shadow-sm flex items-center justify-center ${isSelected ? 'opacity-100 bg-[#00B4D8]' : 'bg-gray-200 opacity-0 group-hover/col:opacity-100'
+                    }`}>
                     <div className="w-1 h-1 bg-white rounded-full"></div>
                   </div>
 
@@ -224,12 +222,11 @@ export default function RankingBarChart({
 
               {/* RÓTULO INFERIOR */}
               <div
-                className={`text-[9px] text-center leading-tight truncate w-full transition-colors mt-2 px-0.5 ${
-                  isSelected ? 'font-black text-[#0096C7]' : 'font-medium text-[#A0AEC0] group-hover/col:text-[#1A202C]'
-                }`}
+                className={`text-[9px] text-center leading-tight truncate w-full transition-colors mt-2 px-0.5 ${isSelected ? 'font-black text-[#0096C7]' : 'font-medium text-[#A0AEC0] group-hover/col:text-[#1A202C]'
+                  }`}
                 title={`${item.rank}º ${item.cleanName}`}
               >
-                {isSelected ? `📍 ${item.cleanName}` : item.cleanName}
+                {isSelected ? `${item.cleanName}` : item.cleanName}
               </div>
             </div>
           );

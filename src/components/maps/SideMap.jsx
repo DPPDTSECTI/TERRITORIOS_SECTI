@@ -45,8 +45,8 @@ const buildMunicipioTerritoryMap = () => {
 
 // Marcador do Cluster
 const createClusterIcon = (count) => {
-  const size = count >= 50 ? 32 : count >= 10 ? 28 : 24;
-  const fontSize = count >= 50 ? 12 : count >= 10 ? 11 : 10;
+  const size = count >= 50 ? 28 : count >= 10 ? 24 : 20;
+  const fontSize = count >= 50 ? 11 : count >= 10 ? 10 : 9;
 
   return L.divIcon({
     html: `
@@ -55,17 +55,16 @@ const createClusterIcon = (count) => {
         height: ${size}px;
         background: #1D3557;
         color: #FFFFFF;
-        border: 2px solid #FFFFFF;
+        border: 1.5px solid #FFFFFF;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 800;
+        font-weight: 700;
         font-size: ${fontSize}px;
-        box-shadow: 0 4px 12px rgba(29, 53, 87, 0.4);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         cursor: pointer;
         font-family: inherit;
-        transition: transform 0.2s ease;
       ">
         ${count}
       </div>
@@ -76,12 +75,12 @@ const createClusterIcon = (count) => {
   });
 };
 
-// Ícone de Ativo Individual com suporte ao parâmetro isSelected
-const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => {
-  const size = isSelected ? 32 : 26;
+// Ícone de Ativo Individual (visual padrão, limpo e direto)
+const createSingleAssetIconWithSvg = (corHex, svgMarkup) => {
+  const size = 24;
   const safeColor = corHex || '#3B82F6';
 
-  const defaultSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
+  const defaultSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
   const innerSvg = svgMarkup || defaultSvg;
 
   return L.divIcon({
@@ -91,15 +90,13 @@ const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => 
         height: ${size}px;
         background-color: ${safeColor};
         color: #ffffff;
-        border: ${isSelected ? '3px solid #1D3557' : '2px solid #ffffff'};
+        border: 2px solid #ffffff;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: ${isSelected ? '0 0 0 4px rgba(37,99,235,0.35), 0 6px 16px rgba(0,0,0,0.3)' : '0 4px 10px rgba(29, 53, 87, 0.35)'};
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
         cursor: pointer;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        transform: ${isSelected ? 'scale(1.15)' : 'scale(1)'};
       ">
         ${innerSvg}
       </div>
@@ -326,7 +323,7 @@ function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, o
     <Marker
       key={elem.key}
       position={[elem.lat, elem.lng]}
-      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected)}
+      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg)}
       eventHandlers={{
         click: (e) => {
           L.DomEvent.stopPropagation(e);
@@ -1040,18 +1037,6 @@ export default function SideMap({
                 </span>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODO ATIVOS: LEGENDA DE CONEXÃO RNP */}
-      {/* ========================================================================= */}
-      {mode === 'ativos' && (
-        <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-md rounded-2xl px-3 py-1.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#00B4D8] border border-white shadow-xs"></span>
-            <span className="text-[10px] font-bold text-[#1D3557]">Destaque: Conexão RNP</span>
           </div>
         </div>
       )}
