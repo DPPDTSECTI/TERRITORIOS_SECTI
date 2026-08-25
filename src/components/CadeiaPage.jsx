@@ -531,7 +531,6 @@ export default function CadeiaPage() {
                 >
                   <MapPin size={11} className="text-[#2563EB]" />
                   <span>{territoryName}</span>
-                  <span className="text-red-500 font-black ml-0.5">×</span>
                 </button>
               )}
             </div>
