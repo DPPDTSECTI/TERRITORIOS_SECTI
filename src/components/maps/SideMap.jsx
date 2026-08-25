@@ -221,8 +221,22 @@ function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryR
 function ChangeMapView({ coords }) {
   const map = useMap();
   useEffect(() => {
-    if (coords && coords.lat && coords.lng) {
-      map.flyTo([coords.lat, coords.lng], 14, { duration: 1.2 });
+    if (!coords) return;
+    let lat, lng;
+    let zoom = 15;
+    if (Array.isArray(coords) && coords.length >= 2) {
+      lat = Number(coords[0]);
+      lng = Number(coords[1]);
+      if (coords.length >= 3 && typeof coords[2] === 'number') {
+        zoom = coords[2];
+      }
+    } else if (typeof coords === 'object') {
+      lat = Number(coords.lat ?? coords.latitude);
+      lng = Number(coords.lng ?? coords.longitude);
+      if (coords.zoom) zoom = coords.zoom;
+    }
+    if (lat != null && lng != null && !isNaN(lat) && !isNaN(lng) && lat !== 0) {
+      map.flyTo([lat, lng], zoom, { duration: 1.0 });
     }
   }, [coords, map]);
   return null;
@@ -285,6 +299,52 @@ function SingleAssetPopupContent({ ativo }) {
         </a>
       )}
     </div>
+  );
+}
+
+function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, map }) {
+  const markerRef = useRef(null);
+  const isPinned = pinnedAssetId === ativo.id;
+
+  useEffect(() => {
+    if (isPinned && markerRef.current) {
+      const timer = setTimeout(() => {
+        markerRef.current?.openPopup();
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [isPinned, elem.lat, elem.lng]);
+
+  return (
+    <Marker
+      ref={markerRef}
+      key={elem.key}
+      position={[elem.lat, elem.lng]}
+      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg)}
+      eventHandlers={{
+        mouseover: (e) => {
+          e.target.openPopup();
+        },
+        mouseout: (e) => {
+          if (pinnedAssetId !== ativo.id) {
+            e.target.closePopup();
+          }
+        },
+        click: (e) => {
+          L.DomEvent.stopPropagation(e);
+          setPinnedAssetId(ativo.id);
+          e.target.openPopup();
+
+          const currentZoom = map.getZoom();
+          const targetZoom = Math.max(currentZoom, 15);
+          map.flyTo([elem.lat, elem.lng], targetZoom, { duration: 0.8 });
+        }
+      }}
+    >
+      <Popup className="custom-premium-popup" autoPan={true} closeButton={isPinned}>
+        <SingleAssetPopupContent ativo={ativo} />
+      </Popup>
+    </Marker>
   );
 }
 
@@ -442,37 +502,15 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
         const ativo = elem.ativo;
         if (!ativo) return null;
 
-        const isPinned = pinnedAssetId === ativo.id;
-
         return (
-          <Marker
+          <SingleAssetMarkerItem
             key={elem.key}
-            position={[elem.lat, elem.lng]}
-            icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg)}
-            eventHandlers={{
-              mouseover: (e) => {
-                e.target.openPopup();
-              },
-              mouseout: (e) => {
-                if (pinnedAssetId !== ativo.id) {
-                  e.target.closePopup();
-                }
-              },
-              click: (e) => {
-                L.DomEvent.stopPropagation(e);
-                setPinnedAssetId(ativo.id);
-                e.target.openPopup();
-
-                const currentZoom = map.getZoom();
-                const targetZoom = Math.max(currentZoom, 14);
-                map.flyTo([elem.lat, elem.lng], targetZoom, { duration: 0.8 });
-              }
-            }}
-          >
-            <Popup className="custom-premium-popup" autoPan={false} closeButton={isPinned}>
-              <SingleAssetPopupContent ativo={ativo} />
-            </Popup>
-          </Marker>
+            elem={elem}
+            ativo={ativo}
+            pinnedAssetId={pinnedAssetId}
+            setPinnedAssetId={setPinnedAssetId}
+            map={map}
+          />
         );
       })}
     </>
@@ -497,6 +535,24 @@ export default function SideMap({
   const [pinnedAssetId, setPinnedAssetId] = useState(null);
   const [hoveredTerritory, setHoveredTerritory] = useState(null);
   const [isLayerControlOpen, setIsLayerControlOpen] = useState(false);
+
+  useEffect(() => {
+    if (focusedAsset) {
+      if (focusedAsset.id != null) {
+        setPinnedAssetId(focusedAsset.id);
+      }
+      if (focusedAsset.tipo) {
+        setActiveCategoryKeys((prev) => {
+          if (!prev.has(focusedAsset.tipo)) {
+            const next = new Set(prev);
+            next.add(focusedAsset.tipo);
+            return next;
+          }
+          return prev;
+        });
+      }
+    }
+  }, [focusedAsset]);
 
   const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
 

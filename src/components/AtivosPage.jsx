@@ -35,7 +35,7 @@ export default function AtivosPage() {
   const [focusedAsset, setFocusedAsset] = useState(null);
   const [selectedTipo, setSelectedTipo] = useState('todos');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'categorias' | 'ranking' | 'inovacao'
+  const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'categorias' | 'ranking'
 
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
@@ -198,15 +198,7 @@ export default function AtivosPage() {
       }));
   }, [selectedTerritory, territoryAtivos]);
 
-  // 5. Ambientes de Inovação (Hubs, Parques, Incubadoras, Aceleradoras)
-  const inovacaoList = useMemo(() => {
-    return territoryAtivos.filter(a => {
-      const t = (a.tipo || '').toLowerCase();
-      return t.includes('parque') || t.includes('hub') || t.includes('incubadora') || t.includes('aceleradora') || t.includes('dinamizador') || t.includes('fablab') || t.includes('centro');
-    });
-  }, [territoryAtivos]);
-
-  // 6. Contagens Globais e por Grupo
+  // 5. Contagens Globais e por Grupo
   const totalEnsinoPesquisa = useMemo(() => {
     return ativosProcessados.filter(a => {
       const t = (a.tipo || '').toLowerCase();
@@ -364,19 +356,6 @@ export default function AtivosPage() {
                 <TrendingUp size={13} />
                 {selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios'}
               </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('inovacao')}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                  activeTab === 'inovacao'
-                    ? 'bg-[#1D3557] text-white shadow-xs'
-                    : 'text-[#457B9D] hover:text-[#1D3557]'
-                }`}
-              >
-                <Rocket size={13} />
-                Inovação ({inovacaoList.length})
-              </button>
             </div>
 
             {/* INPUT DE BUSCA */}
@@ -469,7 +448,14 @@ export default function AtivosPage() {
                           key={ativo.id || idx}
                           onClick={() => {
                             if (ativo.lat && ativo.lng) {
-                              setFocusedAsset([ativo.lat, ativo.lng]);
+                              setFocusedAsset({
+                                lat: ativo.lat,
+                                lng: ativo.lng,
+                                id: ativo.id,
+                                tipo: ativo.tipo,
+                                zoom: 15,
+                                ts: Date.now()
+                              });
                             }
                           }}
                           className="bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer"
@@ -659,7 +645,12 @@ export default function AtivosPage() {
                             const munKey = String(m.name || '').trim();
                             const coords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()];
                             if (coords) {
-                              setFocusedAsset(coords);
+                              setFocusedAsset({
+                                lat: coords[0],
+                                lng: coords[1],
+                                zoom: 12,
+                                ts: Date.now()
+                              });
                             }
                           }}
                           className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer"
@@ -732,87 +723,6 @@ export default function AtivosPage() {
                         </div>
                       </div>
                     ))
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* ABA 4: AMBIENTES DE INOVAÇÃO */}
-            {activeTab === 'inovacao' && (
-              <div className="flex-1 flex flex-col min-h-0">
-                <div className="mb-3 shrink-0 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                      {selectedTerritory 
-                        ? `Ambientes de Inovação em ${territoryName}` 
-                        : 'Parques Tecnológicos, Hubs & Incubadoras'
-                      }
-                    </h3>
-                    <p className="text-[10.5px] text-[#457B9D] font-medium">
-                      Infraestruturas dedicadas à aceleração, dinamização e criação de negócios inovadores
-                    </p>
-                  </div>
-                  <span className="text-[10px] font-black text-[#8B5CF6] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 px-2.5 py-1 rounded-full">
-                    {inovacaoList.length} Ambientes Mapeados
-                  </span>
-                </div>
-
-                <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
-                  {inovacaoList.length > 0 ? (
-                    inovacaoList.map((amb, idx) => (
-                      <div
-                        key={amb.id || idx}
-                        onClick={() => {
-                          if (amb.lat && amb.lng) {
-                            setFocusedAsset([amb.lat, amb.lng]);
-                          }
-                        }}
-                        className="bg-[#F8FAFC] hover:bg-white hover:border-[#8B5CF6]/40 border border-transparent rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-9 h-9 rounded-xl bg-[#8B5CF6]/15 text-[#8B5CF6] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <Rocket size={18} strokeWidth={2.5} />
-                          </div>
-                          <div className="flex flex-col min-w-0">
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-[12.5px] font-black text-[#1D3557] group-hover:text-[#8B5CF6] transition-colors truncate">
-                                {amb.nome}
-                              </h4>
-                              {amb.sigla && (
-                                <span className="bg-[#8B5CF6] text-white text-[8.5px] font-black px-1.5 py-0.2 rounded-md uppercase">
-                                  {amb.sigla}
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#457B9D] mt-0.5 font-medium">
-                              <span className="font-bold text-[#1D3557]">{amb.shortTipo || amb.tipo}</span>
-                              <span>•</span>
-                              <span>{amb.municipio}</span>
-                              <span>•</span>
-                              <span className="text-[#64748B]">{amb.territorio}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {amb.urlReferencia && (
-                          <a
-                            href={amb.urlReferencia}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#8B5CF6]/10 hover:bg-[#8B5CF6] text-[#8B5CF6] hover:text-white transition-all text-[10px] font-bold shrink-0"
-                          >
-                            <span>Visitar</span>
-                            <ExternalLink size={11} />
-                          </a>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
-                      <Rocket size={32} className="mb-2 opacity-40 text-[#457B9D]" />
-                      <p className="text-[12px] font-bold text-[#1D3557]">Nenhum ambiente de inovação registrado neste território</p>
-                    </div>
                   )}
                 </div>
               </div>

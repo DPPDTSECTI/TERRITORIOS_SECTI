@@ -484,7 +484,14 @@ export default function CadeiaPage() {
                           key={c.id_cadeia || idx}
                           onClick={() => {
                             if (c.lat && c.lng) {
-                              setFocusedAsset([c.lat, c.lng]);
+                              setFocusedAsset({
+                                lat: c.lat,
+                                lng: c.lng,
+                                id: c.id_cadeia || idx,
+                                tipo: c.tipo,
+                                zoom: 15,
+                                ts: Date.now()
+                              });
                             }
                           }}
                           className="bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer"
@@ -667,7 +674,12 @@ export default function CadeiaPage() {
                             const munKey = String(m.name || '').trim();
                             const coords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()];
                             if (coords) {
-                              setFocusedAsset(coords);
+                              setFocusedAsset({
+                                lat: coords[0],
+                                lng: coords[1],
+                                zoom: 12,
+                                ts: Date.now()
+                              });
                             }
                           }}
                           className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer"
@@ -789,7 +801,14 @@ export default function CadeiaPage() {
                         key={ig.id_cadeia || idx}
                         onClick={() => {
                           if (ig.lat && ig.lng) {
-                            setFocusedAsset([ig.lat, ig.lng]);
+                            setFocusedAsset({
+                              lat: ig.lat,
+                              lng: ig.lng,
+                              id: ig.id_cadeia || idx,
+                              tipo: ig.tipo,
+                              zoom: 15,
+                              ts: Date.now()
+                            });
                           }
                         }}
                         className="bg-[#F8FAFC] hover:bg-white hover:border-[#10B981]/40 border border-transparent rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer"
