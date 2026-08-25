@@ -11,7 +11,8 @@ import {
   Layers,
   Compass,
   CheckCircle2,
-  Users
+  Building2,
+  X
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
@@ -153,7 +154,6 @@ export default function CadeiaPage() {
   const itemRefs = useRef({});
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
-  // Auto-scroll ao selecionar pelo mapa
   const handleSelectFromMap = (cadeia) => {
     setSelectedCadeia(cadeia);
     if (cadeia?.lat && cadeia?.lng) {
@@ -203,7 +203,7 @@ export default function CadeiaPage() {
         overrideSede = 'Juazeiro';
         overrideTerritorioId = 21;
         overrideTerritorioNome = 'Sertão do São Francisco';
-      } else if (entidadeStr.includes('luis eduardo') || entidadeStr.includes('oeste da bahia') || entidadeStr.includes('algodao')) {
+      } else if (entidadeStr.includes('luis eduardo') || entidadeStr.includes('oeste da bahia')) {
         overrideSede = 'Luís Eduardo Magalhães';
         overrideTerritorioId = 4;
         overrideTerritorioNome = 'Bacia do Rio Grande';
@@ -322,17 +322,16 @@ export default function CadeiaPage() {
     return Array.from(tipos);
   }, [enrichedCadeias]);
 
+  // FILTRO ESTRITO POR SEDE
   const territoryCadeias = useMemo(() => {
     if (!selectedTerritory) return enrichedCadeias;
     const targetId = Number(selectedTerritory.id_territorio);
     const targetNome = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
 
     return enrichedCadeias.filter(c => {
-      const matchSede = Number(c.id_territorio) === targetId || normalizeName(c.territorio_identidade) === targetNome;
-      const matchCobertura = c.municipios_cobertos.some(m => 
-        Number(m.id_territorio) === targetId || normalizeName(m.nome_territorio) === targetNome
-      );
-      return matchSede || matchCobertura;
+      const matchId = Number(c.id_territorio) === targetId;
+      const matchNome = normalizeName(c.territorio_identidade) === targetNome;
+      return matchId || matchNome;
     });
   }, [enrichedCadeias, selectedTerritory]);
 
@@ -344,11 +343,11 @@ export default function CadeiaPage() {
   }, [territoryCadeias, selectedTipo, selectedSegmento]);
 
   const segmentStats = useMemo(() => {
-    if (!territoryCadeias || territoryCadeias.length === 0) return [];
+    if (!filteredCadeias || filteredCadeias.length === 0) return [];
     const counts = {};
-    const total = territoryCadeias.length;
+    const total = filteredCadeias.length;
 
-    territoryCadeias.forEach(c => {
+    filteredCadeias.forEach(c => {
       const seg = c.segmento || 'Outros Segmentos';
       counts[seg] = (counts[seg] || 0) + 1;
     });
@@ -360,11 +359,11 @@ export default function CadeiaPage() {
         return { name, count, percent, color };
       })
       .sort((a, b) => b.count - a.count);
-  }, [territoryCadeias]);
+  }, [filteredCadeias]);
 
-  const totalMunicipiosAbrangentes = useMemo(() => {
+  const totalMunicipiosBeneficiados = useMemo(() => {
     const munSet = new Set();
-    enrichedCadeias.forEach(c => {
+    filteredCadeias.forEach(c => {
       if (c.municipios_cobertos && c.municipios_cobertos.length > 0) {
         c.municipios_cobertos.forEach(m => {
           if (m.nome_municipio) munSet.add(normalizeName(m.nome_municipio));
@@ -374,7 +373,15 @@ export default function CadeiaPage() {
       }
     });
     return munSet.size;
-  }, [enrichedCadeias]);
+  }, [filteredCadeias]);
+
+  const totalMunicipiosSede = useMemo(() => {
+    const sedeSet = new Set();
+    filteredCadeias.forEach(c => {
+      if (c.municipio_sede) sedeSet.add(normalizeName(c.municipio_sede));
+    });
+    return sedeSet.size;
+  }, [filteredCadeias]);
 
   const territoryRanking = useMemo(() => {
     if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
@@ -403,11 +410,11 @@ export default function CadeiaPage() {
   }, [enrichedCadeias]);
 
   const municipalityRanking = useMemo(() => {
-    if (!territoryCadeias || territoryCadeias.length === 0) return [];
+    if (!filteredCadeias || filteredCadeias.length === 0) return [];
     const counts = {};
     const targetId = selectedTerritory ? Number(selectedTerritory.id_territorio) : null;
 
-    territoryCadeias.forEach(c => {
+    filteredCadeias.forEach(c => {
       if (!targetId || Number(c.id_territorio) === targetId) {
         const munSede = c.municipio_sede || 'Polo Regional';
         counts[munSede] = (counts[munSede] || 0) + 1;
@@ -425,19 +432,38 @@ export default function CadeiaPage() {
         percentBar: Math.min(100, (count / maxCount) * 100),
         heatColor: count >= 5 ? '#1D3557' : count >= 2 ? '#2563EB' : '#60A5FA'
       }));
-  }, [selectedTerritory, territoryCadeias]);
+  }, [selectedTerritory, filteredCadeias]);
 
   const topSegment = segmentStats[0];
 
   const kpis = [
-    { label: 'Arranjos & IGs Mapeados', value: loadingStats ? '...' : enrichedCadeias.length, icon: GitPullRequest },
-    { label: 'Municípios Beneficiados', value: loadingStats ? '...' : totalMunicipiosAbrangentes, icon: CheckCircle2 },
-    { label: 'Territórios com Arranjos', value: loadingStats ? '...' : `${territoryRanking.length} de ${territoriosData.length || 27}`, icon: MapPin },
-    { label: 'Tipologias Identificadas', value: loadingStats ? '...' : `${availableTipos.length} Categorias`, icon: Layers },
-    { label: topSegment ? `Maior Segmento: ${topSegment.name}` : 'Maior Segmento', value: loadingStats ? '...' : (topSegment ? `${topSegment.percent}%` : '-'), icon: Sparkles }
+    { 
+      label: 'Arranjos & IGs Mapeados', 
+      value: loadingStats ? '...' : filteredCadeias.length, 
+      icon: GitPullRequest 
+    },
+    { 
+      label: 'Municípios Beneficiados', 
+      value: loadingStats ? '...' : totalMunicipiosBeneficiados, 
+      icon: CheckCircle2 
+    },
+    { 
+      label: selectedTerritory ? 'Municípios Sede' : 'Territórios com Arranjos', 
+      value: loadingStats ? '...' : (selectedTerritory ? `${totalMunicipiosSede} munic.` : `${territoryRanking.length} de ${territoriosData.length || 27}`), 
+      icon: selectedTerritory ? Building2 : MapPin 
+    },
+    { 
+      label: 'Qtd. de Segmentos', 
+      value: loadingStats ? '...' : `${segmentStats.length} Segmentos`, 
+      icon: Layers 
+    },
+    { 
+      label: topSegment ? `Maior Segmento: ${topSegment.name}` : 'Maior Segmento', 
+      value: loadingStats ? '...' : (topSegment ? `${topSegment.percent}%` : '-'), 
+      icon: Sparkles 
+    }
   ];
 
-  // 2. Abas do CardLista
   const dynamicTabs = useMemo(() => [
     {
       id: 'catalogo',
@@ -499,7 +525,7 @@ export default function CadeiaPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full hide-scroll pb-2">
+          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
             {filteredCadeias.length > 0 ? (
               filteredCadeias.map((c, idx) => {
                 const IconComp = c.icone;
@@ -578,7 +604,6 @@ export default function CadeiaPage() {
                       </div>
                     </div>
 
-                    {/* LISTA COM QUEBRA PERFEITA DE LINHAS DOS MUNICÍPIOS */}
                     <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors ${
                       isSelected 
                         ? 'bg-white/90 border border-[#BFDBFE] text-[#1E40AF]' 
@@ -597,7 +622,7 @@ export default function CadeiaPage() {
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
                 <GitPullRequest size={32} className="mb-2 opacity-40 text-[#457B9D]" />
-                <p className="text-[12px] font-bold text-[#1D3557]">Nenhum arranjo produtivo encontrado neste território</p>
+                <p className="text-[12px] font-bold text-[#1D3557]">Nenhum arranjo produtivo sediado neste território</p>
               </div>
             )}
           </div>
@@ -620,7 +645,7 @@ export default function CadeiaPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0 w-full hide-scroll">
+          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0 w-full">
             {segmentStats.map((seg) => {
               const isSelected = selectedSegmento === seg.name;
               return (
@@ -672,7 +697,7 @@ export default function CadeiaPage() {
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full hide-scroll">
+          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full">
             {selectedTerritory ? (
               municipalityRanking.map((m) => (
                 <div
@@ -727,8 +752,11 @@ export default function CadeiaPage() {
     }
   ], [filteredCadeias, segmentStats, territoryRanking, municipalityRanking, selectedTerritory, territoryName, selectedTipo, selectedSegmento, availableTipos, selectedCadeia, territoriosData]);
 
+  const activeSelectionName = selectedCadeia ? selectedCadeia.entidade : (selectedTerritory ? territoryName : null);
+  const activeSelectionCount = selectedCadeia ? 1 : (selectedTerritory ? filteredCadeias.length : 0);
+
   return (
-    <main className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full max-w-[100vw]">
+    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full">
       
       {/* HEADER DA PÁGINA */}
       <div className="flex items-center justify-between w-full shrink-0">
@@ -748,7 +776,7 @@ export default function CadeiaPage() {
         </div>
       </div>
 
-      {/* GRID DE KPIS (5 COLUNAS RÍGIDAS) */}
+      {/* GRID DE KPIS */}
       <div className="w-full relative z-10 shrink-0">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => (
@@ -771,14 +799,14 @@ export default function CadeiaPage() {
       </div>
 
       {/* GRID PRINCIPAL: MAPA (40%) + CARDLISTA (60%) */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-0 overflow-hidden w-full">
+      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4">
         
         {/* LADO ESQUERDO: MAPA DE CADEIAS */}
-        <div className="w-full lg:w-[42%] h-[400px] lg:h-full shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0">
+        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 h-[480px] lg:h-full bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0">
           <SideMap
             mode="cadeias"
-            cadeiasData={enrichedCadeias}
-            focusedAsset={focusedAsset}
+            cadeiasData={filteredCadeias}
+            processedAtivos={filteredCadeias}
             selectedTerritory={selectedTerritory}
             selectedCadeia={selectedCadeia}
             onSelectTerritory={setSelectedTerritory}
@@ -788,15 +816,52 @@ export default function CadeiaPage() {
           />
         </div>
 
-        {/* LADO DIREITO: CARDLISTA */}
-        <div className="flex-1 h-full min-h-0 min-w-0 overflow-hidden">
-          <CardLista
-            tabs={dynamicTabs}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            showSearch={true}
-            searchPlaceholder="Buscar cadeia, segmento ou cidade..."
-          />
+        {/* LADO DIREITO: CARDLISTA COM A BARRA DE FILTRO INTEGRADA */}
+        <div className="flex-1 h-[480px] lg:h-full min-h-0 min-w-0 flex flex-col gap-3">
+          
+          {/* BARRA DE SELEÇÃO ATIVA (ESTILO OFICIAL DA PÁGINA DE ATIVOS) */}
+          {activeSelectionName && (
+            <div className="w-full bg-[#E0F2FE]/60 border border-[#BAE6FD]/80 rounded-[22px] py-2 px-4 flex items-center justify-between gap-3 shrink-0 shadow-2xs backdrop-blur-xs animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-[#0284C7] shrink-0" />
+                <span className="text-[12px] font-bold text-[#1D3557] truncate">
+                  {selectedCadeia ? 'Arranjo Selecionado:' : 'Região Selecionada:'}{' '}
+                  <strong className="font-black text-[#0284C7]">{activeSelectionName}</strong>
+                </span>
+                <span className="bg-white/80 text-[#0284C7] border border-[#BAE6FD]/80 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs shrink-0">
+                  {activeSelectionCount} {activeSelectionCount === 1 ? (selectedCadeia ? 'arranjo' : 'cadeia') : 'cadeias'}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (selectedCadeia) {
+                    setSelectedCadeia(null);
+                  } else {
+                    setSelectedTerritory(null);
+                  }
+                  setFocusedAsset(null);
+                }}
+                className="text-[11px] font-bold text-[#1D3557] hover:text-red-600 bg-white hover:bg-red-50/80 px-3 py-1 rounded-full border border-[#BAE6FD]/80 hover:border-red-200 flex items-center gap-1.5 shadow-2xs transition-all duration-200 cursor-pointer shrink-0"
+              >
+                <X size={12} className="text-[#64748B] group-hover:text-red-500" />
+                <span>{selectedCadeia ? 'Limpar seleção de arranjo' : 'Limpar filtro da região'}</span>
+              </button>
+            </div>
+          )}
+
+          {/* CARDLISTA DINÂMICO */}
+          <div className="flex-1 min-h-0 min-w-0 overflow-hidden">
+            <CardLista
+              tabs={dynamicTabs}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              showSearch={true}
+              searchPlaceholder="Buscar cadeia, segmento ou cidade..."
+            />
+          </div>
+
         </div>
 
       </div>

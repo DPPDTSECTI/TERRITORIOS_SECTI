@@ -76,9 +76,9 @@ const createClusterIcon = (count) => {
   });
 };
 
-// Ícone de Ativo Individual
-const createSingleAssetIconWithSvg = (corHex, svgMarkup) => {
-  const size = 26;
+// Ícone de Ativo Individual com suporte ao parâmetro isSelected
+const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => {
+  const size = isSelected ? 32 : 26;
   const safeColor = corHex || '#3B82F6';
 
   const defaultSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
@@ -109,7 +109,6 @@ const createSingleAssetIconWithSvg = (corHex, svgMarkup) => {
     iconAnchor: [size / 2, size / 2]
   });
 };
-
 // Marcador compacto para municípios abrangidos
 const partnerPinIcon = L.divIcon({
   html: `
