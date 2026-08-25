@@ -1,21 +1,24 @@
 import React, { useContext, useState, useMemo } from 'react';
-import { 
-  Database, 
-  Building2, 
-  Layers, 
-  MapPin, 
-  Search, 
-  TrendingUp, 
-  Sparkles, 
+import {
+  Database,
+  Building2,
+  Layers,
+  MapPin,
+  Search,
+  TrendingUp,
+  Sparkles,
   ExternalLink,
   Filter,
   GraduationCap,
   Microscope,
   Rocket,
-  Cpu
+  Cpu,
+  Network,
+  Wifi
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
+import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
 import SideMap from './maps/SideMap';
 
@@ -24,11 +27,29 @@ function normalizeName(name) {
   return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 }
 
+function normalizeTerritoryName(name) {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/^(territorio\s+de\s+identidade|territorio\s+identidade|territorio)\s+/i, '')
+    .trim();
+}
+
+const MUN_LOOKUP = (() => {
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byName };
+})();
+
 export default function AtivosPage() {
-  const { 
-    ativosData = [], 
-    territoriosData = [], 
-    loadingStats = false 
+  const {
+    ativosData = [],
+    territoriosData = [],
+    loadingStats = false
   } = useContext(DataContext);
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
@@ -39,13 +60,16 @@ export default function AtivosPage() {
 
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
-  // 1. Processamento e Normalização de Ativos com Coordenadas e Estilos
+  // 1. Processamento e Normalização de Ativos com Coordenadas, Territórios e Estilos
   const ativosProcessados = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
 
     return ativosData.map((a, idx) => {
       const nomeTipoColuna = a.tipo || a.nome_tipo || 'Outros';
       const configEstilo = getDynamicAssetTypeConfig(nomeTipoColuna);
+
+      const munKey = normalizeName(a.municipio || '');
+      const munRow = MUN_LOOKUP.byName[munKey];
 
       const rawLat = a.latitude != null && a.latitude !== '' ? Number(a.latitude) : null;
       const rawLng = a.longitude != null && a.longitude !== '' ? Number(a.longitude) : null;
@@ -54,23 +78,35 @@ export default function AtivosPage() {
       let lng = rawLng;
 
       if (lat == null || lng == null || isNaN(lat) || isNaN(lng) || lat === 0) {
-        const munKey = String(a.municipio || '').trim();
-        const fallback = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()] || [-12.9714, -38.5014];
+        const fallback = MUNICIPIOS_COORDS[String(a.municipio || '').trim()] || 
+                         MUNICIPIOS_COORDS[munKey] || 
+                         [-12.9714, -38.5014];
         lat = fallback[0];
         lng = fallback[1];
       }
 
+      const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || a.rnp === '1' || a.rnp === 't' || a.rnp === 'T' || String(a.rnp || '').toLowerCase() === 'sim' || String(a.rnp || '').toLowerCase() === 'true';
+
+      const id_territorio = a.id_territorio != null && a.id_territorio !== '' 
+        ? Number(a.id_territorio) 
+        : (munRow?.id_territorio || null);
+        
+      const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
+      const cleanTerr = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
+      const normTerr = normalizeTerritoryName(cleanTerr);
+
       return {
         id: a.id_ativo || idx + 1,
-        id_territorio: a.id_territorio,
+        id_territorio,
+        normTerritorio: normTerr,
         nome: a.nome_ativo || a.sigla || 'Ativo de CT&I',
         sigla: a.sigla || '',
         tipo: nomeTipoColuna,
         idTipoAtivo: configEstilo.id,
         shortTipo: configEstilo.shortLabel,
-        municipio: a.municipio || 'Bahia',
-        territorio: a.territorio_identidade || a.territorio || '',
-        territorio_identidade: a.territorio_identidade || a.territorio || '',
+        municipio: a.municipio || munRow?.nome_municipio || 'Bahia',
+        territorio: cleanTerr || 'Bahia',
+        territorio_identidade: cleanTerr || 'Bahia',
         lat,
         lng,
         icone: configEstilo.icone,
@@ -79,7 +115,8 @@ export default function AtivosPage() {
         textCor: configEstilo.textClass,
         corHex: configEstilo.corHex,
         urlReferencia: a.url_referencia || '',
-        tituloReferencia: a.titulo_referencia || ''
+        tituloReferencia: a.titulo_referencia || '',
+        rnp: hasRnp
       };
     });
   }, [ativosData]);
@@ -88,13 +125,17 @@ export default function AtivosPage() {
   const territoryAtivos = useMemo(() => {
     if (!ativosProcessados || ativosProcessados.length === 0) return [];
     if (!selectedTerritory) return ativosProcessados;
-    
+
     const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
-    const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+    const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
 
     return ativosProcessados.filter(a => {
-      if (tid && String(a.id_territorio) === tid) return true;
-      if (tNorm && normalizeName(a.territorio || '') === tNorm) return true;
+      if (tid && a.id_territorio && String(a.id_territorio) === tid) return true;
+      if (tNorm && a.normTerritorio && (
+        a.normTerritorio === tNorm || 
+        a.normTerritorio.includes(tNorm) || 
+        tNorm.includes(a.normTerritorio)
+      )) return true;
       return false;
     });
   }, [ativosProcessados, selectedTerritory]);
@@ -109,7 +150,7 @@ export default function AtivosPage() {
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      list = list.filter(a => 
+      list = list.filter(a =>
         (a.nome && a.nome.toLowerCase().includes(q)) ||
         (a.sigla && a.sigla.toLowerCase().includes(q)) ||
         (a.tipo && a.tipo.toLowerCase().includes(q)) ||
@@ -121,7 +162,7 @@ export default function AtivosPage() {
     return list;
   }, [territoryAtivos, selectedTipo, searchQuery]);
 
-  // 3. Distribuição por Tipos / Categorias de Ativos
+  // 3. Distribuição por Tipos / Categorias de Ativos (com dados empilhados de RNP)
   const categoryStats = useMemo(() => {
     if (!territoryAtivos || territoryAtivos.length === 0) return [];
     const counts = {};
@@ -134,22 +175,35 @@ export default function AtivosPage() {
           name: t,
           shortName: a.shortTipo || t,
           count: 0,
-          corHex: a.corHex || '#2563EB',
+          rnpCount: 0,
+          corHex: a.corHex || '#3B82F6',
           icone: a.icone || Database
         };
       }
       counts[t].count += 1;
+      if (a.rnp) {
+        counts[t].rnpCount += 1;
+      }
     });
 
     return Object.values(counts)
-      .map(c => ({
-        ...c,
-        percent: total > 0 ? ((c.count / total) * 100).toFixed(1) : '0.0'
-      }))
+      .map(c => {
+        const outrosCount = c.count - c.rnpCount;
+        const rnpPercent = c.count > 0 ? (c.rnpCount / c.count) * 100 : 0;
+        const outrosPercent = c.count > 0 ? (outrosCount / c.count) * 100 : 0;
+
+        return {
+          ...c,
+          outrosCount,
+          rnpPercent,
+          outrosPercent,
+          percent: total > 0 ? ((c.count / total) * 100).toFixed(1) : '0.0'
+        };
+      })
       .sort((a, b) => b.count - a.count);
   }, [territoryAtivos]);
 
-  // 4A. Ranking Territorial de Ativos
+  // 4A. Ranking Territorial de Ativos (com dados empilhados de RNP)
   const territoryRanking = useMemo(() => {
     if (!ativosProcessados || ativosProcessados.length === 0) return [];
     const counts = {};
@@ -160,58 +214,81 @@ export default function AtivosPage() {
       const key = tid || normalizeName(tName);
 
       if (!counts[key]) {
-        counts[key] = { id: tid, name: tName, count: 0 };
+        counts[key] = { id: tid, name: tName, count: 0, rnpCount: 0 };
       }
       counts[key].count += 1;
+      if (a.rnp) {
+        counts[key].rnpCount += 1;
+      }
     });
 
     const maxCount = Math.max(...Object.values(counts).map(t => t.count), 1);
 
     return Object.values(counts)
       .sort((a, b) => b.count - a.count)
-      .map((t, idx) => ({
-        ...t,
-        rank: idx + 1,
-        percentBar: Math.min(100, (t.count / maxCount) * 100)
-      }));
+      .map((t, idx) => {
+        const outrosCount = t.count - t.rnpCount;
+        const rnpPercent = t.count > 0 ? (t.rnpCount / t.count) * 100 : 0;
+        const outrosPercent = t.count > 0 ? (outrosCount / t.count) * 100 : 0;
+        return {
+          ...t,
+          rank: idx + 1,
+          percentBar: Math.min(100, (t.count / maxCount) * 100),
+          rnpPercent,
+          outrosCount,
+          outrosPercent
+        };
+      });
   }, [ativosProcessados]);
 
-  // 4B. Ranking de Municípios do Território
+  // 4B. Ranking de Municípios do Território (com dados empilhados de RNP)
   const municipalityRanking = useMemo(() => {
     if (!selectedTerritory || !territoryAtivos || territoryAtivos.length === 0) return [];
     const counts = {};
 
     territoryAtivos.forEach(a => {
       const mun = a.municipio || 'Bahia';
-      counts[mun] = (counts[mun] || 0) + 1;
+      if (!counts[mun]) {
+        counts[mun] = { count: 0, rnpCount: 0 };
+      }
+      counts[mun].count += 1;
+      if (a.rnp) {
+        counts[mun].rnpCount += 1;
+      }
     });
 
-    const maxCount = Math.max(...Object.values(counts), 1);
+    const maxCount = Math.max(...Object.values(counts).map(c => c.count), 1);
 
     return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, count], idx) => ({
-        name,
-        count,
-        rank: idx + 1,
-        percentBar: Math.min(100, (count / maxCount) * 100)
-      }));
+      .sort((a, b) => b[1].count - a[1].count)
+      .map(([name, data], idx) => {
+        const outrosCount = data.count - data.rnpCount;
+        const rnpPercent = data.count > 0 ? (data.rnpCount / data.count) * 100 : 0;
+        const outrosPercent = data.count > 0 ? (outrosCount / data.count) * 100 : 0;
+        return {
+          name,
+          count: data.count,
+          rnpCount: data.rnpCount,
+          outrosCount,
+          rnpPercent,
+          outrosPercent,
+          rank: idx + 1,
+          percentBar: Math.min(100, (data.count / maxCount) * 100)
+        };
+      });
   }, [selectedTerritory, territoryAtivos]);
 
-  // 5. Contagens Globais e por Grupo
+  // 5. Contagens Globais e por Grupo (Scoped para a região selecionada)
   const totalEnsinoPesquisa = useMemo(() => {
-    return ativosProcessados.filter(a => {
+    return territoryAtivos.filter(a => {
       const t = (a.tipo || '').toLowerCase();
       return t.includes('universidade') || t.includes('faculdade') || t.includes('instituto federal') || t.includes('ict') || t.includes('pesquisa');
     }).length;
-  }, [ativosProcessados]);
+  }, [territoryAtivos]);
 
-  const totalInovacao = useMemo(() => {
-    return ativosProcessados.filter(a => {
-      const t = (a.tipo || '').toLowerCase();
-      return t.includes('parque') || t.includes('hub') || t.includes('incubadora') || t.includes('aceleradora') || t.includes('dinamizador');
-    }).length;
-  }, [ativosProcessados]);
+  const totalRnp = useMemo(() => {
+    return territoryAtivos.filter(a => a.rnp).length;
+  }, [territoryAtivos]);
 
   const territoriosComAtivosCount = useMemo(() => {
     if (territoriosData && territoriosData.length > 0) {
@@ -220,38 +297,38 @@ export default function AtivosPage() {
     return territoryRanking.length;
   }, [territoriosData, territoryRanking]);
 
-  // 7. 5 Indicadores Estratégicos (KPIs)
+  // 7. 5 Indicadores Estratégicos (KPIs com adaptação contextual à região)
   const kpis = [
-    { 
-      label: 'Total de Ativos CT&I', 
-      value: loadingStats ? '...' : ativosProcessados.length, 
-      icon: Database 
+    {
+      label: selectedTerritory ? `Ativos em ${territoryName}` : 'Total de Ativos CT&I',
+      value: loadingStats ? '...' : territoryAtivos.length,
+      icon: Database
     },
-    { 
-      label: 'Ensino & Pesquisa (ICTs)', 
-      value: loadingStats ? '...' : totalEnsinoPesquisa, 
-      icon: GraduationCap 
+    {
+      label: 'Ensino & Pesquisa (ICTs)',
+      value: loadingStats ? '...' : totalEnsinoPesquisa,
+      icon: GraduationCap
     },
-    { 
-      label: 'Ambientes de Inovação', 
-      value: loadingStats ? '...' : totalInovacao, 
-      icon: Rocket 
+    {
+      label: 'Ativos com RNP',
+      value: loadingStats ? '...' : totalRnp,
+      icon: Network
     },
-    { 
-      label: 'Territórios Cobertos', 
-      value: loadingStats ? '...' : `${territoriosComAtivosCount} / ${territoriosData.length || 27}`, 
-      icon: MapPin 
+    {
+      label: selectedTerritory ? 'Municípios com Ativos' : 'Territórios Cobertos',
+      value: loadingStats ? '...' : (selectedTerritory ? `${municipalityRanking.length} munic.` : `${territoriosComAtivosCount} / ${territoriosData.length || 27}`),
+      icon: MapPin
     },
-    { 
-      label: categoryStats[0] ? categoryStats[0].shortName : 'Principal Tipo', 
-      value: loadingStats ? '...' : (categoryStats[0] ? `${categoryStats[0].percent}%` : '-'), 
-      icon: Sparkles 
+    {
+      label: categoryStats[0] ? categoryStats[0].shortName : 'Principal Tipo',
+      value: loadingStats ? '...' : (categoryStats[0] ? `${categoryStats[0].percent}%` : '-'),
+      icon: Sparkles
     }
   ];
 
   return (
     <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
-      
+
       {/* HEADER DA PÁGINA */}
       <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
         <div className="flex flex-col">
@@ -294,7 +371,7 @@ export default function AtivosPage() {
 
       {/* GRID PRINCIPAL: MAPA (calc(40% - 12px)) + DASHBOARD ANALÍTICO (flex-1) */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
-        
+
         {/* ========================================================================= */}
         {/* LADO ESQUERDO: MAPA DE PONTOS DE ATIVOS (ALINHADO COM 2 KPIS) */}
         {/* ========================================================================= */}
@@ -312,20 +389,42 @@ export default function AtivosPage() {
         {/* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS (FLEX-1) */}
         {/* ========================================================================= */}
         <div className="flex-1 flex flex-col gap-4 h-full min-h-0">
-          
+
+          {/* BANNER DE FILTRO REGIONAL ATIVO COM BOTÃO DE LIMPEZA */}
+          {selectedTerritory && (
+            <div className="bg-[#D6EAF8]/50 border border-[#A8DADC] px-4 py-2 rounded-2xl flex items-center justify-between gap-3 shrink-0 animate-in fade-in slide-in-from-top-1 duration-200">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="w-2 h-2 rounded-full bg-[#00B4D8] animate-pulse"></span>
+                <span className="text-[12px] font-extrabold text-[#1D3557]">
+                  Região Selecionada: <span className="text-[#0284C7] font-black">{territoryName}</span>
+                </span>
+                <span className="text-[10.5px] font-bold text-[#457B9D] bg-white px-2.5 py-0.5 rounded-full shadow-2xs">
+                  {territoryAtivos.length} {territoryAtivos.length === 1 ? 'ativo' : 'ativos'}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedTerritory(null)}
+                className="text-[11px] font-bold text-[#1D3557] hover:text-[#E63946] bg-white/90 hover:bg-white px-3 py-1 rounded-xl transition-all shadow-2xs cursor-pointer border border-[#CBD5E1] flex items-center gap-1.5 active:scale-95"
+              >
+                <span>✕</span>
+                <span>Limpar filtro da região</span>
+              </button>
+            </div>
+          )}
+
           {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
           <div className="bg-white rounded-[24px] p-3 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-            
+
             {/* ABAS */}
             <div className="flex items-center bg-[#F1F5F9] p-1 rounded-2xl border border-[#E2E8F0] gap-1 w-full sm:w-auto overflow-x-auto">
               <button
                 type="button"
                 onClick={() => setActiveTab('catalogo')}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                  activeTab === 'catalogo'
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'catalogo'
                     ? 'bg-[#1D3557] text-white shadow-xs'
                     : 'text-[#457B9D] hover:text-[#1D3557]'
-                }`}
+                  }`}
               >
                 <Database size={13} />
                 Catálogo ({filteredAtivosList.length})
@@ -334,11 +433,10 @@ export default function AtivosPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab('categorias')}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                  activeTab === 'categorias'
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'categorias'
                     ? 'bg-[#1D3557] text-white shadow-xs'
                     : 'text-[#457B9D] hover:text-[#1D3557]'
-                }`}
+                  }`}
               >
                 <Filter size={13} />
                 Categorias ({categoryStats.length})
@@ -347,11 +445,10 @@ export default function AtivosPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab('ranking')}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                  activeTab === 'ranking'
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ranking'
                     ? 'bg-[#1D3557] text-white shadow-xs'
                     : 'text-[#457B9D] hover:text-[#1D3557]'
-                }`}
+                  }`}
               >
                 <TrendingUp size={13} />
                 {selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios'}
@@ -383,7 +480,7 @@ export default function AtivosPage() {
 
           {/* CONTEÚDO DA ABA SELECIONADA */}
           <div className="flex-1 bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-5 flex flex-col min-h-0 overflow-hidden">
-            
+
             {/* ABA 1: CATÁLOGO DE ATIVOS */}
             {activeTab === 'catalogo' && (
               <div className="flex-1 flex flex-col min-h-0">
@@ -402,11 +499,10 @@ export default function AtivosPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedTipo('todos')}
-                      className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${
-                        selectedTipo === 'todos'
+                      className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${selectedTipo === 'todos'
                           ? 'bg-[#1D3557] text-white'
                           : 'bg-[#F1F5F9] text-[#457B9D] hover:bg-[#E2E8F0]'
-                      }`}
+                        }`}
                     >
                       Todos
                     </button>
@@ -415,11 +511,10 @@ export default function AtivosPage() {
                         key={cat.name}
                         type="button"
                         onClick={() => setSelectedTipo(selectedTipo === cat.name ? 'todos' : cat.name)}
-                        className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${
-                          selectedTipo === cat.name
+                        className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${selectedTipo === cat.name
                             ? 'text-white'
                             : 'hover:opacity-80'
-                        }`}
+                          }`}
                         style={{
                           backgroundColor: selectedTipo === cat.name ? cat.corHex : `${cat.corHex}15`,
                           color: selectedTipo === cat.name ? '#ffffff' : cat.corHex
@@ -458,18 +553,20 @@ export default function AtivosPage() {
                               });
                             }
                           }}
-                          className="bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer"
+                          className={`bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border ${
+                            ativo.rnp ? 'border-l-[3.5px] border-l-[#00B4D8]' : 'border-transparent'
+                          } rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer`}
                         >
                           <div className="flex items-start gap-3 min-w-0">
                             <div
                               className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
-                              style={{ backgroundColor: `${ativo.corHex || '#2563EB'}15`, color: ativo.corHex || '#2563EB' }}
+                              style={{ backgroundColor: `${ativo.corHex || '#3B82F6'}15`, color: ativo.corHex || '#3B82F6' }}
                             >
                               <IconComponent size={16} />
                             </div>
                             <div className="flex flex-col min-w-0">
                               <div className="flex items-center gap-2">
-                                <h4 className="text-[12px] font-extrabold text-[#1D3557] group-hover:text-[#2563EB] transition-colors leading-tight truncate">
+                                <h4 className="text-[12px] font-extrabold text-[#1D3557] group-hover:text-[#3B82F6] transition-colors leading-tight truncate">
                                   {ativo.nome}
                                 </h4>
                                 {ativo.sigla && (
@@ -477,11 +574,20 @@ export default function AtivosPage() {
                                     {ativo.sigla}
                                   </span>
                                 )}
+                                {ativo.rnp && (
+                                  <span 
+                                    className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/30 rounded-md shrink-0 shadow-2xs"
+                                    title="Ponto de Presença / Conexão RNP"
+                                  >
+                                    <Network size={10} className="text-[#00B4D8] shrink-0" />
+                                    <span>RNP</span>
+                                  </span>
+                                )}
                               </div>
                               <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-0.5 font-medium">
-                                <span 
+                                <span
                                   className="font-bold px-1.5 py-0.2 rounded-md"
-                                  style={{ backgroundColor: `${ativo.corHex || '#2563EB'}12`, color: ativo.corHex || '#2563EB' }}
+                                  style={{ backgroundColor: `${ativo.corHex || '#3B82F6'}12`, color: ativo.corHex || '#3B82F6' }}
                                 >
                                   {ativo.shortTipo || ativo.tipo}
                                 </span>
@@ -522,27 +628,43 @@ export default function AtivosPage() {
               </div>
             )}
 
-            {/* ABA 2: TIPOS & CATEGORIAS */}
+            {/* ABA 2: TIPOS & CATEGORIAS (BARRAS EMPILHADAS COM RNP) */}
             {activeTab === 'categorias' && (
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="mb-3 shrink-0 flex items-center justify-between">
+                <div className="mb-3 shrink-0 flex items-center justify-between flex-wrap gap-2">
                   <div>
                     <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                      {selectedTerritory 
-                        ? `Categorias de Ativos em ${territoryName}` 
+                      {selectedTerritory
+                        ? `Categorias de Ativos em ${territoryName}`
                         : 'Classificação dos Ativos de CT&I do Estado'
                       }
                     </h3>
                     <p className="text-[10.5px] text-[#457B9D] font-medium">
-                      Distribuição quantitativa e percentual por tipologia oficial
+                      Distribuição quantitativa e proporção com conexão à rede RNP por tipologia oficial
                     </p>
                   </div>
-                  {selectedTerritory && (
-                    <span className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <MapPin size={11} className="text-[#2563EB]" />
-                      {territoryName}
-                    </span>
-                  )}
+
+                  <div className="flex items-center gap-2.5">
+                    {/* LEGENDA BARRAS EMPILHADAS */}
+                    <div className="flex items-center gap-2.5 bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-1 rounded-full text-[9.5px] font-bold shadow-2xs">
+                      <div className="flex items-center gap-1">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#00B4D8]"></span>
+                        <span className="text-[#0096C7]">Com RNP</span>
+                      </div>
+                      <span className="text-gray-300">|</span>
+                      <div className="flex items-center gap-1">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span>
+                        <span className="text-[#2563EB]">Demais Ativos</span>
+                      </div>
+                    </div>
+
+                    {selectedTerritory && (
+                      <span className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <MapPin size={11} className="text-[#3B82F6]" />
+                        {territoryName}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0">
@@ -555,15 +677,14 @@ export default function AtivosPage() {
                         <div
                           key={cat.name}
                           onClick={() => setSelectedTipo(isSelected ? 'todos' : cat.name)}
-                          className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${
-                            isSelected
-                              ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20'
+                          className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${isSelected
+                              ? 'bg-white border-[#3B82F6] shadow-md ring-2 ring-[#3B82F6]/20'
                               : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2 min-w-0">
-                              <div 
+                              <div
                                 className="w-5 h-5 rounded-md flex items-center justify-center shrink-0"
                                 style={{ backgroundColor: `${cat.corHex}20`, color: cat.corHex }}
                               >
@@ -574,27 +695,46 @@ export default function AtivosPage() {
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
+                              {cat.rnpCount > 0 && (
+                                <span
+                                  className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
+                                  title={`${cat.rnpCount} ativo(s) com conexão RNP`}
+                                >
+                                  {cat.rnpCount} RNP
+                                </span>
+                              )}
                               <span className="text-[12px] font-black text-[#1D3557]">
                                 {cat.count} {cat.count === 1 ? 'ativo' : 'ativos'}
                               </span>
                               <span
-                                className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
-                                style={{ backgroundColor: `${cat.corHex}15`, color: cat.corHex }}
+                                className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#3B82F6]/10 text-[#2563EB]"
                               >
                                 {cat.percent}%
                               </span>
                             </div>
                           </div>
 
-                          {/* BARRA DE PROGRESSO */}
-                          <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
+                          {/* BARRA DE PROGRESSO EMPILHADA */}
+                          <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden relative">
                             <div
-                              className="h-full rounded-full transition-all duration-500"
-                              style={{
-                                width: `${cat.percent}%`,
-                                backgroundColor: cat.corHex
-                              }}
-                            ></div>
+                              className="h-full flex rounded-full overflow-hidden transition-all duration-500"
+                              style={{ width: `${cat.percent}%` }}
+                            >
+                              {cat.rnpCount > 0 && (
+                                <div
+                                  className="h-full bg-[#00B4D8] transition-all duration-300"
+                                  style={{ width: `${cat.rnpPercent}%` }}
+                                  title={`${cat.name}: ${cat.rnpCount} com RNP (${cat.rnpPercent.toFixed(0)}%)`}
+                                ></div>
+                              )}
+                              {cat.outrosCount > 0 && (
+                                <div
+                                  className="h-full bg-[#3B82F6] transition-all duration-300"
+                                  style={{ width: `${cat.outrosPercent}%` }}
+                                  title={`${cat.name}: ${cat.outrosCount} demais (${cat.outrosPercent.toFixed(0)}%)`}
+                                ></div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -609,30 +749,53 @@ export default function AtivosPage() {
               </div>
             )}
 
-            {/* ABA 3: RANKING TERRITORIAL OU MUNICIPAL */}
+            {/* ABA 3: RANKING TERRITORIAL OU MUNICIPAL (BARRAS EMPILHADAS COM RNP) */}
             {activeTab === 'ranking' && (
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="mb-3 shrink-0 flex items-center justify-between">
+                <div className="mb-3 shrink-0 flex items-center justify-between flex-wrap gap-2">
                   <div>
                     <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                      {selectedTerritory 
-                        ? `Ranking de Municípios · ${territoryName}` 
+                      {selectedTerritory
+                        ? `Ranking de Municípios · ${territoryName}`
                         : 'Ranking Territorial de Ativos de CT&I'
                       }
                     </h3>
                     <p className="text-[10.5px] text-[#457B9D] font-medium">
-                      {selectedTerritory 
-                        ? 'Concentração de infraestrutura de CT&I nos municípios deste território'
-                        : 'Densidade de infraestrutura nos 27 Territórios de Identidade'
+                      {selectedTerritory
+                        ? 'Distribuição de ativos e proporção com conexão à rede RNP nos municípios'
+                        : 'Densidade de infraestrutura e proporção com conexão RNP nos 27 Territórios'
                       }
                     </p>
                   </div>
-                  <span className="text-[10px] font-black text-[#457B9D] bg-[#F1F5F9] px-2.5 py-1 rounded-full">
-                    {selectedTerritory 
-                      ? `${municipalityRanking.length} municípios polo`
-                      : `${territoryRanking.length} territórios com ativos`
-                    }
-                  </span>
+
+                  <div className="flex items-center gap-2.5">
+                    {/* LEGENDA BARRAS EMPILHADAS */}
+                    <div className="flex items-center gap-2.5 bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-1 rounded-full text-[9.5px] font-bold shadow-2xs">
+                      <div className="flex items-center gap-1">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#00B4D8]"></span>
+                        <span className="text-[#0096C7]">Com RNP</span>
+                      </div>
+                      <span className="text-gray-300">|</span>
+                      <div className="flex items-center gap-1">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span>
+                        <span className="text-[#2563EB]">Demais Ativos</span>
+                      </div>
+                    </div>
+
+                    {selectedTerritory ? (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTerritory(null)}
+                        className="text-[10px] font-extrabold text-[#0284C7] hover:text-[#0369A1] hover:underline bg-[#D6EAF8]/50 px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer"
+                      >
+                        ← Ver Todos os Territórios
+                      </button>
+                    ) : (
+                      <span className="text-[10px] font-black text-[#457B9D] bg-[#F1F5F9] px-2.5 py-1 rounded-full shrink-0">
+                        {territoryRanking.length} territórios
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
@@ -653,29 +816,56 @@ export default function AtivosPage() {
                               });
                             }
                           }}
-                          className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer"
+                          className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer group"
                         >
                           <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                              m.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
-                            }`}>
+                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${m.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                              }`}>
                               {m.rank}
                             </span>
                             <div className="flex flex-col min-w-0 flex-1">
                               <span className="text-[11px] font-extrabold text-[#1D3557] truncate">
                                 {m.name}
                               </span>
-                              <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden mt-1">
+
+                              {/* BARRA EMPILHADA */}
+                              <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden mt-1.5 relative">
                                 <div
-                                  className="h-full rounded-full transition-all duration-300 bg-[#2563EB]"
+                                  className="h-full flex rounded-full overflow-hidden transition-all duration-500"
                                   style={{ width: `${m.percentBar}%` }}
-                                ></div>
+                                >
+                                  {m.rnpCount > 0 && (
+                                    <div
+                                      className="h-full bg-[#00B4D8] transition-all duration-300"
+                                      style={{ width: `${m.rnpPercent}%` }}
+                                      title={`${m.name}: ${m.rnpCount} ativo(s) com RNP (${m.rnpPercent.toFixed(0)}%)`}
+                                    ></div>
+                                  )}
+                                  {m.outrosCount > 0 && (
+                                    <div
+                                      className="h-full bg-[#3B82F6] transition-all duration-300"
+                                      style={{ width: `${m.outrosPercent}%` }}
+                                      title={`${m.name}: ${m.outrosCount} demais ativo(s) (${m.outrosPercent.toFixed(0)}%)`}
+                                    ></div>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#2563EB] text-white shadow-2xs">
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {m.rnpCount > 0 && (
+                              <span
+                                className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
+                                title={`${m.rnpCount} ativo(s) com conexão RNP`}
+                              >
+                                {m.rnpCount} RNP
+                              </span>
+                            )}
+                            <span
+                              className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#3B82F6] text-white shadow-2xs"
+                              title={`Total: ${m.count} ativo(s)`}
+                            >
                               {m.count} {m.count === 1 ? 'ativo' : 'ativos'}
                             </span>
                           </div>
@@ -695,29 +885,56 @@ export default function AtivosPage() {
                           const found = territoriosData.find(x => String(x.id_territorio) === String(t.id) || normalizeName(x.territorio) === normalizeName(t.name));
                           setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
                         }}
-                        className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs"
+                        className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs group"
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                            t.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
-                          }`}>
+                          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${t.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                            }`}>
                             {t.rank}
                           </span>
                           <div className="flex flex-col min-w-0 flex-1">
                             <span className="text-[11px] font-extrabold text-[#1D3557] truncate">
                               {t.name}
                             </span>
-                            <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden mt-1">
+
+                            {/* BARRA EMPILHADA */}
+                            <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden mt-1.5 relative">
                               <div
-                                className="h-full rounded-full transition-all duration-300 bg-[#2563EB]"
+                                className="h-full flex rounded-full overflow-hidden transition-all duration-500"
                                 style={{ width: `${t.percentBar}%` }}
-                              ></div>
+                              >
+                                {t.rnpCount > 0 && (
+                                  <div
+                                    className="h-full bg-[#00B4D8] transition-all duration-300"
+                                    style={{ width: `${t.rnpPercent}%` }}
+                                    title={`${t.name}: ${t.rnpCount} ativo(s) com RNP (${t.rnpPercent.toFixed(0)}%)`}
+                                  ></div>
+                                )}
+                                {t.outrosCount > 0 && (
+                                  <div
+                                    className="h-full bg-[#3B82F6] transition-all duration-300"
+                                    style={{ width: `${t.outrosPercent}%` }}
+                                    title={`${t.name}: ${t.outrosCount} demais ativo(s) (${t.outrosPercent.toFixed(0)}%)`}
+                                  ></div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#2563EB] text-white shadow-2xs">
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {t.rnpCount > 0 && (
+                            <span
+                              className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
+                              title={`${t.rnpCount} ativo(s) com conexão RNP`}
+                            >
+                              {t.rnpCount} RNP
+                            </span>
+                          )}
+                          <span
+                            className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#3B82F6] text-white shadow-2xs"
+                            title={`Total: ${t.count} ativo(s)`}
+                          >
                             {t.count} {t.count === 1 ? 'ativo' : 'ativos'}
                           </span>
                         </div>

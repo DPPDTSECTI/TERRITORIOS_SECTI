@@ -78,7 +78,7 @@ const createClusterIcon = (count) => {
 // Ícone de Ativo Individual
 const createSingleAssetIconWithSvg = (corHex, svgMarkup) => {
   const size = 26;
-  const safeColor = corHex || '#2563EB';
+  const safeColor = corHex || '#3B82F6';
 
   const defaultSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
   const innerSvg = svgMarkup || defaultSvg;
@@ -283,6 +283,12 @@ function SingleAssetPopupContent({ ativo }) {
             <span className="font-medium text-[#457B9D] truncate">
               {ativo.territorio.replace(/^Território de Identidade\s+/i, '')}
             </span>
+          </div>
+        )}
+        {ativo.rnp && (
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#0096C7] bg-[#00B4D8]/15 px-2 py-0.5 rounded-lg border border-[#00B4D8]/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00B4D8]"></span>
+            <span>Ponto de Presença / Conexão RNP</span>
           </div>
         )}
       </div>
@@ -1031,6 +1037,18 @@ export default function SideMap({
                 </span>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODO ATIVOS: LEGENDA DE CONEXÃO RNP */}
+      {/* ========================================================================= */}
+      {mode === 'ativos' && (
+        <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-md rounded-2xl px-3 py-1.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00B4D8] border border-white shadow-xs"></span>
+            <span className="text-[10px] font-bold text-[#1D3557]">Destaque: Conexão RNP</span>
           </div>
         </div>
       )}
