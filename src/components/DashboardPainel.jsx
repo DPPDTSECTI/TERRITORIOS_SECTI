@@ -9,6 +9,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 // IMPORTAÇÃO DOS DADOS E COMPONENTES
 import { DataContext } from '../context/DataContext';
+import { municipiosDB } from '../data/municipiosDB';
 import PtiMap from './maps/PtiMap.jsx';
 
 // COMPONENTES DE GRÁFICOS MODULARIZADOS
@@ -16,6 +17,35 @@ import DonutChart from './graph/DonutChart.jsx';
 import CustomPieChart from './graph/CustomPieChart.jsx';
 import RankingBarChart from './graph/RankingBarChart.jsx';
 import ProportionBarChart from './graph/ProportionBarChart.jsx';
+
+function normalizeName(value) {
+  if (!value) return '';
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeTerritoryName(name) {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/^(territorio\s+de\s+identidade|territorio\s+identidade|territorio)\s+/i, '')
+    .trim();
+}
+
+const MUN_LOOKUP = (() => {
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byName };
+})();
 
 function SortableCard({ id, className = '', children }) {
   const {
@@ -66,9 +96,72 @@ export default function DashboardPainel() {
     setSelectedTerritory
   } = useContext(DataContext);
 
-  // Cálculo de municípios do Semiárido
+  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  // 1. Ativos Filtrados pelo Território Selecionado
+  const scopedAtivos = useMemo(() => {
+    if (!ativosData || ativosData.length === 0) return [];
+    if (!selectedTerritory) return ativosData;
+
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+    return ativosData.filter(a => {
+      const munKey = normalizeName(a.municipio || '');
+      const munRow = MUN_LOOKUP.byName[munKey];
+      const idTerr = a.id_territorio != null && a.id_territorio !== '' ? String(a.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+      const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
+      const normTerr = normalizeTerritoryName(rawTerr);
+
+      if (tid && idTerr && idTerr === tid) return true;
+      if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+      return false;
+    });
+  }, [ativosData, selectedTerritory]);
+
+  // 2. Cursos Filtrados pelo Território Selecionado
+  const scopedCursos = useMemo(() => {
+    if (!cursosData || cursosData.length === 0) return [];
+    if (!selectedTerritory) return cursosData;
+
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+    return cursosData.filter(c => {
+      const munKey = normalizeName(c.municipio || '');
+      const munRow = MUN_LOOKUP.byName[munKey];
+      const idTerr = c.id_territorio != null && c.id_territorio !== '' ? String(c.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+      const rawTerr = c.territorio_identidade || c.territorio || munRow?.nome_territorio || '';
+      const normTerr = normalizeTerritoryName(rawTerr);
+
+      if (tid && idTerr && idTerr === tid) return true;
+      if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+      return false;
+    });
+  }, [cursosData, selectedTerritory]);
+
+  // 3. Dados Consolidados do Território Selecionado
+  const scopedTerritorioRow = useMemo(() => {
+    if (!selectedTerritory || !territoriosData) return null;
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+    return territoriosData.find(t => {
+      if (tid && String(t.id_territorio) === tid) return true;
+      const norm = normalizeTerritoryName(t.territorio || t.nome_territorio || '');
+      return norm === tNorm || norm.includes(tNorm) || tNorm.includes(norm);
+    });
+  }, [selectedTerritory, territoriosData]);
+
+  // 4. Cálculo de municípios do Semiárido (global ou por território)
   const semiaridoStats = useMemo(() => {
     if (!territoriosData || territoriosData.length === 0) return { semiarido: 0, total: 0 };
+
+    if (selectedTerritory && scopedTerritorioRow) {
+      const semiarido = Number(scopedTerritorioRow.qtd_mun_semiarido || 0);
+      const total = Number(scopedTerritorioRow.qtd_mun_total || (semiarido + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0)));
+      return { semiarido, total };
+    }
 
     const semiarido = territoriosData.reduce((acc, t) => acc + Number(t.qtd_mun_semiarido || 0), 0);
     const naoSemiarido = territoriosData.reduce((acc, t) => acc + Number(t.qtd_mun_nao_semiarido || 0), 0);
@@ -78,13 +171,13 @@ export default function DashboardPainel() {
       semiarido,
       total: total > 0 ? total : 417
     };
-  }, [territoriosData]);
+  }, [territoriosData, selectedTerritory, scopedTerritorioRow]);
 
-  // 1. DonutChart (Cursos)
+  // 5. DonutChart (Cursos por Área)
   const donutChartData = useMemo(() => {
-    if (!cursosData || cursosData.length === 0) return [];
+    if (!scopedCursos || scopedCursos.length === 0) return [];
     const counts = {};
-    cursosData.forEach(c => {
+    scopedCursos.forEach(c => {
       const cat = c.categoria || 'Outras Áreas';
       counts[cat] = (counts[cat] || 0) + 1;
     });
@@ -95,13 +188,14 @@ export default function DashboardPainel() {
       .map(([label, value], idx) => ({
         label, value, color: palette[idx % palette.length]
       }));
-  }, [cursosData]);
+  }, [scopedCursos]);
 
+  // Top Instituições de Ensino com Cursos
   const topEntidadesCursos = useMemo(() => {
-    if (!cursosData || cursosData.length === 0) return [];
+    if (!scopedCursos || scopedCursos.length === 0) return [];
 
     const mapEntidades = {};
-    cursosData.forEach(c => {
+    scopedCursos.forEach(c => {
       const ent = c.entidade || 'Não informada';
       if (!mapEntidades[ent]) {
         const siglaDB = c.sigla ? String(c.sigla).toUpperCase().trim() : '';
@@ -130,13 +224,13 @@ export default function DashboardPainel() {
         color: styles[idx % styles.length].bg,
         text: styles[idx % styles.length].text
       }));
-  }, [cursosData]);
+  }, [scopedCursos]);
 
-  // 2. CustomPieChart (Ativos CT&I)
+  // 6. CustomPieChart (Distribuição dos Ativos de CT&I)
   const ecosystemData = useMemo(() => {
-    if (!ativosData || ativosData.length === 0) return [];
+    if (!scopedAtivos || scopedAtivos.length === 0) return [];
     const counts = {};
-    ativosData.forEach(a => {
+    scopedAtivos.forEach(a => {
       const tipo = a.tipo || a.nome_tipo || 'Outros';
       counts[tipo] = (counts[tipo] || 0) + 1;
     });
@@ -150,14 +244,24 @@ export default function DashboardPainel() {
         value,
         colorHex: palette[idx % palette.length]
       }));
-  }, [ativosData]);
+  }, [scopedAtivos]);
 
-  const topTerritoriosAtivos = useMemo(() => {
-    if (!ativosData || ativosData.length === 0) return [];
+  // Top Territórios (ou Municípios se território selecionado) com mais ativos
+  const topTerritoriosOuMunicipiosAtivos = useMemo(() => {
+    if (!scopedAtivos || scopedAtivos.length === 0) return [];
     const counts = {};
-    ativosData.forEach(a => {
-      const terr = a.territorio_identidade || 'Não identificado';
-      counts[terr] = (counts[terr] || 0) + 1;
+
+    scopedAtivos.forEach(a => {
+      let key;
+      if (selectedTerritory) {
+        key = a.municipio || 'Não informado';
+      } else {
+        const munKey = normalizeName(a.municipio || '');
+        const munRow = MUN_LOOKUP.byName[munKey];
+        const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || 'Não identificado';
+        key = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
+      }
+      counts[key] = (counts[key] || 0) + 1;
     });
 
     const styles = [
@@ -171,18 +275,18 @@ export default function DashboardPainel() {
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
-      .map(([terr, count], idx) => ({
+      .map(([name, count], idx) => ({
         rank: idx + 1,
-        name: terr.replace('Território de Identidade ', ''),
+        name,
         count,
         color: styles[idx % styles.length].bg,
         text: styles[idx % styles.length].text
       }));
-  }, [ativosData]);
+  }, [scopedAtivos, selectedTerritory]);
 
-  // 3. Infraestrutura RNP
+  // 7. Infraestrutura RNP
   const rnpComparisonData = useMemo(() => {
-    if (!ativosData || ativosData.length === 0) return [];
+    if (!scopedAtivos || scopedAtivos.length === 0) return [];
 
     const stats = {
       'Univ. Federal': { com: 0, sem: 0 },
@@ -191,7 +295,7 @@ export default function DashboardPainel() {
       'ICT': { com: 0, sem: 0 }
     };
 
-    ativosData.forEach(a => {
+    scopedAtivos.forEach(a => {
       const str = String(a.tipo || a.nome_tipo || '').toLowerCase();
       let categoria = null;
 
@@ -201,7 +305,7 @@ export default function DashboardPainel() {
       else if (str.includes('ict') || str.includes('pesquisa')) categoria = 'ICT';
 
       if (categoria) {
-        const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || a.rnp === 't';
+        const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || a.rnp === '1' || a.rnp === 't' || a.rnp === 'T' || String(a.rnp || '').toLowerCase() === 'sim' || String(a.rnp || '').toLowerCase() === 'true';
         if (hasRnp) stats[categoria].com += 1;
         else stats[categoria].sem += 1;
       }
@@ -213,7 +317,7 @@ export default function DashboardPainel() {
       negative: valores.sem,
       total: valores.com + valores.sem
     }));
-  }, [ativosData]);
+  }, [scopedAtivos]);
 
   // Configurações DnD
   const INITIAL_CARDS = ['card-donut', 'card-pie', 'card-ranking', 'card-mapeamento'];
@@ -246,14 +350,31 @@ export default function DashboardPainel() {
     }
   };
 
+  // KPIs Dinâmicos contextuais à região
   const kpis = [
-    { label: 'Ativos de CT&I', value: loadingStats ? '...' : kpisGlobais.ativos, icon: Settings },
-    { label: 'Cursos de CT&I', value: loadingStats ? '...' : kpisGlobais.cursos, icon: GraduationCap },
-    { label: 'D. Territorial (IFDM)', value: loadingStats ? '...' : kpisGlobais.ifdmMedio, icon: TrendingUp },
-    { label: 'Cadeias Produtivas', value: loadingStats ? '...' : kpisGlobais.cadeias, icon: Database },
     {
-      label: 'Municípios Semiárido',
-      value: loadingStats ? '...' : `${semiaridoStats.semiarido}`,
+      label: selectedTerritory ? `Ativos em ${territoryName}` : 'Ativos de CT&I',
+      value: loadingStats ? '...' : (selectedTerritory ? scopedAtivos.length : kpisGlobais.ativos),
+      icon: Settings
+    },
+    {
+      label: selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos de CT&I',
+      value: loadingStats ? '...' : (selectedTerritory ? scopedCursos.length : kpisGlobais.cursos),
+      icon: GraduationCap
+    },
+    {
+      label: selectedTerritory ? `IFDM · ${territoryName}` : 'D. Territorial (IFDM)',
+      value: loadingStats ? '...' : (selectedTerritory ? (scopedTerritorioRow?.media_ifdm != null ? Number(scopedTerritorioRow.media_ifdm).toFixed(3) : kpisGlobais.ifdmMedio) : kpisGlobais.ifdmMedio),
+      icon: TrendingUp
+    },
+    {
+      label: selectedTerritory ? `Cadeias no Território` : 'Cadeias Produtivas',
+      value: loadingStats ? '...' : (selectedTerritory ? (scopedTerritorioRow?.cadeias_produtivas ?? 0) : kpisGlobais.cadeias),
+      icon: Database
+    },
+    {
+      label: selectedTerritory ? 'Municípios no Território' : 'Municípios Semiárido',
+      value: loadingStats ? '...' : (selectedTerritory ? (scopedTerritorioRow ? `${scopedTerritorioRow.qtd_mun_total || (Number(scopedTerritorioRow.qtd_mun_semiarido || 0) + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0))} mun.` : '-') : `${semiaridoStats.semiarido}`),
       icon: Building2
     }
   ];
@@ -269,9 +390,8 @@ export default function DashboardPainel() {
         </div>
       </div>
 
-      {/* GRID DE KPIs COM ALINHAMENTO PROPORCIONAL AO GRID INFERIOR (12 COLUNAS) */}
+      {/* GRID DE KPIs COM ALINHAMENTO PROPORCIONAL AO GRID INFERIOR (5 COLUNAS) */}
       <div className="w-full relative z-10 shrink-0">
-        {/* Layout sincronizado: 5 colunas estritamente proporcionais */}
         <div className="grid grid-cols-5 gap-5 items-stretch w-full">
           {kpis.map((kpi, index) => (
             <div
@@ -295,7 +415,7 @@ export default function DashboardPainel() {
       {/* GRID PRINCIPAL */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
-        {/* LADO ESQUERDO: MAPA INTEGRADO (alinhado com 2 KPIs: 2cols + 1gap do grid-cols-5 gap-5) */}
+        {/* LADO ESQUERDO: MAPA INTEGRADO */}
         <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[400px]">
           <p className="absolute top-5 left-5 text-[#457B9D]/50 font-mono tracking-widest uppercase text-[10px] z-20 pointer-events-none group-hover:text-[#457B9D] transition-colors">
             Mapa Territorial
@@ -320,29 +440,29 @@ export default function DashboardPainel() {
               {cardsOrder.map(cardId => (
                 <React.Fragment key={cardId}>
 
-                  {/* CARD 1: DONUT CHART */}
+                  {/* CARD 1: DONUT CHART (CURSOS) */}
                   {cardId === 'card-donut' && (
                     <SortableCard id="card-donut">
                       <DonutChart
-                        title="Cursos por Área"
-                        subtitle="Distribuição oficial de cursos no estado"
+                        title={selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos por Área'}
+                        subtitle={selectedTerritory ? `${scopedCursos.length} cursos mapeados na região` : 'Distribuição oficial de cursos no estado'}
                         totalLabel="Total de Cursos"
-                        listTitle="Top 5 Instituições com mais cursos"
-                        data={donutChartData.length > 0 ? donutChartData : [{ label: 'Carregando...', value: 1, color: '#E2E8F0' }]}
+                        listTitle={selectedTerritory ? 'Top Instituições na Região' : 'Top 5 Instituições com mais cursos'}
+                        data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 1, color: '#E2E8F0' }]}
                         topList={topEntidadesCursos}
                       />
                     </SortableCard>
                   )}
 
-                  {/* CARD 2: PIE CHART */}
+                  {/* CARD 2: PIE CHART (ATIVOS CT&I) */}
                   {cardId === 'card-pie' && (
                     <SortableCard id="card-pie">
                       <CustomPieChart
                         data={ecosystemData}
-                        topList={topTerritoriosAtivos}
-                        title="Distribuição dos Ativos de CT&I"
-                        subtitle="Visão geral das categorias e ranking"
-                        listTitle="Top 5 Territórios com Mais Ativos"
+                        topList={topTerritoriosOuMunicipiosAtivos}
+                        title={selectedTerritory ? `Ativos em ${territoryName}` : 'Distribuição dos Ativos de CT&I'}
+                        subtitle={selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking'}
+                        listTitle={selectedTerritory ? 'Top Municípios com Mais Ativos' : 'Top 5 Territórios com Mais Ativos'}
                         defaultCenterLabel="Ativos Mapeados"
                         labelKey="region"
                         valueKey="value"
@@ -375,7 +495,7 @@ export default function DashboardPainel() {
                       <ProportionBarChart
                         data={rnpComparisonData}
                         title="Infraestrutura RNP"
-                        subtitle="Proporção de ativos conectados à Rede Nacional de Pesquisa"
+                        subtitle={selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa'}
                         positiveLabel="Com RNP"
                         negativeLabel="Sem RNP"
                         positiveColor="bg-[#2563EB]"

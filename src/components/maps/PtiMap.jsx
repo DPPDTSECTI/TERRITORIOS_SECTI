@@ -6,6 +6,7 @@ import * as topojson from 'topojson-client';
 
 // IMPORTANDO A NOSSA NOVA BASE DE IDs
 import { municipiosDB } from '../../data/municipiosDB';
+import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 
 // Paleta Soft Blue & Teal
 const TERRITORY_COLORS = [
@@ -277,6 +278,34 @@ export default function PtiMap({
         return muns.sort();
     }, [selectedTerritory, filtroSemiarido, semiaridoMunicipios]);
 
+    // Determina se o território selecionado está a Leste (Direita) ou Oeste (Esquerda) da Bahia
+    const isTerritoryOnRight = useMemo(() => {
+        if (!selectedTerritory) return false;
+        const idTer = selectedTerritory.id_territorio;
+        const muns = idTer 
+            ? municipiosDB.filter(m => m.id_territorio === idTer)
+            : municipiosDB.filter(m => normalizeName(m.nome_territorio) === normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || ''));
+        
+        if (muns.length === 0) return false;
+
+        let sumLng = 0;
+        let count = 0;
+        muns.forEach(m => {
+            const munNorm = normalizeName(m.nome_municipio);
+            const coords = MUNICIPIOS_COORDS[m.nome_municipio] || MUNICIPIOS_COORDS[munNorm];
+            if (coords) {
+                sumLng += coords[1];
+                count++;
+            }
+        });
+
+        if (count === 0) return false;
+        const avgLng = sumLng / count;
+        // Se a longitude média for maior que -41.5 (Leste/Direita), o território fica no lado direito do mapa
+        // Portanto, a caixa deve ficar no lado OPOSTO (Esquerda / left-4) para não cobrir a região!
+        return avgLng > -41.5;
+    }, [selectedTerritory]);
+
     const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
 
     return (
@@ -363,9 +392,9 @@ export default function PtiMap({
                 </button>
             </div>
 
-            {/* ================= CAIXA LATERAL DE MUNICÍPIOS ================= */}
+            {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
             {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
-                <div className="absolute top-4 right-4 z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[20px] border bg-white/95 backdrop-blur-xl border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] transition-all animate-soft-fade pointer-events-auto">
+                <div className={`absolute top-4 ${isTerritoryOnRight ? 'left-4' : 'right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[20px] border bg-white/95 backdrop-blur-xl border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] transition-all duration-300 animate-soft-fade pointer-events-auto`}>
                     <div className="flex justify-between items-center mb-3 border-b border-[#D6EAF8] pb-3">
                         <h4 className="text-[11px] font-bold text-[#1D3557] uppercase tracking-widest leading-tight">
                             {selectedTerritory.nome_territorio || selectedTerritory.territorio}

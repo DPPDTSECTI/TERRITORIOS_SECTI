@@ -390,29 +390,6 @@ export default function AtivosPage() {
         {/* ========================================================================= */}
         <div className="flex-1 flex flex-col gap-4 h-full min-h-0">
 
-          {/* BANNER DE FILTRO REGIONAL ATIVO COM BOTÃO DE LIMPEZA */}
-          {selectedTerritory && (
-            <div className="bg-[#D6EAF8]/50 border border-[#A8DADC] px-4 py-2 rounded-2xl flex items-center justify-between gap-3 shrink-0 animate-in fade-in slide-in-from-top-1 duration-200">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="w-2 h-2 rounded-full bg-[#00B4D8] animate-pulse"></span>
-                <span className="text-[12px] font-extrabold text-[#1D3557]">
-                  Região Selecionada: <span className="text-[#0284C7] font-black">{territoryName}</span>
-                </span>
-                <span className="text-[10.5px] font-bold text-[#457B9D] bg-white px-2.5 py-0.5 rounded-full shadow-2xs">
-                  {territoryAtivos.length} {territoryAtivos.length === 1 ? 'ativo' : 'ativos'}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedTerritory(null)}
-                className="text-[11px] font-bold text-[#1D3557] hover:text-[#E63946] bg-white/90 hover:bg-white px-3 py-1 rounded-xl transition-all shadow-2xs cursor-pointer border border-[#CBD5E1] flex items-center gap-1.5 active:scale-95"
-              >
-                <span>✕</span>
-                <span>Limpar filtro da região</span>
-              </button>
-            </div>
-          )}
-
           {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
           <div className="bg-white rounded-[24px] p-3 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
 
