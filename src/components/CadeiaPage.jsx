@@ -154,7 +154,19 @@ export default function CadeiaPage() {
   const itemRefs = useRef({});
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
+  // Sincronização e reset de estados mutuamente exclusivos
+  const handleSelectTerritory = (terr) => {
+    setSelectedTerritory(terr);
+    setSelectedCadeia(null);
+    setFocusedAsset(null);
+  };
+
   const handleSelectFromMap = (cadeia) => {
+    if (!cadeia) {
+      setSelectedCadeia(null);
+      setFocusedAsset(null);
+      return;
+    }
     setSelectedCadeia(cadeia);
     if (cadeia?.lat && cadeia?.lng) {
       setFocusedAsset([cadeia.lat, cadeia.lng]);
@@ -514,7 +526,7 @@ export default function CadeiaPage() {
               {selectedTerritory && (
                 <button
                   type="button"
-                  onClick={() => setSelectedTerritory(null)}
+                  onClick={() => handleSelectTerritory(null)}
                   className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 hover:bg-[#D6EAF8] px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors"
                 >
                   <MapPin size={11} className="text-[#2563EB]" />
@@ -728,7 +740,7 @@ export default function CadeiaPage() {
                   key={t.id}
                   onClick={() => {
                     const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
-                    setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                    handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
                   }}
                   className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs"
                 >
@@ -809,17 +821,17 @@ export default function CadeiaPage() {
             processedAtivos={filteredCadeias}
             selectedTerritory={selectedTerritory}
             selectedCadeia={selectedCadeia}
-            onSelectTerritory={setSelectedTerritory}
+            onSelectTerritory={handleSelectTerritory}
             selectedSegmento={selectedSegmento}
             onSelectSegmento={setSelectedSegmento}
             onAssetClick={handleSelectFromMap}
           />
         </div>
 
-        {/* LADO DIREITO: CARDLISTA COM A BARRA DE FILTRO INTEGRADA */}
+        {/* LADO DIREITO: BARRA DE SELEÇÃO + CARDLISTA */}
         <div className="flex-1 h-[480px] lg:h-full min-h-0 min-w-0 flex flex-col gap-3">
           
-          {/* BARRA DE SELEÇÃO ATIVA (ESTILO OFICIAL DA PÁGINA DE ATIVOS) */}
+          {/* BARRA DE SELEÇÃO ATIVA (ESTILO EXATO DA PÁGINA DE ATIVOS) */}
           {activeSelectionName && (
             <div className="w-full bg-[#E0F2FE]/60 border border-[#BAE6FD]/80 rounded-[22px] py-2 px-4 flex items-center justify-between gap-3 shrink-0 shadow-2xs backdrop-blur-xs animate-in fade-in duration-200">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -839,7 +851,7 @@ export default function CadeiaPage() {
                   if (selectedCadeia) {
                     setSelectedCadeia(null);
                   } else {
-                    setSelectedTerritory(null);
+                    handleSelectTerritory(null);
                   }
                   setFocusedAsset(null);
                 }}
