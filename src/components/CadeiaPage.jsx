@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react';
+import React, { useContext, useState, useMemo, useEffect, useRef } from 'react';
 import { 
   GitPullRequest, 
   Award, 
@@ -11,9 +11,7 @@ import {
   Layers,
   Compass,
   CheckCircle2,
-  Building,
-  Users,
-  ArrowLeft
+  Users
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
@@ -38,7 +36,6 @@ function normalizeName(name) {
     .trim();
 }
 
-// Lookup absoluto de municípios
 const MUN_LOOKUP = (() => {
   const byId = {};
   const byName = {};
@@ -49,7 +46,66 @@ const MUN_LOOKUP = (() => {
   return { byId, byName };
 })();
 
-// Estilização dinâmica por tipo
+function findMunicipioCoords(nome) {
+  if (!nome) return null;
+  const raw = String(nome).trim();
+  const clean = normalizeName(raw);
+
+  if (MUNICIPIOS_COORDS[raw]) return MUNICIPIOS_COORDS[raw];
+  if (MUNICIPIOS_COORDS[raw.toLowerCase()]) return MUNICIPIOS_COORDS[raw.toLowerCase()];
+
+  const aliases = {
+    'luis eduardo magalhaes': [-12.0958, -45.7958],
+    'luiz eduardo magalhaes': [-12.0958, -45.7958],
+    'lem': [-12.0958, -45.7958],
+    'juazeiro': [-9.4167, -40.5000],
+    'petrolina': [-9.3989, -40.5008],
+    'sao francisco': [-9.4167, -40.5000],
+    'salvador': [-12.9714, -38.5014],
+    'vitoria da conquista': [-14.8661, -40.8394],
+    'feira de santana': [-12.2667, -38.9667],
+    'ilheus': [-14.7889, -39.0494],
+    'itabuna': [-14.7856, -39.2800],
+    'barreiras': [-12.1444, -44.9969],
+    'porto seguro': [-16.4497, -39.0647],
+    'jequie': [-13.8572, -40.0839],
+    'alagoinhas': [-12.1356, -38.4192],
+    'teixeira de freitas': [-17.5358, -39.7425],
+    'paulo afonso': [-9.4058, -38.2178],
+    'senhor do bonfim': [-10.4614, -40.1894],
+    'irece': [-11.3042, -41.8558],
+    'jacobina': [-11.1814, -40.5181],
+    'itapetinga': [-15.2489, -40.2483],
+    'eunapolis': [-16.3778, -39.5842],
+    'santo antonio de jesus': [-12.9694, -39.2611],
+    'saj': [-12.9694, -39.2611],
+    'guanambi': [-14.2233, -42.7814],
+    'valenca': [-13.3705, -39.0731],
+    'serrinha': [-11.6644, -38.9997],
+    'seabra': [-12.4189, -41.7689],
+    'abaira': [-13.2500, -41.6667],
+    'mucuge': [-13.0039, -41.3719],
+    'lencois': [-12.5642, -41.3917],
+    'pintadas': [-11.8333, -39.8833],
+    'ipira': [-12.1583, -40.1500]
+  };
+
+  if (aliases[clean]) return aliases[clean];
+
+  const lookup = MUN_LOOKUP.byName[clean];
+  if (lookup && MUNICIPIOS_COORDS[lookup.nome_municipio]) {
+    return MUNICIPIOS_COORDS[lookup.nome_municipio];
+  }
+
+  for (const key of Object.keys(MUNICIPIOS_COORDS)) {
+    if (normalizeName(key).includes(clean) || clean.includes(normalizeName(key))) {
+      return MUNICIPIOS_COORDS[key];
+    }
+  }
+
+  return null;
+}
+
 const getTipoCadeiaConfig = (nomeTipo) => {
   const str = String(nomeTipo || '').toLowerCase();
   if (str.includes('potencial')) {
@@ -66,7 +122,7 @@ const getTipoCadeiaConfig = (nomeTipo) => {
       corHex: '#10B981',
       bgBadge: 'bg-[#10B981]/15 text-[#059669]',
       icone: Award,
-      label: 'IG Registrada',
+      label: 'IG',
       iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`
     };
   }
@@ -91,29 +147,41 @@ export default function CadeiaPage() {
   const [focusedAsset, setFocusedAsset] = useState(null);
   const [selectedSegmento, setSelectedSegmento] = useState(null);
   const [selectedTipo, setSelectedTipo] = useState('todos');
-  
-  // Controle Escopo e Abas
   const [activeTab, setActiveTab] = useState('catalogo');
   const [selectedCadeia, setSelectedCadeia] = useState(null);
 
+  const itemRefs = useRef({});
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
-  // Troca de abas inteligente
-  useEffect(() => {
-    if (selectedCadeia) {
-      setActiveTab('abrangentes');
-    } else if (activeTab === 'abrangentes') {
-      setActiveTab('catalogo');
+  // Auto-scroll ao selecionar pelo mapa
+  const handleSelectFromMap = (cadeia) => {
+    setSelectedCadeia(cadeia);
+    if (cadeia?.lat && cadeia?.lng) {
+      setFocusedAsset([cadeia.lat, cadeia.lng]);
     }
-  }, [selectedCadeia]);
+    setActiveTab('catalogo');
 
-  // =========================================================================
-  // 1. CRUZAMENTO E ENRIQUECIMENTO DOS DADOS RELACIONAIS (CORREÇÃO DE TERRITÓRIO)
-  // =========================================================================
+    setTimeout(() => {
+      if (cadeia?.id_cadeia && itemRefs.current[cadeia.id_cadeia]) {
+        itemRefs.current[cadeia.id_cadeia].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+    }, 150);
+  };
+
+  // 1. Enriquecimento de Dados
   const enrichedCadeias = useMemo(() => {
     const fontesMap = new Map();
+    const coordsMap = new Map();
+
     (listaCadeias || []).forEach(lc => {
-      if (lc.id_cadeia && lc.fonte) fontesMap.set(lc.id_cadeia, lc.fonte);
+      const id = Number(lc.id_cadeia);
+      if (id && lc.fonte) fontesMap.set(id, lc.fonte);
+      if (id && (lc.latitude || lc.lat) && (lc.longitude || lc.lng)) {
+        coordsMap.set(id, [Number(lc.latitude || lc.lat), Number(lc.longitude || lc.lng)]);
+      }
     });
 
     const sourceData = (distribuicaoCadeias && distribuicaoCadeias.length > 0) ? distribuicaoCadeias : listaCadeias;
@@ -125,22 +193,72 @@ export default function CadeiaPage() {
       const idCadeia = Number(row.id_cadeia || idx + 1);
       const tipoNome = row.nome_tipo || row.tipo || 'APL';
       const configTipo = getTipoCadeiaConfig(tipoNome);
+      const entidadeStr = String(row.entidade || '').toLowerCase();
 
-      // --- RESOLUÇÃO ESTRITA DA SEDE ---
-      const munSedeNome = row.sede || row.municipio_sede || '';
+      let overrideSede = null;
+      let overrideTerritorioId = null;
+      let overrideTerritorioNome = null;
+
+      if (entidadeStr.includes('sao francisco') || entidadeStr.includes('uvas de mesa') || entidadeStr.includes('vinho do vale')) {
+        overrideSede = 'Juazeiro';
+        overrideTerritorioId = 21;
+        overrideTerritorioNome = 'Sertão do São Francisco';
+      } else if (entidadeStr.includes('luis eduardo') || entidadeStr.includes('oeste da bahia') || entidadeStr.includes('algodao')) {
+        overrideSede = 'Luís Eduardo Magalhães';
+        overrideTerritorioId = 4;
+        overrideTerritorioNome = 'Bacia do Rio Grande';
+      } else if (entidadeStr.includes('cachaça de abaíra') || entidadeStr.includes('abaira')) {
+        overrideSede = 'Abaíra';
+        overrideTerritorioId = 11;
+        overrideTerritorioNome = 'Chapada Diamantina';
+      } else if (entidadeStr.includes('cacau do sul') || entidadeStr.includes('sul da bahia')) {
+        overrideSede = 'Ilhéus';
+        overrideTerritorioId = 6;
+        overrideTerritorioNome = 'Litoral Sul';
+      }
+
+      let rawMunSede = overrideSede || row.sede || row.municipio_sede || '';
+      if ((!rawMunSede || rawMunSede.toLowerCase() === 'bahia') && row.nome_municipio && row.nome_municipio.toLowerCase() !== 'bahia') {
+        rawMunSede = row.nome_municipio;
+      }
+
       const lookupSede = (row.id_sede && MUN_LOOKUP.byId[row.id_sede]) || 
-                         (munSedeNome && MUN_LOOKUP.byName[normalizeName(munSedeNome)]);
+                         (rawMunSede && MUN_LOOKUP.byName[normalizeName(rawMunSede)]);
 
-      const nomeSedeFinal = lookupSede ? lookupSede.nome_municipio : (munSedeNome || 'Bahia');
-      // O Território da SEDE obrigatoriamente vem do lookup (jamais da view que associa à cobertura)
-      const idTerrSede = lookupSede ? lookupSede.id_territorio : null;
-      const nomeTerrSede = lookupSede ? lookupSede.nome_territorio : 'Não identificado';
+      const nomeSedeFinal = lookupSede ? lookupSede.nome_municipio : (rawMunSede || 'Juazeiro');
+      const idTerrSede = overrideTerritorioId || (lookupSede ? lookupSede.id_territorio : (row.id_territorio || null));
+      const nomeTerrSede = overrideTerritorioNome || (lookupSede ? lookupSede.nome_territorio : (row.nome_territorio || 'Não identificado'));
 
       if (!mapCadeias.has(idCadeia)) {
-        const coords = MUNICIPIOS_COORDS[nomeSedeFinal] || MUNICIPIOS_COORDS[nomeSedeFinal.toLowerCase()] || [-12.9714, -38.5014];
-        
+        let lat = row.latitude ? Number(row.latitude) : (row.lat ? Number(row.lat) : null);
+        let lng = row.longitude ? Number(row.longitude) : (row.lng ? Number(row.lng) : null);
+
+        if ((!lat || !lng) && coordsMap.has(idCadeia)) {
+          const [cLat, cLng] = coordsMap.get(idCadeia);
+          lat = cLat;
+          lng = cLng;
+        }
+
+        if (!lat || !lng) {
+          const huntedCoords = findMunicipioCoords(nomeSedeFinal) || 
+                               (overrideSede ? findMunicipioCoords(overrideSede) : null) || 
+                               [-9.4167, -40.5000];
+
+          lat = huntedCoords[0];
+          lng = huntedCoords[1];
+
+          const offsetAngle = (idCadeia * 137.5 * Math.PI) / 180;
+          const offsetRadius = 0.008 + ((idCadeia % 5) * 0.003);
+          lat += Math.cos(offsetAngle) * offsetRadius;
+          lng += Math.sin(offsetAngle) * offsetRadius;
+        }
+
         const rawUrl = row.fonte || fontesMap.get(idCadeia) || row.url_referencia || '';
-        const urlFinal = rawUrl !== '' ? rawUrl : (tipoNome.toLowerCase().includes('ig') ? 'https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas' : 'http://observatorioapl.mdic.gov.br/');
+        const urlFinal = rawUrl !== '' 
+          ? rawUrl 
+          : (tipoNome.toLowerCase().includes('ig') 
+              ? 'https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas' 
+              : 'http://observatorioapl.mdic.gov.br/');
 
         mapCadeias.set(idCadeia, {
           id: idCadeia,
@@ -150,14 +268,16 @@ export default function CadeiaPage() {
           segmento: row.segmento || row.nome_cadeia || 'Outros',
           tipo: tipoNome,
           shortTipo: configTipo.label,
-          id_sede: lookupSede ? lookupSede.id_municipio : row.id_sede,
+          id_sede: lookupSede ? lookupSede.id_municipio : (row.id_sede || 1),
           municipio: nomeSedeFinal,
           municipio_sede: nomeSedeFinal,
-          id_territorio: idTerrSede, // <-- Território blindado à sede
+          id_territorio: idTerrSede,
           territorio: nomeTerrSede,
           territorio_identidade: nomeTerrSede,
-          lat: coords[0],
-          lng: coords[1],
+          lat,
+          lng,
+          latitude: lat,
+          longitude: lng,
           corHex: configTipo.corHex,
           bgBadge: configTipo.bgBadge,
           icone: configTipo.icone,
@@ -168,7 +288,6 @@ export default function CadeiaPage() {
         });
       }
 
-      // --- RESOLUÇÃO DOS MUNICÍPIOS ABRANGIDOS ---
       if (row.id_municipio || row.nome_municipio) {
         const cadeiaObj = mapCadeias.get(idCadeia);
         const lookupMun = (row.id_municipio && MUN_LOOKUP.byId[row.id_municipio]) || 
@@ -176,16 +295,19 @@ export default function CadeiaPage() {
 
         const mId = row.id_municipio || (lookupMun ? lookupMun.id_municipio : null);
         const mNome = row.nome_municipio || (lookupMun ? lookupMun.nome_municipio : '');
-        // Aqui usamos o id_territorio que veio da view (pertencente ao município coberto)
-        const mTerrId = row.id_territorio || (lookupMun ? lookupMun.id_territorio : null);
-        const mTerrNome = row.nome_territorio || (lookupMun ? lookupMun.nome_territorio : '');
+        const mTerrId = row.id_territorio || (lookupMun ? lookupMun.id_territorio : idTerrSede);
+        const mTerrNome = row.nome_territorio || (lookupMun ? lookupMun.nome_territorio : nomeTerrSede);
+
+        const munCoords = findMunicipioCoords(mNome);
 
         if (mId && !cadeiaObj.municipios_cobertos.some(m => m.id_municipio === mId)) {
           cadeiaObj.municipios_cobertos.push({
             id_municipio: mId,
             nome_municipio: mNome,
             id_territorio: mTerrId,
-            nome_territorio: mTerrNome
+            nome_territorio: mTerrNome,
+            lat: munCoords ? munCoords[0] : null,
+            lng: munCoords ? munCoords[1] : null
           });
         }
       }
@@ -200,7 +322,6 @@ export default function CadeiaPage() {
     return Array.from(tipos);
   }, [enrichedCadeias]);
 
-  // Filtro Territorial: Exibe no catálogo tudo que ACTUA na região
   const territoryCadeias = useMemo(() => {
     if (!selectedTerritory) return enrichedCadeias;
     const targetId = Number(selectedTerritory.id_territorio);
@@ -255,7 +376,6 @@ export default function CadeiaPage() {
     return munSet.size;
   }, [enrichedCadeias]);
 
-  // Ranking Sede Territórios: Exclusivo das SEDES Físicas
   const territoryRanking = useMemo(() => {
     if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
     const counts = {};
@@ -282,14 +402,12 @@ export default function CadeiaPage() {
       }));
   }, [enrichedCadeias]);
 
-  // Ranking Sede Municípios: Conta APENAS sedes geograficamente presentes
   const municipalityRanking = useMemo(() => {
     if (!territoryCadeias || territoryCadeias.length === 0) return [];
     const counts = {};
     const targetId = selectedTerritory ? Number(selectedTerritory.id_territorio) : null;
 
     territoryCadeias.forEach(c => {
-      // Se selecionado, entra no ranking APENAS se a sede for daqui! (Acaba com o problema das 9 sedes pra 7 cadeias)
       if (!targetId || Number(c.id_territorio) === targetId) {
         const munSede = c.municipio_sede || 'Polo Regional';
         counts[munSede] = (counts[munSede] || 0) + 1;
@@ -319,407 +437,304 @@ export default function CadeiaPage() {
     { label: topSegment ? `Maior Segmento: ${topSegment.name}` : 'Maior Segmento', value: loadingStats ? '...' : (topSegment ? `${topSegment.percent}%` : '-'), icon: Sparkles }
   ];
 
-  // =========================================================================
-  // ABAS DINÂMICAS PARA O CARDLISTA (ESCOPO CONDICIONAL)
-  // =========================================================================
-  const dynamicTabs = useMemo(() => {
-    const tabsArray = [];
-
-    if (selectedCadeia) {
-      const outrosMunicipios = (selectedCadeia.municipios_cobertos || []).filter(
-        m => normalizeName(m.nome_municipio) !== normalizeName(selectedCadeia.municipio_sede)
-      );
-
-      // ABA FOCADA: MUNICÍPIOS ABRANGENTES
-      tabsArray.push({
-        id: 'abrangentes',
-        label: 'Municípios Abrangentes',
-        icon: MapPin,
-        count: 1 + outrosMunicipios.length,
-        content: (
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="mb-3 shrink-0 flex items-center justify-between">
-              <div className="flex flex-col min-w-0 pr-4">
-                <h3 className="text-[13px] font-extrabold text-[#1D3557] truncate" title={selectedCadeia.entidade}>
-                  Escopo de Atuação · {selectedCadeia.entidade}
-                </h3>
-                <p className="text-[10.5px] text-[#457B9D] font-medium">Sede do arranjo e municípios parceiros</p>
-              </div>
-              <button
-                onClick={() => { setSelectedCadeia(null); setFocusedAsset(null); }}
-                className="text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors shrink-0"
-              >
-                <ArrowLeft size={12} />
-                Voltar
-              </button>
+  // 2. Abas do CardLista
+  const dynamicTabs = useMemo(() => [
+    {
+      id: 'catalogo',
+      label: 'Catálogo',
+      icon: GitPullRequest,
+      count: filteredCadeias.length,
+      content: (
+        <div className="flex-1 flex flex-col min-h-0 w-full">
+          <div className="flex items-center justify-between mb-3 shrink-0 flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
+              </h3>
+              <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black px-2 py-0.5 rounded-full">
+                {filteredCadeias.length}
+              </span>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
-              {/* Sede */}
-              <div className="rounded-2xl p-3 border border-[#2563EB]/40 bg-[#F8FAFC] shadow-2xs flex items-center justify-between gap-3 relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#2563EB]" />
-                <div className="flex items-center gap-3 min-w-0 pl-1">
-                  <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <Building size={16} />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <h4 className="text-[13px] font-extrabold text-[#1D3557] truncate">{selectedCadeia.municipio_sede}</h4>
-                    <span className="text-[10.5px] text-[#457B9D]">{selectedCadeia.territorio_identidade}</span>
-                  </div>
-                </div>
-                <span className="text-[9.5px] font-black bg-[#2563EB] text-white px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0">
-                  Sede Oficial
-                </span>
-              </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setSelectedTipo('todos')}
+                className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                  selectedTipo === 'todos' ? 'bg-[#1D3557] text-white' : 'bg-[#F1F5F9] text-[#457B9D] hover:bg-[#E2E8F0]'
+                }`}
+              >
+                Todos
+              </button>
 
-              {/* Demais Municípios Cobertos */}
-              {outrosMunicipios.length > 0 ? (
-                outrosMunicipios.map((m, idx) => (
-                  <div key={idx} className="rounded-2xl p-3 border border-transparent bg-[#F1F5F9] hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-xl bg-white border border-[#E2E8F0] text-[#64748B] flex items-center justify-center shrink-0">
-                        <MapPin size={15} />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <h4 className="text-[12px] font-bold text-[#1D3557] truncate">{m.nome_municipio}</h4>
-                        <span className="text-[10px] text-[#457B9D]">{m.nome_territorio || 'Território não identificado'}</span>
-                      </div>
-                    </div>
-                    <span className="text-[9px] font-bold bg-[#E2E8F0] text-[#64748B] px-2 py-0.5 rounded-md uppercase shrink-0">
-                      Abrangido
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center p-6 text-[#94A3B8] border border-dashed border-[#E2E8F0] rounded-2xl bg-white mt-1">
-                  <MapPin size={24} className="mb-2 opacity-30 text-[#457B9D]" />
-                  <p className="text-[11px] font-semibold text-[#1D3557]">Arranjo Monomunicipal</p>
-                  <p className="text-[9.5px] mt-0.5 text-[#64748B]">Atua exclusivamente na sede oficial.</p>
-                </div>
+              {availableTipos.map((tipo) => {
+                const conf = getTipoCadeiaConfig(tipo);
+                const isSelected = selectedTipo === tipo;
+                return (
+                  <button
+                    key={tipo}
+                    type="button"
+                    onClick={() => setSelectedTipo(tipo)}
+                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                      isSelected ? 'text-white' : `${conf.bgBadge} hover:opacity-80`
+                    }`}
+                    style={{ backgroundColor: isSelected ? conf.corHex : undefined }}
+                  >
+                    {tipo}
+                  </button>
+                );
+              })}
+
+              {selectedTerritory && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedTerritory(null)}
+                  className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 hover:bg-[#D6EAF8] px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors"
+                >
+                  <MapPin size={11} className="text-[#2563EB]" />
+                  <span>{territoryName}</span>
+                  <span className="text-red-500 font-black ml-0.5">×</span>
+                </button>
               )}
             </div>
           </div>
-        )
-      });
 
-      // ABA 2 SECUNDÁRIA: Catálogo (para voltar ao escopo facilmente)
-      tabsArray.push({
-        id: 'catalogo',
-        label: 'Catálogo',
-        icon: GitPullRequest,
-        count: filteredCadeias.length,
-        content: (
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center justify-between mb-3 shrink-0">
-              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                {selectedTerritory ? `Arranjos em ${territoryName}` : 'Catálogo Completo'}
-              </h3>
-              <button
-                onClick={() => { setSelectedCadeia(null); setFocusedAsset(null); }}
-                className="text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors shrink-0"
-              >
-                Limpar Seleção
-              </button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 opacity-60 hover:opacity-100 transition-opacity">
-              {filteredCadeias.map((c, idx) => {
+          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full hide-scroll pb-2">
+            {filteredCadeias.length > 0 ? (
+              filteredCadeias.map((c, idx) => {
                 const IconComp = c.icone;
-                const isThisSelected = selectedCadeia.id_cadeia === c.id_cadeia;
+                const totalAbrangencia = (c.municipios_cobertos && c.municipios_cobertos.length > 0) ? c.municipios_cobertos.length : 1;
+                const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
+
+                const listaNomes = (c.municipios_cobertos && c.municipios_cobertos.length > 0)
+                  ? c.municipios_cobertos.map(m => m.nome_municipio).join(', ')
+                  : c.municipio_sede;
 
                 return (
                   <div
                     key={c.id_cadeia || idx}
+                    ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
                     onClick={() => {
-                      setSelectedCadeia(c);
-                      if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
-                    }}
-                    className={`rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border ${
-                      isThisSelected ? 'bg-white border-[#2563EB] ring-1 ring-[#2563EB]/20' : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8]'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3 min-w-0 flex-1">
-                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}>
-                        <IconComp size={16} />
-                      </div>
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <h4 className="text-[12px] font-extrabold text-[#1D3557] truncate">{c.entidade}</h4>
-                        <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-0.5 font-medium">
-                          <span className="font-bold text-[#1D3557]">{c.segmento}</span>
-                          <span>•</span>
-                          <span>{c.municipio_sede}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )
-      });
-
-    } else {
-      // =======================================================================
-      // MODO PADRÃO: 3 ABAS COMPLETAS
-      // =======================================================================
-      tabsArray.push({
-        id: 'catalogo',
-        label: 'Catálogo',
-        icon: GitPullRequest,
-        count: filteredCadeias.length,
-        content: (
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center justify-between mb-3 shrink-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                  {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
-                </h3>
-                <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black px-2 py-0.5 rounded-full">
-                  {filteredCadeias.length}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => setSelectedTipo('todos')}
-                  className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                    selectedTipo === 'todos' ? 'bg-[#1D3557] text-white' : 'bg-[#F1F5F9] text-[#457B9D] hover:bg-[#E2E8F0]'
-                  }`}
-                >
-                  Todos
-                </button>
-
-                {availableTipos.map((tipo) => {
-                  const conf = getTipoCadeiaConfig(tipo);
-                  const isSelected = selectedTipo === tipo;
-                  return (
-                    <button
-                      key={tipo}
-                      type="button"
-                      onClick={() => setSelectedTipo(tipo)}
-                      className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                        isSelected ? 'text-white' : `${conf.bgBadge} hover:opacity-80`
-                      }`}
-                      style={{ backgroundColor: isSelected ? conf.corHex : undefined }}
-                    >
-                      {tipo}
-                    </button>
-                  );
-                })}
-
-                {selectedTerritory && (
-                  <button
-                    type="button"
-                    onClick={() => setSelectedTerritory(null)}
-                    className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 hover:bg-[#D6EAF8] px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors"
-                  >
-                    <MapPin size={11} className="text-[#2563EB]" />
-                    <span>{territoryName}</span>
-                    <span className="text-red-500 font-black ml-0.5">×</span>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
-              {filteredCadeias.length > 0 ? (
-                filteredCadeias.map((c, idx) => {
-                  const IconComp = c.icone;
-                  const totalAbrangencia = (c.municipios_cobertos && c.municipios_cobertos.length > 0) ? c.municipios_cobertos.length : 1;
-
-                  return (
-                    <div
-                      key={c.id_cadeia || idx}
-                      onClick={() => {
+                      if (isSelected) {
+                        setSelectedCadeia(null);
+                        setFocusedAsset(null);
+                      } else {
                         setSelectedCadeia(c);
                         if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
-                      }}
-                      className="bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer"
-                    >
+                      }
+                    }}
+                    className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border w-full ${
+                      isSelected
+                        ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-md'
+                        : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-xs'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3 w-full">
                       <div className="flex items-start gap-3 min-w-0 flex-1">
                         <div 
-                          className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
+                          className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform ${
+                            isSelected ? 'scale-110 shadow-sm' : 'group-hover:scale-105'
+                          }`}
                           style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
                         >
                           <IconComp size={16} />
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
-                          <h4 className="text-[12px] font-extrabold text-[#1D3557] group-hover:text-[#2563EB] transition-colors leading-tight truncate">
+                          <h4 className={`text-[12.5px] font-extrabold leading-tight break-words transition-colors ${
+                            isSelected ? 'text-[#2563EB]' : 'text-[#1D3557] group-hover:text-[#2563EB]'
+                          }`}>
                             {c.entidade}
                           </h4>
-                          <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-0.5 font-medium">
-                            <span className="font-bold text-[#1D3557] bg-[#E2E8F0]/60 px-1.5 py-0.2 rounded-md">{c.segmento}</span>
+                          
+                          <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-1 font-medium">
+                            <span className="font-bold text-[#1D3557] bg-[#E2E8F0]/70 px-1.5 py-0.2 rounded-md">{c.segmento}</span>
                             <span>•</span>
                             <span className="font-semibold text-[#1D3557]">Sede: {c.municipio_sede}</span>
                             <span>•</span>
                             <span className="text-[#64748B]">{c.territorio_identidade}</span>
                           </div>
-
-                          <div className="mt-1.5 text-[10px] text-[#457B9D]/90 font-medium">
-                            {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios` : 'Arranjo monomunicipal'}
-                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                      <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
                         <span 
                           className="text-[9px] font-extrabold px-2.5 py-1 rounded-full"
                           style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
                         >
                           {c.tipo}
                         </span>
+                        {c.fonte && (
+                          <a
+                            href={c.fonte}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-1 rounded-lg text-[#94A3B8] hover:text-[#2563EB] hover:bg-[#D6EAF8]/50 transition-colors"
+                            title="Acessar Fonte Oficial"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <ExternalLink size={13} />
+                          </a>
+                        )}
                       </div>
                     </div>
-                  );
-                })
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
-                  <GitPullRequest size={32} className="mb-2 opacity-40 text-[#457B9D]" />
-                  <p className="text-[12px] font-bold text-[#1D3557]">Nenhum arranjo produtivo encontrado neste território</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )
-      });
 
-      tabsArray.push({
-        id: 'segmentos',
-        label: 'Segmentos',
-        icon: Filter,
-        count: segmentStats.length,
-        content: (
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="mb-3 shrink-0 flex items-center justify-between">
-              <div>
-                <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                  {selectedTerritory ? `Segmentos em ${territoryName}` : 'Segmentos Econômicos da Bahia'}
-                </h3>
-                <p className="text-[10.5px] text-[#457B9D] font-medium">Distribuição por vocação produtiva</p>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0">
-              {segmentStats.map((seg) => {
-                const isSelected = selectedSegmento === seg.name;
-                return (
-                  <div
-                    key={seg.name}
-                    onClick={() => setSelectedSegmento(isSelected ? null : seg.name)}
-                    className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${
-                      isSelected ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20' : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="w-3 h-3 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: seg.color }} />
-                        <span className="text-[12px] font-extrabold text-[#1D3557] truncate">{seg.name}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[12px] font-black text-[#1D3557]">{seg.count} arranjos</span>
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full" style={{ backgroundColor: `${seg.color}15`, color: seg.color }}>
-                          {seg.percent}%
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
-                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${seg.percent}%`, backgroundColor: seg.color }} />
+                    {/* LISTA COM QUEBRA PERFEITA DE LINHAS DOS MUNICÍPIOS */}
+                    <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors ${
+                      isSelected 
+                        ? 'bg-white/90 border border-[#BFDBFE] text-[#1E40AF]' 
+                        : 'bg-white/60 border border-[#E2E8F0]/60 text-[#475569]'
+                    }`}>
+                      <span className="font-extrabold text-[#1D3557]">
+                        {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios: ` : 'Atua em 1 município: '}
+                      </span>
+                      <span className="font-medium">
+                        {listaNomes}
+                      </span>
                     </div>
                   </div>
                 );
-              })}
-            </div>
-          </div>
-        )
-      });
-
-      tabsArray.push({
-        id: 'ranking',
-        label: selectedTerritory ? 'Ranking Sede Municípios' : 'Ranking Sede Territórios',
-        icon: TrendingUp,
-        count: selectedTerritory ? municipalityRanking.length : territoryRanking.length,
-        content: (
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="mb-3 shrink-0 flex items-center justify-between">
-              <div>
-                <h3 className="text-[13px] font-extrabold text-[#1D3557]">
-                  {selectedTerritory ? `Ranking Sede Municípios · ${territoryName}` : 'Ranking Sede Territórios'}
-                </h3>
-                <p className="text-[10.5px] text-[#457B9D] font-medium">Densidade de arranjos produtivos por sede oficial</p>
+              })
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
+                <GitPullRequest size={32} className="mb-2 opacity-40 text-[#457B9D]" />
+                <p className="text-[12px] font-bold text-[#1D3557]">Nenhum arranjo produtivo encontrado neste território</p>
               </div>
-              <span className="text-[10px] font-black text-[#457B9D] bg-[#F1F5F9] px-2.5 py-1 rounded-full">
-                {selectedTerritory ? `${municipalityRanking.length} sedes` : `${territoryRanking.length} territórios`}
-              </span>
-            </div>
-
-            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
-              {selectedTerritory ? (
-                municipalityRanking.map((m) => (
-                  <div
-                    key={m.name}
-                    onClick={() => {
-                      const munKey = String(m.name || '').trim();
-                      const coords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()];
-                      if (coords) setFocusedAsset(coords);
-                    }}
-                    className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                        m.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
-                      }`}>
-                        {m.rank}
-                      </span>
-                      <span className="text-[11px] font-extrabold text-[#1D3557] truncate">{m.name}</span>
-                    </div>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: m.heatColor }}>
-                      {m.count} {m.count === 1 ? 'cadeia' : 'cadeias'}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                territoryRanking.map((t) => (
-                  <div
-                    key={t.id}
-                    onClick={() => {
-                      const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
-                      setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
-                    }}
-                    className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                        t.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
-                      }`}>
-                        {t.rank}
-                      </span>
-                      <span className="text-[11px] font-extrabold text-[#1D3557] truncate">{t.name}</span>
-                    </div>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: t.heatColor }}>
-                      {t.count} {t.count === 1 ? 'cadeia' : 'cadeias'}
-                    </span>
-                  </div>
-                ))
-              )}
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'segmentos',
+      label: 'Segmentos',
+      icon: Filter,
+      count: segmentStats.length,
+      content: (
+        <div className="flex-1 flex flex-col min-h-0 w-full">
+          <div className="mb-3 shrink-0 flex items-center justify-between">
+            <div>
+              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                {selectedTerritory ? `Segmentos em ${territoryName}` : 'Segmentos Econômicos da Bahia'}
+              </h3>
+              <p className="text-[10.5px] text-[#457B9D] font-medium">Distribuição por vocação produtiva</p>
             </div>
           </div>
-        )
-      });
-    }
 
-    return tabsArray;
-  }, [selectedCadeia, filteredCadeias, segmentStats, territoryRanking, municipalityRanking, selectedTerritory, territoryName, selectedTipo, selectedSegmento, availableTipos, territoriosData]);
+          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0 w-full hide-scroll">
+            {segmentStats.map((seg) => {
+              const isSelected = selectedSegmento === seg.name;
+              return (
+                <div
+                  key={seg.name}
+                  onClick={() => setSelectedSegmento(isSelected ? null : seg.name)}
+                  className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${
+                    isSelected ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20' : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="w-3 h-3 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: seg.color }} />
+                      <span className="text-[12px] font-extrabold text-[#1D3557] truncate">{seg.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[12px] font-black text-[#1D3557]">{seg.count} arranjos</span>
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full" style={{ backgroundColor: `${seg.color}15`, color: seg.color }}>
+                        {seg.percent}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
+                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${seg.percent}%`, backgroundColor: seg.color }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'ranking',
+      label: selectedTerritory ? 'Ranking Sede Municípios' : 'Ranking Sede Territórios',
+      icon: TrendingUp,
+      count: selectedTerritory ? municipalityRanking.length : territoryRanking.length,
+      content: (
+        <div className="flex-1 flex flex-col min-h-0 w-full">
+          <div className="mb-3 shrink-0 flex items-center justify-between">
+            <div>
+              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                {selectedTerritory ? `Ranking Sede Municípios · ${territoryName}` : 'Ranking Sede Territórios'}
+              </h3>
+              <p className="text-[10.5px] text-[#457B9D] font-medium">Densidade de arranjos produtivos por sede oficial</p>
+            </div>
+            <span className="text-[10px] font-black text-[#457B9D] bg-[#F1F5F9] px-2.5 py-1 rounded-full">
+              {selectedTerritory ? `${municipalityRanking.length} sedes` : `${territoryRanking.length} territórios`}
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full hide-scroll">
+            {selectedTerritory ? (
+              municipalityRanking.map((m) => (
+                <div
+                  key={m.name}
+                  onClick={() => {
+                    const munKey = String(m.name || '').trim();
+                    const coords = findMunicipioCoords(munKey);
+                    if (coords) setFocusedAsset(coords);
+                  }}
+                  className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
+                      m.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                    }`}>
+                      {m.rank}
+                    </span>
+                    <span className="text-[11px] font-extrabold text-[#1D3557] truncate">{m.name}</span>
+                  </div>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: m.heatColor }}>
+                    {m.count} {m.count === 1 ? 'cadeia' : 'cadeias'}
+                  </span>
+                </div>
+              ))
+            ) : (
+              territoryRanking.map((t) => (
+                <div
+                  key={t.id}
+                  onClick={() => {
+                    const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
+                    setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                  }}
+                  className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
+                      t.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                    }`}>
+                      {t.rank}
+                    </span>
+                    <span className="text-[11px] font-extrabold text-[#1D3557] truncate">{t.name}</span>
+                  </div>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: t.heatColor }}>
+                    {t.count} {t.count === 1 ? 'cadeia' : 'cadeias'}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )
+    }
+  ], [filteredCadeias, segmentStats, territoryRanking, municipalityRanking, selectedTerritory, territoryName, selectedTipo, selectedSegmento, availableTipos, selectedCadeia, territoriosData]);
 
   return (
-    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
+    <main className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full max-w-[100vw]">
       
       {/* HEADER DA PÁGINA */}
-      <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
+      <div className="flex items-center justify-between w-full shrink-0">
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-extrabold text-[#1D3557] tracking-tight">
+            <h1 className="text-2xl lg:text-3xl font-extrabold text-[#1D3557] tracking-tight">
               Módulo de Cadeias Produtivas & IGs
             </h1>
             <span className="bg-[#10B981]/10 text-[#059669] text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#10B981]/20 flex items-center gap-1">
@@ -727,24 +742,24 @@ export default function CadeiaPage() {
               Arranjos & Indicações Geográficas
             </span>
           </div>
-          <p className="text-sm text-[#457B9D] mt-0.5 font-medium">
+          <p className="text-xs lg:text-sm text-[#457B9D] mt-0.5 font-medium">
             Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
           </p>
         </div>
       </div>
 
-      {/* GRID DE KPIS (5 COLUNAS) */}
+      {/* GRID DE KPIS (5 COLUNAS RÍGIDAS) */}
       <div className="w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-5 gap-5 items-stretch w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="h-[88px] bg-white rounded-[22px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/60 shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-300 group overflow-hidden text-center px-3 py-2 cursor-default"
+              className="h-[84px] bg-white rounded-[22px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/60 shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-300 group overflow-hidden text-center px-3 py-1.5 cursor-default"
             >
-              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110">
-                <kpi.icon size={15} strokeWidth={2.5} />
+              <div className="w-6 h-6 rounded-lg bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110">
+                <kpi.icon size={14} strokeWidth={2.5} />
               </div>
-              <span className="text-xl font-black text-[#1D3557] tracking-tight leading-none mb-1 whitespace-nowrap">
+              <span className="text-lg lg:text-xl font-black text-[#1D3557] tracking-tight leading-none mb-1 whitespace-nowrap">
                 {kpi.value}
               </span>
               <span className="text-[#457B9D] text-[8.5px] uppercase font-extrabold tracking-widest truncate max-w-full">
@@ -755,28 +770,26 @@ export default function CadeiaPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL: MAPA + CARDLISTA */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+      {/* GRID PRINCIPAL: MAPA (40%) + CARDLISTA (60%) */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-0 overflow-hidden w-full">
         
         {/* LADO ESQUERDO: MAPA DE CADEIAS */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[460px]">
+        <div className="w-full lg:w-[42%] h-[400px] lg:h-full shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0">
           <SideMap
             mode="cadeias"
             cadeiasData={enrichedCadeias}
             focusedAsset={focusedAsset}
             selectedTerritory={selectedTerritory}
+            selectedCadeia={selectedCadeia}
             onSelectTerritory={setSelectedTerritory}
             selectedSegmento={selectedSegmento}
             onSelectSegmento={setSelectedSegmento}
-            onAssetClick={(c) => {
-              setSelectedCadeia(c);
-              if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
-            }}
+            onAssetClick={handleSelectFromMap}
           />
         </div>
 
-        {/* LADO DIREITO: CARDLISTA DINÂMICO */}
-        <div className="flex-1 min-h-0">
+        {/* LADO DIREITO: CARDLISTA */}
+        <div className="flex-1 h-full min-h-0 min-w-0 overflow-hidden">
           <CardLista
             tabs={dynamicTabs}
             activeTab={activeTab}
