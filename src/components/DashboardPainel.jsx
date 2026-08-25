@@ -484,6 +484,7 @@ export default function DashboardPainel() {
                         topSubtitle="Top 5 melhores"
                         mediumSubtitle="5 na média"
                         bottomSubtitle="Top 5 piores"
+                        highlightLabel={territoryName}
                         maxScale={1}
                       />
                     </SortableCard>
