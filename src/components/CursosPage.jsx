@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useRef } from 'react';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -11,12 +11,54 @@ import {
   ExternalLink,
   Filter,
   Database,
-  Check
+  Check,
+  X,
+  Wifi
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import SideMap, { getHeatColor } from './maps/SideMap';
+import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 
 const PALETTE_CORES = ['#2563EB', '#10B981', '#06B6D4', '#F59E0B', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1'];
+
+export function cleanIesName(name, municipio) {
+  if (!name) return '';
+  let clean = String(name).trim();
+
+  // Remove menções de campus, polo, unidade, sede, ead
+  clean = clean.replace(/\s*-\s*Campus\b.*$/i, '');
+  clean = clean.replace(/\s*-\s*Polo\b.*$/i, '');
+  clean = clean.replace(/\s*-\s*Unidade\b.*$/i, '');
+  clean = clean.replace(/\s*\((?:campus|polo|sede|ead).*?\)/gi, '');
+
+  // Remove sufixo do município se bater com o município informado, ex: " - Barreiras", " - Salvador"
+  if (municipio) {
+    const munTrim = String(municipio).trim();
+    if (clean.toLowerCase().endsWith(' - ' + munTrim.toLowerCase())) {
+      clean = clean.slice(0, -(munTrim.length + 3)).trim();
+    }
+  }
+
+  // Remove qualquer " - NomeDeCidade" conhecida no final
+  clean = clean.replace(/\s*-\s*([A-Za-zÀ-ÖØ-öø-ÿ\s]+)$/, (match, candidate) => {
+    const c = candidate.trim();
+    if (MUNICIPIOS_COORDS[c] || MUNICIPIOS_COORDS[c.toLowerCase()]) {
+      return '';
+    }
+    return match;
+  });
+
+  return clean.trim();
+}
+
+export function isCursoEad(c) {
+  if (!c) return false;
+  if (c.ead === true || c.ead === 'true' || c.ead === 1 || c.ead === '1' || c.ead === 't') return true;
+  const cursoLower = String(c.curso || '').toLowerCase();
+  const modLower = String(c.modalidade || '').toLowerCase();
+  const munLower = String(c.municipio || '').toLowerCase();
+  return cursoLower.includes('ead') || modLower.includes('distância') || modLower.includes('distancia') || modLower.includes('ead') || munLower.includes('ead');
+}
 
 export default function CursosPage() {
   const { 
@@ -29,9 +71,13 @@ export default function CursosPage() {
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [selectedIES, setSelectedIES] = useState(null);
+  const [selectedCursoId, setSelectedCursoId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'areas' | 'ranking' | 'ies'
+  const [isMapExpanded, setIsMapExpanded] = useState(false);
+  const [sidebarSearch, setSidebarSearch] = useState('');
 
+  const itemRefs = useRef({});
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
   // Cursos restritos ao território selecionado (quando houver seleção de região)
@@ -54,7 +100,12 @@ export default function CursosPage() {
       list = list.filter(c => {
         const sigla = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
         const ent = c.entidade ? String(c.entidade).trim() : '';
-        return sigla === selectedIES.toUpperCase() || ent === selectedIES;
+        const cleanEnt = cleanIesName(ent, c.municipio);
+        return (
+          sigla === selectedIES.toUpperCase() || 
+          ent === selectedIES ||
+          cleanEnt === selectedIES
+        );
       });
     }
 
@@ -76,17 +127,34 @@ export default function CursosPage() {
     return list;
   }, [cursosData, selectedCategory, selectedIES, selectedTerritory, searchQuery]);
 
+  const compactCursosList = useMemo(() => {
+    if (!sidebarSearch.trim()) return filteredCursos;
+    const q = sidebarSearch.toLowerCase().trim();
+    return filteredCursos.filter(c =>
+      (c.curso && c.curso.toLowerCase().includes(q)) ||
+      (c.sigla && c.sigla.toLowerCase().includes(q)) ||
+      (c.entidade && c.entidade.toLowerCase().includes(q)) ||
+      (c.municipio && c.municipio.toLowerCase().includes(q)) ||
+      (c.categoria && c.categoria.toLowerCase().includes(q))
+    );
+  }, [filteredCursos, sidebarSearch]);
+
   // Cursos alimentados no Mapa (Se IES estiver selecionada, filtra o mapa apenas para ela)
   const cursosDataForMap = useMemo(() => {
     if (!selectedIES) return cursosData;
     return cursosData.filter(c => {
       const sigla = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
       const ent = c.entidade ? String(c.entidade).trim() : '';
-      return sigla === selectedIES.toUpperCase() || ent === selectedIES;
+      const cleanEnt = cleanIesName(ent, c.municipio);
+      return (
+        sigla === selectedIES.toUpperCase() || 
+        ent === selectedIES ||
+        cleanEnt === selectedIES
+      );
     });
   }, [cursosData, selectedIES]);
 
-  // 2. Mapeamento e Estatísticas de Categorias (Áreas) - REAGE AO TERRITÓRIO SELECIONADO
+  // 2. Mapeamento e Estatísticas de Categorias (Áreas) - REAGE AO TERRITÓRIO SELECIONADO COM PORCENTAGEM EAD
   const categoryStats = useMemo(() => {
     if (!territoryCursos || territoryCursos.length === 0) return [];
     const counts = {};
@@ -94,16 +162,30 @@ export default function CursosPage() {
 
     territoryCursos.forEach(c => {
       const cat = c.categoria || 'Outras Áreas';
-      counts[cat] = (counts[cat] || 0) + 1;
+      if (!counts[cat]) {
+        counts[cat] = { total: 0, ead: 0, presencial: 0 };
+      }
+      counts[cat].total += 1;
+      if (isCursoEad(c)) {
+        counts[cat].ead += 1;
+      } else {
+        counts[cat].presencial += 1;
+      }
     });
 
     return Object.entries(counts)
-      .map(([name, count], idx) => {
-        const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
+      .map(([name, data], idx) => {
+        const percent = total > 0 ? ((data.total / total) * 100).toFixed(1) : '0.0';
+        const eadPercent = data.total > 0 ? (data.ead / data.total) * 100 : 0;
+        const presencialPercent = data.total > 0 ? (data.presencial / data.total) * 100 : 0;
         const color = PALETTE_CORES[idx % PALETTE_CORES.length];
         return { 
           name, 
-          count, 
+          count: data.total, 
+          eadCount: data.ead,
+          presencialCount: data.presencial,
+          eadPercent,
+          presencialPercent,
           percent, 
           color,
           shortName: name
@@ -170,20 +252,29 @@ export default function CursosPage() {
       }));
   }, [selectedTerritory, territoryCursos]);
 
-  // 4. Ranking de Instituições Ofertantes (IES) - REAGE AO TERRITÓRIO SELECIONADO
+  // 4. Ranking de Instituições Ofertantes (IES) - COM NOME DA CIDADE REMOVIDO
   const iesRanking = useMemo(() => {
     if (!territoryCursos || territoryCursos.length === 0) return [];
     const counts = {};
 
     territoryCursos.forEach(c => {
-      const entName = c.entidade || 'Outra';
-      const sigla = c.sigla ? String(c.sigla).toUpperCase().trim() : entName;
-      if (!counts[sigla]) {
-        counts[sigla] = { sigla, fullName: entName, count: 0, municipios: new Set(), territorios: new Set() };
+      const fullClean = cleanIesName(c.entidade || 'Outra', c.municipio);
+      const sigla = c.sigla ? String(c.sigla).toUpperCase().trim() : fullClean;
+      const key = sigla || fullClean;
+      if (!counts[key]) {
+        counts[key] = { 
+          sigla: sigla || fullClean, 
+          fullName: fullClean, 
+          count: 0, 
+          eadCount: 0,
+          municipios: new Set(), 
+          territorios: new Set() 
+        };
       }
-      counts[sigla].count += 1;
-      if (c.municipio) counts[sigla].municipios.add(c.municipio);
-      if (c.territorio_identidade) counts[sigla].territorios.add(c.territorio_identidade);
+      counts[key].count += 1;
+      if (isCursoEad(c)) counts[key].eadCount += 1;
+      if (c.municipio) counts[key].municipios.add(c.municipio);
+      if (c.territorio_identidade) counts[key].territorios.add(c.territorio_identidade);
     });
 
     return Object.values(counts)
@@ -268,7 +359,7 @@ export default function CursosPage() {
         </div>
       </div>
 
-      {/* GRID DE KPIS COM ALINHAMENTO PROPORCIONAL AO GRID INFERIOR (5 COLUNAS) */}
+      {/* GRID DE KPIS */}
       <div className="w-full relative z-10 shrink-0">
         <div className="grid grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => (
@@ -302,13 +393,14 @@ export default function CursosPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL: MAPA (calc(40% - 12px)) + DASHBOARD ANALÍTICO (flex-1) */}
+      {/* GRID PRINCIPAL: MAPA (calc(40% - 12px) ou Expandido) + DASHBOARD / KPIS VERTICAIS */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
         
-        {/* ========================================================================= */}
-        {/* LADO ESQUERDO: MAPA DE CALOR DE CURSOS (ALINHADO COM 2 KPIS) */}
-        {/* ========================================================================= */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[460px]">
+        {/* LADO ESQUERDO: MAPA DE CALOR DE CURSOS */}
+        <div
+          style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
+          className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-[460px]"
+        >
           <SideMap
             mode="cursos"
             cursosData={cursosDataForMap}
@@ -316,13 +408,127 @@ export default function CursosPage() {
             onSelectTerritory={setSelectedTerritory}
             selectedIES={selectedIES}
             onSelectIES={setSelectedIES}
+            isExpanded={isMapExpanded}
+            onToggleExpand={() => setIsMapExpanded(prev => !prev)}
           />
         </div>
 
-        {/* ========================================================================= */}
-        {/* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE CURSOS (FLEX-1) */}
-        {/* ========================================================================= */}
-        <div className="flex-1 flex flex-col gap-4 h-full min-h-0">
+        {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
+        {isMapExpanded ? (
+          <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+            {/* CABEÇALHO DA LISTA COMPACTA */}
+            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#E2E8F0]/70 shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
+                  Cursos de CT&I
+                </span>
+                <span className="bg-[#2563EB]/10 text-[#2563EB] text-[9.5px] font-black px-2 py-0.5 rounded-full shrink-0">
+                  {compactCursosList.length}
+                </span>
+              </div>
+              {selectedCursoId && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedCursoId(null)}
+                  className="text-[9.5px] font-bold text-[#64748B] hover:text-red-600 bg-[#F1F5F9] hover:bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+                >
+                  <span>Limpar</span>
+                  <X size={10} />
+                </button>
+              )}
+            </div>
+
+            {/* BUSCA COMPACTA */}
+            <div className="relative my-2 shrink-0">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+              <input
+                type="text"
+                value={sidebarSearch}
+                onChange={(e) => setSidebarSearch(e.target.value)}
+                placeholder="Filtrar curso, IES ou cidade..."
+                className="w-full pl-7 pr-3 py-1.5 text-[10.5px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors placeholder-[#94A3B8]"
+              />
+              {sidebarSearch && (
+                <button
+                  type="button"
+                  onClick={() => setSidebarSearch('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* LISTA SCROLLÁVEL COMPACTA */}
+            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0">
+              {compactCursosList.length > 0 ? (
+                compactCursosList.map((c, idx) => {
+                  const catColor = categoryColorMap[c.categoria] || '#64748B';
+                  const cursoKey = c.id_curso || c.id || `${c.curso}-${c.municipio}-${idx}`;
+                  const isSelected = selectedCursoId === cursoKey;
+                  const isEad = isCursoEad(c);
+
+                  return (
+                    <div
+                      key={cursoKey}
+                      onClick={() => setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey)}
+                      className={`p-2 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${
+                        isSelected
+                          ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-xs'
+                          : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-2xs'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div
+                          className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${
+                            isSelected ? 'scale-105 shadow-2xs' : 'group-hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: `${catColor}18`, color: catColor }}
+                        >
+                          <GraduationCap size={12} />
+                        </div>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${
+                            isSelected ? 'text-[#1E40AF]' : 'text-[#1D3557] group-hover:text-[#2563EB]'
+                          }`}>
+                            {c.curso}
+                          </h5>
+                          <span className="text-[9.5px] text-[#64748B] truncate leading-tight">
+                            {c.sigla || cleanIesName(c.entidade, c.municipio)} • <strong className="font-semibold text-[#457B9D]">{c.municipio}</strong>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        {isEad ? (
+                          <span className="text-[7.5px] font-black px-1.5 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200/70">
+                            EaD
+                          </span>
+                        ) : (
+                          <span className="text-[7.5px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                            Pres.
+                          </span>
+                        )}
+                        <span
+                          className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap"
+                          style={{ backgroundColor: `${catColor}15`, color: catColor }}
+                        >
+                          {c.categoria || 'Geral'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-[#94A3B8]">
+                  <p className="text-[11px] font-bold">Nenhum curso encontrado</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE CURSOS */
+          <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
           
           {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
           <div className="bg-white rounded-[24px] p-3 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
@@ -442,11 +648,25 @@ export default function CursosPage() {
                   {filteredCursos.length > 0 ? (
                     filteredCursos.map((c, idx) => {
                       const catColor = categoryColorMap[c.categoria] || '#2563EB';
+                      const isSelected = selectedCursoId === (c.id || `${c.curso}-${idx}`);
+                      const isEad = isCursoEad(c);
 
                       return (
                         <div
                           key={c.id || idx}
-                          className="bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs hover:shadow-xs transition-all duration-200 group"
+                          ref={(el) => {
+                            const key = c.id || `${c.curso}-${idx}`;
+                            if (el && key) itemRefs.current[key] = el;
+                          }}
+                          onClick={() => {
+                            const key = c.id || `${c.curso}-${idx}`;
+                            setSelectedCursoId(prev => prev === key ? null : key);
+                          }}
+                          className={`rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border ${
+                            isSelected
+                              ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-md'
+                              : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-xs'
+                          }`}
                         >
                           <div className="flex items-start gap-3 min-w-0">
                             <div 
@@ -460,7 +680,7 @@ export default function CursosPage() {
                                 {c.curso}
                               </h4>
                               <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-0.5 font-medium">
-                                <span className="font-bold text-[#1D3557]">{c.sigla || c.entidade}</span>
+                                <span className="font-bold text-[#1D3557]">{c.sigla || cleanIesName(c.entidade, c.municipio)}</span>
                                 <span>•</span>
                                 <span>{c.municipio}</span>
                                 <span>•</span>
@@ -470,6 +690,18 @@ export default function CursosPage() {
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                            {/* BADGE DE MODALIDADE: EAD vs PRESENCIAL */}
+                            {isEad ? (
+                              <span className="text-[9.5px] font-black px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200/80 flex items-center gap-1 shadow-2xs">
+                                <Wifi size={10} strokeWidth={2.5} />
+                                EaD
+                              </span>
+                            ) : (
+                              <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/60">
+                                Presencial
+                              </span>
+                            )}
+
                             <span 
                               className="text-[9px] font-extrabold px-2.5 py-1 rounded-full"
                               style={{ backgroundColor: `${catColor}15`, color: catColor }}
@@ -520,12 +752,26 @@ export default function CursosPage() {
                       }
                     </p>
                   </div>
-                  {selectedTerritory && (
-                    <span className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <MapPin size={11} className="text-[#2563EB]" />
-                      {territoryName}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {/* LEGENDA RÁPIDA DA BARRA EMPILHADA */}
+                    <div className="hidden sm:flex items-center gap-2.5 bg-[#F1F5F9] px-2.5 py-1 rounded-full border border-[#E2E8F0] text-[9.5px] font-bold text-[#64748B]">
+                      <span className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>
+                        Presencial
+                      </span>
+                      <span className="flex items-center gap-1 text-purple-700">
+                        <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                        EaD
+                      </span>
+                    </div>
+
+                    {selectedTerritory && (
+                      <span className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <MapPin size={11} className="text-[#2563EB]" />
+                        {territoryName}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0">
@@ -553,28 +799,55 @@ export default function CursosPage() {
                                 {cat.name}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 shrink-0">
                               <span className="text-[12px] font-black text-[#1D3557]">
                                 {cat.count} {cat.count === 1 ? 'curso' : 'cursos'}
                               </span>
                               <span
                                 className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
                                 style={{ backgroundColor: `${cat.color}15`, color: cat.color }}
+                                title={`${cat.percent}% do total de cursos`}
                               >
                                 {cat.percent}%
                               </span>
+                              {cat.eadCount > 0 && (
+                                <span
+                                  className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200/80 shadow-2xs flex items-center gap-1"
+                                  title={`${cat.eadCount} de ${cat.count} curso(s) em EaD (${cat.eadPercent.toFixed(0)}%)`}
+                                >
+                                  <Wifi size={10} strokeWidth={2.5} />
+                                  {cat.eadPercent.toFixed(0)}% EaD
+                                </span>
+                              )}
                             </div>
                           </div>
 
-                          {/* BARRA DE PROGRESSO */}
-                          <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
+                          {/* BARRA DE PROGRESSO EMPILHADA */}
+                          <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden relative">
                             <div
-                              className="h-full rounded-full transition-all duration-500"
-                              style={{
-                                width: `${cat.percent}%`,
-                                backgroundColor: cat.color
-                              }}
-                            ></div>
+                              className="h-full flex rounded-full overflow-hidden transition-all duration-500"
+                              style={{ width: `${cat.percent}%` }}
+                            >
+                              {cat.presencialCount > 0 && (
+                                <div
+                                  className="h-full transition-all duration-300"
+                                  style={{
+                                    width: `${cat.presencialPercent}%`,
+                                    backgroundColor: cat.color
+                                  }}
+                                  title={`${cat.name}: ${cat.presencialCount} presencial (${cat.presencialPercent.toFixed(0)}%)`}
+                                />
+                              )}
+                              {cat.eadCount > 0 && (
+                                <div
+                                  className="h-full bg-purple-500 transition-all duration-300"
+                                  style={{
+                                    width: `${cat.eadPercent}%`
+                                  }}
+                                  title={`${cat.name}: ${cat.eadCount} EaD (${cat.eadPercent.toFixed(0)}%)`}
+                                />
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -775,13 +1048,19 @@ export default function CursosPage() {
                                   </span>
                                 )}
                               </div>
-                              <span className="text-[10px] text-[#457B9D] font-medium truncate">
+                              <span className="text-[10.5px] text-[#457B9D] font-bold truncate" title={ies.fullName}>
                                 {ies.fullName}
                               </span>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
+                            {ies.eadCount > 0 && (
+                              <span className="text-[9px] font-bold text-purple-700 bg-purple-50 border border-purple-200/60 px-2 py-0.5 rounded-full flex items-center gap-0.5" title={`${ies.eadCount} cursos EaD`}>
+                                <Wifi size={9} strokeWidth={2.5} />
+                                {ies.eadCount} EaD
+                              </span>
+                            )}
                             <span className="text-[9.5px] font-bold text-[#457B9D] bg-[#E2E8F0]/50 px-2 py-0.5 rounded-full">
                               {ies.municipios.size} {ies.municipios.size === 1 ? 'cidade' : 'cidades'}
                             </span>
@@ -803,8 +1082,8 @@ export default function CursosPage() {
             )}
 
           </div>
-
         </div>
+      )}
 
       </div>
 

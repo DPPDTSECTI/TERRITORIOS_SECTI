@@ -40,20 +40,20 @@ const SobrePage = () => {
             <SectionTitle icon={Target} title="Nossos Objetivos" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                {t: 'Apoiar a Tomada de Decisão', d: 'Fornecer dados qualificados para planejar e formular políticas públicas.', i: <MapIcon /> },
-                {t: 'Promover a Transparência', d: 'Disponibilizar informações sobre investimentos e indicadores de CT&I.', i: <Eye /> },
-                {t: 'Fomentar a Articulação', d: 'Sinergias entre governo, setor produtivo, academia e sociedade civil.', i: <Users /> },
-                {t: 'Democratizar a Informação', d: 'Fonte de consulta para pesquisadores, estudantes, gestores e investidores.', i: <Lightbulb /> },
+                { t: 'Apoiar a Tomada de Decisão', d: 'Fornecer dados qualificados para planejar e formular políticas públicas.', i: <MapIcon /> },
+                { t: 'Promover a Transparência', d: 'Disponibilizar informações sobre investimentos e indicadores de CT&I.', i: <Eye /> },
+                { t: 'Fomentar a Articulação', d: 'Sinergias entre governo, setor produtivo, academia e sociedade civil.', i: <Users /> },
+                { t: 'Democratizar a Informação', d: 'Fonte de consulta para pesquisadores, estudantes, gestores e investidores.', i: <Lightbulb /> },
               ].map((item, idx) => (
-              <div key={idx} className="p-6 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] flex items-start gap-4 transition-all hover:-translate-y-2 duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group cursor-default">
-                <div className="w-12 h-12 rounded-2xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:-rotate-3">
-                  {React.cloneElement(item.i, { size: 22, strokeWidth: 2.5 })}
+                <div key={idx} className="p-6 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] flex items-start gap-4 transition-all hover:-translate-y-2 duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group cursor-default">
+                  <div className="w-12 h-12 rounded-2xl bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:-rotate-3">
+                    {React.cloneElement(item.i, { size: 22, strokeWidth: 2.5 })}
+                  </div>
+                  <div>
+                    <strong className="block text-lg font-bold mb-1 text-[#1D3557]">{item.t}</strong>
+                    <span className="text-sm font-medium leading-relaxed text-[#457B9D]/80">{item.d}</span>
+                  </div>
                 </div>
-                <div>
-                  <strong className="block text-lg font-bold mb-1 text-[#1D3557]">{item.t}</strong>
-                  <span className="text-sm font-medium leading-relaxed text-[#457B9D]/80">{item.d}</span>
-                </div>
-              </div>
               ))}
             </div>
           </div>

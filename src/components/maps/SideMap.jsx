@@ -53,7 +53,7 @@ const createClusterIcon = (count) => {
       <div style="
         width: ${size}px;
         height: ${size}px;
-        background: #1D3557;
+        background: #1E40AF;
         color: #FFFFFF;
         border: 1.5px solid #FFFFFF;
         border-radius: 50%;
@@ -62,7 +62,7 @@ const createClusterIcon = (count) => {
         justify-content: center;
         font-weight: 700;
         font-size: ${fontSize}px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 3px rgba(30, 64, 175, 0.3);
         cursor: pointer;
         font-family: inherit;
         transform: none !important;
@@ -91,12 +91,12 @@ const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => 
         height: ${size}px;
         background-color: ${safeColor};
         color: #ffffff;
-        border: ${isSelected ? '2.5px solid #1D3557' : '1.5px solid #ffffff'};
+        border: ${isSelected ? '2.5px solid #1E40AF' : '1.5px solid #ffffff'};
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: ${isSelected ? '0 3px 10px rgba(29, 53, 87, 0.35)' : '0 1px 3px rgba(0, 0, 0, 0.15)'};
+        box-shadow: ${isSelected ? '0 3px 10px rgba(30, 64, 175, 0.45)' : '0 1px 3px rgba(0, 0, 0, 0.15)'};
         cursor: pointer;
         transform: none !important;
       ">
@@ -124,6 +124,22 @@ const partnerPinIcon = L.divIcon({
   className: 'partner-map-pin',
   iconSize: [6, 6],
   iconAnchor: [3, 3]
+});
+
+const selectedPartnerPinIcon = L.divIcon({
+  html: `
+    <div style="
+      background-color: #1E40AF;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1px solid #FFFFFF;
+      box-shadow: 0 1px 3px rgba(30, 64, 175, 0.4);
+    "></div>
+  `,
+  className: 'partner-map-pin-selected',
+  iconSize: [7, 7],
+  iconAnchor: [3.5, 3.5]
 });
 
 export const HEAT_LEVELS = [
@@ -154,14 +170,15 @@ function ZoomDependentTileLayer() {
 
   return zoom >= 13 ? (
     <TileLayer
-      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-      opacity={0.75}
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      opacity={0.8}
       maxZoom={19}
     />
   ) : (
     <TileLayer
-      url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-      opacity={0.65}
+      url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+      opacity={0.75}
+      maxZoom={16}
     />
   );
 }
@@ -207,12 +224,23 @@ function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryR
   return null;
 }
 
-// Controlador de foco suave que enquadra perfeitamente a cadeia e todas as linhas
+// Controlador de foco suave que enquadra a cadeia e suas linhas respeitando o zoom do usuário
 function CadeiaFocusController({ selectedCadeia }) {
   const map = useMap();
 
   useEffect(() => {
     if (selectedCadeia && selectedCadeia.lat && selectedCadeia.lng) {
+      const currentZoom = map.getZoom();
+
+      // Se o usuário JÁ aproximou o zoom (zoom_meu >= 9.5):
+      // NÃO tira o zoom e NÃO altera o nível! Apenas centraliza suavemente na sede
+      if (currentZoom >= 9.5) {
+        map.panTo([selectedCadeia.lat, selectedCadeia.lng], { animate: true, duration: 0.8 });
+        return;
+      }
+
+      // Se o usuário estava em um zoom afastado (< 9.5, visão geral):
+      // Pode aproximar para enquadrar a cadeia e seus municípios abrangidos
       const bounds = [[selectedCadeia.lat, selectedCadeia.lng]];
 
       (selectedCadeia.municipios_cobertos || []).forEach((mun) => {
@@ -251,20 +279,28 @@ function ChangeMapView({ coords }) {
   useEffect(() => {
     if (!coords) return;
     let lat, lng;
-    let zoom = 15;
+    let targetZoom = 15;
     if (Array.isArray(coords) && coords.length >= 2) {
       lat = Number(coords[0]);
       lng = Number(coords[1]);
       if (coords.length >= 3 && typeof coords[2] === 'number') {
-        zoom = coords[2];
+        targetZoom = coords[2];
       }
     } else if (typeof coords === 'object') {
       lat = Number(coords.lat ?? coords.latitude);
       lng = Number(coords.lng ?? coords.longitude);
-      if (coords.zoom) zoom = coords.zoom;
+      if (coords.zoom) targetZoom = coords.zoom;
     }
     if (lat != null && lng != null && !isNaN(lat) && !isNaN(lng) && lat !== 0) {
-      map.flyTo([lat, lng], zoom, { duration: 1.0 });
+      const currentZoom = map.getZoom();
+      // Se o usuário já está em um zoom próximo (zoom_meu >= 9.5):
+      // Mantém o nível de zoom atual do usuário e apenas desliza para a coordenada!
+      if (currentZoom >= 9.5) {
+        map.panTo([lat, lng], { animate: true, duration: 0.8 });
+      } else {
+        // Se estava afastado (< 9.5), aproxima para o targetZoom
+        map.flyTo([lat, lng], targetZoom, { duration: 1.0 });
+      }
     }
   }, [coords, map]);
   return null;
@@ -328,8 +364,13 @@ function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, o
       eventHandlers={{
         click: (e) => {
           L.DomEvent.stopPropagation(e);
-          setPinnedAssetId(ativo.id);
-          onAssetClick?.(ativo);
+          if (isSelected) {
+            setPinnedAssetId(null);
+            onAssetClick?.(null);
+          } else {
+            setPinnedAssetId(ativo.id);
+            onAssetClick?.(ativo);
+          }
         }
       }}
     >
@@ -513,7 +554,10 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
 
         const ativo = elem.ativo;
         if (!ativo) return null;
-        const isSelected = selectedCadeia?.id_cadeia === ativo.id_cadeia;
+        const isSelected = Boolean(
+          (selectedCadeia && (selectedCadeia.id_cadeia === ativo.id_cadeia || selectedCadeia.id === ativo.id)) ||
+          (pinnedAssetId != null && (pinnedAssetId === ativo.id || pinnedAssetId === ativo.id_ativo))
+        );
 
         return (
           <SingleAssetMarkerItem
@@ -542,6 +586,18 @@ function MapResizeHandler({ isExpanded }) {
   return null;
 }
 
+function MapZoomWatcher({ onZoomChange }) {
+  const map = useMap();
+  useMapEvents({
+    zoomend: () => onZoomChange(map.getZoom()),
+    zoom: () => onZoomChange(map.getZoom())
+  });
+  useEffect(() => {
+    onZoomChange(map.getZoom());
+  }, [map, onZoomChange]);
+  return null;
+}
+
 export default function SideMap({
   processedAtivos = [],
   cursosData = [],
@@ -565,6 +621,7 @@ export default function SideMap({
   const [hoveredTerritory, setHoveredTerritory] = useState(null);
   const [isLayerControlOpen, setIsLayerControlOpen] = useState(false);
   const [showAllConnections, setShowAllConnections] = useState(false);
+  const [currentZoom, setCurrentZoom] = useState(6);
 
   useEffect(() => {
     if (focusedAsset) {
@@ -1021,6 +1078,7 @@ export default function SideMap({
         attributionControl={false}
       >
         <MapResizeHandler isExpanded={isExpanded} />
+        <MapZoomWatcher onZoomChange={setCurrentZoom} />
         <ZoomDependentTileLayer />
         <MapClickHandler
           onClearPinned={() => setPinnedAssetId(null)}
@@ -1049,34 +1107,39 @@ export default function SideMap({
             key={`conn-line-${idx}`}
             positions={line.positions}
             pathOptions={{
-              color: line.isSelected ? '#1D3557' : '#60A5FA',
-              weight: line.isSelected ? 2 : 0.75,
-              opacity: line.isSelected ? 0.9 : 0.18,
+              color: line.isSelected ? '#1E40AF' : '#3B82F6',
+              weight: line.isSelected ? 2.4 : 1.15,
+              opacity: line.isSelected ? 0.95 : 0.38,
               dashArray: null
             }}
           />
         ))}
 
         {/* PINOS E TAGS LIMPAS DOS MUNICÍPIOS ABRANGIDOS */}
-        {mode === 'cadeias' && uniquePartnerMunicipios.map((p, idx) => (
-          <Marker key={`partner-pin-${p.municipio}-${idx}`} position={p.position} icon={partnerPinIcon}>
-            <Tooltip
-              direction="top"
-              offset={[0, -4]}
-              opacity={0.98}
-              permanent={!showAllConnections && p.isSelected}
-              className="clean-city-tooltip"
-            >
-              <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
-                p.isSelected
-                  ? 'text-white bg-[#1D3557] border-[#1D3557] font-bold'
-                  : 'text-[#1D3557] bg-white/95 backdrop-blur-xs border-[#E2E8F0]'
-              }`}>
-                {p.municipio}
-              </span>
-            </Tooltip>
-          </Marker>
-        ))}
+        {mode === 'cadeias' && uniquePartnerMunicipios.map((p, idx) => {
+          const showLabel = Boolean(p.isSelected && currentZoom >= 8.0);
+
+          return (
+            <Marker key={`partner-pin-${p.municipio}-${idx}`} position={p.position} icon={p.isSelected ? selectedPartnerPinIcon : partnerPinIcon}>
+              <Tooltip
+                key={`city-tip-${p.municipio}-${p.isSelected ? 'sel' : 'norm'}-${showLabel ? 'perm' : 'hover'}`}
+                direction="top"
+                offset={[0, -4]}
+                opacity={0.98}
+                permanent={showLabel}
+                className="clean-city-tooltip"
+              >
+                <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
+                  p.isSelected
+                    ? 'text-white bg-[#1E40AF] border-[#1E40AF] font-bold'
+                    : 'text-[#1E40AF] bg-white/95 backdrop-blur-xs border-[#E2E8F0]'
+                }`}>
+                  {p.municipio}
+                </span>
+              </Tooltip>
+            </Marker>
+          );
+        })}
 
         {/* PINOS DOS ATIVOS OU CADEIAS */}
         {(mode === 'ativos' || mode === 'cadeias') && (

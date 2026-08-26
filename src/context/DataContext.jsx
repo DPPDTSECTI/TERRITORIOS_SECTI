@@ -4,7 +4,7 @@ import { supabase } from '../services/supabase';
 export const DataContext = createContext();
 
 // Força nova versão do cache
-const CACHE_KEY = '@SectiPainel_Data_v7_FULL'; 
+const CACHE_KEY = '@SectiPainel_Data_v8_FULL'; 
 const CACHE_TIME_MS = 15 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
@@ -35,7 +35,7 @@ export const DataProvider = ({ children }) => {
 
           // Só considera válido se distCadeias tiver mais de 88 registros (ou seja, a relação 1:N real)
           if (cache.distCadeias && cache.distCadeias.length > 88 && idadeDoCache < CACHE_TIME_MS) {
-            console.log(`⚡ Cache V7 Carregado com Sucesso: ${cache.distCadeias.length} linhas de distribuição.`);
+            console.log(`⚡ Cache V8 Carregado com Sucesso: ${cache.distCadeias.length} linhas de distribuição.`);
             setTerritoriosData(cache.stats || []);
             setAtivosData(cache.ativos || []);
             setCursosData(cache.cursos || []);
@@ -71,7 +71,8 @@ export const DataProvider = ({ children }) => {
         munTerRes,
         tAtivosRes,
         tCursosRes,
-        tCadeiasRes
+        tCadeiasRes,
+        cursosRawRes
       ] = await Promise.all([
         supabase.from('stats_ti').select('*'),
         supabase.from('lista_ativos_cti').select('*').range(0, 3000),
@@ -81,7 +82,8 @@ export const DataProvider = ({ children }) => {
         supabase.from('lista_municipioxterritorio').select('*').range(0, 1000),
         supabase.from('tipo_ativos').select('*'),
         supabase.from('tipo_cursos').select('*'),
-        supabase.from('tipo_cadeia').select('*')
+        supabase.from('tipo_cadeia').select('*'),
+        supabase.from('cursos').select('id_curso, ead').range(0, 3000)
       ]);
 
       // LOG DE DIAGNÓSTICO DIRETO NO SEU NAVEGADOR
@@ -99,11 +101,18 @@ export const DataProvider = ({ children }) => {
         return { ...t, media_ifdm: ifdmFormatado };
       });
 
+      // Mapeamento e união da coluna ead nos cursos
+      const eadMap = new Map((cursosRawRes.data || []).map(r => [r.id_curso, r.ead]));
+      const cursosTratados = (cursosRes.data || []).map(c => ({
+        ...c,
+        ead: eadMap.get(c.id) ?? false
+      }));
+
       // 3. GRAVA NO CACHE
       const novoCache = {
         stats: dadosTratados,
         ativos: ativosRes.data || [],
-        cursos: cursosRes.data || [],
+        cursos: cursosTratados,
         distCadeias: distCadeiasRes.data || [],
         listaCadeias: listaCadeiasRes.data || [],
         munTer: munTerRes.data || [],

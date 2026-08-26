@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useRef } from 'react';
 import {
   Database,
   Building2,
@@ -14,7 +14,8 @@ import {
   Rocket,
   Cpu,
   Network,
-  Wifi
+  Wifi,
+  X
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
@@ -54,11 +55,44 @@ export default function AtivosPage() {
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const [focusedAsset, setFocusedAsset] = useState(null);
+  const [selectedAssetId, setSelectedAssetId] = useState(null);
   const [selectedTipo, setSelectedTipo] = useState('todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'categorias' | 'ranking'
+  const [isMapExpanded, setIsMapExpanded] = useState(false);
+  const [sidebarSearch, setSidebarSearch] = useState('');
 
+  const itemRefs = useRef({});
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  const handleSelectFromMap = (ativo) => {
+    if (!ativo || selectedAssetId === ativo.id) {
+      setSelectedAssetId(null);
+      setFocusedAsset(null);
+      return;
+    }
+    setSelectedAssetId(ativo.id);
+    if (ativo?.lat && ativo?.lng) {
+      setFocusedAsset({
+        lat: ativo.lat,
+        lng: ativo.lng,
+        id: ativo.id,
+        tipo: ativo.tipo,
+        zoom: 15,
+        ts: Date.now()
+      });
+    }
+    setActiveTab('catalogo');
+
+    setTimeout(() => {
+      if (ativo?.id && itemRefs.current[ativo.id]) {
+        itemRefs.current[ativo.id].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+    }, 150);
+  };
 
   // 1. Processamento e Normalização de Ativos com Coordenadas, Territórios e Estilos
   const ativosProcessados = useMemo(() => {
@@ -161,6 +195,17 @@ export default function AtivosPage() {
 
     return list;
   }, [territoryAtivos, selectedTipo, searchQuery]);
+
+  const compactAtivosList = useMemo(() => {
+    if (!sidebarSearch.trim()) return filteredAtivosList;
+    const q = sidebarSearch.toLowerCase().trim();
+    return filteredAtivosList.filter(a =>
+      (a.nome && a.nome.toLowerCase().includes(q)) ||
+      (a.sigla && a.sigla.toLowerCase().includes(q)) ||
+      (a.tipo && a.tipo.toLowerCase().includes(q)) ||
+      (a.municipio && a.municipio.toLowerCase().includes(q))
+    );
+  }, [filteredAtivosList, sidebarSearch]);
 
   // 3. Distribuição por Tipos / Categorias de Ativos (com dados empilhados de RNP)
   const categoryStats = useMemo(() => {
@@ -347,7 +392,7 @@ export default function AtivosPage() {
         </div>
       </div>
 
-      {/* GRID DE KPIS COM ALINHAMENTO PROPORCIONAL AO GRID INFERIOR (5 COLUNAS) */}
+      {/* GRID DE KPIS */}
       <div className="w-full relative z-10 shrink-0">
         <div className="grid grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => (
@@ -381,26 +426,152 @@ export default function AtivosPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL: MAPA (calc(40% - 12px)) + DASHBOARD ANALÍTICO (flex-1) */}
+      {/* GRID PRINCIPAL: MAPA (calc(40% - 12px) ou Expandido) + DASHBOARD / KPIS VERTICAIS */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
-        {/* ========================================================================= */}
-        {/* LADO ESQUERDO: MAPA DE PONTOS DE ATIVOS (ALINHADO COM 2 KPIS) */}
-        {/* ========================================================================= */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[460px]">
+        {/* LADO ESQUERDO: MAPA DE PONTOS DE ATIVOS */}
+        <div
+          style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
+          className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-[460px]"
+        >
           <SideMap
             mode="ativos"
             processedAtivos={ativosProcessados}
             focusedAsset={focusedAsset}
             selectedTerritory={selectedTerritory}
             onSelectTerritory={setSelectedTerritory}
+            onAssetClick={handleSelectFromMap}
+            isExpanded={isMapExpanded}
+            onToggleExpand={() => setIsMapExpanded(prev => !prev)}
           />
         </div>
 
-        {/* ========================================================================= */}
-        {/* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS (FLEX-1) */}
-        {/* ========================================================================= */}
-        <div className="flex-1 flex flex-col gap-4 h-full min-h-0">
+        {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
+        {isMapExpanded ? (
+          <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+            {/* CABEÇALHO DA LISTA COMPACTA */}
+            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#E2E8F0]/70 shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
+                  Ativos de CT&I
+                </span>
+                <span className="bg-[#2563EB]/10 text-[#2563EB] text-[9.5px] font-black px-2 py-0.5 rounded-full shrink-0">
+                  {compactAtivosList.length}
+                </span>
+              </div>
+              {selectedAssetId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedAssetId(null);
+                    setFocusedAsset(null);
+                  }}
+                  className="text-[9.5px] font-bold text-[#64748B] hover:text-red-600 bg-[#F1F5F9] hover:bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+                >
+                  <span>Limpar</span>
+                  <X size={10} />
+                </button>
+              )}
+            </div>
+
+            {/* BUSCA COMPACTA */}
+            <div className="relative my-2 shrink-0">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+              <input
+                type="text"
+                value={sidebarSearch}
+                onChange={(e) => setSidebarSearch(e.target.value)}
+                placeholder="Filtrar ativo, tipo ou cidade..."
+                className="w-full pl-7 pr-3 py-1.5 text-[10.5px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors placeholder-[#94A3B8]"
+              />
+              {sidebarSearch && (
+                <button
+                  type="button"
+                  onClick={() => setSidebarSearch('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* LISTA SCROLLÁVEL COMPACTA */}
+            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0">
+              {compactAtivosList.length > 0 ? (
+                compactAtivosList.map((ativo) => {
+                  const IconComp = ativo.icone || Database;
+                  const isSelected = selectedAssetId === ativo.id;
+
+                  return (
+                    <div
+                      key={ativo.id}
+                      ref={(el) => { itemRefs.current[ativo.id] = el; }}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedAssetId(null);
+                          setFocusedAsset(null);
+                        } else {
+                          setSelectedAssetId(ativo.id);
+                          if (ativo.lat && ativo.lng) {
+                            setFocusedAsset({
+                              lat: ativo.lat,
+                              lng: ativo.lng,
+                              id: ativo.id,
+                              tipo: ativo.tipo,
+                              zoom: 15,
+                              ts: Date.now()
+                            });
+                          }
+                        }
+                      }}
+                      className={`p-2 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${
+                        isSelected
+                          ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-xs'
+                          : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-2xs'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div
+                          className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${
+                            isSelected ? 'scale-105 shadow-2xs' : 'group-hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: `${ativo.corHex}18`, color: ativo.corHex }}
+                        >
+                          <IconComp size={12} />
+                        </div>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${
+                            isSelected ? 'text-[#1E40AF]' : 'text-[#1D3557] group-hover:text-[#2563EB]'
+                          }`}>
+                            {ativo.nome}
+                          </h5>
+                          <span className="text-[9.5px] text-[#64748B] truncate leading-tight">
+                            {ativo.shortTipo || ativo.tipo} • <strong className="font-semibold text-[#457B9D]">{ativo.municipio}</strong>
+                          </span>
+                        </div>
+                      </div>
+
+                      {ativo.sigla ? (
+                        <span
+                          className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap"
+                          style={{ backgroundColor: `${ativo.corHex}15`, color: ativo.corHex }}
+                        >
+                          {ativo.sigla}
+                        </span>
+                      ) : null}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-[#94A3B8]">
+                  <p className="text-[11px] font-bold">Nenhum ativo encontrado</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS */
+          <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
           {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
           <div className="bg-white rounded-[24px] p-3 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
@@ -526,25 +697,39 @@ export default function AtivosPage() {
                   {filteredAtivosList.length > 0 ? (
                     filteredAtivosList.map((ativo, idx) => {
                       const IconComponent = ativo.icone || Database;
+                      const isSelected = selectedAssetId === ativo.id;
 
                       return (
                         <div
                           key={ativo.id || idx}
+                          ref={(el) => {
+                            if (el && ativo.id) itemRefs.current[ativo.id] = el;
+                          }}
                           onClick={() => {
-                            if (ativo.lat && ativo.lng) {
-                              setFocusedAsset({
-                                lat: ativo.lat,
-                                lng: ativo.lng,
-                                id: ativo.id,
-                                tipo: ativo.tipo,
-                                zoom: 15,
-                                ts: Date.now()
-                              });
+                            if (isSelected) {
+                              setSelectedAssetId(null);
+                              setFocusedAsset(null);
+                            } else {
+                              setSelectedAssetId(ativo.id);
+                              if (ativo.lat && ativo.lng) {
+                                setFocusedAsset({
+                                  lat: ativo.lat,
+                                  lng: ativo.lng,
+                                  id: ativo.id,
+                                  tipo: ativo.tipo,
+                                  zoom: 15,
+                                  ts: Date.now()
+                                });
+                              }
                             }
                           }}
-                          className={`bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border ${
-                            ativo.rnp ? 'border-l-[3.5px] border-l-[#00B4D8]' : 'border-transparent'
-                          } rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs hover:shadow-xs transition-all duration-200 group cursor-pointer`}
+                          className={`rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border ${
+                            isSelected
+                              ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-md'
+                              : `bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] hover:shadow-xs ${
+                                  ativo.rnp ? 'border-l-[3.5px] border-l-[#00B4D8]' : 'border-transparent'
+                                }`
+                          }`}
                         >
                           <div className="flex items-start gap-3 min-w-0">
                             <div
@@ -936,8 +1121,8 @@ export default function AtivosPage() {
             )}
 
           </div>
-
         </div>
+      )}
 
       </div>
 

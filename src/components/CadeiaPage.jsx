@@ -12,7 +12,8 @@ import {
   Compass,
   CheckCircle2,
   Building2,
-  X
+  X,
+  Search
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
@@ -53,42 +54,14 @@ function findMunicipioCoords(nome) {
   const clean = normalizeName(raw);
 
   if (MUNICIPIOS_COORDS[raw]) return MUNICIPIOS_COORDS[raw];
+  if (MUNICIPIOS_COORDS[clean]) return MUNICIPIOS_COORDS[clean];
   if (MUNICIPIOS_COORDS[raw.toLowerCase()]) return MUNICIPIOS_COORDS[raw.toLowerCase()];
 
   const aliases = {
-    'luis eduardo magalhaes': [-12.0958, -45.7958],
-    'luiz eduardo magalhaes': [-12.0958, -45.7958],
-    'lem': [-12.0958, -45.7958],
-    'juazeiro': [-9.4167, -40.5000],
     'petrolina': [-9.3989, -40.5008],
-    'sao francisco': [-9.4167, -40.5000],
-    'salvador': [-12.9714, -38.5014],
-    'vitoria da conquista': [-14.8661, -40.8394],
-    'feira de santana': [-12.2667, -38.9667],
-    'ilheus': [-14.7889, -39.0494],
-    'itabuna': [-14.7856, -39.2800],
-    'barreiras': [-12.1444, -44.9969],
-    'porto seguro': [-16.4497, -39.0647],
-    'jequie': [-13.8572, -40.0839],
-    'alagoinhas': [-12.1356, -38.4192],
-    'teixeira de freitas': [-17.5358, -39.7425],
-    'paulo afonso': [-9.4058, -38.2178],
-    'senhor do bonfim': [-10.4614, -40.1894],
-    'irece': [-11.3042, -41.8558],
-    'jacobina': [-11.1814, -40.5181],
-    'itapetinga': [-15.2489, -40.2483],
-    'eunapolis': [-16.3778, -39.5842],
-    'santo antonio de jesus': [-12.9694, -39.2611],
-    'saj': [-12.9694, -39.2611],
-    'guanambi': [-14.2233, -42.7814],
-    'valenca': [-13.3705, -39.0731],
-    'serrinha': [-11.6644, -38.9997],
-    'seabra': [-12.4189, -41.7689],
-    'abaira': [-13.2500, -41.6667],
-    'mucuge': [-13.0039, -41.3719],
-    'lencois': [-12.5642, -41.3917],
-    'pintadas': [-11.8333, -39.8833],
-    'ipira': [-12.1583, -40.1500]
+    'sao francisco': [-9.427268, -40.505742],
+    'lem': [-12.087454, -45.796046],
+    'saj': [-12.968813, -39.257965]
   };
 
   if (aliases[clean]) return aliases[clean];
@@ -151,6 +124,7 @@ export default function CadeiaPage() {
   const [activeTab, setActiveTab] = useState('catalogo');
   const [selectedCadeia, setSelectedCadeia] = useState(null);
   const [isMapExpanded, setIsMapExpanded] = useState(false);
+  const [sidebarSearch, setSidebarSearch] = useState('');
 
   const itemRefs = useRef({});
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
@@ -163,7 +137,7 @@ export default function CadeiaPage() {
   };
 
   const handleSelectFromMap = (cadeia) => {
-    if (!cadeia) {
+    if (!cadeia || (selectedCadeia && (selectedCadeia.id_cadeia === cadeia.id_cadeia || selectedCadeia.id === cadeia.id))) {
       setSelectedCadeia(null);
       setFocusedAsset(null);
       return;
@@ -354,6 +328,16 @@ export default function CadeiaPage() {
     if (selectedSegmento) list = list.filter(c => c.segmento === selectedSegmento);
     return list;
   }, [territoryCadeias, selectedTipo, selectedSegmento]);
+
+  const compactCadeiasList = useMemo(() => {
+    if (!sidebarSearch.trim()) return filteredCadeias;
+    const q = sidebarSearch.toLowerCase().trim();
+    return filteredCadeias.filter(c => 
+      (c.entidade && c.entidade.toLowerCase().includes(q)) ||
+      (c.segmento && c.segmento.toLowerCase().includes(q)) ||
+      (c.municipio_sede && c.municipio_sede.toLowerCase().includes(q))
+    );
+  }, [filteredCadeias, sidebarSearch]);
 
   const segmentStats = useMemo(() => {
     if (!filteredCadeias || filteredCadeias.length === 0) return [];
@@ -788,48 +772,46 @@ export default function CadeiaPage() {
         </div>
       </div>
 
-      {/* GRID DE KPIS (Oculto no topo em modo mapa aumentado) */}
-      {!isMapExpanded && (
-        <div className="w-full relative z-10 shrink-0 animate-in fade-in duration-200">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
-            {kpis.map((kpi, index) => (
-              <div
-                key={index}
-                className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
-              >
-                {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
-                <div className="flex items-center justify-between gap-1.5 min-w-0">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
-                      <kpi.icon size={14} strokeWidth={2.5} />
-                    </div>
-                    <span
-                      className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
-                      title={kpi.label}
-                    >
-                      {kpi.label}
-                    </span>
+      {/* GRID DE KPIS */}
+      <div className="w-full relative z-10 shrink-0">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
+          {kpis.map((kpi, index) => (
+            <div
+              key={index}
+              className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
+            >
+              {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
+              <div className="flex items-center justify-between gap-1.5 min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                    <kpi.icon size={14} strokeWidth={2.5} />
                   </div>
-                </div>
-
-                {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
-                <div className="flex items-center justify-center w-full min-w-0 pt-1">
-                  <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
-                    {kpi.value}
+                  <span
+                    className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                    title={kpi.label}
+                  >
+                    {kpi.label}
                   </span>
                 </div>
               </div>
-            ))}
-          </div>
+
+              {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
+              <div className="flex items-center justify-center w-full min-w-0 pt-1">
+                <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                  {kpi.value}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* GRID PRINCIPAL: MAPA (40% ou Expandido) + CARDLISTA ou KPIS VERTICAIS */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4">
         
         {/* MAPA DE CADEIAS */}
         <div
-          style={{ width: isMapExpanded ? 'calc(100% - 250px)' : 'calc(40% - 12px)' }}
+          style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
           className="shrink-0 h-[480px] lg:h-full bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0"
         >
           <SideMap
@@ -847,35 +829,117 @@ export default function CadeiaPage() {
           />
         </div>
 
-        {/* MODO EXPANDIDO: KPIS NA VERTICAL AO LADO DO MAPA */}
+        {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
         {isMapExpanded ? (
-          <div className="w-[230px] shrink-0 h-[480px] lg:h-full flex flex-col justify-between gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
-            {kpis.map((kpi, index) => (
-              <div
-                key={index}
-                className="flex-1 bg-white rounded-[20px] p-3.5 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-200 cursor-default"
-              >
-                {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-6 h-6 rounded-md bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
-                    <kpi.icon size={13} strokeWidth={2.5} />
-                  </div>
-                  <span
-                    className="text-[10px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
-                    title={kpi.label}
-                  >
-                    {kpi.label}
-                  </span>
-                </div>
-
-                {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
-                <div className="flex items-center justify-center w-full min-w-0 pt-0.5">
-                  <span className="text-[26px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
-                    {kpi.value}
-                  </span>
-                </div>
+          <div className="w-[305px] shrink-0 h-[480px] lg:h-full bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+            {/* CABEÇALHO DA LISTA COMPACTA */}
+            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#E2E8F0]/70 shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
+                  Arranjos & IGs
+                </span>
+                <span className="bg-[#2563EB]/10 text-[#2563EB] text-[9.5px] font-black px-2 py-0.5 rounded-full shrink-0">
+                  {compactCadeiasList.length}
+                </span>
               </div>
-            ))}
+              {selectedCadeia && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCadeia(null);
+                    setFocusedAsset(null);
+                  }}
+                  className="text-[9.5px] font-bold text-[#64748B] hover:text-red-600 bg-[#F1F5F9] hover:bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+                >
+                  <span>Limpar</span>
+                  <X size={10} />
+                </button>
+              )}
+            </div>
+
+            {/* BUSCA COMPACTA */}
+            <div className="relative my-2 shrink-0">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+              <input
+                type="text"
+                value={sidebarSearch}
+                onChange={(e) => setSidebarSearch(e.target.value)}
+                placeholder="Filtrar arranjo ou cidade..."
+                className="w-full pl-7 pr-3 py-1.5 text-[10.5px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors placeholder-[#94A3B8]"
+              />
+              {sidebarSearch && (
+                <button
+                  type="button"
+                  onClick={() => setSidebarSearch('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* LISTA SCROLLÁVEL COMPACTA */}
+            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0">
+              {compactCadeiasList.length > 0 ? (
+                compactCadeiasList.map((c, idx) => {
+                  const IconComp = c.icone;
+                  const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
+
+                  return (
+                    <div
+                      key={c.id_cadeia || idx}
+                      ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedCadeia(null);
+                          setFocusedAsset(null);
+                        } else {
+                          setSelectedCadeia(c);
+                          if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
+                        }
+                      }}
+                      className={`p-2 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${
+                        isSelected
+                          ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-xs'
+                          : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-2xs'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div
+                          className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${
+                            isSelected ? 'scale-105 shadow-2xs' : 'group-hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
+                        >
+                          <IconComp size={12} />
+                        </div>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${
+                            isSelected ? 'text-[#1E40AF]' : 'text-[#1D3557] group-hover:text-[#2563EB]'
+                          }`}>
+                            {c.entidade}
+                          </h5>
+                          <span className="text-[9.5px] text-[#64748B] truncate leading-tight">
+                            {c.segmento} • <strong className="font-semibold text-[#457B9D]">{c.municipio_sede}</strong>
+                          </span>
+                        </div>
+                      </div>
+
+                      <span
+                        className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap"
+                        style={{ backgroundColor: `${c.corHex}15`, color: c.corHex }}
+                      >
+                        {c.tipo}
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-[#94A3B8]">
+                  <p className="text-[11px] font-bold">Nenhum arranjo encontrado</p>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           /* LADO DIREITO: BARRA DE SELEÇÃO + CARDLISTA */
