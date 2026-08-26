@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
-import { MapPin, ExternalLink, Layers, Check, ChevronDown, ChevronUp, Building, Flame } from 'lucide-react';
+import { MapPin, ExternalLink, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2 } from 'lucide-react';
 
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
@@ -43,10 +43,10 @@ const buildMunicipioTerritoryMap = () => {
   return m;
 };
 
-// Marcador do Cluster
+// Marcador do Cluster (tamanho constante e uniforme de 20px)
 const createClusterIcon = (count) => {
-  const size = count >= 50 ? 28 : count >= 10 ? 24 : 20;
-  const fontSize = count >= 50 ? 11 : count >= 10 ? 10 : 9;
+  const size = 20;
+  const fontSize = 9.5;
 
   return L.divIcon({
     html: `
@@ -62,9 +62,10 @@ const createClusterIcon = (count) => {
         justify-content: center;
         font-weight: 700;
         font-size: ${fontSize}px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         cursor: pointer;
         font-family: inherit;
+        transform: none !important;
       ">
         ${count}
       </div>
@@ -75,12 +76,12 @@ const createClusterIcon = (count) => {
   });
 };
 
-// Ícone de Ativo Individual (visual padrão, limpo e direto)
-const createSingleAssetIconWithSvg = (corHex, svgMarkup) => {
-  const size = 24;
+// Ícone de Ativo Individual (tamanho compacto e discreto, com destaque quando selecionado)
+const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => {
+  const size = isSelected ? 24 : 18;
   const safeColor = corHex || '#3B82F6';
 
-  const defaultSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
+  const defaultSvg = `<svg width="${isSelected ? 13 : 10}" height="${isSelected ? 13 : 10}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
   const innerSvg = svgMarkup || defaultSvg;
 
   return L.divIcon({
@@ -90,37 +91,39 @@ const createSingleAssetIconWithSvg = (corHex, svgMarkup) => {
         height: ${size}px;
         background-color: ${safeColor};
         color: #ffffff;
-        border: 2px solid #ffffff;
+        border: ${isSelected ? '2.5px solid #1D3557' : '1.5px solid #ffffff'};
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+        box-shadow: ${isSelected ? '0 3px 10px rgba(29, 53, 87, 0.35)' : '0 1px 3px rgba(0, 0, 0, 0.15)'};
         cursor: pointer;
+        transform: none !important;
       ">
         ${innerSvg}
       </div>
     `,
-    className: 'custom-single-asset-marker',
+    className: `custom-single-asset-marker ${isSelected ? 'z-50' : ''}`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2]
   });
 };
-// Marcador compacto para municípios abrangidos
+
+// Marcador micro e discreto para municípios parceiros / abrangidos (6px)
 const partnerPinIcon = L.divIcon({
   html: `
     <div style="
-      background-color: #EF4444;
-      width: 12px;
-      height: 12px;
+      background-color: #3B82F6;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      border: 2px solid #FFFFFF;
-      box-shadow: 0 2px 6px rgba(239,68,68,0.6);
+      border: 1px solid #FFFFFF;
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.3);
     "></div>
   `,
   className: 'partner-map-pin',
-  iconSize: [12, 12],
-  iconAnchor: [6, 6]
+  iconSize: [6, 6],
+  iconAnchor: [3, 3]
 });
 
 export const HEAT_LEVELS = [
@@ -149,18 +152,16 @@ function ZoomDependentTileLayer() {
     zoomend: () => setZoom(map.getZoom())
   });
 
-  return zoom >= 12 ? (
+  return zoom >= 13 ? (
     <TileLayer
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      opacity={0.8}
+      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+      opacity={0.75}
       maxZoom={19}
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     />
   ) : (
     <TileLayer
       url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-      opacity={0.6}
-      attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+      opacity={0.65}
     />
   );
 }
@@ -278,7 +279,7 @@ function SingleAssetPopupContent({ ativo }) {
     <div className="p-2 min-w-[220px] max-w-[260px] flex flex-col gap-1.5 font-sans">
       <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-1">
         <div className="flex items-center gap-1.5 min-w-0">
-          <div 
+          <div
             className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-xs"
             style={{ backgroundColor: ativo.corHex || '#2563EB' }}
           >
@@ -323,7 +324,7 @@ function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, o
     <Marker
       key={elem.key}
       position={[elem.lat, elem.lng]}
-      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg)}
+      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected)}
       eventHandlers={{
         click: (e) => {
           L.DomEvent.stopPropagation(e);
@@ -362,7 +363,48 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
       }
     });
 
-    return Array.from(seen.values());
+    const rawList = Array.from(seen.values());
+
+    // Agrupa ativos que compartilham a mesma localização aproximada (~150m)
+    // e aplica um deslocamento geográfico FIXO e PERMANENTE.
+    // Como é fixado aqui, as coordenadas NUNCA mudam ao dar zoom!
+    const coordGroups = new Map();
+    rawList.forEach((a) => {
+      const cKey = `${Number(a.lat).toFixed(3)}_${Number(a.lng).toFixed(3)}`;
+      if (!coordGroups.has(cKey)) {
+        coordGroups.set(cKey, []);
+      }
+      coordGroups.get(cKey).push(a);
+    });
+
+    const fixedAtivos = [];
+    coordGroups.forEach((group) => {
+      const total = group.length;
+      group.forEach((a, idx) => {
+        let fixedLat = Number(a.lat);
+        let fixedLng = Number(a.lng);
+
+        if (total > 1) {
+          // Deslocamento fixo de ~70 metros na Terra (permanente)
+          const SPREAD = 0.00065;
+          if (total === 2) {
+            fixedLng += (idx === 0 ? -1 : 1) * SPREAD;
+          } else {
+            const angle = (idx / total) * 2 * Math.PI - (Math.PI / 2);
+            fixedLat += SPREAD * Math.sin(angle);
+            fixedLng += SPREAD * Math.cos(angle);
+          }
+        }
+
+        fixedAtivos.push({
+          ...a,
+          lat: fixedLat,
+          lng: fixedLng
+        });
+      });
+    });
+
+    return fixedAtivos;
   }, [processedAtivos]);
 
   const superclusterIndex = useMemo(() => {
@@ -421,7 +463,6 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
 
     const clusters = superclusterIndex.getClusters(bounds, Math.floor(zoom));
     const elements = [];
-    const rawPoints = [];
 
     clusters.forEach((c) => {
       if (c.properties.cluster) {
@@ -434,49 +475,15 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
           key: `cluster-${c.properties.cluster_id}`
         });
       } else {
-        rawPoints.push({
-          lng: c.geometry.coordinates[0],
-          lat: c.geometry.coordinates[1],
-          ativo: c.properties.ativoData,
-          id: c.properties.ativoId
-        });
-      }
-    });
-
-    const groupedByCoord = new Map();
-    rawPoints.forEach((pt) => {
-      const coordKey = `${pt.lat.toFixed(5)}_${pt.lng.toFixed(5)}`;
-      if (!groupedByCoord.has(coordKey)) {
-        groupedByCoord.set(coordKey, []);
-      }
-      groupedByCoord.get(coordKey).push(pt);
-    });
-
-    groupedByCoord.forEach((items) => {
-      const total = items.length;
-      items.forEach((item, idx) => {
-        let finalLat = item.lat;
-        let finalLng = item.lng;
-
-        if (total > 1) {
-          const spreadDistance = 0.00035 * (zoom >= 14 ? 1 : 1.8);
-          if (total === 2) {
-            finalLng += (idx === 0 ? -1 : 1) * spreadDistance;
-          } else {
-            const angle = (idx / total) * 2 * Math.PI;
-            finalLat += spreadDistance * Math.sin(angle);
-            finalLng += spreadDistance * Math.cos(angle);
-          }
-        }
-
+        const ativo = c.properties.ativoData;
         elements.push({
           isCluster: false,
-          lng: finalLng,
-          lat: finalLat,
-          ativo: item.ativo,
-          key: `ativo-${item.id}-${idx}`
+          lng: c.geometry.coordinates[0],
+          lat: c.geometry.coordinates[1],
+          ativo,
+          key: `ativo-${c.properties.ativoId}`
         });
-      });
+      }
     });
 
     return elements;
@@ -524,6 +531,16 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
     </>
   );
 }
+function MapResizeHandler({ isExpanded }) {
+  const map = useMap();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [isExpanded, map]);
+  return null;
+}
 
 export default function SideMap({
   processedAtivos = [],
@@ -533,18 +550,21 @@ export default function SideMap({
   focusedAsset = null,
   selectedTerritory = null,
   selectedCadeia = null,
-  onSelectTerritory = () => {},
+  onSelectTerritory = () => { },
   selectedIES = null,
-  onSelectIES = () => {},
+  onSelectIES = () => { },
   selectedSegmento = null,
-  onSelectSegmento = () => {},
-  onAssetClick = () => {}
+  onSelectSegmento = () => { },
+  onAssetClick = () => { },
+  isExpanded = false,
+  onToggleExpand = null
 }) {
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
   const [pinnedAssetId, setPinnedAssetId] = useState(null);
   const [hoveredTerritory, setHoveredTerritory] = useState(null);
   const [isLayerControlOpen, setIsLayerControlOpen] = useState(false);
+  const [showAllConnections, setShowAllConnections] = useState(false);
 
   useEffect(() => {
     if (focusedAsset) {
@@ -690,12 +710,54 @@ export default function SideMap({
     return list;
   }, [cadeiasData, activeCategoryKeys, selectedSegmento, selectedTerritory, mode]);
 
-  // Linhas de conexão vermelhas limpas (Sede -> Municípios Abrangidos)
+  // Linhas de conexão (Sede -> Municípios Abrangidos) - Modo Individual ou Teia de Conexões Geral
   const connectionLines = useMemo(() => {
-    if (mode !== 'cadeias' || !selectedCadeia || !selectedCadeia.lat || !selectedCadeia.lng) return [];
+    if (mode !== 'cadeias') return [];
+
+    const lines = [];
+
+    if (showAllConnections) {
+      // Modo Teia: conecta todas as cadeias visíveis aos seus respectivos municípios abrangidos
+      const targetCadeias = visibleCadeias.filter(c => c.lat && c.lng);
+
+      targetCadeias.forEach((c) => {
+        const origin = [c.lat, c.lng];
+        const isSelected = selectedCadeia && (String(selectedCadeia.id) === String(c.id) || selectedCadeia.nome === c.nome);
+
+        (c.municipios_cobertos || []).forEach((mun) => {
+          let mLat = mun.lat;
+          let mLng = mun.lng;
+
+          if (!mLat || !mLng) {
+            const fallback = MUNICIPIOS_COORDS[mun.nome_municipio] || MUNICIPIOS_COORDS[mun.nome_municipio?.toLowerCase()];
+            if (fallback) {
+              mLat = fallback[0];
+              mLng = fallback[1];
+            }
+          }
+
+          if (mLat && mLng) {
+            const isSamePoint = Math.abs(mLat - c.lat) < 0.001 && Math.abs(mLng - c.lng) < 0.001;
+            if (!isSamePoint) {
+              lines.push({
+                positions: [origin, [mLat, mLng]],
+                municipio: mun.nome_municipio,
+                territorio: mun.nome_territorio,
+                cadeiaNome: c.nome || c.cadeia_produtiva,
+                isSelected
+              });
+            }
+          }
+        });
+      });
+
+      return lines;
+    }
+
+    // Modo Padrão: exibe apenas da cadeia selecionada
+    if (!selectedCadeia || !selectedCadeia.lat || !selectedCadeia.lng) return [];
 
     const origin = [selectedCadeia.lat, selectedCadeia.lng];
-    const lines = [];
 
     (selectedCadeia.municipios_cobertos || []).forEach((mun) => {
       let mLat = mun.lat;
@@ -715,14 +777,41 @@ export default function SideMap({
           lines.push({
             positions: [origin, [mLat, mLng]],
             municipio: mun.nome_municipio,
-            territorio: mun.nome_territorio
+            territorio: mun.nome_territorio,
+            cadeiaNome: selectedCadeia.nome || selectedCadeia.cadeia_produtiva,
+            isSelected: true
           });
         }
       }
     });
 
     return lines;
-  }, [mode, selectedCadeia]);
+  }, [mode, showAllConnections, visibleCadeias, selectedCadeia]);
+
+  // Municípios parceiros únicos para renderização consolidada dos pinos
+  const uniquePartnerMunicipios = useMemo(() => {
+    if (mode !== 'cadeias' || connectionLines.length === 0) return [];
+
+    const mapMuns = new Map();
+    connectionLines.forEach((line) => {
+      const key = normalizeName(line.municipio);
+      if (!mapMuns.has(key)) {
+        mapMuns.set(key, {
+          position: line.positions[1],
+          municipio: line.municipio,
+          territorio: line.territorio,
+          count: 1,
+          isSelected: line.isSelected
+        });
+      } else {
+        const existing = mapMuns.get(key);
+        existing.count += 1;
+        if (line.isSelected) existing.isSelected = true;
+      }
+    });
+
+    return Array.from(mapMuns.values());
+  }, [mode, connectionLines]);
 
   // Estatísticas
   const cursosStatsByTerritory = useMemo(() => {
@@ -929,16 +1018,17 @@ export default function SideMap({
         scrollWheelZoom={true}
         className="w-full h-full z-0 flex-1 min-h-0 outline-none"
         zoomControl={false}
-        style={{ background: 'transparent' }}
+        attributionControl={false}
       >
+        <MapResizeHandler isExpanded={isExpanded} />
         <ZoomDependentTileLayer />
-        <MapClickHandler 
-          onClearPinned={() => setPinnedAssetId(null)} 
+        <MapClickHandler
+          onClearPinned={() => setPinnedAssetId(null)}
           onClearTerritory={() => onSelectTerritory(null)}
         />
-        <TerritoryFocusController 
-          selectedTerritory={selectedTerritory} 
-          geoJsonLayersByTerritoryRef={geoJsonLayersByTerritoryRef} 
+        <TerritoryFocusController
+          selectedTerritory={selectedTerritory}
+          geoJsonLayersByTerritoryRef={geoJsonLayersByTerritoryRef}
         />
         <CadeiaFocusController selectedCadeia={selectedCadeia} />
 
@@ -953,41 +1043,46 @@ export default function SideMap({
 
         {focusedAsset && <ChangeMapView coords={focusedAsset} />}
 
-        {/* LINHAS VERMELHAS E TAGS FLUTUANTES DOS MUNICÍPIOS ABRANGIDOS */}
+        {/* TEIA DE CONEXÕES / LINHAS DE ABRANGÊNCIA */}
         {mode === 'cadeias' && connectionLines.map((line, idx) => (
-          <React.Fragment key={`conn-line-${idx}`}>
-            <Polyline
-              positions={line.positions}
-              pathOptions={{
-                color: '#EF4444',
-                weight: 2,
-                opacity: 0.85,
-                dashArray: '6, 6'
-              }}
-            />
+          <Polyline
+            key={`conn-line-${idx}`}
+            positions={line.positions}
+            pathOptions={{
+              color: line.isSelected ? '#1D3557' : '#60A5FA',
+              weight: line.isSelected ? 2 : 0.75,
+              opacity: line.isSelected ? 0.9 : 0.18,
+              dashArray: null
+            }}
+          />
+        ))}
 
-            {/* PINO E TAG LIMPA NO MUNICÍPIO PARCEIRO */}
-            <Marker position={line.positions[1]} icon={partnerPinIcon}>
-              <Tooltip 
-                direction="bottom" 
-                offset={[0, 4]} 
-                opacity={0.98} 
-                permanent 
-                className="clean-city-tooltip"
-              >
-                <span className="text-[9.5px] font-black text-red-600 bg-white/95 px-2 py-0.5 rounded-md shadow-sm border border-red-200">
-                  {line.municipio}
-                </span>
-              </Tooltip>
-            </Marker>
-          </React.Fragment>
+        {/* PINOS E TAGS LIMPAS DOS MUNICÍPIOS ABRANGIDOS */}
+        {mode === 'cadeias' && uniquePartnerMunicipios.map((p, idx) => (
+          <Marker key={`partner-pin-${p.municipio}-${idx}`} position={p.position} icon={partnerPinIcon}>
+            <Tooltip
+              direction="top"
+              offset={[0, -4]}
+              opacity={0.98}
+              permanent={!showAllConnections && p.isSelected}
+              className="clean-city-tooltip"
+            >
+              <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
+                p.isSelected
+                  ? 'text-white bg-[#1D3557] border-[#1D3557] font-bold'
+                  : 'text-[#1D3557] bg-white/95 backdrop-blur-xs border-[#E2E8F0]'
+              }`}>
+                {p.municipio}
+              </span>
+            </Tooltip>
+          </Marker>
         ))}
 
         {/* PINOS DOS ATIVOS OU CADEIAS */}
         {(mode === 'ativos' || mode === 'cadeias') && (
-          <SuperclusteredMarkers 
-            processedAtivos={mode === 'cadeias' ? visibleCadeias : visibleAtivos} 
-            pinnedAssetId={pinnedAssetId} 
+          <SuperclusteredMarkers
+            processedAtivos={mode === 'cadeias' ? visibleCadeias : visibleAtivos}
+            pinnedAssetId={pinnedAssetId}
             setPinnedAssetId={setPinnedAssetId}
             onAssetClick={onAssetClick}
             selectedCadeia={selectedCadeia}
@@ -1042,30 +1137,75 @@ export default function SideMap({
       )}
 
       {/* ========================================================================= */}
-      {/* CONTROLE DE CAMADAS COM ÍCONES (ATIVOS OU ÁREAS DE CURSOS) */}
+      {/* CONTROLES SUPERIORES (TEIA DE CONEXÕES + FILTRO DE CAMADAS/TIPOS + EXPANDIR) */}
       {/* ========================================================================= */}
-      <div className="absolute top-3 right-3 z-[400] flex flex-col items-end">
-        <button
-          type="button"
-          onClick={() => setIsLayerControlOpen(!isLayerControlOpen)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
-            isLayerControlOpen
-              ? 'bg-[#1D3557] text-white border-[#1D3557]'
-              : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
-          }`}
-        >
-          <Layers size={13} className={isLayerControlOpen ? 'text-white' : 'text-[#2563EB]'} />
-          <span>{mode === 'cursos' ? 'Áreas' : mode === 'cadeias' ? 'Tipos' : 'Camadas'}</span>
-          <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${
-            isLayerControlOpen ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-[#457B9D]'
-          }`}>
-            {activeCategoryKeys.size}/{allCategories.length}
-          </span>
-          {isLayerControlOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-        </button>
+      <div className="absolute top-3 right-3 z-[400] flex items-start gap-2">
+        {mode === 'cadeias' && (
+          <button
+            type="button"
+            onClick={() => setShowAllConnections((prev) => !prev)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
+              showAllConnections
+                ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
+                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+            }`}
+            title={showAllConnections ? "Desativar teia de conexões" : "Visualizar teia com todas as conexões simultâneas das cadeias"}
+          >
+            <Network size={13} className={showAllConnections ? 'text-[#00B4D8]' : 'text-[#2563EB]'} />
+            <span>Teia de Conexões</span>
+            <span
+              className={`w-2 h-2 rounded-full transition-all ${
+                showAllConnections ? 'bg-[#00B4D8] animate-pulse scale-110' : 'bg-[#CBD5E1]'
+              }`}
+            />
+          </button>
+        )}
+
+        {onToggleExpand && (
+          <button
+            type="button"
+            onClick={onToggleExpand}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
+              isExpanded
+                ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
+                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+            }`}
+            title={isExpanded ? "Restaurar visualização padrão (mapa e lista)" : "Modo aumentado (expandir mapa com KPIs na vertical)"}
+          >
+            {isExpanded ? (
+              <>
+                <Minimize2 size={13} className="text-[#00B4D8]" />
+                <span>Modo Normal</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 size={13} className="text-[#2563EB]" />
+                <span>Expandir</span>
+              </>
+            )}
+          </button>
+        )}
+
+        <div className="relative flex flex-col items-end">
+          <button
+            type="button"
+            onClick={() => setIsLayerControlOpen(!isLayerControlOpen)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${isLayerControlOpen
+                ? 'bg-[#1D3557] text-white border-[#1D3557]'
+                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+              }`}
+          >
+            <Layers size={13} className={isLayerControlOpen ? 'text-white' : 'text-[#2563EB]'} />
+            <span>{mode === 'cursos' ? 'Áreas' : mode === 'cadeias' ? 'Tipos' : 'Camadas'}</span>
+            <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${isLayerControlOpen ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-[#457B9D]'
+              }`}>
+              {activeCategoryKeys.size}/{allCategories.length}
+            </span>
+            {isLayerControlOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          </button>
 
         {isLayerControlOpen && (
-          <div className="mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95">
+          <div className="absolute right-0 top-full mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 z-50">
             <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-1 px-1">
               <span className="text-[9.5px] font-extrabold text-[#A0AEC0] uppercase tracking-wider">
                 {mode === 'cursos' ? 'Filtrar por Área' : mode === 'cadeias' ? `Tipos (${visibleCadeias.length} cadeias)` : `Tipos (${visibleAtivos.length} ativos)`}
@@ -1099,19 +1239,17 @@ export default function SideMap({
                     key={cat.key}
                     type="button"
                     onClick={() => toggleCategory(cat.key)}
-                    className={`w-full flex items-center justify-between px-2 py-1.5 rounded-xl text-[10.5px] font-semibold transition-colors cursor-pointer text-left ${
-                      isActive
+                    className={`w-full flex items-center justify-between px-2 py-1.5 rounded-xl text-[10.5px] font-semibold transition-colors cursor-pointer text-left ${isActive
                         ? 'bg-[#F8FAFC] text-[#1D3557] hover:bg-[#F1F5F9]'
                         : 'text-gray-400 hover:bg-gray-50'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <div
-                        className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${
-                          isActive
+                        className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${isActive
                             ? 'border-transparent text-white'
                             : 'border-[#CBD5E1] bg-white'
-                        }`}
+                          }`}
                         style={{ backgroundColor: isActive ? cat.corHex : 'transparent' }}
                       >
                         {isActive && <Check size={10} strokeWidth={3} />}
@@ -1123,9 +1261,8 @@ export default function SideMap({
                         </span>
                       </div>
                     </div>
-                    <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${
-                      isActive ? 'text-[#457B9D]' : 'text-gray-300'
-                    }`}>
+                    <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${isActive ? 'text-[#457B9D]' : 'text-gray-300'
+                      }`}>
                       {cat.count}
                     </span>
                   </button>
@@ -1134,6 +1271,7 @@ export default function SideMap({
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* CONTROLES DE ZOOM E LIMPEZA */}
@@ -1162,11 +1300,10 @@ export default function SideMap({
             onSelectSegmento?.(null);
             onAssetClick?.(null);
           }}
-          className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
-            hasActiveFilter
+          className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${hasActiveFilter
               ? 'text-red-500 bg-red-50 hover:bg-red-100'
               : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
-          }`}
+            }`}
           title="Limpar filtros"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

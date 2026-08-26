@@ -33,3 +33,19 @@
   scrollbar-width: thin;
   scrollbar-color: #A8DADC transparent;
 }
+
+/* Remover atribuição/marca d'água do Leaflet */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* Tooltip limpo e sem borda nativa do Leaflet */
+.leaflet-tooltip.clean-city-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.leaflet-tooltip.clean-city-tooltip::before {
+  display: none !important;
+}

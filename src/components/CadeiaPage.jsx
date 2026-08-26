@@ -150,6 +150,7 @@ export default function CadeiaPage() {
   const [selectedTipo, setSelectedTipo] = useState('todos');
   const [activeTab, setActiveTab] = useState('catalogo');
   const [selectedCadeia, setSelectedCadeia] = useState(null);
+  const [isMapExpanded, setIsMapExpanded] = useState(false);
 
   const itemRefs = useRef({});
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
@@ -787,33 +788,50 @@ export default function CadeiaPage() {
         </div>
       </div>
 
-      {/* GRID DE KPIS */}
-      <div className="w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
-          {kpis.map((kpi, index) => (
-            <div
-              key={index}
-              className="h-[84px] bg-white rounded-[22px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/60 shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-300 group overflow-hidden text-center px-3 py-1.5 cursor-default"
-            >
-              <div className="w-6 h-6 rounded-lg bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110">
-                <kpi.icon size={14} strokeWidth={2.5} />
-              </div>
-              <span className="text-lg lg:text-xl font-black text-[#1D3557] tracking-tight leading-none mb-1 whitespace-nowrap">
-                {kpi.value}
-              </span>
-              <span className="text-[#457B9D] text-[8.5px] uppercase font-extrabold tracking-widest truncate max-w-full">
-                {kpi.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* GRID DE KPIS (Oculto no topo em modo mapa aumentado) */}
+      {!isMapExpanded && (
+        <div className="w-full relative z-10 shrink-0 animate-in fade-in duration-200">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
+            {kpis.map((kpi, index) => (
+              <div
+                key={index}
+                className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
+              >
+                {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
+                <div className="flex items-center justify-between gap-1.5 min-w-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                      <kpi.icon size={14} strokeWidth={2.5} />
+                    </div>
+                    <span
+                      className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                      title={kpi.label}
+                    >
+                      {kpi.label}
+                    </span>
+                  </div>
+                </div>
 
-      {/* GRID PRINCIPAL: MAPA (40%) + CARDLISTA (60%) */}
+                {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
+                <div className="flex items-center justify-center w-full min-w-0 pt-1">
+                  <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                    {kpi.value}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* GRID PRINCIPAL: MAPA (40% ou Expandido) + CARDLISTA ou KPIS VERTICAIS */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4">
         
-        {/* LADO ESQUERDO: MAPA DE CADEIAS */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 h-[480px] lg:h-full bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0">
+        {/* MAPA DE CADEIAS */}
+        <div
+          style={{ width: isMapExpanded ? 'calc(100% - 250px)' : 'calc(40% - 12px)' }}
+          className="shrink-0 h-[480px] lg:h-full bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0"
+        >
           <SideMap
             mode="cadeias"
             cadeiasData={filteredCadeias}
@@ -824,11 +842,44 @@ export default function CadeiaPage() {
             selectedSegmento={selectedSegmento}
             onSelectSegmento={setSelectedSegmento}
             onAssetClick={handleSelectFromMap}
+            isExpanded={isMapExpanded}
+            onToggleExpand={() => setIsMapExpanded(prev => !prev)}
           />
         </div>
 
-        {/* LADO DIREITO: BARRA DE SELEÇÃO + CARDLISTA */}
-        <div className="flex-1 h-[480px] lg:h-full min-h-0 min-w-0 flex flex-col gap-3">
+        {/* MODO EXPANDIDO: KPIS NA VERTICAL AO LADO DO MAPA */}
+        {isMapExpanded ? (
+          <div className="w-[230px] shrink-0 h-[480px] lg:h-full flex flex-col justify-between gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
+            {kpis.map((kpi, index) => (
+              <div
+                key={index}
+                className="flex-1 bg-white rounded-[20px] p-3.5 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-200 cursor-default"
+              >
+                {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-6 h-6 rounded-md bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                    <kpi.icon size={13} strokeWidth={2.5} />
+                  </div>
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                    title={kpi.label}
+                  >
+                    {kpi.label}
+                  </span>
+                </div>
+
+                {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
+                <div className="flex items-center justify-center w-full min-w-0 pt-0.5">
+                  <span className="text-[26px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                    {kpi.value}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* LADO DIREITO: BARRA DE SELEÇÃO + CARDLISTA */
+          <div className="flex-1 h-[480px] lg:h-full min-h-0 min-w-0 flex flex-col gap-3 animate-in fade-in duration-200">
           
           {/* BARRA DE SELEÇÃO ATIVA (ESTILO EXATO DA PÁGINA DE ATIVOS) */}
           {activeSelectionName && (
@@ -872,8 +923,8 @@ export default function CadeiaPage() {
               searchPlaceholder="Buscar cadeia, segmento ou cidade..."
             />
           </div>
-
         </div>
+      )}
 
       </div>
 

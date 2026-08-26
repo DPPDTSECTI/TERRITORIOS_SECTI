@@ -339,6 +339,7 @@ export default function PtiMap({
                     // ==========================================
 
                     zoomControl={false}
+                    attributionControl={false}
                     scrollWheelZoom={true}
                     doubleClickZoom={false}
                     className="w-full h-full outline-none z-0"

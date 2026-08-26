@@ -349,21 +349,33 @@ export default function AtivosPage() {
 
       {/* GRID DE KPIS COM ALINHAMENTO PROPORCIONAL AO GRID INFERIOR (5 COLUNAS) */}
       <div className="w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-5 gap-5 items-stretch w-full">
+        <div className="grid grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="h-[88px] bg-white rounded-[22px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/60 shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-300 group overflow-hidden text-center px-3 py-2 cursor-default"
+              className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
             >
-              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110">
-                <kpi.icon size={15} strokeWidth={2.5} />
+              {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
+              <div className="flex items-center justify-between gap-1.5 min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                    <kpi.icon size={14} strokeWidth={2.5} />
+                  </div>
+                  <span
+                    className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                    title={kpi.label}
+                  >
+                    {kpi.label}
+                  </span>
+                </div>
               </div>
-              <span className="text-xl font-black text-[#1D3557] tracking-tight leading-none mb-1 whitespace-nowrap">
-                {kpi.value}
-              </span>
-              <span className="text-[#457B9D] text-[8.5px] uppercase font-extrabold tracking-widest truncate max-w-full">
-                {kpi.label}
-              </span>
+
+              {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
+              <div className="flex items-center justify-center w-full min-w-0 pt-1">
+                <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                  {kpi.value}
+                </span>
+              </div>
             </div>
           ))}
         </div>
@@ -672,22 +684,23 @@ export default function AtivosPage() {
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              {cat.rnpCount > 0 && (
-                                <span
-                                  className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
-                                  title={`${cat.rnpCount} ativo(s) com conexão RNP`}
-                                >
-                                  {cat.rnpCount} RNP
-                                </span>
-                              )}
                               <span className="text-[12px] font-black text-[#1D3557]">
                                 {cat.count} {cat.count === 1 ? 'ativo' : 'ativos'}
                               </span>
                               <span
                                 className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#3B82F6]/10 text-[#2563EB]"
+                                title={`${cat.percent}% do total de ativos`}
                               >
                                 {cat.percent}%
                               </span>
+                              {cat.rnpCount > 0 && (
+                                <span
+                                  className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
+                                  title={`${cat.rnpCount} de ${cat.count} ativo(s) com conexão RNP (${cat.rnpPercent.toFixed(1)}%)`}
+                                >
+                                  {cat.rnpCount} RNP ({cat.rnpPercent % 1 === 0 ? cat.rnpPercent.toFixed(0) : cat.rnpPercent.toFixed(1)}%)
+                                </span>
+                              )}
                             </div>
                           </div>
 
@@ -831,20 +844,20 @@ export default function AtivosPage() {
                           </div>
 
                           <div className="flex items-center gap-1.5 shrink-0">
-                            {m.rnpCount > 0 && (
-                              <span
-                                className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
-                                title={`${m.rnpCount} ativo(s) com conexão RNP`}
-                              >
-                                {m.rnpCount} RNP
-                              </span>
-                            )}
                             <span
                               className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#3B82F6] text-white shadow-2xs"
                               title={`Total: ${m.count} ativo(s)`}
                             >
                               {m.count} {m.count === 1 ? 'ativo' : 'ativos'}
                             </span>
+                            {m.rnpCount > 0 && (
+                              <span
+                                className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
+                                title={`${m.rnpCount} de ${m.count} ativo(s) com conexão RNP (${m.rnpPercent.toFixed(1)}%)`}
+                              >
+                                {m.rnpCount} RNP ({m.rnpPercent % 1 === 0 ? m.rnpPercent.toFixed(0) : m.rnpPercent.toFixed(1)}%)
+                              </span>
+                            )}
                           </div>
                         </div>
                       ))
@@ -900,20 +913,20 @@ export default function AtivosPage() {
                         </div>
 
                         <div className="flex items-center gap-1.5 shrink-0">
-                          {t.rnpCount > 0 && (
-                            <span
-                              className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
-                              title={`${t.rnpCount} ativo(s) com conexão RNP`}
-                            >
-                              {t.rnpCount} RNP
-                            </span>
-                          )}
                           <span
                             className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#3B82F6] text-white shadow-2xs"
                             title={`Total: ${t.count} ativo(s)`}
                           >
                             {t.count} {t.count === 1 ? 'ativo' : 'ativos'}
                           </span>
+                          {t.rnpCount > 0 && (
+                            <span
+                              className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/25 shadow-2xs"
+                              title={`${t.rnpCount} de ${t.count} ativo(s) com conexão RNP (${t.rnpPercent.toFixed(1)}%)`}
+                            >
+                              {t.rnpCount} RNP ({t.rnpPercent % 1 === 0 ? t.rnpPercent.toFixed(0) : t.rnpPercent.toFixed(1)}%)
+                            </span>
+                          )}
                         </div>
                       </div>
                     ))

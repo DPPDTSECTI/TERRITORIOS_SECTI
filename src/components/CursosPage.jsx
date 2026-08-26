@@ -270,21 +270,33 @@ export default function CursosPage() {
 
       {/* GRID DE KPIS COM ALINHAMENTO PROPORCIONAL AO GRID INFERIOR (5 COLUNAS) */}
       <div className="w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-5 gap-5 items-stretch w-full">
+        <div className="grid grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="h-[88px] bg-white rounded-[22px] flex flex-col items-center justify-center relative border border-transparent hover:border-[#D6EAF8]/60 shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] transition-all duration-300 group overflow-hidden text-center px-3 py-2 cursor-default"
+              className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
             >
-              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8] text-[#457B9D] flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110">
-                <kpi.icon size={15} strokeWidth={2.5} />
+              {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
+              <div className="flex items-center justify-between gap-1.5 min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                    <kpi.icon size={14} strokeWidth={2.5} />
+                  </div>
+                  <span
+                    className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                    title={kpi.label}
+                  >
+                    {kpi.label}
+                  </span>
+                </div>
               </div>
-              <span className="text-xl font-black text-[#1D3557] tracking-tight leading-none mb-1 whitespace-nowrap">
-                {kpi.value}
-              </span>
-              <span className="text-[#457B9D] text-[8.5px] uppercase font-extrabold tracking-widest truncate max-w-full">
-                {kpi.label}
-              </span>
+
+              {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
+              <div className="flex items-center justify-center w-full min-w-0 pt-1">
+                <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                  {kpi.value}
+                </span>
+              </div>
             </div>
           ))}
         </div>
