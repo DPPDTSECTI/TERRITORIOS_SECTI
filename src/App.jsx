@@ -42,6 +42,7 @@ const AdminPage = lazy(() => import('./components/AdminPage'));
 const AtivosPage = lazy(() => import('./components/AtivosPage'));
 const CadeiaPage = lazy(() => import('./components/CadeiaPage'));
 const CursosPage = lazy(() => import('./components/CursosPage'));
+const RelatorioPage = lazy(() => import('./components/RelatorioPage'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -87,7 +88,7 @@ function PageScrollNavigator() {
   useEffect(() => {
     const handleWheel = (e) => {
       // 1. Ignora páginas fora do fluxo de módulos
-      if (location.pathname === '/' || location.pathname === '/admin' || location.pathname === '/sobre') return;
+      if (location.pathname === '/' || location.pathname === '/admin' || location.pathname === '/sobre' || location.pathname === '/relatorio') return;
 
       // 2. REGRA ESTRITA: Se o cursor estiver sobre QUALQUER lista interna, tabela, catálogo ou mapa, NUNCA troca de página!
       const target = e.target;
@@ -146,7 +147,7 @@ function TopFixedBar() {
   if (location.pathname === '/' || location.pathname === '/admin') return null;
 
   return (
-    <div className="fixed top-6 right-6 lg:top-8 lg:right-8 z-[100] flex items-center gap-3 pointer-events-auto select-none">
+    <div className="fixed top-6 right-6 lg:top-8 lg:right-8 z-[100] flex items-center gap-3 pointer-events-auto select-none print:hidden">
       <UserHeaderProfile />
     </div>
   );
@@ -180,7 +181,7 @@ function AnimatedRoutes() {
   const isHome = location.pathname === '/';
 
   return (
-    <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#F0F7FD] text-[#1D3557] overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans`}>
+    <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#F0F7FD] text-[#1D3557] overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-white`}>
       
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">
@@ -191,7 +192,7 @@ function AnimatedRoutes() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -50, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="h-screen sticky top-0 z-50 flex-shrink-0"
+            className="h-screen sticky top-0 z-50 flex-shrink-0 print:hidden"
           >
             <Sidebar 
               username="Gestor BA" 
@@ -202,7 +203,7 @@ function AnimatedRoutes() {
       </AnimatePresence>
 
       {/* ÁREA PRINCIPAL COM HEADER FIXO */}
-      <div className={`flex-1 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent`}>
+      <div className={`flex-1 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
         {!isHome && <TopFixedBar />}
 
         <AnimatePresence mode="wait">
@@ -213,6 +214,7 @@ function AnimatedRoutes() {
             <Route path="/ativos" element={<PageWrapper><AtivosPage /></PageWrapper>} />
             <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
             <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
+            <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />
             <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
