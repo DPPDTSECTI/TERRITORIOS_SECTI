@@ -3,14 +3,14 @@ import { supabase } from '../services/supabase';
 
 export const DataContext = createContext();
 
-// Força nova versão do cache
-const CACHE_KEY = '@SectiPainel_Data_v8_FULL'; 
+const CACHE_KEY = '@SectiPainel_Data_v10_NO_EAD';
 const CACHE_TIME_MS = 15 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
   const [territoriosData, setTerritoriosData] = useState([]);
   const [ativosData, setAtivosData] = useState([]);
   const [cursosData, setCursosData] = useState([]);
+  const [cursosEadData, setCursosEadData] = useState([]);
   const [distribuicaoCadeias, setDistribuicaoCadeias] = useState([]);
   const [listaCadeias, setListaCadeias] = useState([]);
   const [municipiosTerritorios, setMunicipiosTerritorios] = useState([]);
@@ -26,19 +26,17 @@ export const DataProvider = ({ children }) => {
     const carregarEstatisticas = async () => {
       // 1. TENTA LER DO CACHE
       const cachedDataStr = localStorage.getItem(CACHE_KEY);
-      let isCacheValid = false;
 
       if (cachedDataStr) {
         try {
           const cache = JSON.parse(cachedDataStr);
           const idadeDoCache = Date.now() - cache.timestamp;
 
-          // Só considera válido se distCadeias tiver mais de 88 registros (ou seja, a relação 1:N real)
           if (cache.distCadeias && cache.distCadeias.length > 88 && idadeDoCache < CACHE_TIME_MS) {
-            console.log(`⚡ Cache V8 Carregado com Sucesso: ${cache.distCadeias.length} linhas de distribuição.`);
             setTerritoriosData(cache.stats || []);
             setAtivosData(cache.ativos || []);
             setCursosData(cache.cursos || []);
+            setCursosEadData(cache.cursosEad || []);
             setDistribuicaoCadeias(cache.distCadeias || []);
             setListaCadeias(cache.listaCadeias || []);
             setMunicipiosTerritorios(cache.munTer || []);
@@ -46,22 +44,16 @@ export const DataProvider = ({ children }) => {
             setTiposCursos(cache.tiposCursos || []);
             setTiposCadeias(cache.tiposCadeias || []);
             setLoadingStats(false);
-            isCacheValid = true;
             return;
           }
         } catch (e) {
-          console.warn("Limpando cache inconsistente...", e);
           localStorage.removeItem(CACHE_KEY);
         }
       }
 
-      if (!isCacheValid) {
-        setLoadingStats(true);
-      }
+      setLoadingStats(true);
 
-      // 2. BUSCA DO SUPABASE COM RANGE EXPLÍCITO (IGNORA LIMITE DE 1000 LINHAS)
-      console.log("🌐 Buscando dados completos do Supabase...");
-      
+      // 2. BUSCA DO SUPABASE
       const [
         statsRes, 
         ativosRes, 
@@ -77,7 +69,7 @@ export const DataProvider = ({ children }) => {
         supabase.from('stats_ti').select('*'),
         supabase.from('lista_ativos_cti').select('*').range(0, 3000),
         supabase.from('lista_cursos_cti').select('*').range(0, 3000),
-        supabase.from('distribuicao_cadeias').select('*').range(0, 4999), // <-- Força a leitura completa de todas as linhas da relação 1:N
+        supabase.from('distribuicao_cadeias').select('*').range(0, 4999),
         supabase.from('lista_cadeia_produtiva').select('*').range(0, 1000),
         supabase.from('lista_municipioxterritorio').select('*').range(0, 1000),
         supabase.from('tipo_ativos').select('*'),
@@ -86,33 +78,47 @@ export const DataProvider = ({ children }) => {
         supabase.from('cursos').select('id_curso, ead').range(0, 3000)
       ]);
 
-      // LOG DE DIAGNÓSTICO DIRETO NO SEU NAVEGADOR
-      console.log("📊 RESUMO DAS RESPOSTAS DO BANCO:");
-      console.log("-> distribuicao_cadeias:", distCadeiasRes.data?.length || 0, "linhas", distCadeiasRes.error ? `[ERRO: ${distCadeiasRes.error.message}]` : "OK");
-      console.log("-> lista_cadeia_produtiva:", listaCadeiasRes.data?.length || 0, "linhas", listaCadeiasRes.error ? `[ERRO: ${listaCadeiasRes.error.message}]` : "OK");
+      // Mapeamento explícito de EAD da tabela base
+      const eadMap = new Map((cursosRawRes.data || []).map(r => [r.id_curso, Boolean(r.ead)]));
 
-      // Tratamento do IFDM
+      // Separação estrita: Somente cursos presenciais entram no fluxo principal
+      const todosCursos = (cursosRes.data || []).map(c => ({
+        ...c,
+        ead: eadMap.get(c.id) ?? Boolean(c.ead) ?? false
+      }));
+
+      const cursosPresenciais = todosCursos.filter(c => c.ead === false);
+      const cursosEad = todosCursos.filter(c => c.ead === true);
+
+      // Recalcula a contagem de cursos presenciais por território para quebrar o número inflado da view
+      const contagemCursosPresenciaisPorTerritorio = {};
+      cursosPresenciais.forEach(c => {
+        const idTerr = c.id_territorio;
+        if (idTerr) {
+          contagemCursosPresenciaisPorTerritorio[idTerr] = (contagemCursosPresenciaisPorTerritorio[idTerr] || 0) + 1;
+        }
+      });
+
       const dadosTratados = (statsRes.data || []).map(t => {
         let ifdmFormatado = null;
         if (t.media_ifdm) {
           const match = String(t.media_ifdm).match(/^-?\d+(?:\.\d{0,3})?/);
           ifdmFormatado = match ? Number(match[0]).toFixed(3) : null;
         }
-        return { ...t, media_ifdm: ifdmFormatado };
+        return { 
+          ...t, 
+          media_ifdm: ifdmFormatado,
+          // Substitui a contagem estática pela contagem estrita de cursos presenciais
+          qtd_cursos_cti: contagemCursosPresenciaisPorTerritorio[t.id_territorio] || 0
+        };
       });
-
-      // Mapeamento e união da coluna ead nos cursos
-      const eadMap = new Map((cursosRawRes.data || []).map(r => [r.id_curso, r.ead]));
-      const cursosTratados = (cursosRes.data || []).map(c => ({
-        ...c,
-        ead: eadMap.get(c.id) ?? false
-      }));
 
       // 3. GRAVA NO CACHE
       const novoCache = {
         stats: dadosTratados,
         ativos: ativosRes.data || [],
-        cursos: cursosTratados,
+        cursos: cursosPresenciais,
+        cursosEad: cursosEad,
         distCadeias: distCadeiasRes.data || [],
         listaCadeias: listaCadeiasRes.data || [],
         munTer: munTerRes.data || [],
@@ -131,6 +137,7 @@ export const DataProvider = ({ children }) => {
       setTerritoriosData(novoCache.stats);
       setAtivosData(novoCache.ativos);
       setCursosData(novoCache.cursos);
+      setCursosEadData(novoCache.cursosEad);
       setDistribuicaoCadeias(novoCache.distCadeias);
       setListaCadeias(novoCache.listaCadeias);
       setMunicipiosTerritorios(novoCache.munTer);
@@ -144,7 +151,6 @@ export const DataProvider = ({ children }) => {
     carregarEstatisticas();
   }, []);
 
-  // KPIs DINÂMICOS
   const territoriesDynamicStats = useMemo(() => {
     const stats = {};
     territoriosData.forEach(t => {
@@ -152,6 +158,7 @@ export const DataProvider = ({ children }) => {
         matchesFilters: true, 
         ifdm: t.media_ifdm ? Number(t.media_ifdm).toFixed(3) : '-',
         capacidadeCti: t.ativos_cti || 0,
+        qtdCursos: t.qtd_cursos_cti || 0,
         cadeiasIgs: t.cadeias_produtivas || 0,
         pctSemiarido: t.pct_semiarido || 0,
       };
@@ -185,7 +192,8 @@ export const DataProvider = ({ children }) => {
     <DataContext.Provider value={{ 
       territoriosData, 
       ativosData, 
-      cursosData,
+      cursosData, // Retorna exclusivamente cursos onde ead = false
+      cursosEadData,
       distribuicaoCadeias,
       listaCadeias,
       municipiosTerritorios,
