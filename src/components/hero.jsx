@@ -102,9 +102,9 @@ export default function LandingHero() {
       </div>
 
       {/* ================= BRASÃO FIXO ================= */}
-      <div className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50 pointer-events-none opacity-80 drop-shadow-md transition-opacity duration-500">
+      <div className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50 pointer-events-none opacity-100 drop-shadow-md transition-opacity duration-500">
         <img
-          src="/img/Brasao-Horizontal_Branco.webp"
+          src="/img/brasao_preto.webp"
           alt="Governo do Estado da Bahia"
           className="h-6 sm:h-8 lg:h-20 object-contain invert brightness-0 opacity-70"
         />

@@ -178,7 +178,7 @@ export default function Sidebar({ username, navOnly = false }) {
       }`}>
         <div className="w-full bg-[#1D3557] rounded-[22px] p-3.5 flex flex-col items-center relative overflow-hidden shadow-sm">
           <img
-            src="/img/Brasao-Horizontal_Branco.webp"
+            src="/img/brasao_preto.webp"
             alt="Governo da Bahia"
             className="h-[26px] object-contain opacity-90 mb-1.5 z-10"
           />

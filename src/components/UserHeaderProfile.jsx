@@ -4,8 +4,17 @@ import { Settings, LogOut } from 'lucide-react';
 export default function UserHeaderProfile() {
   return (
     <div className="flex items-center gap-3">
-      {/* DIVISOR SUTIL ESQUERDA */}
-      <div className="h-6 w-[1px] bg-[#D6EAF8] hidden sm:block"></div>
+      {/* BRASÃO / LOGOMARCA */}
+      <div className="flex items-center">
+        <img
+          src="/img/brasao_preto.webp"
+          alt="Brasão do Estado"
+          className="h-12 w-auto object-contain shrink-0"
+        />
+      </div>
+
+      {/* DIVISOR DIREITO DO BRASÃO */}
+      <div className="h-6 w-[1px] bg-[#D6EAF8]"></div>
 
       {/* PERFIL DO USUÁRIO */}
       <div className="flex items-center gap-3 cursor-pointer group">
