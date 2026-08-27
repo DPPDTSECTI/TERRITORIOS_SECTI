@@ -196,13 +196,22 @@ export default function DashboardPainel() {
 
     const mapEntidades = {};
     scopedCursos.forEach(c => {
-      const ent = c.entidade || 'Não informada';
-      if (!mapEntidades[ent]) {
-        const siglaDB = c.sigla ? String(c.sigla).toUpperCase().trim() : '';
-        const textoParaExibir = siglaDB !== '' ? siglaDB : ent;
-        mapEntidades[ent] = { name: ent, sigla: textoParaExibir, count: 0 };
+      // Pega a instituição com fallback em cascata (instituicao -> nome_ativo -> sigla -> entidade)
+      const nomeInst = c.instituicao || c.nome_ativo || c.entidade || c.sigla || 'Outras Instituições';
+      const siglaInst = (c.sigla && String(c.sigla).trim() !== '') 
+        ? String(c.sigla).toUpperCase().trim() 
+        : nomeInst;
+
+      const chaveAgrupamento = siglaInst;
+
+      if (!mapEntidades[chaveAgrupamento]) {
+        mapEntidades[chaveAgrupamento] = { 
+          name: nomeInst, 
+          sigla: siglaInst, 
+          count: 0 
+        };
       }
-      mapEntidades[ent].count += 1;
+      mapEntidades[chaveAgrupamento].count += 1;
     });
 
     const styles = [
