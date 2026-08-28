@@ -275,8 +275,8 @@ export default function RelatorioPage() {
         col2: item.tipo,
         col3: `${item.territorios.size} território(s)`,
         col4: Array.from(item.territorios).slice(0, 3).join(', ') + (item.territorios.size > 3 ? '...' : ''),
-        col5: 'Cadeia Ativa',
-        col6: 'Mapeada',
+        col5: '',
+        col6: '',
         raw: item
       }));
     } else if (reportType === 'municipios') {
@@ -820,12 +820,12 @@ export default function RelatorioPage() {
                 <div className={`border border-[#E2E8F0] border-b-0 rounded-t-2xl bg-[#F8FAFC] print:hidden `}>
                   <table className="w-full text-left border-collapse text-xs table-fixed">
                     <colgroup>
-                      <col className={reportType === 'municipios' ? "w-[55%]" : "w-[35%]"} />
-                      {reportType !== 'municipios' && <col className="w-[15%]" />}
+                      <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
+                      {reportType !== 'municipios' && <col className={reportType === 'cadeias' ? "w-[20%]" : "w-[15%]"} />}
                       {reportType !== 'municipios' && <col className="w-[20%]" />}
                       <col className="w-[20%]" />
-                      {reportType !== 'ativos' && reportType !== 'cursos' && <col className="w-[15%]" />}
-                      <col className="w-[10%]" />
+                      {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
+                      {reportType !== 'cadeias' && <col className="w-[10%]" />}
                     </colgroup>
                     <thead className="text-[#457B9D] font-extrabold text-[10.5px] uppercase tracking-wider">
                       <tr>
@@ -855,18 +855,18 @@ export default function RelatorioPage() {
                           {reportType === 'cadeias' && 'Territórios'}
                           {reportType === 'municipios' && 'Ativos CT&I'}
                         </th>
-                        {reportType !== 'ativos' && reportType !== 'cursos' && (
+                        {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && (
                           <th className="py-2.5 px-3">
-                            {reportType === 'cadeias' && 'Status'}
                             {reportType === 'municipios' && 'Cursos CT&I'}
                           </th>
                         )}
-                        <th className="py-2.5 px-3 text-right">
-                          {reportType === 'ativos' && 'RNP'}
-                          {reportType === 'cursos' && 'Modalidade'}
-                          {reportType === 'cadeias' && 'Situação'}
-                          {reportType === 'municipios' && 'Cobertura'}
-                        </th>
+                        {reportType !== 'cadeias' && (
+                          <th className="py-2.5 px-3 text-right">
+                            {reportType === 'ativos' && 'RNP'}
+                            {reportType === 'cursos' && 'Modalidade'}
+                            {reportType === 'municipios' && 'Cobertura'}
+                          </th>
+                        )}
                       </tr>
                     </thead>
                   </table>
@@ -876,12 +876,12 @@ export default function RelatorioPage() {
                 <div className={`flex-1 overflow-y-auto overflow-x-hidden border border-[#E2E8F0] rounded-b-2xl shadow-2xs bg-white print:overflow-visible print:border-none print:shadow-none min-h-0`}>
                   <table className="w-full text-left border-collapse text-xs table-fixed">
                     <colgroup>
-                      <col className={reportType === 'municipios' ? "w-[55%]" : "w-[35%]"} />
-                      {reportType !== 'municipios' && <col className="w-[15%]" />}
+                      <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
+                      {reportType !== 'municipios' && <col className={reportType === 'cadeias' ? "w-[20%]" : "w-[15%]"} />}
                       {reportType !== 'municipios' && <col className="w-[20%]" />}
                       <col className="w-[20%]" />
-                      {reportType !== 'ativos' && reportType !== 'cursos' && <col className="w-[15%]" />}
-                      <col className="w-[10%]" />
+                      {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
+                      {reportType !== 'cadeias' && <col className="w-[10%]" />}
                     </colgroup>
                     
                     <tbody className="divide-y divide-[#E2E8F0]/70 text-[#1D3557]">
@@ -909,27 +909,29 @@ export default function RelatorioPage() {
                             <td className="py-2 px-3 text-[#64748B] max-w-[140px] truncate" title={row.col4}>
                               {row.col4}
                             </td>
-                            {reportType !== 'ativos' && reportType !== 'cursos' && (
+                            {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && (
                               <td className="py-2 px-3 text-[#64748B] max-w-[140px] truncate" title={row.col5}>
                                 {row.col5}
                               </td>
                             )}
-                            <td className="py-2 px-3 text-right font-bold whitespace-nowrap">
-                              {row.col6 === 'EaD' || row.col6 === 'Sim (RNP Conectado)' ? (
-                                <span className="text-[10px] font-black text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
-                                  <Wifi size={10} />
-                                  {row.col6}
-                                </span>
-                              ) : row.col6 === 'Presencial' ? (
-                                <span className="text-[10px] font-extrabold text-[#457B9D] bg-slate-100 px-2 py-0.5 rounded-full">
-                                  Presencial
-                                </span>
-                              ) : (
-                                <span className="text-[10.5px] font-bold text-[#64748B]">
-                                  {row.col6}
-                                </span>
-                              )}
-                            </td>
+                            {reportType !== 'cadeias' && (
+                              <td className="py-2 px-3 text-right font-bold whitespace-nowrap">
+                                {row.col6 === 'EaD' || row.col6 === 'Sim (RNP Conectado)' ? (
+                                  <span className="text-[10px] font-black text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                                    <Wifi size={10} />
+                                    {row.col6}
+                                  </span>
+                                ) : row.col6 === 'Presencial' ? (
+                                  <span className="text-[10px] font-extrabold text-[#457B9D] bg-slate-100 px-2 py-0.5 rounded-full">
+                                    Presencial
+                                  </span>
+                                ) : (
+                                  <span className="text-[10.5px] font-bold text-[#64748B]">
+                                    {row.col6}
+                                  </span>
+                                )}
+                              </td>
+                            )}
                           </tr>
                         ))
                       ) : (
