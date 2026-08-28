@@ -43,7 +43,7 @@ const AtivosPage = lazy(() => import('./components/AtivosPage'));
 const CadeiaPage = lazy(() => import('./components/CadeiaPage'));
 const CursosPage = lazy(() => import('./components/CursosPage'));
 const RelatorioPage = lazy(() => import('./components/RelatorioPage'));
-const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioEnsino'));
+const RelatorioCursosPage = lazy(() => import('./components/pdf/RelatorioEnsino'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {

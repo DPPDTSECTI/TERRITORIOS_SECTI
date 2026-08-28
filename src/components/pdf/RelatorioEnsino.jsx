@@ -1,260 +1,535 @@
-import React, { Suspense, lazy, useEffect, useState, useRef, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { AnimatePresence, motion } from 'framer-motion';
-import { DataProvider, DataContext } from './context/DataContext';
-import { Analytics } from '@vercel/analytics/react';
-import { supabase } from './services/supabase';
+import React, { useContext, useState, useMemo } from 'react';
+import { 
+  FileText, 
+  Layers, 
+  Building2, 
+  MapPin, 
+  Wifi, 
+  PieChart as PieIcon, 
+  BarChart3, 
+  Download,
+  Filter,
+  X,
+  GraduationCap,
+  Sparkles
+} from 'lucide-react';
+import { 
+  ResponsiveContainer, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  Tooltip as RechartsTooltip, 
+  Cell, 
+  PieChart, 
+  Pie 
+} from 'recharts';
 
-export function useDadosSupabase() {
-  const [dados, setDados] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+import { DataContext } from '../../context/DataContext';
+import SideMap from '../maps/SideMap';
+import { municipiosDB } from '../../data/municipiosDB';
 
-  useEffect(() => {
-    async function carregar() {
-      const { data, error } = await supabase
-        .from('stats_ti') 
-        .select('*');
+const PALETTE = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
 
-      if (error) {
-        console.error("Erro ao buscar no Supabase:", error);
+// Categorias estritas do escopo de Ensino Superior de CT&I
+const CATEGORIAS_ENSINO_VALIDAS = [
+  'Campi Instituto Federal',
+  'Campi Universidade Privada',
+  'Campi Universidade Pública - Federal',
+  'Campi Universidade Pública - Estadual'
+];
+
+function normalizeName(value) {
+  if (!value) return '';
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const MUN_LOOKUP = (() => {
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byName };
+})();
+
+export default function RelatorioAtivosPage() {
+  const { 
+    ativosData = [], 
+    loadingStats = false 
+  } = useContext(DataContext);
+
+  const [selectedTerritory, setSelectedTerritory] = useState(null);
+  const [selectedTipo, setSelectedTipo] = useState('todos');
+
+  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  // 1. Isola e valida apenas instituições de ensino superior
+  const baseEnsinoAtivos = useMemo(() => {
+    if (!ativosData || ativosData.length === 0) return [];
+    return ativosData.filter(a => {
+      const tipo = a.tipo || a.nome_tipo || '';
+      return CATEGORIAS_ENSINO_VALIDAS.some(cat => 
+        normalizeName(cat) === normalizeName(tipo)
+      );
+    });
+  }, [ativosData]);
+
+  // 2. Filtro contextual por território e tipologia
+  const filteredAtivos = useMemo(() => {
+    let list = baseEnsinoAtivos;
+
+    if (selectedTerritory) {
+      const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+      list = list.filter(a => {
+        const munKey = normalizeName(a.municipio || '');
+        const munRow = MUN_LOOKUP.byName[munKey];
+        const idTerr = a.id_territorio != null && a.id_territorio !== '' 
+          ? String(a.id_territorio) 
+          : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+        const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
+        const normTerr = normalizeName(rawTerr);
+
+        if (tid && idTerr && idTerr === tid) return true;
+        if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+        return false;
+      });
+    }
+
+    if (selectedTipo !== 'todos') {
+      list = list.filter(a => normalizeName(a.tipo || a.nome_tipo) === normalizeName(selectedTipo));
+    }
+
+    return list;
+  }, [baseEnsinoAtivos, selectedTerritory, selectedTipo]);
+
+  // 3. Indicadores Executivos (KPIs)
+  const statsKpis = useMemo(() => {
+    const total = filteredAtivos.length;
+    const rnpCount = filteredAtivos.filter(a => 
+      a.rnp === true || a.rnp === 'true' || a.rnp === 1 || String(a.rnp || '').toLowerCase() === 'sim'
+    ).length;
+
+    const rnpPercent = total > 0 ? ((rnpCount / total) * 100).toFixed(1) : '0.0';
+
+    const munSet = new Set();
+    const terrSet = new Set();
+    filteredAtivos.forEach(a => {
+      if (a.municipio) munSet.add(normalizeName(a.municipio));
+      const terr = a.territorio_identidade || a.territorio;
+      if (terr) terrSet.add(normalizeName(terr));
+    });
+
+    return {
+      total,
+      rnpCount,
+      rnpPercent,
+      municipiosAtendidos: munSet.size,
+      territoriosAtendidos: terrSet.size
+    };
+  }, [filteredAtivos]);
+
+  // 4. Gráfico de Rosca: Distribuição de Tipologia
+  const tipologiaChartData = useMemo(() => {
+    if (!filteredAtivos || filteredAtivos.length === 0) return [];
+    const counts = {};
+    filteredAtivos.forEach(a => {
+      const tipo = a.tipo || a.nome_tipo || 'Outros';
+      counts[tipo] = (counts[tipo] || 0) + 1;
+    });
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, value], idx) => ({
+        name,
+        value,
+        color: PALETTE[idx % PALETTE.length]
+      }));
+  }, [filteredAtivos]);
+
+  // 5. Gráfico de Cobertura de Rede (Categorias vs Instituições/Siglas)
+  const rnpNetworkData = useMemo(() => {
+    if (!filteredAtivos || filteredAtivos.length === 0) return [];
+    const stats = {};
+
+    filteredAtivos.forEach(a => {
+      let key;
+      if (selectedTipo === 'todos') {
+        key = a.tipo || a.nome_tipo || 'Outros';
       } else {
-        setDados(data);
-      }
-      setCarregando(false);
-    }
-    
-    carregar();
-  }, []);
-
-  return { dados, carregando };
-}
-
-// Importações Globais
-import Sidebar from './components/Sidebar';
-import UserHeaderProfile from './components/UserHeaderProfile';
-
-// CARREGAMENTO PREGUIÇOSO (LAZY LOADING)
-const LandingHero = lazy(() => import('./components/hero'));
-const SobrePage = lazy(() => import('./components/SobrePage'));
-const DashboardPainel = lazy(() => import('./components/DashboardPainel'));
-const AdminPage = lazy(() => import('./components/AdminPage'));
-const AtivosPage = lazy(() => import('./components/AtivosPage'));
-const CadeiaPage = lazy(() => import('./components/CadeiaPage'));
-const CursosPage = lazy(() => import('./components/CursosPage'));
-const RelatorioPage = lazy(() => import('./components/RelatorioPage'));
-const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioAtivosPage'));
-
-// ================= GERENCIADOR GLOBAL DE SCROLL =================
-function GlobalScroll() {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    const savedScrollPosition = sessionStorage.getItem(`scroll-${pathname}`);
-    if (savedScrollPosition) {
-      setTimeout(() => {
-        window.scrollTo({
-          top: parseInt(savedScrollPosition, 10),
-          behavior: 'instant'
-        });
-      }, 0);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }, [pathname]);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      sessionStorage.setItem(`scroll-${window.location.pathname}`, window.scrollY);
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
-
-  return null;
-}
-
-// ================= ROLAGEM GLOBAL ENTRE MÓDULOS =================
-const DEFAULT_MODULES_ORDER = ['/territorios', '/ativos', '/cadeia', '/cursos'];
-
-function getDynamicRoutesOrder() {
-  return DEFAULT_MODULES_ORDER;
-}
-
-function PageScrollNavigator() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isTransitioningRef = useRef(false);
-
-  useEffect(() => {
-    const handleWheel = (e) => {
-      // 1. Ignora páginas fora do fluxo de módulos ou relatórios de impressão
-      if (
-        location.pathname === '/' || 
-        location.pathname === '/admin' || 
-        location.pathname === '/sobre' || 
-        location.pathname === '/relatorio' ||
-        location.pathname.startsWith('/relatorio/')
-      ) {
-        return;
+        const sigla = (a.sigla_ativo || a.sigla || '').trim().toUpperCase();
+        const nome = (a.nome_ativo || a.nome || '').trim();
+        key = sigla !== '' ? sigla : nome;
       }
 
-      // 2. REGRA ESTRITA: Se o cursor estiver sobre mapa ou áreas roláveis internas, não troca de página
-      const target = e.target;
-      if (target) {
-        if (target.closest('.leaflet-container, .leaflet-pane')) {
-          return;
-        }
-
-        const scrollable = target.closest('.overflow-y-auto, .overflow-y-scroll, .overflow-auto, .overflow-scroll, table, tbody, [data-scrollable="true"]');
-        if (scrollable && scrollable.tagName.toLowerCase() !== 'main') {
-          return;
-        }
+      if (!stats[key]) {
+        stats[key] = { 
+          name: key, 
+          comRnp: 0, 
+          semRnp: 0, 
+          total: 0 
+        };
       }
 
-      // 3. Transição entre módulos principais
-      const currentOrder = getDynamicRoutesOrder();
-      const currentIndex = currentOrder.indexOf(location.pathname);
-      if (currentIndex === -1) return;
+      const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || String(a.rnp || '').toLowerCase() === 'sim';
+      if (hasRnp) stats[key].comRnp += 1;
+      else stats[key].semRnp += 1;
+      stats[key].total += 1;
+    });
 
-      if (Math.abs(e.deltaY) < 35) return;
-      if (isTransitioningRef.current) return;
+    return Object.values(stats)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 10)
+      .map(item => ({
+        ...item,
+        pctRnp: Number(((item.comRnp / item.total) * 100).toFixed(1)),
+        pctSemRnp: Number(((item.semRnp / item.total) * 100).toFixed(1))
+      }));
+  }, [filteredAtivos, selectedTipo]);
 
-      if (e.deltaY > 0) {
-        if (currentIndex < currentOrder.length - 1) {
-          isTransitioningRef.current = true;
-          navigate(currentOrder[currentIndex + 1]);
-          setTimeout(() => { isTransitioningRef.current = false; }, 750);
-        }
-      } else if (e.deltaY < 0) {
-        if (currentIndex > 0) {
-          isTransitioningRef.current = true;
-          navigate(currentOrder[currentIndex - 1]);
-          setTimeout(() => { isTransitioningRef.current = false; }, 750);
-        }
-      }
-    };
+  // 6. Ranking Top Municípios
+  const topMunicipiosData = useMemo(() => {
+    if (!filteredAtivos || filteredAtivos.length === 0) return [];
+    const counts = {};
 
-    window.addEventListener('wheel', handleWheel, { passive: true });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [location.pathname, navigate]);
+    filteredAtivos.forEach(a => {
+      const mun = a.municipio || 'Não informado';
+      counts[mun] = (counts[mun] || 0) + 1;
+    });
 
-  return null;
-}
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, count]) => ({
+        name,
+        count
+      }));
+  }, [filteredAtivos]);
 
-// HEADER SUPERIOR FIXO (Oculto na Home, Admin e Páginas de Relatório Puro)
-function TopFixedBar() {
-  const location = useLocation();
-  const isExcluded = 
-    location.pathname === '/' || 
-    location.pathname === '/admin' || 
-    location.pathname.startsWith('/relatorio/');
+  // Exportação de Dados
+  const handleExportCSV = () => {
+    if (!filteredAtivos.length) return;
+    const headers = ['ID', 'Instituicao', 'Sigla', 'Tipo', 'Municipio', 'Territorio', 'Conexao_RNP'];
+    const rows = filteredAtivos.map(a => [
+      a.id_ativo || a.id || '',
+      `"${(a.nome_ativo || a.nome || '').replace(/"/g, '""')}"`,
+      `"${(a.sigla_ativo || a.sigla || '').replace(/"/g, '""')}"`,
+      `"${(a.tipo || a.nome_tipo || '').replace(/"/g, '""')}"`,
+      `"${(a.municipio || '').replace(/"/g, '""')}"`,
+      `"${(a.territorio_identidade || a.territorio || '').replace(/"/g, '""')}"`,
+      a.rnp ? 'Sim' : 'Nao'
+    ]);
 
-  if (isExcluded) return null;
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `relatorio_ensino_cti_${selectedTerritory ? territoryName : 'bahia'}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
-    <div className="fixed top-6 right-6 lg:top-8 lg:right-8 z-[100] flex items-center gap-3 pointer-events-auto select-none print:hidden">
-      <UserHeaderProfile />
-    </div>
-  );
-}
-
-// COMPONENTE DE TRANSIÇÃO
-const PageWrapper = ({ children }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className="w-full h-full flex flex-col relative"
-    >
-      <Suspense 
-        fallback={
-          <div className="flex flex-col items-center justify-center min-h-[60vh] w-full gap-4 bg-transparent">
-            <div className="w-8 h-8 border-2 border-white/10 border-t-[#2563EB] rounded-full animate-spin"></div>
+    <main className="flex-1 h-screen overflow-hidden relative p-5 lg:p-6 flex flex-col gap-3.5 bg-transparent font-sans w-full">
+      
+      {/* CABEÇALHO DO RELATÓRIO */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl lg:text-2xl font-black text-[#1D3557] tracking-tight">
+              Relatório Executivo de Ensino Superior de CT&I
+            </h1>
+            <span className="bg-[#2563EB]/10 text-[#2563EB] text-[9.5px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-[#2563EB]/20 flex items-center gap-1">
+              <GraduationCap size={12} className="text-[#2563EB]" />
+              Instituições de Ensino
+            </span>
           </div>
-        }
-      >
-        {children}
-      </Suspense>
-    </motion.div>
-  );
-};
+          <p className="text-[11px] lg:text-xs text-[#457B9D] mt-0.5 font-medium">
+            Panorama territorial das universidades e institutos federais e estaduais no Estado da Bahia
+          </p>
+        </div>
 
-function AnimatedRoutes() {
-  const location = useLocation();
-  const isHome = location.pathname === '/';
-  const isReportPrintRoute = location.pathname.startsWith('/relatorio/');
-
-  return (
-    <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#F0F7FD] text-[#1D3557] overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-white`}>
-      
-      {/* SIDEBAR GLOBAL (Oculta na Home e em páginas de Relatório Puro) */}
-      <AnimatePresence initial={false} mode="wait">
-        {!isHome && !isReportPrintRoute && (
-          <motion.div
-            key="global-sidebar"
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -50, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="h-screen sticky top-0 z-50 flex-shrink-0 print:hidden"
-          >
-            <Sidebar 
-              username="Gestor BA" 
-              navOnly={location.pathname === '/sobre'} 
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ÁREA PRINCIPAL */}
-      <div className={`flex-1 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
-        {!isHome && !isReportPrintRoute && <TopFixedBar />}
-
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />
-            <Route path="/sobre" element={<PageWrapper><SobrePage /></PageWrapper>} />
-            <Route path="/territorios" element={<PageWrapper><DashboardPainel /></PageWrapper>} />
-            <Route path="/ativos" element={<PageWrapper><AtivosPage /></PageWrapper>} />
-            <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
-            <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
-            <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />
-            <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
-            <Route path="/relatorio/ativos" element={<PageWrapper><RelatorioAtivosPage /></PageWrapper>} />
-          </Routes>
-        </AnimatePresence>
+        <button
+          type="button"
+          onClick={handleExportCSV}
+          className="flex items-center gap-1.5 bg-[#1D3557] hover:bg-[#2563EB] text-white text-[10.5px] font-bold px-3.5 py-2 rounded-xl shadow-xs hover:shadow-sm transition-all cursor-pointer shrink-0"
+        >
+          <Download size={13} />
+          <span>Exportar Dados (CSV)</span>
+        </button>
       </div>
-    </div>
-  );
-}
 
-function MainApp() {
-  return (
-    <>
-      <Helmet>
-        <title>Painel Territorial CT&I | Governo da Bahia</title>
-      </Helmet>
-      
-      <GlobalScroll />
-      <PageScrollNavigator />
-      <Analytics />
+      {/* BARRA DE FILTROS SUPERIORES */}
+      <div className="bg-white rounded-[18px] p-2.5 px-3.5 border border-transparent shadow-[0_2px_12px_rgba(29,53,87,0.03)] flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-black text-[#457B9D] uppercase tracking-wider flex items-center gap-1 mr-1">
+            <Filter size={11} />
+            Tipologia de Ensino:
+          </span>
+          <button
+            type="button"
+            onClick={() => setSelectedTipo('todos')}
+            className={`text-[10px] font-extrabold px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+              selectedTipo === 'todos'
+                ? 'bg-[#1D3557] text-white shadow-xs'
+                : 'bg-[#F1F5F9] text-[#457B9D] hover:bg-[#E2E8F0]'
+            }`}
+          >
+            Todas ({baseEnsinoAtivos.length})
+          </button>
+          {CATEGORIAS_ENSINO_VALIDAS.map(tipo => {
+            const count = baseEnsinoAtivos.filter(a => normalizeName(a.tipo || a.nome_tipo) === normalizeName(tipo)).length;
+            const isSelected = selectedTipo === tipo;
+            return (
+              <button
+                key={tipo}
+                type="button"
+                onClick={() => setSelectedTipo(tipo)}
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#2563EB] text-white shadow-xs'
+                    : 'bg-[#F8FAFC] text-[#64748B] hover:bg-[#F1F5F9] border border-[#E2E8F0]'
+                }`}
+              >
+                {tipo.replace(/^Campi\s+/i, '')} ({count})
+              </button>
+            );
+          })}
+        </div>
 
-      <AnimatedRoutes />
-    </>
-  );
-}
+        {selectedTerritory && (
+          <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-1 rounded-lg shrink-0">
+            <MapPin size={11} className="text-[#0284C7]" />
+            <span className="text-[10.5px] font-bold text-[#0369A1]">
+              Região: <strong className="text-[#0C4A6E]">{territoryName}</strong>
+            </span>
+            <button
+              type="button"
+              onClick={() => setSelectedTerritory(null)}
+              className="text-[#0369A1] hover:text-red-500 transition-colors ml-0.5 cursor-pointer"
+            >
+              <X size={11} />
+            </button>
+          </div>
+        )}
+      </div>
 
-export default function AppWrapper() {
-  return (
-    <HelmetProvider>
-      <Router>
-        <DataProvider>
-          <MainApp />
-        </DataProvider>
-      </Router>
-    </HelmetProvider>
+      {/* GRID DE KPIS EXECUTIVOS */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
+        <div className="bg-white rounded-[16px] p-3 flex flex-col justify-between shadow-[0_2px_12px_rgba(29,53,87,0.03)] border border-transparent">
+          <div className="flex items-center gap-1.5 text-[#457B9D]">
+            <div className="w-6 h-6 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB]">
+              <Building2 size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[9.5px] font-bold uppercase tracking-wider">Campi Mapeados</span>
+          </div>
+          <span className="text-xl lg:text-2xl font-black text-[#1D3557] mt-1">
+            {loadingStats ? '...' : statsKpis.total}
+          </span>
+        </div>
+
+        <div className="bg-white rounded-[16px] p-3 flex flex-col justify-between shadow-[0_2px_12px_rgba(29,53,87,0.03)] border border-transparent">
+          <div className="flex items-center gap-1.5 text-[#457B9D]">
+            <div className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <Wifi size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[9.5px] font-bold uppercase tracking-wider">Conectados à RNP</span>
+          </div>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-xl lg:text-2xl font-black text-emerald-600">
+              {loadingStats ? '...' : statsKpis.rnpCount}
+            </span>
+            <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-md">
+              {statsKpis.rnpPercent}%
+            </span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[16px] p-3 flex flex-col justify-between shadow-[0_2px_12px_rgba(29,53,87,0.03)] border border-transparent">
+          <div className="flex items-center gap-1.5 text-[#457B9D]">
+            <div className="w-6 h-6 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB]">
+              <MapPin size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[9.5px] font-bold uppercase tracking-wider">Municípios com Campi</span>
+          </div>
+          <span className="text-xl lg:text-2xl font-black text-[#1D3557] mt-1">
+            {loadingStats ? '...' : `${statsKpis.municipiosAtendidos} munic.`}
+          </span>
+        </div>
+
+        <div className="bg-white rounded-[16px] p-3 flex flex-col justify-between shadow-[0_2px_12px_rgba(29,53,87,0.03)] border border-transparent">
+          <div className="flex items-center gap-1.5 text-[#457B9D]">
+            <div className="w-6 h-6 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB]">
+              <Layers size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[9.5px] font-bold uppercase tracking-wider">Territórios Cobertos</span>
+          </div>
+          <span className="text-xl lg:text-2xl font-black text-[#1D3557] mt-1">
+            {loadingStats ? '...' : (selectedTerritory ? '1 Território' : `${statsKpis.territoriosAtendidos} de 27`)}
+          </span>
+        </div>
+      </div>
+
+      {/* GRID PRINCIPAL: GRÁFICOS ANALÍTICOS (60%) + SIDEMAP (40%) */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 relative z-10 min-h-0 overflow-hidden pb-1">
+        
+        {/* COLUNA ESQUERDA: GRÁFICOS */}
+        <div className="flex-1 flex flex-col gap-3 min-h-0 overflow-y-auto pr-1">
+          
+          {/* GRID DE ROSCA + BARRAS MUNICIPAIS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
+            
+            {/* GRÁFICO 1: DISTRIBUIÇÃO POR TIPOLOGIA */}
+            <div className="bg-white rounded-[20px] p-3.5 border border-transparent shadow-[0_2px_12px_rgba(29,53,87,0.03)] flex flex-col justify-between min-h-[220px]">
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <h3 className="text-[12px] font-extrabold text-[#1D3557]">Composição das Redes</h3>
+                  <p className="text-[9.5px] text-[#457B9D]">Distribuição dos campi universitários</p>
+                </div>
+                <PieIcon size={14} className="text-[#2563EB]" />
+              </div>
+
+              <div className="h-[155px] w-full flex items-center justify-center">
+                {tipologiaChartData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={tipologiaChartData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={38}
+                        outerRadius={62}
+                        paddingAngle={3}
+                      >
+                        {tipologiaChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip 
+                        formatter={(value) => [`${value} campi`, 'Total']}
+                        contentStyle={{ backgroundColor: '#1D3557', borderRadius: '10px', border: 'none', color: '#fff', fontSize: '10.5px', fontWeight: 'bold' }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <span className="text-[10px] text-gray-400 font-bold">Sem dados</span>
+                )}
+              </div>
+            </div>
+
+            {/* GRÁFICO 2: TOP MUNICÍPIOS */}
+            <div className="bg-white rounded-[20px] p-3.5 border border-transparent shadow-[0_2px_12px_rgba(29,53,87,0.03)] flex flex-col justify-between min-h-[220px]">
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <h3 className="text-[12px] font-extrabold text-[#1D3557]">Polos Universitários</h3>
+                  <p className="text-[9.5px] text-[#457B9D]">Cidades com mais instituições de ensino</p>
+                </div>
+                <BarChart3 size={14} className="text-[#2563EB]" />
+              </div>
+
+              <div className="h-[155px] w-full">
+                {topMunicipiosData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={topMunicipiosData} layout="vertical" margin={{ left: 5, right: 15, top: 5, bottom: 0 }}>
+                      <XAxis type="number" hide />
+                      <YAxis dataKey="name" type="category" width={80} tick={{ fontSize: 9.5, fill: '#1D3557', fontWeight: 700 }} />
+                      <RechartsTooltip 
+                        formatter={(value) => [`${value} campi`, 'Quantidade']}
+                        contentStyle={{ backgroundColor: '#1D3557', borderRadius: '10px', border: 'none', color: '#fff', fontSize: '10.5px', fontWeight: 'bold' }}
+                      />
+                      <Bar dataKey="count" fill="#2563EB" radius={[0, 6, 6, 0]}>
+                        {topMunicipiosData.map((_, index) => (
+                          <Cell key={`cell-bar-${index}`} fill={PALETTE[index % PALETTE.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <span className="text-[10px] text-gray-400 font-bold">Sem dados</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+
+          {/* CARD DE COBERTURA RNP: CATEGORIAS OU AGRUPAMENTO POR SIGLA */}
+          <div className="bg-white rounded-[20px] p-3.5 border border-transparent shadow-[0_2px_12px_rgba(29,53,87,0.03)] shrink-0">
+            <div className="flex items-center justify-between mb-2.5 border-b border-[#F1F5F9] pb-1.5">
+              <div>
+                <h3 className="text-[12px] font-extrabold text-[#1D3557]">
+                  {selectedTipo === 'todos'
+                    ? 'Cobertura RNP por Categoria de Ensino'
+                    : `Conectividade RNP: ${selectedTipo.replace(/^Campi\s+/i, '')} (Por Instituição)`
+                  }
+                </h3>
+                <p className="text-[9.5px] text-[#457B9D]">
+                  {selectedTipo === 'todos'
+                    ? 'Proporção de infraestrutura conectada ao backbone RNP'
+                    : 'Detalhamento empilhado por entidade/sigla com e sem RNP'
+                  }
+                </p>
+              </div>
+              <Wifi size={14} className="text-emerald-500" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              {rnpNetworkData.map((item, idx) => (
+                <div key={idx} className="flex flex-col gap-1 p-2 rounded-xl bg-[#F8FAFC]">
+                  <div className="flex items-center justify-between text-[10.5px]">
+                    <span className="font-extrabold text-[#1D3557] truncate max-w-[55%]">
+                      {item.name}
+                    </span>
+                    <span className="font-bold text-[#457B9D] text-[10px]">
+                      <strong className="text-emerald-600 font-black">{item.comRnp}</strong> com RNP 
+                      <span className="text-gray-400 mx-1">/</span> 
+                      <strong className="text-slate-600 font-black">{item.semRnp}</strong> sem ({item.pctRnp}%)
+                    </span>
+                  </div>
+
+                  {/* BARRA EMPILHADA */}
+                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex">
+                    <div 
+                      className="h-full bg-emerald-500 transition-all duration-500"
+                      style={{ width: `${item.pctRnp}%` }}
+                      title={`Com RNP: ${item.comRnp} (${item.pctRnp}%)`}
+                    />
+                    <div 
+                      className="h-full bg-slate-300 transition-all duration-500"
+                      style={{ width: `${item.pctSemRnp}%` }}
+                      title={`Sem RNP: ${item.semRnp} (${item.pctSemRnp}%)`}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+
+        {/* COLUNA DIREITA: SIDEMAP */}
+        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 h-full bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_2px_16px_rgba(29,53,87,0.04)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-[420px]">
+          <SideMap
+            mode="ativos"
+            processedAtivos={filteredAtivos}
+            selectedTerritory={selectedTerritory}
+            onSelectTerritory={setSelectedTerritory}
+          />
+        </div>
+
+      </div>
+
+    </main>
   );
 }
