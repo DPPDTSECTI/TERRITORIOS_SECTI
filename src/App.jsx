@@ -44,6 +44,7 @@ const CadeiaPage = lazy(() => import('./components/CadeiaPage'));
 const CursosPage = lazy(() => import('./components/CursosPage'));
 const RelatorioPage = lazy(() => import('./components/RelatorioPage'));
 const RelatorioCursosPage = lazy(() => import('./components/pdf/RelatorioEnsino'));
+const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioAtivos'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -180,13 +181,15 @@ const PageWrapper = ({ children }) => {
 function AnimatedRoutes() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isPrintPage = location.pathname.startsWith('/relatorio/ativos') || location.pathname.startsWith('/relatorio/cursos');
+  const hideNavigation = isHome || isPrintPage;
 
   return (
     <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#F0F7FD] text-[#1D3557] overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-white`}>
       
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">
-        {!isHome && (
+        {!hideNavigation && (
           <motion.div
             key="global-sidebar"
             initial={{ x: -50, opacity: 0 }}
@@ -205,7 +208,7 @@ function AnimatedRoutes() {
 
       {/* ÁREA PRINCIPAL COM HEADER FIXO */}
       <div className={`flex-1 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
-        {!isHome && <TopFixedBar />}
+        {!hideNavigation && <TopFixedBar />}
 
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
@@ -218,6 +221,7 @@ function AnimatedRoutes() {
             <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />
             <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
             <Route path="/relatorio/cursos" element={<PageWrapper><RelatorioCursosPage /></PageWrapper>} />
+            <Route path="/relatorio/ativos" element={<PageWrapper><RelatorioAtivosPage /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>

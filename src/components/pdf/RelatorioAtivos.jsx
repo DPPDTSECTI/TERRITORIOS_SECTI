@@ -59,7 +59,7 @@ export default function RelatorioAtivosPage() {
   } = useContext(DataContext);
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
-  const [selectedTipo, setSelectedTipo] = useState('todos');
+
   const [focusedAsset, setFocusedAsset] = useState(null);
 
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
@@ -86,22 +86,8 @@ export default function RelatorioAtivosPage() {
       });
     }
 
-    if (selectedTipo !== 'todos') {
-      list = list.filter(a => (a.tipo || a.nome_tipo) === selectedTipo);
-    }
-
     return list;
-  }, [ativosData, selectedTerritory, selectedTipo]);
-
-  // 2. Tipologias disponíveis para filtro
-  const tiposDisponiveis = useMemo(() => {
-    const tipos = new Set();
-    ativosData.forEach(a => {
-      const t = a.tipo || a.nome_tipo;
-      if (t) tipos.add(t);
-    });
-    return Array.from(tipos);
-  }, [ativosData]);
+  }, [ativosData, selectedTerritory]);
 
   // 3. Indicadores Executivos (KPIs)
   const statsKpis = useMemo(() => {
@@ -162,13 +148,19 @@ export default function RelatorioAtivosPage() {
       stats[tipo].total += 1;
     });
 
-    return Object.values(stats)
+    const arr = Object.values(stats)
       .sort((a, b) => b.total - a.total)
       .slice(0, 6)
       .map(item => ({
         ...item,
         pctRnp: Number(((item.comRnp / item.total) * 100).toFixed(1))
       }));
+      
+    const maxTotal = Math.max(0, ...arr.map(c => c.total));
+    return arr.map(item => ({
+      ...item,
+      relativeWidth: maxTotal > 0 ? (item.total / maxTotal) * 100 : 0
+    }));
   }, [filteredAtivos]);
 
   // 6. Ranking Top Municípios com mais Ativos
@@ -224,76 +216,8 @@ export default function RelatorioAtivosPage() {
             <h1 className="text-2xl lg:text-3xl font-extrabold text-[#1D3557] tracking-tight">
               Relatório Executivo de Ativos de CT&I
             </h1>
-            <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#2563EB]/20 flex items-center gap-1">
-              <FileText size={12} className="text-[#2563EB]" />
-              Painel Analítico
-            </span>
           </div>
-          <p className="text-xs lg:text-sm text-[#457B9D] mt-0.5 font-medium">
-            Diagnóstico quantitativo da infraestrutura científica, tecnológica e de inovação do Estado da Bahia
-          </p>
         </div>
-
-        {/* BOTÃO DE EXPORTAÇÃO */}
-        <button
-          type="button"
-          onClick={handleExportCSV}
-          className="flex items-center gap-2 bg-[#1D3557] hover:bg-[#2563EB] text-white text-[11px] font-bold px-4 py-2.5 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer self-start sm:self-auto"
-        >
-          <Download size={14} />
-          <span>Exportar Dados (CSV)</span>
-        </button>
-      </div>
-
-      {/* BARRA DE FILTROS SUPERIORES */}
-      <div className="bg-white rounded-[22px] p-3 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[11px] font-extrabold text-[#457B9D] uppercase tracking-wider flex items-center gap-1.5 mr-1">
-            <Filter size={13} />
-            Filtrar Tipologia:
-          </span>
-          <button
-            type="button"
-            onClick={() => setSelectedTipo('todos')}
-            className={`text-[10.5px] font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              selectedTipo === 'todos'
-                ? 'bg-[#1D3557] text-white shadow-xs'
-                : 'bg-[#F1F5F9] text-[#457B9D] hover:bg-[#E2E8F0]'
-            }`}
-          >
-            Todas ({ativosData.length})
-          </button>
-          {tiposDisponiveis.slice(0, 5).map(tipo => (
-            <button
-              key={tipo}
-              type="button"
-              onClick={() => setSelectedTipo(tipo)}
-              className={`text-[10.5px] font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-                selectedTipo === tipo
-                  ? 'bg-[#2563EB] text-white shadow-xs'
-                  : 'bg-[#F8FAFC] text-[#64748B] hover:bg-[#F1F5F9] border border-[#E2E8F0]'
-              }`}
-            >
-              {tipo}
-            </button>
-          ))}
-        </div>
-
-        {selectedTerritory && (
-          <div className="flex items-center gap-2 bg-[#E0F2FE]/70 border border-[#BAE6FD] px-3 py-1.5 rounded-xl">
-            <MapPin size={12} className="text-[#0284C7]" />
-            <span className="text-[11px] font-bold text-[#0369A1]">
-              Região: <strong className="text-[#0C4A6E]">{territoryName}</strong>
-            </span>
-            <button
-              type="button"
-              onClick={() => setSelectedTerritory(null)}
-              className="text-[#0369A1] hover:text-red-500 transition-colors ml-1 cursor-pointer"
-            >
-              <X size={12} />
-            </button>
-          </div>
-        )}
       </div>
 
       {/* GRID DE KPIS / INDICADORES EXECUTIVOS */}
@@ -457,7 +381,10 @@ export default function RelatorioAtivosPage() {
                       <strong className="text-emerald-600 font-black">{cat.comRnp}</strong> de {cat.total} com RNP ({cat.pctRnp}%)
                     </span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
+                  <div 
+                    className="h-2 rounded-full bg-[#E2E8F0] overflow-hidden" 
+                    style={{ width: `${cat.relativeWidth}%` }}
+                  >
                     <div 
                       className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                       style={{ width: `${cat.pctRnp}%` }}
