@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useRef } from 'react';
 import { 
   Building2, 
   MapPin, 
@@ -9,7 +9,8 @@ import {
   Printer, 
   X, 
   BookOpen,
-  Layers
+  Layers,
+  Flame
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -158,7 +159,7 @@ export default function RelatorioAtivosPage() {
     };
   }, [filteredCursos, filteredAtivos]);
 
-  // 5. Gráfico 1: Donut de Áreas de Conhecimento com Porcentagem
+  // 5. Gráfico 1: Donut de Áreas de Conhecimento
   const areasChartData = useMemo(() => {
     if (!filteredCursos || filteredCursos.length === 0) return [];
     const counts = {};
@@ -271,8 +272,8 @@ export default function RelatorioAtivosPage() {
               Relatório Executivo de Cursos e Ensino Superior de CT&I
             </h1>
             <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#2563EB]/20 flex items-center gap-1">
-              <GraduationCap size={13} className="text-[#2563EB]" />
-              Formação & Infraestrutura
+              <Flame size={13} className="text-[#2563EB]" />
+              Heatmap & Infraestrutura
             </span>
 
             {selectedTerritory && (
@@ -285,6 +286,7 @@ export default function RelatorioAtivosPage() {
                   type="button"
                   onClick={() => setSelectedTerritory(null)}
                   className="text-[#0369A1] hover:text-red-500 transition-colors ml-0.5 cursor-pointer"
+                  title="Limpar seleção territorial"
                 >
                   <X size={11} />
                 </button>
@@ -293,7 +295,7 @@ export default function RelatorioAtivosPage() {
           </div>
           <div className="flex items-center gap-3 mt-1">
             <p className="text-xs text-[#457B9D] font-medium">
-              Diagnóstico territorial da oferta acadêmica e distribuição dos campi universitários na Bahia
+              Diagnóstico territorial da densidade de cursos e distribuição dos campi universitários na Bahia
             </p>
             <button
               type="button"
@@ -365,10 +367,10 @@ export default function RelatorioAtivosPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL */}
+      {/* GRID PRINCIPAL: GRÁFICOS ANALÍTICOS (60%) + SIDEMAP NO MODO CURSOS (40%) */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-0 w-full">
         
-        {/* COLUNA ESQUERDA: GRID 2x2 */}
+        {/* COLUNA ESQUERDA: GRID 2x2 TOTALMENTE EXPANDIDO */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
           
           {/* GRÁFICO 1: DONUT DE ÁREAS COM LEGENDA ESTÁTICA EM BAIXO */}
@@ -564,11 +566,11 @@ export default function RelatorioAtivosPage() {
 
         </div>
 
-        {/* COLUNA DIREITA: SIDEMAP INTEGRADO */}
+        {/* COLUNA DIREITA: SIDEMAP INTEGRADO NO MODO HEATMAP DE CURSOS */}
         <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 h-full bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0">
           <SideMap
-            mode="ativos"
-            processedAtivos={filteredAtivos}
+            mode="cursos"
+            cursosData={cursosData}
             selectedTerritory={selectedTerritory}
             onSelectTerritory={setSelectedTerritory}
           />
