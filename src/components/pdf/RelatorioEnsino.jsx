@@ -27,7 +27,7 @@ import {
 } from 'recharts';
 
 import { DataContext } from '../../context/DataContext';
-import SideMap from '../../components/maps/SideMap';
+import SideMap from '../maps/SideMap';
 import { municipiosDB } from '../../data/municipiosDB';
 
 const PALETTE = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
