@@ -25,9 +25,6 @@ import {
   BarChart3
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
-import { pdf } from '@react-pdf/renderer';
-import RelatorioPDFDocument from './pdf/RelatorioPDFDocument';
-import html2canvas from 'html2canvas';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   PieChart, Pie, Cell, Legend
@@ -70,45 +67,6 @@ export default function RelatorioPage() {
   const [tableSearch, setTableSearch] = useState('');
   const [sortField, setSortField] = useState(null);
   const [sortAsc, setSortAsc] = useState(true);
-
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-
-  const handleExportPDF = async () => {
-    setIsGeneratingPDF(true);
-    try {
-      let mapImage = null;
-      const mapEl = document.querySelector('.leaflet-container');
-      if (mapEl) {
-        try {
-          const canvas = await html2canvas(mapEl, { useCORS: true, allowTaint: true, scale: 4 });
-          mapImage = canvas.toDataURL('image/jpeg', 0.95);
-        } catch (e) {
-          console.error("Erro ao capturar mapa:", e);
-        }
-      }
-
-      const doc = <RelatorioPDFDocument 
-        reportType={reportType} 
-        territoryTitle={territoryTitle} 
-        statsSintese={statsSintese} 
-        tableData={tableData} 
-        reportLabel={reportOptions.find(o => o.id === reportType)?.label || 'Síntese'} 
-        mapImage={mapImage}
-      />;
-      const asPdf = pdf(doc);
-      const blob = await asPdf.toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `relatorio_${reportType}_${selectedTerritoryId}.pdf`;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
 
 
   // Território selecionado (objeto) ou null se for Toda a Bahia
@@ -530,17 +488,7 @@ export default function RelatorioPage() {
                     <span>JSON</span>
                   </button>
 
-                                                      <button
-                    type="button"
-                    onClick={handleExportPDF}
-                    disabled={isGeneratingPDF}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#1D3557] text-white hover:bg-[#2563EB] shadow-sm transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Salvar relatório como PDF (Alta Qualidade)"
-                  >
-                    <Printer size={13} />
-                    <span className="hidden xl:inline">{isGeneratingPDF ? 'Gerando...' : 'Exportar PDF'}</span>
-                    <span className="inline xl:hidden">{isGeneratingPDF ? '...' : 'PDF'}</span>
-                  </button>
+
                 </div>
               </div>
 
