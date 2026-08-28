@@ -21,7 +21,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@google/generative-ai": "^0.24.1",
-    "@react-pdf/renderer": "^4.8.1",
+    "@react-pdf/renderer": "^4.9.0",
     "@supabase/supabase-js": "^2.112.3",
     "@upstash/redis": "^1.38.1",
     "@vercel/analytics": "^2.0.1",
