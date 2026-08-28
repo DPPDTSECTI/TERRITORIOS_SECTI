@@ -27,6 +27,7 @@ import {
 import { DataContext } from '../context/DataContext';
 import { pdf } from '@react-pdf/renderer';
 import RelatorioPDFDocument from './pdf/RelatorioPDFDocument';
+import html2canvas from 'html2canvas';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   PieChart, Pie, Cell, Legend
@@ -75,7 +76,25 @@ export default function RelatorioPage() {
   const handleExportPDF = async () => {
     setIsGeneratingPDF(true);
     try {
-      const doc = <RelatorioPDFDocument reportType={reportType} territoryTitle={territoryTitle} statsSintese={statsSintese} tableData={tableData} reportLabel={reportOptions.find(o => o.id === reportType)?.label || 'Síntese'} />;
+      let mapImage = null;
+      const mapEl = document.querySelector('.leaflet-container');
+      if (mapEl) {
+        try {
+          const canvas = await html2canvas(mapEl, { useCORS: true, allowTaint: true, scale: 4 });
+          mapImage = canvas.toDataURL('image/jpeg', 0.95);
+        } catch (e) {
+          console.error("Erro ao capturar mapa:", e);
+        }
+      }
+
+      const doc = <RelatorioPDFDocument 
+        reportType={reportType} 
+        territoryTitle={territoryTitle} 
+        statsSintese={statsSintese} 
+        tableData={tableData} 
+        reportLabel={reportOptions.find(o => o.id === reportType)?.label || 'Síntese'} 
+        mapImage={mapImage}
+      />;
       const asPdf = pdf(doc);
       const blob = await asPdf.toBlob();
       const url = URL.createObjectURL(blob);
