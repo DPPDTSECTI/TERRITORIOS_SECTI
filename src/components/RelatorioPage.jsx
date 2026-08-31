@@ -467,7 +467,7 @@ export default function RelatorioPage() {
                 </div>
 
                 {/* BOTÕES DE EXPORTAÇÃO E IMPRESSÃO (MOVIDOS PARA A CAIXA 2) */}
-                <div className="flex items-center gap-1.5 self-start sm:self-center print:hidden">
+                <div className="tour-relatorio-export flex items-center gap-1.5 self-start sm:self-center print:hidden">
                   <button
                     type="button"
                     onClick={handleExportCSV}
@@ -493,7 +493,7 @@ export default function RelatorioPage() {
               </div>
 
               {/* ABAS / BOTÕES DOS TIPOS DE RELATÓRIO */}
-              <div className={`flex items-center bg-[#F1F5F9] p-1 rounded-2xl border border-[#E2E8F0] gap-1 overflow-x-auto print:hidden `}>
+              <div className={`tour-relatorio-tipo flex items-center bg-[#F1F5F9] p-1 rounded-2xl border border-[#E2E8F0] gap-1 overflow-x-auto print:hidden `}>
                 {reportOptions.map((opt) => {
                   const isActive = reportType === opt.id;
                   const Icon = opt.icon;
@@ -520,7 +520,7 @@ export default function RelatorioPage() {
             </div>
 
             {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4 shrink-0">
+            <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4 shrink-0">
               <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-2xl flex flex-col">
                 <span className="text-[10px] font-bold text-[#457B9D] uppercase tracking-wider flex items-center gap-1">
                   <Database size={11} className="text-[#2563EB]" />
@@ -544,9 +544,6 @@ export default function RelatorioPage() {
                 <div className="flex items-baseline gap-1.5 mt-1">
                   <span className="text-lg font-black text-[#1D3557]">
                     {statsSintese.totalCursos}
-                  </span>
-                  <span className="text-[10px] font-bold text-[#8B5CF6] flex items-center gap-0.5">
-                    <Wifi size={10} /> {statsSintese.eadTaxa}% EaD
                   </span>
                 </div>
               </div>
@@ -759,7 +756,7 @@ export default function RelatorioPage() {
                 {/* BARRA DE BUSCA E FILTROS DA TABELA */}
                 <div className={`flex items-center justify-between gap-3 mb-3 shrink-0 print:hidden `}>
                   <div className="relative flex-1 max-w-sm">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#457B9D]" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-[#457B9D]" />
                     <input
                       type="text"
                       value={tableSearch}
@@ -771,7 +768,7 @@ export default function RelatorioPage() {
                       <button
                         type="button"
                         onClick={() => setTableSearch('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-xs font-bold"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-xs font-bold"
                       >
                         ×
                       </button>

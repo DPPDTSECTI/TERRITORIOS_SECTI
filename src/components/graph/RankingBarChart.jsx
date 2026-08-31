@@ -205,7 +205,7 @@ export default function RankingBarChart({
                   </span>
 
                   {/* TOOLTIP FLUTUANTE */}
-                  <div className="absolute bottom-[calc(100%+14px)] bg-[#1A202C] shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-[12px] px-3 py-2 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[110px] left-1/2 -translate-x-1/2">
+                  <div className="absolute bottom-[calc(100%+14px)] bg-[#1A202C] shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-[12px] px-3 py-2 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[110px] left-1/2 -translate-x-1/2 transform-gpu">
                     <div className="text-[10px] font-bold text-white mb-0.5 leading-tight">{item.rank}º · {item.cleanName}</div>
                     <div className="flex items-center text-[10px] text-gray-300">
                       <span>IFDM: <strong className="text-white font-bold">{item.val.toFixed(3)}</strong></span>
@@ -215,7 +215,7 @@ export default function RankingBarChart({
                         <span>{item.extra} {extraLabel}</span>
                       </div>
                     )}
-                    <div className="absolute -bottom-[4px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#1A202C] rotate-45 rounded-sm"></div>
+                    <div className="absolute -bottom-[4px] left-1/2 -translate-x-1/2 transform-gpu w-2.5 h-2.5 bg-[#1A202C] rotate-45 rounded-sm"></div>
                   </div>
                 </div>
               </div>

@@ -14,10 +14,10 @@ export default function Sidebar({ username, navOnly = false }) {
   ];
 
   const modulesItems = [
-    { path: '/territorios', label: 'Visão Geral', icon: LayoutDashboard },
-    { path: '/ativos', label: 'Ativos', icon: Database },
-    { path: '/cadeia', label: 'Cadeia', icon: GitPullRequest },
-    { path: '/cursos', label: 'Cursos', icon: GraduationCap },
+    { path: '/territorios', label: 'Visão Geral', icon: LayoutDashboard, tourClass: 'tour-nav-visao' },
+    { path: '/ativos', label: 'Ativos', icon: Database, tourClass: 'tour-nav-ativos' },
+    { path: '/cadeia', label: 'Cadeia', icon: GitPullRequest, tourClass: 'tour-nav-cadeias' },
+    { path: '/cursos', label: 'Cursos', icon: GraduationCap, tourClass: 'tour-nav-cursos' },
   ];
 
   const adminItems = [
@@ -28,7 +28,7 @@ export default function Sidebar({ username, navOnly = false }) {
     <aside 
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
-      className={`h-[calc(100vh-48px)] my-6 ml-6 bg-white rounded-[28px] shadow-[0_8px_30px_rgba(29,53,87,0.04)] flex flex-col py-6 flex-shrink-0 z-50 font-sans select-none relative transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] px-3.5 overflow-hidden will-change-[width] ${
+      className={`tour-sidebar h-[calc(100vh-48px)] my-6 ml-6 bg-white rounded-[28px] shadow-[0_8px_30px_rgba(29,53,87,0.04)] flex flex-col py-6 flex-shrink-0 z-50 font-sans select-none relative transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] px-3.5 overflow-hidden will-change-[width] ${
         isCollapsed ? 'w-[68px]' : 'w-[190px]'
       }`}
     >
@@ -68,7 +68,7 @@ export default function Sidebar({ username, navOnly = false }) {
             <div key={item.path} className="w-full flex items-center shrink-0">
               <Link
                 to={item.path}
-                className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${
+                className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${item.path === '/sobre' ? 'tour-nav-sobre ' : ''}${
                   isActive
                     ? `bg-[#457B9D] text-white shadow-sm shadow-[#457B9D]/20`
                     : `text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557]`
@@ -107,7 +107,7 @@ export default function Sidebar({ username, navOnly = false }) {
                 <div key={item.path} className="w-full flex items-center shrink-0">
                   <Link
                     to={item.path}
-                    className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${
+                    className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${item.tourClass ? item.tourClass + ' ' : ''}${
                       isActive
                         ? `bg-[#457B9D] text-white shadow-sm shadow-[#457B9D]/20`
                         : `text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557]`

@@ -126,8 +126,8 @@ export default function LandingHero() {
             </span>
           </div>
 
-          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-12 bg-white/70 backdrop-blur-md px-8 py-3 rounded-full border border-[#D6EAF8] shadow-[0_4px_20px_rgba(29,53,87,0.04)]">
-            <Link to="/" className="text-xs font-bold tracking-widest text-[#1D3557] uppercase relative after:content-[''] after:absolute after:-bottom-1.5 after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:bg-[#2563EB] after:rounded-full transition-all">
+          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 transform-gpu items-center gap-12 bg-white/70 backdrop-blur-md px-8 py-3 rounded-full border border-[#D6EAF8] shadow-[0_4px_20px_rgba(29,53,87,0.04)]">
+            <Link to="/" className="text-xs font-bold tracking-widest text-[#1D3557] uppercase relative after:content-[''] after:absolute after:-bottom-1.5 after:left-1/2 after:-translate-x-1/2 after:transform-gpu after:w-1.5 after:h-1.5 after:bg-[#2563EB] after:rounded-full transition-all">
               Início
             </Link>
             <button onClick={() => navigate('/territorios')} className="text-xs font-semibold tracking-widest text-[#457B9D] hover:text-[#1D3557] uppercase transition-colors duration-300 cursor-pointer">
@@ -179,7 +179,7 @@ export default function LandingHero() {
               <span className="font-sans font-bold text-base lg:text-lg tracking-wide">
                 Explorar o Painel
               </span>
-              <ArrowUpRight size={20} strokeWidth={2.5} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight size={20} strokeWidth={2.5} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform transform-gpu" />
             </button>
           </div>
         </div>
@@ -190,7 +190,7 @@ export default function LandingHero() {
             {kpis.map((kpi, idx) => (
               <div 
                 key={idx} 
-                className="p-6 rounded-[24px] bg-white/90 border border-[#D6EAF8] backdrop-blur-2xl shadow-[0_4px_24px_rgba(29,53,87,0.06)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.12)] flex flex-col justify-center min-h-[120px] lg:min-h-[150px] hover:bg-white hover:-translate-y-1 hover:border-[#2563EB]/40 transition-all duration-300 group cursor-default"
+                className="p-6 rounded-[24px] bg-white/90 border border-[#D6EAF8] backdrop-blur-2xl shadow-[0_4px_24px_rgba(29,53,87,0.06)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.12)] flex flex-col justify-center min-h-[120px] lg:min-h-[150px] hover:bg-white hover:-translate-y-1 hover:border-[#2563EB]/40 transition-all duration-300 group cursor-default transform-gpu"
               >
                 <h3 className="text-4xl lg:text-6xl font-black text-[#1D3557] mb-1 flex items-center font-sans tracking-tight">
                   {kpi.prefix && <span className="text-[#2563EB] font-bold text-2xl lg:text-4xl mr-1">{kpi.prefix}</span>}
@@ -244,7 +244,7 @@ export default function LandingHero() {
                   { t: 'Articulação', d: 'Sinergias entre governo, setor produtivo, academia e sociedade civil.', i: <Users /> },
                   { t: 'Democratização', d: 'Fonte confiável para pesquisadores, gestores públicos e investidores.', i: <Lightbulb /> },
                 ].map((item, idx) => (
-                  <div key={idx} className="p-8 rounded-[28px] flex flex-col gap-4 transition-all hover:-translate-y-1.5 duration-300 bg-white border border-[#D6EAF8] shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] hover:border-[#2563EB]/40 group cursor-default">
+                  <div key={idx} className="p-8 rounded-[28px] flex flex-col gap-4 transition-all hover:-translate-y-1.5 duration-300 bg-white border border-[#D6EAF8] shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] hover:border-[#2563EB]/40 group cursor-default transform-gpu">
                     <div className="text-[#2563EB] p-3 rounded-2xl bg-[#D6EAF8] w-fit group-hover:bg-[#2563EB] group-hover:text-white transition-colors duration-300">
                       {React.cloneElement(item.i, { size: 26, strokeWidth: 2.2 })}
                     </div>
@@ -276,7 +276,7 @@ export default function LandingHero() {
                   { t: 'Cursos Superiores', d: 'Capacidade local de formação de novos talentos e pesquisadores.', i: <GraduationCap /> },
                   { t: 'APLs e IGs', d: 'Arranjos Produtivos e certificações de Indicações Geográficas.', i: <Milestone /> }
                 ].map((item, idx) => (
-                  <div key={idx} className="p-8 rounded-[28px] transition-all duration-300 bg-white border border-[#D6EAF8] shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] hover:border-[#2563EB]/40 hover:-translate-y-1.5 group cursor-default">
+                  <div key={idx} className="p-8 rounded-[28px] transition-all duration-300 bg-white border border-[#D6EAF8] shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] hover:border-[#2563EB]/40 hover:-translate-y-1.5 group cursor-default transform-gpu">
                     <div className="w-12 h-12 mb-6 rounded-2xl flex items-center justify-center bg-[#D6EAF8] text-[#2563EB] group-hover:bg-[#2563EB] group-hover:text-white transition-colors duration-300">
                       {React.cloneElement(item.i, { size: 24, strokeWidth: 2.2 })}
                     </div>

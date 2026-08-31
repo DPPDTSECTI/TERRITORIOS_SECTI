@@ -464,7 +464,7 @@ export default function CursosPage() {
             </div>
 
             <div className="relative my-2 shrink-0">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8]" />
               <input
                 type="text"
                 value={sidebarSearch}
@@ -476,7 +476,7 @@ export default function CursosPage() {
                 <button
                   type="button"
                   onClick={() => setSidebarSearch('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
                 >
                   ×
                 </button>
@@ -616,7 +616,7 @@ export default function CursosPage() {
 
             {/* INPUT DE BUSCA */}
             <div className="relative w-full sm:w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#457B9D]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-[#457B9D]" />
               <input
                 type="text"
                 value={searchQuery}
@@ -628,7 +628,7 @@ export default function CursosPage() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-[12px] font-bold"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[12px] font-bold"
                 >
                   ×
                 </button>

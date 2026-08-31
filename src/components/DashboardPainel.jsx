@@ -415,7 +415,7 @@ export default function DashboardPainel() {
       </div>
 
       {/* GRID DE KPIs (5 COLUNAS, FAIXA HORIZONTAL ÚNICA, DESIGN MODERNO/LINEAR) */}
-      <div className="w-full relative z-10 shrink-0">
+      <div className="tour-kpis w-full relative z-10 shrink-0">
         <div className="grid grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => (
             <div
@@ -457,7 +457,7 @@ export default function DashboardPainel() {
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[400px]">
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[400px]">
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}
@@ -472,7 +472,7 @@ export default function DashboardPainel() {
 
         {/* LADO DIREITO: DASHBOARD DE CARDS (DND) */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
+          <div className="tour-charts flex-1 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
                 <React.Fragment key={cardId}>

@@ -105,7 +105,7 @@ function CardLista({
 
           {showSearch && (
             <div className="relative w-full sm:w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#457B9D]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-[#457B9D]" />
               <input
                 type="text"
                 value={internalSearch}
@@ -117,7 +117,7 @@ function CardLista({
                 <button
                   type="button"
                   onClick={() => setInternalSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-[12px] font-bold"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[12px] font-bold"
                 >
                   ×
                 </button>

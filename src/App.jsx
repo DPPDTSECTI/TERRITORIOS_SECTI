@@ -33,6 +33,7 @@ export function useDadosSupabase() {
 // Importações Globais
 import Sidebar from './components/Sidebar';
 import UserHeaderProfile from './components/UserHeaderProfile';
+import TourGuide from './components/TourGuide';
 
 // CARREGAMENTO PREGUIÇOSO (LAZY LOADING)
 const LandingHero = lazy(() => import('./components/hero'));
@@ -236,6 +237,7 @@ function MainApp() {
         <title>Painel Territorial CT&I | Governo da Bahia</title>
       </Helmet>
       
+      <TourGuide />
       <GlobalScroll />
       <PageScrollNavigator />
       <Analytics />

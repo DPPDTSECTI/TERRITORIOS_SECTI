@@ -859,7 +859,7 @@ export default function CadeiaPage() {
 
             {/* BUSCA COMPACTA */}
             <div className="relative my-2 shrink-0">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8]" />
               <input
                 type="text"
                 value={sidebarSearch}
@@ -871,7 +871,7 @@ export default function CadeiaPage() {
                 <button
                   type="button"
                   onClick={() => setSidebarSearch('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
                 >
                   ×
                 </button>

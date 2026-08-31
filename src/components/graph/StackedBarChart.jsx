@@ -157,7 +157,7 @@ function StackedBarChart({
                   {/* TOOLTIP COMPACTO DE FATIA INDIVIDUAL (ELEGANTE E SEM OVERFLOW) */}
                   {hoveredSlice && hoveredSlice.label === item.label && !hoveredTotalTerritory && (
                     <div
-                      className={`absolute bottom-full mb-2 bg-[#1D3557] text-white shadow-[0_8px_24px_rgba(29,53,87,0.35)] rounded-lg px-2.5 py-1.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1 border border-white/20 min-w-[140px] max-w-[190px] transition-all duration-150 animate-in fade-in zoom-in-95 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
+                      className={`absolute bottom-full mb-2 bg-[#1D3557] text-white shadow-[0_8px_24px_rgba(29,53,87,0.35)] rounded-lg px-2.5 py-1.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1 border border-white/20 min-w-[140px] max-w-[190px] transition-all duration-150 animate-in fade-in zoom-in-95 transform-gpu ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
                         }`}
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -189,7 +189,7 @@ function StackedBarChart({
                   {/* TOOLTIP COMPLETO DE TODOS OS ATIVOS (AO PASSAR O MOUSE NO NÚMERO / BOLINHA SUPERIOR) */}
                   {hoveredTotalTerritory && hoveredTotalTerritory.label === item.label && (
                     <div
-                      className={`absolute bottom-full mb-2 bg-[#1D3557] text-white shadow-[0_12px_32px_rgba(29,53,87,0.45)] rounded-xl p-2.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1.5 border border-white/20 min-w-[165px] max-w-[210px] transition-all duration-150 animate-in fade-in zoom-in-95 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
+                      className={`absolute bottom-full mb-2 bg-[#1D3557] text-white shadow-[0_12px_32px_rgba(29,53,87,0.45)] rounded-xl p-2.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1.5 border border-white/20 min-w-[165px] max-w-[210px] transition-all duration-150 animate-in fade-in zoom-in-95 transform-gpu ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
                         }`}
                     >
                       <div className="flex items-center justify-between border-b border-white/15 pb-1 gap-2">
