@@ -51,6 +51,13 @@ module.exports = {
           600: 'rgb(var(--color-warning-600) / <alpha-value>)',
           700: 'rgb(var(--color-warning-700) / <alpha-value>)',
         },
+        info: {
+          50: 'rgb(var(--color-primary-50) / <alpha-value>)',
+          100: 'rgb(var(--color-primary-100) / <alpha-value>)',
+          500: 'rgb(var(--color-primary-500) / <alpha-value>)',
+          600: 'rgb(var(--color-primary-600) / <alpha-value>)',
+          700: 'rgb(var(--color-primary-700) / <alpha-value>)',
+        },
         danger: {
           50: 'rgb(var(--color-danger-50) / <alpha-value>)',
           100: 'rgb(var(--color-danger-100) / <alpha-value>)',
@@ -64,6 +71,10 @@ module.exports = {
           600: 'rgb(var(--color-accent-600) / <alpha-value>)',
           700: 'rgb(var(--color-accent-700) / <alpha-value>)',
         },
+          accentPrimary: 'rgb(var(--color-primary-600) / <alpha-value>)',
+          accentSuccess: 'rgb(var(--color-success-600) / <alpha-value>)',
+          accentAccent: 'rgb(var(--color-accent-600) / <alpha-value>)',
+          accentWarning: 'rgb(var(--color-warning-600) / <alpha-value>)',
         surface: {
           DEFAULT: 'rgb(var(--color-surface) / <alpha-value>)',
           soft: 'rgb(var(--color-surface-soft) / <alpha-value>)',
@@ -106,6 +117,13 @@ module.exports = {
         },
         warning: {
           soft: 'rgb(var(--color-warning-50) / <alpha-value>)',
+        },
+        info: {
+          50: 'rgb(var(--color-primary-50) / <alpha-value>)',
+          100: 'rgb(var(--color-primary-100) / <alpha-value>)',
+          500: 'rgb(var(--color-primary-500) / <alpha-value>)',
+          600: 'rgb(var(--color-primary-600) / <alpha-value>)',
+          700: 'rgb(var(--color-primary-700) / <alpha-value>)',
         },
         danger: {
           soft: 'rgb(var(--color-danger-50) / <alpha-value>)',

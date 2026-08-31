@@ -109,7 +109,8 @@
 ::-webkit-scrollbar-thumb {
   background-color: #D6EAF8;
   border-radius: 10px;
-  border: 2px solid #ffffff; /* Gives a padded look in some situations, but here background is transparent so border-right etc is better if needed. We will keep it simple. */
+  border: 2px solid #ffffff;
+  /* Gives a padded look in some situations, but here background is transparent so border-right etc is better if needed. We will keep it simple. */
 }
 
 /* Redefine more cleanly */
@@ -140,6 +141,75 @@
   box-shadow: none !important;
   padding: 0 !important;
 }
+
 .leaflet-tooltip.clean-city-tooltip::before {
   display: none !important;
+}
+
+
+/* CARTOGRAPHIC PATTERNS (INTELIGNCIA TERRITORIAL) */
+.bg-carto-grid {
+  background-image: linear-gradient(to right, rgba(100, 116, 139, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(100, 116, 139, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-carto-dots {
+  background-image: radial-gradient(rgba(100, 116, 139, 0.1) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.carto-node {
+  position: relative;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: rgb(var(--color-primary-500));
+  border-radius: 50%;
+}
+
+.carto-node::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--color-primary-500), 0.3);
+}
+
+.carto-node.node-success {
+  background-color: rgb(var(--color-success-600));
+}
+
+.carto-node.node-success::after {
+  border-color: rgba(var(--color-success-600), 0.3);
+}
+
+.carto-node.node-accent {
+  background-color: rgb(var(--color-accent-600));
+}
+
+.carto-node.node-accent::after {
+  border-color: rgba(var(--color-accent-600), 0.3);
+}
+
+/* CUSTOM SCROLLBAR FOR INSTITUTIONAL LOOK */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-neutral-300), 0.6);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--color-neutral-400), 0.8);
 }

@@ -68,7 +68,7 @@ function SortableCard({ id, className = '', children }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative h-full flex flex-col min-h-0 transform-gpu backface-hidden will-change-transform ${className} ${isDragging ? 'opacity-40 scale-[1.02] shadow-2xl' : ''
+      className={`relative h-full flex flex-col min-h-0 backface-hidden ${className} ${isDragging ? 'opacity-40 scale-[1.02] shadow-card-hover' : ''
         }`}
     >
       <button
@@ -198,17 +198,17 @@ export default function DashboardPainel() {
     scopedCursos.forEach(c => {
       // Pega a instituição com fallback em cascata (instituicao -> nome_ativo -> sigla -> entidade)
       const nomeInst = c.instituicao || c.nome_ativo || c.entidade || c.sigla || 'Outras Instituições';
-      const siglaInst = (c.sigla && String(c.sigla).trim() !== '') 
-        ? String(c.sigla).toUpperCase().trim() 
+      const siglaInst = (c.sigla && String(c.sigla).trim() !== '')
+        ? String(c.sigla).toUpperCase().trim()
         : nomeInst;
 
       const chaveAgrupamento = siglaInst;
 
       if (!mapEntidades[chaveAgrupamento]) {
-        mapEntidades[chaveAgrupamento] = { 
-          name: nomeInst, 
-          sigla: siglaInst, 
-          count: 0 
+        mapEntidades[chaveAgrupamento] = {
+          name: nomeInst,
+          sigla: siglaInst,
+          count: 0
         };
       }
       mapEntidades[chaveAgrupamento].count += 1;
@@ -217,9 +217,9 @@ export default function DashboardPainel() {
     const styles = [
       { bg: 'bg-primary-900', text: 'text-white' },
       { bg: 'bg-primary-600/10', text: 'text-primary-600' },
-      { bg: 'bg-[#457B9D]/10', text: 'text-text-secondary' },
-      { bg: 'bg-[#A8DADC]/20', text: 'text-text-secondary' },
-      { bg: 'bg-[#E2E8F0]/50', text: 'text-text-primary' }
+      { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
+      { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
+      { bg: 'bg-border/50', text: 'text-text-primary' }
     ];
 
     return Object.values(mapEntidades)
@@ -276,9 +276,9 @@ export default function DashboardPainel() {
     const styles = [
       { bg: 'bg-primary-900', text: 'text-white' },
       { bg: 'bg-primary-600/10', text: 'text-primary-600' },
-      { bg: 'bg-[#457B9D]/10', text: 'text-text-secondary' },
-      { bg: 'bg-[#A8DADC]/20', text: 'text-text-secondary' },
-      { bg: 'bg-[#E2E8F0]/50', text: 'text-text-primary' }
+      { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
+      { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
+      { bg: 'bg-border/50', text: 'text-text-primary' }
     ];
 
     return Object.entries(counts)
@@ -409,7 +409,10 @@ export default function DashboardPainel() {
       {/* HEADER DA PÁGINA */}
       <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
+          <div className="flex items-center gap-3 relative z-10">
+            <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
+            <div className="carto-node mt-2 opacity-80"></div>
+          </div>
           <p className="text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
         </div>
       </div>
@@ -420,7 +423,7 @@ export default function DashboardPainel() {
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
+              className="relative overflow-hidden h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border-y border-r border-l-[3px] border-border border-l-primary-500 shadow-sm hover:-translate-y-[1px] hover:shadow-card-hover transition-all duration-300 cursor-default"
             >
               {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO COM CORES ORIGINAIS */}
               <div className="flex items-center justify-between gap-1.5 min-w-0">
@@ -429,14 +432,14 @@ export default function DashboardPainel() {
                     <kpi.icon size={14} strokeWidth={2.5} />
                   </div>
                   <span
-                    className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary truncate"
+                    className="text-[11px] font-semibold uppercase text-text-secondary truncate"
                     title={kpi.label}
                   >
                     {kpi.label}
                   </span>
                 </div>
                 {kpi.isIndex && (
-                  <span className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-primary-200/60 text-text-primary shrink-0 leading-none">
+                  <span className="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md bg-primary-200/60 text-text-primary shrink-0 leading-none">
                     Índice
                   </span>
                 )}
@@ -444,7 +447,7 @@ export default function DashboardPainel() {
 
               {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
               <div className="flex items-center justify-center w-full min-w-0 pt-1">
-                <span className="text-[30px] font-bold text-text-primary tracking-tight leading-none text-center">
+                <span className="text-[30px] font-medium text-text-primary tracking-tight leading-none text-center">
                   {kpi.value}
                 </span>
               </div>
@@ -457,7 +460,7 @@ export default function DashboardPainel() {
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-2xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-[400px]">
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-[400px]">
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}
@@ -537,7 +540,7 @@ export default function DashboardPainel() {
                         positiveLabel="Com RNP"
                         negativeLabel="Sem RNP"
                         positiveColor="bg-primary-600"
-                        negativeColor="bg-[#E2E8F0]"
+                        negativeColor="bg-border"
                       />
                     </SortableCard>
                   )}
