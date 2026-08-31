@@ -28,7 +28,7 @@ export default function Sidebar({ username, navOnly = false }) {
     <aside 
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
-      className={`tour-sidebar h-[calc(100vh-48px)] my-6 ml-6 bg-white rounded-[28px] shadow-[0_8px_30px_rgba(29,53,87,0.04)] flex flex-col py-6 flex-shrink-0 z-50 font-sans select-none relative transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] px-3.5 overflow-hidden will-change-[width] ${
+      className={`tour-sidebar h-[calc(100vh-48px)] my-6 ml-6 bg-white rounded-2xl shadow-card-soft border border-slate-100 flex flex-col py-6 flex-shrink-0 z-50 font-sans select-none relative transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] px-3.5 overflow-hidden will-change-[width] ${
         isCollapsed ? 'w-[68px]' : 'w-[190px]'
       }`}
     >
@@ -36,12 +36,12 @@ export default function Sidebar({ username, navOnly = false }) {
       {/* ================= TOPO: LOGO ================= */}
       <div className="w-full h-[40px] flex items-center mb-4 cursor-pointer group shrink-0">
         <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
-          <div className="w-9 h-9 rounded-full bg-[#1D3557] flex items-center justify-center text-white shadow-sm font-extrabold text-[13px] tracking-tight">
+          <div className="w-9 h-9 rounded-full bg-primary-900 text-white shadow-sm font-extrabold text-[13px] tracking-tight">
             BA
           </div>
         </div>
         
-        <span className={`text-[16px] font-extrabold text-[#1D3557] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pl-2 ${
+        <span className={`text-[16px] font-bold text-text-primary tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pl-2 ${
           isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0'
         }`}>
           {username ? username : "Gestor BA"}
@@ -53,7 +53,7 @@ export default function Sidebar({ username, navOnly = false }) {
         
         {/* SEÇÃO: MENU (ALTURA FIXA h-[18px] SEMPRE RESERVADA) */}
         <div className="w-full h-[18px] flex items-center px-2 shrink-0">
-          <span className={`text-[9px] font-bold text-[#457B9D]/60 uppercase tracking-widest transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          <span className={`text-[9px] font-bold text-text-muted uppercase tracking-widest transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
             isCollapsed ? 'opacity-0 -translate-x-2 pointer-events-none' : 'opacity-100 translate-x-0'
           }`}>
             Menu
@@ -68,15 +68,15 @@ export default function Sidebar({ username, navOnly = false }) {
             <div key={item.path} className="w-full flex items-center shrink-0">
               <Link
                 to={item.path}
-                className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${item.path === '/sobre' ? 'tour-nav-sobre ' : ''}${
+                className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.path === '/sobre' ? 'tour-nav-sobre ' : ''}${
                   isActive
-                    ? `bg-[#457B9D] text-white shadow-sm shadow-[#457B9D]/20`
-                    : `text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557]`
+                    ? `bg-surface-soft border-primary-600 text-text-primary shadow-sm`
+                    : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
-                <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
-                  <item.icon size={18} className={isActive ? 'text-white' : 'text-[#457B9D]'} strokeWidth={isActive ? 2.5 : 2} />
+                <div className="w-[37px] h-[40px] flex items-center justify-center shrink-0">
+                  <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
                 
                 <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
@@ -94,7 +94,7 @@ export default function Sidebar({ username, navOnly = false }) {
           <div className="mt-2 flex flex-col gap-1 w-full shrink-0">
             {/* ALTURA FIXA h-[18px] SEMPRE RESERVADA */}
             <div className="w-full h-[18px] flex items-center px-2 shrink-0">
-              <span className={`text-[9px] font-bold text-[#457B9D]/60 uppercase tracking-widest transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              <span className={`text-[9px] font-bold text-text-muted uppercase tracking-widest transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 isCollapsed ? 'opacity-0 -translate-x-2 pointer-events-none' : 'opacity-100 translate-x-0'
               }`}>
                 Módulos
@@ -107,15 +107,15 @@ export default function Sidebar({ username, navOnly = false }) {
                 <div key={item.path} className="w-full flex items-center shrink-0">
                   <Link
                     to={item.path}
-                    className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${item.tourClass ? item.tourClass + ' ' : ''}${
+                    className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.tourClass ? item.tourClass + ' ' : ''}${
                       isActive
-                        ? `bg-[#457B9D] text-white shadow-sm shadow-[#457B9D]/20`
-                        : `text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557]`
+                        ? `bg-surface-soft border-primary-600 text-text-primary shadow-sm`
+                        : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                     }`}
                     title={isCollapsed ? item.label : undefined}
                   >
-                    <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
-                      <item.icon size={18} className={isActive ? 'text-white' : 'text-[#457B9D]'} strokeWidth={isActive ? 2.5 : 2} />
+                    <div className="w-[37px] h-[40px] flex items-center justify-center shrink-0">
+                      <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={isActive ? 2.5 : 2} />
                     </div>
                     
                     <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
@@ -135,7 +135,7 @@ export default function Sidebar({ username, navOnly = false }) {
           <div className="mt-2 flex flex-col gap-1 w-full shrink-0">
             {/* ALTURA FIXA h-[18px] SEMPRE RESERVADA */}
             <div className="w-full h-[18px] flex items-center px-2 shrink-0">
-              <span className={`text-[9px] font-bold text-[#457B9D]/60 uppercase tracking-widest transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              <span className={`text-[9px] font-bold text-text-muted uppercase tracking-widest transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 isCollapsed ? 'opacity-0 -translate-x-2 pointer-events-none' : 'opacity-100 translate-x-0'
               }`}>
                 Admin
@@ -148,15 +148,15 @@ export default function Sidebar({ username, navOnly = false }) {
                 <div key={item.path} className="w-full flex items-center shrink-0">
                   <Link
                     to={item.path}
-                    className={`w-full h-[40px] flex items-center rounded-full transition-colors duration-200 ${
+                    className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${
                       isActive
-                        ? `bg-[#457B9D] text-white shadow-sm shadow-[#457B9D]/20`
-                        : `text-[#457B9D] hover:bg-[#D6EAF8]/50 hover:text-[#1D3557]`
+                        ? `bg-surface-soft border-primary-600 text-text-primary shadow-sm`
+                        : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                     }`}
                     title={isCollapsed ? item.label : undefined}
                   >
-                    <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
-                      <item.icon size={18} className={isActive ? 'text-white' : 'text-[#457B9D]'} strokeWidth={isActive ? 2.5 : 2} />
+                    <div className="w-[37px] h-[40px] flex items-center justify-center shrink-0">
+                      <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={isActive ? 2.5 : 2} />
                     </div>
                     
                     <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
@@ -176,16 +176,16 @@ export default function Sidebar({ username, navOnly = false }) {
       <div className={`mt-auto pt-2 w-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 ${
         isCollapsed ? 'opacity-0 h-0 pointer-events-none' : 'opacity-100 h-auto'
       }`}>
-        <div className="w-full bg-[#1D3557] rounded-[22px] p-3.5 flex flex-col items-center relative overflow-hidden shadow-sm">
+        <div className="w-full bg-primary-900 rounded-xl p-3.5 flex flex-col items-center relative overflow-hidden shadow-sm">
           <img
             src="/img/brasao_preto.webp"
             alt="Governo da Bahia"
             className="h-[26px] object-contain opacity-90 mb-1.5 z-10"
           />
-          <p className="text-[#F1FAEE]/80 text-[10px] text-center font-medium z-10 leading-relaxed mb-2">
+          <p className="text-white/80 text-[10px] text-center font-medium z-10 leading-relaxed mb-2">
             Gestão integrada da Bahia.
           </p>
-          <button className="w-full bg-[#457B9D] text-white text-[10px] font-bold py-1.5 rounded-full hover:bg-[#A8DADC] hover:text-[#1D3557] transition-colors shadow-sm">
+          <button className="w-full bg-primary-800 text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-primary-400 hover:text-primary-900 transition-colors shadow-sm">
             Ver Portal
           </button>
         </div>

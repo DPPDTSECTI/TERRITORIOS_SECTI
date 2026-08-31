@@ -389,23 +389,23 @@ export default function RelatorioPage() {
 
   return (
     <>
-      <div className={`flex-1 w-full h-full flex flex-col p-4 sm:p-6 lg:p-7 min-h-0 overflow-hidden font-sans select-none bg-[#F8FAFC] print:hidden`}>
+      <div className={`flex-1 w-full h-full flex flex-col p-4 sm:p-6 lg:p-7 min-h-0 overflow-hidden font-sans select-none bg-surface-soft print:hidden`}>
 
         {/* ================= TOPO: CABEÇALHO DO MÓDULO DE RELATÓRIOS ================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 shrink-0 pr-4 print:hidden">
         <div>
           <div className="flex items-center gap-2">
-            <span className="bg-[#2563EB]/10 text-[#2563EB] p-1.5 rounded-xl flex items-center justify-center">
+            <span className="bg-primary-600/10 text-primary-600 p-1.5 rounded-xl flex items-center justify-center">
               <FileText size={18} strokeWidth={2.5} />
             </span>
-            <h1 className="text-xl sm:text-2xl font-black text-[#1D3557] tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight">
               Relatórios Executivos de CT&I
             </h1>
-            <span className="text-[10.5px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#059669] border border-[#10B981]/25">
+            <span className="text-[10.5px] font-semibold px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#059669] border border-[#10B981]/25">
               Dados Oficiais SECTI/BA
             </span>
           </div>
-          <p className="text-xs sm:text-[13px] text-[#457B9D] font-medium mt-0.5 max-w-[70%]">
+          <p className="text-xs sm:text-[13px] text-text-secondary font-medium mt-0.5 max-w-[70%]">
             Geração de relatórios, sínteses territoriais e exportação de dados consolidados
           </p>
         </div>
@@ -422,9 +422,9 @@ export default function RelatorioPage() {
         <div className={`flex-1 flex flex-col lg:flex-row gap-5 min-h-0 `}>
 
           {/* NOVO CARD DO MAPA (MEIO) */}
-          <div className={`w-full lg:w-[400px] xl:w-[500px] shrink-0 bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-4 sm:p-5 flex flex-col print:hidden min-h-0`}>
-            <h3 className="text-sm font-black text-[#1D3557] tracking-tight mb-3">Visão Espacial</h3>
-            <div className="flex-1 w-full rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-sm relative z-0 bg-[#F8FAFC]">
+          <div className={`w-full lg:w-[400px] xl:w-[500px] shrink-0 bg-surface rounded-2xl border border-border shadow-sm p-4 sm:p-5 flex flex-col print:hidden min-h-0`}>
+            <h3 className="text-sm font-semibold text-text-primary tracking-tight mb-3">Visão Espacial</h3>
+            <div className="flex-1 w-full rounded-2xl overflow-hidden border border-border shadow-sm relative z-0 bg-surface-soft">
               {(() => {
                 const handleMapSelect = (t) => {
                   if (t && t.id_territorio) setSelectedTerritoryId(String(t.id_territorio));
@@ -453,15 +453,15 @@ export default function RelatorioPage() {
                CAIXA 2: TIPOS DE RELATÓRIO E OS SEUS DADOS (DIREITA)
               ------------------------------------------------------------- */}
           <div
-            className={`flex-1 bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0`}
+            className={`flex-1 bg-surface rounded-2xl border border-border shadow-sm p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0`}
           >
 
             {/* CABEÇALHO DA CAIXA 2: SELETOR DOS TIPOS DE RELATÓRIO */}
             <div className="mb-4 shrink-0">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-[#1D3557] bg-[#F1F5F9] px-2.5 py-1 rounded-full border border-[#E2E8F0]">
-                    <Globe size={12} className="text-[#2563EB]" />
+                  <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-text-primary bg-surface-soft px-2.5 py-1 rounded-full border border-border">
+                    <Globe size={12} className="text-primary-600" />
                     <span>Exibindo: <strong>{territoryTitle}</strong></span>
                   </div>
                 </div>
@@ -471,10 +471,10 @@ export default function RelatorioPage() {
                   <button
                     type="button"
                     onClick={handleExportCSV}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white border border-[#D6EAF8] text-[#1D3557] hover:bg-[#F1F5F9] hover:border-[#2563EB] shadow-2xs transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft hover:border-[#2563EB] shadow-2xs transition-all cursor-pointer"
                     title="Baixar dados tabulares em formato CSV para Excel"
                   >
-                    <Download size={13} className="text-[#2563EB]" />
+                    <Download size={13} className="text-primary-600" />
                     <span className="hidden xl:inline">Exportar CSV</span>
                     <span className="inline xl:hidden">CSV</span>
                   </button>
@@ -482,7 +482,7 @@ export default function RelatorioPage() {
                   <button
                     type="button"
                     onClick={handleExportJSON}
-                    className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white border border-[#D6EAF8] text-[#1D3557] hover:bg-[#F1F5F9] shadow-2xs transition-all cursor-pointer"
+                    className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft shadow-2xs transition-all cursor-pointer"
                     title="Baixar em formato estruturado JSON"
                   >
                     <span>JSON</span>
@@ -493,7 +493,7 @@ export default function RelatorioPage() {
               </div>
 
               {/* ABAS / BOTÕES DOS TIPOS DE RELATÓRIO */}
-              <div className={`tour-relatorio-tipo flex items-center bg-[#F1F5F9] p-1 rounded-2xl border border-[#E2E8F0] gap-1 overflow-x-auto print:hidden `}>
+              <div className={`tour-relatorio-tipo flex items-center bg-surface-soft p-1 rounded-2xl border border-border gap-1 overflow-x-auto print:hidden `}>
                 {reportOptions.map((opt) => {
                   const isActive = reportType === opt.id;
                   const Icon = opt.icon;
@@ -507,8 +507,8 @@ export default function RelatorioPage() {
                         setTableSearch('');
                       }}
                       className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 flex-1 justify-center ${isActive
-                        ? 'bg-[#1D3557] text-white shadow-xs'
-                        : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-white/60'
+                        ? 'bg-primary-900 text-white shadow-xs'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-surface/60'
                         }`}
                     >
                       <Icon size={14} />
@@ -521,13 +521,13 @@ export default function RelatorioPage() {
 
             {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO */}
             <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4 shrink-0">
-              <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-2xl flex flex-col">
-                <span className="text-[10px] font-bold text-[#457B9D] uppercase tracking-wider flex items-center gap-1">
-                  <Database size={11} className="text-[#2563EB]" />
+              <div className="bg-surface-soft border border-border p-3 rounded-2xl flex flex-col">
+                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1">
+                  <Database size={11} className="text-primary-600" />
                   Ativos de CT&I
                 </span>
                 <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-black text-[#1D3557]">
+                  <span className="text-lg font-bold text-text-primary">
                     {statsSintese.totalAtivos}
                   </span>
                   <span className="text-[10px] font-bold text-[#10B981]">
@@ -536,25 +536,25 @@ export default function RelatorioPage() {
                 </div>
               </div>
 
-              <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-2xl flex flex-col">
-                <span className="text-[10px] font-bold text-[#457B9D] uppercase tracking-wider flex items-center gap-1">
+              <div className="bg-surface-soft border border-border p-3 rounded-2xl flex flex-col">
+                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1">
                   <GraduationCap size={11} className="text-[#8B5CF6]" />
                   Cursos CT&I
                 </span>
                 <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-black text-[#1D3557]">
+                  <span className="text-lg font-bold text-text-primary">
                     {statsSintese.totalCursos}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-2xl flex flex-col">
-                <span className="text-[10px] font-bold text-[#457B9D] uppercase tracking-wider flex items-center gap-1">
+              <div className="bg-surface-soft border border-border p-3 rounded-2xl flex flex-col">
+                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1">
                   <GitPullRequest size={11} className="text-[#F59E0B]" />
                   Cadeias Mapeadas
                 </span>
                 <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-black text-[#1D3557]">
+                  <span className="text-lg font-bold text-text-primary">
                     {statsSintese.totalCadeias}
                   </span>
                   <span className="text-[10px] font-bold text-[#64748B]">
@@ -563,13 +563,13 @@ export default function RelatorioPage() {
                 </div>
               </div>
 
-              <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-2xl flex flex-col" title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
-                <span className="text-[10px] font-bold text-[#457B9D] uppercase tracking-wider flex items-center gap-1">
+              <div className="bg-surface-soft border border-border p-3 rounded-2xl flex flex-col" title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
+                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1">
                   <MapPin size={11} className="text-[#EF4444]" />
                   Cobertura CT&I
                 </span>
                 <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-black text-[#1D3557]">
+                  <span className="text-lg font-bold text-text-primary">
                     {statsSintese.munAtendidosCount} <span className="text-xs font-bold text-[#64748B]">/ {statsSintese.totalMunEscopo}</span>
                   </span>
                   <span className="text-[10px] font-bold text-[#059669]">
@@ -591,11 +591,11 @@ export default function RelatorioPage() {
                   <div className="flex flex-col max-w-xl">
                     <div className="flex items-center gap-2 mb-1">
                       <Award size={16} className="text-[#A8DADC]" />
-                      <span className="text-[10px] font-black uppercase tracking-wider text-[#A8DADC]">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8DADC]">
                         Documento Analítico SECTI
                       </span>
                     </div>
-                    <h3 className="text-lg sm:text-xl font-black leading-tight">
+                    <h3 className="text-lg sm:text-xl font-bold leading-tight">
                       {territoryTitle}
                     </h3>
                     <p className="text-xs text-white/80 mt-1 leading-relaxed">
@@ -607,12 +607,12 @@ export default function RelatorioPage() {
                   </div>
 
                   <div className="flex flex-row sm:flex-col gap-2 shrink-0 sm:items-end">
-                    <div className="bg-white/10 px-3 py-1.5 rounded-xl border border-white/15">
+                    <div className="bg-surface/10 px-3 py-1.5 rounded-xl border border-white/15">
                       <span className="text-[9px] text-white/70 block">População Estimada</span>
                       <strong className="text-sm font-black">{statsSintese.populacaoTotal} hab.</strong>
                     </div>
                     {statsSintese.ifdmMedio && (
-                      <div className="bg-white/10 px-3 py-1.5 rounded-xl border border-white/15">
+                      <div className="bg-surface/10 px-3 py-1.5 rounded-xl border border-white/15">
                         <span className="text-[9px] text-white/70 block">IFDM Médio FIRJAN</span>
                         <strong className="text-sm font-black">{statsSintese.ifdmMedio}</strong>
                       </div>
@@ -624,13 +624,13 @@ export default function RelatorioPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                   {/* BLOCO 1: INFRAESTRUTURA DE ATIVOS E CONECTIVIDADE */}
-                  <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] flex flex-col gap-3">
-                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
-                      <h4 className="text-xs font-black text-[#1D3557] flex items-center gap-1.5">
-                        <Database size={13} className="text-[#2563EB]" />
+                  <div className="p-4 rounded-2xl bg-surface-soft border border-border flex flex-col gap-3">
+                    <div className="flex items-center justify-between border-b border-border pb-2">
+                      <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
+                        <Database size={13} className="text-primary-600" />
                         Infraestrutura de CT&I & RNP
                       </h4>
-                      <span className="text-[10px] font-extrabold text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-semibold text-primary-600 bg-primary-600/10 px-2 py-0.5 rounded-full">
                         {scopedAtivos.length} Registros
                       </span>
                     </div>
@@ -641,14 +641,14 @@ export default function RelatorioPage() {
 
                     <div className="space-y-3 mt-1">
                       <div className="flex flex-col gap-1.5">
-                        <div className="flex justify-between items-center text-[11px] text-[#1D3557]">
+                        <div className="flex justify-between items-center text-[11px] text-text-primary">
                           <div className="flex items-center gap-1.5 font-bold">
-                            <span className="w-2 h-2 rounded-full bg-[#00B4D8]"></span>
+                            <span className="w-2 h-2 rounded-full bg-info-500"></span>
                             Pontos de Presença / Conexão RNP
                           </div>
                           <span className="font-bold">{statsSintese.rnpAtivos} de {statsSintese.totalAtivos} <span className="text-[#64748B] font-medium">({statsSintese.rnpTaxa}%)</span></span>
                         </div>
-                        <div className="flex justify-between items-center text-[11px] text-[#1D3557]">
+                        <div className="flex justify-between items-center text-[11px] text-text-primary">
                           <div className="flex items-center gap-1.5 font-bold">
                             <span className="w-2 h-2 rounded-full bg-[#3B82F6]"></span>
                             Demais Ativos Institucionais / Lab
@@ -658,7 +658,7 @@ export default function RelatorioPage() {
                       </div>
                       <div className="w-full h-2.5 rounded-full bg-[#E2E8F0] overflow-hidden flex">
                         <div
-                          className="h-full bg-[#00B4D8] transition-all"
+                          className="h-full bg-info-500 transition-all"
                           style={{ width: `${statsSintese.rnpTaxa}%` }}
                         />
                         <div
@@ -670,13 +670,13 @@ export default function RelatorioPage() {
                   </div>
 
                   {/* BLOCO 2: FORMAÇÃO SUPERIOR E MODALIDADES */}
-                  <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] flex flex-col gap-3">
-                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
-                      <h4 className="text-xs font-black text-[#1D3557] flex items-center gap-1.5">
+                  <div className="p-4 rounded-2xl bg-surface-soft border border-border flex flex-col gap-3">
+                    <div className="flex items-center justify-between border-b border-border pb-2">
+                      <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
                         <GraduationCap size={14} className="text-[#8B5CF6]" />
                         Oferta Educacional CT&I
                       </h4>
-                      <span className="text-[10px] font-extrabold text-[#8B5CF6] bg-[#8B5CF6]/10 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-semibold text-[#8B5CF6] bg-[#8B5CF6]/10 px-2 py-0.5 rounded-full">
                         {scopedCursos.length} Cursos
                       </span>
                     </div>
@@ -687,17 +687,17 @@ export default function RelatorioPage() {
 
                     <div className="space-y-3 mt-1">
                       <div>
-                        <div className="flex justify-between items-center text-[11px] font-bold text-[#1D3557] mb-1">
+                        <div className="flex justify-between items-center text-[11px] font-bold text-text-primary mb-1">
                           <span>Rede Pública Estadual</span>
                           <span>{statsSintese.estadualCursos} ({statsSintese.estadualTaxa}%)</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex">
-                          <div className="h-full bg-[#2563EB] transition-all" style={{ width: `${statsSintese.estadualTaxa}%` }} />
+                          <div className="h-full bg-primary-600 transition-all" style={{ width: `${statsSintese.estadualTaxa}%` }} />
                         </div>
                       </div>
 
                       <div>
-                        <div className="flex justify-between items-center text-[11px] font-bold text-[#1D3557] mb-1">
+                        <div className="flex justify-between items-center text-[11px] font-bold text-text-primary mb-1">
                           <span>Rede Pública Federal</span>
                           <span>{statsSintese.federalCursos} ({statsSintese.federalTaxa}%)</span>
                         </div>
@@ -707,7 +707,7 @@ export default function RelatorioPage() {
                       </div>
 
                       <div>
-                        <div className="flex justify-between items-center text-[11px] font-bold text-[#1D3557] mb-1">
+                        <div className="flex justify-between items-center text-[11px] font-bold text-text-primary mb-1">
                           <span>Rede Privada / Outros</span>
                           <span>{statsSintese.privadaCursos} ({statsSintese.privadaTaxa}%)</span>
                         </div>
@@ -721,13 +721,13 @@ export default function RelatorioPage() {
                 </div>
 
                 {/* VOCAÇÕES PRODUTIVAS MAPEADAS */}
-                <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                <div className="p-4 rounded-2xl bg-surface-soft border border-border">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-black text-[#1D3557] flex items-center gap-1.5">
+                    <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
                       <GitPullRequest size={13} className="text-[#F59E0B]" />
                       Vocações Econômicas e Cadeias Produtivas Mapeadas ({statsSintese.totalCadeias})
                     </h4>
-                    <span className="text-[10px] text-[#457B9D] font-bold">
+                    <span className="text-[10px] text-text-secondary font-bold">
                       Fonte: Base Oficial SECTI / SDR
                     </span>
                   </div>
@@ -735,7 +735,7 @@ export default function RelatorioPage() {
                     {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-white border border-[#E2E8F0] text-[#1D3557] shadow-2xs"
+                        className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-surface border border-border text-text-primary shadow-2xs"
                       >
                         {cad}
                       </span>
@@ -756,19 +756,19 @@ export default function RelatorioPage() {
                 {/* BARRA DE BUSCA E FILTROS DA TABELA */}
                 <div className={`flex items-center justify-between gap-3 mb-3 shrink-0 print:hidden `}>
                   <div className="relative flex-1 max-w-sm">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-[#457B9D]" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-text-secondary" />
                     <input
                       type="text"
                       value={tableSearch}
                       onChange={(e) => setTableSearch(e.target.value)}
                       placeholder={`Pesquisar nos ${tableData.length} registros...`}
-                      className="w-full pl-9 pr-7 py-1.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#1D3557] placeholder-[#94A3B8] focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors"
+                      className="w-full pl-9 pr-7 py-1.5 rounded-xl bg-surface-soft border border-border text-xs text-text-primary placeholder-[#94A3B8] focus:bg-surface focus:border-[#2563EB] focus:outline-none transition-colors"
                     />
                     {tableSearch && (
                       <button
                         type="button"
                         onClick={() => setTableSearch('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-xs font-bold"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-text-primary text-xs font-bold"
                       >
                         ×
                       </button>
@@ -781,7 +781,7 @@ export default function RelatorioPage() {
                 </div>
 
                 {/* TABELA - CABEÇALHO (Estático, fora do scroll) */}
-                <div className={`border border-[#E2E8F0] border-b-0 rounded-t-2xl bg-[#F8FAFC] print:hidden `}>
+                <div className={`border border-border border-b-0 rounded-t-2xl bg-surface-soft print:hidden `}>
                   <table className="w-full text-left border-collapse text-xs table-fixed">
                     <colgroup>
                       <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
@@ -791,7 +791,7 @@ export default function RelatorioPage() {
                       {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
                       {reportType !== 'cadeias' && <col className="w-[10%]" />}
                     </colgroup>
-                    <thead className="text-[#457B9D] font-extrabold text-[10.5px] uppercase tracking-wider">
+                    <thead className="text-text-muted font-semibold text-[10.5px] uppercase tracking-wider">
                       <tr>
                         <th className="py-2.5 px-3">
                           {reportType === 'ativos' && 'Nome do Ativo'}
@@ -837,7 +837,7 @@ export default function RelatorioPage() {
                 </div>
 
                 {/* TABELA DE DADOS COM SCROLL INTERNO */}
-                <div className={`flex-1 overflow-y-auto overflow-x-hidden border border-[#E2E8F0] rounded-b-2xl shadow-2xs bg-white print:overflow-visible print:border-none print:shadow-none min-h-0`}>
+                <div className={`flex-1 overflow-y-auto overflow-x-hidden border border-border rounded-b-2xl shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0`}>
                   <table className="w-full text-left border-collapse text-xs table-fixed">
                     <colgroup>
                       <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
@@ -848,24 +848,24 @@ export default function RelatorioPage() {
                       {reportType !== 'cadeias' && <col className="w-[10%]" />}
                     </colgroup>
                     
-                    <tbody className="divide-y divide-[#E2E8F0]/70 text-[#1D3557]">
+                    <tbody className="divide-y divide-[#E2E8F0]/70 text-text-primary">
                       {tableData.length > 0 ? (
                         tableData.map((row, idx) => (
                           <tr
                             key={idx}
-                            className="hover:bg-[#F8FAFC] transition-colors group"
+                            className="hover:bg-surface-soft transition-colors group"
                           >
-                            <td className="py-2 px-3 font-bold text-[#1D3557] truncate" title={row.col1}>
+                            <td className="py-2 px-3 font-bold text-text-primary truncate" title={row.col1}>
                               {row.col1}
                             </td>
                             {reportType !== 'municipios' && (
-                              <td className="py-2 px-3 text-[#457B9D] font-medium max-w-[160px] truncate" title={row.col2}>
+                              <td className="py-2 px-3 text-text-secondary font-medium max-w-[160px] truncate" title={row.col2}>
                                 {row.col2}
                               </td>
                             )}
                             {reportType !== 'municipios' && (
                               <td className="py-2 px-3 max-w-[180px] truncate" title={row.col3}>
-                                <span className="bg-[#F1F5F9] text-[#1D3557] px-2 py-0.5 rounded-md text-[10px] font-bold">
+                                <span className="bg-surface-soft text-text-primary px-2 py-0.5 rounded-md text-[10px] font-bold">
                                   {row.col3}
                                 </span>
                               </td>
@@ -881,12 +881,12 @@ export default function RelatorioPage() {
                             {reportType !== 'cadeias' && (
                               <td className="py-2 px-3 text-right font-bold whitespace-nowrap">
                                 {row.col6 === 'EaD' || row.col6 === 'Sim (RNP Conectado)' ? (
-                                  <span className="text-[10px] font-black text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                                  <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
                                     <Wifi size={10} />
                                     {row.col6}
                                   </span>
                                 ) : row.col6 === 'Presencial' ? (
-                                  <span className="text-[10px] font-extrabold text-[#457B9D] bg-slate-100 px-2 py-0.5 rounded-full">
+                                  <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2 py-0.5 rounded-full">
                                     Presencial
                                   </span>
                                 ) : (

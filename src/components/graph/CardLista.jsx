@@ -72,8 +72,8 @@ function CardLista({
       
       {/* SE HOUVER ABAS DINÂMICAS: RENDERIZA A BARRA DE NAVEGAÇÃO E BUSCA */}
       {hasTabs && (
-        <div className="bg-white rounded-[24px] p-2.5 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center bg-[#F1F5F9] p-1 rounded-2xl border border-[#E2E8F0] gap-1 w-full sm:w-auto overflow-x-auto">
+        <div className="bg-surface rounded-xl p-2.5 border border-border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
             {tabs.map((tab) => {
               const TabIcon = tab.icon;
               const isActive = (activeTab || tabs[0]?.id) === tab.id;
@@ -83,17 +83,17 @@ function CardLista({
                   key={tab.id}
                   type="button"
                   onClick={() => onTabChange(tab.id)}
-                  className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                     isActive
-                      ? 'bg-[#1D3557] text-white shadow-xs'
-                      : 'text-[#457B9D] hover:text-[#1D3557]'
+                      ? 'bg-primary-900 text-white shadow-sm'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   {TabIcon && <TabIcon size={13} />}
                   <span>{tab.label}</span>
                   {tab.count !== undefined && (
-                    <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-extrabold ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-[#E2E8F0] text-[#457B9D]'
+                    <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-semibold ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-border text-text-secondary'
                     }`}>
                       {tab.count}
                     </span>
@@ -105,19 +105,19 @@ function CardLista({
 
           {showSearch && (
             <div className="relative w-full sm:w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-[#457B9D]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-text-secondary" />
               <input
                 type="text"
                 value={internalSearch}
                 onChange={(e) => setInternalSearch(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[11px] text-[#1D3557] placeholder-[#94A3B8] focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
               />
               {internalSearch && (
                 <button
                   type="button"
                   onClick={() => setInternalSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[12px] font-bold"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-text-muted hover:text-text-primary text-[12px] font-bold"
                 >
                   ×
                 </button>
@@ -128,7 +128,7 @@ function CardLista({
       )}
 
       {/* CONTAINER PRINCIPAL DO CARD */}
-      <div className={`bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] p-5 relative flex flex-col justify-start flex-1 group cursor-default min-h-0 ${
+      <div className={`bg-surface rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow p-6 relative flex flex-col justify-start flex-1 group cursor-default min-h-0 ${
         isDropdownOpen ? '!z-50' : 'z-10'
       }`}>
 
@@ -140,11 +140,11 @@ function CardLista({
             {/* CABEÇALHO PADRÃO DE LISTA COM FILTRO */}
             <div className="flex items-center justify-between gap-2 mb-3 shrink-0 pr-8 relative z-30">
               <div className="flex items-center gap-2">
-                <MapPin size={15} className="text-[#457B9D]" />
-                <h3 className="text-[#1D3557] font-extrabold text-[13px] tracking-tight truncate max-w-[150px]">
+                <MapPin size={15} className="text-text-secondary" />
+                <h3 className="text-text-primary font-semibold text-[13px] tracking-tight truncate max-w-[150px]">
                   {selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : title}
                 </h3>
-                <span className="text-[10px] font-bold text-[#457B9D] bg-[#F1F5F9] px-2 py-0.5 rounded-full border border-[#E2E8F0] shrink-0">
+                <span className="text-[10px] font-medium text-text-muted bg-surface-soft px-2 py-0.5 rounded-full border border-border shrink-0">
                   {items.length}
                 </span>
               </div>
@@ -155,7 +155,7 @@ function CardLista({
                   {selectedTerritory && (
                     <button
                       onClick={onClearTerritory}
-                      className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg hover:bg-red-100 transition-colors cursor-pointer"
+                      className="text-[10px] font-bold text-danger-700 bg-danger-50 px-2 py-1 rounded-lg hover:bg-danger-100 transition-colors cursor-pointer"
                     >
                       Limpar Região
                     </button>
@@ -167,13 +167,13 @@ function CardLista({
                       e.stopPropagation();
                       setIsDropdownOpen((prev) => !prev);
                     }}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors duration-150 border cursor-pointer select-none active:scale-95 ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors duration-150 border cursor-pointer select-none active:scale-95 ${
                       selectedFilter !== 'todos'
-                        ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-xs'
-                        : 'bg-[#F8FAFC] text-[#1D3557] border-[#E2E8F0] hover:bg-[#F1F5F9]'
+                        ? 'bg-primary-900 text-white border-primary-900 shadow-sm'
+                        : 'bg-surface text-text-secondary border-border hover:bg-surface-soft'
                     }`}
                   >
-                    <Filter size={12} className={selectedFilter !== 'todos' ? 'text-white' : 'text-[#457B9D]'} />
+                    <Filter size={12} className={selectedFilter !== 'todos' ? 'text-white' : 'text-text-secondary'} />
                     <span className="max-w-[110px] truncate">
                       {selectedFilter === 'todos' ? filterLabel : selectedFilter}
                     </span>
@@ -182,10 +182,10 @@ function CardLista({
 
                   {isDropdownOpen && (
                     <div 
-                      className="absolute right-0 top-full mt-2 w-[270px] max-h-[260px] overflow-y-auto hide-scroll bg-white rounded-2xl shadow-[0_16px_40px_rgba(29,53,87,0.22)] border border-[#E2E8F0] p-1.5 z-[200] flex flex-col gap-0.5"
+                      className="absolute right-0 top-full mt-2 w-[270px] max-h-[260px] overflow-y-auto hide-scroll bg-surface rounded-xl shadow-md border border-border p-1.5 z-[200] flex flex-col gap-0.5"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#A0AEC0] border-b border-[#F1F5F9] mb-1">
+                      <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-text-muted border-b border-border mb-1">
                         {filterTitle}
                       </div>
 
@@ -195,12 +195,12 @@ function CardLista({
                           onSelectFilter('todos'); 
                           setIsDropdownOpen(false); 
                         }}
-                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition-colors text-left cursor-pointer ${
-                          selectedFilter === 'todos' ? 'bg-[#F1F5F9] text-[#1D3557] font-bold' : 'text-[#457B9D] hover:bg-[#F8FAFC]'
+                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors text-left cursor-pointer ${
+                          selectedFilter === 'todos' ? 'bg-surface-soft text-text-primary font-semibold' : 'text-text-secondary hover:bg-surface-soft'
                         }`}
                       >
                         <span className="truncate">Todos</span>
-                        <span className="text-[10px] text-[#A0AEC0]">({items.length})</span>
+                        <span className="text-[10px] text-text-muted">({items.length})</span>
                       </button>
 
                       {filterOptions.map((option) => (
@@ -212,7 +212,7 @@ function CardLista({
                             setIsDropdownOpen(false); 
                           }}
                           className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition-colors text-left cursor-pointer ${
-                            selectedFilter === option ? 'bg-[#F1F5F9] text-[#1D3557] font-bold' : 'text-[#457B9D] hover:bg-[#F8FAFC]'
+                            selectedFilter === option ? 'bg-surface-soft text-text-primary font-bold' : 'text-text-secondary hover:bg-surface-soft'
                           }`}
                         >
                           <span className="truncate pr-2">{option}</span>
@@ -229,7 +229,7 @@ function CardLista({
               isAlone ? 'grid grid-cols-1 md:grid-cols-2 gap-2.5 content-start' : 'flex flex-col gap-2'
             }`}>
               {items.length === 0 ? (
-                <div className="col-span-full py-8 text-center text-[11px] font-semibold text-[#A0AEC0]">
+                <div className="col-span-full py-8 text-center text-[11px] font-semibold text-text-muted">
                   {emptyMessage}
                 </div>
               ) : (
@@ -241,7 +241,7 @@ function CardLista({
                     <div
                       key={item.id}
                       onClick={() => onItemClick(item)}
-                      className="flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-[#F8FAFC] transition-colors duration-150 cursor-pointer border border-transparent hover:border-[#E2E8F0] group shrink-0"
+                      className="flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-surface-soft transition-colors duration-150 cursor-pointer border border-transparent hover:border-border group shrink-0"
                     >
                       <div 
                         className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200"
@@ -251,14 +251,14 @@ function CardLista({
                       </div>
 
                       <div className="flex flex-col flex-1 min-w-0">
-                        <span className="text-[12px] font-bold text-[#1D3557] leading-tight mb-0.5 group-hover:text-[#2563EB] transition-colors line-clamp-1 truncate" title={item.nome || item.entidade}>
+                        <span className="text-[12px] font-bold text-text-primary leading-tight mb-0.5 group-hover:text-primary-600 transition-colors line-clamp-1 truncate" title={item.nome || item.entidade}>
                           {item.nome || item.entidade}
                         </span>
                         <div className="flex items-center justify-between mt-0.5 gap-1.5">
-                          <span className="text-[9px] font-semibold text-[#A0AEC0] bg-gray-50 px-1.5 py-0.5 rounded-full border border-gray-100 truncate max-w-[135px]">
+                          <span className="text-[9px] font-semibold text-text-muted bg-surface-soft px-1.5 py-0.5 rounded-full border border-border truncate max-w-[135px]">
                             {item.shortTipo || item.tipo || item.segmento}
                           </span>
-                          <span className="text-[10px] font-bold text-[#457B9D] truncate">
+                          <span className="text-[10px] font-bold text-text-secondary truncate">
                             {item.municipio || item.municipio_sede}
                           </span>
                         </div>
@@ -269,7 +269,7 @@ function CardLista({
               )}
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-[24px] z-20" />
+            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-surface to-transparent pointer-events-none rounded-b-[24px] z-20" />
           </>
         )}
       </div>

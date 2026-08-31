@@ -74,7 +74,7 @@ function SortableCard({ id, className = '', children }) {
       <button
         {...attributes}
         {...listeners}
-        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-colors duration-200 group-hover:text-[#1D3557]"
+        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-colors duration-200 group-hover:text-text-primary"
         title="Arrastar card"
       >
         <GripHorizontal size={18} />
@@ -215,11 +215,11 @@ export default function DashboardPainel() {
     });
 
     const styles = [
-      { bg: 'bg-[#1D3557]', text: 'text-white' },
-      { bg: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
-      { bg: 'bg-[#457B9D]/10', text: 'text-[#457B9D]' },
-      { bg: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
-      { bg: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
+      { bg: 'bg-primary-900', text: 'text-white' },
+      { bg: 'bg-primary-600/10', text: 'text-primary-600' },
+      { bg: 'bg-[#457B9D]/10', text: 'text-text-secondary' },
+      { bg: 'bg-[#A8DADC]/20', text: 'text-text-secondary' },
+      { bg: 'bg-[#E2E8F0]/50', text: 'text-text-primary' }
     ];
 
     return Object.values(mapEntidades)
@@ -274,11 +274,11 @@ export default function DashboardPainel() {
     });
 
     const styles = [
-      { bg: 'bg-[#1D3557]', text: 'text-white' },
-      { bg: 'bg-[#2563EB]/10', text: 'text-[#2563EB]' },
-      { bg: 'bg-[#457B9D]/10', text: 'text-[#457B9D]' },
-      { bg: 'bg-[#A8DADC]/20', text: 'text-[#457B9D]' },
-      { bg: 'bg-[#E2E8F0]/50', text: 'text-[#1D3557]' }
+      { bg: 'bg-primary-900', text: 'text-white' },
+      { bg: 'bg-primary-600/10', text: 'text-primary-600' },
+      { bg: 'bg-[#457B9D]/10', text: 'text-text-secondary' },
+      { bg: 'bg-[#A8DADC]/20', text: 'text-text-secondary' },
+      { bg: 'bg-[#E2E8F0]/50', text: 'text-text-primary' }
     ];
 
     return Object.entries(counts)
@@ -409,8 +409,8 @@ export default function DashboardPainel() {
       {/* HEADER DA PÁGINA */}
       <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-[#1D3557] tracking-tight">Visão Geral</h1>
-          <p className="text-sm text-[#457B9D] mt-1 font-medium">Dashboard Integrado de CTI</p>
+          <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
+          <p className="text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
         </div>
       </div>
 
@@ -420,23 +420,23 @@ export default function DashboardPainel() {
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
+              className="h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
             >
               {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO COM CORES ORIGINAIS */}
               <div className="flex items-center justify-between gap-1.5 min-w-0">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-primary-200/70 text-text-secondary flex items-center justify-center shrink-0">
                     <kpi.icon size={14} strokeWidth={2.5} />
                   </div>
                   <span
-                    className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                    className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary truncate"
                     title={kpi.label}
                   >
                     {kpi.label}
                   </span>
                 </div>
                 {kpi.isIndex && (
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[#D6EAF8]/60 text-[#1D3557] shrink-0 leading-none">
+                  <span className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-primary-200/60 text-text-primary shrink-0 leading-none">
                     Índice
                   </span>
                 )}
@@ -444,7 +444,7 @@ export default function DashboardPainel() {
 
               {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
               <div className="flex items-center justify-center w-full min-w-0 pt-1">
-                <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                <span className="text-[30px] font-bold text-text-primary tracking-tight leading-none text-center">
                   {kpi.value}
                 </span>
               </div>
@@ -457,7 +457,7 @@ export default function DashboardPainel() {
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden flex flex-col group min-h-[400px]">
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-2xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-[400px]">
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}
@@ -536,7 +536,7 @@ export default function DashboardPainel() {
                         subtitle={selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa'}
                         positiveLabel="Com RNP"
                         negativeLabel="Sem RNP"
-                        positiveColor="bg-[#2563EB]"
+                        positiveColor="bg-primary-600"
                         negativeColor="bg-[#E2E8F0]"
                       />
                     </SortableCard>

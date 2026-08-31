@@ -122,20 +122,20 @@ export default function RankingBarChart({
   }, [allRanked, filterMode, highlightedItem]);
 
   return (
-    <div className="flex-1 bg-white rounded-[24px] border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col group cursor-default h-full">
+    <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-6 relative flex flex-col group cursor-default h-full">
 
       {/* HEADER + CONTROLES */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex flex-col min-w-0 pr-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-[#1A202C] font-bold text-[15px] tracking-tight">{title}</h3>
+            <h3 className="text-slate-900 font-semibold text-[15px] tracking-tight">{title}</h3>
             {highlightedItem && (
               <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-[#00B4D8]/15 text-[#0096C7] border border-[#00B4D8]/30 shrink-0">
                 {highlightedItem.rank}º no Estado
               </span>
             )}
           </div>
-          <p className="text-[#A0AEC0] font-medium text-[11px] mt-0.5 truncate">{subtitle}</p>
+          <p className="text-slate-500 font-normal text-[11px] mt-0.5 truncate">{subtitle}</p>
         </div>
 
         <div className="flex flex-row items-center justify-center gap-[2px] bg-gray-50 border border-gray-100 rounded-[8px] p-1 mr-7 relative z-40 shrink-0">
@@ -200,29 +200,29 @@ export default function RankingBarChart({
                     <div className="w-1 h-1 bg-white rounded-full"></div>
                   </div>
 
-                  <span className={`absolute -top-6 text-[9px] ${isSelected ? 'text-[#0096C7] font-black' : 'font-bold text-[#A0AEC0]'} group-hover/col:opacity-0 transition-opacity whitespace-nowrap`}>
+                  <span className={`absolute -top-6 text-[9px] ${isSelected ? 'text-[#0096C7] font-bold' : 'font-medium text-slate-400'} group-hover/col:opacity-0 transition-opacity whitespace-nowrap`}>
                     {item.val < 1 && item.val > 0 ? item.val.toFixed(3) : item.val}
                   </span>
 
                   {/* TOOLTIP FLUTUANTE */}
-                  <div className="absolute bottom-[calc(100%+14px)] bg-[#1A202C] shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-[12px] px-3 py-2 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[110px] left-1/2 -translate-x-1/2 transform-gpu">
-                    <div className="text-[10px] font-bold text-white mb-0.5 leading-tight">{item.rank}º · {item.cleanName}</div>
-                    <div className="flex items-center text-[10px] text-gray-300">
-                      <span>IFDM: <strong className="text-white font-bold">{item.val.toFixed(3)}</strong></span>
+                  <div className="absolute bottom-[calc(100%+14px)] bg-white border border-slate-200 shadow-sm rounded-lg px-3 py-2 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-all duration-300 pointer-events-none z-30 translate-y-2 group-hover/col:translate-y-0 min-w-[110px] left-1/2 -translate-x-1/2 transform-gpu">
+                    <div className="text-[10px] font-semibold text-slate-900 mb-0.5 leading-tight">{item.rank}º · {item.cleanName}</div>
+                    <div className="flex items-center text-[10px] text-slate-600">
+                      <span>IFDM: <strong className="text-slate-900 font-bold">{item.val.toFixed(3)}</strong></span>
                     </div>
                     {item.extra > 0 && (
-                      <div className="flex items-center text-[9.5px] text-[#A0AEC0] mt-0.5">
+                      <div className="flex items-center text-[9.5px] text-slate-500 mt-0.5">
                         <span>{item.extra} {extraLabel}</span>
                       </div>
                     )}
-                    <div className="absolute -bottom-[4px] left-1/2 -translate-x-1/2 transform-gpu w-2.5 h-2.5 bg-[#1A202C] rotate-45 rounded-sm"></div>
+                    <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 transform-gpu w-2 h-2 bg-white border-b border-r border-slate-200 rotate-45 rounded-sm"></div>
                   </div>
                 </div>
               </div>
 
               {/* RÓTULO INFERIOR */}
               <div
-                className={`text-[9px] text-center leading-tight truncate w-full transition-colors mt-2 px-0.5 ${isSelected ? 'font-black text-[#0096C7]' : 'font-medium text-[#A0AEC0] group-hover/col:text-[#1A202C]'
+                className={`text-[9px] text-center leading-tight truncate w-full transition-colors mt-2 px-0.5 ${isSelected ? 'font-bold text-[#0096C7]' : 'font-normal text-slate-500 group-hover/col:text-slate-900'
                   }`}
                 title={`${item.rank}º ${item.cleanName}`}
               >

@@ -321,32 +321,32 @@ function SingleAssetPopupContent({ ativo }) {
           >
             {IconComp && <IconComp size={11} className="text-white" />}
           </div>
-          <span className="text-[10px] font-extrabold text-[#1D3557] uppercase truncate">
+          <span className="text-[10px] font-extrabold text-text-primary uppercase truncate">
             {ativo.shortTipo || ativo.tipo}
           </span>
         </div>
       </div>
 
-      <h4 className="font-extrabold text-[#1D3557] text-[12.5px] leading-tight tracking-tight">
+      <h4 className="font-extrabold text-text-primary text-[12.5px] leading-tight tracking-tight">
         {ativo.nome || ativo.entidade}
       </h4>
 
-      <div className="flex flex-col gap-1 bg-[#F8FAFC] p-2 rounded-xl border border-[#E2E8F0]/70 text-[10.5px]">
-        <div className="flex items-center gap-1.5 text-[#457B9D]">
-          <MapPin size={12} className="text-[#2563EB] shrink-0" />
-          <span className="font-semibold text-[#1D3557] truncate">{ativo.municipio}</span>
+      <div className="flex flex-col gap-1 bg-surface-soft p-2 rounded-xl border border-border/70 text-[10.5px]">
+        <div className="flex items-center gap-1.5 text-text-secondary">
+          <MapPin size={12} className="text-primary-600 shrink-0" />
+          <span className="font-semibold text-text-primary truncate">{ativo.municipio}</span>
         </div>
         {ativo.territorio && (
-          <div className="flex items-center gap-1.5 text-[#457B9D]">
-            <Building size={12} className="text-[#457B9D] shrink-0" />
-            <span className="font-medium text-[#457B9D] truncate">
+          <div className="flex items-center gap-1.5 text-text-secondary">
+            <Building size={12} className="text-text-secondary shrink-0" />
+            <span className="font-medium text-text-secondary truncate">
               {ativo.territorio.replace(/^Território de Identidade\s+/i, '')}
             </span>
           </div>
         )}
         {ativo.rnp && (
-          <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#0096C7] bg-[#00B4D8]/15 px-2 py-0.5 rounded-lg border border-[#00B4D8]/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00B4D8]"></span>
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-info-600 bg-info-500/15 px-2 py-0.5 rounded-lg border border-info-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-info-500"></span>
             <span>Ponto de Presença / Conexão RNP</span>
           </div>
         )}
@@ -1132,7 +1132,7 @@ export default function SideMap({
                 <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
                   p.isSelected
                     ? 'text-white bg-[#1E40AF] border-[#1E40AF] font-bold'
-                    : 'text-[#1E40AF] bg-white/95 backdrop-blur-xs border-[#E2E8F0]'
+                    : 'text-[#1E40AF] bg-surface/95 backdrop-blur-xs border-border'
                 }`}>
                   {p.municipio}
                 </span>
@@ -1156,17 +1156,17 @@ export default function SideMap({
 
       {/* BADGE DE HOVER */}
       {hoveredTerritory && (
-        <div className="absolute top-3 left-3.5 z-[400] pointer-events-none select-none flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
-          {mode === 'cursos' && <Flame size={13} className="text-[#2563EB]" />}
-          <span className="text-[#1D3557] font-extrabold text-[12px] tracking-tight">
+        <div className="absolute top-3 left-3.5 z-[400] pointer-events-none select-none flex items-center gap-1.5 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
+          {mode === 'cursos' && <Flame size={13} className="text-primary-600" />}
+          <span className="text-text-primary font-extrabold text-[12px] tracking-tight">
             {hoveredTerritory}
           </span>
           {mode === 'cursos' ? (
-            <span className="text-[#2563EB] font-black text-[11px] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
+            <span className="text-primary-600 font-black text-[11px] bg-primary-600/10 px-2 py-0.5 rounded-full">
               {hoveredCursosCount} {hoveredCursosCount === 1 ? 'curso' : 'cursos'}
             </span>
           ) : (
-            <span className="text-[#2563EB] font-extrabold text-[10.5px]">
+            <span className="text-primary-600 font-extrabold text-[10.5px]">
               · {territoryStats[hoveredTerritory]?.count || 0} {mode === 'cadeias' ? 'arranjos' : 'ativos'}
             </span>
           )}
@@ -1175,10 +1175,10 @@ export default function SideMap({
 
       {/* LEGENDA DO HEATMAP (MODO CURSOS) */}
       {mode === 'cursos' && (
-        <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-md rounded-2xl p-2.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto">
+        <div className="absolute bottom-3 left-3 z-[400] bg-surface/95 backdrop-blur-md rounded-2xl p-2.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto">
           <div className="flex items-center gap-1 mb-1.5">
-            <Flame size={12} className="text-[#2563EB]" />
-            <span className="text-[9.5px] font-extrabold text-[#1D3557] uppercase tracking-wider">
+            <Flame size={12} className="text-primary-600" />
+            <span className="text-[9.5px] font-extrabold text-text-primary uppercase tracking-wider">
               Densidade de Cursos
             </span>
           </div>
@@ -1209,16 +1209,16 @@ export default function SideMap({
             onClick={() => setShowAllConnections((prev) => !prev)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
               showAllConnections
-                ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
-                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+                ? 'bg-primary-900 text-white border-primary-900 shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
+                : 'bg-surface/95 backdrop-blur-md text-text-primary border-[#CBD5E1] hover:bg-surface hover:border-[#2563EB]'
             }`}
             title={showAllConnections ? "Desativar teia de conexões" : "Visualizar teia com todas as conexões simultâneas das cadeias"}
           >
-            <Network size={13} className={showAllConnections ? 'text-[#00B4D8]' : 'text-[#2563EB]'} />
+            <Network size={13} className={showAllConnections ? 'text-[#00B4D8]' : 'text-primary-600'} />
             <span>Teia de Conexões</span>
             <span
               className={`w-2 h-2 rounded-full transition-all ${
-                showAllConnections ? 'bg-[#00B4D8] animate-pulse scale-110' : 'bg-[#CBD5E1]'
+                showAllConnections ? 'bg-info-500 animate-pulse scale-110' : 'bg-border-strong'
               }`}
             />
           </button>
@@ -1230,8 +1230,8 @@ export default function SideMap({
             onClick={onToggleExpand}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
               isExpanded
-                ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
-                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+                ? 'bg-primary-900 text-white border-primary-900 shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
+                : 'bg-surface/95 backdrop-blur-md text-text-primary border-[#CBD5E1] hover:bg-surface hover:border-[#2563EB]'
             }`}
             title={isExpanded ? "Restaurar visualização padrão (mapa e lista)" : "Modo aumentado (expandir mapa com KPIs na vertical)"}
           >
@@ -1242,7 +1242,7 @@ export default function SideMap({
               </>
             ) : (
               <>
-                <Maximize2 size={13} className="text-[#2563EB]" />
+                <Maximize2 size={13} className="text-primary-600" />
                 <span>Expandir</span>
               </>
             )}
@@ -1254,13 +1254,13 @@ export default function SideMap({
             type="button"
             onClick={() => setIsLayerControlOpen(!isLayerControlOpen)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${isLayerControlOpen
-                ? 'bg-[#1D3557] text-white border-[#1D3557]'
-                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+                ? 'bg-primary-900 text-white border-primary-900'
+                : 'bg-surface/95 backdrop-blur-md text-text-primary border-[#CBD5E1] hover:bg-surface hover:border-[#2563EB]'
               }`}
           >
-            <Layers size={13} className={isLayerControlOpen ? 'text-white' : 'text-[#2563EB]'} />
+            <Layers size={13} className={isLayerControlOpen ? 'text-white' : 'text-primary-600'} />
             <span>{mode === 'cursos' ? 'Áreas' : mode === 'cadeias' ? 'Tipos' : 'Camadas'}</span>
-            <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${isLayerControlOpen ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-[#457B9D]'
+            <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${isLayerControlOpen ? 'bg-surface/20 text-white' : 'bg-surface-soft text-text-secondary'
               }`}>
               {activeCategoryKeys.size}/{allCategories.length}
             </span>
@@ -1268,7 +1268,7 @@ export default function SideMap({
           </button>
 
         {isLayerControlOpen && (
-          <div className="absolute right-0 top-full mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 z-50">
+          <div className="absolute right-0 top-full mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-surface/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-border p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 z-50">
             <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-1 px-1">
               <span className="text-[9.5px] font-extrabold text-[#A0AEC0] uppercase tracking-wider">
                 {mode === 'cursos' ? 'Filtrar por Área' : mode === 'cadeias' ? `Tipos (${visibleCadeias.length} cadeias)` : `Tipos (${visibleAtivos.length} ativos)`}
@@ -1277,7 +1277,7 @@ export default function SideMap({
                 <button
                   type="button"
                   onClick={selectAllCategories}
-                  className="text-[9px] font-bold text-[#2563EB] hover:underline cursor-pointer"
+                  className="text-[9px] font-bold text-primary-600 hover:underline cursor-pointer"
                 >
                   Todas
                 </button>
@@ -1285,7 +1285,7 @@ export default function SideMap({
                 <button
                   type="button"
                   onClick={deselectAllCategories}
-                  className="text-[9px] font-bold text-[#457B9D] hover:underline cursor-pointer"
+                  className="text-[9px] font-bold text-text-secondary hover:underline cursor-pointer"
                 >
                   Limpar
                 </button>
@@ -1303,7 +1303,7 @@ export default function SideMap({
                     type="button"
                     onClick={() => toggleCategory(cat.key)}
                     className={`w-full flex items-center justify-between px-2 py-1.5 rounded-xl text-[10.5px] font-semibold transition-colors cursor-pointer text-left ${isActive
-                        ? 'bg-[#F8FAFC] text-[#1D3557] hover:bg-[#F1F5F9]'
+                        ? 'bg-surface-soft text-text-primary hover:bg-surface-soft'
                         : 'text-gray-400 hover:bg-gray-50'
                       }`}
                   >
@@ -1311,7 +1311,7 @@ export default function SideMap({
                       <div
                         className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${isActive
                             ? 'border-transparent text-white'
-                            : 'border-[#CBD5E1] bg-white'
+                            : 'border-[#CBD5E1] bg-surface'
                           }`}
                         style={{ backgroundColor: isActive ? cat.corHex : 'transparent' }}
                       >
@@ -1319,12 +1319,12 @@ export default function SideMap({
                       </div>
                       <div className="flex items-center gap-1.5 truncate">
                         {IconComponent && <IconComponent size={12} style={{ color: cat.corHex }} className="shrink-0" />}
-                        <span className={`truncate ${isActive ? 'font-bold text-[#1D3557]' : 'font-normal'}`}>
+                        <span className={`truncate ${isActive ? 'font-bold text-text-primary' : 'font-normal'}`}>
                           {cat.label}
                         </span>
                       </div>
                     </div>
-                    <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${isActive ? 'text-[#457B9D]' : 'text-gray-300'
+                    <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${isActive ? 'text-text-secondary' : 'text-gray-300'
                       }`}>
                       {cat.count}
                     </span>
@@ -1338,17 +1338,17 @@ export default function SideMap({
       </div>
 
       {/* CONTROLES DE ZOOM E LIMPEZA */}
-      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-white/95 backdrop-blur-md rounded-[18px] border border-[#CBD5E1] shadow-sm overflow-hidden">
+      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-surface/95 backdrop-blur-md rounded-[18px] border border-[#CBD5E1] shadow-sm overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-          className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#E2E8F0] cursor-pointer"
+          className="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-primary-200/50 transition-colors border-b border-border cursor-pointer"
           title="Aproximar"
         >
           <span className="text-lg font-medium leading-none">+</span>
         </button>
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-          className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#E2E8F0] cursor-pointer"
+          className="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-primary-200/50 transition-colors border-b border-border cursor-pointer"
           title="Afastar"
         >
           <span className="text-lg font-medium leading-none">−</span>
@@ -1364,8 +1364,8 @@ export default function SideMap({
             onAssetClick?.(null);
           }}
           className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${hasActiveFilter
-              ? 'text-red-500 bg-red-50 hover:bg-red-100'
-              : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+              ? 'text-danger-600 bg-danger-50 hover:bg-danger-100'
+              : 'text-text-secondary hover:text-text-primary hover:bg-primary-200/50'
             }`}
           title="Limpar filtros"
         >

@@ -13,58 +13,109 @@ module.exports = {
         display: ['Righteous', 'cursive'],
       },
       colors: {
-        // === PALETA ESTRUTURAL DA SECTI ===
-        navy: {
-          DEFAULT: '#1D3557',
-          dark: '#0F1D30',
-          light: '#2B4C7E',
+        primary: {
+          50: 'rgb(var(--color-primary-50) / <alpha-value>)',
+          100: 'rgb(var(--color-primary-100) / <alpha-value>)',
+          200: 'rgb(var(--color-primary-200) / <alpha-value>)',
+          300: 'rgb(var(--color-primary-300) / <alpha-value>)',
+          400: 'rgb(var(--color-primary-400) / <alpha-value>)',
+          500: 'rgb(var(--color-primary-500) / <alpha-value>)',
+          600: 'rgb(var(--color-primary-600) / <alpha-value>)',
+          700: 'rgb(var(--color-primary-700) / <alpha-value>)',
+          800: 'rgb(var(--color-primary-800) / <alpha-value>)',
+          900: 'rgb(var(--color-primary-900) / <alpha-value>)',
+          950: 'rgb(var(--color-primary-950) / <alpha-value>)',
         },
-        steel: {
-          DEFAULT: '#457B9D',
-          light: '#6B9BB8',
+        neutral: {
+          50: 'rgb(var(--color-neutral-50) / <alpha-value>)',
+          100: 'rgb(var(--color-neutral-100) / <alpha-value>)',
+          200: 'rgb(var(--color-neutral-200) / <alpha-value>)',
+          300: 'rgb(var(--color-neutral-300) / <alpha-value>)',
+          400: 'rgb(var(--color-neutral-400) / <alpha-value>)',
+          500: 'rgb(var(--color-neutral-500) / <alpha-value>)',
+          600: 'rgb(var(--color-neutral-600) / <alpha-value>)',
+          700: 'rgb(var(--color-neutral-700) / <alpha-value>)',
+          800: 'rgb(var(--color-neutral-800) / <alpha-value>)',
+          900: 'rgb(var(--color-neutral-900) / <alpha-value>)',
+          950: 'rgb(var(--color-neutral-950) / <alpha-value>)',
         },
-        ice: {
-          DEFAULT: '#A8DADC',
-          light: '#EBF4FF',
+        success: {
+          50: 'rgb(var(--color-success-50) / <alpha-value>)',
+          100: 'rgb(var(--color-success-100) / <alpha-value>)',
+          600: 'rgb(var(--color-success-600) / <alpha-value>)',
+          700: 'rgb(var(--color-success-700) / <alpha-value>)',
         },
-        skysoft: {
-          DEFAULT: '#D6EAF8',
-          light: '#F0F7FD',
+        warning: {
+          50: 'rgb(var(--color-warning-50) / <alpha-value>)',
+          100: 'rgb(var(--color-warning-100) / <alpha-value>)',
+          600: 'rgb(var(--color-warning-600) / <alpha-value>)',
+          700: 'rgb(var(--color-warning-700) / <alpha-value>)',
         },
-        royal: {
-          DEFAULT: '#2563EB',
-          hover: '#1D4ED8',
+        danger: {
+          50: 'rgb(var(--color-danger-50) / <alpha-value>)',
+          100: 'rgb(var(--color-danger-100) / <alpha-value>)',
+          600: 'rgb(var(--color-danger-600) / <alpha-value>)',
+          700: 'rgb(var(--color-danger-700) / <alpha-value>)',
         },
-
-        // === PALETA DE ATIVOS CTI (EFEITO CASCATA) ===
-        asset: {
-          privada: '#38BDF8',
-          estadual: '#2563EB',
-          federal: '#1E3A8A',
-          if: '#0284C7',
-          aceleradora: '#10B981',
-          dinamizador: '#06B6D4',
-          incubadora: '#6366F1',
-          parque: '#0F172A',
-          ict: '#0D9488',
-          pesquisa: '#64748B',
+        accent: {
+          50: 'rgb(var(--color-accent-50) / <alpha-value>)',
+          100: 'rgb(var(--color-accent-100) / <alpha-value>)',
+          500: 'rgb(var(--color-accent-500) / <alpha-value>)',
+          600: 'rgb(var(--color-accent-600) / <alpha-value>)',
+          700: 'rgb(var(--color-accent-700) / <alpha-value>)',
         },
-
-        // === PALETA BRAND SECTI (AZUIS & CIANOS MODERNOS) ===
-        'brand': {
-          1: '#1D3557', // Deep Navy
-          2: '#1E40AF', // Blue Real
-          3: '#2563EB', // Royal Blue
-          4: '#38BDF8', // Cyan Claro
-          5: '#A8DADC', // Gelo / Ice
+        surface: {
+          DEFAULT: 'rgb(var(--color-surface) / <alpha-value>)',
+          soft: 'rgb(var(--color-surface-soft) / <alpha-value>)',
         },
-        'neon-blue': '#2563EB',
+        background: 'rgb(var(--color-background) / <alpha-value>)',
+        chart: {
+          1: 'rgb(var(--color-chart-1) / <alpha-value>)',
+          2: 'rgb(var(--color-chart-2) / <alpha-value>)',
+          3: 'rgb(var(--color-chart-3) / <alpha-value>)',
+          4: 'rgb(var(--color-chart-4) / <alpha-value>)',
+          5: 'rgb(var(--color-chart-5) / <alpha-value>)',
+          6: 'rgb(var(--color-chart-6) / <alpha-value>)',
+          7: 'rgb(var(--color-chart-7) / <alpha-value>)',
+          8: 'rgb(var(--color-chart-8) / <alpha-value>)',
+        },
+        map: {
+          1: 'rgb(var(--color-map-1) / <alpha-value>)',
+          2: 'rgb(var(--color-map-2) / <alpha-value>)',
+          3: 'rgb(var(--color-map-3) / <alpha-value>)',
+          4: 'rgb(var(--color-map-4) / <alpha-value>)',
+          5: 'rgb(var(--color-map-5) / <alpha-value>)',
+          neutral: 'rgb(var(--color-map-neutral) / <alpha-value>)',
+        },
+      },
+      textColor: {
+        primary: 'rgb(var(--color-text-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-text-secondary) / <alpha-value>)',
+        muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
+      },
+      borderColor: {
+        DEFAULT: 'rgb(var(--color-border) / <alpha-value>)',
+        strong: 'rgb(var(--color-border-strong) / <alpha-value>)',
+      },
+      backgroundColor: {
+        info: {
+          soft: 'rgb(var(--color-primary-50) / <alpha-value>)',
+        },
+        success: {
+          soft: 'rgb(var(--color-success-50) / <alpha-value>)',
+        },
+        warning: {
+          soft: 'rgb(var(--color-warning-50) / <alpha-value>)',
+        },
+        danger: {
+          soft: 'rgb(var(--color-danger-50) / <alpha-value>)',
+        },
       },
       boxShadow: {
-        'glass': '0 8px 32px 0 rgba(15, 23, 42, 0.05)',
-        'glass-hover': '0 12px 48px 0 rgba(49, 23, 234, 0.12)',
-        'card-soft': '0 4px 24px rgba(29, 53, 87, 0.04)',
-        'card-hover': '0 12px 32px rgba(29, 53, 87, 0.1)',
+        'glass': '0 4px 20px 0 rgba(15, 23, 42, 0.03)',
+        'glass-hover': '0 8px 30px 0 rgba(15, 23, 42, 0.06)',
+        'card-soft': '0 2px 10px rgba(15, 23, 42, 0.02), 0 1px 3px rgba(15, 23, 42, 0.02)',
+        'card-hover': '0 10px 30px rgba(15, 23, 42, 0.06), 0 4px 10px rgba(15, 23, 42, 0.03)',
       }
     },
   },

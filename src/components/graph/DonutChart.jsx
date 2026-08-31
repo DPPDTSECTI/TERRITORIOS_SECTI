@@ -46,13 +46,13 @@ export default function DonutChart({
     : totalLabel;
 
   return (
-    <div className="flex-1 bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(29,53,87,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-5 relative flex flex-col justify-start h-full group cursor-default">
+    <div className="flex-1 bg-surface rounded-xl border border-border shadow-sm transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-6 relative flex flex-col justify-start h-full group cursor-default">
 
       {/* HEADER SECTION IDÊNTICO */}
       <div className="flex justify-between items-start mb-3 relative z-10 w-full">
         <div className="flex flex-col">
-          <h2 className="text-[#1D3557] font-extrabold text-[15px] tracking-tight">{title}</h2>
-          <p className="text-[#457B9D]/60 text-[11px] font-medium mt-0.5">{subtitle}</p>
+          <h2 className="text-text-primary font-semibold text-[15px] tracking-tight">{title}</h2>
+          <p className="text-text-muted text-[11px] font-normal mt-0.5">{subtitle}</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export default function DonutChart({
                     {/* Linha de Fundo */}
                     <circle
                       cx={center} cy={center} r={radius} fill="none"
-                      stroke="#E2E8F0" strokeWidth={strokeWidth}
+                      stroke="rgb(var(--color-border))" strokeWidth={strokeWidth}
                       strokeLinecap="round" strokeDasharray={`${trackLength} ${circumference}`}
                       className={`transition-opacity duration-300 pointer-events-none ${isOtherHovered ? 'opacity-20' : 'opacity-50'}`}
                     />
@@ -109,10 +109,10 @@ export default function DonutChart({
           </div>
 
           <div className="flex flex-col items-center justify-center text-center w-full mt-3 h-[38px]">
-            <span className="text-[#1D3557] font-extrabold text-[20px] leading-none mb-1 tracking-tight transition-all duration-300">
+            <span className="text-text-primary font-bold text-[20px] leading-none mb-1 tracking-tight transition-all duration-300">
               {displayValue.toLocaleString('pt-BR')}
             </span>
-            <span className="text-[#457B9D]/80 font-semibold text-[10px] leading-tight transition-all duration-300 px-1 w-full truncate">
+            <span className="text-text-muted font-normal text-[10px] leading-tight transition-all duration-300 px-1 w-full truncate">
               {displayLabel}
             </span>
           </div>
@@ -122,8 +122,8 @@ export default function DonutChart({
         {children ? (
           children
         ) : showTopList && topList.length > 0 ? (
-          <div className="flex flex-col flex-1 pl-4 lg:pl-6 border-l border-[#E2E8F0]/50 justify-center h-full py-1 min-w-0">
-            <h3 className="text-[#1D3557] font-extrabold text-[10px] tracking-widest uppercase mb-3 truncate">
+          <div className="flex flex-col flex-1 pl-4 lg:pl-6 border-l border-border/50 justify-center h-full py-1 min-w-0">
+            <h3 className="text-text-muted font-semibold text-[10px] tracking-widest uppercase mb-3 truncate">
               {listTitle}
             </h3>
 
@@ -131,14 +131,14 @@ export default function DonutChart({
               {topList.map((item, index) => (
                 <div key={index} className="flex items-center justify-between group min-w-0 gap-2">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className={`w-[20px] h-[20px] rounded-md ${item.color || 'bg-gray-100'} ${item.text || 'text-gray-500'} flex items-center justify-center font-bold text-[9px] shadow-sm shrink-0`}>
+                    <div className={`w-[20px] h-[20px] rounded-md ${item.color || 'bg-surface-soft'} ${item.text || 'text-text-muted'} flex items-center justify-center font-bold text-[9px] shadow-sm shrink-0`}>
                       {item.rank || (index + 1)}º
                     </div>
-                    <span className="text-[11px] font-bold text-[#2563EB] group-hover:text-[#1D3557] transition-colors truncate" title={item.name}>
+                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-primary transition-colors truncate" title={item.name}>
                       {item.sigla || item.name}
                     </span>
                   </div>
-                  <span className="font-extrabold text-[#1D3557] text-[12px] shrink-0">
+                  <span className="font-semibold text-text-primary text-[12px] shrink-0">
                     {item.count}
                   </span>
                 </div>

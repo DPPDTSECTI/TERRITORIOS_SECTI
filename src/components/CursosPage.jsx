@@ -373,15 +373,15 @@ export default function CursosPage() {
       <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-extrabold text-[#1D3557] tracking-tight">
+            <h1 className="text-3xl font-bold text-text-primary tracking-tight">
               Módulo de Cursos de CT&I
             </h1>
-            <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#2563EB]/20 flex items-center gap-1">
-              <Flame size={12} className="text-[#2563EB]" />
+            <span className="bg-primary-600/10 text-primary-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#2563EB]/20 flex items-center gap-1">
+              <Flame size={12} className="text-primary-600" />
               Heatmap Territorial
             </span>
           </div>
-          <p className="text-sm text-[#457B9D] mt-0.5 font-medium">
+          <p className="text-sm text-text-secondary mt-0.5 font-medium">
             Mapeamento territorial e densidade de cursos de ensino superior em Ciência, Tecnologia e Inovação
           </p>
         </div>
@@ -393,15 +393,15 @@ export default function CursosPage() {
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
+              className="h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
             >
               <div className="flex items-center justify-between gap-1.5 min-w-0">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-primary-200/70 text-text-secondary flex items-center justify-center shrink-0">
                     <kpi.icon size={14} strokeWidth={2.5} />
                   </div>
                   <span
-                    className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                    className="text-[11px] font-bold uppercase tracking-wider text-text-secondary truncate"
                     title={kpi.label}
                   >
                     {kpi.label}
@@ -410,7 +410,7 @@ export default function CursosPage() {
               </div>
 
               <div className="flex items-center justify-center w-full min-w-0 pt-1">
-                <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                <span className="text-[30px] font-bold text-text-primary tracking-tight leading-none text-center">
                   {kpi.value}
                 </span>
               </div>
@@ -425,7 +425,7 @@ export default function CursosPage() {
         {/* LADO ESQUERDO: MAPA */}
         <div
           style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-          className="shrink-0 bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-[460px]"
+          className="shrink-0 bg-surface rounded-2xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
         >
           <SideMap
             mode="cursos"
@@ -441,13 +441,13 @@ export default function CursosPage() {
 
         {/* MODO EXPANDIDO */}
         {isMapExpanded ? (
-          <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#E2E8F0]/70 shrink-0">
+          <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-2xl border border-border shadow-sm p-4 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
+                <span className="text-[12px] font-semibold text-text-primary truncate">
                   Cursos de CT&I
                 </span>
-                <span className="bg-[#2563EB]/10 text-[#2563EB] text-[9.5px] font-black px-2 py-0.5 rounded-full shrink-0">
+                <span className="bg-primary-600/10 text-primary-600 text-[9.5px] font-bold px-2 py-0.5 rounded-full shrink-0">
                   {compactCursosList.length}
                 </span>
               </div>
@@ -455,7 +455,7 @@ export default function CursosPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedCursoId(null)}
-                  className="text-[9.5px] font-bold text-[#64748B] hover:text-red-600 bg-[#F1F5F9] hover:bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+                  className="text-[9.5px] font-bold text-[#64748B] hover:text-red-600 bg-surface-soft hover:bg-danger-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0"
                 >
                   <span>Limpar</span>
                   <X size={10} />
@@ -470,13 +470,13 @@ export default function CursosPage() {
                 value={sidebarSearch}
                 onChange={(e) => setSidebarSearch(e.target.value)}
                 placeholder="Filtrar curso, IES ou cidade..."
-                className="w-full pl-7 pr-3 py-1.5 text-[10.5px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors placeholder-[#94A3B8]"
+                className="w-full pl-7 pr-3 py-1.5 text-[10.5px] bg-surface-soft border border-border rounded-xl focus:bg-surface focus:border-[#2563EB] focus:outline-none transition-colors placeholder-[#94A3B8]"
               />
               {sidebarSearch && (
                 <button
                   type="button"
                   onClick={() => setSidebarSearch('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-text-primary text-[11px] font-bold"
                 >
                   ×
                 </button>
@@ -497,7 +497,7 @@ export default function CursosPage() {
                       className={`p-2 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${
                         isSelected
                           ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-xs'
-                          : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-2xs'
+                          : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-2xs'
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -511,19 +511,19 @@ export default function CursosPage() {
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
                           <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${
-                            isSelected ? 'text-[#1E40AF]' : 'text-[#1D3557] group-hover:text-[#2563EB]'
+                            isSelected ? 'text-[#1E40AF]' : 'text-text-primary group-hover:text-primary-600'
                           }`}>
                             {c.curso || c.nome}
                           </h5>
                           <span className="text-[9.5px] text-[#64748B] truncate leading-tight">
-                            {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)} • <strong className="font-semibold text-[#457B9D]">{c.municipio}</strong>
+                            {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)} • <strong className="font-semibold text-text-secondary">{c.municipio}</strong>
                           </span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-1 shrink-0">
                         <span
-                          className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap"
+                          className="text-[8px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap"
                           style={{ backgroundColor: `${catColor}15`, color: catColor }}
                         >
                           {c.categoria || c.tipo || 'Geral'}
@@ -544,16 +544,16 @@ export default function CursosPage() {
           <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
           
           {/* BARRA SUPERIOR DE ABAS */}
-          <div className="bg-white rounded-[24px] p-3 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+          <div className="bg-surface rounded-xl p-2.5 border border-border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
             
-            <div className="flex items-center bg-[#F1F5F9] p-1 rounded-2xl border border-[#E2E8F0] gap-1 w-full sm:w-auto overflow-x-auto">
+            <div className="flex items-center bg-surface-soft p-1 rounded-2xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
               <button
                 type="button"
                 onClick={() => setActiveTab('catalogo')}
                 className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeTab === 'catalogo'
-                    ? 'bg-[#1D3557] text-white shadow-xs'
-                    : 'text-[#457B9D] hover:text-[#1D3557]'
+                    ? 'bg-primary-900 text-white shadow-xs'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <BookOpen size={13} />
@@ -579,8 +579,8 @@ export default function CursosPage() {
                 onClick={() => setActiveTab('areas')}
                 className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeTab === 'areas'
-                    ? 'bg-[#1D3557] text-white shadow-xs'
-                    : 'text-[#457B9D] hover:text-[#1D3557]'
+                    ? 'bg-primary-900 text-white shadow-xs'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <Filter size={13} />
@@ -592,8 +592,8 @@ export default function CursosPage() {
                 onClick={() => setActiveTab('ranking')}
                 className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeTab === 'ranking'
-                    ? 'bg-[#1D3557] text-white shadow-xs'
-                    : 'text-[#457B9D] hover:text-[#1D3557]'
+                    ? 'bg-primary-900 text-white shadow-xs'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <TrendingUp size={13} />
@@ -605,30 +605,30 @@ export default function CursosPage() {
                 onClick={() => setActiveTab('ies')}
                 className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeTab === 'ies'
-                    ? 'bg-[#1D3557] text-white shadow-xs'
-                    : 'text-[#457B9D] hover:text-[#1D3557]'
+                    ? 'bg-primary-900 text-white shadow-xs'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <Building2 size={13} />
-                Top Instituições {selectedIES && <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>}
+                Top Instituições {selectedIES && <span className="w-2 h-2 rounded-full bg-primary-600"></span>}
               </button>
             </div>
 
             {/* INPUT DE BUSCA */}
             <div className="relative w-full sm:w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-[#457B9D]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 transform-gpu text-text-secondary" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar curso, instituição ou cidade..."
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[11px] text-[#1D3557] placeholder-[#94A3B8] focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-[#94A3B8] focus:bg-surface focus:border-[#2563EB] focus:outline-none transition-colors"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[12px] font-bold"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-text-primary text-[12px] font-bold"
                 >
                   ×
                 </button>
@@ -638,31 +638,31 @@ export default function CursosPage() {
           </div>
 
           {/* CONTEÚDO DAS ABAS */}
-          <div className="flex-1 bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-5 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 bg-surface rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-5 flex flex-col min-h-0 overflow-hidden">
             
             {/* ABA 1: CATÁLOGO COMPLETO DE CURSOS PRESENCIAIS */}
             {activeTab === 'catalogo' && (
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between mb-3 shrink-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                    <h3 className="text-[13px] font-semibold text-text-primary">
                       {selectedTerritory ? `Cursos Presenciais em ${territoryName}` : 'Cursos Presenciais de CT&I'}
                     </h3>
-                    <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black px-2 py-0.5 rounded-full">
+                    <span className="bg-primary-600/10 text-primary-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
                       {filteredCursos.length} resultados
                     </span>
                   </div>
                   
                   <div className="flex items-center gap-2">
                     {selectedIES && (
-                      <span className="text-[10px] font-bold text-[#1D3557] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                        <Building2 size={11} className="text-[#2563EB]" />
+                      <span className="text-[10px] font-bold text-text-primary bg-primary-600/10 border border-[#2563EB]/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <Building2 size={11} className="text-primary-600" />
                         {selectedIES}
                       </span>
                     )}
                     {selectedTerritory && (
-                      <span className="text-[10.5px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
-                        <MapPin size={11} className="text-[#2563EB]" />
+                      <span className="text-[10.5px] font-bold text-text-primary bg-primary-200/40 px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <MapPin size={11} className="text-primary-600" />
                         {territoryName}
                       </span>
                     )}
@@ -689,7 +689,7 @@ export default function CursosPage() {
                           className={`rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border ${
                             isSelected
                               ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-md'
-                              : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-xs'
+                              : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-xs'
                           }`}
                         >
                           <div className="flex items-start gap-3 min-w-0">
@@ -700,11 +700,11 @@ export default function CursosPage() {
                               <GraduationCap size={16} style={{ color: catColor }} />
                             </div>
                             <div className="flex flex-col min-w-0">
-                              <h4 className="text-[12px] font-extrabold text-[#1D3557] group-hover:text-[#2563EB] transition-colors leading-tight truncate">
+                              <h4 className="text-[12px] font-semibold text-text-primary group-hover:text-blue-600 transition-colors leading-tight truncate">
                                 {c.curso || c.nome}
                               </h4>
-                              <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-0.5 font-medium">
-                                <span className="font-bold text-[#1D3557]">{c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}</span>
+                              <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
+                                <span className="font-bold text-text-primary">{c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}</span>
                                 <span>•</span>
                                 <span>{c.municipio}</span>
                                 <span>•</span>
@@ -714,11 +714,11 @@ export default function CursosPage() {
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                            <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/60">
+                            <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-surface-soft text-text-secondary border border-border/60">
                               Presencial
                             </span>
                             <span 
-                              className="text-[9px] font-extrabold px-2.5 py-1 rounded-full"
+                              className="text-[9px] font-medium px-2.5 py-1 rounded-full"
                               style={{ backgroundColor: `${catColor}15`, color: catColor }}
                             >
                               {c.categoria || c.tipo || 'Geral'}
@@ -728,7 +728,7 @@ export default function CursosPage() {
                                 href={c.url_referencia}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="p-1 rounded-lg text-[#94A3B8] hover:text-[#2563EB] hover:bg-[#D6EAF8]/50 transition-colors"
+                                className="p-1 rounded-lg text-[#94A3B8] hover:text-primary-600 hover:bg-primary-200/50 transition-colors"
                                 title="Fonte Oficial"
                                 onClick={(e) => e.stopPropagation()}
                               >
@@ -741,8 +741,8 @@ export default function CursosPage() {
                     })
                   ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
-                      <GraduationCap size={32} className="mb-2 opacity-40 text-[#457B9D]" />
-                      <p className="text-[12px] font-bold text-[#1D3557]">Nenhum curso presencial encontrado</p>
+                      <GraduationCap size={32} className="mb-2 opacity-40 text-text-secondary" />
+                      <p className="text-[12px] font-bold text-text-primary">Nenhum curso presencial encontrado</p>
                     </div>
                   )}
                 </div>
@@ -754,10 +754,10 @@ export default function CursosPage() {
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between mb-3 shrink-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-[13px] font-extrabold text-[#7C3AED]">
+                    <h3 className="text-[13px] font-semibold text-[#7C3AED]">
                       {selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Oferta de Cursos à Distância (EaD) e Semipresenciais'}
                     </h3>
-                    <span className="bg-[#8B5CF6]/15 text-[#7C3AED] text-[10px] font-black px-2 py-0.5 rounded-full">
+                    <span className="bg-[#8B5CF6]/15 text-[#7C3AED] text-[10px] font-bold px-2 py-0.5 rounded-full">
                       {filteredEadCursos.length} cursos
                     </span>
                   </div>
@@ -775,18 +775,18 @@ export default function CursosPage() {
                     filteredEadCursos.map((c, idx) => (
                       <div
                         key={c.id || idx}
-                        className="rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs transition-all duration-200 bg-[#FAF5FF] hover:bg-white hover:border-[#DDD6FE] border border-transparent group"
+                        className="rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs transition-all duration-200 bg-[#FAF5FF] hover:bg-surface hover:border-[#DDD6FE] border border-transparent group"
                       >
                         <div className="flex items-start gap-3 min-w-0">
                           <div className="w-8 h-8 rounded-xl bg-[#8B5CF6]/15 text-[#7C3AED] flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                             <Laptop size={16} />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <h4 className="text-[12px] font-extrabold text-[#1D3557] group-hover:text-[#7C3AED] transition-colors leading-tight truncate">
+                            <h4 className="text-[12px] font-semibold text-text-primary group-hover:text-purple-600 transition-colors leading-tight truncate">
                               {c.curso || c.nome}
                             </h4>
-                            <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-0.5 font-medium">
-                              <span className="font-bold text-[#1D3557]">
+                            <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
+                              <span className="font-bold text-text-primary">
                                 {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}
                               </span>
                               <span>•</span>
@@ -802,7 +802,7 @@ export default function CursosPage() {
                             <Wifi size={10} strokeWidth={2.5} />
                             EaD
                           </span>
-                          <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-[#8B5CF6]/10 text-[#7C3AED]">
+                          <span className="text-[9px] font-medium px-2.5 py-1 rounded-full bg-[#8B5CF6]/10 text-[#7C3AED]">
                             {c.categoria || c.tipo || 'Geral'}
                           </span>
                           {c.url_referencia && (
@@ -823,7 +823,7 @@ export default function CursosPage() {
                   ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
                       <Laptop size={32} className="mb-2 opacity-40 text-[#7C3AED]" />
-                      <p className="text-[12px] font-bold text-[#1D3557]">Nenhum curso EaD registrado neste território</p>
+                      <p className="text-[12px] font-bold text-text-primary">Nenhum curso EaD registrado neste território</p>
                     </div>
                   )}
                 </div>
@@ -835,13 +835,13 @@ export default function CursosPage() {
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="mb-3 shrink-0 flex items-center justify-between">
                   <div>
-                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                    <h3 className="text-[13px] font-semibold text-text-primary">
                       {selectedTerritory 
                         ? `Áreas de Conhecimento em ${territoryName}` 
                         : 'Distribuição por Áreas de Conhecimento'
                       }
                     </h3>
-                    <p className="text-[10.5px] text-[#457B9D] font-medium">
+                    <p className="text-[10.5px] text-text-secondary font-medium">
                       {selectedTerritory 
                         ? `Exibindo proporção dos ${territoryCursos.length} cursos presenciais neste território`
                         : 'Clique em uma categoria para filtrar o catálogo'
@@ -849,8 +849,8 @@ export default function CursosPage() {
                     </p>
                   </div>
                   {selectedTerritory && (
-                    <span className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <MapPin size={11} className="text-[#2563EB]" />
+                    <span className="text-[10px] font-bold text-text-primary bg-primary-200/40 px-2.5 py-1 rounded-full flex items-center gap-1">
+                      <MapPin size={11} className="text-primary-600" />
                       {territoryName}
                     </span>
                   )}
@@ -867,8 +867,8 @@ export default function CursosPage() {
                           onClick={() => setSelectedCategory(isSelected ? 'todas' : cat.name)}
                           className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20'
-                              : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
+                              ? 'bg-surface border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20'
+                              : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
@@ -877,16 +877,16 @@ export default function CursosPage() {
                                 className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
                                 style={{ backgroundColor: cat.color }}
                               />
-                              <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
+                              <span className="text-[12px] font-semibold text-text-primary truncate">
                                 {cat.name}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-[12px] font-black text-[#1D3557]">
+                              <span className="text-[12px] font-semibold text-text-primary">
                                 {cat.count} {cat.count === 1 ? 'curso' : 'cursos'}
                               </span>
                               <span
-                                className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
+                                className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                                 style={{ backgroundColor: `${cat.color}15`, color: cat.color }}
                               >
                                 {cat.percent}%
@@ -905,8 +905,8 @@ export default function CursosPage() {
                     })
                   ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
-                      <Filter size={28} className="mb-2 opacity-40 text-[#457B9D]" />
-                      <p className="text-[12px] font-bold text-[#1D3557]">Nenhuma área de ensino registrada</p>
+                      <Filter size={28} className="mb-2 opacity-40 text-text-secondary" />
+                      <p className="text-[12px] font-bold text-text-primary">Nenhuma área de ensino registrada</p>
                     </div>
                   )}
                 </div>
@@ -918,17 +918,17 @@ export default function CursosPage() {
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="mb-3 shrink-0 flex items-center justify-between">
                   <div>
-                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                    <h3 className="text-[13px] font-semibold text-text-primary">
                       {selectedTerritory 
                         ? `Ranking de Municípios · ${territoryName}` 
                         : 'Ranking Territorial de Oferta de Cursos'
                       }
                     </h3>
-                    <p className="text-[10.5px] text-[#457B9D] font-medium">
+                    <p className="text-[10.5px] text-text-secondary font-medium">
                       Densidade de cursos de CT&I por localidade
                     </p>
                   </div>
-                  <span className="text-[10px] font-black text-[#457B9D] bg-[#F1F5F9] px-2.5 py-1 rounded-full">
+                  <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full">
                     {selectedTerritory 
                       ? `${municipalityRanking.length} municípios com oferta`
                       : `${territoryRanking.length} territórios`
@@ -942,16 +942,16 @@ export default function CursosPage() {
                       municipalityRanking.map((m) => (
                         <div
                           key={m.name}
-                          className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3"
+                          className="rounded-2xl p-2.5 border bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs transition-all flex items-center justify-between gap-3"
                         >
                           <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                              m.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                              m.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-[#E2E8F0] text-[#64748B]'
                             }`}>
                               {m.rank}
                             </span>
                             <div className="flex flex-col min-w-0 flex-1">
-                              <span className="text-[11px] font-extrabold text-[#1D3557] truncate">
+                              <span className="text-[11px] font-semibold text-text-primary truncate">
                                 {m.name}
                               </span>
                               <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden mt-1">
@@ -968,7 +968,7 @@ export default function CursosPage() {
 
                           <div className="flex items-center gap-2 shrink-0">
                             <span
-                              className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs"
+                              className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white shadow-2xs"
                               style={{ backgroundColor: m.heatColor === '#E2E8F0' ? '#64748B' : m.heatColor }}
                             >
                               {m.count} {m.count === 1 ? 'curso' : 'cursos'}
@@ -978,8 +978,8 @@ export default function CursosPage() {
                       ))
                     ) : (
                       <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
-                        <MapPin size={28} className="mb-2 opacity-40 text-[#457B9D]" />
-                        <p className="text-[12px] font-bold text-[#1D3557]">Nenhum município com cursos cadastrados neste território</p>
+                        <MapPin size={28} className="mb-2 opacity-40 text-text-secondary" />
+                        <p className="text-[12px] font-bold text-text-primary">Nenhum município com cursos cadastrados neste território</p>
                       </div>
                     )
                   ) : (
@@ -990,16 +990,16 @@ export default function CursosPage() {
                           const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
                           setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
                         }}
-                        className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs"
+                        className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs"
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                            t.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                            t.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-[#E2E8F0] text-[#64748B]'
                           }`}>
                             {t.rank}
                           </span>
                           <div className="flex flex-col min-w-0 flex-1">
-                            <span className="text-[11px] font-extrabold text-[#1D3557] truncate">
+                            <span className="text-[11px] font-semibold text-text-primary truncate">
                               {t.name}
                             </span>
                             <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden mt-1">
@@ -1016,7 +1016,7 @@ export default function CursosPage() {
 
                         <div className="flex items-center gap-2 shrink-0">
                           <span
-                            className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs"
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white shadow-2xs"
                             style={{ backgroundColor: t.heatColor === '#E2E8F0' ? '#64748B' : t.heatColor }}
                           >
                             {t.count} cursos
@@ -1034,13 +1034,13 @@ export default function CursosPage() {
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="mb-3 shrink-0 flex items-center justify-between">
                   <div>
-                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                    <h3 className="text-[13px] font-semibold text-text-primary">
                       {selectedTerritory 
                         ? `Top Instituições em ${territoryName}` 
                         : 'Top Instituições Ofertantes de Cursos de CT&I'
                       }
                     </h3>
-                    <p className="text-[10.5px] text-[#457B9D] font-medium">
+                    <p className="text-[10.5px] text-text-secondary font-medium">
                       Clique em uma instituição para filtrar no mapa
                     </p>
                   </div>
@@ -1048,7 +1048,7 @@ export default function CursosPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedIES(null)}
-                      className="text-[10px] font-bold text-red-500 hover:text-red-700 bg-red-50 px-2.5 py-1 rounded-full cursor-pointer transition-colors"
+                      className="text-[10px] font-bold text-danger-600 hover:text-red-700 bg-danger-50 px-2.5 py-1 rounded-full cursor-pointer transition-colors"
                     >
                       Limpar Filtro
                     </button>
@@ -1069,39 +1069,39 @@ export default function CursosPage() {
                           onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
                           className={`rounded-2xl p-3 flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer ${
                             isSelected
-                              ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20 border'
-                              : 'bg-[#F8FAFC] hover:bg-white hover:border-[#D6EAF8] border border-transparent shadow-2xs'
+                              ? 'bg-surface border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20 border'
+                              : 'bg-surface-soft hover:bg-surface hover:border-primary-200 border border-transparent shadow-2xs'
                           }`}
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-[11px] shrink-0 transition-colors ${
-                              isSelected ? 'bg-[#2563EB] text-white' : 'bg-[#2563EB]/10 text-[#2563EB]'
+                              isSelected ? 'bg-primary-600 text-white' : 'bg-primary-600/10 text-primary-600'
                             }`}>
                               #{idx + 1}
                             </div>
                             <div className="flex flex-col min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <h4 className="text-[12px] font-black text-[#1D3557] truncate">
+                                <h4 className="text-[12px] font-semibold text-text-primary truncate">
                                   {ies.sigla}
                                 </h4>
                                 {isSelected && (
-                                  <span className="bg-[#2563EB] text-white text-[8.5px] font-extrabold px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
+                                  <span className="bg-primary-600 text-white text-[8.5px] font-semibold px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
                                     <Check size={9} strokeWidth={3} />
                                     Ativa no Mapa
                                   </span>
                                 )}
                               </div>
-                              <span className="text-[10.5px] text-[#457B9D] font-bold truncate" title={ies.fullName}>
+                              <span className="text-[10.5px] text-text-secondary font-bold truncate" title={ies.fullName}>
                                 {ies.fullName}
                               </span>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[9.5px] font-bold text-[#457B9D] bg-[#E2E8F0]/50 px-2 py-0.5 rounded-full">
+                            <span className="text-[9.5px] font-bold text-text-secondary bg-[#E2E8F0]/50 px-2 py-0.5 rounded-full">
                               {ies.municipios.size} {ies.municipios.size === 1 ? 'cidade' : 'cidades'}
                             </span>
-                            <span className="text-[11px] font-black text-[#1D3557] bg-[#D6EAF8] px-2.5 py-0.5 rounded-full">
+                            <span className="text-[11px] font-bold text-text-primary bg-primary-200 px-2.5 py-0.5 rounded-full">
                               {ies.count} {ies.count === 1 ? 'curso' : 'cursos'}
                             </span>
                           </div>
@@ -1110,8 +1110,8 @@ export default function CursosPage() {
                     })
                   ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
-                      <Building2 size={28} className="mb-2 opacity-40 text-[#457B9D]" />
-                      <p className="text-[12px] font-bold text-[#1D3557]">Nenhuma instituição cadastrada neste território</p>
+                      <Building2 size={28} className="mb-2 opacity-40 text-text-secondary" />
+                      <p className="text-[12px] font-bold text-text-primary">Nenhuma instituição cadastrada neste território</p>
                     </div>
                   )}
                 </div>

@@ -186,7 +186,7 @@ function AnimatedRoutes() {
   const hideNavigation = isHome || isPrintPage;
 
   return (
-    <div className={`flex w-full ${isHome ? 'min-h-screen bg-[#F0F7FD] text-[#1D3557] overflow-x-clip' : 'h-screen bg-[#F1FAEE] text-[#1D3557] overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-white`}>
+    <div className={`flex w-full ${isHome ? 'min-h-screen bg-slate-50 text-[#1D3557] overflow-x-clip' : 'h-screen bg-slate-50 text-[#1D3557] overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-white`}>
       
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">

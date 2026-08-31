@@ -102,7 +102,7 @@ const getTipoCadeiaConfig = (nomeTipo) => {
   }
   return {
     corHex: '#2563EB',
-    bgBadge: 'bg-[#2563EB]/15 text-[#2563EB]',
+    bgBadge: 'bg-primary-600/15 text-primary-600',
     icone: Wheat,
     label: 'APL',
     iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22 12 12"/><path d="M7 17a5 5 0 0 1 5-5"/><path d="M12 12a5 5 0 0 1 5-5"/><path d="M17 7a5 5 0 0 1 5-5"/></svg>`
@@ -471,10 +471,10 @@ export default function CadeiaPage() {
         <div className="flex-1 flex flex-col min-h-0 w-full">
           <div className="flex items-center justify-between mb-3 shrink-0 flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+              <h3 className="text-[13px] font-semibold text-text-primary">
                 {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
               </h3>
-              <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black px-2 py-0.5 rounded-full">
+              <span className="bg-primary-600/10 text-primary-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
                 {filteredCadeias.length}
               </span>
             </div>
@@ -483,8 +483,8 @@ export default function CadeiaPage() {
               <button
                 type="button"
                 onClick={() => setSelectedTipo('todos')}
-                className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                  selectedTipo === 'todos' ? 'bg-[#1D3557] text-white' : 'bg-[#F1F5F9] text-[#457B9D] hover:bg-[#E2E8F0]'
+                className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                  selectedTipo === 'todos' ? 'bg-primary-900 text-white' : 'bg-surface-soft text-text-secondary hover:bg-[#E2E8F0]'
                 }`}
               >
                 Todos
@@ -498,7 +498,7 @@ export default function CadeiaPage() {
                     key={tipo}
                     type="button"
                     onClick={() => setSelectedTipo(tipo)}
-                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                    className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
                       isSelected ? 'text-white' : `${conf.bgBadge} hover:opacity-80`
                     }`}
                     style={{ backgroundColor: isSelected ? conf.corHex : undefined }}
@@ -512,9 +512,9 @@ export default function CadeiaPage() {
                 <button
                   type="button"
                   onClick={() => handleSelectTerritory(null)}
-                  className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 hover:bg-[#D6EAF8] px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors"
+                  className="text-[10px] font-bold text-text-primary bg-primary-200/40 hover:bg-primary-200 px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors"
                 >
-                  <MapPin size={11} className="text-[#2563EB]" />
+                  <MapPin size={11} className="text-primary-600" />
                   <span>{territoryName}</span>
                 </button>
               )}
@@ -548,7 +548,7 @@ export default function CadeiaPage() {
                     className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border w-full ${
                       isSelected
                         ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-md'
-                        : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-xs'
+                        : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-xs'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3 w-full">
@@ -562,16 +562,16 @@ export default function CadeiaPage() {
                           <IconComp size={16} />
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
-                          <h4 className={`text-[12.5px] font-extrabold leading-tight break-words transition-colors ${
-                            isSelected ? 'text-[#2563EB]' : 'text-[#1D3557] group-hover:text-[#2563EB]'
+                          <h4 className={`text-[12.5px] font-semibold leading-tight break-words transition-colors ${
+                            isSelected ? 'text-primary-600' : 'text-text-primary group-hover:text-primary-600'
                           }`}>
                             {c.entidade}
                           </h4>
                           
-                          <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[#457B9D] mt-1 font-medium">
-                            <span className="font-bold text-[#1D3557] bg-[#E2E8F0]/70 px-1.5 py-0.2 rounded-md">{c.segmento}</span>
+                          <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-1 font-medium">
+                            <span className="font-bold text-text-primary bg-[#E2E8F0]/70 px-1.5 py-0.2 rounded-md">{c.segmento}</span>
                             <span>•</span>
-                            <span className="font-semibold text-[#1D3557]">Sede: {c.municipio_sede}</span>
+                            <span className="font-semibold text-text-primary">Sede: {c.municipio_sede}</span>
                             <span>•</span>
                             <span className="text-[#64748B]">{c.territorio_identidade}</span>
                           </div>
@@ -580,7 +580,7 @@ export default function CadeiaPage() {
 
                       <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
                         <span 
-                          className="text-[9px] font-extrabold px-2.5 py-1 rounded-full"
+                          className="text-[9px] font-medium px-2.5 py-1 rounded-full"
                           style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
                         >
                           {c.tipo}
@@ -590,7 +590,7 @@ export default function CadeiaPage() {
                             href={c.fonte}
                             target="_blank"
                             rel="noreferrer"
-                            className="p-1 rounded-lg text-[#94A3B8] hover:text-[#2563EB] hover:bg-[#D6EAF8]/50 transition-colors"
+                            className="p-1 rounded-lg text-[#94A3B8] hover:text-primary-600 hover:bg-primary-200/50 transition-colors"
                             title="Acessar Fonte Oficial"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -602,10 +602,10 @@ export default function CadeiaPage() {
 
                     <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors ${
                       isSelected 
-                        ? 'bg-white/90 border border-[#BFDBFE] text-[#1E40AF]' 
-                        : 'bg-white/60 border border-[#E2E8F0]/60 text-[#475569]'
+                        ? 'bg-surface/90 border border-[#BFDBFE] text-[#1E40AF]' 
+                        : 'bg-surface/60 border border-border/60 text-[#475569]'
                     }`}>
-                      <span className="font-extrabold text-[#1D3557]">
+                      <span className="font-extrabold text-text-primary">
                         {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios: ` : 'Atua em 1 município: '}
                       </span>
                       <span className="font-medium">
@@ -617,8 +617,8 @@ export default function CadeiaPage() {
               })
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-[#94A3B8]">
-                <GitPullRequest size={32} className="mb-2 opacity-40 text-[#457B9D]" />
-                <p className="text-[12px] font-bold text-[#1D3557]">Nenhum arranjo produtivo sediado neste território</p>
+                <GitPullRequest size={32} className="mb-2 opacity-40 text-text-secondary" />
+                <p className="text-[12px] font-bold text-text-primary">Nenhum arranjo produtivo sediado neste território</p>
               </div>
             )}
           </div>
@@ -634,10 +634,10 @@ export default function CadeiaPage() {
         <div className="flex-1 flex flex-col min-h-0 w-full">
           <div className="mb-3 shrink-0 flex items-center justify-between">
             <div>
-              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+              <h3 className="text-[13px] font-semibold text-text-primary">
                 {selectedTerritory ? `Segmentos em ${territoryName}` : 'Segmentos Econômicos da Bahia'}
               </h3>
-              <p className="text-[10.5px] text-[#457B9D] font-medium">Distribuição por vocação produtiva</p>
+              <p className="text-[10.5px] text-text-secondary font-medium">Distribuição por vocação produtiva</p>
             </div>
           </div>
 
@@ -649,17 +649,17 @@ export default function CadeiaPage() {
                   key={seg.name}
                   onClick={() => setSelectedSegmento(isSelected ? null : seg.name)}
                   className={`rounded-2xl p-3.5 border transition-all cursor-pointer ${
-                    isSelected ? 'bg-white border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20' : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs'
+                    isSelected ? 'bg-surface border-[#2563EB] shadow-md ring-2 ring-[#2563EB]/20' : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="w-3 h-3 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: seg.color }} />
-                      <span className="text-[12px] font-extrabold text-[#1D3557] truncate">{seg.name}</span>
+                      <span className="text-[12px] font-semibold text-text-primary truncate">{seg.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[12px] font-black text-[#1D3557]">{seg.count} arranjos</span>
-                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full" style={{ backgroundColor: `${seg.color}15`, color: seg.color }}>
+                      <span className="text-[12px] font-semibold text-text-primary">{seg.count} arranjos</span>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: `${seg.color}15`, color: seg.color }}>
                         {seg.percent}%
                       </span>
                     </div>
@@ -683,12 +683,12 @@ export default function CadeiaPage() {
         <div className="flex-1 flex flex-col min-h-0 w-full">
           <div className="mb-3 shrink-0 flex items-center justify-between">
             <div>
-              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+              <h3 className="text-[13px] font-semibold text-text-primary">
                 {selectedTerritory ? `Ranking Sede Municípios · ${territoryName}` : 'Ranking Sede Territórios'}
               </h3>
-              <p className="text-[10.5px] text-[#457B9D] font-medium">Densidade de arranjos produtivos por sede oficial</p>
+              <p className="text-[10.5px] text-text-secondary font-medium">Densidade de arranjos produtivos por sede oficial</p>
             </div>
-            <span className="text-[10px] font-black text-[#457B9D] bg-[#F1F5F9] px-2.5 py-1 rounded-full">
+            <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full">
               {selectedTerritory ? `${municipalityRanking.length} sedes` : `${territoryRanking.length} territórios`}
             </span>
           </div>
@@ -703,17 +703,17 @@ export default function CadeiaPage() {
                     const coords = findMunicipioCoords(munKey);
                     if (coords) setFocusedAsset(coords);
                   }}
-                  className="rounded-2xl p-2.5 border bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer"
+                  className="rounded-2xl p-2.5 border bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                      m.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                      m.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-[#E2E8F0] text-[#64748B]'
                     }`}>
                       {m.rank}
                     </span>
-                    <span className="text-[11px] font-extrabold text-[#1D3557] truncate">{m.name}</span>
+                    <span className="text-[11px] font-semibold text-text-primary truncate">{m.name}</span>
                   </div>
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: m.heatColor }}>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: m.heatColor }}>
                     {m.count} {m.count === 1 ? 'cadeia' : 'cadeias'}
                   </span>
                 </div>
@@ -726,17 +726,17 @@ export default function CadeiaPage() {
                     const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
                     handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
                   }}
-                  className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] shadow-2xs"
+                  className="rounded-2xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                      t.rank <= 3 ? 'bg-[#1D3557] text-white' : 'bg-[#E2E8F0] text-[#64748B]'
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                      t.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-[#E2E8F0] text-[#64748B]'
                     }`}>
                       {t.rank}
                     </span>
-                    <span className="text-[11px] font-extrabold text-[#1D3557] truncate">{t.name}</span>
+                    <span className="text-[11px] font-semibold text-text-primary truncate">{t.name}</span>
                   </div>
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: t.heatColor }}>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white shadow-2xs" style={{ backgroundColor: t.heatColor }}>
                     {t.count} {t.count === 1 ? 'cadeia' : 'cadeias'}
                   </span>
                 </div>
@@ -758,15 +758,15 @@ export default function CadeiaPage() {
       <div className="flex items-center justify-between w-full shrink-0">
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl lg:text-3xl font-extrabold text-[#1D3557] tracking-tight">
+            <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
               Módulo de Cadeias Produtivas & IGs
             </h1>
-            <span className="bg-[#10B981]/10 text-[#059669] text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#10B981]/20 flex items-center gap-1">
+            <span className="bg-[#10B981]/10 text-[#059669] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#10B981]/20 flex items-center gap-1">
               <Award size={12} className="text-[#059669]" />
               Arranjos & Indicações Geográficas
             </span>
           </div>
-          <p className="text-xs lg:text-sm text-[#457B9D] mt-0.5 font-medium">
+          <p className="text-xs lg:text-sm text-text-secondary mt-0.5 font-medium">
             Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
           </p>
         </div>
@@ -778,16 +778,16 @@ export default function CadeiaPage() {
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="h-[98px] bg-white rounded-[16px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] hover:shadow-[0_8px_24px_rgba(29,53,87,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-default"
+              className="h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
             >
               {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
               <div className="flex items-center justify-between gap-1.5 min-w-0">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 text-[#457B9D] flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-primary-200/70 text-text-secondary flex items-center justify-center shrink-0">
                     <kpi.icon size={14} strokeWidth={2.5} />
                   </div>
                   <span
-                    className="text-[11px] font-bold uppercase tracking-wider text-[#457B9D] truncate"
+                    className="text-[11px] font-bold uppercase tracking-wider text-text-secondary truncate"
                     title={kpi.label}
                   >
                     {kpi.label}
@@ -797,7 +797,7 @@ export default function CadeiaPage() {
 
               {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
               <div className="flex items-center justify-center w-full min-w-0 pt-1">
-                <span className="text-[30px] font-bold text-[#1D3557] tracking-tight leading-none text-center">
+                <span className="text-[30px] font-bold text-text-primary tracking-tight leading-none text-center">
                   {kpi.value}
                 </span>
               </div>
@@ -812,7 +812,7 @@ export default function CadeiaPage() {
         {/* MAPA DE CADEIAS */}
         <div
           style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-          className="shrink-0 h-[480px] lg:h-full bg-white rounded-[28px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_24px_rgba(29,53,87,0.04)] hover:shadow-[0_12px_32px_rgba(29,53,87,0.08)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0"
+          className="shrink-0 h-[480px] lg:h-full bg-surface rounded-2xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-0 transition-[width] duration-300"
         >
           <SideMap
             mode="cadeias"
@@ -831,14 +831,14 @@ export default function CadeiaPage() {
 
         {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
         {isMapExpanded ? (
-          <div className="w-[305px] shrink-0 h-[480px] lg:h-full bg-white rounded-[28px] border border-transparent shadow-[0_4px_24px_rgba(29,53,87,0.04)] p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+          <div className="w-[305px] shrink-0 h-[480px] lg:h-full bg-surface rounded-2xl border border-border shadow-sm p-4 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
             {/* CABEÇALHO DA LISTA COMPACTA */}
-            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#E2E8F0]/70 shrink-0">
+            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-[12px] font-extrabold text-[#1D3557] truncate">
+                <span className="text-[12px] font-semibold text-text-primary truncate">
                   Arranjos & IGs
                 </span>
-                <span className="bg-[#2563EB]/10 text-[#2563EB] text-[9.5px] font-black px-2 py-0.5 rounded-full shrink-0">
+                <span className="bg-primary-600/10 text-primary-600 text-[9.5px] font-bold px-2 py-0.5 rounded-full shrink-0">
                   {compactCadeiasList.length}
                 </span>
               </div>
@@ -849,7 +849,7 @@ export default function CadeiaPage() {
                     setSelectedCadeia(null);
                     setFocusedAsset(null);
                   }}
-                  className="text-[9.5px] font-bold text-[#64748B] hover:text-red-600 bg-[#F1F5F9] hover:bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+                  className="text-[9.5px] font-bold text-[#64748B] hover:text-red-600 bg-surface-soft hover:bg-danger-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0"
                 >
                   <span>Limpar</span>
                   <X size={10} />
@@ -865,13 +865,13 @@ export default function CadeiaPage() {
                 value={sidebarSearch}
                 onChange={(e) => setSidebarSearch(e.target.value)}
                 placeholder="Filtrar arranjo ou cidade..."
-                className="w-full pl-7 pr-3 py-1.5 text-[10.5px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:bg-white focus:border-[#2563EB] focus:outline-none transition-colors placeholder-[#94A3B8]"
+                className="w-full pl-7 pr-3 py-1.5 text-[10.5px] bg-surface-soft border border-border rounded-xl focus:bg-surface focus:border-[#2563EB] focus:outline-none transition-colors placeholder-[#94A3B8]"
               />
               {sidebarSearch && (
                 <button
                   type="button"
                   onClick={() => setSidebarSearch('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-[#1D3557] text-[11px] font-bold"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 transform-gpu text-[#94A3B8] hover:text-text-primary text-[11px] font-bold"
                 >
                   ×
                 </button>
@@ -901,7 +901,7 @@ export default function CadeiaPage() {
                       className={`p-2 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${
                         isSelected
                           ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-xs'
-                          : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-2xs'
+                          : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-2xs'
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -915,18 +915,18 @@ export default function CadeiaPage() {
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
                           <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${
-                            isSelected ? 'text-[#1E40AF]' : 'text-[#1D3557] group-hover:text-[#2563EB]'
+                            isSelected ? 'text-[#1E40AF]' : 'text-text-primary group-hover:text-primary-600'
                           }`}>
                             {c.entidade}
                           </h5>
                           <span className="text-[9.5px] text-[#64748B] truncate leading-tight">
-                            {c.segmento} • <strong className="font-semibold text-[#457B9D]">{c.municipio_sede}</strong>
+                            {c.segmento} • <strong className="font-semibold text-text-secondary">{c.municipio_sede}</strong>
                           </span>
                         </div>
                       </div>
 
                       <span
-                        className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap"
+                        className="text-[8px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap"
                         style={{ backgroundColor: `${c.corHex}15`, color: c.corHex }}
                       >
                         {c.tipo}
@@ -950,11 +950,11 @@ export default function CadeiaPage() {
             <div className="w-full bg-[#E0F2FE]/60 border border-[#BAE6FD]/80 rounded-[22px] py-2 px-4 flex items-center justify-between gap-3 shrink-0 shadow-2xs backdrop-blur-xs animate-in fade-in duration-200">
               <div className="flex items-center gap-2.5 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-[#0284C7] shrink-0" />
-                <span className="text-[12px] font-bold text-[#1D3557] truncate">
+                <span className="text-[12px] font-bold text-text-primary truncate">
                   {selectedCadeia ? 'Arranjo Selecionado:' : 'Região Selecionada:'}{' '}
-                  <strong className="font-black text-[#0284C7]">{activeSelectionName}</strong>
+                  <strong className="font-bold text-[#0284C7]">{activeSelectionName}</strong>
                 </span>
-                <span className="bg-white/80 text-[#0284C7] border border-[#BAE6FD]/80 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs shrink-0">
+                <span className="bg-surface/80 text-[#0284C7] border border-[#BAE6FD]/80 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-2xs shrink-0">
                   {activeSelectionCount} {activeSelectionCount === 1 ? (selectedCadeia ? 'arranjo' : 'cadeia') : 'cadeias'}
                 </span>
               </div>
@@ -969,9 +969,9 @@ export default function CadeiaPage() {
                   }
                   setFocusedAsset(null);
                 }}
-                className="text-[11px] font-bold text-[#1D3557] hover:text-red-600 bg-white hover:bg-red-50/80 px-3 py-1 rounded-full border border-[#BAE6FD]/80 hover:border-red-200 flex items-center gap-1.5 shadow-2xs transition-all duration-200 cursor-pointer shrink-0"
+                className="text-[11px] font-bold text-text-primary hover:text-red-600 bg-surface hover:bg-danger-50/80 px-3 py-1 rounded-full border border-[#BAE6FD]/80 hover:border-red-200 flex items-center gap-1.5 shadow-2xs transition-all duration-200 cursor-pointer shrink-0"
               >
-                <X size={12} className="text-[#64748B] group-hover:text-red-500" />
+                <X size={12} className="text-[#64748B] group-hover:text-danger-600" />
                 <span>{selectedCadeia ? 'Limpar seleção de arranjo' : 'Limpar filtro da região'}</span>
               </button>
             </div>

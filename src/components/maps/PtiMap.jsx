@@ -316,8 +316,8 @@ export default function PtiMap({
             onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
         >
             {loading || !geoJsonData ? (
-                <div className="flex flex-col items-center text-[#457B9D]">
-                    <svg className="animate-spin h-6 w-6 mb-2 text-[#457B9D]" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <div className="flex flex-col items-center text-primary-600">
+                    <svg className="animate-spin h-6 w-6 mb-2 text-primary-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     <span className="text-[10px] font-bold tracking-widest uppercase">Processando Malha...</span>
                 </div>
             ) : (
@@ -365,14 +365,14 @@ export default function PtiMap({
             <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-white/90 backdrop-blur-xl rounded-[18px] border border-white shadow-[0_8px_32px_rgba(29,53,87,0.1)] overflow-hidden">
                 <button
                     onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40 cursor-pointer"
+                    className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
                     title="Aproximar"
                 >
                     <span className="text-lg font-medium leading-none">+</span>
                 </button>
                 <button
                     onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-                    className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#D6EAF8]/40 cursor-pointer"
+                    className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
                     title="Afastar"
                 >
                     <span className="text-lg font-medium leading-none">−</span>
@@ -384,8 +384,8 @@ export default function PtiMap({
                     }}
                     className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
                         selectedTerritory
-                            ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                            : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+                            ? 'text-danger-600 bg-danger-50 hover:bg-danger-100'
+                            : 'text-primary-600 hover:text-primary-950 hover:bg-surface-soft'
                     }`}
                     title="Limpar seleção"
                 >
@@ -400,13 +400,13 @@ export default function PtiMap({
             {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
             {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
                 <div className={`absolute top-4 ${isTerritoryOnRight ? 'left-4' : 'right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-[20px] border bg-white/95 backdrop-blur-xl border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] transition-all duration-300 animate-soft-fade pointer-events-auto`}>
-                    <div className="flex justify-between items-center mb-3 border-b border-[#D6EAF8] pb-3">
-                        <h4 className="text-[11px] font-bold text-[#1D3557] uppercase tracking-widest leading-tight">
+                    <div className="flex justify-between items-center mb-3 border-b border-border pb-3">
+                        <h4 className="text-[11px] font-bold text-primary-950 uppercase tracking-widest leading-tight">
                             {selectedTerritory.nome_territorio || selectedTerritory.territorio}
                         </h4>
                         <button
                             onClick={() => onSelectTerritory(null)}
-                            className="text-[#457B9D] hover:text-red-500 transition-colors bg-[#D6EAF8]/30 hover:bg-red-50 rounded-full p-1.5 ml-2"
+                            className="text-primary-600 hover:text-danger-600 transition-colors bg-surface-soft hover:bg-danger-50 rounded-full p-1.5 ml-2"
                         >
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
@@ -415,8 +415,8 @@ export default function PtiMap({
                         {municipalitiesToShow.map((m, idx) => {
                             const isSemi = semiaridoMunicipios.includes(normalizeName(m));
                             return (
-                                <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-[#457B9D] py-1.5 hover:bg-[#D6EAF8]/40 rounded-lg px-2 cursor-default transition-colors">
-                                    <span className={`shrink-0 w-1.5 h-1.5 rounded-full shadow-sm ${isSemi ? 'bg-[#F59E0B]' : 'bg-[#A8DADC]'}`}></span>
+                                <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-text-secondary py-1.5 hover:bg-surface-soft rounded-lg px-2 cursor-default transition-colors">
+                                    <span className={`shrink-0 w-1.5 h-1.5 rounded-full shadow-sm ${isSemi ? 'bg-warning-600' : 'bg-primary-300'}`}></span>
                                     <span className="truncate">{m}</span>
                                 </li>
                             );
@@ -425,7 +425,7 @@ export default function PtiMap({
                     {selectedTerritoryMunicipalities.length > 4 && (
                         <button
                             onClick={() => setIsMunListExpanded(!isMunListExpanded)}
-                            className="w-full mt-3 text-center text-[10px] font-bold text-[#457B9D] hover:text-[#1D3557] uppercase tracking-wider py-2.5 rounded-lg bg-[#D6EAF8]/30 hover:bg-[#D6EAF8]/70 transition-colors"
+                            className="w-full mt-3 text-center text-[10px] font-bold text-primary-600 hover:text-primary-950 uppercase tracking-wider py-2.5 rounded-lg bg-surface-soft hover:bg-primary-100 transition-colors"
                         >
                             {isMunListExpanded ? 'Ver menos' : `Ver os ${selectedTerritoryMunicipalities.length} municípios`}
                         </button>
@@ -439,21 +439,21 @@ export default function PtiMap({
                     className="absolute z-[1000] overflow-hidden rounded-[16px] border bg-white/95 backdrop-blur-md border-white shadow-[0_12px_40px_rgba(29,53,87,0.15)] pointer-events-none transition-opacity duration-150"
                     style={{ top: tooltip.y, left: tooltip.x, width: 240 }}
                 >
-                    <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[hoveredTerritoryId] || '#457B9D' }}></div>
+                    <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[hoveredTerritoryId] || 'rgb(var(--color-primary-600))' }}></div>
                     <div className="p-4">
                         <div className="flex justify-between items-start mb-3">
-                            <h2 className="font-bold text-[13px] text-[#1D3557] leading-tight pr-2">
+                            <h2 className="font-bold text-[13px] text-primary-950 leading-tight pr-2">
                                 {hoveredData ? hoveredData.territorio : fallbackName}
                             </h2>
                         </div>
                         <div className="grid grid-cols-2 gap-2 mb-2">
-                            <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
-                                <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Ativos</span>
-                                <span className="text-[14px] font-bold text-[#1D3557]">{hoveredData?.ativos_cti || 0}</span>
+                            <div className="rounded-xl p-2 border bg-surface-soft border-border flex flex-col">
+                                <span className="text-[10px] text-text-muted font-medium mb-0.5">Ativos</span>
+                                <span className="text-[14px] font-bold text-primary-950">{hoveredData?.ativos_cti || 0}</span>
                             </div>
-                            <div className="rounded-xl p-2 border bg-[#F1FAEE]/50 border-[#D6EAF8]/50 flex flex-col">
-                                <span className="text-[10px] text-[#457B9D] font-medium mb-0.5">Média IFDM</span>
-                                <span className="text-[14px] font-bold text-[#1D3557]">
+                            <div className="rounded-xl p-2 border bg-surface-soft border-border flex flex-col">
+                                <span className="text-[10px] text-text-muted font-medium mb-0.5">Média IFDM</span>
+                                <span className="text-[14px] font-bold text-primary-950">
                                     {hoveredData?.media_ifdm
                                         ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3)
                                         : '0.000'}

@@ -22,57 +22,57 @@ const CustomTooltip = ({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ type: "spring", stiffness: 350, damping: 25 }}
-      className="bg-white border border-white/40 shadow-[0_16px_40px_-12px_rgba(29,53,87,0.15)] rounded-2xl p-5 w-[320px] sm:w-[380px] relative z-50 flex flex-col font-sans transform-gpu"
+      className="bg-surface border border-white/40 shadow-xl shadow-primary-900/10 rounded-2xl p-5 w-[320px] sm:w-[380px] relative z-50 flex flex-col font-sans transform-gpu"
     >
       <div className="flex justify-between items-center mb-3">
         {step.title ? (
-          <h3 className="text-[16px] font-extrabold text-[#1D3557] tracking-tight">{step.title}</h3>
+          <h3 className="text-[16px] font-bold text-text-primary tracking-tight">{step.title}</h3>
         ) : (
           <div className="flex items-center gap-2">
-             <div className="w-6 h-6 rounded-full bg-[#D6EAF8] flex items-center justify-center text-[#457B9D]">
+             <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
              </div>
-             <span className="text-[11px] font-bold text-[#457B9D] uppercase tracking-wider">Passo {index + 1} de {size}</span>
+             <span className="text-[11px] font-bold text-primary-600 uppercase tracking-wider">Passo {index + 1} de {size}</span>
           </div>
         )}
         
-        <button {...closeProps} title="Fechar Tutorial" className="text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 p-1.5 rounded-full transition-colors">
+        <button {...closeProps} title="Fechar Tutorial" className="text-text-muted hover:text-text-primary hover:bg-surface-soft p-1.5 rounded-full transition-colors">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <div className="text-[14px] text-[#1D3557]/80 leading-relaxed font-medium mb-5">
+      <div className="text-[14px] text-text-secondary leading-relaxed font-medium mb-5">
         {step.content}
       </div>
 
-      <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#D6EAF8]/50">
+      <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
         
         {/* Indicadores de bolinhas */}
         <div className="flex gap-1.5">
            {[...Array(size)].map((_, i) => (
-             <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? 'bg-[#457B9D] w-4' : 'bg-[#D6EAF8] w-1.5'}`} />
+             <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? 'bg-primary-600 w-4' : 'bg-primary-200 w-1.5'}`} />
            ))}
         </div>
 
         {/* Botões de Ação */}
         <div className="flex items-center gap-3">
           {!isLastStep && (
-            <button {...skipProps} className="text-[12px] font-bold text-[#94A3B8] hover:text-[#1D3557] transition-colors">
-              Pular
+            <button {...skipProps} className="text-[12px] font-bold text-text-muted hover:text-text-primary transition-colors bg-transparent border-none cursor-pointer">
+              Pular Tutorial
             </button>
           )}
           {index > 0 && (
-            <button {...backProps} className="text-[12px] font-extrabold text-[#457B9D] hover:text-[#1D3557] transition-colors">
+            <button {...backProps} className="text-[12px] font-bold text-primary-600 hover:text-primary-800 transition-colors bg-transparent border-none cursor-pointer">
               Voltar
             </button>
           )}
           {continuous && !isLastStep && (
-            <button {...primaryProps} className="px-4 py-2 text-[13px] font-extrabold tracking-wide bg-[#457B9D] text-white rounded-full shadow-md shadow-[#457B9D]/30 hover:bg-[#1D3557] hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all">
+            <button {...primaryProps} className="px-4 py-2 text-[13px] font-bold tracking-wide bg-primary-600 text-white rounded-full shadow-md shadow-primary-600/30 hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer">
               Próximo
             </button>
           )}
           {(!continuous || isLastStep) && (
-            <button {...primaryProps} className="px-4 py-2 text-[13px] font-extrabold tracking-wide bg-[#1D3557] text-white rounded-full shadow-md shadow-[#1D3557]/30 hover:bg-[#2563EB] hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all">
+            <button {...primaryProps} className="px-4 py-2 text-[13px] font-bold tracking-wide bg-primary-900 text-white rounded-full shadow-md shadow-primary-900/30 hover:bg-primary-600 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer">
               Concluir
             </button>
           )}
@@ -107,39 +107,39 @@ export default function TourGuide() {
     {
       target: '.tour-nav-sobre',
       title: 'Entenda o Sistema 💡',
-      content: 'Nós recomendamos fortemente visitar a aba "Sobre" para entender a metodologia, as fontes de dados e os conceitos usados neste painel!',
+      content: 'Recomendamos FORTEMENTE visitar a aba "Sobre" antes de começar! Lá você entenderá a metodologia inovadora que utilizamos, as fontes de dados oficiais e os conceitos chave. Isso fará toda a diferença na sua análise!',
       placement: 'right',
       spotlightPadding: 4,
       blockTargetInteraction: true,
     },
     {
       target: '.tour-nav-visao',
-      title: 'Visão Geral (Painel Integrado)',
-      content: 'Reúne os totais do estado e apresenta métricas agregadas de todos os indicadores.',
+      title: 'Visão Geral',
+      content: 'Reúne os totais do estado e apresenta métricas agregadas de todos os indicadores em um painel integrado.',
       placement: 'right',
       spotlightPadding: 2,
       blockTargetInteraction: true,
     },
     {
       target: '.tour-nav-ativos',
-      title: 'Infraestrutura de Ativos',
-      content: 'Acesse o mapeamento de laboratórios, parques tecnológicos e a distribuição de conectividade avançada.',
+      title: 'Módulo de Ativos',
+      content: 'O diferencial aqui é o mapeamento detalhado da infraestrutura tecnológica: laboratórios, centros de pesquisa e pontos de conectividade avançada RNP.',
       placement: 'right',
       spotlightPadding: 2,
       blockTargetInteraction: true,
     },
     {
       target: '.tour-nav-cadeias',
-      title: 'Cadeias Produtivas',
-      content: 'Explore as vocações econômicas e a teia de conexões territoriais interativa dos setores estratégicos.',
+      title: 'Módulo de Cadeias',
+      content: 'Aqui exploramos as vocações econômicas. O grande destaque é a Teia de Conexões Interativa, que ilustra como os arranjos produtivos e indicações geográficas se conectam no território.',
       placement: 'right',
       spotlightPadding: 2,
       blockTargetInteraction: true,
     },
     {
       target: '.tour-nav-cursos',
-      title: 'Oferta de Cursos',
-      content: 'Consulte a distribuição educacional superior (graduação/pós) em CT&I por modalidade e instituição.',
+      title: 'Módulo de Cursos',
+      content: 'Focado em capital humano. Veja a distribuição educacional (graduação/pós), com destaque para as áreas STEM (Ciência, Tecnologia, Engenharia e Matemática) e a força da educação à distância (EaD).',
       placement: 'right',
       spotlightPadding: 2,
       blockTargetInteraction: true,
@@ -249,10 +249,10 @@ export default function TourGuide() {
   }, [location.pathname, navigate]);
 
   const handleJoyrideCallback = (data) => {
-    const { status, type } = data;
+    const { status, type, action } = data;
     
     // Quando o tour for concluído ou pulado
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) || type === 'tour:end') {
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) || type === 'tour:end' || action === 'skip' || action === 'close') {
       setRun(false);
       // Salvar no localStorage para não mostrar novamente automaticamente
       if (location.pathname === '/territorios') {
