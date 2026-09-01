@@ -72,13 +72,13 @@
 </head>
 <body>
   <div class="card">
-    <h1>🧹 Limpeza de Cache - PTI Bahia</h1>
+    <h1>Limpeza de Cache - PTI Bahia</h1>
     <p>Use esta página para limpar todos os caches e resetar o Service Worker.</p>
     
     <button onclick="unregisterServiceWorker()">1. Desregistrar Service Worker</button>
     <button onclick="clearAllCaches()">2. Limpar Todos os Caches</button>
     <button onclick="clearIndexedDB()">3. Limpar IndexedDB</button>
-    <button onclick="clearAll()">🔥 LIMPAR TUDO</button>
+    <button onclick="clearAll()">LIMPAR TUDO</button>
     
     <div id="status" class="status info">
       <strong>Status:</strong> Aguardando ação...
@@ -106,7 +106,7 @@
 
     function showStatus(message, type = 'info') {
       statusDiv.className = `status ${type}`;
-      statusDiv.innerHTML = `<strong>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</strong> ${message}`;
+      statusDiv.innerHTML = `<strong>${type.toUpperCase()}:</strong> ${message}`;
     }
 
     async function unregisterServiceWorker() {
@@ -175,7 +175,7 @@
       localStorage.clear();
       sessionStorage.clear();
       
-      showStatus('✅ TUDO LIMPO! Recarregando em 2 segundos...', 'success');
+      showStatus('TUDO LIMPO! Recarregando em 2 segundos...', 'success');
       
       setTimeout(() => {
         window.location.href = '/';

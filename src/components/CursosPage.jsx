@@ -561,8 +561,8 @@ export default function CursosPage() {
                                     type="button"
                                     onClick={() => setActiveTab('ead')}
                                     className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ead'
-                                            ? 'bg-accent-600 text-white shadow-xs'
-                                            : 'text-accent-600 hover:bg-accent-50'
+                                            ? 'bg-primary-900 text-white shadow-xs'
+                                            : 'text-text-secondary hover:text-text-primary'
                                         }`}
                                 >
                                     <Laptop size={13} />
@@ -745,17 +745,17 @@ export default function CursosPage() {
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="flex items-center justify-between mb-3 shrink-0">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="text-[13px] font-semibold text-accent-600">
+                                            <h3 className="text-[13px] font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Oferta de Cursos à Distância (EaD) e Semipresenciais'}
                                             </h3>
-                                            <span className="bg-accent-50 text-accent-600 text-[11px] font-medium px-2 py-0.5 rounded-full">
+                                            <span className="bg-primary-50 text-primary-700 text-[11px] font-medium px-2 py-0.5 rounded-full border border-primary-200/60">
                                                 {filteredEadCursos.length} cursos
                                             </span>
                                         </div>
 
                                         {selectedTerritory && (
-                                            <span className="text-[10.5px] font-medium text-accent-600 bg-purple-50 px-2.5 py-1 rounded-full flex items-center gap-1 border border-purple-100">
-                                                <MapPin size={11} className="text-accent-600" />
+                                            <span className="text-[10.5px] font-medium text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full flex items-center gap-1 border border-primary-200/60">
+                                                <MapPin size={11} className="text-primary-600" />
                                                 {territoryName}
                                             </span>
                                         )}
@@ -763,57 +763,64 @@ export default function CursosPage() {
 
                                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
                                         {filteredEadCursos.length > 0 ? (
-                                            filteredEadCursos.map((c, idx) => (
-                                                <div
-                                                    key={c.id || idx}
-                                                    className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors duration-200 bg-transparent hover:bg-surface-soft border-b border-neutral-200/50 group cursor-pointer"
-                                                >
-                                                    <div className="flex items-start gap-3 min-w-0">
-                                                        <div className="w-8 h-8 rounded-xl bg-accent-50 text-accent-600 flex items-center justify-center shrink-0 mt-0.5  transition-transform">
-                                                            <Laptop size={16} />
-                                                        </div>
-                                                        <div className="flex flex-col min-w-0">
-                                                            <h4 className="text-[12px] font-semibold text-text-primary group-hover:text-purple-600 transition-colors leading-tight truncate">
-                                                                {c.curso || c.nome}
-                                                            </h4>
-                                                            <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
-                                                                <span className="font-medium text-text-primary">
-                                                                    {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}
-                                                                </span>
-                                                                <span>•</span>
-                                                                <span>{c.municipio}</span>
-                                                                <span>•</span>
-                                                                <span className="text-text-secondary">{c.territorio_identidade}</span>
+                                            filteredEadCursos.map((c, idx) => {
+                                                const catColor = categoryColorMap[c.categoria || c.tipo] || '#2563EB';
+
+                                                return (
+                                                    <div
+                                                        key={c.id || idx}
+                                                        className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors duration-200 bg-transparent hover:bg-surface-soft border-b border-neutral-200/50 group cursor-pointer"
+                                                    >
+                                                        <div className="flex items-start gap-3 min-w-0">
+                                                            <div className="w-8 h-8 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 mt-0.5 transition-transform">
+                                                                 <Laptop size={16} />
+                                                            </div>
+                                                            <div className="flex flex-col min-w-0">
+                                                                <h4 className="text-[12px] font-semibold text-text-primary group-hover:text-primary-600 transition-colors leading-tight truncate">
+                                                                    {c.curso || c.nome}
+                                                                </h4>
+                                                                <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
+                                                                    <span className="font-medium text-text-primary">
+                                                                        {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}
+                                                                    </span>
+                                                                    <span>•</span>
+                                                                    <span>{c.municipio}</span>
+                                                                    <span>•</span>
+                                                                    <span className="text-text-secondary">{c.territorio_identidade}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                                                        <span className="text-[9.5px] font-medium px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 border border-purple-200 flex items-center gap-1 shadow-2xs">
-                                                            <Wifi size={10} strokeWidth={2.5} />
-                                                            EaD
-                                                        </span>
-                                                        <span className="text-[9px] font-medium px-2.5 py-1 rounded-full bg-accent-50 text-accent-600">
-                                                            {c.categoria || c.tipo || 'Geral'}
-                                                        </span>
-                                                        {c.url_referencia && (
-                                                            <a
-                                                                href={c.url_referencia}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                className="p-1 rounded-lg text-text-muted hover:text-accent-600 hover:bg-accent-50 transition-colors"
-                                                                title="Fonte Oficial"
-                                                                onClick={(e) => e.stopPropagation()}
+                                                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                                            <span className="text-[9.5px] font-medium px-2 py-0.5 rounded-md bg-primary-100 text-primary-800 border border-primary-200 flex items-center gap-1 shadow-2xs">
+                                                                <Wifi size={10} strokeWidth={2.5} />
+                                                                 EaD
+                                                            </span>
+                                                            <span
+                                                                className="text-[9px] font-medium px-2.5 py-1 rounded-full"
+                                                                style={{ backgroundColor: `${catColor}15`, color: catColor }}
                                                             >
-                                                                <ExternalLink size={12} />
-                                                            </a>
-                                                        )}
+                                                                {c.categoria || c.tipo || 'Geral'}
+                                                            </span>
+                                                            {c.url_referencia && (
+                                                                <a
+                                                                    href={c.url_referencia}
+                                                                    target="_blank"
+                                                                    rel="noreferrer"
+                                                                    className="p-1 rounded-lg text-text-muted hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                                                                    title="Fonte Oficial"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    <ExternalLink size={12} />
+                                                                </a>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         ) : (
                                             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                <Laptop size={32} className="mb-2 opacity-40 text-accent-600" />
+                                                <Laptop size={32} className="mb-2 opacity-40 text-primary-600" />
                                                 <p className="text-[12px] font-medium text-text-primary">Nenhum curso EaD registrado neste território</p>
                                             </div>
                                         )}

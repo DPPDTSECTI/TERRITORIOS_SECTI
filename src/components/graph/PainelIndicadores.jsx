@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { DataContext } from '../../context/DataContext';
 import { KpiCard } from '../KpiCard';
 import { FaBuilding, FaGraduationCap, FaTractor } from 'react-icons/fa'; // Ícones de exemplo
+import { TrendingUp } from 'lucide-react';
 
 export const PainelIndicadores = ({ territorioSelecionado }) => {
  const { statsTerritorios, carregando } = useContext(DataContext);
@@ -49,7 +50,7 @@ export const PainelIndicadores = ({ territorioSelecionado }) => {
  <KpiCard 
  titulo="Média IFDM" 
  valor={dadosAtuais.media_ifdm} 
- icone={<span>📊</span>} 
+ icone={<TrendingUp size={16} />} 
  corDestaque="#8B5CF6" // Roxo
  />
  </div>

@@ -37,8 +37,8 @@ function normalizeName(value) {
  .replace(/\s+/g, ' ')
  .trim();
 
- // Dicionário de Correção (O que vem do GeoJSON -> O que está no nosso Banco)
- // 🚨 OLHE O CONSOLE (F12) E ADICIONE OS MUNICÍPIOS FALTANTES AQUI:
+ // Dicionario de Correcao (O que vem do GeoJSON -> O que esta no nosso Banco)
+ // NOTA: Verifique o console e adicione os municipios faltantes aqui se necessario:
  const correcoes = {
  'dias davila': 'dias d avila',
  'santa teresinha': 'santa terezinha',
@@ -134,8 +134,8 @@ export default function PtiMap({
  if (!groups[dbInfo.id_territorio]) groups[dbInfo.id_territorio] = [];
  groups[dbInfo.id_territorio].push(feat);
  } else {
- // 🚨 DETETIVE DE BURACOS NO MAPA:
- console.warn(`Buraco no mapa! A cidade "${nome}" do GeoJSON não achou par no BD.`);
+ // Verificacao de municipios sem par no banco:
+ console.warn(`Aviso: A cidade "${nome}" do GeoJSON nao achou par no BD.`);
  feat.properties.id_territorio = null;
  }
  });

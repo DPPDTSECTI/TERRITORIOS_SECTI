@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut, HelpCircle } from 'lucide-react';
 
 export default function UserHeaderProfile() {
  return (
@@ -43,14 +43,14 @@ export default function UserHeaderProfile() {
 
  {/* BOTÕES DE CONFIGURAÇÃO E LOGOUT */}
  <div className="flex items-center gap-2">
- <button
- type="button"
- onClick={() => window.dispatchEvent(new Event('start-tour'))}
- title="Tutorial/Ajuda"
- className="tour-help-button w-9 h-9 rounded-full bg-white text-text-secondary hover:text-text-primary hover:bg-surface-soft flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm"
- >
- <span className="font-medium">?</span>
- </button>
+  <button
+  type="button"
+  onClick={() => window.dispatchEvent(new Event('start-tour'))}
+  title="Tutorial / Ajuda"
+  className="tour-help-button w-8 h-8 rounded-full bg-surface-soft text-text-muted hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-colors shadow-xs"
+  >
+  <HelpCircle size={15} strokeWidth={2} />
+  </button>
  <button
  type="button"
  title="Configurações"
