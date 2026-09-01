@@ -450,7 +450,7 @@ export default function CadeiaPage() {
       icon: selectedTerritory ? Building2 : MapPin 
     },
     { 
-      label: 'Qtd. de Segmentos', 
+      label: 'Qtd. de Segmentos Econômicos', 
       value: loadingStats ? '...' : `${segmentStats.length} Segmentos`, 
       icon: Layers 
     },

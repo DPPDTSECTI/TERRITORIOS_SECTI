@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
-import { MapPin, ExternalLink, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2 } from 'lucide-react';
+import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2 } from 'lucide-react';
 
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
@@ -43,7 +43,7 @@ const buildMunicipioTerritoryMap = () => {
   return m;
 };
 
-// Marcador do Cluster (tamanho constante e uniforme de 20px)
+// Marcador do Cluster
 const createClusterIcon = (count) => {
   const size = 20;
   const fontSize = 9.5;
@@ -76,7 +76,7 @@ const createClusterIcon = (count) => {
   });
 };
 
-// Ícone de Ativo Individual (tamanho compacto e discreto, com destaque quando selecionado)
+// Marcador Individual
 const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => {
   const size = isSelected ? 24 : 18;
   const safeColor = corHex || '#3B82F6';
@@ -109,7 +109,6 @@ const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => 
   });
 };
 
-// Marcador micro e discreto para municípios parceiros / abrangidos (6px)
 const partnerPinIcon = L.divIcon({
   html: `
     <div style="
@@ -143,7 +142,7 @@ const selectedPartnerPinIcon = L.divIcon({
 });
 
 export const HEAT_LEVELS = [
-  { min: 0, max: 0, label: '0 cursos', color: '#E2E8F0', text: '#64748B' },
+  { min: 0, max: 0, label: '0 cursos', color: '#F1F5F9', text: '#64748B' },
   { min: 1, max: 5, label: '1 a 5', color: '#BAE6FD', text: '#0369A1' },
   { min: 6, max: 15, label: '6 a 15', color: '#38BDF8', text: '#0284C7' },
   { min: 16, max: 35, label: '16 a 35', color: '#2563EB', text: '#FFFFFF' },
@@ -152,11 +151,24 @@ export const HEAT_LEVELS = [
 ];
 
 export const getHeatColor = (count) => {
-  if (count === 0) return '#E2E8F0';
+  if (count === 0) return '#F1F5F9';
   if (count <= 5) return '#BAE6FD';
   if (count <= 15) return '#38BDF8';
   if (count <= 35) return '#2563EB';
   if (count <= 70) return '#1D4ED8';
+  return '#0F1D30';
+};
+
+// Escala Relativa com excelente contraste visual
+export const getRelativeHeatColor = (count, maxCount) => {
+  if (!count || count === 0) return '#F1F5F9';
+  if (maxCount <= 0) return '#F1F5F9';
+
+  const ratio = count / maxCount;
+  if (ratio <= 0.12) return '#BAE6FD';
+  if (ratio <= 0.30) return '#38BDF8';
+  if (ratio <= 0.55) return '#2563EB';
+  if (ratio <= 0.80) return '#1D4ED8';
   return '#0F1D30';
 };
 
@@ -177,7 +189,7 @@ function ZoomDependentTileLayer() {
   ) : (
     <TileLayer
       url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-      opacity={0.75}
+      opacity={0.65}
       maxZoom={16}
     />
   );
@@ -224,7 +236,6 @@ function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryR
   return null;
 }
 
-// Controlador de foco suave que enquadra a cadeia e suas linhas respeitando o zoom do usuário
 function CadeiaFocusController({ selectedCadeia }) {
   const map = useMap();
 
@@ -232,15 +243,11 @@ function CadeiaFocusController({ selectedCadeia }) {
     if (selectedCadeia && selectedCadeia.lat && selectedCadeia.lng) {
       const currentZoom = map.getZoom();
 
-      // Se o usuário JÁ aproximou o zoom (zoom_meu >= 9.5):
-      // NÃO tira o zoom e NÃO altera o nível! Apenas centraliza suavemente na sede
       if (currentZoom >= 9.5) {
         map.panTo([selectedCadeia.lat, selectedCadeia.lng], { animate: true, duration: 0.8 });
         return;
       }
 
-      // Se o usuário estava em um zoom afastado (< 9.5, visão geral):
-      // Pode aproximar para enquadrar a cadeia e seus municípios abrangidos
       const bounds = [[selectedCadeia.lat, selectedCadeia.lng]];
 
       (selectedCadeia.municipios_cobertos || []).forEach((mun) => {
@@ -293,12 +300,9 @@ function ChangeMapView({ coords }) {
     }
     if (lat != null && lng != null && !isNaN(lat) && !isNaN(lng) && lat !== 0) {
       const currentZoom = map.getZoom();
-      // Se o usuário já está em um zoom próximo (zoom_meu >= 9.5):
-      // Mantém o nível de zoom atual do usuário e apenas desliza para a coordenada!
       if (currentZoom >= 9.5) {
         map.panTo([lat, lng], { animate: true, duration: 0.8 });
       } else {
-        // Se estava afastado (< 9.5), aproxima para o targetZoom
         map.flyTo([lat, lng], targetZoom, { duration: 1.0 });
       }
     }
@@ -406,9 +410,6 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
 
     const rawList = Array.from(seen.values());
 
-    // Agrupa ativos que compartilham a mesma localização aproximada (~150m)
-    // e aplica um deslocamento geográfico FIXO e PERMANENTE.
-    // Como é fixado aqui, as coordenadas NUNCA mudam ao dar zoom!
     const coordGroups = new Map();
     rawList.forEach((a) => {
       const cKey = `${Number(a.lat).toFixed(3)}_${Number(a.lng).toFixed(3)}`;
@@ -426,7 +427,6 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
         let fixedLng = Number(a.lng);
 
         if (total > 1) {
-          // Deslocamento fixo de ~70 metros na Terra (permanente)
           const SPREAD = 0.00065;
           if (total === 2) {
             fixedLng += (idx === 0 ? -1 : 1) * SPREAD;
@@ -575,6 +575,7 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
     </>
   );
 }
+
 function MapResizeHandler({ isExpanded }) {
   const map = useMap();
   useEffect(() => {
@@ -602,7 +603,7 @@ export default function SideMap({
   processedAtivos = [],
   cursosData = [],
   cadeiasData = [],
-  mode = 'ativos', // 'ativos' | 'cursos' | 'cadeias'
+  mode = 'ativos',
   focusedAsset = null,
   selectedTerritory = null,
   selectedCadeia = null,
@@ -617,8 +618,9 @@ export default function SideMap({
 }) {
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
+  const [municipiosGeoJson, setMunicipiosGeoJson] = useState(null);
   const [pinnedAssetId, setPinnedAssetId] = useState(null);
-  const [hoveredTerritory, setHoveredTerritory] = useState(null);
+  const [hoveredFeatureName, setHoveredFeatureName] = useState(null);
   const [isLayerControlOpen, setIsLayerControlOpen] = useState(false);
   const [showAllConnections, setShowAllConnections] = useState(false);
   const [currentZoom, setCurrentZoom] = useState(6);
@@ -723,7 +725,6 @@ export default function SideMap({
     setActiveCategoryKeys(new Set());
   };
 
-  // Filtragem dos dados
   const visibleAtivos = useMemo(() => {
     if (mode !== 'ativos') return [];
     let list = processedAtivos.filter((a) => activeCategoryKeys.has(a.tipo || 'Outros'));
@@ -767,14 +768,12 @@ export default function SideMap({
     return list;
   }, [cadeiasData, activeCategoryKeys, selectedSegmento, selectedTerritory, mode]);
 
-  // Linhas de conexão (Sede -> Municípios Abrangidos) - Modo Individual ou Teia de Conexões Geral
+  // Linhas de conexão
   const connectionLines = useMemo(() => {
     if (mode !== 'cadeias') return [];
-
     const lines = [];
 
     if (showAllConnections) {
-      // Modo Teia: conecta todas as cadeias visíveis aos seus respectivos municípios abrangidos
       const targetCadeias = visibleCadeias.filter(c => c.lat && c.lng);
 
       targetCadeias.forEach((c) => {
@@ -811,7 +810,6 @@ export default function SideMap({
       return lines;
     }
 
-    // Modo Padrão: exibe apenas da cadeia selecionada
     if (!selectedCadeia || !selectedCadeia.lat || !selectedCadeia.lng) return [];
 
     const origin = [selectedCadeia.lat, selectedCadeia.lng];
@@ -845,7 +843,6 @@ export default function SideMap({
     return lines;
   }, [mode, showAllConnections, visibleCadeias, selectedCadeia]);
 
-  // Municípios parceiros únicos para renderização consolidada dos pinos
   const uniquePartnerMunicipios = useMemo(() => {
     if (mode !== 'cadeias' || connectionLines.length === 0) return [];
 
@@ -870,7 +867,6 @@ export default function SideMap({
     return Array.from(mapMuns.values());
   }, [mode, connectionLines]);
 
-  // Estatísticas
   const cursosStatsByTerritory = useMemo(() => {
     if (mode !== 'cursos') return {};
     const stats = {};
@@ -896,6 +892,45 @@ export default function SideMap({
     return stats;
   }, [visibleCursos, mode]);
 
+  const cursosStatsByMunicipio = useMemo(() => {
+    if (mode !== 'cursos') return {};
+    const stats = {};
+
+    visibleCursos.forEach((c) => {
+      const munNorm = normalizeName(c.municipio || '');
+      if (munNorm) {
+        if (!stats[munNorm]) {
+          stats[munNorm] = { count: 0, nome: c.municipio };
+        }
+        stats[munNorm].count += 1;
+      }
+    });
+
+    return stats;
+  }, [visibleCursos, mode]);
+
+  // Máximo relativo baseado no município líder daquele território
+  const maxCursosNoTerritorioSelecionado = useMemo(() => {
+    if (mode !== 'cursos' || !selectedTerritory) return 1;
+
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+    const cursosDoTerritorio = visibleCursos.filter(c => {
+      if (tid && String(c.id_territorio) === tid) return true;
+      if (tNorm && normalizeName(c.territorio_identidade || c.territorio || '') === tNorm) return true;
+      return false;
+    });
+
+    const mCounts = {};
+    cursosDoTerritorio.forEach(c => {
+      const m = normalizeName(c.municipio || '');
+      if (m) mCounts[m] = (mCounts[m] || 0) + 1;
+    });
+
+    return Math.max(...Object.values(mCounts), 1);
+  }, [mode, selectedTerritory, visibleCursos]);
+
   const territoryStats = useMemo(() => {
     if (mode === 'cursos') return {};
     const stats = {};
@@ -910,7 +945,7 @@ export default function SideMap({
     return stats;
   }, [visibleAtivos, visibleCadeias, mode]);
 
-  // Divisas dos 27 territórios
+  // Carrega a topologia base
   useEffect(() => {
     fetch('/BA_(1)9396399957704198.json')
       .then((resp) => resp.json())
@@ -933,7 +968,7 @@ export default function SideMap({
           groups[idTerr].geoms.push(geom);
         });
 
-        const features = Object.entries(groups).map(([idTerr, group]) => {
+        const terrFeatures = Object.entries(groups).map(([idTerr, group]) => {
           const mergedGeometry = topojson.merge(topology, group.geoms);
           return {
             type: 'Feature',
@@ -947,19 +982,39 @@ export default function SideMap({
 
         setTerritoriosGeoJson({
           type: 'FeatureCollection',
-          features
+          features: terrFeatures
+        });
+
+        const munFeatures = topojson.feature(topology, topology.objects.BA).features.map(feat => {
+          const rawMunName = feat.properties?.NOME || feat.properties?.nome || '';
+          const dbInfo = municipioTerritoryMap[normalizeName(rawMunName)];
+          return {
+            ...feat,
+            properties: {
+              ...feat.properties,
+              nome_municipio: dbInfo ? dbInfo.nome_municipio : rawMunName,
+              id_territorio: dbInfo ? dbInfo.id_territorio : null,
+              nome_territorio: dbInfo ? dbInfo.nome_territorio : null
+            }
+          };
+        });
+
+        setMunicipiosGeoJson({
+          type: 'FeatureCollection',
+          features: munFeatures
         });
       })
-      .catch((err) => console.error('Erro ao processar divisas dos territórios:', err));
+      .catch((err) => console.error('Erro ao carregar topologia:', err));
   }, [municipioTerritoryMap]);
 
+  // 1. Estilização dos Territórios de Identidade
   const territoryBorderStyle = (feature) => {
     const rawNome = feature?.properties?.nome_territorio || '';
     const nome = rawNome.replace(/^Território de Identidade\s+/i, '').trim();
     const idTerr = feature?.properties?.id_territorio;
     const norm = normalizeName(nome);
 
-    const isHovered = hoveredTerritory === nome;
+    const isHovered = hoveredFeatureName === nome;
     const isSelected = selectedTerritory && (
       (selectedTerritory.id_territorio && String(selectedTerritory.id_territorio) === String(idTerr)) ||
       normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio) === norm
@@ -970,30 +1025,37 @@ export default function SideMap({
       const count = tStat ? tStat.count : 0;
       const heatColor = getHeatColor(count);
 
-      let fillOpacity = 0.88;
-      let fillColor = heatColor;
-      let weight = 0.6;
-      let color = '#FFFFFF';
-
       if (selectedTerritory) {
         if (isSelected) {
-          fillOpacity = 1;
-          weight = 1.2;
-        } else {
-          fillOpacity = 0.25;
-          fillColor = '#E2E8F0';
-          weight = 0.4;
+          return {
+            fillColor: 'transparent',
+            fillOpacity: 0,
+            color: '#1E293B',
+            weight: 2.2,
+            opacity: 0.95,
+            lineCap: 'round',
+            lineJoin: 'round',
+            className: 'outline-none pointer-events-none'
+          };
         }
-      } else if (isHovered) {
-        fillOpacity = 1;
-        weight = 1;
+        // Fundo do restante do estado com contraste equilibrado
+        return {
+          fillColor: '#CBD5E1',
+          fillOpacity: 0.55,
+          color: '#FFFFFF',
+          weight: 0.8,
+          opacity: 0.9,
+          lineCap: 'round',
+          lineJoin: 'round',
+          className: 'outline-none cursor-pointer hover:opacity-80 transition-opacity'
+        };
       }
 
       return {
-        fillColor,
-        fillOpacity,
-        color,
-        weight,
+        fillColor: heatColor,
+        fillOpacity: isHovered ? 1.0 : 0.92,
+        color: '#FFFFFF',
+        weight: isHovered ? 1.8 : 1.1,
         opacity: 1,
         lineCap: 'round',
         lineJoin: 'round',
@@ -1004,12 +1066,57 @@ export default function SideMap({
     return {
       fillColor: isHovered ? '#2563EB' : 'transparent',
       fillOpacity: isHovered ? 0.08 : 0,
-      color: isHovered ? '#2563EB' : '#1D3557',
-      weight: isHovered ? 1.8 : 1.1,
-      opacity: isHovered ? 0.75 : 0.25,
+      color: '#FFFFFF',
+      weight: isHovered ? 2.0 : 1.2,
+      opacity: 1,
       lineCap: 'round',
       lineJoin: 'round',
       className: 'transition-all duration-300 cursor-pointer'
+    };
+  };
+
+  // 2. Estilização dos Municípios (Quando o território está focado)
+  const municipioBorderStyle = (feature) => {
+    const munNome = feature?.properties?.nome_municipio || feature?.properties?.NOME || '';
+    const munNorm = normalizeName(munNome);
+    const idTerr = feature?.properties?.id_territorio;
+    const terrNome = feature?.properties?.nome_territorio || '';
+    const terrNorm = normalizeName(terrNome);
+
+    const targetId = selectedTerritory?.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const targetTerrNorm = normalizeName(selectedTerritory?.nome_territorio || selectedTerritory?.territorio || '');
+
+    const isInsideSelectedTerritory = Boolean(
+      (targetId && idTerr && String(idTerr) === targetId) ||
+      (targetTerrNorm && (terrNorm === targetTerrNorm || terrNorm.includes(targetTerrNorm)))
+    );
+
+    if (!isInsideSelectedTerritory) {
+      return {
+        fillColor: 'transparent',
+        fillOpacity: 0,
+        weight: 0,
+        opacity: 0,
+        stroke: false
+      };
+    }
+
+    const munStat = cursosStatsByMunicipio[munNorm];
+    const count = munStat ? munStat.count : 0;
+    const isHovered = hoveredFeatureName === munNome;
+    
+    // Calcula a cor relativa ao município mais forte daquele território
+    const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado);
+
+    return {
+      fillColor: relativeHeatColor,
+      fillOpacity: isHovered ? 1.0 : 0.95,
+      color: '#FFFFFF',
+      weight: isHovered ? 2.0 : 1.2,
+      opacity: 1,
+      lineCap: 'round',
+      lineJoin: 'round',
+      className: 'transition-all duration-150 cursor-pointer outline-none'
     };
   };
 
@@ -1025,8 +1132,8 @@ export default function SideMap({
     if (norm) geoJsonLayersByTerritoryRef.current[norm] = layer;
 
     layer.on({
-      mouseover: () => setHoveredTerritory(nome),
-      mouseout: () => setHoveredTerritory(null),
+      mouseover: () => setHoveredFeatureName(nome),
+      mouseout: () => setHoveredFeatureName(null),
       click: (e) => {
         L.DomEvent.stopPropagation(e);
         const isCurrentSelected = selectedTerritory && (
@@ -1043,12 +1150,43 @@ export default function SideMap({
     });
   };
 
-  const hoveredCursosCount = useMemo(() => {
-    if (mode !== 'cursos' || !hoveredTerritory) return null;
-    const norm = normalizeName(hoveredTerritory);
+  const onEachMunicipioFeature = (feature, layer) => {
+    const munNome = feature?.properties?.nome_municipio || feature?.properties?.NOME || '';
+    const idTerr = feature?.properties?.id_territorio;
+    const terrNome = feature?.properties?.nome_territorio || '';
+
+    layer.on({
+      mouseover: () => setHoveredFeatureName(munNome),
+      mouseout: () => setHoveredFeatureName(null),
+      click: (e) => {
+        L.DomEvent.stopPropagation(e);
+        if (!selectedTerritory && idTerr) {
+          onSelectTerritory({ id_territorio: idTerr, nome_territorio: terrNome, territorio: terrNome });
+        }
+      }
+    });
+  };
+
+  const hoveredInfo = useMemo(() => {
+    if (mode !== 'cursos' || !hoveredFeatureName) return null;
+    const norm = normalizeName(hoveredFeatureName);
+
+    if (selectedTerritory) {
+      const stat = cursosStatsByMunicipio[norm];
+      return {
+        label: hoveredFeatureName,
+        count: stat ? stat.count : 0,
+        sub: 'no município'
+      };
+    }
+
     const stat = cursosStatsByTerritory[norm];
-    return stat ? stat.count : 0;
-  }, [mode, hoveredTerritory, cursosStatsByTerritory]);
+    return {
+      label: hoveredFeatureName,
+      count: stat ? stat.count : 0,
+      sub: 'no território'
+    };
+  }, [mode, hoveredFeatureName, selectedTerritory, cursosStatsByMunicipio, cursosStatsByTerritory]);
 
   const hasActiveFilter = Boolean(
     pinnedAssetId ||
@@ -1060,7 +1198,7 @@ export default function SideMap({
   );
 
   return (
-    <div className="relative w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10 flex-1">
+    <div className="relative w-full h-full min-h-0 flex items-center justify-center bg-[#E8EEF5] rounded-md overflow-hidden select-none z-10 flex-1">
       <MapContainer
         ref={mapRef}
         preferCanvas={true}
@@ -1090,12 +1228,23 @@ export default function SideMap({
         />
         <CadeiaFocusController selectedCadeia={selectedCadeia} />
 
+        {/* 1. TERRITÓRIOS DE IDENTIDADE (VISÃO GERAL OU MÁSCARA DE CONTEXTO) */}
         {territoriosGeoJson && (
           <GeoJSON
-            key={`territorios-layer-${mode}-${hoveredTerritory || 'none'}-${selectedTerritory?.id_territorio || 'none'}-${activeCategoryKeys.size}`}
+            key={`territorios-layer-${mode}-${hoveredFeatureName || 'none'}-${selectedTerritory?.id_territorio || 'none'}-${activeCategoryKeys.size}`}
             data={territoriosGeoJson}
             style={territoryBorderStyle}
             onEachFeature={onEachTerritoryFeature}
+          />
+        )}
+
+        {/* 2. MUNICÍPIOS COM HEATMAP RELATIVO NO RECORTE TERRITORIAL */}
+        {mode === 'cursos' && selectedTerritory && municipiosGeoJson && (
+          <GeoJSON
+            key={`municipios-heat-layer-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${hoveredFeatureName || 'none'}-${activeCategoryKeys.size}`}
+            data={municipiosGeoJson}
+            style={municipioBorderStyle}
+            onEachFeature={onEachMunicipioFeature}
           />
         )}
 
@@ -1115,7 +1264,7 @@ export default function SideMap({
           />
         ))}
 
-        {/* PINOS E TAGS LIMPAS DOS MUNICÍPIOS ABRANGIDOS */}
+        {/* PINOS E TAGS DOS MUNICÍPIOS ABRANGIDOS */}
         {mode === 'cadeias' && uniquePartnerMunicipios.map((p, idx) => {
           const showLabel = Boolean(p.isSelected && currentZoom >= 8.0);
 
@@ -1154,54 +1303,60 @@ export default function SideMap({
         )}
       </MapContainer>
 
-      {/* BADGE DE HOVER */}
-      {hoveredTerritory && (
-        <div className="absolute top-3 left-3.5 z-[400] pointer-events-none select-none flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
+      {/* BADGE DE HOVER DINÂMICO */}
+      {hoveredInfo && (
+        <div className="absolute top-3 left-3.5 z-[400] pointer-events-none select-none flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
           {mode === 'cursos' && <Flame size={13} className="text-[#2563EB]" />}
           <span className="text-[#1D3557] font-extrabold text-[12px] tracking-tight">
-            {hoveredTerritory}
+            {hoveredInfo.label}
           </span>
-          {mode === 'cursos' ? (
-            <span className="text-[#2563EB] font-black text-[11px] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
-              {hoveredCursosCount} {hoveredCursosCount === 1 ? 'curso' : 'cursos'}
-            </span>
-          ) : (
-            <span className="text-[#2563EB] font-extrabold text-[10.5px]">
-              · {territoryStats[hoveredTerritory]?.count || 0} {mode === 'cadeias' ? 'arranjos' : 'ativos'}
-            </span>
-          )}
+          <span className="text-[#2563EB] font-black text-[11px] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
+            {hoveredInfo.count} {hoveredInfo.count === 1 ? 'curso' : 'cursos'}
+          </span>
         </div>
       )}
 
-      {/* LEGENDA DO HEATMAP (MODO CURSOS) */}
+      {/* LEGENDA DO HEATMAP */}
       {mode === 'cursos' && (
         <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-md rounded-2xl p-2.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto">
-          <div className="flex items-center gap-1 mb-1.5">
-            <Flame size={12} className="text-[#2563EB]" />
-            <span className="text-[9.5px] font-extrabold text-[#1D3557] uppercase tracking-wider">
-              Densidade de Cursos
-            </span>
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <div className="flex items-center gap-1">
+              <Flame size={12} className="text-[#2563EB]" />
+              <span className="text-[9.5px] font-extrabold text-[#1D3557] uppercase tracking-wider">
+                {selectedTerritory ? 'Densidade Relativa Municipal' : 'Densidade de Cursos'}
+              </span>
+            </div>
+            {selectedTerritory && (
+              <span className="text-[8.5px] font-black bg-[#2563EB]/10 text-[#2563EB] px-1.5 py-0.2 rounded-md">
+                Máx: {maxCursosNoTerritorioSelecionado}
+              </span>
+            )}
           </div>
+          
           <div className="flex items-center gap-1.5">
-            {HEAT_LEVELS.map((lvl, idx) => (
-              <div key={idx} className="flex flex-col items-center gap-1">
-                <div
-                  className="w-5 h-2.5 rounded-[3px] shadow-2xs border border-black/10"
-                  style={{ backgroundColor: lvl.color }}
-                  title={`${lvl.label}`}
-                />
-                <span className="text-[7.5px] font-bold text-[#64748B] whitespace-nowrap">
-                  {lvl.label.replace(' cursos', '')}
-                </span>
-              </div>
-            ))}
+            {HEAT_LEVELS.map((lvl, idx) => {
+              const labelText = selectedTerritory 
+                ? (idx === 0 ? '0' : idx === HEAT_LEVELS.length - 1 ? `${maxCursosNoTerritorioSelecionado}` : '')
+                : lvl.label.replace(' cursos', '');
+
+              return (
+                <div key={idx} className="flex flex-col items-center gap-1">
+                  <div
+                    className="w-5 h-2.5 rounded-[3px] shadow-2xs border border-black/10"
+                    style={{ backgroundColor: lvl.color }}
+                    title={lvl.label}
+                  />
+                  <span className="text-[7.5px] font-bold text-[#64748B] whitespace-nowrap">
+                    {labelText}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* CONTROLES SUPERIORES (TEIA DE CONEXÕES + FILTRO DE CAMADAS/TIPOS + EXPANDIR) */}
-      {/* ========================================================================= */}
+      {/* CONTROLES SUPERIORES */}
       <div className="absolute top-3 right-3 z-[400] flex items-start gap-2">
         {mode === 'cadeias' && (
           <button
@@ -1212,7 +1367,7 @@ export default function SideMap({
                 ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
                 : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
             }`}
-            title={showAllConnections ? "Desativar teia de conexões" : "Visualizar teia com todas as conexões simultâneas das cadeias"}
+            title={showAllConnections ? "Desativar teia de conexões" : "Visualizar teia de conexões"}
           >
             <Network size={13} className={showAllConnections ? 'text-[#00B4D8]' : 'text-[#2563EB]'} />
             <span>Teia de Conexões</span>
@@ -1233,7 +1388,7 @@ export default function SideMap({
                 ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
                 : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
             }`}
-            title={isExpanded ? "Restaurar visualização padrão (mapa e lista)" : "Modo aumentado (expandir mapa com KPIs na vertical)"}
+            title={isExpanded ? "Restaurar visualização padrão" : "Expandir mapa"}
           >
             {isExpanded ? (
               <>
@@ -1253,91 +1408,94 @@ export default function SideMap({
           <button
             type="button"
             onClick={() => setIsLayerControlOpen(!isLayerControlOpen)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${isLayerControlOpen
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
+              isLayerControlOpen
                 ? 'bg-[#1D3557] text-white border-[#1D3557]'
                 : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
-              }`}
+            }`}
           >
             <Layers size={13} className={isLayerControlOpen ? 'text-white' : 'text-[#2563EB]'} />
             <span>{mode === 'cursos' ? 'Áreas' : mode === 'cadeias' ? 'Tipos' : 'Camadas'}</span>
-            <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${isLayerControlOpen ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-[#457B9D]'
-              }`}>
+            <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${
+              isLayerControlOpen ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-[#457B9D]'
+            }`}>
               {activeCategoryKeys.size}/{allCategories.length}
             </span>
             {isLayerControlOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           </button>
 
-        {isLayerControlOpen && (
-          <div className="absolute right-0 top-full mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 z-50">
-            <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-1 px-1">
-              <span className="text-[9.5px] font-extrabold text-[#A0AEC0] uppercase tracking-wider">
-                {mode === 'cursos' ? 'Filtrar por Área' : mode === 'cadeias' ? `Tipos (${visibleCadeias.length} cadeias)` : `Tipos (${visibleAtivos.length} ativos)`}
-              </span>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={selectAllCategories}
-                  className="text-[9px] font-bold text-[#2563EB] hover:underline cursor-pointer"
-                >
-                  Todas
-                </button>
-                <span className="text-gray-300">·</span>
-                <button
-                  type="button"
-                  onClick={deselectAllCategories}
-                  className="text-[9px] font-bold text-[#457B9D] hover:underline cursor-pointer"
-                >
-                  Limpar
-                </button>
+          {isLayerControlOpen && (
+            <div className="absolute right-0 top-full mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 z-50">
+              <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-1 px-1">
+                <span className="text-[9.5px] font-extrabold text-[#A0AEC0] uppercase tracking-wider">
+                  {mode === 'cursos' ? 'Filtrar por Área' : mode === 'cadeias' ? `Tipos (${visibleCadeias.length} cadeias)` : `Tipos (${visibleAtivos.length} ativos)`}
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={selectAllCategories}
+                    className="text-[9px] font-bold text-[#2563EB] hover:underline cursor-pointer"
+                  >
+                    Todas
+                  </button>
+                  <span className="text-gray-300">·</span>
+                  <button
+                    type="button"
+                    onClick={deselectAllCategories}
+                    className="text-[9px] font-bold text-[#457B9D] hover:underline cursor-pointer"
+                  >
+                    Limpar
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-0.5 pt-0.5">
+                {allCategories.map((cat) => {
+                  const isActive = activeCategoryKeys.has(cat.key);
+                  const IconComponent = cat.icone;
+
+                  return (
+                    <button
+                      key={cat.key}
+                      type="button"
+                      onClick={() => toggleCategory(cat.key)}
+                      className={`w-full flex items-center justify-between px-2 py-1.5 rounded-xl text-[10.5px] font-semibold transition-colors cursor-pointer text-left ${
+                        isActive
+                          ? 'bg-[#F8FAFC] text-[#1D3557] hover:bg-[#F1F5F9]'
+                          : 'text-gray-400 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div
+                          className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${
+                            isActive
+                              ? 'border-transparent text-white'
+                              : 'border-[#CBD5E1] bg-white'
+                          }`}
+                          style={{ backgroundColor: isActive ? cat.corHex : 'transparent' }}
+                        >
+                          {isActive && <Check size={10} strokeWidth={3} />}
+                        </div>
+                        <div className="flex items-center gap-1.5 truncate">
+                          {IconComponent && <IconComponent size={12} style={{ color: cat.corHex }} className="shrink-0" />}
+                          <span className={`truncate ${isActive ? 'font-bold text-[#1D3557]' : 'font-normal'}`}>
+                            {cat.label}
+                          </span>
+                        </div>
+                      </div>
+                      <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${isActive ? 'text-[#457B9D]' : 'text-gray-300'}`}>
+                        {cat.count}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-
-            <div className="flex flex-col gap-0.5 pt-0.5">
-              {allCategories.map((cat) => {
-                const isActive = activeCategoryKeys.has(cat.key);
-                const IconComponent = cat.icone;
-
-                return (
-                  <button
-                    key={cat.key}
-                    type="button"
-                    onClick={() => toggleCategory(cat.key)}
-                    className={`w-full flex items-center justify-between px-2 py-1.5 rounded-xl text-[10.5px] font-semibold transition-colors cursor-pointer text-left ${isActive
-                        ? 'bg-[#F8FAFC] text-[#1D3557] hover:bg-[#F1F5F9]'
-                        : 'text-gray-400 hover:bg-gray-50'
-                      }`}
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div
-                        className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${isActive
-                            ? 'border-transparent text-white'
-                            : 'border-[#CBD5E1] bg-white'
-                          }`}
-                        style={{ backgroundColor: isActive ? cat.corHex : 'transparent' }}
-                      >
-                        {isActive && <Check size={10} strokeWidth={3} />}
-                      </div>
-                      <div className="flex items-center gap-1.5 truncate">
-                        {IconComponent && <IconComponent size={12} style={{ color: cat.corHex }} className="shrink-0" />}
-                        <span className={`truncate ${isActive ? 'font-bold text-[#1D3557]' : 'font-normal'}`}>
-                          {cat.label}
-                        </span>
-                      </div>
-                    </div>
-                    <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${isActive ? 'text-[#457B9D]' : 'text-gray-300'
-                      }`}>
-                      {cat.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
+          )}
         </div>
       </div>
 
-      {/* CONTROLES DE ZOOM E LIMPEZA */}
+      {/* CONTROLES DE ZOOM E RESET */}
       <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-white/95 backdrop-blur-md rounded-[18px] border border-[#CBD5E1] shadow-sm overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
@@ -1363,10 +1521,11 @@ export default function SideMap({
             onSelectSegmento?.(null);
             onAssetClick?.(null);
           }}
-          className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${hasActiveFilter
+          className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
+            hasActiveFilter
               ? 'text-red-500 bg-red-50 hover:bg-red-100'
               : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
-            }`}
+          }`}
           title="Limpar filtros"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
