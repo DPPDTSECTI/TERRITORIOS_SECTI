@@ -89,10 +89,10 @@ function CardLista({
  : 'text-text-secondary hover:text-text-primary'
  }`}
  >
- {TabIcon && <TabIcon size={13} />}
+ {TabIcon && <TabIcon size={16} />}
  <span>{tab.label}</span>
  {tab.count !== undefined && (
- <span className={`text-[9.5px] px-1.5 py-0.2 rounded-lg font-semibold ${
+ <span className={`text-[10px] px-1.5 py-0.2 rounded-lg font-semibold ${
  isActive ? 'bg-white/20 text-white' : 'bg-border text-text-secondary'
  }`}>
  {tab.count}
@@ -105,7 +105,7 @@ function CardLista({
 
  {showSearch && (
  <div className="relative w-full sm:w-64">
- <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+ <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
  <input
  type="text"
  value={internalSearch}
@@ -140,11 +140,11 @@ function CardLista({
  {/* CABEÇALHO PADRÃO DE LISTA COM FILTRO */}
  <div className="flex items-center justify-between gap-2 mb-3 shrink-0 pr-8 relative z-30">
  <div className="flex items-center gap-2">
- <MapPin size={15} className="text-text-secondary" />
+ <MapPin size={16} className="text-text-secondary" />
  <h3 className="text-text-primary font-semibold text-[13px] tracking-tight truncate max-w-[150px]">
  {selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : title}
  </h3>
- <span className="text-[10px] font-medium text-text-muted bg-surface-soft px-2 py-0.5 rounded-full border border-border shrink-0">
+ <span className="text-[10px] font-medium text-text-muted bg-surface-soft px-2 py-0.5 rounded-full border border-border shrink-0 inline-flex items-center justify-center leading-none">
  {items.length}
  </span>
  </div>
@@ -155,7 +155,7 @@ function CardLista({
  {selectedTerritory && (
  <button
  onClick={onClearTerritory}
- className="text-[11px] font-medium text-danger-700 bg-danger-50 px-2 py-1 rounded-lg hover:bg-danger-100 transition-colors cursor-pointer"
+ className="text-[11px] font-medium text-danger-700 bg-danger-50 px-2 py-1 rounded-lg hover:bg-danger-100 transition-colors cursor-pointer inline-flex items-center justify-center leading-none"
  >
  Limpar Região
  </button>
@@ -173,11 +173,11 @@ function CardLista({
  : 'bg-surface text-text-secondary border-border hover:bg-surface-soft'
  }`}
  >
- <Filter size={12} className={selectedFilter !== 'todos' ? 'text-white' : 'text-text-secondary'} />
+ <Filter size={16} className={selectedFilter !== 'todos' ? 'text-white' : 'text-text-secondary'} />
  <span className="max-w-[110px] truncate">
  {selectedFilter === 'todos' ? filterLabel : selectedFilter}
  </span>
- <ChevronDown size={12} className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+ <ChevronDown size={16} className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
  </button>
 
  {isDropdownOpen && (
@@ -255,7 +255,7 @@ function CardLista({
  {item.nome || item.entidade}
  </span>
  <div className="flex items-center justify-between mt-0.5 gap-1.5">
- <span className="text-[9px] font-semibold text-text-muted bg-surface-soft px-1.5 py-0.5 rounded-full border border-border truncate max-w-[135px]">
+ <span className="text-[9px] font-semibold text-text-muted bg-surface-soft px-1.5 py-0.5 rounded-full border border-border truncate max-w-[135px] inline-flex items-center justify-center leading-none">
  {item.shortTipo || item.tipo || item.segmento}
  </span>
  <span className="text-[11px] font-medium text-text-secondary truncate">

@@ -396,12 +396,12 @@ export default function RelatorioPage() {
  <div>
  <div className="flex items-center gap-2">
  <span className="bg-primary-600/10 text-primary-600 p-1.5 rounded-xl flex items-center justify-center">
- <FileText size={18} strokeWidth={2.5} />
+ <FileText size={18} strokeWidth={2} />
  </span>
  <h1 className="text-xl sm:text-lg font-semibold text-text-primary tracking-tight">
  Relatórios Executivos de CT&I
  </h1>
- <span className="text-[10.5px] font-semibold px-2.5 py-0.5 rounded-full bg-success-500/15 text-success-700 border border-success-500/25">
+ <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-success-500/15 text-success-700 border border-success-500/25 inline-flex items-center justify-center leading-none">
  Dados Oficiais SECTI/BA
  </span>
  </div>
@@ -460,8 +460,8 @@ export default function RelatorioPage() {
  <div className="mb-4 shrink-0">
  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
  <div className="flex items-center gap-3">
- <div className="flex items-center gap-1.5 text-[10.5px] font-medium text-text-primary bg-surface-soft px-2.5 py-1 rounded-full border border-border">
- <Globe size={12} className="text-primary-600" />
+ <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-primary bg-surface-soft px-2.5 py-1 rounded-full border border-border justify-center leading-none">
+ <Globe size={16} className="text-primary-600" />
  <span>Exibindo: <strong>{territoryTitle}</strong></span>
  </div>
  </div>
@@ -471,10 +471,10 @@ export default function RelatorioPage() {
  <button
  type="button"
  onClick={handleExportCSV}
- className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft hover:border-primary-600 shadow-2xs transition-all cursor-pointer"
+ className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft hover:border-primary-600 shadow-2xs transition-all cursor-pointer justify-center leading-none"
  title="Baixar dados tabulares em formato CSV para Excel"
  >
- <Download size={13} className="text-primary-600" />
+ <Download size={16} className="text-primary-600" />
  <span className="hidden xl:inline">Exportar CSV</span>
  <span className="inline xl:hidden">CSV</span>
  </button>
@@ -482,7 +482,7 @@ export default function RelatorioPage() {
  <button
  type="button"
  onClick={handleExportJSON}
- className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft shadow-2xs transition-all cursor-pointer"
+ className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft shadow-2xs transition-all cursor-pointer leading-none"
  title="Baixar em formato estruturado JSON"
  >
  <span>JSON</span>
@@ -520,14 +520,19 @@ export default function RelatorioPage() {
  </div>
 
  {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO */}
- <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4 shrink-0">
- <div className="bg-surface-soft border border-border p-3 rounded-xl flex flex-col">
- <span className="text-[11px] font-medium text-text-secondary uppercase flex items-center gap-1">
- <Database size={11} className="text-primary-600" />
+ <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 shrink-0">
+ {/* CARD 1: Ativos */}
+ <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel bg-primary-900/10 border border-primary-500/20 shadow-sm">
+ <div className="flex items-center gap-2.5 w-full min-w-0">
+ <div className="flex items-center justify-center shrink-0 mr-1">
+ <Database size={16} strokeWidth={2} className="text-primary-400" />
+ </div>
+ <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
  Ativos de CT&I
  </span>
- <div className="flex items-baseline gap-1.5 mt-1">
- <span className="text-base font-semibold text-text-primary">
+ </div>
+ <div className="mt-3.5 flex items-baseline gap-2 w-full">
+ <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
  {statsSintese.totalAtivos}
  </span>
  <span className="text-[11px] font-medium text-success-500">
@@ -536,43 +541,58 @@ export default function RelatorioPage() {
  </div>
  </div>
 
- <div className="bg-surface-soft border border-border p-3 rounded-xl flex flex-col">
- <span className="text-[11px] font-medium text-text-secondary uppercase flex items-center gap-1">
- <GraduationCap size={11} className="text-[#8B5CF6]" />
+ {/* CARD 2: Cursos */}
+ <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
+ <div className="flex items-center gap-2.5 w-full min-w-0">
+ <div className="flex items-center justify-center shrink-0 mr-1">
+ <GraduationCap size={16} strokeWidth={2} className="text-[#14B8A6]" />
+ </div>
+ <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
  Cursos CT&I
  </span>
- <div className="flex items-baseline gap-1.5 mt-1">
- <span className="text-base font-semibold text-text-primary">
+ </div>
+ <div className="mt-3.5 flex items-baseline w-full">
+ <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
  {statsSintese.totalCursos}
  </span>
  </div>
  </div>
 
- <div className="bg-surface-soft border border-border p-3 rounded-xl flex flex-col">
- <span className="text-[11px] font-medium text-text-secondary uppercase flex items-center gap-1">
- <GitPullRequest size={11} className="text-warning-600" />
+ {/* CARD 3: Cadeias */}
+ <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
+ <div className="flex items-center gap-2.5 w-full min-w-0">
+ <div className="flex items-center justify-center shrink-0 mr-1">
+ <GitPullRequest size={16} strokeWidth={2} className="text-warning-400" />
+ </div>
+ <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
  Cadeias Mapeadas
  </span>
- <div className="flex items-baseline gap-1.5 mt-1">
- <span className="text-base font-semibold text-text-primary">
+ </div>
+ <div className="mt-3.5 flex items-baseline gap-2 w-full">
+ <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
  {statsSintese.totalCadeias}
  </span>
  <span className="text-[11px] font-medium text-text-secondary">
- setores estratégicos
+ setores
  </span>
  </div>
  </div>
 
- <div className="bg-surface-soft border border-border p-3 rounded-xl flex flex-col" title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
- <span className="text-[11px] font-medium text-text-secondary uppercase flex items-center gap-1">
- <MapPin size={11} className="text-danger-600" />
+ {/* CARD 4: Cobertura */}
+ <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm" title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
+ <div className="flex items-center gap-2.5 w-full min-w-0">
+ <div className="flex items-center justify-center shrink-0 mr-1">
+ <MapPin size={16} strokeWidth={2} className="text-danger-400" />
+ </div>
+ <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
  Cobertura CT&I
  </span>
- <div className="flex items-baseline gap-1.5 mt-1">
- <span className="text-base font-semibold text-text-primary">
- {statsSintese.munAtendidosCount} <span className="text-xs font-medium text-text-secondary">/ {statsSintese.totalMunEscopo}</span>
+ </div>
+ <div className="mt-3.5 flex items-baseline gap-2 w-full">
+ <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+ {statsSintese.munAtendidosCount} <span className="text-sm font-medium text-text-secondary">/ {statsSintese.totalMunEscopo}</span>
  </span>
- <span className="text-[11px] font-medium text-success-700">
+ <span className="text-[11px] font-medium text-success-500">
  {statsSintese.taxaCoberturaMun}% do total
  </span>
  </div>
@@ -627,10 +647,10 @@ export default function RelatorioPage() {
  <div className="p-4 rounded-xl bg-surface-soft border border-border flex flex-col gap-3">
  <div className="flex items-center justify-between border-b border-border pb-2">
  <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
- <Database size={13} className="text-primary-600" />
+ <Database size={16} className="text-primary-600" />
  Infraestrutura de CT&I & RNP
  </h4>
- <span className="text-[10px] font-semibold text-primary-600 bg-primary-600/10 px-2 py-0.5 rounded-full">
+ <span className="text-[10px] font-semibold text-primary-600 bg-primary-600/10 px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
  {scopedAtivos.length} Registros
  </span>
  </div>
@@ -643,26 +663,26 @@ export default function RelatorioPage() {
  <div className="flex flex-col gap-1.5">
  <div className="flex justify-between items-center text-[11px] text-text-primary">
  <div className="flex items-center gap-1.5 font-medium">
- <span className="w-2 h-2 rounded-full bg-info-500"></span>
+ <span className="w-2 h-2 rounded-full bg-primary-600"></span>
  Pontos de Presença / Conexão RNP
  </div>
  <span className="font-medium">{statsSintese.rnpAtivos} de {statsSintese.totalAtivos} <span className="text-text-secondary font-medium">({statsSintese.rnpTaxa}%)</span></span>
  </div>
  <div className="flex justify-between items-center text-[11px] text-text-primary">
  <div className="flex items-center gap-1.5 font-medium">
- <span className="w-2 h-2 rounded-full bg-primary-500"></span>
+ <span className="w-2 h-2 rounded-full bg-neutral-200"></span>
  Demais Ativos Institucionais / Lab
  </div>
  <span className="font-medium">{statsSintese.totalAtivos - statsSintese.rnpAtivos} <span className="text-text-secondary font-medium">({(100 - Number(statsSintese.rnpTaxa)).toFixed(1)}%)</span></span>
  </div>
  </div>
- <div className="w-full h-2.5 rounded-full bg-border overflow-hidden flex">
+ <div className="w-full h-2.5 rounded-full bg-neutral-200 overflow-hidden flex">
  <div
- className="h-full bg-info-500 transition-all"
+ className="h-full bg-primary-600 transition-all"
  style={{ width: `${statsSintese.rnpTaxa}%` }}
  />
  <div
- className="h-full bg-primary-500 transition-all"
+ className="h-full bg-neutral-200 transition-all"
  style={{ width: `${100 - Number(statsSintese.rnpTaxa)}%` }}
  />
  </div>
@@ -673,10 +693,10 @@ export default function RelatorioPage() {
  <div className="p-4 rounded-xl bg-surface-soft border border-border flex flex-col gap-3">
  <div className="flex items-center justify-between border-b border-border pb-2">
  <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
- <GraduationCap size={14} className="text-[#8B5CF6]" />
+ <GraduationCap size={16} className="text-[#8B5CF6]" />
  Oferta Educacional CT&I
  </h4>
- <span className="text-[10px] font-semibold text-[#8B5CF6] bg-[#8B5CF6]/10 px-2 py-0.5 rounded-full">
+ <span className="text-[10px] font-semibold text-[#8B5CF6] bg-[#8B5CF6]/10 px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
  {scopedCursos.length} Cursos
  </span>
  </div>
@@ -724,7 +744,7 @@ export default function RelatorioPage() {
  <div className="p-4 rounded-xl bg-surface-soft border border-border">
  <div className="flex items-center justify-between mb-2">
  <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
- <GitPullRequest size={13} className="text-warning-600" />
+ <GitPullRequest size={16} className="text-warning-600" />
  Vocações Econômicas e Cadeias Produtivas Mapeadas ({statsSintese.totalCadeias})
  </h4>
  <span className="text-[10px] text-text-secondary font-medium">
@@ -735,7 +755,7 @@ export default function RelatorioPage() {
  {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx) => (
  <span
  key={idx}
- className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-surface border border-border text-text-primary shadow-2xs"
+ className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-surface border border-border text-text-primary shadow-2xs inline-flex items-center justify-center leading-none"
  >
  {cad}
  </span>
@@ -756,7 +776,7 @@ export default function RelatorioPage() {
  {/* BARRA DE BUSCA E FILTROS DA TABELA */}
  <div className={`flex items-center justify-between gap-3 mb-3 shrink-0 print:hidden `}>
  <div className="relative flex-1 max-w-sm">
- <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+ <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
  <input
  type="text"
  value={tableSearch}
@@ -791,7 +811,7 @@ export default function RelatorioPage() {
  {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
  {reportType !== 'cadeias' && <col className="w-[10%]" />}
  </colgroup>
- <thead className="text-text-muted font-semibold text-[10.5px] uppercase ">
+ <thead className="text-text-muted font-semibold text-[11px] uppercase ">
  <tr>
  <th className="py-2.5 px-3">
  {reportType === 'ativos' && 'Nome do Ativo'}
@@ -865,7 +885,7 @@ export default function RelatorioPage() {
  )}
  {reportType !== 'municipios' && (
  <td className="py-2 px-3 max-w-[180px] truncate" title={row.col3}>
- <span className="bg-surface-soft text-text-primary px-2 py-0.5 rounded-md text-[11px] font-medium">
+ <span className="bg-surface-soft text-text-primary px-2 py-0.5 rounded-md text-[11px] font-medium inline-flex items-center justify-center leading-none">
  {row.col3}
  </span>
  </td>
@@ -881,16 +901,16 @@ export default function RelatorioPage() {
  {reportType !== 'cadeias' && (
  <td className="py-2 px-3 text-right font-medium whitespace-nowrap">
  {row.col6 === 'EaD' || row.col6 === 'Sim (RNP Conectado)' ? (
- <span className="text-[11px] font-medium text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
- <Wifi size={10} />
+ <span className="text-[11px] font-medium text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1 justify-center leading-none">
+ <Wifi size={16} />
  {row.col6}
  </span>
  ) : row.col6 === 'Presencial' ? (
- <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2 py-0.5 rounded-full">
+ <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
  Presencial
  </span>
  ) : (
- <span className="text-[10.5px] font-medium text-text-secondary">
+ <span className="text-[11px] font-medium text-text-secondary">
  {row.col6}
  </span>
  )}

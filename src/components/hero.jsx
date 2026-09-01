@@ -154,7 +154,7 @@ export default function LandingHero() {
  {/* HERO TITLE & CALL TO ACTION */}
  <div className="w-full relative z-10 flex flex-col justify-center mt-32 lg:mt-60 mb-12">
  <div className="max-w-[820px] animate-soft-fade">
- <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-primary-200 text-xs font-medium uppercase text-primary-600 mb-6 shadow-sm">
+ <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-primary-200 text-xs font-medium uppercase text-primary-600 mb-6 shadow-sm justify-center leading-none">
  <span className="w-2 h-2 rounded-full bg-primary-600 animate-pulse"></span>
  Plataforma de Inteligência Territorial
  </div>
@@ -179,7 +179,7 @@ export default function LandingHero() {
  <span className="font-sans font-semibold text-base lg:text-lg ">
  Explorar o Painel
  </span>
- <ArrowUpRight size={20} strokeWidth={2.5} className="group-hover:translate-x-0.5  transition-transform " />
+ <ArrowUpRight size={20} strokeWidth={2} className="group-hover:translate-x-0.5  transition-transform " />
  </button>
  </div>
  </div>
@@ -212,8 +212,8 @@ export default function LandingHero() {
  <div className="max-w-7xl w-full z-10 flex flex-col justify-start">
  
  <div className={`text-center flex flex-col items-center mb-24 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
- <div className="px-4 py-1.5 rounded-full border border-primary-200 text-xs font-medium uppercase flex items-center gap-2 bg-white text-text-secondary shadow-sm mb-6">
- <Info size={14} className="text-primary-600" /> Documentação
+ <div className="px-4 py-1.5 rounded-full border border-primary-200 text-xs font-medium uppercase flex items-center gap-2 bg-white text-text-secondary shadow-sm mb-6 justify-center leading-none">
+ <Info size={16} className="text-primary-600" /> Documentação
  </div>
  <h2 className="text-4xl lg:text-6xl font-bold tracking-tight text-text-primary max-w-4xl leading-tight">
  O que é o <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-900 via-primary-600 to-primary-600">Painel Territorial</span>?
@@ -229,7 +229,7 @@ export default function LandingHero() {
  <div className={`flex flex-col lg:flex-row items-start gap-12 lg:gap-20 transition-all duration-1000 delay-200 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
  <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4 self-start">
  <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary-200 text-primary-600 shadow-sm mb-2">
- <Target size={28} strokeWidth={2.5} />
+ <Target size={24} strokeWidth={2} />
  </div>
  <h3 className="text-3xl lg:text-3xl font-bold text-text-primary">Nossos Objetivos</h3>
  <p className="text-text-secondary leading-relaxed text-base lg:text-lg font-medium">
@@ -261,7 +261,7 @@ export default function LandingHero() {
  <div className={`flex flex-col lg:flex-row-reverse items-start gap-12 lg:gap-20 transition-all duration-1000 delay-300 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
  <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4 self-start">
  <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary-200 text-primary-600 shadow-sm mb-2">
- <Zap size={28} strokeWidth={2.5} />
+ <Zap size={24} strokeWidth={2} />
  </div>
  <h3 className="text-3xl lg:text-3xl font-bold text-text-primary">Indicadores Chave</h3>
  <p className="text-text-secondary leading-relaxed text-base lg:text-lg font-medium">

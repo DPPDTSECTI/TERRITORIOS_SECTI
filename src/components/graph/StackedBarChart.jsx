@@ -164,7 +164,7 @@ function StackedBarChart({
  <span className="text-[11px] font-medium text-text-primary truncate max-w-[100px]">
  {hoveredSlice.label}
  </span>
- <span className="text-[9px] font-medium text-text-muted bg-surface-soft px-1.5 py-0.2 rounded-lg shrink-0">
+ <span className="text-[9px] font-medium text-text-muted bg-surface-soft px-1.5 py-0.2 rounded-lg shrink-0 inline-flex items-center justify-center leading-none">
  {hoveredSlice.total} tot
  </span>
  </div>
@@ -172,7 +172,7 @@ function StackedBarChart({
  <div className="flex items-center justify-between gap-2 pt-0.5 border-t border-border">
  <div className="flex items-center gap-1.5 min-w-0">
  <span className="w-2 h-2 rounded-full shrink-0 border border-border" style={{ backgroundColor: hoveredSlice.colorHex }}></span>
- <span className="text-[9.5px] font-medium text-text-secondary truncate">
+ <span className="text-[10px] font-medium text-text-secondary truncate">
  {hoveredSlice.segmentName}
  </span>
  </div>
@@ -196,7 +196,7 @@ function StackedBarChart({
  <span className="text-[11px] font-medium text-text-primary truncate max-w-[115px]">
  {hoveredTotalTerritory.label}
  </span>
- <span className="text-[9px] font-medium text-text-muted bg-surface-soft px-2 py-0.5 rounded-full shrink-0">
+ <span className="text-[9px] font-medium text-text-muted bg-surface-soft px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
  {hoveredTotalTerritory.total} ativos
  </span>
  </div>
@@ -229,7 +229,7 @@ function StackedBarChart({
  segments: item.segments
  });
  }}
- className="flex items-center justify-center min-w-[18px] px-1 py-0.2 rounded-lg bg-surface-soft border border-border text-[8.5px] font-medium text-text-secondary group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs"
+ className="flex items-center justify-center min-w-[18px] px-1 py-0.2 rounded-lg bg-surface-soft border border-border text-[9px] font-medium text-text-secondary group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs leading-none"
  title="Ver todos os ativos da região"
  >
  {totalVal}
@@ -276,7 +276,7 @@ function StackedBarChart({
  className="w-full h-[26px] flex items-start justify-center mt-1.5 px-0.5 text-center leading-[10px] select-none"
  title={item.label}
  >
- <span className="text-[7.5px] sm:text-[8px] font-medium text-text-muted group-hover/bar:text-text-primary transition-colors whitespace-pre-line line-clamp-2 break-words">
+ <span className="text-[8px] sm:text-[8px] font-medium text-text-muted group-hover/bar:text-text-primary transition-colors whitespace-pre-line line-clamp-2 break-words">
  {formattedName}
  </span>
  </div>

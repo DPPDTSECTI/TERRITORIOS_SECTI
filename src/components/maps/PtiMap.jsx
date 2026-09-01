@@ -415,7 +415,7 @@ export default function PtiMap({
  {municipalitiesToShow.map((m, idx) => {
  const isSemi = semiaridoMunicipios.includes(normalizeName(m));
  return (
- <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-text-secondary py-1.5 hover:bg-surface-soft rounded-lg px-2 cursor-default transition-colors">
+ <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-text-secondary py-1.5 hover:bg-surface-soft rounded-lg px-2 cursor-default transition-colors justify-center leading-none">
  <span className={`shrink-0 w-1.5 h-1.5 rounded-full shadow-sm ${isSemi ? 'bg-warning-600' : 'bg-primary-300'}`}></span>
  <span className="truncate">{m}</span>
  </li>

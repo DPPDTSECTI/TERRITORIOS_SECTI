@@ -70,9 +70,9 @@ export default function AdminPage() {
  
  <div className="flex justify-between items-start z-10">
  <div className="w-11 h-11 bg-surface-soft text-text-primary rounded-xl flex items-center justify-center shadow-sm transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ">
- <FileText size={20} strokeWidth={2.5} />
+ <FileText size={20} strokeWidth={2} />
  </div>
- <div className="px-2.5 py-1 bg-primary-900 rounded-full text-[12px] font-medium ">
+ <div className="px-2.5 py-1 bg-primary-900 rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
  +12.4%
  </div>
  </div>
@@ -89,9 +89,9 @@ export default function AdminPage() {
  <div className="bg-white rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-transparent hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
  <div className="flex justify-between items-start">
  <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-3">
- <MapPin size={20} strokeWidth={2.5} />
+ <MapPin size={20} strokeWidth={2} />
  </div>
- <div className="px-2.5 py-1 bg-primary-300/30 text-text-primary rounded-full text-[12px] font-medium ">
+ <div className="px-2.5 py-1 bg-primary-300/30 text-text-primary rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
  +8.4%
  </div>
  </div>
@@ -108,9 +108,9 @@ export default function AdminPage() {
  <div className="bg-white rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-transparent hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
  <div className="flex justify-between items-start">
  <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-[-3deg]">
- <Layers size={20} strokeWidth={2.5} />
+ <Layers size={20} strokeWidth={2} />
  </div>
- <div className="px-2.5 py-1 bg-surface-soft text-text-secondary rounded-full text-[12px] font-medium ">
+ <div className="px-2.5 py-1 bg-surface-soft text-text-secondary rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
  -2.08%
  </div>
  </div>
@@ -126,9 +126,9 @@ export default function AdminPage() {
  <div className="bg-white rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-transparent hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
  <div className="flex justify-between items-start">
  <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-3">
- <CheckCircle size={20} strokeWidth={2.5} />
+ <CheckCircle size={20} strokeWidth={2} />
  </div>
- <div className="px-2.5 py-1 bg-primary-300/30 text-text-primary rounded-full text-[12px] font-medium ">
+ <div className="px-2.5 py-1 bg-primary-300/30 text-text-primary rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
  +12.1%
  </div>
  </div>
@@ -165,7 +165,7 @@ export default function AdminPage() {
  onClick={() => setIsAddDropdownOpen(!isAddDropdownOpen)}
  className="h-11 px-6 bg-primary-900 rounded-lg flex items-center gap-2 text-surface-soft hover:bg-primary-600 transition-all font-medium text-[15px] shadow-lg shadow-primary-900/20 "
  >
- <Plus size={18} strokeWidth={2.5} />
+ <Plus size={18} strokeWidth={2} />
  <span>Novo Ativo</span>
  </button>
 
@@ -174,7 +174,7 @@ export default function AdminPage() {
  <div className="absolute right-[calc(100%+12px)] top-0 w-96 bg-white border border-primary-200 shadow-card-soft rounded-xl p-6 z-50 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
  <div className="flex items-center gap-2 mb-2">
  <div className="w-8 h-8 rounded-xl bg-primary-200 text-text-primary flex items-center justify-center">
- <Plus size={16} strokeWidth={2.5} />
+ <Plus size={16} strokeWidth={2} />
  </div>
  <h3 className="text-[16px] font-medium text-text-primary">Cadastro Rápido</h3>
  </div>
@@ -262,15 +262,15 @@ export default function AdminPage() {
  </div>
 
  <div className="w-full h-full flex items-center pr-2">
- <span className="text-text-primary font-medium text-[12px] bg-surface-soft px-2.5 py-1 rounded-lg truncate border border-transparent">{ativo.sigla || '-'}</span>
+ <span className="text-text-primary font-medium text-[12px] bg-surface-soft px-2.5 py-1 rounded-lg truncate border border-transparent inline-flex items-center justify-center leading-none">{ativo.sigla || '-'}</span>
  </div>
 
  <div className="w-full h-full flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
  <button className="text-text-secondary hover:text-text-primary p-2 rounded-lg hover:bg-primary-200 transition-colors">
- <Pencil size={15} strokeWidth={2.5} />
+ <Pencil size={16} strokeWidth={2} />
  </button>
  <button onClick={() => handleDeleteRow(ativo.id)} className="text-text-secondary hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-colors">
- <Trash2 size={15} strokeWidth={2.5} />
+ <Trash2 size={16} strokeWidth={2} />
  </button>
  </div>
 

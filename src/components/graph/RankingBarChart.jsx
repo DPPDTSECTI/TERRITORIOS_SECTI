@@ -130,7 +130,7 @@ export default function RankingBarChart({
                     <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-text-primary font-semibold text-[15px] tracking-tight">{title}</h3>
                         {highlightedItem && (
-                            <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-primary-100 text-primary-700 border border-primary-200 shrink-0">
+                            <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-primary-100 text-primary-700 border border-primary-200 shrink-0 inline-flex items-center justify-center leading-none">
                                 {highlightedItem.rank}º no Estado
                             </span>
                         )}
@@ -145,7 +145,7 @@ export default function RankingBarChart({
                             className={`p-1 rounded transition-colors duration-200 flex items-center justify-center ${filterMode === 'focus' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
                             title={`Foco em ${highlightedItem.cleanName} (${highlightedItem.rank}º de ${allRanked.length})`}
                         >
-                            <MapPin size={13} strokeWidth={2.5} />
+                            <MapPin size={16} strokeWidth={2} />
                         </button>
                     )}
                     <button
@@ -153,21 +153,21 @@ export default function RankingBarChart({
                         className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'top' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
                         title={topSubtitle}
                     >
-                        <ChevronUp size={14} strokeWidth={3.5} />
+                        <ChevronUp size={16} strokeWidth={2} />
                     </button>
                     <button
                         onClick={() => setFilterMode('medium')}
                         className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'medium' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
                         title={mediumSubtitle}
                     >
-                        <Minus size={14} strokeWidth={3.5} />
+                        <Minus size={16} strokeWidth={2} />
                     </button>
                     <button
                         onClick={() => setFilterMode('bottom')}
                         className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'bottom' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
                         title={bottomSubtitle}
                     >
-                        <ChevronDown size={14} strokeWidth={3.5} />
+                        <ChevronDown size={16} strokeWidth={2} />
                     </button>
                 </div>
             </div>
@@ -211,7 +211,7 @@ export default function RankingBarChart({
                                             <span>IFDM: <strong className="text-text-primary font-medium">{item.val.toFixed(3)}</strong></span>
                                         </div>
                                         {item.extra > 0 && (
-                                            <div className="flex items-center text-[9.5px] text-text-muted mt-0.5">
+                                            <div className="flex items-center text-[10px] text-text-muted mt-0.5">
                                                 <span>{item.extra} {extraLabel}</span>
                                             </div>
                                         )}

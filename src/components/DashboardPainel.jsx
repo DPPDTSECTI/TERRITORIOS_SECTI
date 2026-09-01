@@ -418,42 +418,81 @@ export default function DashboardPainel() {
         </div>
       </div>
 
-      {/* GRID DE KPIs (5 COLUNAS, FAIXA HORIZONTAL ÚNICA, DESIGN MODERNO/LINEAR) */}
+      {/* GRID DE KPIs */}
       <div className="tour-kpis w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-5 gap-3.5 items-stretch w-full">
-          {kpis.map((kpi, index) => (
-            <div
-              key={index}
-              className={`h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default ${index === 0 ? 'kpi-accent-primary' : index === 1 ? 'kpi-accent-success' : index === 2 ? 'kpi-accent-accent' : index === 3 ? 'kpi-accent-warning' : 'kpi-accent-neutral'}`}
-            >
-              {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO COM CORES ORIGINAIS */}
-              <div className="flex items-center justify-between gap-1.5 min-w-0">
-                <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-primary-200/70 text-text-secondary flex items-center justify-center shrink-0">
-                    <kpi.icon size={14} strokeWidth={2.5} />
+        <div className="grid grid-cols-5 gap-4 items-stretch w-full">
+          {kpis.map((kpi, index) => {
+            const styles = [
+              {
+                bg: 'surface-panel bg-primary-900/10',
+                border: 'border-primary-500/20',
+                iconBg: 'bg-primary-500/15',
+                iconColor: 'text-primary-400',
+                accent: 'bg-primary-500'
+              },
+              {
+                bg: 'surface-panel',
+                border: 'border-border/50',
+                iconBg: 'bg-[#0D9488]/15',
+                iconColor: 'text-[#14B8A6]',
+                accent: 'bg-[#0D9488]'
+              },
+              {
+                bg: 'surface-panel',
+                border: 'border-border/50',
+                iconBg: 'bg-primary-400/15',
+                iconColor: 'text-primary-400',
+                accent: 'bg-primary-400'
+              },
+              {
+                bg: 'surface-panel',
+                border: 'border-border/50',
+                iconBg: 'bg-accent-500/15',
+                iconColor: 'text-accent-400',
+                accent: 'bg-accent-500'
+              },
+              {
+                bg: 'surface-panel',
+                border: 'border-border/50',
+                iconBg: 'bg-success-500/15',
+                iconColor: 'text-success-400',
+                accent: 'bg-success-500'
+              }
+            ];
+            const s = styles[index] || styles[1];
+
+            return (
+              <div
+                key={index}
+                className={`relative rounded-[16px] p-[16px] flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md ${s.bg} border ${s.border} shadow-sm`}
+              >
+                {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                <div className="flex items-center gap-2.5 w-full min-w-0">
+                  <div className="flex items-center justify-center shrink-0 mr-1">
+                    <kpi.icon size={16} strokeWidth={2.5} className={s.iconColor} />
                   </div>
                   <span
-                    className="text-[11px] font-semibold uppercase text-text-secondary truncate"
+                    className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1"
                     title={kpi.label}
                   >
                     {kpi.label}
                   </span>
+                  {kpi.isIndex && (
+                    <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-md bg-primary-500/20 text-primary-300 shrink-0 leading-none inline-flex items-center justify-center">
+                      Índice
+                    </span>
+                  )}
                 </div>
-                {kpi.isIndex && (
-                  <span className="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md bg-primary-200/60 text-text-primary shrink-0 leading-none">
-                    Índice
-                  </span>
-                )}
-              </div>
 
-              {/* LINHA INFERIOR: NÚMERO PRINCIPAL CENTRALIZADO */}
-              <div className="flex items-center justify-center w-full min-w-0 pt-1">
-                <span className="text-[30px] font-medium text-text-primary tracking-tight leading-none text-center">
-                  {kpi.value}
-                </span>
+                {/* LINHA INFERIOR: NÚMERO À ESQUERDA */}
+                <div className="mt-3.5 flex items-baseline w-full">
+                  <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+                    {kpi.value}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -541,7 +580,7 @@ export default function DashboardPainel() {
                         positiveLabel="Com RNP"
                         negativeLabel="Sem RNP"
                         positiveColor="bg-primary-600"
-                        negativeColor="bg-border"
+                        negativeColor="bg-neutral-200"
                       />
                     </SortableCard>
                   )}

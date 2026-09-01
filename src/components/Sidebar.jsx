@@ -72,7 +72,7 @@ export default function Sidebar({ username, navOnly = false }) {
                         title={isCollapsed ? item.label : undefined}
                      >
                         <div className="w-[37px] h-[40px] flex items-center justify-center shrink-0">
-                           <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={isActive ? 2.5 : 2} />
+                           <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={2} />
                         </div>
 
                         <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2'
@@ -108,7 +108,7 @@ export default function Sidebar({ username, navOnly = false }) {
                               title={isCollapsed ? item.label : undefined}
                            >
                               <div className="w-[37px] h-[40px] flex items-center justify-center shrink-0">
-                                 <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={isActive ? 2.5 : 2} />
+                                 <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={2} />
                               </div>
 
                               <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2'
@@ -146,7 +146,7 @@ export default function Sidebar({ username, navOnly = false }) {
                               title={isCollapsed ? item.label : undefined}
                            >
                               <div className="w-[37px] h-[40px] flex items-center justify-center shrink-0">
-                                 <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={isActive ? 2.5 : 2} />
+                                 <item.icon size={18} className={isActive ? 'text-primary-600' : 'text-text-muted'} strokeWidth={2} />
                               </div>
 
                               <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2'

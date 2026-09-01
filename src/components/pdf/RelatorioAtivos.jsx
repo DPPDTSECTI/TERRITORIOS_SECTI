@@ -225,9 +225,9 @@ export default function RelatorioAtivosPage() {
  <div className="bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-primary-200/70 flex items-center justify-center">
- <Building2 size={15} strokeWidth={2.5} />
+ <Building2 size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Ativos Mapeados</span>
+ <span className="text-[11px] font-medium uppercase ">Ativos Mapeados</span>
  </div>
  <span className="text-2xl lg:text-3xl font-bold text-text-primary mt-2">
  {loadingStats ? '...' : statsKpis.total}
@@ -237,15 +237,15 @@ export default function RelatorioAtivosPage() {
  <div className="bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
- <Wifi size={15} strokeWidth={2.5} />
+ <Wifi size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Conectados à RNP</span>
+ <span className="text-[11px] font-medium uppercase ">Conectados à RNP</span>
  </div>
  <div className="flex items-baseline gap-2 mt-2">
  <span className="text-2xl lg:text-3xl font-bold text-emerald-600">
  {loadingStats ? '...' : statsKpis.rnpCount}
  </span>
- <span className="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+ <span className="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
  {statsKpis.rnpPercent}%
  </span>
  </div>
@@ -254,9 +254,9 @@ export default function RelatorioAtivosPage() {
  <div className="bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-primary-200/70 flex items-center justify-center">
- <MapPin size={15} strokeWidth={2.5} />
+ <MapPin size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Municípios com Presença</span>
+ <span className="text-[11px] font-medium uppercase ">Municípios com Presença</span>
  </div>
  <span className="text-2xl lg:text-3xl font-bold text-text-primary mt-2">
  {loadingStats ? '...' : `${statsKpis.municipiosAtendidos} munic.`}
@@ -266,9 +266,9 @@ export default function RelatorioAtivosPage() {
  <div className="bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-primary-200/70 flex items-center justify-center">
- <Layers size={15} strokeWidth={2.5} />
+ <Layers size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Territórios Cobertos</span>
+ <span className="text-[11px] font-medium uppercase ">Territórios Cobertos</span>
  </div>
  <span className="text-2xl lg:text-3xl font-bold text-text-primary mt-2">
  {loadingStats ? '...' : (selectedTerritory ? '1 Território' : `${statsKpis.territoriosAtendidos} de 27`)}
@@ -367,7 +367,7 @@ export default function RelatorioAtivosPage() {
  <div className="flex items-center justify-between mb-3 border-b border-surface-soft pb-2">
  <div>
  <h3 className="text-[13px] font-medium text-text-primary">Cobertura de Rede por Categoria</h3>
- <p className="text-[10.5px] text-text-secondary">Proporção de infraestrutura conectada ao backbone de pesquisa da RNP</p>
+ <p className="text-[11px] text-text-secondary">Proporção de infraestrutura conectada ao backbone de pesquisa da RNP</p>
  </div>
  <Wifi size={16} className="text-emerald-500" />
  </div>

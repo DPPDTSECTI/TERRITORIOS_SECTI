@@ -49,7 +49,7 @@ export default function UserHeaderProfile() {
   title="Tutorial / Ajuda"
   className="tour-help-button w-8 h-8 rounded-full bg-surface-soft text-text-muted hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-colors shadow-xs"
   >
-  <HelpCircle size={15} strokeWidth={2} />
+  <HelpCircle size={16} strokeWidth={2} />
   </button>
  <button
  type="button"

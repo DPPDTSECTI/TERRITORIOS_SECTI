@@ -22,8 +22,8 @@ const SobrePage = () => {
 
  {/* HEADER DA PÁGINA */}
  <div className="flex flex-col items-start gap-4 mb-12 mt-4">
- <div className="px-4 py-1.5 rounded-full border border-primary-200 bg-surface text-xs font-medium uppercase flex items-center gap-2 text-text-secondary shadow-sm cursor-default hover:shadow-md transition-shadow">
- <Info size={14} /> Documentação
+ <div className="px-4 py-1.5 rounded-full border border-primary-200 bg-surface text-xs font-medium uppercase flex items-center gap-2 text-text-secondary shadow-sm cursor-default hover:shadow-md transition-shadow justify-center leading-none">
+ <Info size={16} /> Documentação
  </div>
  <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-text-primary">
  Sobre o <span className="text-primary-700">Painel SECTI</span>

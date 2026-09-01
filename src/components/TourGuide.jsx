@@ -48,13 +48,13 @@ const CustomTooltip = ({
             title="Fechar Tutorial" 
             className="text-text-muted hover:text-text-primary hover:bg-surface-soft p-1 rounded-md transition-colors cursor-pointer"
           >
-            <X size={14} />
+            <X size={16} />
           </button>
         </div>
       </div>
 
       {/* Conteúdo */}
-      <div className="text-[12.5px] text-text-secondary leading-relaxed font-normal mb-4">
+      <div className="text-[13px] text-text-secondary leading-relaxed font-normal mb-4">
         {step.content}
       </div>
 
@@ -82,7 +82,7 @@ const CustomTooltip = ({
           {index > 0 && (
             <button 
               {...backProps} 
-              className="px-2.5 py-1 text-[11.5px] font-medium text-text-secondary hover:text-text-primary hover:bg-surface-soft rounded-full transition-colors bg-transparent border-none cursor-pointer"
+              className="px-2.5 py-1 text-[12px] font-medium text-text-secondary hover:text-text-primary hover:bg-surface-soft rounded-full transition-colors bg-transparent border-none cursor-pointer inline-flex items-center justify-center leading-none"
             >
               Voltar
             </button>
@@ -90,16 +90,16 @@ const CustomTooltip = ({
           {continuous && !isLastStep && (
             <button 
               {...primaryProps} 
-              className="px-3.5 py-1 text-[12px] font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-full transition-colors cursor-pointer flex items-center gap-1"
+              className="px-3.5 py-1 text-[12px] font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-full transition-colors cursor-pointer flex items-center gap-1 justify-center leading-none"
             >
               <span>Próximo</span>
-              <ChevronRight size={13} />
+              <ChevronRight size={16} />
             </button>
           )}
           {(!continuous || isLastStep) && (
             <button 
               {...primaryProps} 
-              className="px-4 py-1 text-[12px] font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-full transition-colors cursor-pointer"
+              className="px-4 py-1 text-[12px] font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-full transition-colors cursor-pointer inline-flex items-center justify-center leading-none"
             >
               Concluir
             </button>

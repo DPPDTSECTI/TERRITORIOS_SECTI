@@ -270,15 +270,15 @@ export default function RelatorioAtivosPage() {
  <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
  Relatório Executivo de Cursos e Ensino Superior de CT&I
  </h1>
- <span className="bg-primary-600/10 text-primary-600 text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border border-primary-600/20 flex items-center gap-1">
- <GraduationCap size={13} className="text-primary-600" />
+ <span className="bg-primary-600/10 text-primary-600 text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border border-primary-600/20 flex items-center gap-1 justify-center leading-none">
+ <GraduationCap size={16} className="text-primary-600" />
  Formação & Infraestrutura
  </span>
 
  {selectedTerritory && (
  <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
- <MapPin size={11} className="text-primary-600" />
- <span className="text-[10.5px] font-medium text-[#0369A1]">
+ <MapPin size={16} className="text-primary-600" />
+ <span className="text-[11px] font-medium text-[#0369A1]">
  Recorte: <strong className="text-[#0C4A6E]">{territoryName}</strong>
  </span>
  <button
@@ -286,7 +286,7 @@ export default function RelatorioAtivosPage() {
  onClick={() => setSelectedTerritory(null)}
  className="text-[#0369A1] hover:text-red-500 transition-colors ml-0.5 cursor-pointer"
  >
- <X size={11} />
+ <X size={16} />
  </button>
  </div>
  )}
@@ -298,9 +298,9 @@ export default function RelatorioAtivosPage() {
  <button
  type="button"
  onClick={() => window.print()}
- className="inline-flex items-center gap-1 bg-primary-900 hover:bg-primary-600 text-white text-[11px] font-medium px-2.5 py-1 rounded-lg shadow-xs transition-all cursor-pointer print:hidden"
+ className="inline-flex items-center gap-1 bg-primary-900 hover:bg-primary-600 text-white text-[11px] font-medium px-2.5 py-1 rounded-lg shadow-xs transition-all cursor-pointer print:hidden justify-center leading-none"
  >
- <Printer size={11} />
+ <Printer size={16} />
  <span>Imprimir / PDF</span>
  </button>
  </div>
@@ -313,9 +313,9 @@ export default function RelatorioAtivosPage() {
  <div className="h-[92px] bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-primary-200/70 flex items-center justify-center text-primary-600">
- <BookOpen size={14} strokeWidth={2.5} />
+ <BookOpen size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Cursos Mapeados</span>
+ <span className="text-[11px] font-medium uppercase ">Cursos Mapeados</span>
  </div>
  <span className="text-2xl lg:text-3xl font-bold text-text-primary leading-none">
  {loadingStats ? '...' : statsCursosKpis.totalCursos}
@@ -325,15 +325,15 @@ export default function RelatorioAtivosPage() {
  <div className="h-[92px] bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-primary-200/70 flex items-center justify-center text-primary-600">
- <Building2 size={14} strokeWidth={2.5} />
+ <Building2 size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Campi Ofertantes</span>
+ <span className="text-[11px] font-medium uppercase ">Campi Ofertantes</span>
  </div>
  <div className="flex items-baseline gap-2">
  <span className="text-2xl lg:text-3xl font-bold text-text-primary leading-none">
  {loadingStats ? '...' : statsCursosKpis.totalCampi}
  </span>
- <span className="text-[10.5px] font-medium text-text-secondary bg-surface-soft px-2 py-0.5 rounded-md">
+ <span className="text-[11px] font-medium text-text-secondary bg-surface-soft px-2 py-0.5 rounded-md inline-flex items-center justify-center leading-none">
  ~{statsCursosKpis.mediaCursosPorCampus} cursos/campus
  </span>
  </div>
@@ -342,9 +342,9 @@ export default function RelatorioAtivosPage() {
  <div className="h-[92px] bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-primary-200/70 flex items-center justify-center text-primary-600">
- <MapPin size={14} strokeWidth={2.5} />
+ <MapPin size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Municípios com Cursos</span>
+ <span className="text-[11px] font-medium uppercase ">Municípios com Cursos</span>
  </div>
  <span className="text-2xl lg:text-3xl font-bold text-text-primary leading-none">
  {loadingStats ? '...' : `${statsCursosKpis.municipiosComCursos} municípios`}
@@ -354,9 +354,9 @@ export default function RelatorioAtivosPage() {
  <div className="h-[92px] bg-white rounded-xl p-4 flex flex-col justify-between shadow-glass border border-transparent">
  <div className="flex items-center gap-2 text-text-secondary">
  <div className="w-7 h-7 rounded-lg bg-primary-200/70 flex items-center justify-center text-primary-600">
- <Layers size={14} strokeWidth={2.5} />
+ <Layers size={16} strokeWidth={2} />
  </div>
- <span className="text-[10.5px] font-medium uppercase ">Territórios com Oferta</span>
+ <span className="text-[11px] font-medium uppercase ">Territórios com Oferta</span>
  </div>
  <span className="text-2xl lg:text-3xl font-bold text-text-primary leading-none">
  {loadingStats ? '...' : (selectedTerritory ? '1 Território' : `${statsCursosKpis.territoriosComCursos} de 27`)}
@@ -376,7 +376,7 @@ export default function RelatorioAtivosPage() {
  <div className="flex items-center justify-between mb-1 shrink-0">
  <div>
  <h3 className="text-[13px] font-medium text-text-primary">Áreas de Conhecimento</h3>
- <p className="text-[10.5px] text-text-secondary">Distribuição dos cursos ofertados</p>
+ <p className="text-[11px] text-text-secondary">Distribuição dos cursos ofertados</p>
  </div>
  <PieIcon size={16} className="text-primary-600" />
  </div>
@@ -411,7 +411,7 @@ export default function RelatorioAtivosPage() {
  {/* LEGENDA DETALHADA FIXA */}
  <div className="w-[55%] flex flex-col justify-center gap-1.5 overflow-y-auto pr-1">
  {areasChartData.map((item, idx) => (
- <div key={idx} className="flex items-center justify-between gap-1 text-[9.5px]">
+ <div key={idx} className="flex items-center justify-between gap-1 text-[10px]">
  <div className="flex items-center gap-1.5 min-w-0">
  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
  <span className="font-medium text-text-primary truncate" title={item.name}>
@@ -432,7 +432,7 @@ export default function RelatorioAtivosPage() {
  <div className="flex items-center justify-between mb-1 shrink-0">
  <div>
  <h3 className="text-[13px] font-medium text-text-primary">Polos de Oferta</h3>
- <p className="text-[10.5px] text-text-secondary">Cidades com maior volume de cursos</p>
+ <p className="text-[11px] text-text-secondary">Cidades com maior volume de cursos</p>
  </div>
  <BarChart3 size={16} className="text-primary-600" />
  </div>
@@ -470,12 +470,12 @@ export default function RelatorioAtivosPage() {
  <div className="bg-white rounded-xl p-4 border border-transparent shadow-glass flex flex-col justify-between min-h-0 h-full overflow-hidden">
  <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-surface-soft pb-1">
  <div>
- <h3 className="text-[12.5px] font-medium text-text-primary">Composição por Área e Rede</h3>
- <p className="text-[9.5px] text-text-secondary">Proporção Federal, Estadual, IF e Privada</p>
+ <h3 className="text-[13px] font-medium text-text-primary">Composição por Área e Rede</h3>
+ <p className="text-[10px] text-text-secondary">Proporção Federal, Estadual, IF e Privada</p>
  </div>
 
  {/* LEGENDA */}
- <div className="flex items-center gap-2 text-[8.5px] font-medium">
+ <div className="flex items-center gap-2 text-[9px] font-medium">
  <span className="flex items-center gap-1 text-text-primary"><span className="w-2 h-2 rounded-full bg-primary-900"></span>Fed.</span>
  <span className="flex items-center gap-1 text-primary-600"><span className="w-2 h-2 rounded-full bg-primary-600"></span>Est.</span>
  <span className="flex items-center gap-1 text-success-500"><span className="w-2 h-2 rounded-full bg-success-500"></span>IF</span>
@@ -486,7 +486,7 @@ export default function RelatorioAtivosPage() {
  <div className="flex-1 flex flex-col justify-around gap-1 overflow-y-auto pr-1 min-h-0">
  {matrixAreaNaturezaData.map((row, idx) => (
  <div key={idx} className="flex flex-col gap-0.5">
- <div className="flex items-center justify-between text-[10.5px]">
+ <div className="flex items-center justify-between text-[11px]">
  <span className="font-medium text-text-primary truncate max-w-[70%]">
  {row.categoria}
  </span>
@@ -534,16 +534,16 @@ export default function RelatorioAtivosPage() {
  <div className="bg-white rounded-xl p-4 border border-transparent shadow-glass flex flex-col justify-between min-h-0 h-full overflow-hidden">
  <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-surface-soft pb-1">
  <div>
- <h3 className="text-[12.5px] font-medium text-text-primary">Cobertura de Rede RNP</h3>
- <p className="text-[9.5px] text-text-secondary">Campi conectados ao backbone de pesquisa</p>
+ <h3 className="text-[13px] font-medium text-text-primary">Cobertura de Rede RNP</h3>
+ <p className="text-[10px] text-text-secondary">Campi conectados ao backbone de pesquisa</p>
  </div>
- <Wifi size={15} className="text-emerald-500" />
+ <Wifi size={16} className="text-emerald-500" />
  </div>
 
  <div className="flex-1 flex flex-col justify-around gap-1.5 my-auto min-h-0">
  {rnpCategoryData.map((cat, idx) => (
  <div key={idx} className="flex flex-col gap-0.5 p-1.5 px-2.5 rounded-xl bg-surface-soft">
- <div className="flex items-center justify-between text-[10.5px]">
+ <div className="flex items-center justify-between text-[11px]">
  <span className="font-medium text-text-primary truncate max-w-[60%]">
  {cat.name.replace(/^Campi\s+/i, '')}
  </span>

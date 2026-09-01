@@ -87,10 +87,13 @@
     --color-map-neutral: 232 236 239;
   }
 
-  body {
+  html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+  }
+
+  body {
     background-color: rgb(var(--color-background));
     color: rgb(var(--color-text-primary));
   }
