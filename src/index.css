@@ -32,9 +32,9 @@
     --color-white: 255 255 255;
 
     /* SURFACES */
-    --color-background: 243 247 243;
+    --color-background: 245 247 250;
     --color-surface: 255 255 255;
-    --color-surface-soft: 248 250 249;
+    --color-surface-soft: 249 251 253;
 
     /* SEMANTIC: SUCCESS */
     --color-success-700: 35 122 87;

@@ -422,71 +422,49 @@ export default function DashboardPainel() {
       <div className="tour-kpis w-full relative z-10 shrink-0">
         <div className="grid grid-cols-5 gap-4 items-stretch w-full">
           {kpis.map((kpi, index) => {
-            const styles = [
-              {
-                bg: 'surface-panel bg-primary-900/10',
-                border: 'border-primary-500/20',
-                iconBg: 'bg-primary-500/15',
-                iconColor: 'text-primary-400',
-                accent: 'bg-primary-500'
-              },
-              {
-                bg: 'surface-panel',
-                border: 'border-border/50',
-                iconBg: 'bg-[#0D9488]/15',
-                iconColor: 'text-[#14B8A6]',
-                accent: 'bg-[#0D9488]'
-              },
-              {
-                bg: 'surface-panel',
-                border: 'border-border/50',
-                iconBg: 'bg-primary-400/15',
-                iconColor: 'text-primary-400',
-                accent: 'bg-primary-400'
-              },
-              {
-                bg: 'surface-panel',
-                border: 'border-border/50',
-                iconBg: 'bg-accent-500/15',
-                iconColor: 'text-accent-400',
-                accent: 'bg-accent-500'
-              },
-              {
-                bg: 'surface-panel',
-                border: 'border-border/50',
-                iconBg: 'bg-success-500/15',
-                iconColor: 'text-success-400',
-                accent: 'bg-success-500'
-              }
+            const isHero = index === 0;
+            const accentColors = [
+              'text-white/70',
+              'text-[#0D9488]',
+              'text-accent-600',
+              'text-warning-600',
+              'text-success-600'
             ];
-            const s = styles[index] || styles[1];
 
             return (
               <div
                 key={index}
-                className={`relative rounded-[16px] p-[16px] flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md ${s.bg} border ${s.border} shadow-sm`}
+                className={`relative rounded-2xl p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-card-elevated ${
+                  isHero
+                    ? 'bg-primary-900 text-white shadow-card-elevated'
+                    : 'bg-surface border border-neutral-100 shadow-card'
+                }`}
               >
                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                <div className="flex items-center gap-2.5 w-full min-w-0">
-                  <div className="flex items-center justify-center shrink-0 mr-1">
-                    <kpi.icon size={16} strokeWidth={2.5} className={s.iconColor} />
-                  </div>
+                <div className="flex items-center gap-2 w-full min-w-0">
+                  <kpi.icon size={16} strokeWidth={2} className={isHero ? accentColors[0] : accentColors[index]} />
                   <span
-                    className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1"
+                    className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
+                      isHero ? 'text-white/60' : 'text-text-muted'
+                    }`}
                     title={kpi.label}
                   >
                     {kpi.label}
                   </span>
                   {kpi.isIndex && (
-                    <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-md bg-primary-500/20 text-primary-300 shrink-0 leading-none inline-flex items-center justify-center">
+                    <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md shrink-0 leading-none inline-flex items-center justify-center ${
+                      isHero ? 'bg-white/15 text-white/80' : 'bg-primary-100 text-primary-700'
+                    }`}>
                       Índice
                     </span>
                   )}
                 </div>
 
-                {/* LINHA INFERIOR: NÚMERO À ESQUERDA */}
-                <div className="mt-3.5 flex items-baseline w-full">
-                  <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+                {/* LINHA INFERIOR: NÚMERO */}
+                <div className="mt-3 flex items-baseline w-full">
+                  <span className={`text-[28px] font-bold tracking-tight leading-none ${
+                    isHero ? 'text-white' : 'text-text-primary'
+                  }`}>
                     {kpi.value}
                   </span>
                 </div>
@@ -500,7 +478,7 @@ export default function DashboardPainel() {
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-[400px]">
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-[400px]">
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}

@@ -132,6 +132,8 @@ module.exports = {
         'glass-hover': '0 8px 30px 0 rgba(15, 23, 42, 0.06)',
         'card-soft': '0 2px 10px rgba(15, 23, 42, 0.02), 0 1px 3px rgba(15, 23, 42, 0.02)',
         'card-hover': '0 10px 30px rgba(15, 23, 42, 0.06), 0 4px 10px rgba(15, 23, 42, 0.03)',
+        'card': '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)',
+        'card-elevated': '0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.03)',
       }
     },
   },
