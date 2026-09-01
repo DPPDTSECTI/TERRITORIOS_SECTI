@@ -159,16 +159,19 @@ export const getHeatColor = (count) => {
   return '#0F1D30';
 };
 
-// Escala Relativa com excelente contraste visual
+// Escala Logarítmica para mitigar o impacto de grandes outliers e destacar valores intermediários
 export const getRelativeHeatColor = (count, maxCount) => {
   if (!count || count === 0) return '#F1F5F9';
   if (maxCount <= 0) return '#F1F5F9';
 
-  const ratio = count / maxCount;
-  if (ratio <= 0.12) return '#BAE6FD';
-  if (ratio <= 0.30) return '#38BDF8';
-  if (ratio <= 0.55) return '#2563EB';
-  if (ratio <= 0.80) return '#1D4ED8';
+  const logVal = Math.log(count + 1);
+  const logMax = Math.log(maxCount + 1);
+  const ratio = logMax > 0 ? logVal / logMax : 0;
+
+  if (ratio <= 0.15) return '#BAE6FD';
+  if (ratio <= 0.35) return '#38BDF8';
+  if (ratio <= 0.60) return '#2563EB';
+  if (ratio <= 0.85) return '#1D4ED8';
   return '#0F1D30';
 };
 
@@ -1038,7 +1041,6 @@ export default function SideMap({
             className: 'outline-none pointer-events-none'
           };
         }
-        // Fundo do restante do estado com contraste equilibrado
         return {
           fillColor: '#CBD5E1',
           fillOpacity: 0.55,
@@ -1075,7 +1077,7 @@ export default function SideMap({
     };
   };
 
-  // 2. Estilização dos Municípios (Quando o território está focado)
+  // 2. Estilização dos Municípios com Escala Logarítmica
   const municipioBorderStyle = (feature) => {
     const munNome = feature?.properties?.nome_municipio || feature?.properties?.NOME || '';
     const munNorm = normalizeName(munNome);
@@ -1105,7 +1107,7 @@ export default function SideMap({
     const count = munStat ? munStat.count : 0;
     const isHovered = hoveredFeatureName === munNome;
     
-    // Calcula a cor relativa ao município mais forte daquele território
+    // Aplicação da Escala Logarítmica para equilibrar o contraste visual
     const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado);
 
     return {
@@ -1228,7 +1230,6 @@ export default function SideMap({
         />
         <CadeiaFocusController selectedCadeia={selectedCadeia} />
 
-        {/* 1. TERRITÓRIOS DE IDENTIDADE (VISÃO GERAL OU MÁSCARA DE CONTEXTO) */}
         {territoriosGeoJson && (
           <GeoJSON
             key={`territorios-layer-${mode}-${hoveredFeatureName || 'none'}-${selectedTerritory?.id_territorio || 'none'}-${activeCategoryKeys.size}`}
@@ -1238,7 +1239,6 @@ export default function SideMap({
           />
         )}
 
-        {/* 2. MUNICÍPIOS COM HEATMAP RELATIVO NO RECORTE TERRITORIAL */}
         {mode === 'cursos' && selectedTerritory && municipiosGeoJson && (
           <GeoJSON
             key={`municipios-heat-layer-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${hoveredFeatureName || 'none'}-${activeCategoryKeys.size}`}
@@ -1250,7 +1250,6 @@ export default function SideMap({
 
         {focusedAsset && <ChangeMapView coords={focusedAsset} />}
 
-        {/* TEIA DE CONEXÕES / LINHAS DE ABRANGÊNCIA */}
         {mode === 'cadeias' && connectionLines.map((line, idx) => (
           <Polyline
             key={`conn-line-${idx}`}
@@ -1264,7 +1263,6 @@ export default function SideMap({
           />
         ))}
 
-        {/* PINOS E TAGS DOS MUNICÍPIOS ABRANGIDOS */}
         {mode === 'cadeias' && uniquePartnerMunicipios.map((p, idx) => {
           const showLabel = Boolean(p.isSelected && currentZoom >= 8.0);
 
@@ -1290,7 +1288,6 @@ export default function SideMap({
           );
         })}
 
-        {/* PINOS DOS ATIVOS OU CADEIAS */}
         {(mode === 'ativos' || mode === 'cadeias') && (
           <SuperclusteredMarkers
             processedAtivos={mode === 'cadeias' ? visibleCadeias : visibleAtivos}
@@ -1303,7 +1300,6 @@ export default function SideMap({
         )}
       </MapContainer>
 
-      {/* BADGE DE HOVER DINÂMICO */}
       {hoveredInfo && (
         <div className="absolute top-3 left-3.5 z-[400] pointer-events-none select-none flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
           {mode === 'cursos' && <Flame size={13} className="text-[#2563EB]" />}
@@ -1316,14 +1312,13 @@ export default function SideMap({
         </div>
       )}
 
-      {/* LEGENDA DO HEATMAP */}
       {mode === 'cursos' && (
         <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-md rounded-2xl p-2.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1">
               <Flame size={12} className="text-[#2563EB]" />
               <span className="text-[9.5px] font-extrabold text-[#1D3557] uppercase tracking-wider">
-                {selectedTerritory ? 'Densidade Relativa Municipal' : 'Densidade de Cursos'}
+                {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
               </span>
             </div>
             {selectedTerritory && (
@@ -1356,7 +1351,7 @@ export default function SideMap({
         </div>
       )}
 
-      {/* CONTROLES SUPERIORES */}
+      {/* CONTROLES DO MAPA */}
       <div className="absolute top-3 right-3 z-[400] flex items-start gap-2">
         {mode === 'cadeias' && (
           <button
@@ -1367,15 +1362,9 @@ export default function SideMap({
                 ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
                 : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
             }`}
-            title={showAllConnections ? "Desativar teia de conexões" : "Visualizar teia de conexões"}
           >
             <Network size={13} className={showAllConnections ? 'text-[#00B4D8]' : 'text-[#2563EB]'} />
             <span>Teia de Conexões</span>
-            <span
-              className={`w-2 h-2 rounded-full transition-all ${
-                showAllConnections ? 'bg-[#00B4D8] animate-pulse scale-110' : 'bg-[#CBD5E1]'
-              }`}
-            />
           </button>
         )}
 
@@ -1388,114 +1377,13 @@ export default function SideMap({
                 ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
                 : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
             }`}
-            title={isExpanded ? "Restaurar visualização padrão" : "Expandir mapa"}
           >
-            {isExpanded ? (
-              <>
-                <Minimize2 size={13} className="text-[#00B4D8]" />
-                <span>Modo Normal</span>
-              </>
-            ) : (
-              <>
-                <Maximize2 size={13} className="text-[#2563EB]" />
-                <span>Expandir</span>
-              </>
-            )}
+            {isExpanded ? <Minimize2 size={13} className="text-[#00B4D8]" /> : <Maximize2 size={13} className="text-[#2563EB]" />}
+            <span>{isExpanded ? 'Modo Normal' : 'Expandir'}</span>
           </button>
         )}
-
-        <div className="relative flex flex-col items-end">
-          <button
-            type="button"
-            onClick={() => setIsLayerControlOpen(!isLayerControlOpen)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
-              isLayerControlOpen
-                ? 'bg-[#1D3557] text-white border-[#1D3557]'
-                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
-            }`}
-          >
-            <Layers size={13} className={isLayerControlOpen ? 'text-white' : 'text-[#2563EB]'} />
-            <span>{mode === 'cursos' ? 'Áreas' : mode === 'cadeias' ? 'Tipos' : 'Camadas'}</span>
-            <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-extrabold ${
-              isLayerControlOpen ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-[#457B9D]'
-            }`}>
-              {activeCategoryKeys.size}/{allCategories.length}
-            </span>
-            {isLayerControlOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-          </button>
-
-          {isLayerControlOpen && (
-            <div className="absolute right-0 top-full mt-1.5 w-[240px] max-h-[300px] overflow-y-auto hide-scroll bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(29,53,87,0.18)] border border-[#E2E8F0] p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 z-50">
-              <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-1 px-1">
-                <span className="text-[9.5px] font-extrabold text-[#A0AEC0] uppercase tracking-wider">
-                  {mode === 'cursos' ? 'Filtrar por Área' : mode === 'cadeias' ? `Tipos (${visibleCadeias.length} cadeias)` : `Tipos (${visibleAtivos.length} ativos)`}
-                </span>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={selectAllCategories}
-                    className="text-[9px] font-bold text-[#2563EB] hover:underline cursor-pointer"
-                  >
-                    Todas
-                  </button>
-                  <span className="text-gray-300">·</span>
-                  <button
-                    type="button"
-                    onClick={deselectAllCategories}
-                    className="text-[9px] font-bold text-[#457B9D] hover:underline cursor-pointer"
-                  >
-                    Limpar
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-0.5 pt-0.5">
-                {allCategories.map((cat) => {
-                  const isActive = activeCategoryKeys.has(cat.key);
-                  const IconComponent = cat.icone;
-
-                  return (
-                    <button
-                      key={cat.key}
-                      type="button"
-                      onClick={() => toggleCategory(cat.key)}
-                      className={`w-full flex items-center justify-between px-2 py-1.5 rounded-xl text-[10.5px] font-semibold transition-colors cursor-pointer text-left ${
-                        isActive
-                          ? 'bg-[#F8FAFC] text-[#1D3557] hover:bg-[#F1F5F9]'
-                          : 'text-gray-400 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div
-                          className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${
-                            isActive
-                              ? 'border-transparent text-white'
-                              : 'border-[#CBD5E1] bg-white'
-                          }`}
-                          style={{ backgroundColor: isActive ? cat.corHex : 'transparent' }}
-                        >
-                          {isActive && <Check size={10} strokeWidth={3} />}
-                        </div>
-                        <div className="flex items-center gap-1.5 truncate">
-                          {IconComponent && <IconComponent size={12} style={{ color: cat.corHex }} className="shrink-0" />}
-                          <span className={`truncate ${isActive ? 'font-bold text-[#1D3557]' : 'font-normal'}`}>
-                            {cat.label}
-                          </span>
-                        </div>
-                      </div>
-                      <span className={`text-[9.5px] font-bold shrink-0 ml-1 ${isActive ? 'text-[#457B9D]' : 'text-gray-300'}`}>
-                        {cat.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* CONTROLES DE ZOOM E RESET */}
       <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-white/95 backdrop-blur-md rounded-[18px] border border-[#CBD5E1] shadow-sm overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
@@ -1522,9 +1410,7 @@ export default function SideMap({
             onAssetClick?.(null);
           }}
           className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
-            hasActiveFilter
-              ? 'text-red-500 bg-red-50 hover:bg-red-100'
-              : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+            hasActiveFilter ? 'text-red-500 bg-red-50 hover:bg-red-100' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
           }`}
           title="Limpar filtros"
         >

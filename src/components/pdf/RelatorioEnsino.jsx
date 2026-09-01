@@ -1,32 +1,29 @@
-import React, { useContext, useState, useMemo, useRef } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 import { 
   Building2, 
   MapPin, 
-  Wifi, 
-  GraduationCap, 
-  PieChart as PieIcon, 
-  BarChart3, 
   Printer, 
   X, 
   BookOpen,
   Layers,
+  BarChart3,
   Flame
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
-  BarChart, 
+  BarChart,
   Bar, 
   XAxis, 
   YAxis, 
   Tooltip as RechartsTooltip, 
   Cell, 
-  PieChart, 
-  Pie,
   LabelList
 } from 'recharts';
 
 import { DataContext } from '../../context/DataContext';
 import SideMap from '../maps/SideMap';
+import ProportionBarChart from '../graph/ProportionBarChart';
+import StackedBarChart from '../graph/StackedBarChart';
 import { municipiosDB } from '../../data/municipiosDB';
 
 const PALETTE = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
@@ -71,6 +68,17 @@ function getTipoPadronizado(tipoStr) {
   return 'Univ. Privada';
 }
 
+function checkSemiaridoValue(val) {
+  if (val === true || val === 1) return true;
+  const s = String(val ?? '').toLowerCase().trim();
+  return s === 'sim' || s === 'true' || s === '1' || s === 't';
+}
+
+const SEMIARIDO_CATEGORIES = [
+  { key: 'semi', label: 'Semiárido', shortLabel: 'Semiárido', colorHex: '#F59E0B' },
+  { key: 'fora', label: 'Outras Regiões', shortLabel: 'Outras Regiões', colorHex: '#3B82F6' }
+];
+
 export default function RelatorioAtivosPage() {
   const { 
     ativosData = [], 
@@ -81,18 +89,42 @@ export default function RelatorioAtivosPage() {
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
-  // 1. Isola ativos de ensino superior
+  // 1. Isola ativos de ensino superior e normaliza o booleano semiarido direto da view de ativos
   const baseEnsinoAtivos = useMemo(() => {
     if (!ativosData || ativosData.length === 0) return [];
-    return ativosData.filter(a => {
-      const tipo = a.tipo || a.nome_tipo || '';
-      return CATEGORIAS_ENSINO_VALIDAS.some(cat => 
-        normalizeName(cat) === normalizeName(tipo)
-      );
-    });
+    return ativosData
+      .filter(a => {
+        const tipo = a.tipo || a.nome_tipo || '';
+        return CATEGORIAS_ENSINO_VALIDAS.some(cat => 
+          normalizeName(cat) === normalizeName(tipo)
+        );
+      })
+      .map(a => ({
+        ...a,
+        semiarido: checkSemiaridoValue(a.semiarido ?? a.semi_arido ?? a.is_semiarido)
+      }));
   }, [ativosData]);
 
-  // 2. Filtro dos Ativos pelo Território
+  // 2. Mapeamentos rápidos de ativos para herança de semiárido
+  const ativoSemiaridoMaps = useMemo(() => {
+    const byId = new Map();
+    const byMun = new Map();
+
+    baseEnsinoAtivos.forEach(a => {
+      const isSemi = a.semiarido === true;
+      if (a.id_ativo || a.id) {
+        byId.set(Number(a.id_ativo || a.id), isSemi);
+      }
+      const munNorm = normalizeName(a.municipio || '');
+      if (munNorm && !byMun.has(munNorm)) {
+        byMun.set(munNorm, isSemi);
+      }
+    });
+
+    return { byId, byMun };
+  }, [baseEnsinoAtivos]);
+
+  // 3. Filtro dos Ativos pelo Território
   const filteredAtivos = useMemo(() => {
     let list = baseEnsinoAtivos;
 
@@ -118,7 +150,7 @@ export default function RelatorioAtivosPage() {
     return list;
   }, [baseEnsinoAtivos, selectedTerritory]);
 
-  // 3. Filtro dos Cursos pelo Território
+  // 4. Filtro dos Cursos e injeção do booleano semiarido
   const filteredCursos = useMemo(() => {
     if (!cursosData || cursosData.length === 0) return [];
     let list = cursosData;
@@ -132,10 +164,27 @@ export default function RelatorioAtivosPage() {
       );
     }
 
-    return list;
-  }, [cursosData, selectedTerritory]);
+    return list.map(c => {
+      let isSemi = false;
+      if (c.id_ativo && ativoSemiaridoMaps.byId.has(Number(c.id_ativo))) {
+        isSemi = ativoSemiaridoMaps.byId.get(Number(c.id_ativo));
+      } else {
+        const munNorm = normalizeName(c.municipio || '');
+        isSemi = ativoSemiaridoMaps.byMun.get(munNorm) || false;
+      }
+      return {
+        ...c,
+        semiarido: isSemi
+      };
+    });
+  }, [cursosData, selectedTerritory, ativoSemiaridoMaps]);
 
-  // 4. Indicadores Executivos
+  // 5. Contagem de cursos no semiárido
+  const semiaridoCursosCount = useMemo(() => {
+    return filteredCursos.filter(c => c.semiarido === true).length;
+  }, [filteredCursos]);
+
+  // 6. Indicadores Executivos (KPIs)
   const statsCursosKpis = useMemo(() => {
     const totalCursos = filteredCursos.length;
     const totalCampi = filteredAtivos.length;
@@ -153,38 +202,63 @@ export default function RelatorioAtivosPage() {
     return {
       totalCursos,
       totalCampi,
+      semiaridoCount: semiaridoCursosCount,
       municipiosComCursos: munSet.size,
       territoriosComCursos: terrSet.size,
       mediaCursosPorCampus
     };
-  }, [filteredCursos, filteredAtivos]);
+  }, [filteredCursos, filteredAtivos, semiaridoCursosCount]);
 
-  // 5. Gráfico 1: Donut de Áreas de Conhecimento
-  const areasChartData = useMemo(() => {
+  // 7. Dados para o ProportionBarChart: Áreas de Conhecimento (Semiárido vs Fora)
+  const areasProportionData = useMemo(() => {
     if (!filteredCursos || filteredCursos.length === 0) return [];
     const counts = {};
-    const total = filteredCursos.length;
 
     filteredCursos.forEach(c => {
       const area = c.categoria || c.tipo || 'Outras Áreas';
-      counts[area] = (counts[area] || 0) + 1;
+      if (!counts[area]) {
+        counts[area] = { label: area, positive: 0, negative: 0, total: 0 };
+      }
+      if (c.semiarido) counts[area].positive += 1;
+      else counts[area].negative += 1;
+      counts[area].total += 1;
     });
 
-    return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, value], idx) => ({
-        name,
-        value,
-        percent: total > 0 ? ((value / total) * 100).toFixed(1) : '0',
-        color: PALETTE[idx % PALETTE.length]
-      }));
+    return Object.values(counts).sort((a, b) => b.total - a.total);
   }, [filteredCursos]);
 
-  // 6. Gráfico 2: Top Municípios por Volume de Cursos
-  const topMunicipiosCursosData = useMemo(() => {
+  // 8. Dados para o StackedBarChart: Territórios Empilhados (ou Ranking de Municípios)
+  const territoriosStackedData = useMemo(() => {
+    if (!cursosData || cursosData.length === 0) return [];
+
+    const terrStats = {};
+    cursosData.forEach(c => {
+      const rawTerr = c.territorio_identidade || c.territorio || 'Não identificado';
+      const cleanTerr = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
+
+      if (!terrStats[cleanTerr]) {
+        terrStats[cleanTerr] = { label: cleanTerr, total: 0, segments: { semi: 0, fora: 0 } };
+      }
+
+      let isSemi = false;
+      if (c.id_ativo && ativoSemiaridoMaps.byId.has(Number(c.id_ativo))) {
+        isSemi = ativoSemiaridoMaps.byId.get(Number(c.id_ativo));
+      } else {
+        const munNorm = normalizeName(c.municipio || '');
+        isSemi = ativoSemiaridoMaps.byMun.get(munNorm) || false;
+      }
+
+      if (isSemi) terrStats[cleanTerr].segments.semi += 1;
+      else terrStats[cleanTerr].segments.fora += 1;
+      terrStats[cleanTerr].total += 1;
+    });
+
+    return Object.values(terrStats).sort((a, b) => b.total - a.total);
+  }, [cursosData, ativoSemiaridoMaps]);
+
+  const topMunicipiosData = useMemo(() => {
     if (!filteredCursos || filteredCursos.length === 0) return [];
     const counts = {};
-
     filteredCursos.forEach(c => {
       const mun = c.municipio || 'Não informado';
       counts[mun] = (counts[mun] || 0) + 1;
@@ -196,7 +270,7 @@ export default function RelatorioAtivosPage() {
       .map(([name, count]) => ({ name, count }));
   }, [filteredCursos]);
 
-  // 7. Gráfico 3: Matriz de Distribuição por Área e Natureza Jurídica
+  // 9. Gráfico 3: Matriz de Distribuição por Área e Natureza Jurídica
   const matrixAreaNaturezaData = useMemo(() => {
     if (!filteredCursos || filteredCursos.length === 0) return [];
 
@@ -208,19 +282,10 @@ export default function RelatorioAtivosPage() {
     });
 
     const countsByArea = {};
-
     filteredCursos.forEach(c => {
       const area = c.categoria || c.tipo || 'Geral';
-
       if (!countsByArea[area]) {
-        countsByArea[area] = {
-          categoria: area,
-          'Univ. Pública Federal': 0,
-          'Univ. Pública Estadual': 0,
-          'Instituto Federal': 0,
-          'Univ. Privada': 0,
-          total: 0
-        };
+        countsByArea[area] = { categoria: area, federal: 0, estadual: 0, ifba: 0, privada: 0, total: 0 };
       }
 
       let tipoFinal = 'Univ. Privada';
@@ -230,35 +295,34 @@ export default function RelatorioAtivosPage() {
         tipoFinal = getTipoPadronizado(c.sigla || c.entidade || c.instituicao);
       }
 
-      countsByArea[area][tipoFinal] = (countsByArea[area][tipoFinal] || 0) + 1;
+      if (tipoFinal === 'Univ. Pública Federal') countsByArea[area].federal += 1;
+      else if (tipoFinal === 'Univ. Pública Estadual') countsByArea[area].estadual += 1;
+      else if (tipoFinal === 'Instituto Federal') countsByArea[area].ifba += 1;
+      else countsByArea[area].privada += 1;
+
       countsByArea[area].total += 1;
     });
 
     return Object.values(countsByArea).sort((a, b) => b.total - a.total);
   }, [filteredCursos, baseEnsinoAtivos]);
 
-  // 8. Gráfico 4: Cobertura RNP por Categoria
-  const rnpCategoryData = useMemo(() => {
+  // 10. Dados para o ProportionBarChart: Cobertura RNP
+  const rnpProportionData = useMemo(() => {
     if (!filteredAtivos || filteredAtivos.length === 0) return [];
     const stats = {};
 
     filteredAtivos.forEach(a => {
-      const tipo = a.tipo || a.nome_tipo || 'Outros';
+      const tipo = (a.tipo || a.nome_tipo || 'Outros').replace(/^Campi\s+/i, '');
       if (!stats[tipo]) {
-        stats[tipo] = { name: tipo, comRnp: 0, semRnp: 0, total: 0 };
+        stats[tipo] = { label: tipo, positive: 0, negative: 0, total: 0 };
       }
       const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || String(a.rnp || '').toLowerCase() === 'sim';
-      if (hasRnp) stats[tipo].comRnp += 1;
-      else stats[tipo].semRnp += 1;
+      if (hasRnp) stats[tipo].positive += 1;
+      else stats[tipo].negative += 1;
       stats[tipo].total += 1;
     });
 
-    return Object.values(stats)
-      .sort((a, b) => b.total - a.total)
-      .map(item => ({
-        ...item,
-        pctRnp: Number(((item.comRnp / item.total) * 100).toFixed(1))
-      }));
+    return Object.values(stats).sort((a, b) => b.total - a.total);
   }, [filteredAtivos]);
 
   return (
@@ -286,7 +350,6 @@ export default function RelatorioAtivosPage() {
                   type="button"
                   onClick={() => setSelectedTerritory(null)}
                   className="text-[#0369A1] hover:text-red-500 transition-colors ml-0.5 cursor-pointer"
-                  title="Limpar seleção territorial"
                 >
                   <X size={11} />
                 </button>
@@ -319,9 +382,14 @@ export default function RelatorioAtivosPage() {
               </div>
               <span className="text-[10.5px] font-bold uppercase tracking-wider">Cursos Mapeados</span>
             </div>
-            <span className="text-2xl lg:text-3xl font-black text-[#1D3557] leading-none">
-              {loadingStats ? '...' : statsCursosKpis.totalCursos}
-            </span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl lg:text-3xl font-black text-[#1D3557] leading-none">
+                {loadingStats ? '...' : statsCursosKpis.totalCursos}
+              </span>
+              <span className="text-[10px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2 py-0.5 rounded-md whitespace-nowrap">
+                {statsCursosKpis.semiaridoCount} no semiárido
+              </span>
+            </div>
           </div>
 
           <div className="h-[92px] bg-white rounded-[20px] p-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
@@ -367,108 +435,64 @@ export default function RelatorioAtivosPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL: GRÁFICOS ANALÍTICOS (60%) + SIDEMAP NO MODO CURSOS (40%) */}
+      {/* GRID PRINCIPAL DE GRÁFICOS + SIDEMAP */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-0 w-full">
         
-        {/* COLUNA ESQUERDA: GRID 2x2 TOTALMENTE EXPANDIDO */}
+        {/* COLUNA ESQUERDA: GRID 2x2 COM COMPONENTES MODULARES */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
           
-          {/* GRÁFICO 1: DONUT DE ÁREAS COM LEGENDA ESTÁTICA EM BAIXO */}
-          <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-1 shrink-0">
-              <div>
-                <h3 className="text-[13px] font-extrabold text-[#1D3557]">Áreas de Conhecimento</h3>
-                <p className="text-[10.5px] text-[#457B9D]">Distribuição dos cursos ofertados</p>
-              </div>
-              <PieIcon size={16} className="text-[#2563EB]" />
-            </div>
+          {/* GRÁFICO 1: REUTILIZANDO ProportionBarChart */}
+          <div className="h-full min-h-0">
+            <ProportionBarChart
+              data={areasProportionData}
+              title="Áreas de Conhecimento"
+              subtitle="Distribuição e presença no Semiárido"
+              positiveLabel="Semiárido"
+              negativeLabel="Outras Regiões"
+              positiveColor="bg-[#F59E0B]"
+              negativeColor="bg-[#3B82F6]"
+            />
+          </div>
 
-            <div className="flex-1 flex items-center gap-2 min-h-0 overflow-hidden">
-              {/* ROSCA */}
-              <div className="w-[45%] h-full flex items-center justify-center">
-                {areasChartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={areasChartData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius="50%"
-                        outerRadius="85%"
-                        paddingAngle={3}
-                      >
-                        {areasChartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <span className="text-[10px] text-gray-400 font-bold">Sem dados</span>
-                )}
-              </div>
-
-              {/* LEGENDA DETALHADA FIXA */}
-              <div className="w-[55%] flex flex-col justify-center gap-1.5 overflow-y-auto pr-1">
-                {areasChartData.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between gap-1 text-[9.5px]">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                      <span className="font-bold text-[#1D3557] truncate" title={item.name}>
-                        {item.name}
-                      </span>
-                    </div>
-                    <span className="font-black text-[#457B9D] shrink-0">
-                      {item.value} ({item.percent}%)
-                    </span>
+          {/* GRÁFICO 2: REUTILIZANDO StackedBarChart (OU RANKING MUNICIPAL) */}
+          <div className="h-full min-h-0">
+            {selectedTerritory ? (
+              <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(29,53,87,0.04)] flex flex-col justify-between h-full min-h-0">
+                <div className="flex items-center justify-between mb-1 shrink-0">
+                  <div>
+                    <h3 className="text-[13px] font-extrabold text-[#1D3557]">Polos de Oferta</h3>
+                    <p className="text-[10px] text-[#457B9D]">Cidades com mais cursos em {territoryName}</p>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* GRÁFICO 2: POLOS DE OFERTA COM RÓTULOS INTERNOS */}
-          <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-1 shrink-0">
-              <div>
-                <h3 className="text-[13px] font-extrabold text-[#1D3557]">Polos de Oferta</h3>
-                <p className="text-[10.5px] text-[#457B9D]">Cidades com maior volume de cursos</p>
-              </div>
-              <BarChart3 size={16} className="text-[#2563EB]" />
-            </div>
-
-            <div className="flex-1 w-full min-h-0 pt-1">
-              {topMunicipiosCursosData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={topMunicipiosCursosData} layout="vertical" margin={{ left: 5, right: 28, top: 0, bottom: 0 }}>
-                    <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" width={90} tick={{ fontSize: 10, fill: '#1D3557', fontWeight: 700 }} />
-                    <Bar dataKey="count" radius={[0, 6, 6, 0]}>
-                      {topMunicipiosCursosData.map((_, index) => (
-                        <Cell key={`cell-bar-${index}`} fill={PALETTE[index % PALETTE.length]} />
-                      ))}
-                      <LabelList 
-                        dataKey="count" 
-                        position="insideRight" 
-                        fill="#ffffff" 
-                        fontSize={10.5} 
-                        fontWeight={800} 
-                        offset={8}
-                      />
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center">
-                  <span className="text-[11px] text-gray-400 font-bold">Sem dados</span>
+                  <BarChart3 size={16} className="text-[#2563EB]" />
                 </div>
-              )}
-            </div>
+                <div className="flex-1 w-full min-h-0 pt-1">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={topMunicipiosData} layout="vertical" margin={{ left: 5, right: 28, top: 0, bottom: 0 }}>
+                      <XAxis type="number" hide />
+                      <YAxis dataKey="name" type="category" width={90} tick={{ fontSize: 10, fill: '#1D3557', fontWeight: 700 }} />
+                      <RechartsTooltip contentStyle={{ backgroundColor: '#1D3557', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 'bold' }} />
+                      <Bar dataKey="count" fill="#2563EB" radius={[0, 6, 6, 0]}>
+                        {topMunicipiosData.map((_, index) => (
+                          <Cell key={`cell-bar-${index}`} fill={PALETTE[index % PALETTE.length]} />
+                        ))}
+                        <LabelList dataKey="count" position="insideRight" fill="#ffffff" fontSize={10.5} fontWeight={800} offset={8} />
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            ) : (
+              <StackedBarChart
+                data={territoriosStackedData}
+                categories={SEMIARIDO_CATEGORIES}
+                title="Concentração por Território"
+                subtitle="Presença e distribuição no Semiárido"
+                allowToggleView={true}
+              />
+            )}
           </div>
 
-          {/* GRÁFICO 3: MATRIZ DE COMPOSIÇÃO POR ÁREA E REDE */}
+          {/* GRÁFICO 3: COMPOSIÇÃO POR ÁREA E REDE */}
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1">
               <div>
@@ -476,7 +500,6 @@ export default function RelatorioAtivosPage() {
                 <p className="text-[9.5px] text-[#457B9D]">Proporção Federal, Estadual, IF e Privada</p>
               </div>
 
-              {/* LEGENDA */}
               <div className="flex items-center gap-2 text-[8.5px] font-black">
                 <span className="flex items-center gap-1 text-[#1D3557]"><span className="w-2 h-2 rounded-full bg-[#1D3557]"></span>Fed.</span>
                 <span className="flex items-center gap-1 text-[#2563EB]"><span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Est.</span>
@@ -489,7 +512,7 @@ export default function RelatorioAtivosPage() {
               {matrixAreaNaturezaData.map((row, idx) => (
                 <div key={idx} className="flex flex-col gap-0.5">
                   <div className="flex items-center justify-between text-[10.5px]">
-                    <span className="font-extrabold text-[#1D3557] truncate max-w-[70%]">
+                    <span className="font-extrabold text-[#1D3557] truncate max-w-[65%]" title={row.categoria}>
                       {row.categoria}
                     </span>
                     <span className="font-bold text-[#457B9D] text-[10px]">
@@ -498,70 +521,42 @@ export default function RelatorioAtivosPage() {
                   </div>
 
                   <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs">
-                    {row['Univ. Pública Federal'] > 0 && (
-                      <div 
-                        className="h-full bg-[#1D3557]"
-                        style={{ width: `${(row['Univ. Pública Federal'] / row.total) * 100}%` }}
-                        title={`Federal: ${row['Univ. Pública Federal']} cursos`}
-                      />
+                    {row.federal > 0 && (
+                      <div className="h-full bg-[#1D3557]" style={{ width: `${(row.federal / row.total) * 100}%` }} title={`Federal: ${row.federal}`} />
                     )}
-                    {row['Univ. Pública Estadual'] > 0 && (
-                      <div 
-                        className="h-full bg-[#2563EB]"
-                        style={{ width: `${(row['Univ. Pública Estadual'] / row.total) * 100}%` }}
-                        title={`Estadual: ${row['Univ. Pública Estadual']} cursos`}
-                      />
+                    {row.estadual > 0 && (
+                      <div className="h-full bg-[#2563EB]" style={{ width: `${(row.estadual / row.total) * 100}%` }} title={`Estadual: ${row.estadual}`} />
                     )}
-                    {row['Instituto Federal'] > 0 && (
-                      <div 
-                        className="h-full bg-[#10B981]"
-                        style={{ width: `${(row['Instituto Federal'] / row.total) * 100}%` }}
-                        title={`IF: ${row['Instituto Federal']} cursos`}
-                      />
+                    {row.ifba > 0 && (
+                      <div className="h-full bg-[#10B981]" style={{ width: `${(row.ifba / row.total) * 100}%` }} title={`IF: ${row.ifba}`} />
                     )}
-                    {row['Univ. Privada'] > 0 && (
-                      <div 
-                        className="h-full bg-[#F59E0B]"
-                        style={{ width: `${(row['Univ. Privada'] / row.total) * 100}%` }}
-                        title={`Privada: ${row['Univ. Privada']} cursos`}
-                      />
+                    {row.privada > 0 && (
+                      <div className="h-full bg-[#F59E0B]" style={{ width: `${(row.privada / row.total) * 100}%` }} title={`Privada: ${row.privada}`} />
                     )}
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[8px] font-extrabold text-[#64748B]">
+                    {row.federal > 0 && <span className="text-[#1D3557]">Fed: {row.federal}</span>}
+                    {row.estadual > 0 && <span className="text-[#2563EB]">Est: {row.estadual}</span>}
+                    {row.ifba > 0 && <span className="text-[#10B981]">IF: {row.ifba}</span>}
+                    {row.privada > 0 && <span className="text-[#D97706]">Priv: {row.privada}</span>}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* GRÁFICO 4: COBERTURA DE REDE RNP */}
-          <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1">
-              <div>
-                <h3 className="text-[12.5px] font-extrabold text-[#1D3557]">Cobertura de Rede RNP</h3>
-                <p className="text-[9.5px] text-[#457B9D]">Campi conectados ao backbone de pesquisa</p>
-              </div>
-              <Wifi size={15} className="text-emerald-500" />
-            </div>
-
-            <div className="flex-1 flex flex-col justify-around gap-1.5 my-auto min-h-0">
-              {rnpCategoryData.map((cat, idx) => (
-                <div key={idx} className="flex flex-col gap-0.5 p-1.5 px-2.5 rounded-xl bg-[#F8FAFC]">
-                  <div className="flex items-center justify-between text-[10.5px]">
-                    <span className="font-extrabold text-[#1D3557] truncate max-w-[60%]">
-                      {cat.name.replace(/^Campi\s+/i, '')}
-                    </span>
-                    <span className="font-bold text-[#457B9D] text-[10px]">
-                      <strong className="text-emerald-600 font-black">{cat.comRnp}</strong> de {cat.total} ({cat.pctRnp}%)
-                    </span>
-                  </div>
-                  <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden shadow-2xs">
-                    <div 
-                      className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                      style={{ width: `${cat.pctRnp}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+          {/* GRÁFICO 4: REUTILIZANDO ProportionBarChart PARA RNP */}
+          <div className="h-full min-h-0">
+            <ProportionBarChart
+              data={rnpProportionData}
+              title="Cobertura de Rede RNP"
+              subtitle="Campi conectados ao backbone de pesquisa"
+              positiveLabel="Com RNP"
+              negativeLabel="Sem Conexão"
+              positiveColor="bg-[#10B981]"
+              negativeColor="bg-[#E2E8F0]"
+            />
           </div>
 
         </div>
