@@ -389,6 +389,7 @@ export default function AtivosPage() {
                     <p className="text-sm text-text-secondary mt-0.5 font-medium">
                         Explore universidades, ICTs, parques tecnológicos, hubs e centros de pesquisa distribuídos pelo estado
                     </p>
+                    <div className="divider-territorial w-48 mt-3"></div>
                 </div>
             </div>
 
@@ -398,7 +399,7 @@ export default function AtivosPage() {
                     {kpis.map((kpi, index) => (
                         <div
                             key={index}
-                            className="h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
+                            className={`h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default ${index === 0 ? 'kpi-accent-primary' : index === 1 ? 'kpi-accent-success' : index === 2 ? 'kpi-accent-accent' : index === 3 ? 'kpi-accent-warning' : 'kpi-accent-neutral'}`}
                         >
                             {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO */}
                             <div className="flex items-center justify-between gap-1.5 min-w-0">

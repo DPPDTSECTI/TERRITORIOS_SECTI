@@ -22,15 +22,16 @@ const SobrePage = () => {
 
  {/* HEADER DA PÁGINA */}
  <div className="flex flex-col items-start gap-4 mb-12 mt-4">
- <div className="px-4 py-1.5 rounded-full border border-primary-200 bg-white text-xs font-medium uppercase flex items-center gap-2 text-text-secondary shadow-sm cursor-default hover:shadow-md transition-shadow">
+ <div className="px-4 py-1.5 rounded-full border border-primary-200 bg-surface text-xs font-medium uppercase flex items-center gap-2 text-text-secondary shadow-sm cursor-default hover:shadow-md transition-shadow">
  <Info size={14} /> Documentação
  </div>
  <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-text-primary">
- Sobre o <span className="text-text-secondary">Painel SECTI</span>
+ Sobre o <span className="text-primary-700">Painel SECTI</span>
  </h2>
- <p className="text-base lg:text-lg max-w-3xl leading-relaxed mt-2 text-text-secondary/80 font-medium">
+ <p className="text-base lg:text-lg max-w-3xl leading-relaxed mt-2 text-text-secondary font-medium">
  Uma plataforma digital interativa para consolidar, analisar e dar transparência aos principais dados do ecossistema de Ciência, Tecnologia e Inovação nos 27 Territórios de Identidade do estado da Bahia.
  </p>
+ <div className="divider-territorial w-48 mt-2"></div>
  </div>
 
  <div className="space-y-12 pb-20">
@@ -45,13 +46,13 @@ const SobrePage = () => {
  { t: 'Fomentar a Articulação', d: 'Sinergias entre governo, setor produtivo, academia e sociedade civil.', i: <Users /> },
  { t: 'Democratizar a Informação', d: 'Fonte de consulta para pesquisadores, estudantes, gestores e investidores.', i: <Lightbulb /> },
  ].map((item, idx) => (
- <div key={idx} className="p-6 bg-white rounded-xl border border-transparent hover:border-primary-200/50 shadow-card-soft hover:shadow-card-hover flex items-start gap-4 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group cursor-default">
- <div className="w-12 h-12 rounded-xl bg-primary-200 text-text-secondary flex items-center justify-center shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:-rotate-3">
+ <div key={idx} className="p-6 bg-surface rounded-xl border border-border shadow-sm hover:shadow-md flex items-start gap-4 transition-shadow duration-200 group cursor-default">
+ <div className="w-12 h-12 rounded-xl bg-primary-100 text-primary-700 flex items-center justify-center shrink-0">
  {React.cloneElement(item.i, { size: 22, strokeWidth: 2.5 })}
  </div>
  <div>
  <strong className="block text-base font-semibold mb-1 text-text-primary">{item.t}</strong>
- <span className="text-sm font-medium leading-relaxed text-text-secondary/80">{item.d}</span>
+ <span className="text-sm font-medium leading-relaxed text-text-secondary">{item.d}</span>
  </div>
  </div>
  ))}
@@ -68,12 +69,12 @@ const SobrePage = () => {
  { t: 'Cursos Superiores', d: 'Capacidade de formação de talentos através de cursos de nível superior.', i: <GraduationCap /> },
  { t: 'APLs e IGs', d: 'Arranjos Produtivos Locais e Indicações Geográficas (certificações de origem).', i: <Milestone /> }
  ].map((item, idx) => (
- <div key={idx} className="p-6 bg-white rounded-xl border border-transparent hover:border-primary-200/50 shadow-card-soft hover:shadow-card-hover transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group cursor-default">
- <div className="w-12 h-12 mb-4 rounded-xl flex items-center justify-center bg-primary-200 text-text-secondary transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-3">
+ <div key={idx} className="p-6 bg-surface rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow duration-200 group cursor-default">
+ <div className="w-12 h-12 mb-4 rounded-xl flex items-center justify-center bg-primary-100 text-primary-700">
  {React.cloneElement(item.i, { size: 22, strokeWidth: 2.5 })}
  </div>
  <strong className="block font-semibold mb-1 text-lg text-text-primary tracking-tight">{item.t}</strong>
- <span className="text-sm font-medium leading-relaxed text-text-secondary/80">{item.d}</span>
+ <span className="text-sm font-medium leading-relaxed text-text-secondary">{item.d}</span>
  </div>
  ))}
  </div>
@@ -88,13 +89,13 @@ const SobrePage = () => {
  { s: '02', t: 'Georreferenciamento', d: 'Vinculação espacial aos municípios e Territórios.', i: <MapPin /> },
  { s: '03', t: 'Indicadores', d: 'Geração de índices processados considerando o contexto geográfico.', i: <Calculator /> },
  ].map((item, idx) => (
- <div key={idx} className="relative p-6 bg-white rounded-xl border border-transparent hover:border-primary-200/50 overflow-hidden flex flex-col shadow-card-soft hover:shadow-card-hover transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group cursor-default">
- <span className="absolute -right-4 -bottom-6 text-[120px] font-medium leading-none opacity-[0.03] text-text-primary select-none pointer-events-none  transition-transform duration-500">{item.s}</span>
- <div className="w-12 h-12 mb-5 rounded-xl flex items-center justify-center bg-primary-200 text-text-secondary shadow-sm transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:-rotate-3">
+ <div key={idx} className="relative p-6 bg-surface rounded-xl border border-border overflow-hidden flex flex-col shadow-sm hover:shadow-md transition-shadow duration-200 group cursor-default">
+ <span className="absolute -right-4 -bottom-6 text-[120px] font-medium leading-none opacity-[0.03] text-text-primary select-none pointer-events-none">{item.s}</span>
+ <div className="w-12 h-12 mb-5 rounded-xl flex items-center justify-center bg-primary-100 text-primary-700 shadow-xs">
  {React.cloneElement(item.i, { size: 22, strokeWidth: 2.5 })}
  </div>
  <strong className="block text-base font-semibold mb-2 z-10 text-text-primary tracking-tight">{item.t}</strong>
- <span className="text-sm font-medium leading-relaxed z-10 text-text-secondary/80">{item.d}</span>
+ <span className="text-sm font-medium leading-relaxed z-10 text-text-secondary">{item.d}</span>
  </div>
  ))}
  </div>

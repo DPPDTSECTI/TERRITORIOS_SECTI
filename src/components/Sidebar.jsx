@@ -28,7 +28,7 @@ export default function Sidebar({ username, navOnly = false }) {
       <aside
          onMouseEnter={() => setIsCollapsed(false)}
          onMouseLeave={() => setIsCollapsed(true)}
-         className={`tour-sidebar h-[calc(100vh-48px)] my-6 ml-6 bg-white rounded-xl shadow-card-soft border border-slate-100 flex flex-col py-6 flex-shrink-0 z-50 font-sans select-none relative transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] px-3.5 overflow-hidden will-change-[width] ${isCollapsed ? 'w-[68px]' : 'w-[190px]'
+         className={`tour-sidebar h-[calc(100vh-48px)] my-6 ml-6 bg-surface rounded-xl shadow-card-soft border border-border flex flex-col py-6 flex-shrink-0 z-50 font-sans select-none relative transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] px-3.5 overflow-hidden will-change-[width] ${isCollapsed ? 'w-[68px]' : 'w-[190px]'
             }`}
       >
 
@@ -66,7 +66,7 @@ export default function Sidebar({ username, navOnly = false }) {
                      <Link
                         to={item.path}
                         className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.path === '/sobre' ? 'tour-nav-sobre ' : ''}${isActive
-                              ? `bg-surface-soft border-primary-600 text-text-primary shadow-sm`
+                              ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
                               : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                            }`}
                         title={isCollapsed ? item.label : undefined}
@@ -76,7 +76,7 @@ export default function Sidebar({ username, navOnly = false }) {
                         </div>
 
                         <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2'
-                           } ${isActive ? 'font-bold' : 'font-medium'}`}>
+                           } ${isActive ? 'font-semibold' : 'font-medium'}`}>
                            {item.label}
                         </span>
                      </Link>
@@ -102,7 +102,7 @@ export default function Sidebar({ username, navOnly = false }) {
                            <Link
                               to={item.path}
                               className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.tourClass ? item.tourClass + ' ' : ''}${isActive
-                                    ? `bg-surface-soft border-primary-600 text-text-primary shadow-sm`
+                                    ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
                                     : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                                  }`}
                               title={isCollapsed ? item.label : undefined}
@@ -112,7 +112,7 @@ export default function Sidebar({ username, navOnly = false }) {
                               </div>
 
                               <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2'
-                                 } ${isActive ? 'font-bold' : 'font-medium'}`}>
+                                 } ${isActive ? 'font-semibold' : 'font-medium'}`}>
                                  {item.label}
                               </span>
                            </Link>
@@ -140,7 +140,7 @@ export default function Sidebar({ username, navOnly = false }) {
                            <Link
                               to={item.path}
                               className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${isActive
-                                    ? `bg-surface-soft border-primary-600 text-text-primary shadow-sm`
+                                    ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
                                     : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                                  }`}
                               title={isCollapsed ? item.label : undefined}
@@ -150,7 +150,7 @@ export default function Sidebar({ username, navOnly = false }) {
                               </div>
 
                               <span className={`text-[13px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2'
-                                 } ${isActive ? 'font-bold' : 'font-medium'}`}>
+                                 } ${isActive ? 'font-semibold' : 'font-medium'}`}>
                                  {item.label}
                               </span>
                            </Link>
@@ -164,7 +164,7 @@ export default function Sidebar({ username, navOnly = false }) {
          {/* ================= CARD DE SUPORTE NO RODAPÉ ================= */}
          <div className={`mt-auto pt-2 w-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 ${isCollapsed ? 'opacity-0 h-0 pointer-events-none' : 'opacity-100 h-auto'
             }`}>
-            <div className="w-full bg-primary-900 rounded-xl p-3.5 flex flex-col items-center relative overflow-hidden shadow-sm">
+            <div className="w-full bg-primary-900 rounded-xl p-3.5 flex flex-col items-center relative overflow-hidden shadow-sm bg-carto-dots">
                <img
                   src="/img/brasao_preto.webp"
                   alt="Governo da Bahia"
@@ -173,7 +173,7 @@ export default function Sidebar({ username, navOnly = false }) {
                <p className="text-white/80 text-[10px] text-center font-medium z-10 leading-relaxed mb-2">
                   Gestão integrada da Bahia.
                </p>
-               <button className="w-full bg-primary-800 text-white text-[11px] font-medium py-1.5 rounded-lg hover:bg-primary-400 hover:text-primary-900 transition-colors shadow-sm">
+               <button className="w-full bg-primary-800 text-white text-[11px] font-medium py-1.5 rounded-lg hover:bg-primary-700 transition-colors shadow-xs">
                   Ver Portal
                </button>
             </div>

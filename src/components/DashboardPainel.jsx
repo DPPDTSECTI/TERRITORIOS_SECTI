@@ -74,7 +74,7 @@ function SortableCard({ id, className = '', children }) {
       <button
         {...attributes}
         {...listeners}
-        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 rounded-md hover:bg-gray-100 transition-colors duration-200 group-hover:text-text-primary"
+        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-text-muted hover:text-text-primary rounded-md hover:bg-surface-soft transition-colors duration-200"
         title="Arrastar card"
       >
         <GripHorizontal size={18} />
@@ -414,6 +414,7 @@ export default function DashboardPainel() {
             <div className="carto-node mt-2 opacity-80"></div>
           </div>
           <p className="text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
+          <div className="divider-territorial w-48 mt-3"></div>
         </div>
       </div>
 
@@ -423,7 +424,7 @@ export default function DashboardPainel() {
           {kpis.map((kpi, index) => (
             <div
               key={index}
-              className="relative overflow-hidden h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border-y border-r border-l-[3px] border-border border-l-primary-500 shadow-sm hover:-translate-y-[1px] hover:shadow-card-hover transition-all duration-300 cursor-default"
+              className={`h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default ${index === 0 ? 'kpi-accent-primary' : index === 1 ? 'kpi-accent-success' : index === 2 ? 'kpi-accent-accent' : index === 3 ? 'kpi-accent-warning' : 'kpi-accent-neutral'}`}
             >
               {/* LINHA SUPERIOR: ÍCONE DISCRETO + TÍTULO COM CORES ORIGINAIS */}
               <div className="flex items-center justify-between gap-1.5 min-w-0">

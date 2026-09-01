@@ -384,6 +384,7 @@ export default function CursosPage() {
                     <p className="text-sm text-text-secondary mt-0.5 font-medium">
                         Mapeamento territorial e densidade de cursos de ensino superior em Ciência, Tecnologia e Inovação
                     </p>
+                    <div className="divider-territorial w-48 mt-3"></div>
                 </div>
             </div>
 
@@ -393,7 +394,7 @@ export default function CursosPage() {
                     {kpis.map((kpi, index) => (
                         <div
                             key={index}
-                            className="h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
+                            className={`h-[98px] bg-surface rounded-xl p-4 flex flex-col justify-between border border-border shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default ${index === 0 ? 'kpi-accent-primary' : index === 1 ? 'kpi-accent-success' : index === 2 ? 'kpi-accent-accent' : index === 3 ? 'kpi-accent-warning' : 'kpi-accent-neutral'}`}
                         >
                             <div className="flex items-center justify-between gap-1.5 min-w-0">
                                 <div className="flex items-center gap-2 min-w-0 flex-1">
