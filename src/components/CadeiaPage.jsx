@@ -461,22 +461,266 @@ export default function CadeiaPage() {
         }
     ];
 
-    const dynamicTabs = useMemo(() => [
-        {
-            id: 'catalogo',
-            label: 'Catálogo',
-            icon: GitPullRequest,
-            count: filteredCadeias.length,
-            content: (
-                <div className="flex-1 flex flex-col min-h-0 w-full">
-                    <div className="flex items-center justify-between mb-3 shrink-0 flex-wrap gap-2">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-[13px] font-semibold text-text-primary">
-                                {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
-                            </h3>
-                            <span className="bg-primary-600/10 text-primary-600 text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
-                                {filteredCadeias.length}
-                            </span>
+    return Array.from(mapCadeias.values());
+  }, [listaCadeias, distribuicaoCadeias]);
+
+  const availableTipos = useMemo(() => {
+    const tipos = new Set();
+    enrichedCadeias.forEach(c => { if (c.tipo) tipos.add(c.tipo); });
+    return Array.from(tipos);
+  }, [enrichedCadeias]);
+
+  // FILTRO ESTRITO POR SEDE
+  const territoryCadeias = useMemo(() => {
+    if (!selectedTerritory) return enrichedCadeias;
+    const targetId = Number(selectedTerritory.id_territorio);
+    const targetNome = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
+
+    return enrichedCadeias.filter(c => {
+      const matchId = Number(c.id_territorio) === targetId;
+      const matchNome = normalizeName(c.territorio_identidade) === targetNome;
+      return matchId || matchNome;
+    });
+  }, [enrichedCadeias, selectedTerritory]);
+
+  const filteredCadeias = useMemo(() => {
+    let list = territoryCadeias;
+    if (selectedTipo !== 'todos') list = list.filter(c => c.tipo === selectedTipo);
+    if (selectedSegmento) list = list.filter(c => c.segmento === selectedSegmento);
+    return list;
+  }, [territoryCadeias, selectedTipo, selectedSegmento]);
+
+  const compactCadeiasList = useMemo(() => {
+    if (!sidebarSearch.trim()) return filteredCadeias;
+    const q = sidebarSearch.toLowerCase().trim();
+    return filteredCadeias.filter(c => 
+      (c.entidade && c.entidade.toLowerCase().includes(q)) ||
+      (c.segmento && c.segmento.toLowerCase().includes(q)) ||
+      (c.municipio_sede && c.municipio_sede.toLowerCase().includes(q))
+    );
+  }, [filteredCadeias, sidebarSearch]);
+
+  const segmentStats = useMemo(() => {
+    if (!filteredCadeias || filteredCadeias.length === 0) return [];
+    const counts = {};
+    const total = filteredCadeias.length;
+
+    filteredCadeias.forEach(c => {
+      const seg = c.segmento || 'Outros Segmentos';
+      counts[seg] = (counts[seg] || 0) + 1;
+    });
+
+    return Object.entries(counts)
+      .map(([name, count], idx) => {
+        const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
+        const color = SEGMENT_PALETTE[idx % SEGMENT_PALETTE.length];
+        return { name, count, percent, color };
+      })
+      .sort((a, b) => b.count - a.count);
+  }, [filteredCadeias]);
+
+  const totalMunicipiosBeneficiados = useMemo(() => {
+    const munSet = new Set();
+    filteredCadeias.forEach(c => {
+      if (c.municipios_cobertos && c.municipios_cobertos.length > 0) {
+        c.municipios_cobertos.forEach(m => {
+          if (m.nome_municipio) munSet.add(normalizeName(m.nome_municipio));
+        });
+      } else if (c.municipio_sede) {
+        munSet.add(normalizeName(c.municipio_sede));
+      }
+    });
+    return munSet.size;
+  }, [filteredCadeias]);
+
+  const totalMunicipiosSede = useMemo(() => {
+    const sedeSet = new Set();
+    filteredCadeias.forEach(c => {
+      if (c.municipio_sede) sedeSet.add(normalizeName(c.municipio_sede));
+    });
+    return sedeSet.size;
+  }, [filteredCadeias]);
+
+  const territoryRanking = useMemo(() => {
+    if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
+    const counts = {};
+
+    enrichedCadeias.forEach(c => {
+      const tid = Number(c.id_territorio) || 0;
+      const tName = c.territorio_identidade || 'Não identificado';
+
+      if (tid > 0) {
+        if (!counts[tid]) counts[tid] = { id: tid, name: tName, count: 0 };
+        counts[tid].count += 1;
+      }
+    });
+
+    const maxCount = Math.max(...Object.values(counts).map(t => t.count), 1);
+
+    return Object.values(counts)
+      .sort((a, b) => b.count - a.count)
+      .map((t, idx) => ({
+        ...t,
+        rank: idx + 1,
+        percentBar: Math.min(100, (t.count / maxCount) * 100),
+        heatColor: t.count >= 8 ? '#1D3557' : t.count >= 4 ? '#2563EB' : '#60A5FA'
+      }));
+  }, [enrichedCadeias]);
+
+  const municipalityRanking = useMemo(() => {
+    if (!filteredCadeias || filteredCadeias.length === 0) return [];
+    const counts = {};
+    const targetId = selectedTerritory ? Number(selectedTerritory.id_territorio) : null;
+
+    filteredCadeias.forEach(c => {
+      if (!targetId || Number(c.id_territorio) === targetId) {
+        const munSede = c.municipio_sede || 'Polo Regional';
+        counts[munSede] = (counts[munSede] || 0) + 1;
+      }
+    });
+
+    const maxCount = Math.max(...Object.values(counts), 1);
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, count], idx) => ({
+        name,
+        count,
+        rank: idx + 1,
+        percentBar: Math.min(100, (count / maxCount) * 100),
+        heatColor: count >= 5 ? '#1D3557' : count >= 2 ? '#2563EB' : '#60A5FA'
+      }));
+  }, [selectedTerritory, filteredCadeias]);
+
+  const topSegment = segmentStats[0];
+
+  const kpis = [
+    { 
+      label: 'Arranjos & IGs Mapeados', 
+      value: loadingStats ? '...' : filteredCadeias.length, 
+      icon: GitPullRequest 
+    },
+    { 
+      label: 'Municípios Beneficiados', 
+      value: loadingStats ? '...' : totalMunicipiosBeneficiados, 
+      icon: CheckCircle2 
+    },
+    { 
+      label: selectedTerritory ? 'Municípios Sede' : 'Territórios com Arranjos', 
+      value: loadingStats ? '...' : (selectedTerritory ? `${totalMunicipiosSede} munic.` : `${territoryRanking.length} de ${territoriosData.length || 27}`), 
+      icon: selectedTerritory ? Building2 : MapPin 
+    },
+    { 
+      label: 'Qtd. de Segmentos Econômicos', 
+      value: loadingStats ? '...' : `${segmentStats.length} Segmentos`, 
+      icon: Layers 
+    },
+    { 
+      label: topSegment ? `Maior Segmento: ${topSegment.name}` : 'Maior Segmento', 
+      value: loadingStats ? '...' : (topSegment ? `${topSegment.percent}%` : '-'), 
+      icon: Sparkles 
+    }
+  ];
+
+  const dynamicTabs = useMemo(() => [
+    {
+      id: 'catalogo',
+      label: 'Catálogo',
+      icon: GitPullRequest,
+      count: filteredCadeias.length,
+      content: (
+        <div className="flex-1 flex flex-col min-h-0 w-full">
+          <div className="flex items-center justify-between mb-3 shrink-0 flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <h3 className="text-[13px] font-extrabold text-[#1D3557]">
+                {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
+              </h3>
+              <span className="bg-[#2563EB]/10 text-[#2563EB] text-[10px] font-black px-2 py-0.5 rounded-full">
+                {filteredCadeias.length}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setSelectedTipo('todos')}
+                className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                  selectedTipo === 'todos' ? 'bg-[#1D3557] text-white' : 'bg-[#F1F5F9] text-[#457B9D] hover:bg-[#E2E8F0]'
+                }`}
+              >
+                Todos
+              </button>
+
+              {availableTipos.map((tipo) => {
+                const conf = getTipoCadeiaConfig(tipo);
+                const isSelected = selectedTipo === tipo;
+                return (
+                  <button
+                    key={tipo}
+                    type="button"
+                    onClick={() => setSelectedTipo(tipo)}
+                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                      isSelected ? 'text-white' : `${conf.bgBadge} hover:opacity-80`
+                    }`}
+                    style={{ backgroundColor: isSelected ? conf.corHex : undefined }}
+                  >
+                    {tipo}
+                  </button>
+                );
+              })}
+
+              {selectedTerritory && (
+                <button
+                  type="button"
+                  onClick={() => handleSelectTerritory(null)}
+                  className="text-[10px] font-bold text-[#1D3557] bg-[#D6EAF8]/40 hover:bg-[#D6EAF8] px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors"
+                >
+                  <MapPin size={11} className="text-[#2563EB]" />
+                  <span>{territoryName}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+            {filteredCadeias.length > 0 ? (
+              filteredCadeias.map((c, idx) => {
+                const IconComp = c.icone;
+                const totalAbrangencia = (c.municipios_cobertos && c.municipios_cobertos.length > 0) ? c.municipios_cobertos.length : 1;
+                const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
+
+                const listaNomes = (c.municipios_cobertos && c.municipios_cobertos.length > 0)
+                  ? c.municipios_cobertos.map(m => m.nome_municipio).join(', ')
+                  : c.municipio_sede;
+
+                return (
+                  <div
+                    key={c.id_cadeia || idx}
+                    ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
+                    onClick={() => {
+                      if (isSelected) {
+                        setSelectedCadeia(null);
+                        setFocusedAsset(null);
+                      } else {
+                        setSelectedCadeia(c);
+                        if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
+                      }
+                    }}
+                    className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border w-full ${
+                      isSelected
+                        ? 'bg-[#EFF6FF] border-[#2563EB] ring-2 ring-[#2563EB]/25 shadow-md'
+                        : 'bg-[#F8FAFC] border-transparent hover:bg-white hover:border-[#D6EAF8] hover:shadow-xs'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3 w-full">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div 
+                          className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform ${
+                            isSelected ? 'scale-110 shadow-sm' : 'group-hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
+                        >
+                          <IconComp size={16} />
                         </div>
 
                         <div className="flex items-center gap-1.5 flex-wrap">
