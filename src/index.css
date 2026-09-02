@@ -122,6 +122,11 @@
   display: none !important;
 }
 
+/* Tile layer suave e neutra para o SideMap (sem marcas d'água) */
+.map-tiles-clean {
+  filter: grayscale(100%) opacity(0.45) brightness(1.06) contrast(0.92);
+}
+
 
 /* CARTOGRAPHIC PATTERNS (INTELIGNCIA TERRITORIAL) */
 .bg-carto-grid {

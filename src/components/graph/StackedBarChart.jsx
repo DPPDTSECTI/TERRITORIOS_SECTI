@@ -7,17 +7,18 @@ const formatTerritoryName = (rawName) => {
 
   const customMap = {
     'Metropolitana de Salvador': 'Metropolitana\nSalvador',
+    'Metropolitano de Salvador': 'Metropolitano\nSalvador',
     'Portal do Sertão': 'Portal do\nSertão',
     'Litoral Sul': 'Litoral\nSul',
     'Litoral Norte e Agreste Baiano': 'Litoral Norte\nAgreste',
     'Sudoeste Baiano': 'Sudoeste\nBaiano',
     'Bacia do Jacuípe': 'Bacia do\nJacuípe',
     'Bacia do Paramirim': 'Bacia do\nParamirim',
-    'Bacia do Rio Grande': 'Bacia Rio\nGrande',
-    'Bacia do Rio Corrente': 'Bacia Rio\nCorrente',
-    'Sertão do São Francisco': 'Sertão São\nFrancisco',
+    'Bacia do Rio Grande': 'Bacia do\nRio Grande',
+    'Bacia do Rio Corrente': 'Bacia do\nRio Corrente',
+    'Sertão do São Francisco': 'Sertão do\nSão Francisco',
     'Sertão Produtivo': 'Sertão\nProdutivo',
-    'Médio Rio de Contas': 'Médio Rio\nContas',
+    'Médio Rio de Contas': 'Médio Rio\nde Contas',
     'Médio Sudoeste da Bahia': 'Médio\nSudoeste',
     'Vale do Jiquiriçá': 'Vale do\nJiquiriçá',
     'Velho Chico': 'Velho\nChico',
@@ -70,15 +71,15 @@ function StackedBarChart({
   }, [visibleData, maxScale]);
 
   return (
-    <div className="bg-surface rounded-xl border border-border shadow-sm transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-6 relative flex flex-col justify-start h-full group cursor-default min-h-0">
+    <div className="bg-white rounded-[24px] border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden">
 
       {/* CABEÇALHO DO CARD */}
-      <div className="flex items-center justify-between gap-2 mb-1.5 shrink-0 pr-8">
+      <div className="flex items-center justify-between gap-2 mb-1 shrink-0">
         <div className="flex flex-col">
-          <h3 className="text-text-primary font-semibold text-[13px] tracking-tight flex items-center gap-2">
+          <h3 className="text-[13.5px] font-extrabold text-[#1D3557] tracking-tight flex items-center gap-2">
             {title}
           </h3>
-          <span className="text-[11px] font-normal text-text-muted">
+          <span className="text-[10px] text-[#457B9D]">
             {subtitle}
           </span>
         </div>
@@ -110,7 +111,7 @@ function StackedBarChart({
             </button>
           </div>
         ) : showTopBadge && data.length > 0 ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/20 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/20 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB]"></span>
             Top {Math.min(limit, data.length)}
           </span>
@@ -118,17 +119,17 @@ function StackedBarChart({
       </div>
 
       {/* LEGENDA HORIZONTAL DAS CATEGORIAS */}
-      <div className="flex items-center flex-wrap gap-x-2.5 gap-y-1 my-1 text-[9px] font-semibold text-text-secondary shrink-0">
+      <div className="flex items-center flex-wrap gap-x-2.5 gap-y-0.5 my-1 text-[9px] font-medium text-[#457B9D] shrink-0 border-b border-[#F1F5F9] pb-1">
         {categories.map((cat) => (
           <div key={cat.key} className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full shrink-0 shadow-xs border border-white" style={{ backgroundColor: cat.colorHex }}></span>
-            <span className="truncate max-w-[110px] text-text-primary font-medium">{cat.shortLabel || cat.label}</span>
+            <span className="w-2 h-2 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.colorHex }}></span>
+            <span className="truncate max-w-[130px] text-[#1D3557] font-semibold">{cat.shortLabel || cat.label}</span>
           </div>
         ))}
       </div>
 
       {/* ÁREA DO GRÁFICO DE BARRAS */}
-      <div className="flex-1 w-full h-full relative min-h-0 pt-4 pb-0.5 px-1">
+      <div className="flex-1 w-full h-full relative min-h-0 pt-2 pb-0.5 px-1">
         <div className="relative w-full h-full">
 
           {/* LINHAS DE GRADE DISCRETAS */}
@@ -280,10 +281,10 @@ function StackedBarChart({
 
                   {/* RÓTULO DO TERRITÓRIO */}
                   <div
-                    className="w-full h-[26px] flex items-start justify-center mt-1.5 px-0.5 text-center leading-[10px] select-none"
+                    className="w-full h-[28px] flex items-start justify-center mt-1 px-0.5 text-center leading-[11px] select-none"
                     title={item.label}
                   >
-                    <span className="text-[8px] sm:text-[8px] font-medium text-text-muted group-hover/bar:text-text-primary transition-colors whitespace-pre-line line-clamp-2 break-words">
+                    <span className="text-[8.5px] font-semibold text-[#457B9D] group-hover/bar:text-[#1D3557] transition-colors whitespace-pre-line break-words">
                       {formattedName}
                     </span>
                   </div>

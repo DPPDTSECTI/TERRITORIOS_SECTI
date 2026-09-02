@@ -176,26 +176,7 @@ export const getRelativeHeatColor = (count, maxCount) => {
 };
 
 function ZoomDependentTileLayer() {
- const map = useMap();
- const [zoom, setZoom] = useState(map.getZoom());
-
- useMapEvents({
- zoomend: () => setZoom(map.getZoom())
- });
-
-  return zoom >= 13 ? (
-    <TileLayer
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      opacity={0.8}
-      maxZoom={19}
-    />
-  ) : (
-    <TileLayer
-      url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-      opacity={0.65}
-      maxZoom={16}
-    />
-  );
+  return null;
 }
 
 function MapClickHandler({ onClearPinned, onClearTerritory }) {
@@ -209,7 +190,7 @@ function MapClickHandler({ onClearPinned, onClearTerritory }) {
  onClearPinned?.();
  if (onClearTerritory) {
  onClearTerritory();
- map.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
+ map.flyTo([-12.8, -41.7], 6.3, { duration: 0.8 });
  }
  }
  });
@@ -231,7 +212,7 @@ function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryR
  map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.8 });
  }
  } else if (prevTerritoryRef.current && !selectedTerritory) {
- map.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
+ map.flyTo([-12.7, -41.7], 5.9, { duration: 0.8 });
  }
  prevTerritoryRef.current = selectedTerritory;
  }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
@@ -1065,15 +1046,40 @@ export default function SideMap({
       };
     }
 
+    if (selectedTerritory) {
+      if (isSelected) {
+        return {
+          fillColor: '#EFF6FF',
+          fillOpacity: 1,
+          color: '#1D4ED8',
+          weight: 2.2,
+          opacity: 1,
+          lineCap: 'round',
+          lineJoin: 'round',
+          className: 'outline-none cursor-pointer'
+        };
+      }
+      return {
+        fillColor: '#F8FAFC',
+        fillOpacity: 0.85,
+        color: '#E2E8F0',
+        weight: 0.8,
+        opacity: 0.9,
+        lineCap: 'round',
+        lineJoin: 'round',
+        className: 'outline-none cursor-pointer hover:opacity-80 transition-opacity'
+      };
+    }
+
     return {
-      fillColor: isHovered ? '#2563EB' : 'transparent',
-      fillOpacity: isHovered ? 0.08 : 0,
-      color: '#FFFFFF',
-      weight: isHovered ? 2.0 : 1.2,
+      fillColor: isHovered ? '#EFF6FF' : '#FFFFFF',
+      fillOpacity: 1,
+      color: isHovered ? '#2563EB' : '#CBD5E1',
+      weight: isHovered ? 1.8 : 0.9,
       opacity: 1,
       lineCap: 'round',
       lineJoin: 'round',
-      className: 'transition-all duration-300 cursor-pointer'
+      className: 'transition-all duration-200 cursor-pointer outline-none'
     };
   };
 
@@ -1200,13 +1206,13 @@ export default function SideMap({
   );
 
   return (
-    <div className="relative w-full h-full min-h-0 flex items-center justify-center bg-[#E8EEF5] rounded-md overflow-hidden select-none z-10 flex-1">
+    <div className="relative w-full h-full min-h-0 flex items-center justify-center bg-[#EBF1F6] bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1">
       <MapContainer
         ref={mapRef}
         preferCanvas={true}
-        center={[-12.5, -41.5]}
-        zoom={6}
-        minZoom={5.5}
+        center={[-12.7, -41.7]}
+        zoom={5.9}
+        minZoom={5.4}
         maxBounds={[
           [-18.5, -47.0],
           [-8.0, -37.0]
@@ -1403,7 +1409,7 @@ export default function SideMap({
           onClick={() => {
             setPinnedAssetId(null);
             setActiveCategoryKeys(new Set(allCategories.map((c) => c.key)));
-            mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8 });
+            mapRef.current?.flyTo([-12.7, -41.7], 5.9, { duration: 0.8 });
             onSelectTerritory(null);
             onSelectIES?.(null);
             onSelectSegmento?.(null);
