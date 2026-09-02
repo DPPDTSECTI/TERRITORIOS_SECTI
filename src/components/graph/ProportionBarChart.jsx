@@ -50,8 +50,8 @@ export default function ProportionBarChart({
                     return (
                         <div key={idx} className="flex flex-col justify-between p-2 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[48px]">
                             <div className="flex justify-between items-center text-[11px] font-bold text-[#1D3557] leading-tight">
-                                <span className="truncate max-w-[160px]" title={item.label}>{item.label}</span>
-                                <div className="flex items-center gap-1.5 text-[10.5px]">
+                                <span className="truncate flex-1 min-w-0 pr-2" title={item.label}>{item.label}</span>
+                                <div className="flex items-center gap-1.5 text-[10.5px] shrink-0">
                                     <span className={`font-black ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
                                         {pos} <span className="text-[9.5px] font-semibold opacity-90">({percentPos}%)</span>
                                     </span>

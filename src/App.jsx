@@ -187,7 +187,7 @@ const PageWrapper = ({ children }) => {
 function AnimatedRoutes() {
  const location = useLocation();
  const isHome = location.pathname === '/';
- const isPrintPage = location.pathname.startsWith('/relatorio');
+ const isPrintPage = location.pathname.startsWith('/relatorio/');
  const hideNavigation = isHome || isPrintPage;
 
  return (
