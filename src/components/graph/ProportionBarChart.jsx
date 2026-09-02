@@ -20,6 +20,8 @@ export default function ProportionBarChart({
     negativeLabel = "Negativo",
     positiveColor = "bg-primary-600",
     negativeColor = "bg-border",
+    positiveTextColor = "text-amber-600",
+    negativeTextColor = "text-blue-600",
     badge = null
 }) {
     return (
@@ -48,12 +50,16 @@ export default function ProportionBarChart({
                     return (
                         <div key={idx} className="flex flex-col gap-1">
                             <div className="flex justify-between items-center text-[11px] font-medium text-text-primary">
-                                <span className="truncate max-w-[140px]" title={item.label}>{item.label}</span>
-                                <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-text-primary">
-                                        {pos} <span className="text-[10px] font-medium text-text-muted">({percentPos}%)</span>
+                                <span className="truncate max-w-[135px]" title={item.label}>{item.label}</span>
+                                <div className="flex items-center gap-1.5 text-[10.5px]">
+                                    <span className={`font-semibold ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
+                                        {pos} <span className="text-[9.5px] font-normal opacity-85">({percentPos}%)</span>
                                     </span>
-                                    <span className="text-text-muted text-[10px] font-normal">de {total}</span>
+                                    <span className="text-neutral-300 font-bold">/</span>
+                                    <span className={`font-semibold ${negativeTextColor}`} title={`${negativeLabel}: ${neg} (${percentNeg}%)`}>
+                                        {neg} <span className="text-[9.5px] font-normal opacity-85">({percentNeg}%)</span>
+                                    </span>
+                                    <span className="text-text-muted text-[10px] font-normal ml-0.5">de {total}</span>
                                 </div>
                             </div>
                             <div className="flex w-full h-2 rounded-full overflow-hidden bg-surface-soft shadow-inner">

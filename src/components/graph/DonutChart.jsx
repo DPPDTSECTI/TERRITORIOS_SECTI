@@ -125,41 +125,73 @@ export default function DonutChart({
   </div>
   </div>
 
-  {/* LADO DIREITO: RANKING */}
-  {children ? (
-  children
-  ) : showTopList && topList.length > 0 ? (
-  <div className="flex flex-col flex-1 pl-5 border-l border-neutral-100 justify-center h-full py-1 min-w-0">
-  <h3 className="text-neutral-400 font-semibold text-[10px] uppercase tracking-wider mb-3 truncate">
-  {listTitle}
-  </h3>
+            {/* LADO DIREITO: RANKING */}
+            {children ? (
+              children
+            ) : showTopList && topList.length > 0 ? (
+              <div className="flex flex-col flex-1 pl-5 border-l border-neutral-100 justify-center h-full py-0.5 min-w-0">
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="text-neutral-400 font-bold text-[10px] uppercase tracking-wider truncate">
+                    {listTitle}
+                  </h3>
+                  <span className="text-[9.5px] font-medium text-neutral-400 uppercase tracking-wider shrink-0">
+                    Qtd
+                  </span>
+                </div>
 
-  <div className="flex flex-col gap-3 w-full">
-  {topList.map((item, index) => {
-  const badgeStyle = index === 0
-    ? 'bg-primary-600 text-white'
-    : index === 1
-    ? 'bg-primary-100 text-primary-700'
-    : 'bg-neutral-100 text-neutral-600';
-  return (
-  <div key={index} className="flex items-center justify-between group min-w-0 gap-2">
-  <div className="flex items-center gap-2.5 min-w-0 flex-1">
-  <div className={`w-5 h-5 rounded-lg ${badgeStyle} flex items-center justify-center font-bold text-[10px] shrink-0 leading-none`}>
-  {item.rank || (index + 1)}
-  </div>
-  <span className="text-[12px] font-medium text-text-secondary group-hover:text-text-primary transition-colors truncate" title={item.name}>
-  {item.sigla || item.name}
-  </span>
-  </div>
-  <span className="font-semibold text-text-primary text-[13px] shrink-0 tabular-nums">
-  {item.count}
-  </span>
-  </div>
-  );
-  })}
-  </div>
-  </div>
-  ) : null}
+                <div className="flex flex-col gap-2 w-full">
+                  {topList.map((item, index) => {
+                    const maxCount = Math.max(...topList.map(t => Number(t.count) || 0), 1);
+                    const percentOfMax = Math.min(100, Math.round(((Number(item.count) || 0) / maxCount) * 100));
+
+                    const badgeStyle = index === 0
+                      ? (badge ? 'bg-amber-500 text-white shadow-2xs font-bold' : 'bg-primary-600 text-white shadow-2xs font-bold')
+                      : index === 1
+                      ? (badge ? 'bg-amber-500/15 text-amber-700 font-bold' : 'bg-primary-100 text-primary-700 font-bold')
+                      : index === 2
+                      ? 'bg-neutral-100 text-neutral-700 font-semibold'
+                      : 'bg-neutral-50 text-neutral-500 font-medium';
+
+                    const barColor = index === 0
+                      ? (badge ? 'bg-amber-500' : 'bg-primary-600')
+                      : index === 1
+                      ? (badge ? 'bg-amber-400/80' : 'bg-primary-500/80')
+                      : index === 2
+                      ? 'bg-primary-400/50'
+                      : 'bg-neutral-300/60';
+
+                    return (
+                      <div 
+                        key={index} 
+                        title={`${item.name || item.sigla}: ${item.count} cursos`}
+                        className="flex items-center gap-2.5 group p-1 -mx-1 rounded-lg hover:bg-surface-soft/80 transition-all min-w-0"
+                      >
+                        <div className={`w-5 h-5 rounded-md ${badgeStyle} flex items-center justify-center text-[10px] shrink-0 leading-none`}>
+                          {item.rank || (index + 1)}
+                        </div>
+
+                        <div className="flex flex-col flex-1 min-w-0 justify-center">
+                          <div className="flex items-center justify-between gap-1.5 leading-tight">
+                            <span className="text-[11.5px] font-semibold text-text-primary group-hover:text-primary-600 transition-colors truncate" title={item.name}>
+                              {item.sigla || item.name}
+                            </span>
+                            <span className="font-bold text-text-primary text-[12px] shrink-0 tabular-nums">
+                              {item.count}
+                            </span>
+                          </div>
+                          <div className="w-full bg-neutral-100 h-1 rounded-full overflow-hidden mt-1">
+                            <div 
+                              className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
+                              style={{ width: `${percentOfMax}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
 
   </div>
   </div>

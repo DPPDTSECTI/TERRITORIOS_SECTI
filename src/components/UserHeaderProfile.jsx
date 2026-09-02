@@ -32,9 +32,6 @@ export default function UserHeaderProfile() {
  <span className="text-[14px] font-medium text-text-primary leading-tight group-hover:text-text-secondary transition-colors">
  Usuario
  </span>
- <span className="text-[12px] font-medium text-text-secondary mt-0.5">
- Admin SECTI
- </span>
  </div>
  </div>
 

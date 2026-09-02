@@ -496,7 +496,9 @@ export default function DashboardPainel() {
         : (selectedTerritory ? `Ativos em ${territoryName}` : 'Ativos de CT&I'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiAtivos : (selectedTerritory ? scopedAtivos.length : kpisGlobais.ativos)),
       percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}%` : null,
-      sublabel: filtroSemiarido ? (selectedTerritory ? `${semiaridoMetrics.pctAtivos}% dos ativos regionais` : `${semiaridoMetrics.pctAtivos}% do total estadual`) : null,
+      tooltip: filtroSemiarido
+        ? `No Semiárido: ${semiaridoMetrics.semiAtivos} (${semiaridoMetrics.pctAtivos}%) | Fora: ${Math.max(0, scopedAtivos.length - semiaridoMetrics.semiAtivos)}`
+        : undefined,
       icon: Settings,
       isIndex: false
     },
@@ -506,7 +508,9 @@ export default function DashboardPainel() {
         : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos de CT&I'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCursos : (selectedTerritory ? scopedCursos.length : kpisGlobais.cursos)),
       percent: filtroSemiarido ? `${semiaridoMetrics.pctCursos}%` : null,
-      sublabel: filtroSemiarido ? (selectedTerritory ? `${semiaridoMetrics.pctCursos}% dos cursos regionais` : `${semiaridoMetrics.pctCursos}% do total estadual`) : null,
+      tooltip: filtroSemiarido
+        ? `No Semiárido: ${semiaridoMetrics.semiCursos} (${semiaridoMetrics.pctCursos}%) | Fora: ${Math.max(0, scopedCursos.length - semiaridoMetrics.semiCursos)}`
+        : undefined,
       icon: GraduationCap,
       isIndex: false
     },
@@ -516,7 +520,7 @@ export default function DashboardPainel() {
         : (selectedTerritory ? `IFDM · ${territoryName}` : 'D. Territorial (IFDM)'),
       value: formattedIfdm,
       percent: null,
-      sublabel: filtroSemiarido ? (selectedTerritory ? 'Território com área semiárida' : 'Média dos territórios semiáridos') : null,
+      tooltip: filtroSemiarido ? 'Média dos territórios com área semiárida' : undefined,
       icon: TrendingUp,
       isIndex: true
     },
@@ -526,7 +530,9 @@ export default function DashboardPainel() {
         : (selectedTerritory ? `Cadeias no Território` : 'Cadeias Produtivas'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCadeias : (selectedTerritory ? (scopedTerritorioRow?.cadeias_produtivas ?? 0) : kpisGlobais.cadeias)),
       percent: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}%` : null,
-      sublabel: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}% do total estadual` : null,
+      tooltip: filtroSemiarido && !selectedTerritory
+        ? `No Semiárido: ${semiaridoMetrics.semiCadeias} (${semiaridoMetrics.pctCadeias}%) | Fora: ${Math.max(0, (kpisGlobais.cadeias || 0) - semiaridoMetrics.semiCadeias)}`
+        : undefined,
       icon: Database,
       isIndex: false
     },
@@ -536,7 +542,9 @@ export default function DashboardPainel() {
         : (selectedTerritory ? 'Municípios no Território' : 'Municípios Semiárido'),
       value: loadingStats ? '...' : (filtroSemiarido ? `${semiaridoMetrics.munSemi}` : (selectedTerritory ? (scopedTerritorioRow ? `${scopedTerritorioRow.qtd_mun_total || (Number(scopedTerritorioRow.qtd_mun_semiarido || 0) + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0))} mun.` : '-') : `${semiaridoStats.semiarido}`)),
       percent: filtroSemiarido ? `${semiaridoMetrics.pctMun}%` : null,
-      sublabel: filtroSemiarido ? (selectedTerritory ? `de ${semiaridoMetrics.munTot} municípios` : `de 417 municípios na Bahia`) : null,
+      tooltip: filtroSemiarido
+        ? `No Semiárido: ${semiaridoMetrics.munSemi} (${semiaridoMetrics.pctMun}%) | Fora: ${semiaridoMetrics.munTot - semiaridoMetrics.munSemi}`
+        : undefined,
       icon: Building2,
       isIndex: false
     }
@@ -579,6 +587,7 @@ export default function DashboardPainel() {
             return (
               <div
                 key={index}
+                title={kpi.tooltip || kpi.label}
                 className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-200 hover:shadow-card-elevated ${
                   isHero
                     ? 'bg-primary-900 text-white shadow-card-elevated'
@@ -665,7 +674,7 @@ export default function DashboardPainel() {
                     <SortableCard id="card-donut">
                       <DonutChart
                         title={filtroSemiarido ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos no Semiárido') : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos por Área')}
-                        subtitle={filtroSemiarido ? `${activeScopedCursos.length} cursos (${semiaridoMetrics.pctCursos}% no Semiárido)` : (selectedTerritory ? `${scopedCursos.length} cursos mapeados na região` : 'Distribuição oficial de cursos no estado')}
+                        subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos mapeados na região` : 'Distribuição oficial de cursos no estado')}
                         totalLabel="Total de Cursos"
                         listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições na Região' : 'Top 5 Instituições com mais cursos')}
                         data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 1, color: '#E2E8F0' }]}
@@ -682,7 +691,7 @@ export default function DashboardPainel() {
                         data={ecosystemData}
                         topList={topTerritoriosOuMunicipiosAtivos}
                         title={filtroSemiarido ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido') : (selectedTerritory ? `Ativos em ${territoryName}` : 'Distribuição dos Ativos de CT&I')}
-                        subtitle={filtroSemiarido ? `${activeScopedAtivos.length} ativos (${semiaridoMetrics.pctAtivos}% no Semiárido)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking')}
+                        subtitle={filtroSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking')}
                         listTitle={filtroSemiarido ? 'Top Municípios do Semiárido' : (selectedTerritory ? 'Top Municípios com Mais Ativos' : 'Top 5 Territórios com Mais Ativos')}
                         defaultCenterLabel="Ativos Mapeados"
                         labelKey="region"
@@ -719,11 +728,13 @@ export default function DashboardPainel() {
                       <ProportionBarChart
                         data={filtroSemiarido ? semiaridoStackedComparisonData : rnpComparisonData}
                         title={filtroSemiarido ? "Distribuição no Semiárido" : "Infraestrutura RNP"}
-                        subtitle={filtroSemiarido ? "Barras empilhadas com percentual no Semiárido" : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
+                        subtitle={filtroSemiarido ? "No Semiárido vs. Fora do Semiárido" : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
                         positiveLabel={filtroSemiarido ? "No Semiárido" : "Com RNP"}
                         negativeLabel={filtroSemiarido ? "Fora do Semiárido" : "Sem RNP"}
                         positiveColor={filtroSemiarido ? "bg-amber-500" : "bg-primary-600"}
                         negativeColor={filtroSemiarido ? "bg-blue-600" : "bg-neutral-200"}
+                        positiveTextColor={filtroSemiarido ? "text-amber-600" : "text-primary-700"}
+                        negativeTextColor={filtroSemiarido ? "text-blue-600" : "text-text-muted"}
                         badge={filtroSemiarido ? "Semiárido" : null}
                       />
                     </SortableCard>
