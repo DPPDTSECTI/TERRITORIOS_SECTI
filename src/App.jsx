@@ -45,6 +45,7 @@ const CursosPage = lazy(() => import('./components/CursosPage'));
 const RelatorioPage = lazy(() => import('./components/RelatorioPage'));
 const RelatorioCursosPage = lazy(() => import('./components/pdf/RelatorioEnsino'));
 const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioAtivos'));
+const RelatorioCadeias = lazy(() => import('./components/pdf/RelatorioCadeias'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -90,7 +91,12 @@ function PageScrollNavigator() {
   useEffect(() => {
     const handleWheel = (e) => {
       // 1. Ignora páginas fora do fluxo de módulos
-      if (location.pathname === '/' || location.pathname === '/admin' || location.pathname === '/sobre' || location.pathname === '/relatorio') return;
+      if (
+        location.pathname === '/' || 
+        location.pathname === '/admin' || 
+        location.pathname === '/sobre' || 
+        location.pathname.startsWith('/relatorio')
+      ) return;
 
       // 2. REGRA ESTRITA: Se o cursor estiver sobre QUALQUER lista interna, tabela, catálogo ou mapa, NUNCA troca de página!
       const target = e.target;
@@ -143,10 +149,9 @@ function PageScrollNavigator() {
 
 // HEADER SUPERIOR FIXO (Badge e Perfil do Usuário)
 function TopFixedBar() {
-  const { kpisGlobais, loadingStats } = useContext(DataContext);
   const location = useLocation();
 
-  if (location.pathname === '/' || location.pathname === '/admin') return null;
+  if (location.pathname === '/' || location.pathname === '/admin' || location.pathname.startsWith('/relatorio/')) return null;
 
   return (
     <div className="fixed top-6 right-6 lg:top-8 lg:right-8 z-[100] flex items-center gap-3 pointer-events-auto select-none print:hidden">
@@ -181,7 +186,8 @@ const PageWrapper = ({ children }) => {
 function AnimatedRoutes() {
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const isPrintPage = location.pathname.startsWith('/relatorio/ativos') || location.pathname.startsWith('/relatorio/cursos');
+  // Oculta barras de navegação em qualquer página de relatório de impressão
+  const isPrintPage = location.pathname.startsWith('/relatorio/');
   const hideNavigation = isHome || isPrintPage;
 
   return (
@@ -220,8 +226,11 @@ function AnimatedRoutes() {
             <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
             <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />
             <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
+            
+            {/* ROTAS DE RELATÓRIO EXECUTIVO / PDF */}
             <Route path="/relatorio/cursos" element={<PageWrapper><RelatorioCursosPage /></PageWrapper>} />
             <Route path="/relatorio/ativos" element={<PageWrapper><RelatorioAtivosPage /></PageWrapper>} />
+            <Route path="/relatorio/cadeias" element={<PageWrapper><RelatorioCadeias /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>
