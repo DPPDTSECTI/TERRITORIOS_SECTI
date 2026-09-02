@@ -28,6 +28,7 @@ function normalizeSimple(str) {
  * @param {String} bottomSubtitle - Subtítulo no modo 'bottom'
  * @param {String} highlightLabel - Nome do território selecionado para destacar no ranking
  * @param {Number} maxScale - Escala máxima de porcentagem (Default: 100)
+ * @param {String} badge - Texto do badge de destaque
  */
 export default function RankingBarChart({
     data = [],
@@ -40,7 +41,8 @@ export default function RankingBarChart({
     mediumSubtitle = "5 na média",
     bottomSubtitle = "Top 5 menores",
     highlightLabel = null,
-    maxScale = 1
+    maxScale = 1,
+    badge = null
 }) {
     const [filterMode, setFilterMode] = useState('top');
 
@@ -129,6 +131,12 @@ export default function RankingBarChart({
                 <div className="flex flex-col min-w-0 pr-2">
                     <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-text-primary font-semibold text-[15px] tracking-tight">{title}</h3>
+                        {badge && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 border border-amber-500/30 shrink-0">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                {badge}
+                            </span>
+                        )}
                         {highlightedItem && (
                             <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-primary-100 text-primary-700 border border-primary-200 shrink-0 inline-flex items-center justify-center leading-none">
                                 {highlightedItem.rank}º no Estado

@@ -15,6 +15,7 @@ import { PieChart, Pie, Sector } from 'recharts';
  * @param {String} labelKey - Chave do objeto para o nome da fatia (Default: 'label')
  * @param {String} valueKey - Chave do objeto para o valor da fatia (Default: 'value')
  * @param {String} colorKey - Chave do objeto para a cor da fatia (Default: 'colorHex')
+ * @param {String} badge - Badge opcional ao lado do título
  */
 export default function CustomPieChart({
  data = [],
@@ -26,6 +27,7 @@ export default function CustomPieChart({
  labelKey = "label",
  valueKey = "value",
  colorKey = "colorHex",
+ badge = null,
  children
 }) {
  const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -57,9 +59,17 @@ export default function CustomPieChart({
   <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-300 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default">
   
   {/* CABEÇALHO */}
-  <div className="flex justify-between items-start mb-4 relative z-10 w-full">
+  <div className="flex justify-between items-start mb-4 relative z-10 w-full pr-8">
   <div className="flex flex-col">
+  <div className="flex items-center gap-2">
   <h2 className="text-text-primary font-semibold text-[16px] tracking-tight">{title}</h2>
+  {badge && (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 border border-amber-500/30 shrink-0">
+      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+      {badge}
+    </span>
+  )}
+  </div>
   <p className="text-neutral-500 text-[11px] font-normal mt-1">{subtitle}</p>
   </div>
   </div>

@@ -3,6 +3,7 @@ import { MapContainer, GeoJSON, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
+import { SunMedium } from 'lucide-react';
 
 // IMPORTANDO A NOSSA NOVA BASE DE IDs
 import { municipiosDB } from '../../data/municipiosDB';
@@ -87,13 +88,14 @@ const buildMunicipioTerritoryMap = () => {
 
 // ================= MAPA PRINCIPAL =================
 export default function PtiMap({
- territoriosData = [],
- territoriesDynamicStats = {},
- searchTerm = '',
- filtroSemiarido = false,
- selectedTerritory = null,
- onSelectTerritory = () => { },
- semiaridoMunicipios = []
+	territoriosData = [],
+	territoriesDynamicStats = {},
+	searchTerm = '',
+	filtroSemiarido = false,
+	selectedTerritory = null,
+	onSelectTerritory = () => { },
+	semiaridoMunicipios = [],
+	onToggleSemiarido = () => { }
 }) {
  const [geoJsonData, setGeoJsonData] = useState(null);
  const [loading, setLoading] = useState(true);
@@ -150,38 +152,55 @@ export default function PtiMap({
  }, [municipioTerritoryMap]);
 
  // ================= ESTILO DOS MUNICÍPIOS =================
- const styleFeature = (feature) => {
- const idTer = feature.properties.id_territorio;
- if (!idTer) return { fillOpacity: 0.1, weight: 1, color: '#f87171', fillColor: '#fee2e2' }; // Destaca buracos em vermelho claro
+	const styleFeature = (feature) => {
+		const idTer = feature.properties.id_territorio;
+		if (!idTer) return { fillOpacity: 0.1, weight: 1, color: '#f87171', fillColor: '#fee2e2' };
 
- const dStats = territoriesDynamicStats[idTer];
- const matchesFilters = dStats ? dStats.matchesFilters : true;
- const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
- const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome_municipio_oficial));
- const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
+		const dStats = territoriesDynamicStats[idTer];
+		const matchesFilters = dStats ? dStats.matchesFilters : true;
+		const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
+		const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome_municipio_oficial));
+		const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
 
- let opacity = 0.85;
- let fillColor = territoryColorMap[idTer] || '#D6EAF8';
- let weight = 0.8;
- let color = '#FFFFFF';
+		let opacity = 0.85;
+		let fillColor = territoryColorMap[idTer] || '#D6EAF8';
+		let weight = 0.8;
+		let color = '#FFFFFF';
 
- if (blockClickAndColor && !selectedTerritory) {
- fillColor = '#E2E8F0';
- opacity = 0.50;
- } else if (selectedTerritory) {
- if (isSelectedMap) {
- opacity = 0.95;
- weight = 1.2;
- if (filtroSemiarido && isMunSemi) fillColor = '#F59E0B';
- } else {
- fillColor = '#E2E8F0';
- opacity = 0.35;
- weight = 0.6;
- }
- }
+		if (filtroSemiarido && !selectedTerritory) {
+			if (isMunSemi) {
+				fillColor = '#F59E0B';
+				opacity = 0.92;
+				weight = 1.0;
+				color = '#FFFFFF';
+			} else {
+				fillColor = '#E2E8F0';
+				opacity = 0.35;
+				weight = 0.6;
+				color = '#CBD5E1';
+			}
+		} else if (blockClickAndColor && !selectedTerritory) {
+			fillColor = '#E2E8F0';
+			opacity = 0.50;
+		} else if (selectedTerritory) {
+			if (isSelectedMap) {
+				opacity = 0.95;
+				weight = 1.2;
+				if (filtroSemiarido && isMunSemi) {
+					fillColor = '#F59E0B';
+				} else if (filtroSemiarido && !isMunSemi) {
+					fillColor = '#E2E8F0';
+					opacity = 0.40;
+				}
+			} else {
+				fillColor = '#E2E8F0';
+				opacity = 0.35;
+				weight = 0.6;
+			}
+		}
 
- return { fillColor, weight, opacity: 1, color, fillOpacity: opacity, className: 'outline-none' };
- };
+		return { fillColor, weight, opacity: 1, color, fillOpacity: opacity, className: 'outline-none' };
+	};
 
  // ================= CONTROLE DE HOVER =================
  const onEachFeature = (feature, layer) => {
@@ -397,9 +416,33 @@ export default function PtiMap({
  </button>
  </div>
 
+ {/* ================= BOTÃO SEMIÁRIDO (CANTO SUPERIOR DIREITO) ================= */}
+ <div className="absolute top-4 right-4 z-[400] flex items-center">
+ <button
+ type="button"
+ onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
+ className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl text-[12px] font-semibold shadow-card transition-all duration-300 border cursor-pointer select-none backdrop-blur-xl ${
+ filtroSemiarido
+ ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-400 shadow-amber-500/25 ring-2 ring-amber-400/30'
+ : 'bg-white/95 hover:bg-white text-text-primary border-border/80 hover:border-amber-400/60 shadow-xs'
+ }`}
+ title={filtroSemiarido ? 'Desativar cruzamento com o Semiárido' : 'Cruzar dados e destacar os 278 municípios do Semiárido'}
+ >
+ <SunMedium size={14} className={filtroSemiarido ? 'text-white' : 'text-amber-500'} />
+ <span className="tracking-tight">Semiárido</span>
+ <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-md transition-colors leading-none ${
+ filtroSemiarido
+ ? 'bg-white/20 text-white'
+ : 'bg-amber-50 text-amber-700 border border-amber-200'
+ }`}>
+ 278 mun.
+ </span>
+ </button>
+ </div>
+
  {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
  {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
- <div className={`absolute top-4 ${isTerritoryOnRight ? 'left-4' : 'right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-xl border bg-white/95 backdrop-blur-xl border-white shadow-card-soft transition-all duration-300 animate-soft-fade pointer-events-auto`}>
+ <div className={`absolute ${isTerritoryOnRight ? 'top-4 left-4' : 'top-[58px] right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-xl border bg-white/95 backdrop-blur-xl border-white shadow-card-soft transition-all duration-300 animate-soft-fade pointer-events-auto`}>
  <div className="flex justify-between items-center mb-3 border-b border-border pb-3">
  <h4 className="text-[11px] font-medium text-primary-950 uppercase leading-tight">
  {selectedTerritory.nome_territorio || selectedTerritory.territorio}

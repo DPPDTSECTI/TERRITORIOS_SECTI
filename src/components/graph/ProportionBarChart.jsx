@@ -19,12 +19,21 @@ export default function ProportionBarChart({
     positiveLabel = "Positivo",
     negativeLabel = "Negativo",
     positiveColor = "bg-primary-600",
-    negativeColor = "bg-border"
+    negativeColor = "bg-border",
+    badge = null
 }) {
     return (
         <div className="flex-1 bg-surface rounded-xl border border-border shadow-sm p-6 relative flex flex-col justify-between cursor-default h-full">
-            <div className="mb-3">
-                <h2 className="text-text-primary font-semibold text-[14px] tracking-tight">{title}</h2>
+            <div className="mb-3 pr-8">
+                <div className="flex items-center gap-2">
+                    <h2 className="text-text-primary font-semibold text-[14px] tracking-tight">{title}</h2>
+                    {badge && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 border border-amber-500/30 shrink-0">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            {badge}
+                        </span>
+                    )}
+                </div>
                 <p className="text-text-muted text-[11px] font-normal mt-0.5">{subtitle}</p>
             </div>
 
@@ -38,16 +47,18 @@ export default function ProportionBarChart({
 
                     return (
                         <div key={idx} className="flex flex-col gap-1">
-                            <div className="flex justify-between items-center text-[10px] font-medium text-text-primary">
-                                <span className="truncate max-w-[130px]" title={item.label}>{item.label}</span>
-                                <div className="flex items-center gap-1.5">
-                                    <span className="text-primary-600 font-semibold">{pos}</span>
-                                    <span className="text-text-muted font-normal">/ {total}</span>
+                            <div className="flex justify-between items-center text-[11px] font-medium text-text-primary">
+                                <span className="truncate max-w-[140px]" title={item.label}>{item.label}</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-text-primary">
+                                        {pos} <span className="text-[10px] font-medium text-text-muted">({percentPos}%)</span>
+                                    </span>
+                                    <span className="text-text-muted text-[10px] font-normal">de {total}</span>
                                 </div>
                             </div>
-                            <div className="flex w-full h-1.5 rounded-full overflow-hidden bg-surface-soft">
-                                <div className={`${positiveColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentPos}%` }} title={`${positiveLabel}: ${pos} (${percentPos}%)`} />
-                                <div className={`${negativeColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentNeg}%` }} title={`${negativeLabel}: ${neg} (${percentNeg}%)`} />
+                            <div className="flex w-full h-2 rounded-full overflow-hidden bg-surface-soft shadow-inner">
+                                <div className={`${positiveColor} h-full transition-all duration-700 ease-out rounded-l-full`} style={{ width: `${percentPos}%` }} title={`${positiveLabel}: ${pos} (${percentPos}%)`} />
+                                <div className={`${negativeColor} h-full transition-all duration-700 ease-out rounded-r-full`} style={{ width: `${percentNeg}%` }} title={`${negativeLabel}: ${neg} (${percentNeg}%)`} />
                             </div>
                         </div>
                     );
@@ -55,14 +66,14 @@ export default function ProportionBarChart({
             </div>
 
             {/* LEGENDA */}
-            <div className="flex items-center gap-4 mt-2 pt-2 border-t border-border/40">
+            <div className="flex items-center justify-between gap-4 mt-2 pt-2 border-t border-border/40">
                 <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${positiveColor}`}></span>
-                    <span className="text-[9px] font-semibold text-text-muted uppercase">{positiveLabel}</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${positiveColor} shadow-xs`}></span>
+                    <span className="text-[10px] font-semibold text-text-secondary uppercase">{positiveLabel}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${negativeColor}`}></span>
-                    <span className="text-[9px] font-semibold text-text-muted uppercase">{negativeLabel}</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${negativeColor}`}></span>
+                    <span className="text-[10px] font-semibold text-text-muted uppercase">{negativeLabel}</span>
                 </div>
             </div>
         </div>
