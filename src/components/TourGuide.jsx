@@ -167,7 +167,7 @@ export default function TourGuide() {
     {
       target: '.tour-nav-cursos',
       title: 'Módulo de Cursos',
-      content: 'Focado em capital humano. Veja a distribuição educacional (graduação/pós), com destaque para as áreas STEM (Ciência, Tecnologia, Engenharia e Matemática) e a força da educação à distância (EaD).',
+      content: 'Aqui você encontra informações sobre os cursos superiores oferecidos na região, bem como as instituições responsáveis por eles.',
       placement: 'right',
       spotlightPadding: 2,
       blockTargetInteraction: true,

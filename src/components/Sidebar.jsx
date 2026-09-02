@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, LayoutDashboard, FileText, Info, Database, GraduationCap, GitPullRequest } from 'lucide-react';
+import { Home, LayoutDashboard, FileText, Info, Database, GraduationCap, GitPullRequest, Map } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Sidebar({ username, navOnly = false }) {
@@ -35,8 +35,8 @@ export default function Sidebar({ username, navOnly = false }) {
          {/* ================= TOPO: LOGO ================= */}
          <div className="w-full h-[40px] flex items-center mb-4 cursor-pointer group shrink-0">
             <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
-               <div className="w-9 h-9 rounded-full bg-primary-900 text-white shadow-sm font-medium text-[13px] tracking-tight">
-                  BA
+               <div className="w-9 h-9 rounded-full bg-primary-900 text-white shadow-sm flex items-center justify-center">
+                  <Map className="w-5 h-5" />
                </div>
             </div>
 
@@ -66,8 +66,8 @@ export default function Sidebar({ username, navOnly = false }) {
                      <Link
                         to={item.path}
                         className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.path === '/sobre' ? 'tour-nav-sobre ' : ''}${isActive
-                              ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
-                              : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
+                           ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
+                           : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                            }`}
                         title={isCollapsed ? item.label : undefined}
                      >
@@ -102,8 +102,8 @@ export default function Sidebar({ username, navOnly = false }) {
                            <Link
                               to={item.path}
                               className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.tourClass ? item.tourClass + ' ' : ''}${isActive
-                                    ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
-                                    : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
+                                 ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
+                                 : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                                  }`}
                               title={isCollapsed ? item.label : undefined}
                            >
@@ -140,8 +140,8 @@ export default function Sidebar({ username, navOnly = false }) {
                            <Link
                               to={item.path}
                               className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${isActive
-                                    ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
-                                    : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
+                                 ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
+                                 : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                                  }`}
                               title={isCollapsed ? item.label : undefined}
                            >

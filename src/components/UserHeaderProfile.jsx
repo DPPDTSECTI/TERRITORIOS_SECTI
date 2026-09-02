@@ -22,7 +22,7 @@ export default function UserHeaderProfile() {
  <div className="flex items-center gap-3 cursor-pointer group">
  <div className="relative">
  <img
- src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
+ src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSEu8mb2FMhQAmdhOwKNR0jYJPWugKBA61474wGmqc8Q&s=10"
  alt="Avatar do Usuário"
  className="w-10 h-10 rounded-full object-cover shadow-sm  transition-transform"
  />
@@ -51,20 +51,6 @@ export default function UserHeaderProfile() {
   >
   <HelpCircle size={16} strokeWidth={2} />
   </button>
- <button
- type="button"
- title="Configurações"
- className="w-9 h-9 rounded-full bg-white text-text-secondary hover:text-text-primary hover:bg-surface-soft flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm"
- >
- <Settings size={16} strokeWidth={2} />
- </button>
- <button
- type="button"
- title="Sair da Sessão"
- className="w-9 h-9 rounded-full bg-white text-text-secondary hover:text-danger-600 hover:bg-danger-50 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm"
- >
- <LogOut size={16} strokeWidth={2} />
- </button>
  </div>
  </div>
  </div>
