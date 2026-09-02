@@ -200,7 +200,7 @@ function AnimatedRoutes() {
  className="h-screen sticky top-0 z-50 flex-shrink-0 print:hidden"
  >
  <Sidebar 
- username="Gestor BA" 
+username="PTI Bahia" 
  navOnly={location.pathname === '/sobre'} 
  />
  </motion.div>

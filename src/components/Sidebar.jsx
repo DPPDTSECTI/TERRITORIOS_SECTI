@@ -35,14 +35,12 @@ export default function Sidebar({ username, navOnly = false }) {
          {/* ================= TOPO: LOGO ================= */}
          <div className="w-full h-[40px] flex items-center mb-4 cursor-pointer group shrink-0">
             <div className="w-[40px] h-[40px] flex items-center justify-center shrink-0">
-               <div className="w-9 h-9 rounded-full bg-primary-900 text-white shadow-sm flex items-center justify-center">
-                  <Map className="w-5 h-5" />
-               </div>
+               <img src="/img/favicon-96x96.webp" alt="Favicon Mapa" className="w-full h-full object-contain" />
             </div>
 
             <span className={`text-[16px] font-bold text-text-primary tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pl-2 ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0'
                }`}>
-               {username ? username : "Gestor BA"}
+               {username ? username : "PTI Bahia"}
             </span>
          </div>
 
