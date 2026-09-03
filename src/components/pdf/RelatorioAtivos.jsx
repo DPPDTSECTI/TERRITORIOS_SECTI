@@ -18,6 +18,7 @@ import StackedBarChart from '../graph/StackedBarChart';
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { getDynamicAssetTypeConfig } from '../../constants/assetTypes';
+import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 
 const PALETTE = ['#2563EB', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#1D3557'];
 
@@ -104,6 +105,9 @@ export default function RelatorioAtivosPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const reportMode = searchParams.get('modo') || 'normal';
+  const isSemiarido = reportMode === 'semiarido';
+
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const [focusedAsset, setFocusedAsset] = useState(null);
 
@@ -166,6 +170,7 @@ export default function RelatorioAtivosPage() {
       const cleanTerr = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
 
       const rawSemiarido = a.semiarido ?? a.semi_arido ?? a.is_semiarido ?? munRow?.semiarido;
+      const isSemi = checkSemiaridoValue(rawSemiarido) || isMunicipioSemiarido(a.municipio);
 
       return {
         id: a.id_ativo || idx + 1,
@@ -187,26 +192,36 @@ export default function RelatorioAtivosPage() {
         urlReferencia: a.url_referencia || '',
         tituloReferencia: a.titulo_referencia || '',
         rnp: a.rnp,
-        semiarido: checkSemiaridoValue(rawSemiarido)
+        semiarido: isSemi
       };
     });
   }, [ativosData]);
 
-  // 1. Filtragem dos Ativos pelo Território Selecionado
+  const totalAtivosBahia = useMemo(() => ativosProcessados.length, [ativosProcessados]);
+
+  // 1. Filtragem dos Ativos pelo Território Selecionado e Modo
   const filteredAtivos = useMemo(() => {
     if (!ativosProcessados || ativosProcessados.length === 0) return [];
-    if (!selectedTerritory) return ativosProcessados;
+    let list = ativosProcessados;
 
-    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
-    const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+    if (selectedTerritory) {
+      const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
 
-    return ativosProcessados.filter(a => {
-      if (tid && a.id_territorio && String(a.id_territorio) === tid) return true;
-      const normTerr = normalizeName(a.territorio || '');
-      if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
-      return false;
-    });
-  }, [ativosProcessados, selectedTerritory]);
+      list = list.filter(a => {
+        if (tid && a.id_territorio && String(a.id_territorio) === tid) return true;
+        const normTerr = normalizeName(a.territorio || '');
+        if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+        return false;
+      });
+    }
+
+    if (isSemiarido) {
+      list = list.filter(a => a.semiarido === true || isMunicipioSemiarido(a.municipio));
+    }
+
+    return list;
+  }, [ativosProcessados, selectedTerritory, isSemiarido]);
 
   // 2. Indicadores Executivos (KPIs)
   const statsKpis = useMemo(() => {
@@ -234,16 +249,25 @@ export default function RelatorioAtivosPage() {
       }
     });
 
+    const pctBahia = totalAtivosBahia > 0 ? ((total / totalAtivosBahia) * 100).toFixed(1) : '0.0';
+    const totalMunUniverso = isSemiarido ? SEMIARIDO_TOTAL_MUNICIPIOS : (selectedTerritory ? munSet.size : BAHIA_TOTAL_MUNICIPIOS);
+    const taxaMun = totalMunUniverso > 0 ? ((munSet.size / totalMunUniverso) * 100).toFixed(1) : '0.0';
+    const rnpTaxa = total > 0 ? ((rnpTotal / total) * 100).toFixed(1) : '0.0';
+
     return {
       total,
+      pctBahia,
       semiaridoCount,
       municipiosAtendidos: munSet.size,
+      totalMunUniverso,
+      taxaMun,
       municipiosSemiCount: munSemiSet.size,
       territoriosAtendidos: terrSet.size,
       rnpTotal,
+      rnpTaxa,
       rnpSemi
     };
-  }, [filteredAtivos]);
+  }, [filteredAtivos, isSemiarido, selectedTerritory, totalAtivosBahia]);
 
   // 3. Top 10 Entidades por Sigla (Duas Bandas: 2 colunas x 5 linhas)
   const topSiglasData = useMemo(() => {
@@ -405,7 +429,14 @@ export default function RelatorioAtivosPage() {
               Relatório Executivo de Ativos de CT&I
             </h1>
 
-            {selectedTerritory && (
+            {isSemiarido ? (
+              <div className="flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+                <span className="text-[10.5px] font-bold text-[#92400E]">
+                  Recorte Oficial: <strong>Semiárido Baiano (278 Municípios)</strong>
+                </span>
+              </div>
+            ) : selectedTerritory ? (
               <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
                 <MapPin size={11} className="text-[#0284C7]" />
                 <span className="text-[10.5px] font-bold text-[#0369A1]">
@@ -420,10 +451,19 @@ export default function RelatorioAtivosPage() {
                   <X size={11} />
                 </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                <span className="text-[10.5px] font-bold text-[#0369A1]">
+                  Cenário Geral: <strong className="text-[#0C4A6E]">Estado da Bahia (417 Municípios)</strong>
+                </span>
+              </div>
             )}
           </div>
           <p className="text-xs text-[#457B9D] font-medium mt-1">
-            Diagnóstico territorial e mapeamento estrutural dos ativos de ciência, tecnologia e inovação na Bahia
+            {isSemiarido
+              ? 'Diagnóstico territorial e mapeamento estrutural dos ativos de CT&I nos 278 municípios do Semiárido'
+              : 'Diagnóstico territorial e mapeamento estrutural dos ativos de ciência, tecnologia e inovação na Bahia'}
           </p>
         </div>
       </div>
@@ -444,8 +484,15 @@ export default function RelatorioAtivosPage() {
               <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsKpis.total}
               </span>
-              <span className="text-[9.5px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {statsKpis.semiaridoCount} no semiárido
+              <span 
+                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`} 
+                title={`${statsKpis.total} de ${totalAtivosBahia} ativos estaduais`}
+              >
+                {isSemiarido ? `${statsKpis.pctBahia}% da Bahia` : `${statsKpis.rnpTotal} com RNP (${statsKpis.rnpTaxa}%)`}
               </span>
             </div>
           </div>
@@ -463,10 +510,16 @@ export default function RelatorioAtivosPage() {
                 <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : statsKpis.municipiosAtendidos}
                 </span>
-                <span className="text-[11px] font-bold text-[#64748B]">munic.</span>
+                <span className="text-[11px] font-bold text-[#64748B]">/ {statsKpis.totalMunUniverso}</span>
               </div>
-              <span className="text-[9.5px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {statsKpis.municipiosSemiCount} no semiárido
+              <span 
+                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+              >
+                {isSemiarido ? `${statsKpis.taxaMun}% de cobertura` : `${statsKpis.taxaMun}% de cobertura estadual`}
               </span>
             </div>
           </div>
@@ -483,8 +536,14 @@ export default function RelatorioAtivosPage() {
               <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsKpis.rnpTotal}
               </span>
-              <span className="text-[9.5px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {statsKpis.rnpSemi} no semiárido
+              <span 
+                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+              >
+                {isSemiarido ? `${statsKpis.rnpTaxa}% conectados` : 'Backbone de Pesquisa'}
               </span>
             </div>
           </div>
@@ -502,10 +561,10 @@ export default function RelatorioAtivosPage() {
                 <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : (selectedTerritory ? '1' : statsKpis.territoriosAtendidos)}
                 </span>
-                <span className="text-[11px] font-bold text-[#64748B]">de 27</span>
+                <span className="text-[11px] font-bold text-[#64748B]">territórios</span>
               </div>
               <span className="text-[9.5px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {selectedTerritory ? 'Território' : 'cobertura estadual'}
+                {isSemiarido ? 'presença Semiárido' : (selectedTerritory ? 'Território' : '100% dos Territórios')}
               </span>
             </div>
           </div>
@@ -524,14 +583,17 @@ export default function RelatorioAtivosPage() {
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div className="min-w-0 flex-1 pr-2">
                 <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <ListOrdered size={15} className="text-[#2563EB] shrink-0" />
+                  <ListOrdered size={15} className={isSemiarido ? "text-[#D97706] shrink-0" : "text-[#2563EB] shrink-0"} />
                   Top 10 Entidades por Sigla
                 </h3>
                 <p className="text-[10px] text-[#457B9D]">Volume de infraestruturas instaladas</p>
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
-                <span className="text-[9px] font-bold text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-md border border-[#E2E8F0]">Total</span>
-                <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2 py-0.5 rounded-md border border-[#F59E0B]/20">Semiárido</span>
+                {isSemiarido ? (
+                  <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2 py-0.5 rounded-md border border-[#F59E0B]/20">No Semiárido</span>
+                ) : (
+                  <span className="text-[9px] font-bold text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded-md border border-[#2563EB]/20">Instalações</span>
+                )}
               </div>
             </div>
 
@@ -560,12 +622,15 @@ export default function RelatorioAtivosPage() {
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0 font-extrabold">
-                    <span className="text-[#1D3557] text-[10.5px] font-bold bg-white px-1.5 py-0.5 rounded-md border border-[#E2E8F0] min-w-[26px] text-center shadow-2xs">
-                      {item.total}
-                    </span>
-                    <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-1.5 py-0.5 rounded-md text-[10px] min-w-[24px] text-center font-bold">
-                      {item.semiarido}
-                    </span>
+                    {isSemiarido ? (
+                      <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-2 py-0.5 rounded-md text-[10.5px] min-w-[28px] text-center font-bold">
+                        {item.total}
+                      </span>
+                    ) : (
+                      <span className="text-[#1D3557] text-[10.5px] font-bold bg-white px-2 py-0.5 rounded-md border border-[#E2E8F0] min-w-[28px] text-center shadow-2xs">
+                        {item.total}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -577,31 +642,38 @@ export default function RelatorioAtivosPage() {
             <StackedBarChart
               data={concentracaoTipologiaStackedData}
               categories={tipologiaCategories}
-              title={selectedTerritory ? `Municípios em ${territoryName}` : 'Concentração por Território'}
-              subtitle="Top 4 categorias + Outros"
+              title={isSemiarido ? 'Concentração no Semiárido' : (selectedTerritory ? `Municípios em ${territoryName}` : 'Concentração por Território')}
+              subtitle={isSemiarido ? 'Principais territórios do Semiárido' : 'Top 4 categorias + Outros'}
               allowToggleView={false}
               showTotalLabel={true}
             />
           </div>
 
-          {/* GRÁFICO 3: DISTRIBUIÇÃO ESTADUAL POR TIPOLOGIA (SEM RETICÊNCIAS) */}
+          {/* GRÁFICO 3: DISTRIBUIÇÃO POR TIPOLOGIA */}
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div>
                 <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <BarChart2 size={15} className="text-[#2563EB]" />
-                  {selectedTerritory ? `Tipologias em ${territoryName}` : 'Distribuição Estadual por Tipologia'}
+                  <BarChart2 size={15} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                  {isSemiarido
+                    ? 'Distribuição por Tipologia no Semiárido'
+                    : (selectedTerritory ? `Tipologias em ${territoryName}` : 'Distribuição Estadual por Tipologia')}
                 </h3>
-                <p className="text-[10px] text-[#457B9D]">Semiárido vs Outras Regiões (Top 6 Categorias)</p>
+                <p className="text-[10px] text-[#457B9D]">
+                  {isSemiarido ? 'Top 6 Categorias instaladas no Semiárido' : 'Top 6 Categorias de Ativos de CT&I na Bahia'}
+                </p>
               </div>
 
               <div className="flex items-center gap-2.5 text-[9px] font-black">
-                <span className="flex items-center gap-1 text-[#B45309]">
-                  <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Semiárido
-                </span>
-                <span className="flex items-center gap-1 text-[#2563EB]">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Outras Regiões
-                </span>
+                {isSemiarido ? (
+                  <span className="flex items-center gap-1 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Recorte Semiárido
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Volume Estadual
+                  </span>
+                )}
               </div>
             </div>
 
@@ -618,60 +690,71 @@ export default function RelatorioAtivosPage() {
                     </span>
                   </div>
 
-                  {/* BARRA EMPILHADA */}
+                  {/* BARRA */}
                   <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
-                    {cat.semi > 0 && (
-                      <div 
-                        className="h-full bg-[#F59E0B] transition-all duration-500"
-                        style={{ width: `${(cat.semi / cat.total) * 100}%` }}
-                        title={`Semiárido: ${cat.semi}`}
-                      />
-                    )}
-                    {cat.fora > 0 && (
-                      <div 
-                        className="h-full bg-[#2563EB] transition-all duration-500"
-                        style={{ width: `${(cat.fora / cat.total) * 100}%` }}
-                        title={`Outras Regiões: ${cat.fora}`}
-                      />
-                    )}
+                    <div 
+                      className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
+                      style={{ width: `${cat.pctTotal}%` }}
+                      title={`${cat.name}: ${cat.total} (${cat.pctTotal}%)`}
+                    />
                   </div>
 
                   <div className="flex items-center justify-between text-[8.5px] font-bold">
-                    <span className="text-[#B45309]">
-                      Semi: <strong>{cat.semi}</strong> ({cat.pctSemi}%)
-                    </span>
-                    <span className="text-[#2563EB]">
-                      Fora: <strong>{cat.fora}</strong> ({cat.pctFora}%)
-                    </span>
+                    {isSemiarido ? (
+                      <>
+                        <span className="text-[#B45309]">
+                          No Semiárido: <strong>{cat.total}</strong>
+                        </span>
+                        <span className="text-[#64748B]">
+                          <strong>{cat.pctTotal}%</strong> do recorte
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-[#2563EB]">
+                          Ativos no Estado: <strong>{cat.total}</strong>
+                        </span>
+                        <span className="text-[#64748B]">
+                          <strong>{cat.pctTotal}%</strong> do total
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* GRÁFICO 4: COBERTURA DE REDE RNP (EMPILHADO COM COMPARAÇÃO AO SEMIÁRIDO) */}
+          {/* GRÁFICO 4: COBERTURA DE REDE RNP */}
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div>
                 <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <Wifi size={15} className="text-[#2563EB]" />
-                  Cobertura de Rede RNP
+                  <Wifi size={15} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                  {isSemiarido ? 'Cobertura de Rede RNP no Semiárido' : 'Cobertura de Rede RNP'}
                 </h3>
-                <p className="text-[10px] text-[#457B9D]">Campi e ICTs conectados ao backbone de pesquisa</p>
+                <p className="text-[10px] text-[#457B9D]">
+                  {isSemiarido
+                    ? 'Campi e ICTs do Semiárido conectados ao backbone'
+                    : 'Campi e ICTs conectados ao backbone de pesquisa na Bahia'}
+                </p>
               </div>
 
-              {/* LEGENDA DO EMPILHAMENTO */}
+              {/* LEGENDA */}
               <div className="flex items-center gap-2 text-[9px] font-black">
-                <span className="flex items-center gap-1 text-[#B45309]">
-                  <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Semiárido
-                </span>
-                <span className="flex items-center gap-1 text-[#2563EB]">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Outras Regiões
-                </span>
+                {isSemiarido ? (
+                  <span className="flex items-center gap-1 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Conectados no Semiárido
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Conectados à RNP
+                  </span>
+                )}
               </div>
             </div>
 
-            {/* LISTA PADRONIZADA: NOME + VALOR/PERCENTUAL + BARRA (SEM CORTES, TODAS AS 5 LINHAS VISÍVEIS) */}
+            {/* LISTA PADRONIZADA: NOME + VALOR/PERCENTUAL + BARRA */}
             <div className="flex-1 flex flex-col justify-between gap-1.5 min-h-0 py-0.5">
               {rnpStackedData.map((cat, idx) => (
                 <div key={idx} className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[43px]">
@@ -683,26 +766,19 @@ export default function RelatorioAtivosPage() {
                       <span className="text-[#1D3557] font-black">
                         {cat.comRnpTotal} <span className="text-[#64748B] font-semibold text-[9.5px]">de {cat.total}</span>
                       </span>
-                      <span className="text-[#2563EB] font-black">({cat.pctTotal}%)</span>
+                      <span className={isSemiarido ? "text-[#D97706] font-black" : "text-[#2563EB] font-black"}>
+                        ({cat.pctTotal}%)
+                      </span>
                     </div>
                   </div>
 
-                  {/* BARRA EMPILHADA */}
+                  {/* BARRA DE ADESÃO À RNP */}
                   <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs">
-                    {cat.semi > 0 && (
-                      <div 
-                        className="h-full bg-[#F59E0B] transition-all duration-500"
-                        style={{ width: `${cat.pctSemi}%` }}
-                        title={`Semiárido com RNP: ${cat.semi}`}
-                      />
-                    )}
-                    {cat.fora > 0 && (
-                      <div 
-                        className="h-full bg-[#2563EB] transition-all duration-500"
-                        style={{ width: `${cat.pctFora}%` }}
-                        title={`Outras Regiões com RNP: ${cat.fora}`}
-                      />
-                    )}
+                    <div 
+                      className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
+                      style={{ width: `${cat.pctTotal}%` }}
+                      title={`${cat.name}: ${cat.comRnpTotal} de ${cat.total} (${cat.pctTotal}%)`}
+                    />
                   </div>
                 </div>
               ))}

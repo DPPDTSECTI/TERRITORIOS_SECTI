@@ -95,7 +95,7 @@ export default function PtiMap({
 	selectedTerritory = null,
 	onSelectTerritory = () => { },
 	semiaridoMunicipios = [],
-	onToggleSemiarido = () => { }
+	onToggleSemiarido = null
 }) {
  const [geoJsonData, setGeoJsonData] = useState(null);
  const [loading, setLoading] = useState(true);
@@ -417,7 +417,8 @@ export default function PtiMap({
  </button>
  </div>
 
- {/* ================= BOTÃO SEMIÁRIDO (CANTO SUPERIOR DIREITO) ================= */}
+ {/* ================= BOTÃO SEMIÁRIDO (CANTO SUPERIOR DIREITO - APENAS SE HOUVER HANDLER) ================= */}
+ {Boolean(onToggleSemiarido) && (
  <div className="absolute top-4 right-4 z-[400] flex items-center">
  <button
  type="button"
@@ -440,6 +441,7 @@ export default function PtiMap({
  </span>
  </button>
  </div>
+ )}
 
  {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
  {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
 import PtiMap from '../maps/PtiMap';
+import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 
 export default function RelatorioSintese() {
   const {
@@ -30,6 +31,9 @@ export default function RelatorioSintese() {
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const reportMode = searchParams.get('modo') || 'normal';
+  const isSemiarido = reportMode === 'semiarido';
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
 
@@ -63,26 +67,54 @@ export default function RelatorioSintese() {
     }
   }, [searchParams, loadingStats]);
 
-  // Filtragem dos dados conforme escopo
+  // Filtragem dos dados conforme escopo e modo
   const scopedAtivos = useMemo(() => {
-    if (!selectedTerritoryId) return ativosData;
-    return ativosData.filter(a => String(a.id_territorio) === String(selectedTerritoryId));
-  }, [ativosData, selectedTerritoryId]);
+    let list = ativosData;
+    if (selectedTerritoryId) {
+      list = list.filter(a => String(a.id_territorio) === String(selectedTerritoryId));
+    }
+    if (isSemiarido) {
+      list = list.filter(a => isMunicipioSemiarido(a.municipio));
+    }
+    return list;
+  }, [ativosData, selectedTerritoryId, isSemiarido]);
 
   const scopedCursos = useMemo(() => {
-    if (!selectedTerritoryId) return cursosData;
-    return cursosData.filter(c => String(c.id_territorio) === String(selectedTerritoryId));
-  }, [cursosData, selectedTerritoryId]);
+    let list = cursosData;
+    if (selectedTerritoryId) {
+      list = list.filter(c => String(c.id_territorio) === String(selectedTerritoryId));
+    }
+    if (isSemiarido) {
+      list = list.filter(c => isMunicipioSemiarido(c.municipio));
+    }
+    return list;
+  }, [cursosData, selectedTerritoryId, isSemiarido]);
 
   const scopedCadeias = useMemo(() => {
-    if (!selectedTerritoryId) return distribuicaoCadeias;
-    return distribuicaoCadeias.filter(d => String(d.id_territorio) === String(selectedTerritoryId));
-  }, [distribuicaoCadeias, selectedTerritoryId]);
+    let list = distribuicaoCadeias;
+    if (selectedTerritoryId) {
+      list = list.filter(d => String(d.id_territorio) === String(selectedTerritoryId));
+    }
+    if (isSemiarido) {
+      list = list.filter(d => isMunicipioSemiarido(d.municipio || d.sede || d.municipio_sede || d.nome_municipio));
+    }
+    return list;
+  }, [distribuicaoCadeias, selectedTerritoryId, isSemiarido]);
 
   const scopedMunicipios = useMemo(() => {
-    if (!selectedTerritoryId) return municipiosTerritorios;
-    return municipiosTerritorios.filter(m => String(m.id_territorio) === String(selectedTerritoryId));
-  }, [municipiosTerritorios, selectedTerritoryId]);
+    let list = municipiosTerritorios;
+    if (selectedTerritoryId) {
+      list = list.filter(m => String(m.id_territorio) === String(selectedTerritoryId));
+    }
+    if (isSemiarido) {
+      list = list.filter(m => isMunicipioSemiarido(m.nome_municipio || m.municipio));
+    }
+    return list;
+  }, [municipiosTerritorios, selectedTerritoryId, isSemiarido]);
+
+  // Totais estaduais para comparação analítica
+  const totalAtivosBahia = useMemo(() => ativosData.length, [ativosData]);
+  const totalCursosBahia = useMemo(() => cursosData.length, [cursosData]);
 
   // Estatísticas calculadas
   const stats = useMemo(() => {
@@ -99,6 +131,9 @@ export default function RelatorioSintese() {
     const estadualTaxa = totalCursos > 0 ? ((estadualCursos / totalCursos) * 100).toFixed(1) : '0.0';
     const privadaTaxa = totalCursos > 0 ? ((privadaCursos / totalCursos) * 100).toFixed(1) : '0.0';
 
+    const pctAtivosEstado = totalAtivosBahia > 0 ? ((totalAtivos / totalAtivosBahia) * 100).toFixed(1) : '0.0';
+    const pctCursosEstado = totalCursosBahia > 0 ? ((totalCursos / totalCursosBahia) * 100).toFixed(1) : '0.0';
+
     const rnpAtivos = scopedAtivos.filter(a => a.rnp).length;
     const rnpTaxa = totalAtivos > 0 ? ((rnpAtivos / totalAtivos) * 100).toFixed(1) : '0.0';
 
@@ -109,7 +144,9 @@ export default function RelatorioSintese() {
     const munComCurso = new Set(scopedCursos.map(c => c.id_municipio || c.municipio));
     const munAtendidos = new Set([...munComAtivo, ...munComCurso]);
 
-    const totalMunEscopo = scopedMunicipios.length || (selectedTerritoryId ? 0 : 417);
+    const totalMunEscopo = isSemiarido
+      ? (selectedTerritoryId ? scopedMunicipios.length : SEMIARIDO_TOTAL_MUNICIPIOS)
+      : (scopedMunicipios.length || (selectedTerritoryId ? 0 : BAHIA_TOTAL_MUNICIPIOS));
 
     let populacaoTotal = 0;
     let ifdmMedio = null;
@@ -125,9 +162,11 @@ export default function RelatorioSintese() {
 
     return {
       totalAtivos,
+      pctAtivosEstado,
       rnpAtivos,
       rnpTaxa,
       totalCursos,
+      pctCursosEstado,
       federalCursos,
       estadualCursos,
       privadaCursos,
@@ -141,7 +180,7 @@ export default function RelatorioSintese() {
       populacaoTotal: populacaoTotal ? populacaoTotal.toLocaleString('pt-BR') : '14.141.626',
       ifdmMedio
     };
-  }, [scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, selectedTerritory, selectedTerritoryId, territoriosData]);
+  }, [scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, selectedTerritory, selectedTerritoryId, territoriosData, isSemiarido, totalAtivosBahia, totalCursosBahia]);
 
   const cadeiasNomes = useMemo(() => {
     return Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 20);
@@ -157,7 +196,14 @@ export default function RelatorioSintese() {
               Relatório Executivo de Síntese de CT&I
             </h1>
 
-            {selectedTerritory && (
+            {isSemiarido ? (
+              <div className="flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+                <span className="text-[10.5px] font-bold text-[#92400E]">
+                  Recorte Oficial: <strong>Semiárido Baiano (278 Municípios)</strong>
+                </span>
+              </div>
+            ) : selectedTerritory ? (
               <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
                 <MapPin size={11} className="text-[#0284C7]" />
                 <span className="text-[10.5px] font-bold text-[#0369A1]">
@@ -172,10 +218,19 @@ export default function RelatorioSintese() {
                   <X size={11} />
                 </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                <span className="text-[10.5px] font-bold text-[#0369A1]">
+                  Cenário Geral: <strong className="text-[#0C4A6E]">Estado da Bahia (417 Municípios)</strong>
+                </span>
+              </div>
             )}
           </div>
           <p className="text-xs text-[#457B9D] font-medium mt-1">
-            Diagnóstico consolidado de infraestrutura física, formação de recursos humanos e arranjos econômicos da Bahia
+            {isSemiarido
+              ? 'Diagnóstico consolidado de infraestrutura física, formação e arranjos econômicos nos 278 municípios do Semiárido'
+              : 'Diagnóstico consolidado de infraestrutura física, formação de recursos humanos e arranjos econômicos da Bahia'}
           </p>
         </div>
 
@@ -203,8 +258,8 @@ export default function RelatorioSintese() {
               <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : stats.totalAtivos}
               </span>
-              <span className="text-[9.5px] font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {stats.rnpAtivos} RNP ({stats.rnpTaxa}%)
+              <span className="text-[9.5px] font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/25 px-2 py-0.5 rounded-md whitespace-nowrap" title={`${stats.totalAtivos} de ${totalAtivosBahia} ativos estaduais`}>
+                {isSemiarido ? `${stats.pctAtivosEstado}% da Bahia` : `${stats.rnpAtivos} RNP (${stats.rnpTaxa}%)`}
               </span>
             </div>
           </div>
@@ -221,8 +276,8 @@ export default function RelatorioSintese() {
               <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : stats.totalCursos}
               </span>
-              <span className="text-[9.5px] font-bold text-[#0D9488] bg-[#0D9488]/10 border border-[#0D9488]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                Graduação & Pós
+              <span className="text-[9.5px] font-bold text-[#0D9488] bg-[#0D9488]/10 border border-[#0D9488]/25 px-2 py-0.5 rounded-md whitespace-nowrap" title={`${stats.totalCursos} de ${totalCursosBahia} cursos estaduais`}>
+                {isSemiarido ? `${stats.pctCursosEstado}% da Bahia` : 'Graduação & Pós'}
               </span>
             </div>
           </div>
@@ -243,7 +298,7 @@ export default function RelatorioSintese() {
                 <span className="text-[11px] font-bold text-[#64748B]">setores</span>
               </div>
               <span className="text-[9.5px] font-bold text-[#D97706] bg-[#D97706]/10 border border-[#D97706]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                Vocações APL
+                {isSemiarido ? 'Vocações Semiárido' : 'Vocações APL'}
               </span>
             </div>
           </div>
@@ -286,12 +341,15 @@ export default function RelatorioSintese() {
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8C7FA]">Panorama Estratégico SECTI</span>
               </div>
               <h2 className="text-base font-black text-white leading-tight">
-                {territoryTitle}
+                {isSemiarido ? 'Recorte Territorial do Semiárido Baiano' : territoryTitle}
               </h2>
               <p className="text-[11px] text-white/80 mt-0.5 leading-snug">
-                {selectedTerritory
-                  ? `Consolidação de indicadores de CT&I para os ${stats.totalMunEscopo} municípios integrantes deste Território de Identidade.`
-                  : 'Visão executiva estadual consolidando os 27 Territórios de Identidade e todos os 417 municípios da Bahia.'
+                {isSemiarido
+                  ? `Consolidação executiva de indicadores de CT&I para os 278 municípios do Semiárido Baiano (66,7% dos municípios do estado).`
+                  : (selectedTerritory
+                    ? `Consolidação de indicadores de CT&I para os ${stats.totalMunEscopo} municípios integrantes deste Território de Identidade.`
+                    : 'Visão executiva estadual consolidando os 27 Territórios de Identidade e todos os 417 municípios da Bahia.'
+                  )
                 }
               </p>
             </div>
@@ -434,8 +492,8 @@ export default function RelatorioSintese() {
             onSelectTerritory={(t) => setSelectedTerritory(t)}
             territoriosData={territoriosData}
             territoriesDynamicStats={territoriesDynamicStats}
-            semiaridoMunicipios={[]}
-            filtroSemiarido={false}
+            semiaridoMunicipios={isSemiarido ? SEMIARIDO_MUNICIPIOS : []}
+            filtroSemiarido={isSemiarido}
           />
         </div>
 

@@ -27,6 +27,7 @@ import SideMap from '../maps/SideMap';
 import ProportionBarChart from '../graph/ProportionBarChart';
 import StackedBarChart from '../graph/StackedBarChart';
 import { municipiosDB } from '../../data/municipiosDB';
+import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 
 const PALETTE = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
 
@@ -86,9 +87,11 @@ function checkSemiaridoValue(val) {
   return s === 'sim' || s === 'true' || s === '1' || s === 't';
 }
 
-const SEMIARIDO_CATEGORIES = [
-  { key: 'Semiárido', label: 'Semiárido', shortLabel: 'Semiárido', colorHex: '#F59E0B' },
-  { key: 'fora', label: 'Fora do Semiárido', shortLabel: 'Fora do Semiárido', colorHex: '#3B82F6' }
+const ENSINO_CATEGORIES = [
+  { key: 'federal', label: 'Univ. Pública Federal', shortLabel: 'Federal', colorHex: '#1D3557' },
+  { key: 'estadual', label: 'Univ. Pública Estadual', shortLabel: 'Estadual', colorHex: '#2563EB' },
+  { key: 'ifba', label: 'Instituto Federal', shortLabel: 'IF', colorHex: '#10B981' },
+  { key: 'privada', label: 'Univ. Privada', shortLabel: 'Privada', colorHex: '#F59E0B' }
 ];
 
 export default function RelatorioEnsinoPage() {
@@ -101,6 +104,9 @@ export default function RelatorioEnsinoPage() {
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const reportMode = searchParams.get('modo') || 'normal';
+  const isSemiarido = reportMode === 'semiarido';
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
 
@@ -140,10 +146,14 @@ export default function RelatorioEnsinoPage() {
           normalizeName(cat) === normalizeName(tipo)
         );
       })
-      .map(a => ({
-        ...a,
-        semiarido: checkSemiaridoValue(a.semiarido ?? a.semi_arido ?? a.is_semiarido)
-      }));
+      .map(a => {
+        const rawSemi = a.semiarido ?? a.semi_arido ?? a.is_semiarido;
+        const isSemi = checkSemiaridoValue(rawSemi) || isMunicipioSemiarido(a.municipio);
+        return {
+          ...a,
+          semiarido: isSemi
+        };
+      });
   }, [ativosData]);
 
   // 2. Mapeamentos rápidos de ativos para herança de semiárido
@@ -165,47 +175,51 @@ export default function RelatorioEnsinoPage() {
     return { byId, byMun };
   }, [baseEnsinoAtivos]);
 
-  // 3. Filtro dos Ativos pelo Território
+  // 3. Filtro dos Ativos pelo Território e Modo
   const filteredAtivos = useMemo(() => {
     let list = baseEnsinoAtivos;
 
- if (selectedTerritory) {
- const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
- const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+    if (selectedTerritory) {
+      const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
 
- list = list.filter(a => {
- const munKey = normalizeName(a.municipio || '');
- const munRow = MUN_LOOKUP.byName[munKey];
- const idTerr = a.id_territorio != null && a.id_territorio !== '' 
- ? String(a.id_territorio) 
- : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
- const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
- const normTerr = normalizeName(rawTerr);
+      list = list.filter(a => {
+        const munKey = normalizeName(a.municipio || '');
+        const munRow = MUN_LOOKUP.byName[munKey];
+        const idTerr = a.id_territorio != null && a.id_territorio !== '' 
+          ? String(a.id_territorio) 
+          : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+        const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
+        const normTerr = normalizeName(rawTerr);
 
- if (tid && idTerr && idTerr === tid) return true;
- if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
- return false;
- });
- }
+        if (tid && idTerr && idTerr === tid) return true;
+        if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+        return false;
+      });
+    }
 
- return list;
- }, [baseEnsinoAtivos, selectedTerritory]);
+    if (isSemiarido) {
+      list = list.filter(a => a.semiarido === true || isMunicipioSemiarido(a.municipio));
+    }
+
+    return list;
+  }, [baseEnsinoAtivos, selectedTerritory, isSemiarido]);
 
   // 4. Filtro dos Cursos e injeção do booleano semiarido
   const filteredCursos = useMemo(() => {
     if (!cursosData || cursosData.length === 0) return [];
     let list = cursosData;
 
- if (selectedTerritory) {
- const tid = selectedTerritory.id_territorio ? Number(selectedTerritory.id_territorio) : null;
- const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
- list = list.filter(c => 
- (tid && Number(c.id_territorio) === tid) || 
- (tNorm && normalizeName(c.territorio_identidade || c.territorio) === tNorm)
- );
- }
+    if (selectedTerritory) {
+      const tid = selectedTerritory.id_territorio ? Number(selectedTerritory.id_territorio) : null;
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
+      list = list.filter(c => 
+        (tid && Number(c.id_territorio) === tid) || 
+        (tNorm && normalizeName(c.territorio_identidade || c.territorio) === tNorm)
+      );
+    }
 
-    return list.map(c => {
+    const mapped = list.map(c => {
       let isSemi = false;
       if (c.id_ativo && ativoSemiaridoMaps.byId.has(Number(c.id_ativo))) {
         isSemi = ativoSemiaridoMaps.byId.get(Number(c.id_ativo));
@@ -213,12 +227,22 @@ export default function RelatorioEnsinoPage() {
         const munNorm = normalizeName(c.municipio || '');
         isSemi = ativoSemiaridoMaps.byMun.get(munNorm) || false;
       }
+      isSemi = isSemi || isMunicipioSemiarido(c.municipio);
       return {
         ...c,
         semiarido: isSemi
       };
     });
-  }, [cursosData, selectedTerritory, ativoSemiaridoMaps]);
+
+    if (isSemiarido) {
+      return mapped.filter(c => c.semiarido === true);
+    }
+
+    return mapped;
+  }, [cursosData, selectedTerritory, ativoSemiaridoMaps, isSemiarido]);
+
+  const totalCursosBahia = useMemo(() => cursosData.length, [cursosData]);
+  const totalCampiBahia = useMemo(() => baseEnsinoAtivos.length, [baseEnsinoAtivos]);
 
   // 5. Contagem de cursos no semiárido
   const semiaridoCursosCount = useMemo(() => {
@@ -247,7 +271,7 @@ export default function RelatorioEnsinoPage() {
       if (terr) terrSet.add(normalizeName(terr));
     });
 
-    // Contagem de CAMPI (pontos físicos de presença) com RNP (bate 100% com o total do gráfico de RNP)
+    // Contagem de CAMPI com RNP
     let campiRnpCount = 0;
     let campiRnpSemiCount = 0;
 
@@ -262,24 +286,42 @@ export default function RelatorioEnsinoPage() {
     });
 
     const mediaCursosPorCampus = totalCampi > 0 ? (totalCursos / totalCampi).toFixed(1) : '0';
+    const pctCursosBahia = totalCursosBahia > 0 ? ((totalCursos / totalCursosBahia) * 100).toFixed(1) : '0.0';
+    const pctCampiBahia = totalCampiBahia > 0 ? ((totalCampi / totalCampiBahia) * 100).toFixed(1) : '0.0';
+    const totalMunUniverso = isSemiarido ? SEMIARIDO_TOTAL_MUNICIPIOS : (selectedTerritory ? munSet.size : BAHIA_TOTAL_MUNICIPIOS);
+    const taxaMun = totalMunUniverso > 0 ? ((munSet.size / totalMunUniverso) * 100).toFixed(1) : '0.0';
+    const rnpTaxa = totalCampi > 0 ? ((campiRnpCount / totalCampi) * 100).toFixed(1) : '0.0';
 
     return {
       totalCursos,
+      pctCursosBahia,
       totalCampi,
+      pctCampiBahia,
       campiSemiaridoCount,
       semiaridoCount: semiaridoCursosCount,
       municipiosComCursos: munSet.size,
+      totalMunUniverso,
+      taxaMun,
       municipiosSemiComCursos: munSemiSet.size,
       territoriosComCursos: terrSet.size,
       mediaCursosPorCampus,
       campiRnpCount,
+      rnpTaxa,
       campiRnpSemiCount
     };
-  }, [filteredCursos, filteredAtivos, semiaridoCursosCount]);
+  }, [filteredCursos, filteredAtivos, semiaridoCursosCount, isSemiarido, selectedTerritory, totalCursosBahia, totalCampiBahia]);
 
-  // 7. Dados para o ProportionBarChart: Áreas de Conhecimento (Semiárido vs Fora)
+  // 7. Dados para o ProportionBarChart: Áreas de Conhecimento (Pública vs Privada)
   const areasProportionData = useMemo(() => {
     if (!filteredCursos || filteredCursos.length === 0) return [];
+
+    const ativoTipoMap = new Map();
+    baseEnsinoAtivos.forEach(a => {
+      if (a.id_ativo || a.id) {
+        ativoTipoMap.set(Number(a.id_ativo || a.id), getTipoPadronizado(a.tipo || a.nome_tipo));
+      }
+    });
+
     const counts = {};
 
     filteredCursos.forEach(c => {
@@ -288,42 +330,65 @@ export default function RelatorioEnsinoPage() {
       if (!counts[area]) {
         counts[area] = { label: area, positive: 0, negative: 0, total: 0 };
       }
-      if (c.semiarido) counts[area].positive += 1;
-      else counts[area].negative += 1;
+
+      let tipoFinal = 'Univ. Privada';
+      if (c.id_ativo && ativoTipoMap.has(Number(c.id_ativo))) {
+        tipoFinal = ativoTipoMap.get(Number(c.id_ativo));
+      } else if (c.sigla || c.entidade || c.instituicao) {
+        tipoFinal = getTipoPadronizado(c.sigla || c.entidade || c.instituicao);
+      }
+
+      const isPublica = tipoFinal !== 'Univ. Privada';
+      if (isPublica) {
+        counts[area].positive += 1;
+      } else {
+        counts[area].negative += 1;
+      }
       counts[area].total += 1;
     });
 
     return Object.values(counts).sort((a, b) => b.total - a.total);
-  }, [filteredCursos]);
+  }, [filteredCursos, baseEnsinoAtivos]);
 
-  // 8. Dados para o StackedBarChart: Territórios Empilhados (ou Ranking de Municípios)
+  // 8. Dados para o StackedBarChart: Territórios Empilhados por Natureza de Ensino
   const territoriosStackedData = useMemo(() => {
-    if (!cursosData || cursosData.length === 0) return [];
+    if (!filteredCursos || filteredCursos.length === 0) return [];
+
+    const ativoTipoMap = new Map();
+    baseEnsinoAtivos.forEach(a => {
+      if (a.id_ativo || a.id) {
+        ativoTipoMap.set(Number(a.id_ativo || a.id), getTipoPadronizado(a.tipo || a.nome_tipo));
+      }
+    });
 
     const terrStats = {};
-    cursosData.forEach(c => {
+    filteredCursos.forEach(c => {
       const rawTerr = c.territorio_identidade || c.territorio || 'Não identificado';
       const cleanTerr = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
 
       if (!terrStats[cleanTerr]) {
-        terrStats[cleanTerr] = { label: cleanTerr, total: 0, segments: { Semiárido: 0, fora: 0 } };
+        terrStats[cleanTerr] = { label: cleanTerr, total: 0, segments: { federal: 0, estadual: 0, ifba: 0, privada: 0 } };
       }
 
-      let isSemi = false;
-      if (c.id_ativo && ativoSemiaridoMaps.byId.has(Number(c.id_ativo))) {
-        isSemi = ativoSemiaridoMaps.byId.get(Number(c.id_ativo));
-      } else {
-        const munNorm = normalizeName(c.municipio || '');
-        isSemi = ativoSemiaridoMaps.byMun.get(munNorm) || false;
+      let tipoFinal = 'Univ. Privada';
+      if (c.id_ativo && ativoTipoMap.has(Number(c.id_ativo))) {
+        tipoFinal = ativoTipoMap.get(Number(c.id_ativo));
+      } else if (c.sigla || c.entidade || c.instituicao) {
+        tipoFinal = getTipoPadronizado(c.sigla || c.entidade || c.instituicao);
       }
 
-      if (isSemi) terrStats[cleanTerr].segments.Semiárido += 1;
-      else terrStats[cleanTerr].segments.fora += 1;
+      if (tipoFinal === 'Univ. Pública Federal') terrStats[cleanTerr].segments.federal += 1;
+      else if (tipoFinal === 'Univ. Pública Estadual') terrStats[cleanTerr].segments.estadual += 1;
+      else if (tipoFinal === 'Instituto Federal') terrStats[cleanTerr].segments.ifba += 1;
+      else terrStats[cleanTerr].segments.privada += 1;
+
       terrStats[cleanTerr].total += 1;
     });
 
-    return Object.values(terrStats).sort((a, b) => b.total - a.total);
-  }, [cursosData, ativoSemiaridoMaps]);
+    return Object.values(terrStats)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 10);
+  }, [filteredCursos, baseEnsinoAtivos]);
 
   const topMunicipiosData = useMemo(() => {
     if (!filteredCursos || filteredCursos.length === 0) return [];
@@ -376,7 +441,7 @@ export default function RelatorioEnsinoPage() {
     return Object.values(countsByArea).sort((a, b) => b.total - a.total);
   }, [filteredCursos, baseEnsinoAtivos]);
 
-  // 10. Cobertura RNP empilhada por Semiárido vs Fora do Semiárido
+  // 10. Cobertura RNP dos Campi por Categoria
   const rnpStackedData = useMemo(() => {
     if (!filteredAtivos || filteredAtivos.length === 0) return [];
     const stats = {};
@@ -387,21 +452,13 @@ export default function RelatorioEnsinoPage() {
       if (!stats[tipo]) {
         stats[tipo] = { 
           name: tipo, 
-          Semiárido: 0, 
-          fora: 0, 
           comRnpTotal: 0, 
           total: 0 
         };
       }
 
       const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || String(a.rnp || '').toLowerCase() === 'sim';
-
       if (hasRnp) {
-        if (a.semiarido === true) {
-          stats[tipo].Semiárido += 1;
-        } else {
-          stats[tipo].fora += 1;
-        }
         stats[tipo].comRnpTotal += 1;
       }
       stats[tipo].total += 1;
@@ -411,9 +468,7 @@ export default function RelatorioEnsinoPage() {
       .sort((a, b) => b.total - a.total)
       .map(item => ({
         ...item,
-        pctTotal: item.total > 0 ? ((item.comRnpTotal / item.total) * 100).toFixed(1) : '0.0',
-        pctSemi: item.total > 0 ? ((item.Semiárido / item.total) * 100).toFixed(1) : 0,
-        pctFora: item.total > 0 ? ((item.fora / item.total) * 100).toFixed(1) : 0
+        pctTotal: item.total > 0 ? ((item.comRnpTotal / item.total) * 100).toFixed(1) : '0.0'
       }));
   }, [filteredAtivos]);
 
@@ -427,7 +482,14 @@ export default function RelatorioEnsinoPage() {
               Relatório Executivo de Cursos e Ensino Superior de CT&I
             </h1>
 
-            {selectedTerritory && (
+            {isSemiarido ? (
+              <div className="flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+                <span className="text-[10.5px] font-bold text-[#92400E]">
+                  Recorte Oficial: <strong>Semiárido Baiano (278 Municípios)</strong>
+                </span>
+              </div>
+            ) : selectedTerritory ? (
               <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
                 <MapPin size={11} className="text-[#0284C7]" />
                 <span className="text-[10.5px] font-bold text-[#0369A1]">
@@ -442,10 +504,19 @@ export default function RelatorioEnsinoPage() {
                   <X size={11} />
                 </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                <span className="text-[10.5px] font-bold text-[#0369A1]">
+                  Cenário Geral: <strong className="text-[#0C4A6E]">Estado da Bahia (417 Municípios)</strong>
+                </span>
+              </div>
             )}
           </div>
           <p className="text-xs text-[#457B9D] font-medium mt-1">
-            Diagnóstico territorial da densidade de cursos e distribuição dos campi universitários na Bahia
+            {isSemiarido
+              ? 'Diagnóstico territorial da densidade de cursos e distribuição dos campi universitários nos 278 municípios do Semiárido'
+              : 'Diagnóstico territorial da densidade de cursos e distribuição dos campi universitários na Bahia'}
           </p>
         </div>
       </div>
@@ -466,8 +537,15 @@ export default function RelatorioEnsinoPage() {
               <span className="text-[26px] lg:text-[28px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsCursosKpis.totalCursos}
               </span>
-              <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-1.5 py-0.5 rounded-md whitespace-nowrap">
-                {statsCursosKpis.semiaridoCount} no semiárido
+              <span 
+                className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+                title={`${statsCursosKpis.totalCursos} de ${totalCursosBahia} cursos estaduais`}
+              >
+                {isSemiarido ? `${statsCursosKpis.pctCursosBahia}% da Bahia` : 'Graduação & Pós'}
               </span>
             </div>
           </div>
@@ -484,8 +562,15 @@ export default function RelatorioEnsinoPage() {
               <span className="text-[26px] lg:text-[28px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsCursosKpis.totalCampi}
               </span>
-              <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-1.5 py-0.5 rounded-md whitespace-nowrap">
-                {statsCursosKpis.campiSemiaridoCount} no semiárido
+              <span 
+                className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+                title={`${statsCursosKpis.totalCampi} de ${totalCampiBahia} campi estaduais`}
+              >
+                {isSemiarido ? `${statsCursosKpis.pctCampiBahia}% da Bahia` : 'Polos & Universidades'}
               </span>
             </div>
           </div>
@@ -503,10 +588,16 @@ export default function RelatorioEnsinoPage() {
                 <span className="text-[26px] lg:text-[28px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : statsCursosKpis.municipiosComCursos}
                 </span>
-                <span className="text-[10.5px] font-bold text-[#64748B]">munic.</span>
+                <span className="text-[10.5px] font-bold text-[#64748B]">/ {statsCursosKpis.totalMunUniverso}</span>
               </div>
-              <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-1.5 py-0.5 rounded-md whitespace-nowrap">
-                {statsCursosKpis.municipiosSemiComCursos} no semiárido
+              <span 
+                className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+              >
+                {isSemiarido ? `${statsCursosKpis.taxaMun}% de cobertura` : `${statsCursosKpis.taxaMun}% de cobertura estadual`}
               </span>
             </div>
           </div>
@@ -523,8 +614,14 @@ export default function RelatorioEnsinoPage() {
               <span className="text-[26px] lg:text-[28px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsCursosKpis.campiRnpCount}
               </span>
-              <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-1.5 py-0.5 rounded-md whitespace-nowrap">
-                {statsCursosKpis.campiRnpSemiCount} no semiárido
+              <span 
+                className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+              >
+                {isSemiarido ? `${statsCursosKpis.rnpTaxa}% com RNP` : `${statsCursosKpis.rnpTaxa}% dos campi com RNP`}
               </span>
             </div>
           </div>
@@ -542,10 +639,10 @@ export default function RelatorioEnsinoPage() {
                 <span className="text-[26px] lg:text-[28px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : (selectedTerritory ? '1' : statsCursosKpis.territoriosComCursos)}
                 </span>
-                <span className="text-[10.5px] font-bold text-[#64748B]">de 27</span>
+                <span className="text-[10.5px] font-bold text-[#64748B]">territórios</span>
               </div>
               <span className="text-[9px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-1.5 py-0.5 rounded-md whitespace-nowrap">
-                {selectedTerritory ? 'Território' : 'cobertura estadual'}
+                {isSemiarido ? 'presença Semiárido' : (selectedTerritory ? 'Território' : '100% dos Territórios')}
               </span>
             </div>
           </div>
@@ -563,14 +660,14 @@ export default function RelatorioEnsinoPage() {
           <div className="h-full min-h-0 overflow-hidden">
             <ProportionBarChart
               data={areasProportionData}
-              title="Áreas de Conhecimento"
-              subtitle="Distribuição e presença no Semiárido"
-              positiveLabel="Semiárido"
-              negativeLabel="Fora do Semiárido"
-              positiveColor="bg-[#F59E0B]"
-              negativeColor="bg-[#2563EB]"
-              positiveTextColor="text-[#B45309]"
-              negativeTextColor="text-[#2563EB]"
+              title={isSemiarido ? "Áreas de Conhecimento no Semiárido" : "Áreas de Conhecimento"}
+              subtitle={isSemiarido ? "Proporção de Ensino Público vs Privado no Semiárido" : "Proporção de Ensino Público vs Privado na Bahia"}
+              positiveLabel="Rede Pública"
+              negativeLabel="Rede Privada"
+              positiveColor="bg-[#2563EB]"
+              negativeColor="bg-[#F59E0B]"
+              positiveTextColor="text-[#2563EB]"
+              negativeTextColor="text-[#D97706]"
             />
           </div>
 
@@ -604,9 +701,9 @@ export default function RelatorioEnsinoPage() {
             ) : (
               <StackedBarChart
                 data={territoriosStackedData}
-                categories={SEMIARIDO_CATEGORIES}
-                title="Concentração por Território"
-                subtitle="Presença e distribuição no Semiárido"
+                categories={ENSINO_CATEGORIES}
+                title={isSemiarido ? "Concentração no Semiárido" : "Concentração por Território"}
+                subtitle={isSemiarido ? "Territórios do Semiárido com maior oferta de cursos" : "Top 10 Territórios da Bahia por Rede de Ensino"}
                 allowToggleView={false}
                 showTotalLabel={true}
               />
@@ -618,8 +715,8 @@ export default function RelatorioEnsinoPage() {
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div>
                 <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <BarChart3 size={15} className="text-[#2563EB]" />
-                  Composição por Área e Rede
+                  <BarChart3 size={15} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                  {isSemiarido ? "Composição por Área e Rede no Semiárido" : "Composição por Área e Rede"}
                 </h3>
                 <p className="text-[10px] text-[#457B9D]">Proporção Federal, Estadual, IF e Privada</p>
               </div>
@@ -670,25 +767,30 @@ export default function RelatorioEnsinoPage() {
             </div>
           </div>
 
-          {/* GRÁFICO 4: COBERTURA DE REDE RNP EMPILHADA COM SEMIÁRIDO */}
+          {/* GRÁFICO 4: COBERTURA DE REDE RNP */}
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div>
                 <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <Wifi size={15} className="text-[#2563EB]" />
-                  Cobertura de Rede RNP
+                  <Wifi size={15} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                  {isSemiarido ? "Cobertura de Rede RNP no Semiárido" : "Cobertura de Rede RNP nos Campi"}
                 </h3>
-                <p className="text-[10px] text-[#457B9D]">Campi conectados ao backbone de pesquisa</p>
+                <p className="text-[10px] text-[#457B9D]">
+                  {isSemiarido ? "Campi do Semiárido conectados ao backbone acadêmico" : "Adesão dos campi universitários ao backbone de pesquisa na Bahia"}
+                </p>
               </div>
 
-              {/* LEGENDA DO EMPILHAMENTO */}
-              <div className="flex items-center gap-2.5 text-[9px] font-black">
-                <span className="flex items-center gap-1 text-[#B45309]">
-                  <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Semiárido
-                </span>
-                <span className="flex items-center gap-1 text-[#2563EB]">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Fora do Semiárido
-                </span>
+              {/* LEGENDA */}
+              <div className="flex items-center gap-2 text-[9px] font-black">
+                {isSemiarido ? (
+                  <span className="flex items-center gap-1 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Conectados no Semiárido
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Conectados à RNP
+                  </span>
+                )}
               </div>
             </div>
 
@@ -704,32 +806,13 @@ export default function RelatorioEnsinoPage() {
                     </span>
                   </div>
 
-                  {/* BARRA EMPILHADA */}
+                  {/* BARRA */}
                   <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
-                    {cat.Semiárido > 0 && (
-                      <div 
-                        className="h-full bg-[#F59E0B] transition-all duration-500"
-                        style={{ width: `${(cat.Semiárido / cat.total) * 100}%` }}
-                        title={`Semiárido com RNP: ${cat.Semiárido}`}
-                      />
-                    )}
-                    {cat.fora > 0 && (
-                      <div 
-                        className="h-full bg-[#2563EB] transition-all duration-500"
-                        style={{ width: `${(cat.fora / cat.total) * 100}%` }}
-                        title={`Fora do Semiárido com RNP: ${cat.fora}`}
-                      />
-                    )}
-                  </div>
-
-                  {/* SUBLEGENDA DE CONTAGEM */}
-                  <div className="flex items-center justify-between text-[8.5px] font-bold">
-                    <span className="text-[#B45309]">
-                      Semiárido: <strong>{cat.Semiárido}</strong> ({cat.pctSemi}%)
-                    </span>
-                    <span className="text-[#2563EB]">
-                      Fora: <strong>{cat.fora}</strong> ({cat.pctFora}%)
-                    </span>
+                    <div 
+                      className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
+                      style={{ width: `${cat.pctTotal}%` }}
+                      title={`${cat.name}: ${cat.comRnpTotal} de ${cat.total} (${cat.pctTotal}%)`}
+                    />
                   </div>
                 </div>
               ))}

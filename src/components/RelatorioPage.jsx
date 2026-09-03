@@ -32,6 +32,7 @@ import {
 } from 'recharts';
 import SideMap from './maps/SideMap';
 import PtiMap from './maps/PtiMap';
+import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../constants/semiarido';
 
 // Helper para limpeza de sufixos de campus / cidade nas IES
 function cleanIes(name) {
@@ -61,10 +62,10 @@ export default function RelatorioPage() {
  // CAIXA 1: Território selecionado. 'bahia' = Toda a Bahia (Padrão)
  const [selectedTerritoryId, setSelectedTerritoryId] = useState('bahia');
  const [searchTerritory, setSearchTerritory] = useState('');
-
  // CAIXA 2: Tipo de Relatório selecionado
  // 'sintese' | 'ativos' | 'cursos' | 'cadeias' | 'municipios'
  const [reportType, setReportType] = useState('sintese');
+ const [reportMode, setReportMode] = useState('normal'); // 'normal' | 'semiarido'
  const [tableSearch, setTableSearch] = useState('');
  const [sortField, setSortField] = useState(null);
  const [sortAsc, setSortAsc] = useState(true);
@@ -80,7 +81,7 @@ export default function RelatorioPage() {
 
  const territoryTitle = selectedTerritory
  ? (selectedTerritory.nome_territorio || selectedTerritory.territorio)
- : 'Estado da Bahia (Toda a Bahia)';
+ : (reportMode === 'semiarido' ? 'Semiárido Baiano (278 Municípios)' : 'Estado da Bahia (Toda a Bahia)');
 
  // Lista dos 27 territórios ordenados alfabeticamente
  const sortedTerritorios = useMemo(() => {
@@ -98,26 +99,46 @@ export default function RelatorioPage() {
  );
  }, [territoriosData, searchTerritory]);
 
- // DADOS FILTRADOS PELO ESCOPO (TODA A BAHIA OU TERRITÓRIO SELECIONADO)
+ // DADOS FILTRADOS PELO ESCOPO (TODA A BAHIA OU TERRITÓRIO SELECIONADO) E MODO
  const scopedAtivos = useMemo(() => {
- if (selectedTerritoryId === 'bahia') return ativosData;
- return ativosData.filter(a => String(a.id_territorio) === String(selectedTerritoryId));
- }, [ativosData, selectedTerritoryId]);
+   let list = selectedTerritoryId === 'bahia'
+     ? ativosData
+     : ativosData.filter(a => String(a.id_territorio) === String(selectedTerritoryId));
+   if (reportMode === 'semiarido') {
+     list = list.filter(a => a.semiarido === true || isMunicipioSemiarido(a.municipio));
+   }
+   return list;
+ }, [ativosData, selectedTerritoryId, reportMode]);
 
  const scopedCursos = useMemo(() => {
- if (selectedTerritoryId === 'bahia') return cursosData;
- return cursosData.filter(c => String(c.id_territorio) === String(selectedTerritoryId));
- }, [cursosData, selectedTerritoryId]);
+   let list = selectedTerritoryId === 'bahia'
+     ? cursosData
+     : cursosData.filter(c => String(c.id_territorio) === String(selectedTerritoryId));
+   if (reportMode === 'semiarido') {
+     list = list.filter(c => c.semiarido === true || isMunicipioSemiarido(c.municipio));
+   }
+   return list;
+ }, [cursosData, selectedTerritoryId, reportMode]);
 
  const scopedCadeias = useMemo(() => {
- if (selectedTerritoryId === 'bahia') return distribuicaoCadeias;
- return distribuicaoCadeias.filter(d => String(d.id_territorio) === String(selectedTerritoryId));
- }, [distribuicaoCadeias, selectedTerritoryId]);
+   let list = selectedTerritoryId === 'bahia'
+     ? distribuicaoCadeias
+     : distribuicaoCadeias.filter(d => String(d.id_territorio) === String(selectedTerritoryId));
+   if (reportMode === 'semiarido') {
+     list = list.filter(d => d.semiarido === true || isMunicipioSemiarido(d.municipio || d.sede || d.municipio_sede || d.nome_municipio));
+   }
+   return list;
+ }, [distribuicaoCadeias, selectedTerritoryId, reportMode]);
 
  const scopedMunicipios = useMemo(() => {
- if (selectedTerritoryId === 'bahia') return municipiosTerritorios;
- return municipiosTerritorios.filter(m => String(m.id_territorio) === String(selectedTerritoryId));
- }, [municipiosTerritorios, selectedTerritoryId]);
+   let list = selectedTerritoryId === 'bahia'
+     ? municipiosTerritorios
+     : municipiosTerritorios.filter(m => String(m.id_territorio) === String(selectedTerritoryId));
+   if (reportMode === 'semiarido') {
+     list = list.filter(m => isMunicipioSemiarido(m.nome_municipio || m.municipio));
+   }
+   return list;
+ }, [municipiosTerritorios, selectedTerritoryId, reportMode]);
 
  // ESTATÍSTICAS INTEGRADAS DA SÍNTESE
  const statsSintese = useMemo(() => {
@@ -389,10 +410,11 @@ export default function RelatorioPage() {
       ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
       : 'territorio=bahia';
 
-    const filename = `${fileBase}.pdf`;
+    const modoParam = `&modo=${reportMode}`;
+    const filename = `${fileBase}_${reportMode}.pdf`;
 
     try {
-      const apiUrl = `/api/export-pdf?type=${type}&${terrParam}`;
+      const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
       const res = await fetch(apiUrl);
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
@@ -421,21 +443,17 @@ export default function RelatorioPage() {
     setIsExportingPng(true);
 
     const type = overrideType || reportType;
-    let pngName = 'relatorio_sintese.png';
-    if (type === 'ativos') {
-      pngName = 'relatorio_ativos.png';
-    } else if (type === 'cursos') {
-      pngName = 'relatorio_cursos.png';
-    } else if (type === 'cadeias') {
-      pngName = 'relatorio_cadeias.png';
-    }
+    const fileType = type === 'cursos' ? 'cursos' : type;
+    const pngName = `relatorio_${fileType}_${reportMode}.png`;
 
     const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
       ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
       : 'territorio=bahia';
 
+    const modoParam = `&modo=${reportMode}`;
+
     try {
-      const apiUrl = `/api/export-png?type=${type}&${terrParam}`;
+      const apiUrl = `/api/export-png?type=${type}&${terrParam}${modoParam}`;
       const res = await fetch(apiUrl);
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
@@ -535,17 +553,17 @@ export default function RelatorioPage() {
  if (reportType === 'cursos') return <SideMap mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
  if (reportType === 'cadeias') return <SideMap mode="cadeias" cadeiasData={scopedCadeias} processedAtivos={scopedCadeias} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
 
- return (
- <PtiMap
- selectedTerritory={selectedTerritory}
- onSelectTerritory={handleMapSelect}
- territoriosData={territoriosData}
- territoriesDynamicStats={territoriesDynamicStats}
- semiaridoMunicipios={[]}
- filtroSemiarido={false}
- />
- );
- })()}
+  return (
+  <PtiMap
+  selectedTerritory={selectedTerritory}
+  onSelectTerritory={handleMapSelect}
+  territoriosData={territoriosData}
+  territoriesDynamicStats={territoriesDynamicStats}
+  semiaridoMunicipios={reportMode === 'semiarido' ? SEMIARIDO_MUNICIPIOS : []}
+  filtroSemiarido={reportMode === 'semiarido'}
+  />
+  );
+  })()}
  </div>
  </div>
 
@@ -553,28 +571,56 @@ export default function RelatorioPage() {
  CAIXA 2: TIPOS DE RELATÓRIO E OS SEUS DADOS (DIREITA)
  ------------------------------------------------------------- */}
  <div
- className={`flex-1 bg-surface rounded-xl border border-border shadow-sm p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0`}
- >
-
- {/* CABEÇALHO DA CAIXA 2: SELETOR DOS TIPOS DE RELATÓRIO */}
- <div className="mb-4 shrink-0">
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
- <div className="flex items-center gap-3">
- <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-primary bg-surface-soft px-2.5 py-1 rounded-full border border-border justify-center leading-none">
- <Globe size={16} className="text-primary-600" />
- <span>Exibindo: <strong>{territoryTitle}</strong></span>
- </div>
- </div>
-
- {/* BOTÕES DE EXPORTAÇÃO E IMPRESSÃO (MOVIDOS PARA A CAIXA 2) */}
- <div className="tour-relatorio-export flex items-center gap-1.5 self-start sm:self-center print:hidden">
-  <button
-    type="button"
-    disabled={isExportingPdf}
-    onClick={() => handleExportPDF()}
-    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-primary-900 text-white hover:bg-primary-800 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-    title={`Exportar Relatório Executivo em PDF (${currentReportLabel})`}
+  className={`flex-1 bg-surface rounded-xl border border-border shadow-sm p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0`}
   >
+
+  {/* CABEÇALHO DA CAIXA 2: SELETOR DOS TIPOS DE RELATÓRIO */}
+  <div className="mb-4 shrink-0 flex flex-col gap-2.5">
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+  <div className="flex items-center gap-2 flex-wrap">
+  <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-primary bg-surface-soft px-2.5 py-1 rounded-full border border-border justify-center leading-none">
+  <Globe size={16} className="text-primary-600" />
+  <span>Exibindo: <strong>{territoryTitle}</strong></span>
+  </div>
+
+  {/* SELETOR DE MODO: NORMAL VS SEMIÁRIDO */}
+  <div className="flex items-center gap-1 p-0.5 bg-surface-soft rounded-full border border-border shrink-0">
+    <button
+      type="button"
+      onClick={() => setReportMode('normal')}
+      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+        reportMode === 'normal'
+          ? 'bg-primary-900 text-white shadow-2xs'
+          : 'text-text-secondary hover:text-text-primary hover:bg-surface/80'
+      }`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full ${reportMode === 'normal' ? 'bg-blue-400' : 'bg-slate-400'}`} />
+      <span>Modo Normal</span>
+    </button>
+    <button
+      type="button"
+      onClick={() => setReportMode('semiarido')}
+      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+        reportMode === 'semiarido'
+          ? 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] shadow-2xs'
+          : 'text-text-secondary hover:text-amber-800 hover:bg-amber-50/50'
+      }`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full ${reportMode === 'semiarido' ? 'bg-[#D97706]' : 'bg-amber-500/50'}`} />
+      <span>Modo Semiárido</span>
+    </button>
+  </div>
+  </div>
+
+  {/* BOTÕES DE EXPORTAÇÃO E IMPRESSÃO (MOVIDOS PARA A CAIXA 2) */}
+  <div className="tour-relatorio-export flex items-center gap-1.5 self-start sm:self-center print:hidden">
+   <button
+     type="button"
+     disabled={isExportingPdf}
+     onClick={() => handleExportPDF()}
+     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-primary-900 text-white hover:bg-primary-800 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
+     title={`Exportar Relatório Executivo em PDF (${currentReportLabel})`}
+   >
     {isExportingPdf ? (
       <>
         <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />

@@ -26,47 +26,53 @@ export default defineConfig({
             const format = url.searchParams.get('format') || (isPngEndpoint ? 'png' : 'pdf');
             const type = url.searchParams.get('type') || 'sintese';
             const territorio = url.searchParams.get('territorio') || 'bahia';
+            const modo = url.searchParams.get('modo') === 'semiarido' ? 'semiarido' : 'normal';
 
             let route = '/relatorio/sintese';
             let fileBase = 'relatorio_sintese';
-            let pngName = 'relatorio_sintese.png';
+            let pngType = 'sintese';
 
             if (type === 'ativos') {
               route = '/relatorio/ativos';
               fileBase = 'relatorio_ativos';
-              pngName = 'relatorio_ativos.png';
+              pngType = 'ativos';
             } else if (type === 'cursos') {
               route = '/relatorio/cursos';
               fileBase = 'relatorio_ensino';
-              pngName = 'relatorio_cursos.png';
+              pngType = 'cursos';
             } else if (type === 'cadeias') {
               route = '/relatorio/cadeias';
               fileBase = 'relatorio_cadeias';
-              pngName = 'relatorio_cadeias.png';
+              pngType = 'cadeias';
             }
 
             const terrParam = territorio && territorio !== 'bahia'
               ? `territorio=${encodeURIComponent(territorio)}`
               : 'territorio=bahia';
 
-            const fullRoute = `${route}?${terrParam}`;
+            const fullRoute = `${route}?${terrParam}&modo=${modo}`;
 
-            const debugPngName = `relatorio_${type === 'cursos' ? 'cursos' : type}_debug.png`;
+            const finalPdfName = `${fileBase}_${modo}.pdf`;
+            const finalPngName = `relatorio_${pngType}_${modo}.png`;
+            const debugPngName = `relatorio_${pngType}_${modo}_debug.png`;
+
             const { captureReportWithPlaywright } = await import('./scripts/captureReports.mjs');
             const result = await captureReportWithPlaywright({
               route: fullRoute,
               pngPath: debugPngName,
-              pdfPath: `${fileBase}.pdf`,
+              pdfPath: finalPdfName,
               baseUrl: 'http://localhost:5173'
             });
 
             if (format === 'png') {
               res.setHeader('Content-Type', 'image/png');
-              res.setHeader('Content-Disposition', `attachment; filename="${pngName}"`);
+              res.setHeader('Content-Length', result.pngBuffer.length);
+              res.setHeader('Content-Disposition', `attachment; filename="${finalPngName}"`);
               res.end(result.pngBuffer);
             } else {
               res.setHeader('Content-Type', 'application/pdf');
-              res.setHeader('Content-Disposition', `attachment; filename="${fileBase}.pdf"`);
+              res.setHeader('Content-Length', result.pdfBuffer.length);
+              res.setHeader('Content-Disposition', `attachment; filename="${finalPdfName}"`);
               res.end(result.pdfBuffer);
             }
           } catch (err) {

@@ -20,6 +20,7 @@ import StackedBarChart from '../graph/StackedBarChart';
 import ProportionBarChart from '../graph/ProportionBarChart';
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
+import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 
 function normalizeName(name) {
   if (!name) return '';
@@ -103,9 +104,10 @@ const getTipoCadeiaConfig = (nomeTipo) => {
   };
 };
 
-const SEMIARIDO_CATEGORIES = [
-  { key: 'semi', label: 'Semiárido', shortLabel: 'Semiárido', colorHex: '#F59E0B' },
-  { key: 'fora', label: 'Outras Regiões', shortLabel: 'Outras Regiões', colorHex: '#3B82F6' }
+const CADEIA_CATEGORIES = [
+  { key: 'apl', label: 'Arranjo Produtivo Local (APL)', shortLabel: 'APL', colorHex: '#2563EB' },
+  { key: 'ig', label: 'Indicação Geográfica (IG)', shortLabel: 'IG', colorHex: '#10B981' },
+  { key: 'ig_potencial', label: 'IG Potencial', shortLabel: 'IG Potencial', colorHex: '#F59E0B' }
 ];
 
 export default function RelatorioCadeiasPage() {
@@ -118,6 +120,9 @@ export default function RelatorioCadeiasPage() {
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const reportMode = searchParams.get('modo') || 'normal';
+  const isSemiarido = reportMode === 'semiarido';
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
 
@@ -204,7 +209,7 @@ export default function RelatorioCadeiasPage() {
       const nomeSedeFinal = lookupSede ? lookupSede.nome_municipio : (rawMunSede || 'Juazeiro');
       const idTerrSede = overrideTerritorioId || (lookupSede ? lookupSede.id_territorio : (row.id_territorio || null));
       const nomeTerrSede = overrideTerritorioNome || (lookupSede ? lookupSede.nome_territorio : (row.nome_territorio || 'Não identificado'));
-      const isSedeSemi = lookupSede ? checkSemiaridoValue(lookupSede.semiarido) : false;
+      const isSedeSemi = lookupSede ? checkSemiaridoValue(lookupSede.semiarido) : isMunicipioSemiarido(nomeSedeFinal);
 
       if (!mapCadeias.has(idCadeia)) {
         let lat = row.latitude ? Number(row.latitude) : (row.lat ? Number(row.lat) : null);
@@ -264,7 +269,7 @@ export default function RelatorioCadeiasPage() {
         const mNome = row.nome_municipio || (lookupMun ? lookupMun.nome_municipio : '');
         const mTerrId = row.id_territorio || (lookupMun ? lookupMun.id_territorio : idTerrSede);
         const mTerrNome = row.nome_territorio || (lookupMun ? lookupMun.nome_territorio : nomeTerrSede);
-        const mSemi = lookupMun ? checkSemiaridoValue(lookupMun.semiarido) : false;
+        const mSemi = lookupMun ? checkSemiaridoValue(lookupMun.semiarido) : isMunicipioSemiarido(mNome);
 
         if (mId && !cadeiaObj.municipios_cobertos.some(m => m.id_municipio === mId)) {
           cadeiaObj.municipios_cobertos.push({
@@ -283,23 +288,37 @@ export default function RelatorioCadeiasPage() {
     return Array.from(mapCadeias.values());
   }, [listaCadeias, distribuicaoCadeias]);
 
-  // 2. Filtragem por Território Selecionado
+  const totalCadeiasBahia = useMemo(() => enrichedCadeias.length, [enrichedCadeias]);
+
+  // 2. Filtragem por Território Selecionado e Modo
   const filteredCadeias = useMemo(() => {
     if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
-    if (!selectedTerritory) return enrichedCadeias;
+    let list = enrichedCadeias;
 
-    const tid = Number(selectedTerritory.id_territorio);
-    const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
+    if (selectedTerritory) {
+      const tid = Number(selectedTerritory.id_territorio);
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
 
-    return enrichedCadeias.filter(c => {
-      const matchSedeId = Number(c.id_territorio) === tid;
-      const matchSedeNome = normalizeName(c.territorio_identidade) === tNorm;
-      const matchAbrangencia = c.municipios_cobertos?.some(m => 
-        Number(m.id_territorio) === tid || normalizeName(m.nome_territorio) === tNorm
+      list = list.filter(c => {
+        const matchSedeId = Number(c.id_territorio) === tid;
+        const matchSedeNome = normalizeName(c.territorio_identidade) === tNorm;
+        const matchAbrangencia = c.municipios_cobertos?.some(m => 
+          Number(m.id_territorio) === tid || normalizeName(m.nome_territorio) === tNorm
+        );
+        return matchSedeId || matchSedeNome || matchAbrangencia;
+      });
+    }
+
+    if (isSemiarido) {
+      list = list.filter(c => 
+        c.semiarido === true || 
+        isMunicipioSemiarido(c.municipio_sede) || 
+        c.municipios_cobertos?.some(m => m.semiarido || isMunicipioSemiarido(m.nome_municipio))
       );
-      return matchSedeId || matchSedeNome || matchAbrangencia;
-    });
-  }, [enrichedCadeias, selectedTerritory]);
+    }
+
+    return list;
+  }, [enrichedCadeias, selectedTerritory, isSemiarido]);
 
   // 3. Indicadores Executivos (KPIs)
   const statsKpis = useMemo(() => {
@@ -343,15 +362,22 @@ export default function RelatorioCadeiasPage() {
       };
     }
 
+    const pctCadeiasBahia = totalCadeiasBahia > 0 ? ((totalArranjos / totalCadeiasBahia) * 100).toFixed(1) : '0.0';
+    const totalMunUniverso = isSemiarido ? SEMIARIDO_TOTAL_MUNICIPIOS : (selectedTerritory ? munBeneficiadosSet.size : BAHIA_TOTAL_MUNICIPIOS);
+    const taxaMun = totalMunUniverso > 0 ? ((munBeneficiadosSet.size / totalMunUniverso) * 100).toFixed(1) : '0.0';
+
     return {
       totalArranjos,
+      pctCadeiasBahia,
       arranjosSemiCount,
       municipiosBeneficiados: munBeneficiadosSet.size,
+      totalMunUniverso,
+      taxaMun,
       municipiosSemiBeneficiados: munSemiBeneficiadosSet.size,
       territoriosAtendidos: terrSet.size,
       maiorSegmento
     };
-  }, [filteredCadeias]);
+  }, [filteredCadeias, isSemiarido, selectedTerritory, totalCadeiasBahia]);
 
   // 4. Top 10 Arranjos / Cadeias Produtivas (Duas Bandas: 2 colunas x 5 linhas)
   const topCadeiasData = useMemo(() => {
@@ -381,25 +407,32 @@ export default function RelatorioCadeiasPage() {
       });
   }, [filteredCadeias]);
 
-  // 5. Concentração por Território (StackedBarChart com Semiárido vs Outras Regiões)
+  // 5. Concentração por Território (StackedBarChart por Tipologia: APL, IG, IG Potencial)
   const concentracaoTerritorialStackedData = useMemo(() => {
-    if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
+    if (!filteredCadeias || filteredCadeias.length === 0) return [];
     const groups = {};
 
-    enrichedCadeias.forEach(c => {
+    filteredCadeias.forEach(c => {
       const terr = c.territorio_identidade || c.territorio || 'Não identificado';
       if (!groups[terr]) {
-        groups[terr] = { label: terr, total: 0, segments: { semi: 0, fora: 0 } };
+        groups[terr] = { label: terr, total: 0, segments: { apl: 0, ig: 0, ig_potencial: 0 } };
       }
-      if (c.semiarido) groups[terr].segments.semi += 1;
-      else groups[terr].segments.fora += 1;
+      const rawTipo = String(c.shortTipo || c.tipo || '').toLowerCase();
+      if (rawTipo.includes('potencial')) {
+        groups[terr].segments.ig_potencial += 1;
+      } else if (rawTipo.includes('indicação') || rawTipo.includes('ig')) {
+        groups[terr].segments.ig += 1;
+      } else {
+        groups[terr].segments.apl += 1;
+      }
       groups[terr].total += 1;
     });
 
     return Object.values(groups)
       .sort((a, b) => b.total - a.total)
+      .slice(0, 10)
       .map(g => ({ ...g, totalLabel: String(g.total) }));
-  }, [enrichedCadeias]);
+  }, [filteredCadeias]);
 
   // 6. Distribuição das Top 6 Segmentos Econômicos (2 Colunas x 3 Linhas DESC)
   const segmentosEmpilhadosData = useMemo(() => {
@@ -410,11 +443,9 @@ export default function RelatorioCadeiasPage() {
     filteredCadeias.forEach(c => {
       const seg = c.segmento || 'Outros';
       if (!stats[seg]) {
-        stats[seg] = { name: seg, total: 0, semi: 0, fora: 0 };
+        stats[seg] = { name: seg, total: 0 };
       }
       stats[seg].total += 1;
-      if (c.semiarido) stats[seg].semi += 1;
-      else stats[seg].fora += 1;
     });
 
     return Object.values(stats)
@@ -422,13 +453,11 @@ export default function RelatorioCadeiasPage() {
       .slice(0, 6)
       .map(item => ({
         ...item,
-        pctTotal: totalGeral > 0 ? ((item.total / totalGeral) * 100).toFixed(1) : '0.0',
-        pctSemi: item.total > 0 ? ((item.semi / item.total) * 100).toFixed(0) : '0',
-        pctFora: item.total > 0 ? ((item.fora / item.total) * 100).toFixed(0) : '0'
+        pctTotal: totalGeral > 0 ? ((item.total / totalGeral) * 100).toFixed(1) : '0.0'
       }));
   }, [filteredCadeias]);
 
-  // 7. Tipologias de Arranjo no Semiárido (APL vs IG vs IG Potencial - ProportionBarChart)
+  // 7. Tipologias de Arranjo por Abrangência (Intermunicipal vs Local)
   const tiposProportionData = useMemo(() => {
     if (!filteredCadeias || filteredCadeias.length === 0) return [];
     const stats = {};
@@ -438,8 +467,12 @@ export default function RelatorioCadeiasPage() {
       if (!stats[tipo]) {
         stats[tipo] = { label: tipo, positive: 0, negative: 0, total: 0 };
       }
-      if (c.semiarido) stats[tipo].positive += 1;
-      else stats[tipo].negative += 1;
+      const isRegional = (c.municipios_cobertos?.length || 1) > 1;
+      if (isRegional) {
+        stats[tipo].positive += 1;
+      } else {
+        stats[tipo].negative += 1;
+      }
       stats[tipo].total += 1;
     });
 
@@ -456,7 +489,14 @@ export default function RelatorioCadeiasPage() {
               Relatório Executivo de Cadeias Produtivas & IGs
             </h1>
 
-            {selectedTerritory && (
+            {isSemiarido ? (
+              <div className="flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+                <span className="text-[10.5px] font-bold text-[#92400E]">
+                  Recorte Oficial: <strong>Semiárido Baiano (278 Municípios)</strong>
+                </span>
+              </div>
+            ) : selectedTerritory ? (
               <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
                 <MapPin size={11} className="text-[#0284C7]" />
                 <span className="text-[10.5px] font-bold text-[#0369A1]">
@@ -471,10 +511,19 @@ export default function RelatorioCadeiasPage() {
                   <X size={11} />
                 </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                <span className="text-[10.5px] font-bold text-[#0369A1]">
+                  Cenário Geral: <strong className="text-[#0C4A6E]">Estado da Bahia (417 Municípios)</strong>
+                </span>
+              </div>
             )}
           </div>
           <p className="text-xs text-[#457B9D] font-medium mt-1">
-            Diagnóstico territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas da Bahia
+            {isSemiarido
+              ? 'Diagnóstico territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas nos 278 municípios do Semiárido'
+              : 'Diagnóstico territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas da Bahia'}
           </p>
         </div>
       </div>
@@ -495,8 +544,15 @@ export default function RelatorioCadeiasPage() {
               <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsKpis.totalArranjos}
               </span>
-              <span className="text-[9.5px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {statsKpis.arranjosSemiCount} no semiárido
+              <span 
+                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+                title={`${statsKpis.totalArranjos} de ${totalCadeiasBahia} arranjos estaduais`}
+              >
+                {isSemiarido ? `${statsKpis.pctCadeiasBahia}% da Bahia` : 'Ecossistema Produtivo'}
               </span>
             </div>
           </div>
@@ -532,10 +588,16 @@ export default function RelatorioCadeiasPage() {
                 <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : statsKpis.municipiosBeneficiados}
                 </span>
-                <span className="text-[11px] font-bold text-[#64748B]">munic.</span>
+                <span className="text-[11px] font-bold text-[#64748B]">/ {statsKpis.totalMunUniverso}</span>
               </div>
-              <span className="text-[9.5px] font-bold text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {statsKpis.municipiosSemiBeneficiados} no semiárido
+              <span 
+                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                  isSemiarido 
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                }`}
+              >
+                {isSemiarido ? `${statsKpis.taxaMun}% do Semiárido` : `${statsKpis.taxaMun}% de abrangência estadual`}
               </span>
             </div>
           </div>
@@ -553,10 +615,10 @@ export default function RelatorioCadeiasPage() {
                 <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : (selectedTerritory ? '1' : statsKpis.territoriosAtendidos)}
                 </span>
-                <span className="text-[11px] font-bold text-[#64748B]">de 27</span>
+                <span className="text-[11px] font-bold text-[#64748B]">territórios</span>
               </div>
               <span className="text-[9.5px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-md whitespace-nowrap">
-                {selectedTerritory ? 'Território' : 'cobertura estadual'}
+                {isSemiarido ? 'presença Semiárido' : (selectedTerritory ? 'Território' : '100% dos Territórios')}
               </span>
             </div>
           </div>
@@ -575,14 +637,16 @@ export default function RelatorioCadeiasPage() {
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div className="min-w-0 flex-1 pr-2">
                 <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <ListOrdered size={15} className="text-[#2563EB] shrink-0" />
+                  <ListOrdered size={15} className={isSemiarido ? "text-[#D97706] shrink-0" : "text-[#2563EB] shrink-0"} />
                   Top 10 Arranjos & IGs
                 </h3>
                 <p className="text-[10px] text-[#457B9D]">Maior extensão municipal de abrangência</p>
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
                 <span className="text-[9px] font-bold text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-md border border-[#E2E8F0]">Municípios</span>
-                <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2 py-0.5 rounded-md border border-[#F59E0B]/20">Semiárido</span>
+                {isSemiarido && (
+                  <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2 py-0.5 rounded-md border border-[#F59E0B]/20">Semiárido</span>
+                )}
               </div>
             </div>
 
@@ -611,12 +675,14 @@ export default function RelatorioCadeiasPage() {
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0 font-extrabold">
-                    <span className="text-[#1D3557] text-[10.5px] font-bold bg-white px-1.5 py-0.5 rounded-md border border-[#E2E8F0] min-w-[26px] text-center shadow-2xs">
+                    <span className="text-[#1D3557] text-[10.5px] font-bold bg-white px-2 py-0.5 rounded-md border border-[#E2E8F0] min-w-[28px] text-center shadow-2xs">
                       {item.totalMunicipios}
                     </span>
-                    <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-1.5 py-0.5 rounded-md text-[10px] min-w-[24px] text-center font-bold">
-                      {item.semiMunicipios}
-                    </span>
+                    {isSemiarido && (
+                      <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-1.5 py-0.5 rounded-md text-[10px] min-w-[24px] text-center font-bold">
+                        {item.semiMunicipios}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -627,9 +693,9 @@ export default function RelatorioCadeiasPage() {
           <div className="h-full min-h-0 overflow-hidden">
             <StackedBarChart
               data={concentracaoTerritorialStackedData}
-              categories={SEMIARIDO_CATEGORIES}
-              title={selectedTerritory ? `Arranjos em ${territoryName}` : 'Concentração por Território'}
-              subtitle="Arranjos com presença e atuação no Semiárido"
+              categories={CADEIA_CATEGORIES}
+              title={isSemiarido ? "Concentração no Semiárido" : (selectedTerritory ? `Arranjos em ${territoryName}` : 'Concentração por Território')}
+              subtitle={isSemiarido ? "Territórios do Semiárido líderes em cadeias produtivas" : "Top 10 Territórios em Cadeias e APLs na Bahia"}
               allowToggleView={false}
               showTotalLabel={true}
             />
@@ -640,19 +706,24 @@ export default function RelatorioCadeiasPage() {
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div>
                 <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <BarChart2 size={15} className="text-[#2563EB]" />
-                  {selectedTerritory ? `Segmentos em ${territoryName}` : 'Distribuição Estadual por Segmento'}
+                  <BarChart2 size={15} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                  {isSemiarido ? "Distribuição por Segmento no Semiárido" : (selectedTerritory ? `Segmentos em ${territoryName}` : 'Distribuição Estadual por Segmento')}
                 </h3>
-                <p className="text-[10px] text-[#457B9D]">Semiárido vs Outras Regiões (Top 6 Segmentos)</p>
+                <p className="text-[10px] text-[#457B9D]">
+                  {isSemiarido ? "Top 6 Segmentos com atuação no Semiárido" : "Top 6 Segmentos Produtivos no Estado da Bahia"}
+                </p>
               </div>
 
               <div className="flex items-center gap-2.5 text-[9px] font-black">
-                <span className="flex items-center gap-1 text-[#B45309]">
-                  <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Semiárido
-                </span>
-                <span className="flex items-center gap-1 text-[#2563EB]">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Outras Regiões
-                </span>
+                {isSemiarido ? (
+                  <span className="flex items-center gap-1 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Vocações do Semiárido
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Volume Estadual
+                  </span>
+                )}
               </div>
             </div>
 
@@ -669,31 +740,35 @@ export default function RelatorioCadeiasPage() {
                     </span>
                   </div>
 
-                  {/* BARRA EMPILHADA */}
+                  {/* BARRA */}
                   <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
-                    {cat.semi > 0 && (
-                      <div 
-                        className="h-full bg-[#F59E0B] transition-all duration-500"
-                        style={{ width: `${(cat.semi / cat.total) * 100}%` }}
-                        title={`Semiárido: ${cat.semi}`}
-                      />
-                    )}
-                    {cat.fora > 0 && (
-                      <div 
-                        className="h-full bg-[#2563EB] transition-all duration-500"
-                        style={{ width: `${(cat.fora / cat.total) * 100}%` }}
-                        title={`Outras Regiões: ${cat.fora}`}
-                      />
-                    )}
+                    <div 
+                      className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
+                      style={{ width: `${cat.pctTotal}%` }}
+                      title={`${cat.name}: ${cat.total} (${cat.pctTotal}%)`}
+                    />
                   </div>
 
                   <div className="flex items-center justify-between text-[8.5px] font-bold">
-                    <span className="text-[#B45309]">
-                      Semi: <strong>{cat.semi}</strong> ({cat.pctSemi}%)
-                    </span>
-                    <span className="text-[#2563EB]">
-                      Fora: <strong>{cat.fora}</strong> ({cat.pctFora}%)
-                    </span>
+                    {isSemiarido ? (
+                      <>
+                        <span className="text-[#B45309]">
+                          No Semiárido: <strong>{cat.total}</strong>
+                        </span>
+                        <span className="text-[#64748B]">
+                          <strong>{cat.pctTotal}%</strong> do recorte
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-[#2563EB]">
+                          No Estado: <strong>{cat.total}</strong>
+                        </span>
+                        <span className="text-[#64748B]">
+                          <strong>{cat.pctTotal}%</strong> do total
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
@@ -704,14 +779,14 @@ export default function RelatorioCadeiasPage() {
           <div className="h-full min-h-0 overflow-hidden">
             <ProportionBarChart
               data={tiposProportionData}
-              title="Tipologias de Reconhecimento"
-              subtitle="Proporção de APLs e IGs presentes no Semiárido"
-              positiveLabel="Semiárido"
-              negativeLabel="Outras Regiões"
-              positiveColor="bg-[#F59E0B]"
-              negativeColor="bg-[#2563EB]"
-              positiveTextColor="text-[#B45309]"
-              negativeTextColor="text-[#2563EB]"
+              title={isSemiarido ? "Tipologias de Reconhecimento no Semiárido" : "Tipologias de Reconhecimento"}
+              subtitle={isSemiarido ? "Abrangência: Intermunicipal vs Local no Semiárido" : "Abrangência: Intermunicipal vs Local na Bahia"}
+              positiveLabel="Intermunicipal"
+              negativeLabel="Local / Sede"
+              positiveColor="bg-[#2563EB]"
+              negativeColor="bg-[#F59E0B]"
+              positiveTextColor="text-[#2563EB]"
+              negativeTextColor="text-[#D97706]"
             />
           </div>
 
