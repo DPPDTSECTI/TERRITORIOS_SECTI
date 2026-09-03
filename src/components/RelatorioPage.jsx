@@ -31,6 +31,7 @@ import {
 } from 'recharts';
 import SideMap from './maps/SideMap';
 import PtiMap from './maps/PtiMap';
+import { captureReportToPdf } from '../utils/exportPdfCapture';
 
 // Helper para limpeza de sufixos de campus / cidade nas IES
 function cleanIes(name) {
@@ -367,36 +368,70 @@ export default function RelatorioPage() {
     return 'Síntese Executiva';
   }, [reportType]);
 
-  const handleExportPDF = (overrideType = null) => {
+  const handleExportPDF = async (overrideType = null) => {
     if (isExportingPdf) return;
     setIsExportingPdf(true);
 
     const type = overrideType || reportType;
     let path = '/relatorio/sintese';
-    if (type === 'ativos') path = '/relatorio/ativos';
-    else if (type === 'cursos') path = '/relatorio/cursos';
-    else if (type === 'cadeias') path = '/relatorio/cadeias';
-    else if (type === 'sintese') path = '/relatorio/sintese';
+    let fileBase = 'relatorio_sintese';
+    if (type === 'ativos') {
+      path = '/relatorio/ativos';
+      fileBase = 'relatorio_ativos';
+    } else if (type === 'cursos') {
+      path = '/relatorio/cursos';
+      fileBase = 'relatorio_ensino';
+    } else if (type === 'cadeias') {
+      path = '/relatorio/cadeias';
+      fileBase = 'relatorio_cadeias';
+    } else if (type === 'sintese') {
+      path = '/relatorio/sintese';
+      fileBase = 'relatorio_sintese';
+    }
 
     const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
       ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
       : 'territorio=bahia';
 
-    const targetUrl = `${path}?${terrParam}`;
+    const filename = `${fileBase}.pdf`;
 
-    // Remove qualquer iframe de impressão anterior
+    // 1. Tenta exportação oficial com Playwright (Chromium real 1920x1080 @3x 5760x3240 -> PDF 16:9)
+    try {
+      const apiUrl = `/api/export-pdf?type=${type}&${terrParam}`;
+      const res = await fetch(apiUrl);
+      if (res.ok) {
+        const blob = await res.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
+        setIsExportingPdf(false);
+        return;
+      }
+      throw new Error(`Endpoint Playwright respondeu com status ${res.status}`);
+    } catch (apiErr) {
+      console.warn('Exportação via Playwright indisponível, acionando fallback de captura:', apiErr);
+    }
+
+    // 2. Fallback de captura direta via iframe se a API não estiver respondendo
+    const targetUrl = `${path}?${terrParam}`;
     const oldIframe = document.getElementById('secti-pdf-print-frame');
     if (oldIframe) oldIframe.remove();
 
-    // Cria iframe invisível no DOM
     const iframe = document.createElement('iframe');
     iframe.id = 'secti-pdf-print-frame';
     iframe.src = targetUrl;
     iframe.style.position = 'fixed';
     iframe.style.top = '0';
     iframe.style.left = '0';
-    iframe.style.width = '1440px';
-    iframe.style.height = '900px';
+    iframe.style.width = '1920px';
+    iframe.style.height = '1080px';
+    iframe.width = '1920';
+    iframe.height = '1080';
     iframe.style.opacity = '0';
     iframe.style.pointerEvents = 'none';
     iframe.style.zIndex = '-9999';
@@ -404,30 +439,36 @@ export default function RelatorioPage() {
 
     document.body.appendChild(iframe);
 
-    // Aguarda o carregamento do conteúdo no iframe
-    iframe.onload = () => {
-      setTimeout(() => {
+    iframe.onload = async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1400));
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (!iframeDoc) throw new Error('Documento do relatório inacessível no iframe.');
+        const reportEl = iframeDoc.getElementById('pdf-report');
+        if (!reportEl) throw new Error('Elemento com id="pdf-report" não encontrado no relatório.');
+
+        await captureReportToPdf(reportEl, filename, 3);
+      } catch (e) {
+        console.error('Erro no fallback de captura:', e);
         try {
-          iframe.contentWindow.focus();
-          iframe.contentWindow.print();
-        } catch (e) {
-          console.warn('Iframe print inacessível, usando fallback:', e);
-          window.open(targetUrl + '&autoPrint=1', '_blank');
-        } finally {
-          setIsExportingPdf(false);
-          setTimeout(() => {
-            if (document.getElementById('secti-pdf-print-frame')) {
-              document.getElementById('secti-pdf-print-frame').remove();
-            }
-          }, 4000);
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        } catch (printErr) {
+          console.error('Fallback print falhou:', printErr);
         }
-      }, 1200);
+      } finally {
+        setIsExportingPdf(false);
+        setTimeout(() => {
+          if (document.getElementById('secti-pdf-print-frame')) {
+            document.getElementById('secti-pdf-print-frame').remove();
+          }
+        }, 3000);
+      }
     };
 
-    // Timeout de segurança
     setTimeout(() => {
       setIsExportingPdf(false);
-    }, 10000);
+    }, 15000);
   };
 
 

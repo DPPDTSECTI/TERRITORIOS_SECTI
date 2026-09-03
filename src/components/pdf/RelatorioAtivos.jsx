@@ -18,6 +18,7 @@ import StackedBarChart from '../graph/StackedBarChart';
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { getDynamicAssetTypeConfig } from '../../constants/assetTypes';
+import { captureReportToPdf } from '../../utils/exportPdfCapture';
 
 const PALETTE = ['#2563EB', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#1D3557'];
 
@@ -120,7 +121,34 @@ export default function RelatorioAtivosPage() {
     }
   }, [searchParams, territoriosData]);
 
-  // Acionamento automático do diálogo de impressão se solicitado via URL
+  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  // Captura visual em alta resolução para PDF (html2canvas + jsPDF)
+  useEffect(() => {
+    const captureParam = searchParams.get('capture') || searchParams.get('download');
+    if ((captureParam === '1' || captureParam === 'pdf' || captureParam === 'true') && !loadingStats) {
+      const timer = setTimeout(async () => {
+        const el = document.getElementById('pdf-report');
+        if (el) {
+          const suffix = selectedTerritory ? `_${normalizeName(territoryName).replace(/\s+/g, '_')}` : '';
+          try {
+            await captureReportToPdf(el, `relatorio_ativos${suffix}.pdf`, 3);
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: 'PDF_EXPORT_COMPLETE', report: 'ativos' }, '*');
+            }
+          } catch (err) {
+            console.error('Erro na captura visual do PDF:', err);
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: 'PDF_EXPORT_ERROR', error: String(err) }, '*');
+            }
+          }
+        }
+      }, 900);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, loadingStats, selectedTerritory, territoryName]);
+
+  // Fallback de auto-impressão caso explicitamente solicitado
   useEffect(() => {
     const autoPrint = searchParams.get('autoPrint');
     if ((autoPrint === '1' || autoPrint === 'true') && !loadingStats) {
@@ -130,8 +158,6 @@ export default function RelatorioAtivosPage() {
       return () => clearTimeout(timer);
     }
   }, [searchParams, loadingStats]);
-
-  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
   // 0. Processamento Completo dos Ativos
   const ativosProcessados = useMemo(() => {
@@ -396,7 +422,7 @@ export default function RelatorioAtivosPage() {
   }, [filteredAtivos]);
 
   return (
-    <main className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-white select-none">
+    <main id="pdf-report" className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-white select-none">
       {/* CABEÇALHO */}
       <div className="flex items-center justify-between w-full shrink-0">
         <div className="flex flex-col">
