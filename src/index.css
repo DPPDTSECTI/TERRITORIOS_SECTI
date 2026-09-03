@@ -194,3 +194,24 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(var(--color-neutral-400), 0.8);
 }
+
+/* ================= PRINT RULES (A4 LANDSCAPE EXECUTIVE REPORTS) ================= */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 6mm 8mm;
+  }
+  
+  html, body {
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print\\:hidden,
+  .print-hidden {
+    display: none !important;
+  }
+}

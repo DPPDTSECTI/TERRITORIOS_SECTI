@@ -1,4 +1,5 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   MapPin, 
@@ -6,7 +7,9 @@ import {
   X, 
   ListOrdered,
   BarChart2,
-  Wifi
+  Wifi,
+  Printer,
+  ArrowLeft
 } from 'lucide-react';
 
 import { DataContext } from '../../context/DataContext';
@@ -94,13 +97,41 @@ const MUN_LOOKUP = (() => {
 export default function RelatorioAtivosPage() {
   const { 
     ativosData = [], 
+    territoriosData = [],
     loadingStats = false 
   } = useContext(DataContext);
+
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const [focusedAsset, setFocusedAsset] = useState(null);
 
- const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+  // Inicializa o território a partir dos parâmetros de busca na URL
+  useEffect(() => {
+    const terrParam = searchParams.get('territorio');
+    if (terrParam && terrParam !== 'bahia' && territoriosData.length > 0) {
+      const match = territoriosData.find(t => String(t.id_territorio) === String(terrParam));
+      if (match) {
+        setSelectedTerritory(match);
+      }
+    } else if (terrParam === 'bahia') {
+      setSelectedTerritory(null);
+    }
+  }, [searchParams, territoriosData]);
+
+  // Acionamento automático do diálogo de impressão se solicitado via URL
+  useEffect(() => {
+    const autoPrint = searchParams.get('autoPrint');
+    if ((autoPrint === '1' || autoPrint === 'true') && !loadingStats) {
+      const timer = setTimeout(() => {
+        window.print();
+      }, 900);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, loadingStats]);
+
+  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
   // 0. Processamento Completo dos Ativos
   const ativosProcessados = useMemo(() => {
@@ -366,7 +397,6 @@ export default function RelatorioAtivosPage() {
 
   return (
     <main className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-white select-none">
-      
       {/* CABEÇALHO */}
       <div className="flex items-center justify-between w-full shrink-0">
         <div className="flex flex-col">

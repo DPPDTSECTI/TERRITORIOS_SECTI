@@ -67,6 +67,7 @@ export default function RelatorioPage() {
  const [tableSearch, setTableSearch] = useState('');
  const [sortField, setSortField] = useState(null);
  const [sortAsc, setSortAsc] = useState(true);
+ const [isExportingPdf, setIsExportingPdf] = useState(false);
 
 
  // Território selecionado (objeto) ou null se for Toda a Bahia
@@ -359,6 +360,76 @@ export default function RelatorioPage() {
  document.body.removeChild(link);
  };
 
+  const currentReportLabel = useMemo(() => {
+    if (reportType === 'ativos') return 'Ativos de CT&I';
+    if (reportType === 'cursos') return 'Cursos Superiores';
+    if (reportType === 'cadeias') return 'Cadeias Produtivas';
+    return 'Síntese Executiva';
+  }, [reportType]);
+
+  const handleExportPDF = (overrideType = null) => {
+    if (isExportingPdf) return;
+    setIsExportingPdf(true);
+
+    const type = overrideType || reportType;
+    let path = '/relatorio/sintese';
+    if (type === 'ativos') path = '/relatorio/ativos';
+    else if (type === 'cursos') path = '/relatorio/cursos';
+    else if (type === 'cadeias') path = '/relatorio/cadeias';
+    else if (type === 'sintese') path = '/relatorio/sintese';
+
+    const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
+      ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
+      : 'territorio=bahia';
+
+    const targetUrl = `${path}?${terrParam}`;
+
+    // Remove qualquer iframe de impressão anterior
+    const oldIframe = document.getElementById('secti-pdf-print-frame');
+    if (oldIframe) oldIframe.remove();
+
+    // Cria iframe invisível no DOM
+    const iframe = document.createElement('iframe');
+    iframe.id = 'secti-pdf-print-frame';
+    iframe.src = targetUrl;
+    iframe.style.position = 'fixed';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
+    iframe.style.width = '1440px';
+    iframe.style.height = '900px';
+    iframe.style.opacity = '0';
+    iframe.style.pointerEvents = 'none';
+    iframe.style.zIndex = '-9999';
+    iframe.style.border = 'none';
+
+    document.body.appendChild(iframe);
+
+    // Aguarda o carregamento do conteúdo no iframe
+    iframe.onload = () => {
+      setTimeout(() => {
+        try {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        } catch (e) {
+          console.warn('Iframe print inacessível, usando fallback:', e);
+          window.open(targetUrl + '&autoPrint=1', '_blank');
+        } finally {
+          setIsExportingPdf(false);
+          setTimeout(() => {
+            if (document.getElementById('secti-pdf-print-frame')) {
+              document.getElementById('secti-pdf-print-frame').remove();
+            }
+          }, 4000);
+        }
+      }, 1200);
+    };
+
+    // Timeout de segurança
+    setTimeout(() => {
+      setIsExportingPdf(false);
+    }, 10000);
+  };
+
 
  const ativosPorTipo = useMemo(() => {
  if (reportType !== 'ativos') return [];
@@ -468,6 +539,26 @@ export default function RelatorioPage() {
 
  {/* BOTÕES DE EXPORTAÇÃO E IMPRESSÃO (MOVIDOS PARA A CAIXA 2) */}
  <div className="tour-relatorio-export flex items-center gap-1.5 self-start sm:self-center print:hidden">
+  <button
+    type="button"
+    disabled={isExportingPdf}
+    onClick={() => handleExportPDF()}
+    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-primary-900 text-white hover:bg-primary-800 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
+    title={`Exportar Relatório Executivo em PDF (${currentReportLabel})`}
+  >
+    {isExportingPdf ? (
+      <>
+        <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+        <span>Gerando PDF...</span>
+      </>
+    ) : (
+      <>
+        <Printer size={15} />
+        <span>Exportar PDF</span>
+      </>
+    )}
+  </button>
+
  <button
  type="button"
  onClick={handleExportCSV}
@@ -796,7 +887,7 @@ export default function RelatorioPage() {
  </div>
 
  <div className="text-[11px] font-medium text-text-secondary shrink-0">
- Mostrando <strong>{tableData.length}</strong> registro(s)
+   Mostrando <strong>{tableData.length}</strong> registro(s)
  </div>
  </div>
 
