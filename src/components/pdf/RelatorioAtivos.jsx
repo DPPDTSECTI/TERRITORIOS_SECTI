@@ -424,22 +424,22 @@ export default function RelatorioAtivosPage() {
       {/* CABEÇALHO */}
       <div className="flex items-center justify-between w-full shrink-0">
         <div className="flex flex-col">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="text-2xl lg:text-3xl font-black text-[#1D3557] tracking-tight">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-[30px] lg:text-[32px] font-black text-[#1D3557] tracking-tight leading-none">
               Relatório Executivo de Ativos de CT&I
             </h1>
 
             {isSemiarido ? (
-              <div className="flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3 py-0.5 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-[#D97706]" />
-                <span className="text-[10.5px] font-bold text-[#92400E]">
+              <div className="flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3.5 py-1 rounded-full">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]" />
+                <span className="text-[12px] font-bold text-[#92400E]">
                   Recorte Oficial: <strong>Semiárido Baiano (278 Municípios)</strong>
                 </span>
               </div>
             ) : selectedTerritory ? (
-              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
-                <MapPin size={11} className="text-[#0284C7]" />
-                <span className="text-[10.5px] font-bold text-[#0369A1]">
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-3 py-1 rounded-full">
+                <MapPin size={13} className="text-[#0284C7]" />
+                <span className="text-[12px] font-bold text-[#0369A1]">
                   Recorte: <strong className="text-[#0C4A6E]">{territoryName}</strong>
                 </span>
                 <button
@@ -448,19 +448,19 @@ export default function RelatorioAtivosPage() {
                   className="text-[#0369A1] hover:text-red-500 transition-colors ml-0.5 cursor-pointer"
                   title="Limpar seleção territorial"
                 >
-                  <X size={11} />
+                  <X size={12} />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-2.5 py-0.5 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
-                <span className="text-[10.5px] font-bold text-[#0369A1]">
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-3.5 py-1 rounded-full">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
+                <span className="text-[12px] font-bold text-[#0369A1]">
                   Cenário Geral: <strong className="text-[#0C4A6E]">Estado da Bahia (417 Municípios)</strong>
                 </span>
               </div>
             )}
           </div>
-          <p className="text-xs text-[#457B9D] font-medium mt-1">
+          <p className="text-[13.5px] text-[#457B9D] font-medium mt-1">
             {isSemiarido
               ? 'Diagnóstico territorial e mapeamento estrutural dos ativos de CT&I nos 278 municípios do Semiárido'
               : 'Diagnóstico territorial e mapeamento estrutural dos ativos de ciência, tecnologia e inovação na Bahia'}
@@ -468,24 +468,24 @@ export default function RelatorioAtivosPage() {
         </div>
       </div>
 
-      {/* GRID DE KPIS (h-[92px]) */}
+      {/* GRID DE KPIS (h-[96px]) */}
       <div className="w-full relative z-10 shrink-0">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 items-stretch w-full">
           
           {/* KPI 1: ATIVOS MAPEADOS */}
-          <div className="h-[92px] bg-white rounded-[24px] p-3.5 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
             <div className="flex items-center gap-2 text-[#457B9D]">
-              <div className="w-6 h-6 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
-                <Building2 size={13} strokeWidth={2.5} />
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <Building2 size={16} strokeWidth={2.5} />
               </div>
-              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Ativos Mapeados</span>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">Ativos Mapeados</span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
-              <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
+              <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsKpis.total}
               </span>
               <span 
-                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${
                   isSemiarido 
                     ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
                     : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
@@ -498,22 +498,22 @@ export default function RelatorioAtivosPage() {
           </div>
 
           {/* KPI 2: MUNICÍPIOS COM PRESENÇA */}
-          <div className="h-[92px] bg-white rounded-[24px] p-3.5 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
             <div className="flex items-center gap-2 text-[#457B9D]">
-              <div className="w-6 h-6 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
-                <MapPin size={13} strokeWidth={2.5} />
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <MapPin size={16} strokeWidth={2.5} />
               </div>
-              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Municípios com Presença</span>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">Municípios com Presença</span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
               <div className="flex items-baseline gap-1">
-                <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
+                <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : statsKpis.municipiosAtendidos}
                 </span>
-                <span className="text-[11px] font-bold text-[#64748B]">/ {statsKpis.totalMunUniverso}</span>
+                <span className="text-[14px] font-bold text-[#64748B]">/ {statsKpis.totalMunUniverso}</span>
               </div>
               <span 
-                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${
                   isSemiarido 
                     ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
                     : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
@@ -525,19 +525,19 @@ export default function RelatorioAtivosPage() {
           </div>
 
           {/* KPI 3: CONECTADOS À REDE RNP */}
-          <div className="h-[92px] bg-white rounded-[24px] p-3.5 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
             <div className="flex items-center gap-2 text-[#457B9D]">
-              <div className="w-6 h-6 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
-                <Wifi size={13} strokeWidth={2.5} />
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <Wifi size={16} strokeWidth={2.5} />
               </div>
-              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Ativos Conectados RNP</span>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">Ativos Conectados RNP</span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
-              <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
+              <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsKpis.rnpTotal}
               </span>
               <span 
-                className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md whitespace-nowrap ${
+                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${
                   isSemiarido 
                     ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
                     : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
@@ -549,21 +549,21 @@ export default function RelatorioAtivosPage() {
           </div>
 
           {/* KPI 4: TERRITÓRIOS COBERTOS */}
-          <div className="h-[92px] bg-white rounded-[24px] p-3.5 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
             <div className="flex items-center gap-2 text-[#457B9D]">
-              <div className="w-6 h-6 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
-                <Layers size={13} strokeWidth={2.5} />
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <Layers size={16} strokeWidth={2.5} />
               </div>
-              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Territórios Cobertos</span>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">Territórios Cobertos</span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
               <div className="flex items-baseline gap-1">
-                <span className="text-[28px] lg:text-[32px] font-black text-[#1D3557] leading-none tracking-tight">
+                <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : (selectedTerritory ? '1' : statsKpis.territoriosAtendidos)}
                 </span>
-                <span className="text-[11px] font-bold text-[#64748B]">territórios</span>
+                <span className="text-[14px] font-bold text-[#64748B]">territórios</span>
               </div>
-              <span className="text-[9.5px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-md whitespace-nowrap">
+              <span className="text-[11.5px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
                 {isSemiarido ? 'presença Semiárido' : (selectedTerritory ? 'Território' : '100% dos Territórios')}
               </span>
             </div>
@@ -582,17 +582,17 @@ export default function RelatorioAtivosPage() {
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div className="min-w-0 flex-1 pr-2">
-                <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <ListOrdered size={15} className={isSemiarido ? "text-[#D97706] shrink-0" : "text-[#2563EB] shrink-0"} />
+                <h3 className="text-[17px] lg:text-[18px] font-bold text-[#1D3557] flex items-center gap-1.5">
+                  <ListOrdered size={18} className={isSemiarido ? "text-[#D97706] shrink-0" : "text-[#2563EB] shrink-0"} />
                   Top 10 Entidades por Sigla
                 </h3>
-                <p className="text-[10px] text-[#457B9D]">Volume de infraestruturas instaladas</p>
+                <p className="text-[12px] text-[#457B9D]">Volume de infraestruturas instaladas</p>
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
                 {isSemiarido ? (
-                  <span className="text-[9px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2 py-0.5 rounded-md border border-[#F59E0B]/20">No Semiárido</span>
+                  <span className="text-[11px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2.5 py-0.5 rounded-full border border-[#F59E0B]/20">No Semiárido</span>
                 ) : (
-                  <span className="text-[9px] font-bold text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded-md border border-[#2563EB]/20">Instalações</span>
+                  <span className="text-[11px] font-bold text-[#2563EB] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full border border-[#2563EB]/20">Instalações</span>
                 )}
               </div>
             </div>
@@ -602,20 +602,20 @@ export default function RelatorioAtivosPage() {
               {topSiglasData.map((item, idx) => (
                 <div 
                   key={idx} 
-                  className="flex items-center justify-between py-1 px-2 rounded-lg bg-[#F8FAFC] hover:bg-[#F1F5F9] transition-colors text-[9.5px] min-w-0 border border-[#E2E8F0]/40"
+                  className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-[#F8FAFC] hover:bg-[#F1F5F9] transition-colors text-[10px] min-w-0 border border-[#E2E8F0]/40"
                 >
-                  <div className="flex items-center gap-1.5 flex-1 min-w-0 pr-1">
+                  <div className="flex items-center gap-2 flex-1 min-w-0 pr-1">
                     <span 
-                      className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-black text-white shrink-0 shadow-2xs" 
+                      className="w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black text-white shrink-0 shadow-2xs" 
                       style={{ backgroundColor: item.corHex }}
                     >
                       {idx + 1}
                     </span>
                     <div className="flex flex-col min-w-0 leading-tight">
-                      <span className="font-extrabold text-[12px] text-[#1D3557] truncate" title={item.nome}>
+                      <span className="font-extrabold text-[13px] text-[#1D3557] truncate" title={item.nome}>
                         {item.sigla}
                       </span>
-                      <span className="text-[9px] text-[#64748B] font-medium truncate leading-tight">
+                      <span className="text-[11px] text-[#64748B] font-medium truncate leading-tight">
                         {item.tipo}
                       </span>
                     </div>
@@ -623,11 +623,11 @@ export default function RelatorioAtivosPage() {
 
                   <div className="flex items-center gap-1.5 shrink-0 font-extrabold">
                     {isSemiarido ? (
-                      <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-2 py-0.5 rounded-md text-[10.5px] min-w-[28px] text-center font-bold">
+                      <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-2 py-0.5 rounded-md text-[12px] min-w-[30px] text-center font-black">
                         {item.total}
                       </span>
                     ) : (
-                      <span className="text-[#1D3557] text-[10.5px] font-bold bg-white px-2 py-0.5 rounded-md border border-[#E2E8F0] min-w-[28px] text-center shadow-2xs">
+                      <span className="text-[#1D3557] text-[12px] font-black bg-white px-2 py-0.5 rounded-md border border-[#E2E8F0] min-w-[30px] text-center shadow-2xs">
                         {item.total}
                       </span>
                     )}
@@ -653,25 +653,25 @@ export default function RelatorioAtivosPage() {
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div>
-                <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <BarChart2 size={15} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                <h3 className="text-[17px] lg:text-[18px] font-bold text-[#1D3557] flex items-center gap-1.5">
+                  <BarChart2 size={18} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
                   {isSemiarido
                     ? 'Distribuição por Tipologia no Semiárido'
                     : (selectedTerritory ? `Tipologias em ${territoryName}` : 'Distribuição Estadual por Tipologia')}
                 </h3>
-                <p className="text-[10px] text-[#457B9D]">
+                <p className="text-[12px] text-[#457B9D]">
                   {isSemiarido ? 'Top 6 Categorias instaladas no Semiárido' : 'Top 6 Categorias de Ativos de CT&I na Bahia'}
                 </p>
               </div>
 
-              <div className="flex items-center gap-2.5 text-[9px] font-black">
+              <div className="flex items-center gap-2.5 text-[11.5px] font-bold">
                 {isSemiarido ? (
-                  <span className="flex items-center gap-1 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Recorte Semiárido
+                  <span className="flex items-center gap-1.5 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 rounded-full">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>Recorte Semiárido
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Volume Estadual
+                  <span className="flex items-center gap-1.5 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-0.5 rounded-full">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>Volume Estadual
                   </span>
                 )}
               </div>
@@ -680,18 +680,18 @@ export default function RelatorioAtivosPage() {
             {/* GRID SIMÉTRICO COM QUEBRA INTELIGENTE DE LINHA */}
             <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-1.5 min-h-0 overflow-hidden py-0.5">
               {categoriasEmpilhadasData.map((cat, idx) => (
-                <div key={idx} className="flex flex-col justify-between p-1.5 px-2 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 min-h-[54px]">
-                  <div className="flex items-start justify-between text-[10.5px] leading-tight gap-1">
+                <div key={idx} className="flex flex-col justify-between p-2 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 min-h-[54px]">
+                  <div className="flex items-start justify-between text-[13px] leading-tight gap-1">
                     <span className="font-extrabold text-[#1D3557] truncate flex-1 min-w-0" title={cat.name}>
                       {cat.name}
                     </span>
-                    <span className="font-bold text-[#457B9D] text-[10px] shrink-0">
+                    <span className="font-bold text-[#457B9D] text-[12px] shrink-0">
                       <strong className="text-[#1D3557] font-black">{cat.total}</strong> ({cat.pctTotal}%)
                     </span>
                   </div>
 
                   {/* BARRA */}
-                  <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
+                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
                     <div 
                       className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
                       style={{ width: `${cat.pctTotal}%` }}
@@ -699,7 +699,7 @@ export default function RelatorioAtivosPage() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between text-[8.5px] font-bold">
+                  <div className="flex items-center justify-between text-[11px] font-bold">
                     {isSemiarido ? (
                       <>
                         <span className="text-[#B45309]">
@@ -729,11 +729,11 @@ export default function RelatorioAtivosPage() {
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div>
-                <h3 className="text-[13.5px] font-extrabold text-[#1D3557] flex items-center gap-1.5">
-                  <Wifi size={15} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                <h3 className="text-[17px] lg:text-[18px] font-bold text-[#1D3557] flex items-center gap-1.5">
+                  <Wifi size={18} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
                   {isSemiarido ? 'Cobertura de Rede RNP no Semiárido' : 'Cobertura de Rede RNP'}
                 </h3>
-                <p className="text-[10px] text-[#457B9D]">
+                <p className="text-[12px] text-[#457B9D]">
                   {isSemiarido
                     ? 'Campi e ICTs do Semiárido conectados ao backbone'
                     : 'Campi e ICTs conectados ao backbone de pesquisa na Bahia'}
@@ -741,14 +741,14 @@ export default function RelatorioAtivosPage() {
               </div>
 
               {/* LEGENDA */}
-              <div className="flex items-center gap-2 text-[9px] font-black">
+              <div className="flex items-center gap-2 text-[11.5px] font-bold">
                 {isSemiarido ? (
-                  <span className="flex items-center gap-1 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Conectados no Semiárido
+                  <span className="flex items-center gap-1.5 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 rounded-full">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>Conectados no Semiárido
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Conectados à RNP
+                  <span className="flex items-center gap-1.5 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-0.5 rounded-full">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>Conectados à RNP
                   </span>
                 )}
               </div>
@@ -757,23 +757,18 @@ export default function RelatorioAtivosPage() {
             {/* LISTA PADRONIZADA: NOME + VALOR/PERCENTUAL + BARRA */}
             <div className="flex-1 flex flex-col justify-between gap-1.5 min-h-0 py-0.5">
               {rnpStackedData.map((cat, idx) => (
-                <div key={idx} className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[43px]">
-                  <div className="flex items-center justify-between text-[11px] leading-tight gap-2">
-                    <span className="font-extrabold text-[#1D3557] truncate" title={cat.name}>
+                <div key={idx} className="flex flex-col justify-between p-2 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[54px]">
+                  <div className="flex items-center justify-between text-[13px] leading-tight gap-1">
+                    <span className="font-extrabold text-[#1D3557] truncate flex-1 min-w-0" title={cat.name}>
                       {cat.name}
                     </span>
-                    <div className="flex items-center gap-1.5 text-[10.5px] shrink-0 font-bold text-[#457B9D]">
-                      <span className="text-[#1D3557] font-black">
-                        {cat.comRnpTotal} <span className="text-[#64748B] font-semibold text-[9.5px]">de {cat.total}</span>
-                      </span>
-                      <span className={isSemiarido ? "text-[#D97706] font-black" : "text-[#2563EB] font-black"}>
-                        ({cat.pctTotal}%)
-                      </span>
-                    </div>
+                    <span className="font-bold text-[#457B9D] text-[12px] shrink-0">
+                      <strong className="text-[#1D3557] font-black">{cat.comRnpTotal}</strong> de {cat.total} ({cat.pctTotal}%)
+                    </span>
                   </div>
 
                   {/* BARRA DE ADESÃO À RNP */}
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs">
+                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
                     <div 
                       className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
                       style={{ width: `${cat.pctTotal}%` }}

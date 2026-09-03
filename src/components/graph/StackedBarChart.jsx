@@ -76,10 +76,10 @@ function StackedBarChart({
       {/* CABEÇALHO DO CARD */}
       <div className="flex items-center justify-between gap-2 mb-1 shrink-0">
         <div className="flex flex-col">
-          <h3 className="text-[13.5px] font-extrabold text-[#1D3557] tracking-tight flex items-center gap-2">
+          <h3 className="text-[17px] lg:text-[18px] font-bold text-[#1D3557] tracking-tight flex items-center gap-2">
             {title}
           </h3>
-          <span className="text-[10px] text-[#457B9D]">
+          <span className="text-[12px] text-[#457B9D]">
             {subtitle}
           </span>
         </div>
@@ -90,7 +90,7 @@ function StackedBarChart({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setMinimizedFilter('acima'); }}
-              className={`px-2.5 py-1 text-[10px] font-medium rounded-md transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'acima'
+              className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'acima'
                 ? 'bg-primary-600 text-white shadow-sm'
                 : 'text-text-secondary hover:text-text-primary'
                 }`}
@@ -101,7 +101,7 @@ function StackedBarChart({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setMinimizedFilter('abaixo'); }}
-              className={`px-2.5 py-1 text-[10px] font-medium rounded-md transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'abaixo'
+              className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'abaixo'
                 ? 'bg-primary-900 text-white shadow-sm'
                 : 'text-text-secondary hover:text-text-primary'
                 }`}
@@ -111,7 +111,7 @@ function StackedBarChart({
             </button>
           </div>
         ) : showTopBadge && data.length > 0 ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/20 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/20 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB]"></span>
             Top {Math.min(limit, data.length)}
           </span>
@@ -119,11 +119,11 @@ function StackedBarChart({
       </div>
 
       {/* LEGENDA HORIZONTAL DAS CATEGORIAS */}
-      <div className="flex items-center flex-wrap gap-x-2.5 gap-y-0.5 my-1 text-[9px] font-medium text-[#457B9D] shrink-0 border-b border-[#F1F5F9] pb-1">
+      <div className="flex items-center flex-wrap gap-x-3 gap-y-0.5 my-1 text-[11.5px] font-semibold text-[#1D3557] shrink-0 border-b border-[#F1F5F9] pb-1.5">
         {categories.map((cat) => (
-          <div key={cat.key} className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.colorHex }}></span>
-            <span className="truncate max-w-[130px] text-[#1D3557] font-semibold">{cat.shortLabel || cat.label}</span>
+          <div key={cat.key} className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.colorHex }}></span>
+            <span className="truncate max-w-[140px] text-[#1D3557] font-semibold">{cat.shortLabel || cat.label}</span>
           </div>
         ))}
       </div>
@@ -237,7 +237,7 @@ function StackedBarChart({
                         segments: item.segments
                       });
                     }}
-                    className="flex items-center justify-center min-w-[18px] px-1 py-0.2 rounded-lg bg-surface-soft border border-border text-[9px] font-medium text-text-secondary group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs leading-none"
+                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-md bg-surface-soft border border-border text-[10.5px] font-bold text-[#1D3557] group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs leading-none"
                     title="Ver todos os ativos da região"
                   >
                     {totalVal}
@@ -246,7 +246,7 @@ function StackedBarChart({
                   {/* BARRA VERTICAL MODERNA COM ARREDONDAMENTO LEVE */}
                   <div className="w-full flex items-end justify-center h-full relative">
                     <div
-                      className="w-full max-w-[15px] sm:max-w-[18px] rounded-t-[4px] rounded-b-[2px] relative flex flex-col-reverse overflow-hidden transition-all duration-300 ease-out group-hover/bar:scale-105 group-hover/bar:ring-2 group-hover/bar:ring-primary-600/40 shadow-xs border border-black/5"
+                      className="w-full max-w-[18px] sm:max-w-[20px] rounded-t-[4px] rounded-b-[2px] relative flex flex-col-reverse overflow-hidden transition-all duration-300 ease-out group-hover/bar:scale-105 group-hover/bar:ring-2 group-hover/bar:ring-primary-600/40 shadow-xs border border-black/5"
                       style={{ height: `${heightPercent}%` }}
                     >
                       {categories.map((cat) => {
@@ -281,10 +281,10 @@ function StackedBarChart({
 
                   {/* RÓTULO DO TERRITÓRIO */}
                   <div
-                    className="w-full h-[28px] flex items-start justify-center mt-1 px-0.5 text-center leading-[11px] select-none"
+                    className="w-full h-[30px] flex items-start justify-center mt-1 px-0.5 text-center leading-[12px] select-none"
                     title={item.label}
                   >
-                    <span className="text-[8.5px] font-semibold text-[#457B9D] group-hover/bar:text-[#1D3557] transition-colors whitespace-pre-line break-words">
+                    <span className="text-[10px] font-bold text-[#334155] group-hover/bar:text-[#1D3557] transition-colors whitespace-pre-line break-words">
                       {formattedName}
                     </span>
                   </div>
