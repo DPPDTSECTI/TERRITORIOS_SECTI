@@ -20,7 +20,6 @@ import StackedBarChart from '../graph/StackedBarChart';
 import ProportionBarChart from '../graph/ProportionBarChart';
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
-import { captureReportToPdf } from '../../utils/exportPdfCapture';
 
 function normalizeName(name) {
   if (!name) return '';
@@ -136,31 +135,6 @@ export default function RelatorioCadeiasPage() {
   }, [searchParams, territoriosData]);
 
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
-
-  // Captura visual em alta resolução para PDF (html2canvas + jsPDF)
-  useEffect(() => {
-    const captureParam = searchParams.get('capture') || searchParams.get('download');
-    if ((captureParam === '1' || captureParam === 'pdf' || captureParam === 'true') && !loadingStats) {
-      const timer = setTimeout(async () => {
-        const el = document.getElementById('pdf-report');
-        if (el) {
-          const suffix = selectedTerritory ? `_${normalizeName(territoryName).replace(/\s+/g, '_')}` : '';
-          try {
-            await captureReportToPdf(el, `relatorio_cadeias${suffix}.pdf`, 3);
-            if (window.parent && window.parent !== window) {
-              window.parent.postMessage({ type: 'PDF_EXPORT_COMPLETE', report: 'cadeias' }, '*');
-            }
-          } catch (err) {
-            console.error('Erro na captura visual do PDF:', err);
-            if (window.parent && window.parent !== window) {
-              window.parent.postMessage({ type: 'PDF_EXPORT_ERROR', error: String(err) }, '*');
-            }
-          }
-        }
-      }, 900);
-      return () => clearTimeout(timer);
-    }
-  }, [searchParams, loadingStats, selectedTerritory, territoryName]);
 
   // Fallback de auto-impressão caso explicitamente solicitado
   useEffect(() => {

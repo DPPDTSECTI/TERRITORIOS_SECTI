@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
 import PtiMap from '../maps/PtiMap';
-import { captureReportToPdf } from '../../utils/exportPdfCapture';
 
 export default function RelatorioSintese() {
   const {
@@ -52,31 +51,6 @@ export default function RelatorioSintese() {
     : 'Estado da Bahia (Toda a Bahia)';
 
   const selectedTerritoryId = selectedTerritory?.id_territorio;
-
-  // Captura visual em alta resolução para PDF (html2canvas + jsPDF)
-  useEffect(() => {
-    const captureParam = searchParams.get('capture') || searchParams.get('download');
-    if ((captureParam === '1' || captureParam === 'pdf' || captureParam === 'true') && !loadingStats) {
-      const timer = setTimeout(async () => {
-        const el = document.getElementById('pdf-report');
-        if (el) {
-          const suffix = selectedTerritory ? `_${String(territoryTitle).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '_')}` : '';
-          try {
-            await captureReportToPdf(el, `relatorio_sintese${suffix}.pdf`, 3);
-            if (window.parent && window.parent !== window) {
-              window.parent.postMessage({ type: 'PDF_EXPORT_COMPLETE', report: 'sintese' }, '*');
-            }
-          } catch (err) {
-            console.error('Erro na captura visual do PDF:', err);
-            if (window.parent && window.parent !== window) {
-              window.parent.postMessage({ type: 'PDF_EXPORT_ERROR', error: String(err) }, '*');
-            }
-          }
-        }
-      }, 900);
-      return () => clearTimeout(timer);
-    }
-  }, [searchParams, loadingStats, selectedTerritory, territoryTitle]);
 
   // Fallback de auto-impressão caso explicitamente solicitado
   useEffect(() => {

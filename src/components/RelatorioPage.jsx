@@ -22,7 +22,8 @@ import {
  ArrowUpDown,
  Sparkles,
  Award,
- BarChart3
+ BarChart3,
+ Image as ImageIcon
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import {
@@ -31,7 +32,6 @@ import {
 } from 'recharts';
 import SideMap from './maps/SideMap';
 import PtiMap from './maps/PtiMap';
-import { captureReportToPdf } from '../utils/exportPdfCapture';
 
 // Helper para limpeza de sufixos de campus / cidade nas IES
 function cleanIes(name) {
@@ -69,6 +69,7 @@ export default function RelatorioPage() {
  const [sortField, setSortField] = useState(null);
  const [sortAsc, setSortAsc] = useState(true);
  const [isExportingPdf, setIsExportingPdf] = useState(false);
+ const [isExportingPng, setIsExportingPng] = useState(false);
 
 
  // Território selecionado (objeto) ou null se for Toda a Bahia
@@ -373,19 +374,14 @@ export default function RelatorioPage() {
     setIsExportingPdf(true);
 
     const type = overrideType || reportType;
-    let path = '/relatorio/sintese';
     let fileBase = 'relatorio_sintese';
     if (type === 'ativos') {
-      path = '/relatorio/ativos';
       fileBase = 'relatorio_ativos';
     } else if (type === 'cursos') {
-      path = '/relatorio/cursos';
       fileBase = 'relatorio_ensino';
     } else if (type === 'cadeias') {
-      path = '/relatorio/cadeias';
       fileBase = 'relatorio_cadeias';
     } else if (type === 'sintese') {
-      path = '/relatorio/sintese';
       fileBase = 'relatorio_sintese';
     }
 
@@ -395,80 +391,72 @@ export default function RelatorioPage() {
 
     const filename = `${fileBase}.pdf`;
 
-    // 1. Tenta exportação oficial com Playwright (Chromium real 1920x1080 @3x 5760x3240 -> PDF 16:9)
     try {
       const apiUrl = `/api/export-pdf?type=${type}&${terrParam}`;
       const res = await fetch(apiUrl);
-      if (res.ok) {
-        const blob = await res.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
-        setIsExportingPdf(false);
-        return;
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro HTTP ${res.status} ao gerar PDF.`);
       }
-      throw new Error(`Endpoint Playwright respondeu com status ${res.status}`);
-    } catch (apiErr) {
-      console.warn('Exportação via Playwright indisponível, acionando fallback de captura:', apiErr);
+
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
+    } catch (err) {
+      console.error('[Exportação PDF] Erro:', err);
+      alert(`Erro ao gerar PDF via Playwright: ${err.message || err}`);
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
+  const handleExportPNG = async (overrideType = null) => {
+    if (isExportingPng) return;
+    setIsExportingPng(true);
+
+    const type = overrideType || reportType;
+    let pngName = 'relatorio_sintese.png';
+    if (type === 'ativos') {
+      pngName = 'relatorio_ativos.png';
+    } else if (type === 'cursos') {
+      pngName = 'relatorio_cursos.png';
+    } else if (type === 'cadeias') {
+      pngName = 'relatorio_cadeias.png';
     }
 
-    // 2. Fallback de captura direta via iframe se a API não estiver respondendo
-    const targetUrl = `${path}?${terrParam}`;
-    const oldIframe = document.getElementById('secti-pdf-print-frame');
-    if (oldIframe) oldIframe.remove();
+    const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
+      ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
+      : 'territorio=bahia';
 
-    const iframe = document.createElement('iframe');
-    iframe.id = 'secti-pdf-print-frame';
-    iframe.src = targetUrl;
-    iframe.style.position = 'fixed';
-    iframe.style.top = '0';
-    iframe.style.left = '0';
-    iframe.style.width = '1920px';
-    iframe.style.height = '1080px';
-    iframe.width = '1920';
-    iframe.height = '1080';
-    iframe.style.opacity = '0';
-    iframe.style.pointerEvents = 'none';
-    iframe.style.zIndex = '-9999';
-    iframe.style.border = 'none';
-
-    document.body.appendChild(iframe);
-
-    iframe.onload = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1400));
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-        if (!iframeDoc) throw new Error('Documento do relatório inacessível no iframe.');
-        const reportEl = iframeDoc.getElementById('pdf-report');
-        if (!reportEl) throw new Error('Elemento com id="pdf-report" não encontrado no relatório.');
-
-        await captureReportToPdf(reportEl, filename, 3);
-      } catch (e) {
-        console.error('Erro no fallback de captura:', e);
-        try {
-          iframe.contentWindow?.focus();
-          iframe.contentWindow?.print();
-        } catch (printErr) {
-          console.error('Fallback print falhou:', printErr);
-        }
-      } finally {
-        setIsExportingPdf(false);
-        setTimeout(() => {
-          if (document.getElementById('secti-pdf-print-frame')) {
-            document.getElementById('secti-pdf-print-frame').remove();
-          }
-        }, 3000);
+    try {
+      const apiUrl = `/api/export-png?type=${type}&${terrParam}`;
+      const res = await fetch(apiUrl);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro HTTP ${res.status} ao gerar PNG.`);
       }
-    };
 
-    setTimeout(() => {
-      setIsExportingPdf(false);
-    }, 15000);
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = pngName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
+    } catch (err) {
+      console.error('[Exportação PNG] Erro:', err);
+      alert(`Erro ao gerar PNG via Playwright: ${err.message || err}`);
+    } finally {
+      setIsExportingPng(false);
+    }
   };
 
 
@@ -596,6 +584,26 @@ export default function RelatorioPage() {
       <>
         <Printer size={15} />
         <span>Exportar PDF</span>
+      </>
+    )}
+  </button>
+
+  <button
+    type="button"
+    disabled={isExportingPng}
+    onClick={() => handleExportPNG()}
+    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-surface border border-primary-300 text-primary-900 hover:bg-primary-50 hover:border-primary-600 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
+    title={`Exportar Imagem PNG em Ultra-Alta Resolução 5760×3240 (${currentReportLabel})`}
+  >
+    {isExportingPng ? (
+      <>
+        <div className="w-3.5 h-3.5 border-2 border-primary-600/20 border-t-primary-600 rounded-full animate-spin" />
+        <span>Gerando PNG...</span>
+      </>
+    ) : (
+      <>
+        <ImageIcon size={15} className="text-primary-600" />
+        <span>Exportar PNG</span>
       </>
     )}
   </button>

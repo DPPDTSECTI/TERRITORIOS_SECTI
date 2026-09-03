@@ -113,7 +113,8 @@ export async function captureReportWithPlaywright({
     const reportLocator = page.locator('#pdf-report');
     const pngBuffer = await reportLocator.screenshot({
       type: 'png',
-      omitBackground: false
+      scale: 'device',
+      animations: 'disabled'
     });
 
     // 8. Salva o PNG primeiro (fonte da verdade visual)
@@ -152,7 +153,8 @@ export async function captureReportWithPlaywright({
       pdfPath,
       width: 5760,
       height: 3240,
-      pdfBuffer
+      pdfBuffer,
+      pngBuffer
     };
   } finally {
     if (shouldCloseBrowser && browser) {
@@ -175,24 +177,28 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       {
         name: 'sintese',
         route: '/relatorio/sintese',
+        debugPng: 'relatorio_sintese_debug.png',
         png: 'relatorio_sintese.png',
         pdf: 'relatorio_sintese.pdf'
       },
       {
         name: 'ativos',
         route: '/relatorio/ativos',
+        debugPng: 'relatorio_ativos_debug.png',
         png: 'relatorio_ativos.png',
         pdf: 'relatorio_ativos.pdf'
       },
       {
         name: 'cursos',
         route: '/relatorio/cursos',
+        debugPng: 'relatorio_cursos_debug.png',
         png: 'relatorio_cursos.png',
         pdf: 'relatorio_ensino.pdf'
       },
       {
         name: 'cadeias',
         route: '/relatorio/cadeias',
+        debugPng: 'relatorio_cadeias_debug.png',
         png: 'relatorio_cadeias.png',
         pdf: 'relatorio_cadeias.pdf'
       }
@@ -203,11 +209,17 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         console.log(`\n>>> Capturando ${rep.name.toUpperCase()} (${rep.route})...`);
         const result = await captureReportWithPlaywright({
           route: rep.route,
-          pngPath: rep.png,
+          pngPath: rep.debugPng,
           pdfPath: rep.pdf,
           browserInstance: browser
         });
-        console.log(`✓ Concluído: ${result.pngPath} e ${result.pdfPath}`);
+
+        // Cria também a cópia padrão sem sufixo debug
+        if (rep.png) {
+          fs.copyFileSync(path.resolve(ROOT_DIR, rep.debugPng), path.resolve(ROOT_DIR, rep.png));
+        }
+
+        console.log(`✓ Concluído: ${rep.debugPng} e ${rep.pdf}`);
       }
       console.log('\n====================================================');
       console.log('Todos os 4 relatórios capturados com sucesso!');
