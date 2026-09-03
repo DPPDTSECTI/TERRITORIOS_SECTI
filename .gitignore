@@ -28,3 +28,9 @@ dist-ssr
 *.sln
 *.sw?
 public/img/*.exe
+
+# Relatórios e artefatos de exportação
+/relatorio_*.pdf
+/relatorio_*.png
+/*_debug.png
+/crop_*.png
