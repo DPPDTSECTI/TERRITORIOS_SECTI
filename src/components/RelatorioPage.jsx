@@ -905,33 +905,43 @@ export default function RelatorioPage() {
   <span className="truncate">Exibindo: <strong>{territoryTitle}</strong></span>
   </div>
 
-  {/* SELETOR DE MODO: NORMAL VS SEMIÁRIDO */}
-  <div className="flex items-center gap-1 p-0.5 bg-surface-soft rounded-full border border-border shrink-0 h-[32px] box-border">
-    <button
-      type="button"
-      onClick={() => setReportMode('normal')}
-      className={`h-[26px] px-3 rounded-full text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 border box-border ${
-        reportMode === 'normal'
-          ? 'bg-primary-900 text-white border-primary-900 shadow-2xs'
-          : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-surface/80'
-      }`}
-    >
-      <span className={`w-1.5 h-1.5 rounded-full ${reportMode === 'normal' ? 'bg-blue-400' : 'bg-slate-400'}`} />
-      <span>Modo Normal</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => setReportMode('semiarido')}
-      className={`h-[26px] px-3 rounded-full text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 border box-border ${
-        reportMode === 'semiarido'
-          ? 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A] shadow-2xs'
-          : 'border-transparent text-text-secondary hover:text-amber-800 hover:bg-amber-50/50'
-      }`}
-    >
-      <span className={`w-1.5 h-1.5 rounded-full ${reportMode === 'semiarido' ? 'bg-[#D97706]' : 'bg-amber-500/50'}`} />
-      <span>Modo Semiárido</span>
-    </button>
-  </div>
+  {/* SELETOR DE MODO: NORMAL VS SEMIÁRIDO — toggle compacto */}
+  <button
+    type="button"
+    onClick={() => setReportMode(prev => prev === 'normal' ? 'semiarido' : 'normal')}
+    title={reportMode === 'normal' ? 'Ativar Modo Semiárido' : 'Voltar ao Modo Normal'}
+    className={`relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border shrink-0 select-none ${
+      reportMode === 'semiarido'
+        ? 'bg-amber-50 border-amber-300 text-amber-800 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
+        : 'bg-surface-soft border-border text-text-secondary hover:border-slate-300 hover:text-text-primary'
+    }`}
+  >
+    {/* thumb deslizante */}
+    <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
+      reportMode === 'semiarido'
+        ? 'bg-amber-400 text-white'
+        : 'bg-white border border-slate-200 text-slate-400'
+    }`}>
+      {reportMode === 'semiarido' ? (
+        /* sol SVG inline — sem dependência de lucide */
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <line x1="12" y1="2" x2="12" y2="5"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+          <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+          <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+          <line x1="2" y1="12" x2="5" y2="12"/>
+          <line x1="19" y1="12" x2="22" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+          <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+        </svg>
+      ) : (
+        /* bolinha simples */
+        <span className="w-2 h-2 rounded-full bg-slate-300 block" />
+      )}
+    </span>
+    <span>{reportMode === 'semiarido' ? 'Semiárido' : 'Normal'}</span>
+  </button>
   </div>
 
   {/* BOTÕES DE EXPORTAÇÃO E IMPRESSÃO (MOVIDOS PARA A CAIXA 2) */}

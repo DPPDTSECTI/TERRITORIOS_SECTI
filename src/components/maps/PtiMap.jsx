@@ -8,6 +8,7 @@ import { SunMedium } from 'lucide-react';
 // IMPORTANDO A NOSSA NOVA BASE DE IDs
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
+import { isMunicipioSemiarido } from '../../constants/semiarido';
 
 // Paleta Soft Blue & Teal
 const TERRITORY_COLORS = [
@@ -159,7 +160,7 @@ export default function PtiMap({
 		const dStats = territoriesDynamicStats[idTer];
 		const matchesFilters = dStats ? dStats.matchesFilters : true;
 		const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
-		const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome_municipio_oficial));
+		const isMunSemi = isMunicipioSemiarido(feature.properties.nome_municipio_oficial || feature.properties.NOME || feature.properties.nome || '');
 		const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
 
 		let opacity = 0.85;
@@ -246,7 +247,7 @@ export default function PtiMap({
  setTooltip({ visible: false, x: 0, y: 0 });
  },
  click: (e) => {
- const isMunSemi = semiaridoMunicipios.includes(normalizeName(feature.properties.nome_municipio_oficial));
+  const isMunSemi = isMunicipioSemiarido(feature.properties.nome_municipio_oficial || feature.properties.NOME || feature.properties.nome || '');
  const blockClick = (filtroSemiarido && !isMunSemi);
 
  if (!blockClick) {
@@ -291,9 +292,9 @@ export default function PtiMap({
  .filter(m => m.id_territorio === selectedTerritory.id_territorio)
  .map(m => m.nome_municipio);
 
- if (filtroSemiarido) {
- muns = muns.filter(m => semiaridoMunicipios.includes(normalizeName(m)));
- }
+  if (filtroSemiarido) {
+  muns = muns.filter(m => isMunicipioSemiarido(m));
+  }
  return muns.sort();
  }, [selectedTerritory, filtroSemiarido, semiaridoMunicipios]);
 
@@ -372,7 +373,7 @@ export default function PtiMap({
  />
 
  <GeoJSON
- key={selectedTerritory?.id_territorio || 'muns'}
+ key={`${selectedTerritory?.id_territorio || 'muns'}-semi${filtroSemiarido ? '1' : '0'}`}
  ref={geoJsonLayerRef}
  data={geoJsonData}
  style={styleFeature}
@@ -417,30 +418,43 @@ export default function PtiMap({
  </button>
  </div>
 
- {/* ================= BOTÃO SEMIÁRIDO (CANTO SUPERIOR DIREITO - APENAS SE HOUVER HANDLER) ================= */}
+ {/* ================= TOGGLE SEMIÁRIDO (CANTO SUPERIOR DIREITO) ================= */}
  {Boolean(onToggleSemiarido) && (
- <div className="absolute top-4 right-4 z-[400] flex items-center">
- <button
- type="button"
- onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
- className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl text-[12px] font-semibold shadow-card transition-all duration-300 border cursor-pointer select-none backdrop-blur-xl ${
- filtroSemiarido
- ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-400 shadow-amber-500/25 ring-2 ring-amber-400/30'
- : 'bg-white/95 hover:bg-white text-text-primary border-border/80 hover:border-amber-400/60 shadow-xs'
- }`}
- title={filtroSemiarido ? 'Desativar cruzamento com o Semiárido' : 'Cruzar dados e destacar os 278 municípios do Semiárido'}
- >
- <SunMedium size={14} className={filtroSemiarido ? 'text-white' : 'text-amber-500'} />
- <span className="tracking-tight">Semiárido</span>
- <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-md transition-colors leading-none ${
- filtroSemiarido
- ? 'bg-white/20 text-white'
- : 'bg-amber-50 text-amber-700 border border-amber-200'
- }`}>
- 278 mun.
- </span>
- </button>
- </div>
+   <div className="absolute top-3 right-3 z-[400]">
+     <button
+       type="button"
+       onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
+       title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
+       className={`relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
+         filtroSemiarido
+           ? 'bg-amber-50/95 border-amber-300 text-amber-800 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
+           : 'bg-white/95 border-white/80 text-text-secondary hover:border-slate-300 hover:text-text-primary shadow-sm'
+       }`}
+     >
+       <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
+         filtroSemiarido
+           ? 'bg-amber-400 text-white'
+           : 'bg-white border border-slate-200 text-slate-400'
+       }`}>
+         {filtroSemiarido ? (
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+             <circle cx="12" cy="12" r="4"/>
+             <line x1="12" y1="2" x2="12" y2="5"/>
+             <line x1="12" y1="19" x2="12" y2="22"/>
+             <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+             <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+             <line x1="2" y1="12" x2="5" y2="12"/>
+             <line x1="19" y1="12" x2="22" y2="12"/>
+             <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+             <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+           </svg>
+         ) : (
+           <span className="w-2 h-2 rounded-full bg-slate-300 block" />
+         )}
+       </span>
+       <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
+     </button>
+   </div>
  )}
 
  {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
@@ -459,7 +473,7 @@ export default function PtiMap({
  </div>
  <ul className="flex flex-col gap-1">
  {municipalitiesToShow.map((m, idx) => {
- const isSemi = semiaridoMunicipios.includes(normalizeName(m));
+  const isSemi = isMunicipioSemiarido(m);
  return (
  <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-text-secondary py-1.5 hover:bg-surface-soft rounded-lg px-2 cursor-default transition-colors justify-center leading-none">
  <span className={`shrink-0 w-1.5 h-1.5 rounded-full shadow-sm ${isSemi ? 'bg-warning-600' : 'bg-primary-300'}`}></span>
