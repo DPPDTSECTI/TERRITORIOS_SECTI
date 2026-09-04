@@ -44,76 +44,7 @@ export default function ProportionBarChart({
                     <p className="text-[12px] text-[#457B9D] mt-0.5">{subtitle}</p>
                 </div>
 
-                <div className="flex flex-col justify-between flex-1 w-full gap-2 my-auto min-h-0 py-0.5">
-                    {data.map((item, idx) => {
-                        const pos = Number(item.positive || 0);
-                        const neg = Number(item.negative || 0);
-                        const total = Number(item.total || pos + neg) || 1;
-                        const percentPos = ((pos / total) * 100).toFixed(1);
-                        const percentNeg = ((neg / total) * 100).toFixed(1);
-
-                        return (
-                            <div key={idx} className="flex flex-col justify-between p-2 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[50px]">
-                                <div className="flex justify-between items-center text-[13px] font-bold text-[#1D3557] leading-tight">
-                                    <span className="truncate flex-1 min-w-0 pr-2" title={item.label}>{item.label}</span>
-                                    <div className="flex items-center gap-1.5 text-[12.5px] shrink-0">
-                                        <span className={`font-black ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
-                                            {pos} <span className="text-[11px] font-bold opacity-90">({percentPos}%)</span>
-                                        </span>
-                                        <span className="text-[#CBD5E1] font-bold">/</span>
-                                        <span className={`font-black ${negativeTextColor}`} title={`${negativeLabel}: ${neg} (${percentNeg}%)`}>
-                                            {neg} <span className="text-[11px] font-bold opacity-90">({percentNeg}%)</span>
-                                        </span>
-                                        <span className="text-[#64748B] text-[11px] font-semibold ml-0.5">de {total}</span>
-                                    </div>
-                                </div>
-                                <div className="flex w-full h-2 rounded-full overflow-hidden bg-[#E2E8F0] shadow-2xs">
-                                    <div className={`${positiveColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentPos}%` }} title={`${positiveLabel}: ${pos} (${percentPos}%)`} />
-                                    <div className={`${negativeColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentNeg}%` }} title={`${negativeLabel}: ${neg} (${percentNeg}%)`} />
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {/* LEGENDA */}
-                <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-[#F1F5F9] shrink-0 text-[11.5px] font-bold">
-                    <div className="flex items-center gap-1.5">
-                        <span className={`w-2.5 h-2.5 rounded-full ${positiveColor} shadow-2xs`}></span>
-                        <span className="text-[#B45309]">{positiveLabel}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className={`w-2.5 h-2.5 rounded-full ${negativeColor} shadow-2xs`}></span>
-                        <span className="text-[#2563EB]">{negativeLabel}</span>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // MODO DASHBOARD INTERATIVO (Perfeito para o painel principal, auto-ajustável sem overflow)
-    return (
-        <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-300 hover:shadow-card-elevated p-4 lg:p-5 relative flex flex-col justify-between h-full group cursor-default overflow-hidden">
-            {/* CABEÇALHO COM PADDING À DIREITA PARA NÃO COLIDIR COM O DRAG HANDLE */}
-            <div className="flex justify-between items-start mb-2 relative z-10 w-full pr-9 shrink-0">
-                <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-2">
-                        <h2 className="text-text-primary font-semibold text-[15px] tracking-tight truncate">{title}</h2>
-                        {badge && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 border border-amber-500/30 shrink-0">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                {badge}
-                            </span>
-                        )}
-                    </div>
-                    <p className="text-neutral-500 text-[11px] font-normal mt-0.5 truncate">{subtitle}</p>
-                </div>
-            </div>
-            
-            <div className="w-full h-px bg-neutral-100 mb-2 shrink-0"></div>
-
-            {/* LISTA DE ITENS PROPORCIONAIS - ALTURA FLEXÍVEL (EVITA QUALQUER SOBREPOSIÇÃO) */}
-            <div className="flex flex-col justify-between flex-1 w-full gap-1.5 my-auto min-h-0 overflow-hidden py-0.5">
+            <div className="flex flex-col justify-start flex-1 w-full gap-2 min-h-0 py-1">
                 {data.map((item, idx) => {
                     const pos = Number(item.positive || 0);
                     const neg = Number(item.negative || 0);
@@ -122,21 +53,21 @@ export default function ProportionBarChart({
                     const percentNeg = ((neg / total) * 100).toFixed(1);
 
                     return (
-                        <div key={idx} className="flex flex-col justify-center gap-1 py-1 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 flex-1 min-h-[32px] max-h-[44px]">
-                            <div className="flex justify-between items-center text-[11.5px] font-bold text-[#1D3557] leading-tight">
+                        <div key={idx} className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[44px]">
+                            <div className="flex justify-between items-center text-[12.5px] font-bold text-[#1D3557] leading-tight">
                                 <span className="truncate flex-1 min-w-0 pr-2" title={item.label}>{item.label}</span>
-                                <div className="flex items-center gap-1 text-[11px] shrink-0">
+                                <div className="flex items-center gap-1.5 text-[12px] shrink-0">
                                     <span className={`font-black ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
-                                        {pos} <span className="text-[10px] font-bold opacity-90">({percentPos}%)</span>
+                                        {pos} <span className="text-[10.5px] font-bold opacity-90">({percentPos}%)</span>
                                     </span>
                                     <span className="text-[#CBD5E1] font-bold">/</span>
                                     <span className={`font-black ${negativeTextColor}`} title={`${negativeLabel}: ${neg} (${percentNeg}%)`}>
-                                        {neg} <span className="text-[10px] font-bold opacity-90">({percentNeg}%)</span>
+                                        {neg} <span className="text-[10.5px] font-bold opacity-90">({percentNeg}%)</span>
                                     </span>
-                                    <span className="text-[#64748B] text-[10px] font-medium ml-0.5">de {total}</span>
+                                    <span className="text-[#64748B] text-[10.5px] font-semibold ml-0.5">de {total}</span>
                                 </div>
                             </div>
-                            <div className="flex w-full h-1.5 rounded-full overflow-hidden bg-[#E2E8F0] shadow-2xs">
+                            <div className="flex w-full h-[7px] shrink-0 rounded-full overflow-hidden bg-[#E2E8F0] shadow-2xs">
                                 <div className={`${positiveColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentPos}%` }} title={`${positiveLabel}: ${pos} (${percentPos}%)`} />
                                 <div className={`${negativeColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentNeg}%` }} title={`${negativeLabel}: ${neg} (${percentNeg}%)`} />
                             </div>
@@ -148,12 +79,12 @@ export default function ProportionBarChart({
             {/* LEGENDA LIMPA E BEM POSICIONADA NO RODAPÉ SEM NENHUMA COLISÃO */}
             <div className="flex items-center justify-between gap-4 pt-2 border-t border-neutral-100 shrink-0 text-[10.5px] font-semibold mt-1">
                 <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${positiveColor} shadow-2xs`}></span>
-                    <span className="text-[#B45309]">{positiveLabel}</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${positiveColor} shadow-2xs`}></span>
+                    <span className={positiveTextColor || "text-[#2563EB]"}>{positiveLabel}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${negativeColor} shadow-2xs`}></span>
-                    <span className="text-[#2563EB]">{negativeLabel}</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${negativeColor} shadow-2xs`}></span>
+                    <span className={negativeTextColor || "text-[#D97706]"}>{negativeLabel}</span>
                 </div>
             </div>
         </div>

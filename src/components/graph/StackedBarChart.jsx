@@ -10,24 +10,24 @@ const formatTerritoryName = (rawName) => {
     'Metropolitano de Salvador': 'Metropolitano\nSalvador',
     'Portal do Sertão': 'Portal do\nSertão',
     'Litoral Sul': 'Litoral\nSul',
-    'Litoral Norte e Agreste Baiano': 'Litoral Norte\nAgreste',
+    'Litoral Norte e Agreste Baiano': 'Lit. Norte\nAgreste',
     'Sudoeste Baiano': 'Sudoeste\nBaiano',
     'Bacia do Jacuípe': 'Bacia do\nJacuípe',
-    'Bacia do Paramirim': 'Bacia do\nParamirim',
-    'Bacia do Rio Grande': 'Bacia do\nRio Grande',
-    'Bacia do Rio Corrente': 'Bacia do\nRio Corrente',
-    'Sertão do São Francisco': 'Sertão do\nSão Francisco',
+    'Bacia do Paramirim': 'Bacia\nParamirim',
+    'Bacia do Rio Grande': 'Bacia Rio\nGrande',
+    'Bacia do Rio Corrente': 'Bacia Rio\nCorrente',
+    'Sertão do São Francisco': 'Sertão São\nFrancisco',
     'Sertão Produtivo': 'Sertão\nProdutivo',
-    'Médio Rio de Contas': 'Médio Rio\nde Contas',
+    'Médio Rio de Contas': 'Médio Rio\nContas',
     'Médio Sudoeste da Bahia': 'Médio\nSudoeste',
     'Vale do Jiquiriçá': 'Vale do\nJiquiriçá',
     'Velho Chico': 'Velho\nChico',
-    'Costa do Descobrimento': 'Costa do\nDescobrimento',
+    'Costa do Descobrimento': 'Costa do\nDescobrim.',
     'Extremo Sul': 'Extremo\nSul',
     'Piemonte da Diamantina': 'Piemonte\nDiamantina',
     'Piemonte do Paraguaçu': 'Piemonte\nParaguaçu',
     'Piemonte Norte do Itapicuru': 'Piemonte\nItapicuru',
-    'Semiárido Nordeste II': 'Semiárido\nNordeste II',
+    'Semiárido Nordeste II': 'Semiárido\nNordeste',
     'Irecê': 'Irecê',
     'Chapadão Ocidental da Bahia': 'Chapadão\nOcidental'
   };
@@ -128,28 +128,26 @@ function StackedBarChart({
         ))}
       </div>
 
-      {/* ÁREA DO GRÁFICO DE BARRAS */}
-      <div className="flex-1 w-full h-full relative min-h-0 pt-2 pb-0.5 px-1">
-        <div className="relative w-full h-full">
-
+      {/* ÁREA DO GRÁFICO DE BARRAS (BARRAS COM BASE UNIFICADA + RÓTULOS INDEPENDENTES) */}
+      <div className="flex-1 w-full h-full relative min-h-0 pt-2 pb-0.5 px-1 flex flex-col justify-between">
+        {/* ÁREA DAS BARRAS COM CHÃO/LINHA DE BASE COMPARTILHADA */}
+        <div className="flex-1 w-full relative min-h-0">
           {/* LINHAS DE GRADE DISCRETAS */}
-          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-25 z-0 pb-7">
+          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-25 z-0 pb-1">
             <div className="w-full h-px bg-border"></div>
             <div className="w-full h-px bg-border"></div>
             <div className="w-full h-px bg-border"></div>
           </div>
 
           {/* BARRAS VERTICAIS */}
-          <div className="w-full h-full flex items-end justify-between gap-1.5 sm:gap-2 relative">
+          <div className="w-full h-full flex items-end justify-between gap-1.5 sm:gap-2 relative z-10">
             {visibleData.map((item, index) => {
-              // Escala calibrada com base visual mínima de 18% para territórios pequenos
+              // Escala calibrada com base visual mínima de 12% para diferenciação nítida entre valores próximos
               const totalVal = Number(item.total || 0);
               const normalized = Math.max(0, totalVal / (calculatedMax || 1));
-              const heightPercent = totalVal === 0 ? 0 : Math.min(100, Math.max(18, 16 + Math.pow(normalized, 0.72) * 84));
+              const heightPercent = totalVal === 0 ? 0 : Math.min(100, Math.max(12, Math.pow(normalized, 0.85) * 88 + 10));
 
               const totalItems = visibleData.length;
-              const formattedName = formatTerritoryName(item.label);
-
               const isFirst = index === 0;
               const isLast = index >= totalItems - 2;
 
@@ -162,7 +160,7 @@ function StackedBarChart({
                   }}
                   className="flex-1 h-full flex flex-col items-center justify-end group/bar relative cursor-pointer min-w-0"
                 >
-                  {/* TOOLTIP COMPACTO DE FATIA INDIVIDUAL (ELEGANTE E SEM OVERFLOW) */}
+                  {/* TOOLTIP COMPACTO DE FATIA INDIVIDUAL */}
                   {hoveredSlice && hoveredSlice.label === item.label && !hoveredTotalTerritory && (
                     <div
                       className={`absolute bottom-full mb-2 bg-surface text-text-primary shadow-sm rounded-lg px-2.5 py-1.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1 border border-border min-w-[140px] max-w-[190px] transition-all duration-150 animate-in fade-in zoom-in-95 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
@@ -194,7 +192,7 @@ function StackedBarChart({
                     </div>
                   )}
 
-                  {/* TOOLTIP COMPLETO DE TODOS OS ATIVOS (AO PASSAR O MOUSE NO NÚMERO / BOLINHA SUPERIOR) */}
+                  {/* TOOLTIP COMPLETO DE TODOS OS ATIVOS */}
                   {hoveredTotalTerritory && hoveredTotalTerritory.label === item.label && (
                     <div
                       className={`absolute bottom-full mb-2 bg-surface text-text-primary shadow-sm rounded-xl p-2.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1.5 border border-border min-w-[165px] max-w-[210px] transition-all duration-150 animate-in fade-in zoom-in-95 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
@@ -226,7 +224,7 @@ function StackedBarChart({
                     </div>
                   )}
 
-                  {/* INDICADOR DE TOTAL NO TOPO DA BARRA (BOLINHA / NÚMERO INTERATIVO) */}
+                  {/* INDICADOR DE TOTAL NO TOPO DA BARRA */}
                   <div
                     onMouseEnter={(e) => {
                       e.stopPropagation();
@@ -237,16 +235,16 @@ function StackedBarChart({
                         segments: item.segments
                       });
                     }}
-                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-md bg-surface-soft border border-border text-[10.5px] font-bold text-[#1D3557] group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs leading-none"
+                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-md bg-surface-soft border border-border text-[10.5px] font-bold text-[#1D3557] group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs leading-none shrink-0"
                     title="Ver todos os ativos da região"
                   >
                     {totalVal}
                   </div>
 
-                  {/* BARRA VERTICAL MODERNA COM ARREDONDAMENTO LEVE */}
-                  <div className="w-full flex items-end justify-center h-full relative">
+                  {/* BARRA VERTICAL MODERNA (BASE TOUTJOURS ANCORADA NO FUNDO) */}
+                  <div className="w-full flex items-end justify-center flex-1 min-h-0 relative">
                     <div
-                      className="w-full max-w-[18px] sm:max-w-[20px] rounded-t-[4px] rounded-b-[2px] relative flex flex-col-reverse overflow-hidden transition-all duration-300 ease-out group-hover/bar:scale-105 group-hover/bar:ring-2 group-hover/bar:ring-primary-600/40 shadow-xs border border-black/5"
+                      className="w-full max-w-[18px] sm:max-w-[21px] rounded-t-[5px] rounded-b-[2px] relative flex flex-col-reverse overflow-hidden transition-all duration-300 ease-out group-hover/bar:scale-105 group-hover/bar:ring-2 group-hover/bar:ring-primary-600/40 shadow-xs border border-black/5"
                       style={{ height: `${heightPercent}%` }}
                     >
                       {categories.map((cat) => {
@@ -278,21 +276,31 @@ function StackedBarChart({
                       })}
                     </div>
                   </div>
-
-                  {/* RÓTULO DO TERRITÓRIO */}
-                  <div
-                    className="w-full h-[30px] flex items-start justify-center mt-1 px-0.5 text-center leading-[12px] select-none"
-                    title={item.label}
-                  >
-                    <span className="text-[10px] font-bold text-[#334155] group-hover/bar:text-[#1D3557] transition-colors whitespace-pre-line break-words">
-                      {formattedName}
-                    </span>
-                  </div>
                 </div>
               );
             })}
           </div>
+        </div>
 
+        {/* LINHA DE BASE HORIZONTAL COMPARTILHADA (ÂNCORA VISUAL) */}
+        <div className="w-full h-[1.5px] bg-[#CBD5E1] shrink-0 my-0.5" />
+
+        {/* ÁREA DOS RÓTULOS DOS TERRITÓRIOS (TOTALMENTE INDEPENDENTE DAS BARRAS) */}
+        <div className="w-full flex items-start justify-between gap-1.5 sm:gap-2 shrink-0 h-[30px] overflow-visible">
+          {visibleData.map((item, index) => {
+            const formattedName = formatTerritoryName(item.label);
+            return (
+              <div
+                key={index}
+                className="flex-1 flex items-start justify-center px-0.5 text-center leading-[11px] select-none min-w-0"
+                title={item.label}
+              >
+                <span className="text-[9.5px] font-bold text-[#334155] group-hover/bar:text-[#1D3557] transition-colors whitespace-pre-line break-words">
+                  {formattedName}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

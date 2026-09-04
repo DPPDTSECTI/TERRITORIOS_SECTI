@@ -1,10 +1,10 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { 
-  Building2, 
-  MapPin, 
-  Layers, 
-  X, 
+import {
+  Building2,
+  MapPin,
+  Layers,
+  X,
   ListOrdered,
   BarChart2,
   Wifi,
@@ -23,14 +23,14 @@ import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIO
 const PALETTE = ['#2563EB', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#1D3557'];
 
 function normalizeName(value) {
- if (!value) return '';
- return String(value)
- .normalize('NFD')
- .replace(/[\u0300-\u036f]/g, '')
- .toLowerCase()
- .replace(/[^a-z0-9]/g, ' ')
- .replace(/\s+/g, ' ')
- .trim();
+  if (!value) return '';
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function checkSemiaridoValue(val) {
@@ -57,6 +57,74 @@ function formatTipoUnificado(tipoStr) {
     return 'Campi Instituto Federal';
   }
   return tipoStr || 'Outros';
+}
+
+function getRedeInfo(tipoStr, siglaStr) {
+  const t = normalizeName(String(tipoStr || ''));
+  const s = normalizeName(String(siglaStr || ''));
+
+  // 1. Estadual
+  if (t.includes('estadual') || s === 'uneb' || s === 'uefs' || s === 'uesc' || s === 'uesb') {
+    return {
+      rede: 'Estadual',
+      label: 'Univ. Pública Estadual',
+      corHex: '#2563EB',
+      bgClass: 'bg-[#2563EB]',
+      textClass: 'text-[#2563EB]',
+      badgeBg: 'bg-[#EFF6FF]',
+      badgeBorder: 'border-[#BFDBFE]'
+    };
+  }
+
+  // 2. Instituto Federal
+  if (t.includes('instituto federal') || t.includes('inst federal') || s === 'ifba' || s === 'if baiano' || s.includes('ifba') || s.includes('if baiano')) {
+    return {
+      rede: 'Inst. Federal',
+      label: 'Instituto Federal',
+      corHex: '#10B981',
+      bgClass: 'bg-[#10B981]',
+      textClass: 'text-[#059669]',
+      badgeBg: 'bg-[#ECFDF5]',
+      badgeBorder: 'border-[#A7F3D0]'
+    };
+  }
+
+  // 3. Universidade Federal
+  if (t.includes('federal') || s === 'ufba' || s === 'ufrb' || s === 'ufob' || s === 'ufsb' || s === 'univasf') {
+    return {
+      rede: 'Univ. Federal',
+      label: 'Univ. Pública Federal',
+      corHex: '#1D3557',
+      bgClass: 'bg-[#1D3557]',
+      textClass: 'text-[#1D3557]',
+      badgeBg: 'bg-[#F1F5F9]',
+      badgeBorder: 'border-[#CBD5E1]'
+    };
+  }
+
+  // 4. Privada
+  if (t.includes('privada') || s === 'unirb' || s === 'anhanguera' || s === 'unex' || s === 'ages' || s === 'ftc' || s === 'unifacs') {
+    return {
+      rede: 'Univ. Privada',
+      label: 'Univ. Privada',
+      corHex: '#F59E0B',
+      bgClass: 'bg-[#F59E0B]',
+      textClass: 'text-[#D97706]',
+      badgeBg: 'bg-[#FEF3C7]',
+      badgeBorder: 'border-[#FDE68A]'
+    };
+  }
+
+  // 5. Outros / ICT
+  return {
+    rede: 'Outros / ICT',
+    label: 'Outros / ICT',
+    corHex: '#8B5CF6',
+    bgClass: 'bg-[#8B5CF6]',
+    textClass: 'text-[#7C3AED]',
+    badgeBg: 'bg-[#F5F3FF]',
+    badgeBorder: 'border-[#DDD6FE]'
+  };
 }
 
 // Mapeamento estrito das 5 categorias solicitadas para o RNP
@@ -88,18 +156,18 @@ function getRnpTargetCategory(tipoStr) {
 }
 
 const MUN_LOOKUP = (() => {
- const byName = {};
- municipiosDB.forEach((row) => {
- byName[normalizeName(row.nome_municipio)] = row;
- });
- return { byName };
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byName };
 })();
 
 export default function RelatorioAtivosPage() {
-  const { 
-    ativosData = [], 
+  const {
+    ativosData = [],
     territoriosData = [],
-    loadingStats = false 
+    loadingStats = false
   } = useContext(DataContext);
 
   const [searchParams] = useSearchParams();
@@ -156,8 +224,8 @@ export default function RelatorioAtivosPage() {
 
       if (lat == null || lng == null || isNaN(lat) || isNaN(lng) || lat === 0) {
         const fallback = MUNICIPIOS_COORDS[String(a.municipio || '').trim()] ||
-                         MUNICIPIOS_COORDS[munKey] ||
-                         [-12.9714, -38.5014];
+          MUNICIPIOS_COORDS[munKey] ||
+          [-12.9714, -38.5014];
         lat = fallback[0];
         lng = fallback[1];
       }
@@ -254,6 +322,10 @@ export default function RelatorioAtivosPage() {
     const taxaMun = totalMunUniverso > 0 ? ((munSet.size / totalMunUniverso) * 100).toFixed(1) : '0.0';
     const rnpTaxa = total > 0 ? ((rnpTotal / total) * 100).toFixed(1) : '0.0';
 
+    const totalTerrUniverso = isSemiarido ? 22 : (selectedTerritory ? 1 : (territoriosData.length || 27));
+    const territoriosAtendidos = selectedTerritory ? (terrSet.size > 0 ? 1 : 0) : terrSet.size;
+    const taxaTerr = totalTerrUniverso > 0 ? ((territoriosAtendidos / totalTerrUniverso) * 100).toFixed(1) : '0.0';
+
     return {
       total,
       pctBahia,
@@ -262,14 +334,16 @@ export default function RelatorioAtivosPage() {
       totalMunUniverso,
       taxaMun,
       municipiosSemiCount: munSemiSet.size,
-      territoriosAtendidos: terrSet.size,
+      territoriosAtendidos,
+      totalTerrUniverso,
+      taxaTerr,
       rnpTotal,
       rnpTaxa,
       rnpSemi
     };
-  }, [filteredAtivos, isSemiarido, selectedTerritory, totalAtivosBahia]);
+  }, [filteredAtivos, isSemiarido, selectedTerritory, totalAtivosBahia, territoriosData]);
 
-  // 3. Top 10 Entidades por Sigla (Duas Bandas: 2 colunas x 5 linhas)
+  // 3. Top 10 Entidades por Sigla com barras horizontais e cores por rede
   const topSiglasData = useMemo(() => {
     if (!filteredAtivos || filteredAtivos.length === 0) return [];
     const map = {};
@@ -277,13 +351,16 @@ export default function RelatorioAtivosPage() {
     filteredAtivos.forEach(a => {
       const sigla = a.sigla || 'OUTROS';
       if (!map[sigla]) {
-        map[sigla] = { 
-          sigla, 
-          nome: a.nome || sigla, 
-          tipo: a.shortTipo || a.tipo, 
-          corHex: a.corHex || '#2563EB',
-          total: 0, 
-          semiarido: 0 
+        const rawTipo = a.shortTipo || a.tipo || '';
+        const redeInfo = getRedeInfo(rawTipo, sigla);
+        map[sigla] = {
+          sigla,
+          nome: a.nome || sigla,
+          tipo: rawTipo,
+          redeInfo,
+          corHex: redeInfo.corHex,
+          total: 0,
+          semiarido: 0
         };
       }
       map[sigla].total += 1;
@@ -294,6 +371,11 @@ export default function RelatorioAtivosPage() {
       .sort((a, b) => b.total - a.total)
       .slice(0, 10);
   }, [filteredAtivos]);
+
+  const maxSiglaTotal = useMemo(() => {
+    if (!topSiglasData || topSiglasData.length === 0) return 1;
+    return Math.max(...topSiglasData.map(d => d.total)) || 1;
+  }, [topSiglasData]);
 
   // 4. Categorias Agrupadas (Top 4 + Outros) com Nomes Completos (Sem Reticências)
   const { top4TiposSet, tipologiaCategories } = useMemo(() => {
@@ -309,7 +391,7 @@ export default function RelatorioAtivosPage() {
       .map(entry => entry[0]);
 
     const top4Set = new Set(top4.map(normalizeName));
-    
+
     const categories = top4.map((tipo, idx) => ({
       key: normalizeName(tipo),
       label: tipo,
@@ -337,7 +419,7 @@ export default function RelatorioAtivosPage() {
       if (!groups[groupKey]) {
         groups[groupKey] = { label: groupKey, total: 0, segments: {} };
       }
-      
+
       const rawKey = normalizeName(a.tipo || 'Outros');
       const finalKey = top4TiposSet.has(rawKey) ? rawKey : 'outros';
 
@@ -397,7 +479,7 @@ export default function RelatorioAtivosPage() {
       if (!targetCat) return;
 
       const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || String(a.rnp || '').toLowerCase() === 'sim';
-      
+
       if (hasRnp) {
         if (a.semiarido === true) {
           stats[targetCat].semi += 1;
@@ -471,7 +553,7 @@ export default function RelatorioAtivosPage() {
       {/* GRID DE KPIS (h-[96px]) */}
       <div className="w-full relative z-10 shrink-0">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 items-stretch w-full">
-          
+
           {/* KPI 1: ATIVOS MAPEADOS */}
           <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
             <div className="flex items-center gap-2 text-[#457B9D]">
@@ -484,12 +566,11 @@ export default function RelatorioAtivosPage() {
               <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsKpis.total}
               </span>
-              <span 
-                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${
-                  isSemiarido 
-                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
-                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
-                }`} 
+              <span
+                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
                 title={`${statsKpis.total} de ${totalAtivosBahia} ativos estaduais`}
               >
                 {isSemiarido ? `${statsKpis.pctBahia}% da Bahia` : `${statsKpis.rnpTotal} com RNP (${statsKpis.rnpTaxa}%)`}
@@ -512,12 +593,11 @@ export default function RelatorioAtivosPage() {
                 </span>
                 <span className="text-[14px] font-bold text-[#64748B]">/ {statsKpis.totalMunUniverso}</span>
               </div>
-              <span 
-                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${
-                  isSemiarido 
-                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
-                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
-                }`}
+              <span
+                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
               >
                 {isSemiarido ? `${statsKpis.taxaMun}% de cobertura` : `${statsKpis.taxaMun}% de cobertura estadual`}
               </span>
@@ -536,14 +616,13 @@ export default function RelatorioAtivosPage() {
               <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsKpis.rnpTotal}
               </span>
-              <span 
-                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${
-                  isSemiarido 
-                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
-                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
-                }`}
+              <span
+                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
               >
-                {isSemiarido ? `${statsKpis.rnpTaxa}% conectados` : 'Backbone de Pesquisa'}
+                {isSemiarido ? `${statsKpis.rnpTaxa}% conectados` : 'Rede de Pesquisa'}
               </span>
             </div>
           </div>
@@ -561,10 +640,15 @@ export default function RelatorioAtivosPage() {
                 <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : (selectedTerritory ? '1' : statsKpis.territoriosAtendidos)}
                 </span>
-                <span className="text-[14px] font-bold text-[#64748B]">territórios</span>
+                <span className="text-[14px] font-bold text-[#64748B]">/ {statsKpis.totalTerrUniverso}</span>
               </div>
-              <span className="text-[11.5px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
-                {isSemiarido ? 'presença Semiárido' : (selectedTerritory ? 'Território' : '100% dos Territórios')}
+              <span
+                className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
+              >
+                {selectedTerritory ? 'Território Selecionado' : (isSemiarido ? `${statsKpis.taxaTerr}% do Semiárido` : `${statsKpis.taxaTerr}% dos territórios`)}
               </span>
             </div>
           </div>
@@ -574,11 +658,11 @@ export default function RelatorioAtivosPage() {
 
       {/* GRID PRINCIPAL: 4 GRÁFICOS (2x2 SIMÉTRICO) + SIDEMAP */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-0 w-full overflow-hidden">
-        
+
         {/* COLUNA ESQUERDA: GRID 2x2 */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
-          
-          {/* GRÁFICO 1: TOP 10 SIGLAS EM DUAS BANDAS COM NOMES COMPLETOS */}
+
+          {/* GRÁFICO 1: TOP 10 SIGLAS COM BARRAS HORIZONTAIS EM ORDEM DESC */}
           <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
             <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
               <div className="min-w-0 flex-1 pr-2">
@@ -586,51 +670,54 @@ export default function RelatorioAtivosPage() {
                   <ListOrdered size={18} className={isSemiarido ? "text-[#D97706] shrink-0" : "text-[#2563EB] shrink-0"} />
                   Top 10 Entidades por Sigla
                 </h3>
-                <p className="text-[12px] text-[#457B9D]">Volume de infraestruturas instaladas</p>
+                <p className="text-[12px] text-[#457B9D]">Volume de infraestruturas instaladas por rede</p>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {isSemiarido ? (
-                  <span className="text-[11px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2.5 py-0.5 rounded-full border border-[#F59E0B]/20">No Semiárido</span>
-                ) : (
-                  <span className="text-[11px] font-bold text-[#2563EB] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full border border-[#2563EB]/20">Instalações</span>
-                )}
+              <div className="flex items-center gap-2 text-[10px] font-bold shrink-0">
+                <span className="flex items-center gap-1 text-[#2563EB]"><span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Estadual</span>
+                <span className="flex items-center gap-1 text-[#10B981]"><span className="w-2 h-2 rounded-full bg-[#10B981]"></span>IF</span>
+                <span className="flex items-center gap-1 text-[#1D3557]"><span className="w-2 h-2 rounded-full bg-[#1D3557]"></span>Federal</span>
+                <span className="flex items-center gap-1 text-[#F59E0B]"><span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Privada</span>
               </div>
             </div>
 
-            {/* DUAS BANDAS (2 COLUNAS x 5 LINHAS) COM QUEBRA DE LINHA LIMPA */}
-            <div className="flex-1 grid grid-cols-2 gap-x-2.5 gap-y-1.5 min-h-0 overflow-hidden py-0.5 items-stretch">
+            {/* DUAS BANDAS (2 COLUNAS x 5 LINHAS) COM BARRAS HORIZONTAIS */}
+            <div className="flex-1 grid grid-cols-2 gap-x-2.5 gap-y-1 min-h-0 overflow-hidden py-0.5 items-stretch">
               {topSiglasData.map((item, idx) => (
-                <div 
-                  key={idx} 
-                  className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-[#F8FAFC] hover:bg-[#F1F5F9] transition-colors text-[10px] min-w-0 border border-[#E2E8F0]/40"
+                <div
+                  key={idx}
+                  className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] hover:bg-[#F1F5F9] transition-all border border-[#E2E8F0]/50 h-[40px]"
                 >
-                  <div className="flex items-center gap-2 flex-1 min-w-0 pr-1">
-                    <span 
-                      className="w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black text-white shrink-0 shadow-2xs" 
-                      style={{ backgroundColor: item.corHex }}
-                    >
-                      {idx + 1}
-                    </span>
-                    <div className="flex flex-col min-w-0 leading-tight">
-                      <span className="font-extrabold text-[13px] text-[#1D3557] truncate" title={item.nome}>
+                  <div className="flex items-center justify-between text-[11.5px] leading-none gap-1">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span
+                        className="w-4 h-4 rounded-md flex items-center justify-center text-[9.5px] font-black text-white shrink-0 shadow-2xs"
+                        style={{ backgroundColor: item.redeInfo.corHex }}
+                      >
+                        {idx + 1}
+                      </span>
+                      <span className="font-extrabold text-[#1D3557] truncate text-[12px]" title={item.nome}>
                         {item.sigla}
                       </span>
-                      <span className="text-[11px] text-[#64748B] font-medium truncate leading-tight">
-                        {item.tipo}
+                      <span className={`text-[8.5px] font-extrabold px-1.5 py-0.2 rounded shrink-0 border ${item.redeInfo.badgeBg} ${item.redeInfo.textClass} ${item.redeInfo.badgeBorder}`}>
+                        {item.redeInfo.rede}
                       </span>
                     </div>
+
+                    <span className="font-extrabold text-[#1D3557] text-[12px] shrink-0">
+                      {item.total} <span className="text-[9.5px] font-medium text-[#64748B]">inst.</span>
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0 font-extrabold">
-                    {isSemiarido ? (
-                      <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-2 py-0.5 rounded-md text-[12px] min-w-[30px] text-center font-black">
-                        {item.total}
-                      </span>
-                    ) : (
-                      <span className="text-[#1D3557] text-[12px] font-black bg-white px-2 py-0.5 rounded-md border border-[#E2E8F0] min-w-[30px] text-center shadow-2xs">
-                        {item.total}
-                      </span>
-                    )}
+                  {/* BARRA HORIZONTAL COM COR DA REDE */}
+                  <div className="w-full h-[6px] rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs mt-1">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${Math.max(6, (item.total / maxSiglaTotal) * 100)}%`,
+                        backgroundColor: item.redeInfo.corHex
+                      }}
+                      title={`${item.sigla} (${item.redeInfo.label}): ${item.total} infraestruturas instaladas`}
+                    />
                   </div>
                 </div>
               ))}
@@ -691,8 +778,8 @@ export default function RelatorioAtivosPage() {
                   </div>
 
                   {/* BARRA */}
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
-                    <div 
+                  <div className="w-full h-[7px] rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
+                    <div
                       className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
                       style={{ width: `${cat.pctTotal}%` }}
                       title={`${cat.name}: ${cat.total} (${cat.pctTotal}%)`}
@@ -735,8 +822,8 @@ export default function RelatorioAtivosPage() {
                 </h3>
                 <p className="text-[12px] text-[#457B9D]">
                   {isSemiarido
-                    ? 'Campi e ICTs do Semiárido conectados ao backbone'
-                    : 'Campi e ICTs conectados ao backbone de pesquisa na Bahia'}
+                    ? 'Campi e ICTs do Semiárido conectados à Rede'
+                    : 'Campi e ICTs conectados à Rede de pesquisa na Bahia'}
                 </p>
               </div>
 
@@ -768,8 +855,8 @@ export default function RelatorioAtivosPage() {
                   </div>
 
                   {/* BARRA DE ADESÃO À RNP */}
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
-                    <div 
+                  <div className="w-full h-[7px] rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
+                    <div
                       className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
                       style={{ width: `${cat.pctTotal}%` }}
                       title={`${cat.name}: ${cat.comRnpTotal} de ${cat.total} (${cat.pctTotal}%)`}
@@ -795,6 +882,6 @@ export default function RelatorioAtivosPage() {
 
       </div>
 
- </main>
- );
+    </main>
+  );
 }
