@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
 import { 
  MapPin, 
  Filter, 
@@ -9,6 +9,7 @@ import {
  Wheat,
  ExternalLink
 } from 'lucide-react';
+import { normalize } from '../../utils/normalization';
 
 function CardLista({
  // --- Props Comuns ---
@@ -32,6 +33,8 @@ function CardLista({
  tabs = [], // [{ id: 'catalogo', label: 'Catálogo', icon: GitPullRequest, count: 10, content: ... }]
  activeTab = null,
  onTabChange = () => {},
+ searchValue,
+ onSearchChange,
  showSearch = false,
  searchPlaceholder = "Buscar..."
 }) {
@@ -39,8 +42,19 @@ function CardLista({
  const [internalSearch, setInternalSearch] = useState('');
  const dropdownRef = useRef(null);
 
+ const currentSearch = searchValue !== undefined ? searchValue : internalSearch;
  const hasTabs = tabs && tabs.length > 0;
  const currentTab = hasTabs ? (tabs.find(t => t.id === activeTab) || tabs[0]) : null;
+
+ const displayItems = useMemo(() => {
+   const term = normalize(currentSearch);
+   if (!term) return items;
+   return items.filter(item =>
+     normalize(item.nome || item.entidade || '').includes(term) ||
+     normalize(item.municipio || item.municipio_sede || '').includes(term) ||
+     normalize(item.shortTipo || item.tipo || item.segmento || '').includes(term)
+   );
+ }, [items, currentSearch]);
 
  // Fecha o dropdown ao clicar fora ou apertar Escape
  useEffect(() => {
@@ -92,8 +106,8 @@ function CardLista({
  {TabIcon && <TabIcon size={16} />}
  <span>{tab.label}</span>
  {tab.count !== undefined && (
- <span className={`text-[10px] px-1.5 py-0.2 rounded-lg font-semibold ${
- isActive ? 'bg-white/20 text-white' : 'bg-border text-text-secondary'
+ <span className={`text-[10px] px-1.5 py-0.2 rounded-full leading-none ${
+ isActive ? 'bg-white/20 text-white' : 'bg-surface text-text-muted'
  }`}>
  {tab.count}
  </span>
@@ -108,15 +122,22 @@ function CardLista({
  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
  <input
  type="text"
- value={internalSearch}
- onChange={(e) => setInternalSearch(e.target.value)}
+ value={currentSearch}
+ onChange={(e) => {
+ const val = e.target.value;
+ setInternalSearch(val);
+ if (onSearchChange) onSearchChange(val);
+ }}
  placeholder={searchPlaceholder}
  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
  />
- {internalSearch && (
+ {currentSearch && (
  <button
  type="button"
- onClick={() => setInternalSearch('')}
+ onClick={() => {
+ setInternalSearch('');
+ if (onSearchChange) onSearchChange('');
+ }}
  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[12px] font-medium"
  >
  ×
@@ -145,7 +166,7 @@ function CardLista({
  {selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : title}
  </h3>
  <span className="text-[10px] font-medium text-text-muted bg-surface-soft px-2 py-0.5 rounded-full border border-border shrink-0 inline-flex items-center justify-center leading-none">
- {items.length}
+ {displayItems.length}
  </span>
  </div>
 
@@ -228,12 +249,12 @@ function CardLista({
  <div className={`flex-1 overflow-y-auto pr-1 hide-scroll min-h-0 relative z-10 pb-4 ${
  isAlone ? 'grid grid-cols-1 md:grid-cols-2 gap-2.5 content-start' : 'flex flex-col gap-2'
  }`}>
- {items.length === 0 ? (
+ {displayItems.length === 0 ? (
  <div className="relative col-span-full py-8 text-center text-[11px] font-semibold text-text-muted before:content-[''] before:absolute before:inset-0 before:bg-carto-dots before:bg-[length:150px] before:opacity-5 before:pointer-events-none before:z-0 after:content-[''] after:absolute after:bottom-2 after:left-2 after:w-4 after:h-4 after:bg-carto-node after:opacity-10 after:pointer-events-none after:z-0">
  {emptyMessage}
  </div>
  ) : (
- items.map((item) => {
+ displayItems.map((item) => {
  const IconComponent = item.icone || Microscope;
  const isIG = item.tipo === 'IG';
 

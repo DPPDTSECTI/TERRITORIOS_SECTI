@@ -668,6 +668,7 @@ export default function RelatorioEnsinoPage() {
               negativeColor="bg-[#F59E0B]"
               positiveTextColor="text-[#2563EB]"
               negativeTextColor="text-[#D97706]"
+              isReport={true}
             />
           </div>
 

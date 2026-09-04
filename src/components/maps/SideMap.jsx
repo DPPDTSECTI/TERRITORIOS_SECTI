@@ -43,6 +43,61 @@ const buildMunicipioTerritoryMap = () => {
  return m;
 };
 
+const MUN_LOOKUP = (() => {
+  const byId = {};
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byId[row.id_municipio] = row;
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byId, byName };
+})();
+
+export function findMunicipioCoords(nome) {
+  if (!nome) return null;
+  const raw = String(nome).trim();
+  const clean = normalizeName(raw);
+
+  if (MUNICIPIOS_COORDS[raw]) return MUNICIPIOS_COORDS[raw];
+  if (MUNICIPIOS_COORDS[clean]) return MUNICIPIOS_COORDS[clean];
+  if (MUNICIPIOS_COORDS[raw.toLowerCase()]) return MUNICIPIOS_COORDS[raw.toLowerCase()];
+
+  const aliases = {
+    petrolina: [-9.3989, -40.5008],
+    'sao francisco': [-9.427268, -40.505742],
+    lem: [-12.087454, -45.796046],
+    saj: [-12.968813, -39.257965]
+  };
+
+  if (aliases[clean]) return aliases[clean];
+
+  const lookup = MUN_LOOKUP.byName[clean];
+  if (lookup && MUNICIPIOS_COORDS[lookup.nome_municipio]) {
+    return MUNICIPIOS_COORDS[lookup.nome_municipio];
+  }
+
+  for (const key of Object.keys(MUNICIPIOS_COORDS)) {
+    if (normalizeName(key).includes(clean) || clean.includes(normalizeName(key))) {
+      return MUNICIPIOS_COORDS[key];
+    }
+  }
+
+  return null;
+}
+
+export function isInsideBahia(lat, lng) {
+  return (
+    typeof lat === 'number' &&
+    typeof lng === 'number' &&
+    !isNaN(lat) &&
+    !isNaN(lng) &&
+    lat >= -18.5 &&
+    lat <= -8.0 &&
+    lng >= -47.0 &&
+    lng <= -36.5
+  );
+}
+
 // Marcador do Cluster
 const createClusterIcon = (count) => {
  const size = 20;
@@ -179,6 +234,18 @@ function ZoomDependentTileLayer() {
   return null;
 }
 
+function MapPaneManager() {
+  const map = useMap();
+  useEffect(() => {
+    if (!map.getPane('connectionsPane')) {
+      const pane = map.createPane('connectionsPane');
+      pane.style.zIndex = '450';
+      pane.style.pointerEvents = 'none';
+    }
+  }, [map]);
+  return null;
+}
+
 function MapClickHandler({ onClearPinned, onClearTerritory }) {
  const map = useMap();
  useMapEvents({
@@ -188,81 +255,111 @@ function MapClickHandler({ onClearPinned, onClearTerritory }) {
  return;
  }
  onClearPinned?.();
- if (onClearTerritory) {
- onClearTerritory();
- map.flyTo([-12.8, -41.7], 6.3, { duration: 0.8 });
- }
- }
- });
- return null;
+  if (onClearTerritory) {
+  onClearTerritory();
+  map.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
+  }
+  }
+  });
+  return null;
 }
 
 function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryRef }) {
- const map = useMap();
- const prevTerritoryRef = useRef(selectedTerritory);
+  const map = useMap();
+  const prevTerritoryRef = useRef(selectedTerritory);
 
- useEffect(() => {
- if (selectedTerritory) {
- const idTerr = selectedTerritory.id_territorio;
- const nome = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
- const layer = (idTerr && geoJsonLayersByTerritoryRef.current[idTerr]) || geoJsonLayersByTerritoryRef.current[nome];
+  useEffect(() => {
+  if (selectedTerritory) {
+  const idTerr = selectedTerritory.id_territorio;
+  const nome = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+  const layer = (idTerr && geoJsonLayersByTerritoryRef.current[idTerr]) || geoJsonLayersByTerritoryRef.current[nome];
 
- if (layer) {
- const bounds = layer.getBounds();
- map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.8 });
- }
- } else if (prevTerritoryRef.current && !selectedTerritory) {
- map.flyTo([-12.7, -41.7], 5.9, { duration: 0.8 });
- }
- prevTerritoryRef.current = selectedTerritory;
- }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
+  if (layer) {
+  const bounds = layer.getBounds();
+  map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.8 });
+  }
+  } else if (prevTerritoryRef.current && !selectedTerritory) {
+  map.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
+  }
+  prevTerritoryRef.current = selectedTerritory;
+  }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
 
- return null;
+  return null;
 }
-
 function CadeiaFocusController({ selectedCadeia }) {
- const map = useMap();
+  const map = useMap();
 
- useEffect(() => {
- if (selectedCadeia && selectedCadeia.lat && selectedCadeia.lng) {
- const currentZoom = map.getZoom();
-
-      if (currentZoom >= 9.5) {
-        map.panTo([selectedCadeia.lat, selectedCadeia.lng], { animate: true, duration: 0.8 });
-        return;
+  useEffect(() => {
+    if (selectedCadeia) {
+      let cLat = Number(selectedCadeia.lat);
+      let cLng = Number(selectedCadeia.lng);
+      if (!isInsideBahia(cLat, cLng)) {
+        const fallback = findMunicipioCoords(selectedCadeia.municipio || selectedCadeia.municipio_sede || selectedCadeia.sede);
+        if (fallback) {
+          cLat = fallback[0];
+          cLng = fallback[1];
+        }
       }
 
-      const bounds = [[selectedCadeia.lat, selectedCadeia.lng]];
+      if (!isInsideBahia(cLat, cLng)) return;
 
- (selectedCadeia.municipios_cobertos || []).forEach((mun) => {
- let mLat = mun.lat;
- let mLng = mun.lng;
+      const bounds = [[cLat, cLng]];
 
- if (!mLat || !mLng) {
- const fallback = MUNICIPIOS_COORDS[mun.nome_municipio] || MUNICIPIOS_COORDS[mun.nome_municipio?.toLowerCase()];
- if (fallback) {
- mLat = fallback[0];
- mLng = fallback[1];
- }
- }
+      (selectedCadeia.municipios_cobertos || []).forEach((mun) => {
+        let mLat = mun.lat ? Number(mun.lat) : null;
+        let mLng = mun.lng ? Number(mun.lng) : null;
 
- if (mLat && mLng) bounds.push([mLat, mLng]);
- });
+        if (!isInsideBahia(mLat, mLng)) {
+          const fallback = findMunicipioCoords(mun.nome_municipio);
+          if (fallback) {
+            mLat = fallback[0];
+            mLng = fallback[1];
+          }
+        }
 
- if (bounds.length > 1) {
- map.fitBounds(bounds, {
- padding: [70, 70],
- maxZoom: 10,
- animate: true,
- duration: 1.1
- });
- } else {
- map.flyTo([selectedCadeia.lat, selectedCadeia.lng], 9.5, { duration: 1.0 });
- }
- }
- }, [selectedCadeia, map]);
+        if (isInsideBahia(mLat, mLng)) bounds.push([mLat, mLng]);
+      });
 
- return null;
+      if (bounds.length > 1) {
+        map.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 9,
+          animate: true,
+          duration: 1.0
+        });
+      } else {
+        map.flyTo([cLat, cLng], 9.0, { duration: 1.0 });
+      }
+    }
+  }, [selectedCadeia, map]);
+
+  return null;
+}
+
+function ConnectionsFocusController({ showAllConnections, mode, connectionLines, selectedTerritory }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (mode === 'cadeias' && showAllConnections && !selectedTerritory && connectionLines.length > 0) {
+      const points = [];
+      connectionLines.forEach((l) => {
+        if (l.positions && l.positions.length >= 2) {
+          if (isInsideBahia(l.positions[0][0], l.positions[0][1])) points.push(l.positions[0]);
+          if (isInsideBahia(l.positions[1][0], l.positions[1][1])) points.push(l.positions[1]);
+        }
+      });
+      if (points.length > 0) {
+        map.fitBounds(points, {
+          padding: [25, 25],
+          maxZoom: 7,
+          animate: true,
+          duration: 0.8
+        });
+      }
+    }
+  }, [showAllConnections, mode, selectedTerritory, connectionLines, map]);
+
+  return null;
 }
 
 function ChangeMapView({ coords }) {
@@ -343,32 +440,87 @@ function SingleAssetPopupContent({ ativo }) {
  );
 }
 
+function SingleCadeiaPopupContent({ cadeia }) {
+  if (!cadeia) return null;
+  return (
+    <div className="p-3 max-w-[260px] text-left select-text font-sans">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span
+          className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded"
+          style={{
+            backgroundColor: `${cadeia.corHex || '#2563EB'}20`,
+            color: cadeia.corHex || '#2563EB'
+          }}
+        >
+          {cadeia.shortTipo || cadeia.tipo || 'Cadeia Produtiva'}
+        </span>
+      </div>
+
+      <h4 className="text-[13px] font-bold text-text-primary leading-snug mb-1">
+        {cadeia.nome || cadeia.entidade || 'Cadeia Produtiva'}
+      </h4>
+
+      <div className="flex flex-col gap-1 text-[11px] text-text-muted mt-2 border-t border-border pt-1.5">
+        {(cadeia.municipio_sede || cadeia.municipio) && (
+          <div className="flex items-center gap-1.5 text-text-secondary">
+            <Building size={12} className="shrink-0 text-text-muted" />
+            <span className="truncate">Sede: {cadeia.municipio_sede || cadeia.municipio}</span>
+          </div>
+        )}
+
+        {(cadeia.territorio_identidade || cadeia.territorio) && (
+          <div className="flex items-center gap-1.5 text-text-secondary">
+            <Layers size={12} className="shrink-0 text-text-muted" />
+            <span className="font-medium text-text-secondary truncate">
+              {String(cadeia.territorio_identidade || cadeia.territorio).replace(/^Território de Identidade\s+/i, '')}
+            </span>
+          </div>
+        )}
+
+        {cadeia.municipios_cobertos && cadeia.municipios_cobertos.length > 0 && (
+          <div className="flex items-center gap-1.5 text-text-secondary mt-0.5">
+            <MapPin size={12} className="shrink-0 text-text-muted" />
+            <span className="font-semibold text-text-secondary">
+              {cadeia.municipios_cobertos.length}
+            </span>
+            <span>municípios atendidos</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode }) {
- return (
- <Marker
- key={elem.key}
- position={[elem.lat, elem.lng]}
- icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected)}
- eventHandlers={{
- click: (e) => {
- L.DomEvent.stopPropagation(e);
- if (isSelected) {
- setPinnedAssetId(null);
- onAssetClick?.(null);
- } else {
- setPinnedAssetId(ativo.id);
- onAssetClick?.(ativo);
- }
- }
- }}
- >
- {mode !== 'cadeias' && (
- <Popup className="custom-premium-popup" autoPan={true}>
- <SingleAssetPopupContent ativo={ativo} />
- </Popup>
- )}
- </Marker>
- );
+  return (
+    <Marker
+      key={elem.key}
+      position={[elem.lat, elem.lng]}
+      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected)}
+      eventHandlers={{
+        click: (e) => {
+          L.DomEvent.stopPropagation(e);
+          if (isSelected) {
+            setPinnedAssetId(null);
+            onAssetClick?.(null);
+          } else {
+            setPinnedAssetId(ativo.id);
+            onAssetClick?.(ativo);
+          }
+        }
+      }}
+    >
+      {mode !== 'cadeias' ? (
+        <Popup className="custom-premium-popup" autoPan={true}>
+          <SingleAssetPopupContent ativo={ativo} />
+        </Popup>
+      ) : (
+        <Popup className="custom-premium-popup" autoPan={true}>
+          <SingleCadeiaPopupContent cadeia={ativo} />
+        </Popup>
+      )}
+    </Marker>
+  );
 }
 
 function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode }) {
@@ -745,6 +897,7 @@ export default function SideMap({
       list = list.filter((c) => {
         if (tid && String(c.id_territorio) === tid) return true;
         if (tNorm && normalizeName(c.territorio_identidade || c.territorio || '') === tNorm) return true;
+        if (c.municipios_cobertos?.some(m => (tid && String(m.id_territorio) === tid) || (tNorm && normalizeName(m.nome_territorio || m.territorio || '') === tNorm))) return true;
         return false;
       });
     }
@@ -761,23 +914,34 @@ export default function SideMap({
       const targetCadeias = visibleCadeias.filter(c => c.lat && c.lng);
 
       targetCadeias.forEach((c) => {
-        const origin = [c.lat, c.lng];
+        let cLat = Number(c.lat);
+        let cLng = Number(c.lng);
+        if (!isInsideBahia(cLat, cLng)) {
+          const fallback = findMunicipioCoords(c.municipio || c.municipio_sede || c.sede);
+          if (fallback) {
+            cLat = fallback[0];
+            cLng = fallback[1];
+          }
+        }
+        if (!isInsideBahia(cLat, cLng)) return;
+
+        const origin = [cLat, cLng];
         const isSelected = selectedCadeia && (String(selectedCadeia.id) === String(c.id) || selectedCadeia.nome === c.nome);
 
         (c.municipios_cobertos || []).forEach((mun) => {
-          let mLat = mun.lat;
-          let mLng = mun.lng;
+          let mLat = mun.lat ? Number(mun.lat) : null;
+          let mLng = mun.lng ? Number(mun.lng) : null;
 
-          if (!mLat || !mLng) {
-            const fallback = MUNICIPIOS_COORDS[mun.nome_municipio] || MUNICIPIOS_COORDS[mun.nome_municipio?.toLowerCase()];
+          if (!isInsideBahia(mLat, mLng)) {
+            const fallback = findMunicipioCoords(mun.nome_municipio);
             if (fallback) {
               mLat = fallback[0];
               mLng = fallback[1];
             }
           }
 
-          if (mLat && mLng) {
-            const isSamePoint = Math.abs(mLat - c.lat) < 0.001 && Math.abs(mLng - c.lng) < 0.001;
+          if (isInsideBahia(mLat, mLng)) {
+            const isSamePoint = Math.abs(mLat - cLat) < 0.001 && Math.abs(mLng - cLng) < 0.001;
             if (!isSamePoint) {
               lines.push({
                 positions: [origin, [mLat, mLng]],
@@ -794,24 +958,35 @@ export default function SideMap({
       return lines;
     }
 
-    if (!selectedCadeia || !selectedCadeia.lat || !selectedCadeia.lng) return [];
+    if (!selectedCadeia) return [];
 
-    const origin = [selectedCadeia.lat, selectedCadeia.lng];
+    let cLat = Number(selectedCadeia.lat);
+    let cLng = Number(selectedCadeia.lng);
+    if (!isInsideBahia(cLat, cLng)) {
+      const fallback = findMunicipioCoords(selectedCadeia.municipio || selectedCadeia.municipio_sede || selectedCadeia.sede);
+      if (fallback) {
+        cLat = fallback[0];
+        cLng = fallback[1];
+      }
+    }
+    if (!isInsideBahia(cLat, cLng)) return [];
+
+    const origin = [cLat, cLng];
 
     (selectedCadeia.municipios_cobertos || []).forEach((mun) => {
-      let mLat = mun.lat;
-      let mLng = mun.lng;
+      let mLat = mun.lat ? Number(mun.lat) : null;
+      let mLng = mun.lng ? Number(mun.lng) : null;
 
-      if (!mLat || !mLng) {
-        const fallback = MUNICIPIOS_COORDS[mun.nome_municipio] || MUNICIPIOS_COORDS[mun.nome_municipio?.toLowerCase()];
+      if (!isInsideBahia(mLat, mLng)) {
+        const fallback = findMunicipioCoords(mun.nome_municipio);
         if (fallback) {
           mLat = fallback[0];
           mLng = fallback[1];
         }
       }
 
-      if (mLat && mLng) {
-        const isSamePoint = Math.abs(mLat - selectedCadeia.lat) < 0.001 && Math.abs(mLng - selectedCadeia.lng) < 0.001;
+      if (isInsideBahia(mLat, mLng)) {
+        const isSamePoint = Math.abs(mLat - cLat) < 0.001 && Math.abs(mLng - cLng) < 0.001;
         if (!isSamePoint) {
           lines.push({
             positions: [origin, [mLat, mLng]],
@@ -1140,8 +1315,23 @@ export default function SideMap({
     if (norm) geoJsonLayersByTerritoryRef.current[norm] = layer;
 
     layer.on({
-      mouseover: () => setHoveredFeatureName(nome),
-      mouseout: () => setHoveredFeatureName(null),
+      mouseover: (e) => {
+        setHoveredFeatureName(nome);
+        if (mode !== 'cursos' && !selectedTerritory) {
+          e.target.setStyle({
+            fillColor: '#EFF6FF',
+            fillOpacity: 1,
+            color: '#2563EB',
+            weight: 1.8
+          });
+        }
+      },
+      mouseout: (e) => {
+        setHoveredFeatureName(null);
+        if (mode !== 'cursos' && !selectedTerritory) {
+          e.target.setStyle(territoryBorderStyle(feature));
+        }
+      },
       click: (e) => {
         L.DomEvent.stopPropagation(e);
         const isCurrentSelected = selectedTerritory && (
@@ -1164,8 +1354,17 @@ export default function SideMap({
     const terrNome = feature?.properties?.nome_territorio || '';
 
     layer.on({
-      mouseover: () => setHoveredFeatureName(munNome),
-      mouseout: () => setHoveredFeatureName(null),
+      mouseover: (e) => {
+        setHoveredFeatureName(munNome);
+        e.target.setStyle({
+          weight: 2.0,
+          color: '#1D3557'
+        });
+      },
+      mouseout: (e) => {
+        setHoveredFeatureName(null);
+        e.target.setStyle(municipioBorderStyle(feature));
+      },
       click: (e) => {
         L.DomEvent.stopPropagation(e);
         if (!selectedTerritory && idTerr) {
@@ -1209,10 +1408,9 @@ export default function SideMap({
     <div className="relative w-full h-full min-h-0 flex items-center justify-center bg-[#EBF1F6] bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1">
       <MapContainer
         ref={mapRef}
-        preferCanvas={true}
-        center={[-12.7, -41.7]}
-        zoom={5.9}
-        minZoom={5.4}
+        center={[-13.1, -41.7]}
+        zoom={5.6}
+        minZoom={5.0}
         maxBounds={[
           [-18.5, -47.0],
           [-8.0, -37.0]
@@ -1223,6 +1421,7 @@ export default function SideMap({
         zoomControl={false}
         attributionControl={false}
       >
+        <MapPaneManager />
         <MapResizeHandler isExpanded={isExpanded} />
         <MapZoomWatcher onZoomChange={setCurrentZoom} />
         <ZoomDependentTileLayer />
@@ -1235,10 +1434,16 @@ export default function SideMap({
           geoJsonLayersByTerritoryRef={geoJsonLayersByTerritoryRef}
         />
         <CadeiaFocusController selectedCadeia={selectedCadeia} />
+        <ConnectionsFocusController
+          showAllConnections={showAllConnections}
+          mode={mode}
+          connectionLines={connectionLines}
+          selectedTerritory={selectedTerritory}
+        />
 
         {territoriosGeoJson && (
           <GeoJSON
-            key={`territorios-layer-${mode}-${hoveredFeatureName || 'none'}-${selectedTerritory?.id_territorio || 'none'}-${activeCategoryKeys.size}`}
+            key={`territorios-layer-${mode}-${selectedTerritory?.id_territorio || 'none'}-${activeCategoryKeys.size}`}
             data={territoriosGeoJson}
             style={territoryBorderStyle}
             onEachFeature={onEachTerritoryFeature}
@@ -1247,7 +1452,7 @@ export default function SideMap({
 
         {mode === 'cursos' && selectedTerritory && municipiosGeoJson && (
           <GeoJSON
-            key={`municipios-heat-layer-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${hoveredFeatureName || 'none'}-${activeCategoryKeys.size}`}
+            key={`municipios-heat-layer-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${activeCategoryKeys.size}`}
             data={municipiosGeoJson}
             style={municipioBorderStyle}
             onEachFeature={onEachMunicipioFeature}
@@ -1259,6 +1464,7 @@ export default function SideMap({
         {mode === 'cadeias' && connectionLines.map((line, idx) => (
           <Polyline
             key={`conn-line-${idx}`}
+            pane="connectionsPane"
             positions={line.positions}
             pathOptions={{
               color: line.isSelected ? '#1E40AF' : '#3B82F6',
@@ -1409,7 +1615,7 @@ export default function SideMap({
           onClick={() => {
             setPinnedAssetId(null);
             setActiveCategoryKeys(new Set(allCategories.map((c) => c.key)));
-            mapRef.current?.flyTo([-12.7, -41.7], 5.9, { duration: 0.8 });
+            mapRef.current?.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
             onSelectTerritory(null);
             onSelectIES?.(null);
             onSelectSegmento?.(null);

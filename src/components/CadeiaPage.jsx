@@ -121,6 +121,7 @@ export default function CadeiaPage() {
     const [focusedAsset, setFocusedAsset] = useState(null);
     const [selectedSegmento, setSelectedSegmento] = useState(null);
     const [selectedTipo, setSelectedTipo] = useState('todos');
+    const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('catalogo');
     const [selectedCadeia, setSelectedCadeia] = useState(null);
     const [isMapExpanded, setIsMapExpanded] = useState(false);
@@ -166,8 +167,10 @@ export default function CadeiaPage() {
         (listaCadeias || []).forEach(lc => {
             const id = Number(lc.id_cadeia);
             if (id && lc.fonte) fontesMap.set(id, lc.fonte);
-            if (id && (lc.latitude || lc.lat) && (lc.longitude || lc.lng)) {
-                coordsMap.set(id, [Number(lc.latitude || lc.lat), Number(lc.longitude || lc.lng)]);
+            const cLat = Number(lc.latitude || lc.lat);
+            const cLng = Number(lc.longitude || lc.lng);
+            if (id && cLat && cLng && cLat >= -18.5 && cLat <= -8.0 && cLng >= -47.0 && cLng <= -36.5) {
+                coordsMap.set(id, [cLat, cLng]);
             }
         });
 
@@ -220,6 +223,10 @@ export default function CadeiaPage() {
                 let lat = row.latitude ? Number(row.latitude) : (row.lat ? Number(row.lat) : null);
                 let lng = row.longitude ? Number(row.longitude) : (row.lng ? Number(row.lng) : null);
 
+                // Garantir limites da Bahia
+                if (lat && (lat < -18.5 || lat > -8.0)) lat = null;
+                if (lng && (lng < -47.0 || lng > -36.5)) lng = null;
+
                 if ((!lat || !lng) && coordsMap.has(idCadeia)) {
                     const [cLat, cLng] = coordsMap.get(idCadeia);
                     lat = cLat;
@@ -229,7 +236,7 @@ export default function CadeiaPage() {
                 if (!lat || !lng) {
                     const huntedCoords = findMunicipioCoords(nomeSedeFinal) ||
                         (overrideSede ? findMunicipioCoords(overrideSede) : null) ||
-                        [-9.4167, -40.5000];
+                        [-12.9714, -38.5014];
 
                     lat = huntedCoords[0];
                     lng = huntedCoords[1];
@@ -285,7 +292,10 @@ export default function CadeiaPage() {
                 const mTerrId = row.id_territorio || (lookupMun ? lookupMun.id_territorio : idTerrSede);
                 const mTerrNome = row.nome_territorio || (lookupMun ? lookupMun.nome_territorio : nomeTerrSede);
 
-                const munCoords = findMunicipioCoords(mNome);
+                let munCoords = findMunicipioCoords(mNome);
+                if (!munCoords || munCoords[0] < -18.5 || munCoords[0] > -8.0 || munCoords[1] < -47.0 || munCoords[1] > -36.5) {
+                    munCoords = null;
+                }
 
                 if (mId && !cadeiaObj.municipios_cobertos.some(m => m.id_municipio === mId)) {
                     cadeiaObj.municipios_cobertos.push({
@@ -326,16 +336,31 @@ export default function CadeiaPage() {
         let list = territoryCadeias;
         if (selectedTipo !== 'todos') list = list.filter(c => c.tipo === selectedTipo);
         if (selectedSegmento) list = list.filter(c => c.segmento === selectedSegmento);
+        if (searchQuery.trim()) {
+            const q = normalizeName(searchQuery);
+            list = list.filter(c =>
+                normalizeName(c.nome).includes(q) ||
+                normalizeName(c.entidade).includes(q) ||
+                normalizeName(c.segmento).includes(q) ||
+                normalizeName(c.tipo).includes(q) ||
+                normalizeName(c.municipio).includes(q) ||
+                normalizeName(c.municipio_sede).includes(q) ||
+                normalizeName(c.territorio_identidade).includes(q)
+            );
+        }
         return list;
-    }, [territoryCadeias, selectedTipo, selectedSegmento]);
+    }, [territoryCadeias, selectedTipo, selectedSegmento, searchQuery]);
 
     const compactCadeiasList = useMemo(() => {
         if (!sidebarSearch.trim()) return filteredCadeias;
-        const q = sidebarSearch.toLowerCase().trim();
+        const q = normalizeName(sidebarSearch);
         return filteredCadeias.filter(c =>
-            (c.entidade && c.entidade.toLowerCase().includes(q)) ||
-            (c.segmento && c.segmento.toLowerCase().includes(q)) ||
-            (c.municipio_sede && c.municipio_sede.toLowerCase().includes(q))
+            normalizeName(c.entidade).includes(q) ||
+            normalizeName(c.nome).includes(q) ||
+            normalizeName(c.segmento).includes(q) ||
+            normalizeName(c.tipo).includes(q) ||
+            normalizeName(c.municipio_sede).includes(q) ||
+            normalizeName(c.municipio).includes(q)
         );
     }, [filteredCadeias, sidebarSearch]);
 
@@ -1011,6 +1036,13 @@ export default function CadeiaPage() {
                                 tabs={dynamicTabs}
                                 activeTab={activeTab}
                                 onTabChange={setActiveTab}
+                                searchValue={searchQuery}
+                                onSearchChange={(val) => {
+                                    setSearchQuery(val);
+                                    if (val.trim() && activeTab !== 'catalogo') {
+                                        setActiveTab('catalogo');
+                                    }
+                                }}
                                 showSearch={true}
                                 searchPlaceholder="Buscar cadeia, segmento ou cidade..."
                             />

@@ -183,13 +183,14 @@ export default function AtivosPage() {
         }
 
         if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase().trim();
+            const q = normalizeName(searchQuery);
             list = list.filter(a =>
-                (a.nome && a.nome.toLowerCase().includes(q)) ||
-                (a.sigla && a.sigla.toLowerCase().includes(q)) ||
-                (a.tipo && a.tipo.toLowerCase().includes(q)) ||
-                (a.municipio && a.municipio.toLowerCase().includes(q)) ||
-                (a.territorio && a.territorio.toLowerCase().includes(q))
+                normalizeName(a.nome).includes(q) ||
+                normalizeName(a.sigla).includes(q) ||
+                normalizeName(a.tipo).includes(q) ||
+                normalizeName(a.shortTipo).includes(q) ||
+                normalizeName(a.municipio).includes(q) ||
+                normalizeName(a.territorio).includes(q)
             );
         }
 
@@ -198,12 +199,13 @@ export default function AtivosPage() {
 
     const compactAtivosList = useMemo(() => {
         if (!sidebarSearch.trim()) return filteredAtivosList;
-        const q = sidebarSearch.toLowerCase().trim();
+        const q = normalizeName(sidebarSearch);
         return filteredAtivosList.filter(a =>
-            (a.nome && a.nome.toLowerCase().includes(q)) ||
-            (a.sigla && a.sigla.toLowerCase().includes(q)) ||
-            (a.tipo && a.tipo.toLowerCase().includes(q)) ||
-            (a.municipio && a.municipio.toLowerCase().includes(q))
+            normalizeName(a.nome).includes(q) ||
+            normalizeName(a.sigla).includes(q) ||
+            normalizeName(a.tipo).includes(q) ||
+            normalizeName(a.shortTipo).includes(q) ||
+            normalizeName(a.municipio).includes(q)
         );
     }, [filteredAtivosList, sidebarSearch]);
 
@@ -658,7 +660,12 @@ export default function AtivosPage() {
                                 <input
                                     type="text"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value.trim() && activeTab !== 'catalogo') {
+                                            setActiveTab('catalogo');
+                                        }
+                                    }}
                                     placeholder="Buscar ativo, tipo, cidade ou sigla..."
                                     className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
                                 />

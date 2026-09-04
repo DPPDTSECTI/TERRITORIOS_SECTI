@@ -23,7 +23,8 @@ import {
  Sparkles,
  Award,
  BarChart3,
- Image as ImageIcon
+ Image as ImageIcon,
+ Compass
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import {
@@ -33,6 +34,78 @@ import {
 import SideMap from './maps/SideMap';
 import PtiMap from './maps/PtiMap';
 import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../constants/semiarido';
+import { normalize } from '../utils/normalization';
+import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
+import { municipiosDB } from '../data/municipiosDB';
+import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
+
+const MUN_LOOKUP = (() => {
+  const byId = {};
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byId[row.id_municipio] = row;
+    byName[normalize(row.nome_municipio)] = row;
+  });
+  return { byId, byName };
+})();
+
+function findMunicipioCoords(nome) {
+  if (!nome) return null;
+  const raw = String(nome).trim();
+  const clean = normalize(raw);
+
+  if (MUNICIPIOS_COORDS[raw]) return MUNICIPIOS_COORDS[raw];
+  if (MUNICIPIOS_COORDS[clean]) return MUNICIPIOS_COORDS[clean];
+  if (MUNICIPIOS_COORDS[raw.toLowerCase()]) return MUNICIPIOS_COORDS[raw.toLowerCase()];
+
+  const aliases = {
+    'petrolina': [-9.3989, -40.5008],
+    'sao francisco': [-9.427268, -40.505742],
+    'lem': [-12.087454, -45.796046],
+    'saj': [-12.968813, -39.257965]
+  };
+
+  if (aliases[clean]) return aliases[clean];
+
+  const lookup = MUN_LOOKUP.byName[clean];
+  if (lookup && MUNICIPIOS_COORDS[lookup.nome_municipio]) {
+    return MUNICIPIOS_COORDS[lookup.nome_municipio];
+  }
+
+  for (const key of Object.keys(MUNICIPIOS_COORDS)) {
+    if (normalize(key).includes(clean) || clean.includes(normalize(key))) {
+      return MUNICIPIOS_COORDS[key];
+    }
+  }
+
+  return null;
+}
+
+const getTipoCadeiaConfig = (nomeTipo) => {
+  const str = String(nomeTipo || '').toLowerCase();
+  if (str.includes('potencial')) {
+    return {
+      corHex: '#F59E0B',
+      label: 'IG Potencial',
+      icone: Compass,
+      iconSvg: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`
+    };
+  }
+  if (str.includes('ig') || str.includes('indica') || str.includes('geogr')) {
+    return {
+      corHex: '#10B981',
+      label: 'IG Concedida',
+      icone: Award,
+      iconSvg: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>`
+    };
+  }
+  return {
+    corHex: '#2563EB',
+    label: 'APL Mapeado',
+    icone: Layers,
+    iconSvg: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`
+  };
+};
 
 // Helper para limpeza de sufixos de campus / cidade nas IES
 function cleanIes(name) {
@@ -48,118 +121,355 @@ function cleanIes(name) {
 console.log('RelatorioPage montado!');
 
 export default function RelatorioPage() {
- const {
- territoriosData = [],
- ativosData = [],
- cursosData = [],
- distribuicaoCadeias = [],
- municipiosTerritorios = [],
- kpisGlobais = {},
- territoriesDynamicStats = {},
- loadingStats = false
- } = useContext(DataContext);
+  const {
+    territoriosData = [],
+    ativosData = [],
+    cursosData = [],
+    distribuicaoCadeias = [],
+    listaCadeias = [],
+    municipiosTerritorios = [],
+    kpisGlobais = {},
+    territoriesDynamicStats = {},
+    loadingStats = false
+  } = useContext(DataContext);
 
- // CAIXA 1: Território selecionado. 'bahia' = Toda a Bahia (Padrão)
- const [selectedTerritoryId, setSelectedTerritoryId] = useState('bahia');
- const [searchTerritory, setSearchTerritory] = useState('');
- // CAIXA 2: Tipo de Relatório selecionado
- // 'sintese' | 'ativos' | 'cursos' | 'cadeias' | 'municipios'
- const [reportType, setReportType] = useState('sintese');
- const [reportMode, setReportMode] = useState('normal'); // 'normal' | 'semiarido'
- const [tableSearch, setTableSearch] = useState('');
- const [sortField, setSortField] = useState(null);
- const [sortAsc, setSortAsc] = useState(true);
- const [isExportingPdf, setIsExportingPdf] = useState(false);
- const [isExportingPng, setIsExportingPng] = useState(false);
+  // CAIXA 1: Território selecionado. 'bahia' = Toda a Bahia (Padrão)
+  const [selectedTerritoryId, setSelectedTerritoryId] = useState('bahia');
+  const [searchTerritory, setSearchTerritory] = useState('');
+  // CAIXA 2: Tipo de Relatório selecionado
+  // 'sintese' | 'ativos' | 'cursos' | 'cadeias' | 'municipios'
+  const [reportType, setReportType] = useState('sintese');
+  const [reportMode, setReportMode] = useState('normal'); // 'normal' | 'semiarido'
+  const [tableSearch, setTableSearch] = useState('');
+  const [sortField, setSortField] = useState(null);
+  const [sortAsc, setSortAsc] = useState(true);
+  const [selectedCadeia, setSelectedCadeia] = useState(null);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingPng, setIsExportingPng] = useState(false);
 
 
- // Território selecionado (objeto) ou null se for Toda a Bahia
- const selectedTerritory = useMemo(() => {
- if (selectedTerritoryId === 'bahia') return null;
- return territoriosData.find(t => String(t.id_territorio) === String(selectedTerritoryId)) || null;
- }, [territoriosData, selectedTerritoryId]);
+  // Território selecionado (objeto) ou null se for Toda a Bahia
+  const selectedTerritory = useMemo(() => {
+    if (selectedTerritoryId === 'bahia') return null;
+    return territoriosData.find(t => String(t.id_territorio) === String(selectedTerritoryId)) || null;
+  }, [territoriosData, selectedTerritoryId]);
 
- const territoryTitle = selectedTerritory
- ? (selectedTerritory.nome_territorio || selectedTerritory.territorio)
- : (reportMode === 'semiarido' ? 'Semiárido Baiano (278 Municípios)' : 'Estado da Bahia (Toda a Bahia)');
+  const territoryTitle = selectedTerritory
+    ? (selectedTerritory.nome_territorio || selectedTerritory.territorio)
+    : (reportMode === 'semiarido' ? 'Semiárido Baiano (278 Municípios)' : 'Estado da Bahia (Toda a Bahia)');
 
- // Lista dos 27 territórios ordenados alfabeticamente
- const sortedTerritorios = useMemo(() => {
- const list = [...territoriosData];
- list.sort((a, b) => {
- const nameA = (a.nome_territorio || a.territorio || '').toLowerCase();
- const nameB = (b.nome_territorio || b.territorio || '').toLowerCase();
- return nameA.localeCompare(nameB, 'pt-BR');
- });
- if (!searchTerritory.trim()) return list;
- const q = searchTerritory.toLowerCase().trim();
- return list.filter(t =>
- (t.nome_territorio && t.nome_territorio.toLowerCase().includes(q)) ||
- (t.territorio && t.territorio.toLowerCase().includes(q))
- );
- }, [territoriosData, searchTerritory]);
+  // Lista dos 27 territórios ordenados alfabeticamente
+  const sortedTerritorios = useMemo(() => {
+    const list = [...territoriosData];
+    list.sort((a, b) => {
+      const nameA = (a.nome_territorio || a.territorio || '').toLowerCase();
+      const nameB = (b.nome_territorio || b.territorio || '').toLowerCase();
+      return nameA.localeCompare(nameB, 'pt-BR');
+    });
+    if (!searchTerritory.trim()) return list;
+    const q = searchTerritory.toLowerCase().trim();
+    return list.filter(t =>
+      (t.nome_territorio && t.nome_territorio.toLowerCase().includes(q)) ||
+      (t.territorio && t.territorio.toLowerCase().includes(q))
+    );
+  }, [territoriosData, searchTerritory]);
 
- // DADOS FILTRADOS PELO ESCOPO (TODA A BAHIA OU TERRITÓRIO SELECIONADO) E MODO
- const scopedAtivos = useMemo(() => {
-   let list = selectedTerritoryId === 'bahia'
-     ? ativosData
-     : ativosData.filter(a => String(a.id_territorio) === String(selectedTerritoryId));
-   if (reportMode === 'semiarido') {
-     list = list.filter(a => a.semiarido === true || isMunicipioSemiarido(a.municipio));
-   }
-   return list;
- }, [ativosData, selectedTerritoryId, reportMode]);
+  // 0. ENRIQUECIMENTO COMPLETO DOS ATIVOS (com coordenadas válidas para pin/cluster)
+  const ativosProcessados = useMemo(() => {
+    if (!ativosData || ativosData.length === 0) return [];
 
- const scopedCursos = useMemo(() => {
-   let list = selectedTerritoryId === 'bahia'
-     ? cursosData
-     : cursosData.filter(c => String(c.id_territorio) === String(selectedTerritoryId));
-   if (reportMode === 'semiarido') {
-     list = list.filter(c => c.semiarido === true || isMunicipioSemiarido(c.municipio));
-   }
-   return list;
- }, [cursosData, selectedTerritoryId, reportMode]);
+    return ativosData.map((a, idx) => {
+      const nomeTipoColuna = a.tipo || a.nome_tipo || 'Outros';
+      const configEstilo = getDynamicAssetTypeConfig(nomeTipoColuna);
 
- const scopedCadeias = useMemo(() => {
-   let list = selectedTerritoryId === 'bahia'
-     ? distribuicaoCadeias
-     : distribuicaoCadeias.filter(d => String(d.id_territorio) === String(selectedTerritoryId));
-   if (reportMode === 'semiarido') {
-     list = list.filter(d => d.semiarido === true || isMunicipioSemiarido(d.municipio || d.sede || d.municipio_sede || d.nome_municipio));
-   }
-   return list;
- }, [distribuicaoCadeias, selectedTerritoryId, reportMode]);
+      const munKey = normalize(a.municipio || '');
+      const munRow = MUN_LOOKUP.byName[munKey];
 
- const scopedMunicipios = useMemo(() => {
-   let list = selectedTerritoryId === 'bahia'
-     ? municipiosTerritorios
-     : municipiosTerritorios.filter(m => String(m.id_territorio) === String(selectedTerritoryId));
-   if (reportMode === 'semiarido') {
-     list = list.filter(m => isMunicipioSemiarido(m.nome_municipio || m.municipio));
-   }
-   return list;
- }, [municipiosTerritorios, selectedTerritoryId, reportMode]);
+      const rawLat = a.latitude != null && a.latitude !== '' ? Number(a.latitude) : null;
+      const rawLng = a.longitude != null && a.longitude !== '' ? Number(a.longitude) : null;
 
- // ESTATÍSTICAS INTEGRADAS DA SÍNTESE
- const statsSintese = useMemo(() => {
- const totalAtivos = scopedAtivos.length;
- const totalCursos = scopedCursos.length;
- const federalCursos = scopedCursos.filter(c => String(c.entidade || c.instituicao || c.nome || '').toLowerCase().includes('federal')).length;
- const estadualCursos = scopedCursos.filter(c => {
- const e = String(c.entidade || c.instituicao || c.nome || '').toLowerCase();
- return e.includes('estadual') || e.includes('estado da bahia');
- }).length;
- const privadaCursos = totalCursos - federalCursos - estadualCursos;
- 
- const federalTaxa = totalCursos > 0 ? ((federalCursos / totalCursos) * 100).toFixed(1) : '0.0';
- const estadualTaxa = totalCursos > 0 ? ((estadualCursos / totalCursos) * 100).toFixed(1) : '0.0';
- const privadaTaxa = totalCursos > 0 ? ((privadaCursos / totalCursos) * 100).toFixed(1) : '0.0';
+      let lat = rawLat;
+      let lng = rawLng;
 
- const rnpAtivos = scopedAtivos.filter(a => a.rnp).length;
- const rnpTaxa = totalAtivos > 0 ? ((rnpAtivos / totalAtivos) * 100).toFixed(1) : '0.0';
+      if (lat == null || lng == null || isNaN(lat) || isNaN(lng) || lat === 0) {
+        const fallback = MUNICIPIOS_COORDS[String(a.municipio || '').trim()] ||
+          MUNICIPIOS_COORDS[munKey] ||
+          [-12.9714, -38.5014];
+        lat = fallback[0];
+        lng = fallback[1];
+      }
 
- const uniqueCadeias = new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia));
- const totalCadeias = uniqueCadeias.size;
+      const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || a.rnp === '1' || a.rnp === 't' || a.rnp === 'T' || String(a.rnp || '').toLowerCase() === 'sim' || String(a.rnp || '').toLowerCase() === 'true';
+
+      const id_territorio = a.id_territorio != null && a.id_territorio !== ''
+        ? Number(a.id_territorio)
+        : (munRow?.id_territorio || null);
+
+      const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
+      const cleanTerr = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
+
+      const isSemi = a.semiarido === true || isMunicipioSemiarido(a.municipio || munRow?.nome_municipio);
+
+      return {
+        id: a.id_ativo || idx + 1,
+        id_ativo: a.id_ativo || idx + 1,
+        id_territorio,
+        nome: a.nome_ativo || a.sigla || 'Ativo de CT&I',
+        nome_ativo: a.nome_ativo || a.sigla || 'Ativo de CT&I',
+        sigla: (a.sigla || a.sigla_ativo || '').trim(),
+        tipo: nomeTipoColuna,
+        idTipoAtivo: configEstilo.id,
+        shortTipo: configEstilo.shortLabel,
+        municipio: a.municipio || munRow?.nome_municipio || 'Bahia',
+        territorio: cleanTerr || 'Bahia',
+        territorio_identidade: cleanTerr || 'Bahia',
+        lat,
+        lng,
+        latitude: lat,
+        longitude: lng,
+        icone: configEstilo.icone,
+        iconSvg: configEstilo.iconSvg,
+        cor: configEstilo.bgClass,
+        textCor: configEstilo.textClass,
+        corHex: configEstilo.corHex,
+        urlReferencia: a.url_referencia || '',
+        tituloReferencia: a.titulo_referencia || '',
+        rnp: hasRnp,
+        semiarido: isSemi
+      };
+    });
+  }, [ativosData]);
+
+  // 1. ENRIQUECIMENTO COMPLETO DAS CADEIAS PRODUTIVAS (com sedes, coordenadas e abrangência)
+  const enrichedCadeias = useMemo(() => {
+    const fontesMap = new Map();
+    const coordsMap = new Map();
+
+    (listaCadeias || []).forEach(lc => {
+      const id = Number(lc.id_cadeia);
+      if (id && lc.fonte) fontesMap.set(id, lc.fonte);
+      const cLat = Number(lc.latitude || lc.lat);
+      const cLng = Number(lc.longitude || lc.lng);
+      if (id && cLat && cLng && cLat >= -18.5 && cLat <= -8.0 && cLng >= -47.0 && cLng <= -36.5) {
+        coordsMap.set(id, [cLat, cLng]);
+      }
+    });
+
+    const sourceData = (distribuicaoCadeias && distribuicaoCadeias.length > 0) ? distribuicaoCadeias : listaCadeias;
+    if (!sourceData || sourceData.length === 0) return [];
+
+    const mapCadeias = new Map();
+
+    sourceData.forEach((row, idx) => {
+      const idCadeia = Number(row.id_cadeia || idx + 1);
+      const tipoNome = row.nome_tipo || row.tipo || 'APL';
+      const configTipo = getTipoCadeiaConfig(tipoNome);
+      const entidadeStr = String(row.entidade || '').toLowerCase();
+
+      let overrideSede = null;
+      let overrideTerritorioId = null;
+      let overrideTerritorioNome = null;
+
+      if (entidadeStr.includes('sao francisco') || entidadeStr.includes('uvas de mesa') || entidadeStr.includes('vinho do vale')) {
+        overrideSede = 'Juazeiro';
+        overrideTerritorioId = 21;
+        overrideTerritorioNome = 'Sertão do São Francisco';
+      } else if (entidadeStr.includes('luis eduardo') || entidadeStr.includes('oeste da bahia')) {
+        overrideSede = 'Luís Eduardo Magalhães';
+        overrideTerritorioId = 4;
+        overrideTerritorioNome = 'Bacia do Rio Grande';
+      } else if (entidadeStr.includes('cachaça de abaíra') || entidadeStr.includes('abaira')) {
+        overrideSede = 'Abaíra';
+        overrideTerritorioId = 11;
+        overrideTerritorioNome = 'Chapada Diamantina';
+      } else if (entidadeStr.includes('cacau do sul') || entidadeStr.includes('sul da bahia')) {
+        overrideSede = 'Ilhéus';
+        overrideTerritorioId = 6;
+        overrideTerritorioNome = 'Litoral Sul';
+      }
+
+      let rawMunSede = overrideSede || row.sede || row.municipio_sede || '';
+      if ((!rawMunSede || rawMunSede.toLowerCase() === 'bahia') && row.nome_municipio && row.nome_municipio.toLowerCase() !== 'bahia') {
+        rawMunSede = row.nome_municipio;
+      }
+
+      const lookupSede = (row.id_sede && MUN_LOOKUP.byId[row.id_sede]) || 
+                         (rawMunSede && MUN_LOOKUP.byName[normalize(rawMunSede)]);
+
+      const nomeSedeFinal = lookupSede ? lookupSede.nome_municipio : (rawMunSede || 'Juazeiro');
+      const idTerrSede = overrideTerritorioId || (lookupSede ? lookupSede.id_territorio : (row.id_territorio || null));
+      const nomeTerrSede = overrideTerritorioNome || (lookupSede ? lookupSede.nome_territorio : (row.nome_territorio || 'Não identificado'));
+      const isSedeSemi = isMunicipioSemiarido(nomeSedeFinal);
+
+      if (!mapCadeias.has(idCadeia)) {
+        let lat = row.latitude ? Number(row.latitude) : (row.lat ? Number(row.lat) : null);
+        let lng = row.longitude ? Number(row.longitude) : (row.lng ? Number(row.lng) : null);
+
+        // Garantir que coordenadas venham de dentro dos limites da Bahia
+        if (lat && (lat < -18.5 || lat > -8.0)) lat = null;
+        if (lng && (lng < -47.0 || lng > -36.5)) lng = null;
+
+        if ((!lat || !lng) && coordsMap.has(idCadeia)) {
+          const [cLat, cLng] = coordsMap.get(idCadeia);
+          lat = cLat;
+          lng = cLng;
+        }
+
+        if (!lat || !lng) {
+          const huntedCoords = findMunicipioCoords(nomeSedeFinal) || 
+                               (overrideSede ? findMunicipioCoords(overrideSede) : null) || 
+                               [-12.9714, -38.5014];
+          lat = huntedCoords[0];
+          lng = huntedCoords[1];
+
+          const offsetAngle = (idCadeia * 137.5 * Math.PI) / 180;
+          const offsetRadius = 0.008 + ((idCadeia % 5) * 0.003);
+          lat += Math.cos(offsetAngle) * offsetRadius;
+          lng += Math.sin(offsetAngle) * offsetRadius;
+        }
+
+        const rawUrl = row.fonte || fontesMap.get(idCadeia) || row.url_referencia || '';
+
+        mapCadeias.set(idCadeia, {
+          id: idCadeia,
+          id_cadeia: idCadeia,
+          nome: row.entidade || row.nome_cadeia || `Arranjo #${idCadeia}`,
+          entidade: row.entidade || row.nome_cadeia || `Arranjo #${idCadeia}`,
+          segmento: row.segmento || row.nome_cadeia || 'Outros',
+          tipo: tipoNome.toUpperCase().includes('POTENCIAL') ? 'IG POTENCIAL' : (tipoNome.toUpperCase().includes('IG') ? 'IG' : 'APL'),
+          shortTipo: configTipo.label,
+          id_sede: lookupSede ? lookupSede.id_municipio : (row.id_sede || 1),
+          municipio: nomeSedeFinal,
+          municipio_sede: nomeSedeFinal,
+          id_territorio: idTerrSede,
+          territorio: nomeTerrSede,
+          territorio_identidade: nomeTerrSede,
+          lat,
+          lng,
+          latitude: lat,
+          longitude: lng,
+          corHex: configTipo.corHex,
+          icone: configTipo.icone,
+          iconSvg: configTipo.iconSvg,
+          urlReferencia: rawUrl,
+          semiarido: isSedeSemi,
+          municipios_cobertos: []
+        });
+      }
+
+      if (row.id_municipio || row.nome_municipio) {
+        const cadeiaObj = mapCadeias.get(idCadeia);
+        const lookupMun = (row.id_municipio && MUN_LOOKUP.byId[row.id_municipio]) || 
+                          (row.nome_municipio && MUN_LOOKUP.byName[normalize(row.nome_municipio)]);
+
+        const mId = row.id_municipio || (lookupMun ? lookupMun.id_municipio : null);
+        const mNome = row.nome_municipio || (lookupMun ? lookupMun.nome_municipio : '');
+        const mTerrId = row.id_territorio || (lookupMun ? lookupMun.id_territorio : idTerrSede);
+        const mTerrNome = row.nome_territorio || (lookupMun ? lookupMun.nome_territorio : nomeTerrSede);
+        const mSemi = isMunicipioSemiarido(mNome);
+
+        let munCoords = findMunicipioCoords(mNome);
+        if (!munCoords || munCoords[0] < -18.5 || munCoords[0] > -8.0 || munCoords[1] < -47.0 || munCoords[1] > -36.5) {
+          munCoords = null;
+        }
+
+        if (mId && !cadeiaObj.municipios_cobertos.some(m => m.id_municipio === mId)) {
+          cadeiaObj.municipios_cobertos.push({
+            id_municipio: mId,
+            nome_municipio: mNome,
+            id_territorio: mTerrId,
+            nome_territorio: mTerrNome,
+            lat: munCoords ? munCoords[0] : null,
+            lng: munCoords ? munCoords[1] : null,
+            semiarido: mSemi
+          });
+          if (mSemi) cadeiaObj.semiarido = true;
+        }
+      }
+    });
+
+    return Array.from(mapCadeias.values());
+  }, [distribuicaoCadeias, listaCadeias]);
+
+  // DADOS FILTRADOS PELO ESCOPO (TODA A BAHIA OU TERRITÓRIO SELECIONADO) E MODO
+  const scopedAtivos = useMemo(() => {
+    let list = selectedTerritoryId === 'bahia'
+      ? ativosProcessados
+      : ativosProcessados.filter(a => String(a.id_territorio) === String(selectedTerritoryId));
+    if (reportMode === 'semiarido') {
+      list = list.filter(a => a.semiarido === true);
+    }
+    return list;
+  }, [ativosProcessados, selectedTerritoryId, reportMode]);
+
+  const scopedCursos = useMemo(() => {
+    let list = selectedTerritoryId === 'bahia'
+      ? cursosData
+      : cursosData.filter(c => String(c.id_territorio) === String(selectedTerritoryId));
+    if (reportMode === 'semiarido') {
+      list = list.filter(c => c.semiarido === true || isMunicipioSemiarido(c.municipio));
+    }
+    return list;
+  }, [cursosData, selectedTerritoryId, reportMode]);
+
+  const scopedCadeias = useMemo(() => {
+    if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
+    let list = enrichedCadeias;
+
+    if (selectedTerritory) {
+      const tid = Number(selectedTerritory.id_territorio);
+      const tNorm = normalize(selectedTerritory.nome_territorio || selectedTerritory.territorio);
+
+      list = list.filter(c => {
+        const matchSedeId = Number(c.id_territorio) === tid;
+        const matchSedeNome = normalize(c.territorio_identidade) === tNorm;
+        const matchAbrangencia = c.municipios_cobertos?.some(m => 
+          Number(m.id_territorio) === tid || normalize(m.nome_territorio) === tNorm
+        );
+        return matchSedeId || matchSedeNome || matchAbrangencia;
+      });
+    }
+
+    if (reportMode === 'semiarido') {
+      list = list.filter(c => 
+        c.semiarido === true || 
+        isMunicipioSemiarido(c.municipio_sede) || 
+        c.municipios_cobertos?.some(m => m.semiarido || isMunicipioSemiarido(m.nome_municipio))
+      );
+    }
+
+    return list;
+  }, [enrichedCadeias, selectedTerritory, reportMode]);
+
+  const scopedMunicipios = useMemo(() => {
+    let list = selectedTerritoryId === 'bahia'
+      ? municipiosTerritorios
+      : municipiosTerritorios.filter(m => String(m.id_territorio) === String(selectedTerritoryId));
+    if (reportMode === 'semiarido') {
+      list = list.filter(m => isMunicipioSemiarido(m.nome_municipio || m.municipio));
+    }
+    return list;
+  }, [municipiosTerritorios, selectedTerritoryId, reportMode]);
+
+  // ESTATÍSTICAS INTEGRADAS DA SÍNTESE
+  const statsSintese = useMemo(() => {
+    const totalAtivos = scopedAtivos.length;
+    const totalCursos = scopedCursos.length;
+    const federalCursos = scopedCursos.filter(c => String(c.entidade || c.instituicao || c.nome || '').toLowerCase().includes('federal')).length;
+    const estadualCursos = scopedCursos.filter(c => {
+      const e = String(c.entidade || c.instituicao || c.nome || '').toLowerCase();
+      return e.includes('estadual') || e.includes('estado da bahia');
+    }).length;
+    const privadaCursos = totalCursos - federalCursos - estadualCursos;
+    
+    const federalTaxa = totalCursos > 0 ? ((federalCursos / totalCursos) * 100).toFixed(1) : '0.0';
+    const estadualTaxa = totalCursos > 0 ? ((estadualCursos / totalCursos) * 100).toFixed(1) : '0.0';
+    const privadaTaxa = totalCursos > 0 ? ((privadaCursos / totalCursos) * 100).toFixed(1) : '0.0';
+
+    const rnpAtivos = scopedAtivos.filter(a => a.rnp).length;
+    const rnpTaxa = totalAtivos > 0 ? ((rnpAtivos / totalAtivos) * 100).toFixed(1) : '0.0';
+
+    const totalCadeias = scopedCadeias.length;
 
  // Municípios atendidos com pelo menos 1 ativo ou curso
  const munComAtivo = new Set(scopedAtivos.map(a => a.id_municipio || a.municipio));
@@ -235,8 +545,8 @@ export default function RelatorioPage() {
 
  // FILTRAGEM E ORDENAÇÃO DE TABELAS CONFORME O RELATÓRIO
  const tableData = useMemo(() => {
- let list = [];
- const q = tableSearch.toLowerCase().trim();
+   let list = [];
+   const q = normalize(tableSearch);
 
  if (reportType === 'ativos') {
  list = scopedAtivos.map(a => ({
@@ -259,28 +569,28 @@ export default function RelatorioPage() {
  raw: c
  }));
  } else if (reportType === 'cadeias') {
- // Agrupar por cadeia
- const map = new Map();
- scopedCadeias.forEach(cad => {
- const name = cad.entidade || cad.cadeia_produtiva || cad.nome_cadeia || 'Cadeia Produtiva';
- const tipo = cad.nome_tipo || cad.segmento || cad.tipo_cadeia || 'Setor Econômico';
- if (!map.has(name)) {
- map.set(name, { name, tipo, territorios: new Set() });
- }
- if (cad.nome_territorio || cad.territorio) {
- map.get(name).territorios.add(cad.nome_territorio || cad.territorio);
- }
- });
- list = Array.from(map.values()).map(item => ({
- col1: item.name,
- col2: item.tipo,
- col3: `${item.territorios.size} território(s)`,
- col4: Array.from(item.territorios).slice(0, 3).join(', ') + (item.territorios.size > 3 ? '...' : ''),
- col5: '',
- col6: '',
- raw: item
- }));
- } else if (reportType === 'municipios') {
+      list = scopedCadeias.map(cad => {
+        const terrs = new Set();
+        if (cad.territorio && cad.territorio !== 'Não identificado') {
+          terrs.add(cad.territorio.replace(/^Território de Identidade\s+/i, ''));
+        }
+        (cad.municipios_cobertos || []).forEach(m => {
+          if (m.nome_territorio && m.nome_territorio !== 'Não identificado') {
+            terrs.add(m.nome_territorio.replace(/^Território de Identidade\s+/i, ''));
+          }
+        });
+        const terrArray = Array.from(terrs);
+        return {
+          col1: cad.nome || cad.entidade || 'Cadeia Produtiva',
+          col2: cad.shortTipo || cad.tipo || 'APL',
+          col3: `${terrArray.length || 1} território(s)`,
+          col4: terrArray.slice(0, 3).join(', ') + (terrArray.length > 3 ? '...' : ''),
+          col5: '',
+          col6: '',
+          raw: cad
+        };
+      });
+    } else if (reportType === 'municipios') {
  // Contagem por município
  const ativosPorMun = {};
  scopedAtivos.forEach(a => {
@@ -309,16 +619,16 @@ export default function RelatorioPage() {
  });
  }
 
- if (q) {
- list = list.filter(row =>
- String(row.col1).toLowerCase().includes(q) ||
- String(row.col2).toLowerCase().includes(q) ||
- String(row.col3).toLowerCase().includes(q) ||
- String(row.col4).toLowerCase().includes(q) ||
- String(row.col5).toLowerCase().includes(q) ||
- String(row.col6).toLowerCase().includes(q)
- );
- }
+    if (q) {
+      list = list.filter(row =>
+        normalize(row.col1).includes(q) ||
+        normalize(row.col2).includes(q) ||
+        normalize(row.col3).includes(q) ||
+        normalize(row.col4).includes(q) ||
+        normalize(row.col5).includes(q) ||
+        normalize(row.col6).includes(q)
+      );
+    }
 
  if (sortField) {
  list.sort((a, b) => {
@@ -490,13 +800,14 @@ export default function RelatorioPage() {
 
  const cadeiasPorTipo = useMemo(() => {
  if (reportType !== 'cadeias') return [];
- const counts = {};
- scopedCadeias.forEach(c => {
- const t = c.nome_tipo || c.segmento || c.tipo_cadeia || 'Setor Econômico';
- counts[t] = (counts[t] || 0) + 1;
- });
- return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value).slice(0, 10);
- }, [scopedCadeias, reportType]);
+    if (reportType !== 'cadeias') return [];
+    const counts = {};
+    scopedCadeias.forEach(c => {
+      const t = c.segmento || c.shortTipo || c.tipo || 'Setor Econômico';
+      counts[t] = (counts[t] || 0) + 1;
+    });
+    return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value).slice(0, 10);
+  }, [scopedCadeias, reportType]);
 
  const cursosPorModalidade = useMemo(() => {
  return [
@@ -549,9 +860,20 @@ export default function RelatorioPage() {
  else setSelectedTerritoryId('bahia');
  };
 
- if (reportType === 'ativos') return <SideMap mode="ativos" processedAtivos={scopedAtivos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
- if (reportType === 'cursos') return <SideMap mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
- if (reportType === 'cadeias') return <SideMap mode="cadeias" cadeiasData={scopedCadeias} processedAtivos={scopedCadeias} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
+ if (reportType === 'ativos') return <SideMap key={`map-ativos-${reportMode}-${selectedTerritoryId}`} mode="ativos" processedAtivos={scopedAtivos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
+ if (reportType === 'cursos') return <SideMap key={`map-cursos-${reportMode}-${selectedTerritoryId}`} mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
+ if (reportType === 'cadeias') return (
+    <SideMap
+      key={`map-cadeias-${reportMode}-${selectedTerritoryId}`}
+      mode="cadeias"
+      cadeiasData={scopedCadeias}
+      processedAtivos={scopedCadeias.map(c => ({...c, coords: c.coords || [0,0]}))}
+      selectedTerritory={selectedTerritory}
+      selectedCadeia={selectedCadeia}
+      onAssetClick={(cad) => setSelectedCadeia((prev) => (prev?.id === cad?.id ? null : cad))}
+      onSelectTerritory={handleMapSelect}
+    />
+  );
 
   return (
   <PtiMap
@@ -576,22 +898,22 @@ export default function RelatorioPage() {
 
   {/* CABEÇALHO DA CAIXA 2: SELETOR DOS TIPOS DE RELATÓRIO */}
   <div className="mb-4 shrink-0 flex flex-col gap-2.5">
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-  <div className="flex items-center gap-2 flex-wrap">
-  <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-primary bg-surface-soft px-2.5 py-1 rounded-full border border-border justify-center leading-none">
-  <Globe size={16} className="text-primary-600" />
-  <span>Exibindo: <strong>{territoryTitle}</strong></span>
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 h-[32px] shrink-0">
+  <div className="flex items-center gap-2">
+  <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-primary bg-surface-soft px-3 h-[32px] rounded-full border border-border justify-center leading-none shrink-0 min-w-[285px] box-border">
+  <Globe size={15} className="text-primary-600 shrink-0" />
+  <span className="truncate">Exibindo: <strong>{territoryTitle}</strong></span>
   </div>
 
   {/* SELETOR DE MODO: NORMAL VS SEMIÁRIDO */}
-  <div className="flex items-center gap-1 p-0.5 bg-surface-soft rounded-full border border-border shrink-0">
+  <div className="flex items-center gap-1 p-0.5 bg-surface-soft rounded-full border border-border shrink-0 h-[32px] box-border">
     <button
       type="button"
       onClick={() => setReportMode('normal')}
-      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+      className={`h-[26px] px-3 rounded-full text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 border box-border ${
         reportMode === 'normal'
-          ? 'bg-primary-900 text-white shadow-2xs'
-          : 'text-text-secondary hover:text-text-primary hover:bg-surface/80'
+          ? 'bg-primary-900 text-white border-primary-900 shadow-2xs'
+          : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-surface/80'
       }`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${reportMode === 'normal' ? 'bg-blue-400' : 'bg-slate-400'}`} />
@@ -600,10 +922,10 @@ export default function RelatorioPage() {
     <button
       type="button"
       onClick={() => setReportMode('semiarido')}
-      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+      className={`h-[26px] px-3 rounded-full text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 border box-border ${
         reportMode === 'semiarido'
-          ? 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] shadow-2xs'
-          : 'text-text-secondary hover:text-amber-800 hover:bg-amber-50/50'
+          ? 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A] shadow-2xs'
+          : 'border-transparent text-text-secondary hover:text-amber-800 hover:bg-amber-50/50'
       }`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${reportMode === 'semiarido' ? 'bg-[#D97706]' : 'bg-amber-500/50'}`} />
@@ -613,7 +935,7 @@ export default function RelatorioPage() {
   </div>
 
   {/* BOTÕES DE EXPORTAÇÃO E IMPRESSÃO (MOVIDOS PARA A CAIXA 2) */}
-  <div className="tour-relatorio-export flex items-center gap-1.5 self-start sm:self-center print:hidden">
+  <div className="tour-relatorio-export flex items-center gap-1.5 h-[32px] shrink-0 print:hidden">
    <button
      type="button"
      disabled={isExportingPdf}
@@ -691,6 +1013,7 @@ export default function RelatorioPage() {
  onClick={() => {
  setReportType(opt.id);
  setTableSearch('');
+ setSelectedCadeia(null);
  }}
  className={`px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 flex-1 justify-center ${isActive
  ? 'bg-primary-900 text-white shadow-xs'
@@ -705,92 +1028,92 @@ export default function RelatorioPage() {
  </div>
  </div>
 
- {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO */}
- <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 shrink-0">
- {/* CARD 1: Ativos */}
- <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel bg-primary-900/10 border border-primary-500/20 shadow-sm">
- <div className="flex items-center gap-2.5 w-full min-w-0">
- <div className="flex items-center justify-center shrink-0 mr-1">
- <Database size={16} strokeWidth={2} className="text-primary-400" />
- </div>
- <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
- Ativos de CT&I
- </span>
- </div>
- <div className="mt-3.5 flex items-baseline gap-2 w-full">
- <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
- {statsSintese.totalAtivos}
- </span>
- <span className="text-[11px] font-medium text-success-500">
- {statsSintese.rnpAtivos} RNP ({statsSintese.rnpTaxa}%)
- </span>
- </div>
- </div>
+  {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO */}
+  <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 h-[98px] shrink-0">
+    {/* CARD 1: Ativos */}
+    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel bg-primary-900/10 border border-primary-500/20 shadow-sm">
+      <div className="flex items-center gap-2.5 w-full min-w-0">
+        <div className="flex items-center justify-center shrink-0 mr-1">
+          <Database size={16} strokeWidth={2} className="text-primary-400" />
+        </div>
+        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+          Ativos de CT&I
+        </span>
+      </div>
+      <div className="flex items-baseline gap-2 w-full">
+        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+          {statsSintese.totalAtivos}
+        </span>
+        <span className="text-[11px] font-medium text-success-500">
+          {statsSintese.rnpAtivos} RNP ({statsSintese.rnpTaxa}%)
+        </span>
+      </div>
+    </div>
 
- {/* CARD 2: Cursos */}
- <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
- <div className="flex items-center gap-2.5 w-full min-w-0">
- <div className="flex items-center justify-center shrink-0 mr-1">
- <GraduationCap size={16} strokeWidth={2} className="text-[#14B8A6]" />
- </div>
- <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
- Cursos CT&I
- </span>
- </div>
- <div className="mt-3.5 flex items-baseline w-full">
- <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
- {statsSintese.totalCursos}
- </span>
- </div>
- </div>
+    {/* CARD 2: Cursos */}
+    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
+      <div className="flex items-center gap-2.5 w-full min-w-0">
+        <div className="flex items-center justify-center shrink-0 mr-1">
+          <GraduationCap size={16} strokeWidth={2} className="text-[#14B8A6]" />
+        </div>
+        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+          Cursos CT&I
+        </span>
+      </div>
+      <div className="flex items-baseline w-full">
+        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+          {statsSintese.totalCursos}
+        </span>
+      </div>
+    </div>
 
- {/* CARD 3: Cadeias */}
- <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
- <div className="flex items-center gap-2.5 w-full min-w-0">
- <div className="flex items-center justify-center shrink-0 mr-1">
- <GitPullRequest size={16} strokeWidth={2} className="text-warning-400" />
- </div>
- <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
- Cadeias Mapeadas
- </span>
- </div>
- <div className="mt-3.5 flex items-baseline gap-2 w-full">
- <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
- {statsSintese.totalCadeias}
- </span>
- <span className="text-[11px] font-medium text-text-secondary">
- setores
- </span>
- </div>
- </div>
+    {/* CARD 3: Cadeias */}
+    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
+      <div className="flex items-center gap-2.5 w-full min-w-0">
+        <div className="flex items-center justify-center shrink-0 mr-1">
+          <GitPullRequest size={16} strokeWidth={2} className="text-warning-400" />
+        </div>
+        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+          Cadeias Mapeadas
+        </span>
+      </div>
+      <div className="flex items-baseline gap-2 w-full">
+        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+          {statsSintese.totalCadeias}
+        </span>
+        <span className="text-[11px] font-medium text-text-secondary">
+          setores
+        </span>
+      </div>
+    </div>
 
- {/* CARD 4: Cobertura */}
- <div className="relative rounded-[16px] p-4 flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm" title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
- <div className="flex items-center gap-2.5 w-full min-w-0">
- <div className="flex items-center justify-center shrink-0 mr-1">
- <MapPin size={16} strokeWidth={2} className="text-danger-400" />
- </div>
- <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
- Cobertura CT&I
- </span>
- </div>
- <div className="mt-3.5 flex items-baseline gap-2 w-full">
- <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
- {statsSintese.munAtendidosCount} <span className="text-sm font-medium text-text-secondary">/ {statsSintese.totalMunEscopo}</span>
- </span>
- <span className="text-[11px] font-medium text-success-500">
- {statsSintese.taxaCoberturaMun}% do total
- </span>
- </div>
- </div>
- </div>
+    {/* CARD 4: Cobertura */}
+    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm" title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
+      <div className="flex items-center gap-2.5 w-full min-w-0">
+        <div className="flex items-center justify-center shrink-0 mr-1">
+          <MapPin size={16} strokeWidth={2} className="text-danger-400" />
+        </div>
+        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+          Cobertura CT&I
+        </span>
+      </div>
+      <div className="flex items-baseline gap-2 w-full">
+        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+          {statsSintese.munAtendidosCount} <span className="text-sm font-medium text-text-secondary">/ {statsSintese.totalMunEscopo}</span>
+        </span>
+        <span className="text-[11px] font-medium text-success-500">
+          {statsSintese.taxaCoberturaMun}% do total
+        </span>
+      </div>
+    </div>
+  </div>
 
 
- {/* ================= CONTEÚDO ESPECÍFICO DO TIPO DE RELATÓRIO ================= */}
+  {/* ================= CONTEÚDO ESPECÍFICO DO TIPO DE RELATÓRIO ================= */}
 
- {/* CASO 1: SÍNTESE EXECUTIVA TERRITORIAL */}
- {reportType === 'sintese' && (
- <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-4 min-h-0">
+  {/* CASO 1: SÍNTESE EXECUTIVA TERRITORIAL */}
+  {reportType === 'sintese' && (
+    <div className="flex-1 overflow-y-auto [scrollbar-gutter:stable] pr-1 flex flex-col gap-4 min-h-0">
 
  {/* CARTÃO DE APRESENTAÇÃO DO ESCOPO */}
  <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-primary-900 to-primary-800 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
@@ -1043,7 +1366,7 @@ export default function RelatorioPage() {
  </div>
 
  {/* TABELA DE DADOS COM SCROLL INTERNO */}
- <div className={`flex-1 overflow-y-auto overflow-x-hidden border border-border rounded-b-2xl shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0`}>
+ <div className={`flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] border border-border rounded-b-2xl shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0`}>
  <table className="w-full text-left border-collapse text-xs table-fixed">
  <colgroup>
  <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
@@ -1056,10 +1379,19 @@ export default function RelatorioPage() {
  
  <tbody className="divide-y divide-border/70 text-text-primary">
  {tableData.length > 0 ? (
- tableData.map((row, idx) => (
+ tableData.map((row, idx) => {
+    const isRowSelected = reportType === 'cadeias' && selectedCadeia && (row.raw?.id === selectedCadeia.id || row.raw?.nome === selectedCadeia.nome);
+    return (
  <tr
  key={idx}
- className="hover:bg-surface-soft transition-colors group"
+ onClick={() => {
+    if (reportType === 'cadeias' && row.raw) {
+      setSelectedCadeia((prev) => (prev?.id === row.raw.id ? null : row.raw));
+    }
+  }}
+  className={`hover:bg-surface-soft transition-colors group cursor-pointer ${
+    isRowSelected ? 'bg-primary-50/80 font-semibold border-l-4 border-primary-600' : ''
+  }`}
  >
  <td className="py-2 px-3 font-medium text-text-primary truncate" title={row.col1}>
  {row.col1}
@@ -1103,7 +1435,8 @@ export default function RelatorioPage() {
  </td>
  )}
  </tr>
- ))
+ )
+ })
  ) : (
  <tr>
  <td colSpan={6} className="py-8 text-center text-text-muted font-medium">

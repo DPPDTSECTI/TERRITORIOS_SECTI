@@ -19,6 +19,7 @@ import {
 import { DataContext } from '../context/DataContext';
 import SideMap, { getHeatColor } from './maps/SideMap';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
+import { normalize } from '../utils/normalization';
 
 const PALETTE_CORES = ['#2563EB', '#10B981', '#06B6D4', '#F59E0B', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1'];
 
@@ -113,15 +114,15 @@ export default function CursosPage() {
         }
 
         if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase().trim();
-            const nomeCurso = c => String(c.curso || c.nome || '').toLowerCase();
+            const q = normalize(searchQuery);
             list = list.filter(c =>
-                nomeCurso(c).includes(q) ||
-                (c.entidade && String(c.entidade).toLowerCase().includes(q)) ||
-                (c.instituicao && String(c.instituicao).toLowerCase().includes(q)) ||
-                (c.sigla && String(c.sigla).toLowerCase().includes(q)) ||
-                (c.municipio && String(c.municipio).toLowerCase().includes(q)) ||
-                (c.territorio_identidade && String(c.territorio_identidade).toLowerCase().includes(q))
+                normalize(c.curso || c.nome).includes(q) ||
+                normalize(c.entidade).includes(q) ||
+                normalize(c.instituicao).includes(q) ||
+                normalize(c.sigla).includes(q) ||
+                normalize(c.municipio).includes(q) ||
+                normalize(c.categoria || c.tipo).includes(q) ||
+                normalize(c.territorio_identidade).includes(q)
             );
         }
 
@@ -155,15 +156,15 @@ export default function CursosPage() {
         }
 
         if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase().trim();
-            const nomeCurso = c => String(c.curso || c.nome || '').toLowerCase();
+            const q = normalize(searchQuery);
             list = list.filter(c =>
-                nomeCurso(c).includes(q) ||
-                (c.entidade && String(c.entidade).toLowerCase().includes(q)) ||
-                (c.instituicao && String(c.instituicao).toLowerCase().includes(q)) ||
-                (c.sigla && String(c.sigla).toLowerCase().includes(q)) ||
-                (c.municipio && String(c.municipio).toLowerCase().includes(q)) ||
-                (c.territorio_identidade && String(c.territorio_identidade).toLowerCase().includes(q))
+                normalize(c.curso || c.nome).includes(q) ||
+                normalize(c.entidade).includes(q) ||
+                normalize(c.instituicao).includes(q) ||
+                normalize(c.sigla).includes(q) ||
+                normalize(c.municipio).includes(q) ||
+                normalize(c.categoria || c.tipo).includes(q) ||
+                normalize(c.territorio_identidade).includes(q)
             );
         }
 
@@ -172,15 +173,14 @@ export default function CursosPage() {
 
     const compactCursosList = useMemo(() => {
         if (!sidebarSearch.trim()) return filteredCursos;
-        const q = sidebarSearch.toLowerCase().trim();
-        const nomeCurso = c => String(c.curso || c.nome || '').toLowerCase();
+        const q = normalize(sidebarSearch);
         return filteredCursos.filter(c =>
-            nomeCurso(c).includes(q) ||
-            (c.sigla && String(c.sigla).toLowerCase().includes(q)) ||
-            (c.entidade && String(c.entidade).toLowerCase().includes(q)) ||
-            (c.instituicao && String(c.instituicao).toLowerCase().includes(q)) ||
-            (c.municipio && String(c.municipio).toLowerCase().includes(q)) ||
-            ((c.categoria || c.tipo) && String(c.categoria || c.tipo).toLowerCase().includes(q))
+            normalize(c.curso || c.nome).includes(q) ||
+            normalize(c.sigla).includes(q) ||
+            normalize(c.entidade).includes(q) ||
+            normalize(c.instituicao).includes(q) ||
+            normalize(c.municipio).includes(q) ||
+            normalize(c.categoria || c.tipo).includes(q)
         );
     }, [filteredCursos, sidebarSearch]);
 
@@ -654,7 +654,12 @@ export default function CursosPage() {
                                 <input
                                     type="text"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value.trim() && activeTab !== 'catalogo' && activeTab !== 'ead') {
+                                            setActiveTab('catalogo');
+                                        }
+                                    }}
                                     placeholder="Buscar curso, instituição ou cidade..."
                                     className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
                                 />

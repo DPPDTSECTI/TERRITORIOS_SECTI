@@ -160,8 +160,10 @@ export default function RelatorioCadeiasPage() {
     (listaCadeias || []).forEach(lc => {
       const id = Number(lc.id_cadeia);
       if (id && lc.fonte) fontesMap.set(id, lc.fonte);
-      if (id && (lc.latitude || lc.lat) && (lc.longitude || lc.lng)) {
-        coordsMap.set(id, [Number(lc.latitude || lc.lat), Number(lc.longitude || lc.lng)]);
+      const cLat = Number(lc.latitude || lc.lat);
+      const cLng = Number(lc.longitude || lc.lng);
+      if (id && cLat && cLng && cLat >= -18.5 && cLat <= -8.0 && cLng >= -47.0 && cLng <= -36.5) {
+        coordsMap.set(id, [cLat, cLng]);
       }
     });
 
@@ -215,6 +217,10 @@ export default function RelatorioCadeiasPage() {
         let lat = row.latitude ? Number(row.latitude) : (row.lat ? Number(row.lat) : null);
         let lng = row.longitude ? Number(row.longitude) : (row.lng ? Number(row.lng) : null);
 
+        // Garantir limites da Bahia
+        if (lat && (lat < -18.5 || lat > -8.0)) lat = null;
+        if (lng && (lng < -47.0 || lng > -36.5)) lng = null;
+
         if ((!lat || !lng) && coordsMap.has(idCadeia)) {
           const [cLat, cLng] = coordsMap.get(idCadeia);
           lat = cLat;
@@ -224,7 +230,7 @@ export default function RelatorioCadeiasPage() {
         if (!lat || !lng) {
           const huntedCoords = findMunicipioCoords(nomeSedeFinal) || 
                                (overrideSede ? findMunicipioCoords(overrideSede) : null) || 
-                               [-9.4167, -40.5000];
+                               [-12.9714, -38.5014];
           lat = huntedCoords[0];
           lng = huntedCoords[1];
 
@@ -271,12 +277,19 @@ export default function RelatorioCadeiasPage() {
         const mTerrNome = row.nome_territorio || (lookupMun ? lookupMun.nome_territorio : nomeTerrSede);
         const mSemi = lookupMun ? checkSemiaridoValue(lookupMun.semiarido) : isMunicipioSemiarido(mNome);
 
+        let munCoords = findMunicipioCoords(mNome);
+        if (!munCoords || munCoords[0] < -18.5 || munCoords[0] > -8.0 || munCoords[1] < -47.0 || munCoords[1] > -36.5) {
+          munCoords = null;
+        }
+
         if (mId && !cadeiaObj.municipios_cobertos.some(m => m.id_municipio === mId)) {
           cadeiaObj.municipios_cobertos.push({
             id_municipio: mId,
             nome_municipio: mNome,
             id_territorio: mTerrId,
             nome_territorio: mTerrNome,
+            lat: munCoords ? munCoords[0] : null,
+            lng: munCoords ? munCoords[1] : null,
             semiarido: mSemi
           });
           // Se qualquer município de abrangência for do semiárido, a cadeia atende ao semiárido
@@ -787,6 +800,7 @@ export default function RelatorioCadeiasPage() {
               negativeColor="bg-[#F59E0B]"
               positiveTextColor="text-[#2563EB]"
               negativeTextColor="text-[#D97706]"
+              isReport={true}
             />
           </div>
 
