@@ -39,7 +39,7 @@ export default function ProportionBarChart({
                 <p className="text-[12px] text-[#457B9D] mt-0.5">{subtitle}</p>
             </div>
 
-            <div className="flex flex-col justify-between flex-1 w-full gap-2 my-auto min-h-0 py-0.5">
+            <div className="flex flex-col justify-start flex-1 w-full gap-2 min-h-0 py-1">
                 {data.map((item, idx) => {
                     const pos = Number(item.positive || 0);
                     const neg = Number(item.negative || 0);
@@ -48,21 +48,21 @@ export default function ProportionBarChart({
                     const percentNeg = ((neg / total) * 100).toFixed(1);
 
                     return (
-                        <div key={idx} className="flex flex-col justify-between p-2 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[50px]">
-                            <div className="flex justify-between items-center text-[13px] font-bold text-[#1D3557] leading-tight">
+                        <div key={idx} className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[44px]">
+                            <div className="flex justify-between items-center text-[12.5px] font-bold text-[#1D3557] leading-tight">
                                 <span className="truncate flex-1 min-w-0 pr-2" title={item.label}>{item.label}</span>
-                                <div className="flex items-center gap-1.5 text-[12.5px] shrink-0">
+                                <div className="flex items-center gap-1.5 text-[12px] shrink-0">
                                     <span className={`font-black ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
-                                        {pos} <span className="text-[11px] font-bold opacity-90">({percentPos}%)</span>
+                                        {pos} <span className="text-[10.5px] font-bold opacity-90">({percentPos}%)</span>
                                     </span>
                                     <span className="text-[#CBD5E1] font-bold">/</span>
                                     <span className={`font-black ${negativeTextColor}`} title={`${negativeLabel}: ${neg} (${percentNeg}%)`}>
-                                        {neg} <span className="text-[11px] font-bold opacity-90">({percentNeg}%)</span>
+                                        {neg} <span className="text-[10.5px] font-bold opacity-90">({percentNeg}%)</span>
                                     </span>
-                                    <span className="text-[#64748B] text-[11px] font-semibold ml-0.5">de {total}</span>
+                                    <span className="text-[#64748B] text-[10.5px] font-semibold ml-0.5">de {total}</span>
                                 </div>
                             </div>
-                            <div className="flex w-full h-2 rounded-full overflow-hidden bg-[#E2E8F0] shadow-2xs">
+                            <div className="flex w-full h-[7px] shrink-0 rounded-full overflow-hidden bg-[#E2E8F0] shadow-2xs">
                                 <div className={`${positiveColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentPos}%` }} title={`${positiveLabel}: ${pos} (${percentPos}%)`} />
                                 <div className={`${negativeColor} h-full transition-all duration-700 ease-out`} style={{ width: `${percentNeg}%` }} title={`${negativeLabel}: ${neg} (${percentNeg}%)`} />
                             </div>
@@ -75,11 +75,11 @@ export default function ProportionBarChart({
             <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-[#F1F5F9] shrink-0 text-[11.5px] font-bold">
                 <div className="flex items-center gap-1.5">
                     <span className={`w-2.5 h-2.5 rounded-full ${positiveColor} shadow-2xs`}></span>
-                    <span className="text-[#B45309]">{positiveLabel}</span>
+                    <span className={positiveTextColor || "text-[#2563EB]"}>{positiveLabel}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <span className={`w-2.5 h-2.5 rounded-full ${negativeColor} shadow-2xs`}></span>
-                    <span className="text-[#2563EB]">{negativeLabel}</span>
+                    <span className={negativeTextColor || "text-[#D97706]"}>{negativeLabel}</span>
                 </div>
             </div>
         </div>

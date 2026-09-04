@@ -1,9 +1,9 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { 
-  Building2, 
-  MapPin, 
-  X, 
+import {
+  Building2,
+  MapPin,
+  X,
   BookOpen,
   Layers,
   BarChart3,
@@ -11,14 +11,14 @@ import {
   Printer,
   ArrowLeft
 } from 'lucide-react';
-import { 
-  ResponsiveContainer, 
+import {
+  ResponsiveContainer,
   BarChart,
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip as RechartsTooltip, 
-  Cell, 
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip,
+  Cell,
   LabelList
 } from 'recharts';
 
@@ -32,43 +32,43 @@ import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIO
 const PALETTE = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
 
 const CATEGORIAS_ENSINO_VALIDAS = [
- 'Campi Instituto Federal',
- 'Campi Universidade Privada',
- 'Campi Universidade Pública - Federal',
- 'Campi Universidade Pública - Estadual'
+  'Campi Instituto Federal',
+  'Campi Universidade Privada',
+  'Campi Universidade Pública - Federal',
+  'Campi Universidade Pública - Estadual'
 ];
 
 function normalizeName(value) {
- if (!value) return '';
- return String(value)
- .normalize('NFD')
- .replace(/[\u0300-\u036f]/g, '')
- .toLowerCase()
- .replace(/[^a-z0-9]/g, ' ')
- .replace(/\s+/g, ' ')
- .trim();
+  if (!value) return '';
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 const MUN_LOOKUP = (() => {
- const byName = {};
- municipiosDB.forEach((row) => {
- byName[normalizeName(row.nome_municipio)] = row;
- });
- return { byName };
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byName };
 })();
 
 function getTipoPadronizado(tipoStr) {
- const s = String(tipoStr || '').toLowerCase();
- if (s.includes('federal') && (s.includes('instituto') || s.includes('ifba') || s.includes('if baiano'))) {
- return 'Instituto Federal';
- }
- if (s.includes('estadual')) {
- return 'Univ. Pública Estadual';
- }
- if (s.includes('federal')) {
- return 'Univ. Pública Federal';
- }
- return 'Univ. Privada';
+  const s = String(tipoStr || '').toLowerCase();
+  if (s.includes('federal') && (s.includes('instituto') || s.includes('ifba') || s.includes('if baiano'))) {
+    return 'Instituto Federal';
+  }
+  if (s.includes('estadual')) {
+    return 'Univ. Pública Estadual';
+  }
+  if (s.includes('federal')) {
+    return 'Univ. Pública Federal';
+  }
+  return 'Univ. Privada';
 }
 
 function formatAreaConhecimento(area) {
@@ -95,11 +95,11 @@ const ENSINO_CATEGORIES = [
 ];
 
 export default function RelatorioEnsinoPage() {
-  const { 
-    ativosData = [], 
-    cursosData = [], 
+  const {
+    ativosData = [],
+    cursosData = [],
     territoriosData = [],
-    loadingStats = false 
+    loadingStats = false
   } = useContext(DataContext);
 
   const [searchParams] = useSearchParams();
@@ -142,7 +142,7 @@ export default function RelatorioEnsinoPage() {
     return ativosData
       .filter(a => {
         const tipo = a.tipo || a.nome_tipo || '';
-        return CATEGORIAS_ENSINO_VALIDAS.some(cat => 
+        return CATEGORIAS_ENSINO_VALIDAS.some(cat =>
           normalizeName(cat) === normalizeName(tipo)
         );
       })
@@ -186,8 +186,8 @@ export default function RelatorioEnsinoPage() {
       list = list.filter(a => {
         const munKey = normalizeName(a.municipio || '');
         const munRow = MUN_LOOKUP.byName[munKey];
-        const idTerr = a.id_territorio != null && a.id_territorio !== '' 
-          ? String(a.id_territorio) 
+        const idTerr = a.id_territorio != null && a.id_territorio !== ''
+          ? String(a.id_territorio)
           : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
         const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
         const normTerr = normalizeName(rawTerr);
@@ -213,8 +213,8 @@ export default function RelatorioEnsinoPage() {
     if (selectedTerritory) {
       const tid = selectedTerritory.id_territorio ? Number(selectedTerritory.id_territorio) : null;
       const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
-      list = list.filter(c => 
-        (tid && Number(c.id_territorio) === tid) || 
+      list = list.filter(c =>
+        (tid && Number(c.id_territorio) === tid) ||
         (tNorm && normalizeName(c.territorio_identidade || c.territorio) === tNorm)
       );
     }
@@ -292,6 +292,9 @@ export default function RelatorioEnsinoPage() {
     const taxaMun = totalMunUniverso > 0 ? ((munSet.size / totalMunUniverso) * 100).toFixed(1) : '0.0';
     const rnpTaxa = totalCampi > 0 ? ((campiRnpCount / totalCampi) * 100).toFixed(1) : '0.0';
 
+    const totalTerrUniverso = isSemiarido ? 22 : (selectedTerritory ? 1 : (territoriosData.length || 27));
+    const taxaTerr = totalTerrUniverso > 0 ? ((terrSet.size / totalTerrUniverso) * 100).toFixed(1) : '0.0';
+
     return {
       totalCursos,
       pctCursosBahia,
@@ -302,6 +305,8 @@ export default function RelatorioEnsinoPage() {
       municipiosComCursos: munSet.size,
       totalMunUniverso,
       taxaMun,
+      totalTerrUniverso,
+      taxaTerr,
       municipiosSemiComCursos: munSemiSet.size,
       territoriosComCursos: terrSet.size,
       mediaCursosPorCampus,
@@ -309,7 +314,7 @@ export default function RelatorioEnsinoPage() {
       rnpTaxa,
       campiRnpSemiCount
     };
-  }, [filteredCursos, filteredAtivos, semiaridoCursosCount, isSemiarido, selectedTerritory, totalCursosBahia, totalCampiBahia]);
+  }, [filteredCursos, filteredAtivos, semiaridoCursosCount, isSemiarido, selectedTerritory, totalCursosBahia, totalCampiBahia, territoriosData]);
 
   // 7. Dados para o ProportionBarChart: Áreas de Conhecimento (Pública vs Privada)
   const areasProportionData = useMemo(() => {
@@ -450,10 +455,10 @@ export default function RelatorioEnsinoPage() {
       const rawTipo = (a.tipo || a.nome_tipo || 'Outros').replace(/^Campi\s+/i, '');
       const tipo = getTipoPadronizado(rawTipo);
       if (!stats[tipo]) {
-        stats[tipo] = { 
-          name: tipo, 
-          comRnpTotal: 0, 
-          total: 0 
+        stats[tipo] = {
+          name: tipo,
+          comRnpTotal: 0,
+          total: 0
         };
       }
 
@@ -465,11 +470,11 @@ export default function RelatorioEnsinoPage() {
     });
 
     return Object.values(stats)
-      .sort((a, b) => b.total - a.total)
       .map(item => ({
         ...item,
         pctTotal: item.total > 0 ? ((item.comRnpTotal / item.total) * 100).toFixed(1) : '0.0'
-      }));
+      }))
+      .sort((a, b) => Number(b.pctTotal) - Number(a.pctTotal) || b.comRnpTotal - a.comRnpTotal);
   }, [filteredAtivos]);
 
   return (
@@ -524,7 +529,7 @@ export default function RelatorioEnsinoPage() {
       {/* GRID DE KPIS (5 CARDS UNIFICADOS EM h-[96px]) */}
       <div className="w-full relative z-10 shrink-0">
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 items-stretch w-full">
-          
+
           {/* KPI 1: CURSOS MAPEADOS */}
           <div className="h-[96px] bg-white rounded-[24px] p-3 px-3.5 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
             <div className="flex items-center gap-2 text-[#457B9D]">
@@ -537,12 +542,11 @@ export default function RelatorioEnsinoPage() {
               <span className="text-[34px] lg:text-[38px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsCursosKpis.totalCursos}
               </span>
-              <span 
-                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${
-                  isSemiarido 
-                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
-                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
-                }`}
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
                 title={`${statsCursosKpis.totalCursos} de ${totalCursosBahia} cursos estaduais`}
               >
                 {isSemiarido ? `${statsCursosKpis.pctCursosBahia}% da Bahia` : 'Graduação & Pós'}
@@ -562,12 +566,11 @@ export default function RelatorioEnsinoPage() {
               <span className="text-[34px] lg:text-[38px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsCursosKpis.totalCampi}
               </span>
-              <span 
-                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${
-                  isSemiarido 
-                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
-                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
-                }`}
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
                 title={`${statsCursosKpis.totalCampi} de ${totalCampiBahia} campi estaduais`}
               >
                 {isSemiarido ? `${statsCursosKpis.pctCampiBahia}% da Bahia` : 'Polos & Universidades'}
@@ -590,12 +593,11 @@ export default function RelatorioEnsinoPage() {
                 </span>
                 <span className="text-[13px] font-bold text-[#64748B]">/ {statsCursosKpis.totalMunUniverso}</span>
               </div>
-              <span 
-                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${
-                  isSemiarido 
-                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
-                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
-                }`}
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
               >
                 {isSemiarido ? `${statsCursosKpis.taxaMun}% de cobertura` : `${statsCursosKpis.taxaMun}% de cobertura estadual`}
               </span>
@@ -614,12 +616,11 @@ export default function RelatorioEnsinoPage() {
               <span className="text-[34px] lg:text-[38px] font-black text-[#1D3557] leading-none tracking-tight">
                 {loadingStats ? '...' : statsCursosKpis.campiRnpCount}
               </span>
-              <span 
-                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${
-                  isSemiarido 
-                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
-                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
-                }`}
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
               >
                 {isSemiarido ? `${statsCursosKpis.rnpTaxa}% com RNP` : `${statsCursosKpis.rnpTaxa}% dos campi com RNP`}
               </span>
@@ -639,10 +640,15 @@ export default function RelatorioEnsinoPage() {
                 <span className="text-[34px] lg:text-[38px] font-black text-[#1D3557] leading-none tracking-tight">
                   {loadingStats ? '...' : (selectedTerritory ? '1' : statsCursosKpis.territoriosComCursos)}
                 </span>
-                <span className="text-[13px] font-bold text-[#64748B]">territórios</span>
+                <span className="text-[13px] font-bold text-[#64748B]">/ {statsCursosKpis.totalTerrUniverso}</span>
               </div>
-              <span className="text-[11px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-lg whitespace-nowrap">
-                {isSemiarido ? 'presença Semiárido' : (selectedTerritory ? 'Território' : '100% dos Territórios')}
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
+              >
+                {selectedTerritory ? 'Território Selecionado' : `${statsCursosKpis.taxaTerr}% dos territórios`}
               </span>
             </div>
           </div>
@@ -652,14 +658,14 @@ export default function RelatorioEnsinoPage() {
 
       {/* GRID PRINCIPAL: 4 GRÁFICOS (70%) EM 2x2 SIMÉTRICO + SIDEMAP (30%) */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-0 w-full overflow-hidden">
-        
+
         {/* COLUNA ESQUERDA: GRID 2x2 */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
-          
+
           {/* GRÁFICO 1: ÁREAS DE CONHECIMENTO */}
           <div className="h-full min-h-0 overflow-hidden">
             <ProportionBarChart
-              data={areasProportionData}
+              data={areasProportionData.slice(0, 5)}
               title={isSemiarido ? "Áreas de Conhecimento no Semiárido" : "Áreas de Conhecimento"}
               subtitle={isSemiarido ? "Proporção de Ensino Público vs Privado no Semiárido" : "Proporção de Ensino Público vs Privado na Bahia"}
               positiveLabel="Rede Pública"
@@ -730,40 +736,50 @@ export default function RelatorioEnsinoPage() {
             </div>
 
             <div className="flex-1 flex flex-col justify-between gap-1.5 min-h-0 py-0.5">
-              {matrixAreaNaturezaData.slice(0, 5).map((row, idx) => (
-                <div key={idx} className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[50px]">
-                  <div className="flex items-center justify-between text-[12.5px] leading-tight gap-1">
-                    <span className="font-extrabold text-[#1D3557] truncate flex-1 min-w-0" title={row.categoria}>
-                      {row.categoria}
-                    </span>
-                    <span className="font-bold text-[#457B9D] text-[11.5px] shrink-0">
-                      <strong className="text-[#1D3557] font-black">{row.total}</strong> cursos
-                    </span>
-                  </div>
+              {matrixAreaNaturezaData.slice(0, 5).map((row, idx) => {
+                const segments = [
+                  { key: 'privada', label: 'Priv', name: 'Privada', count: row.privada, color: 'bg-[#F59E0B]', textColor: 'text-[#D97706]' },
+                  { key: 'federal', label: 'Fed', name: 'Federal', count: row.federal, color: 'bg-[#1D3557]', textColor: 'text-[#1D3557]' },
+                  { key: 'estadual', label: 'Est', name: 'Estadual', count: row.estadual, color: 'bg-[#2563EB]', textColor: 'text-[#2563EB]' },
+                  { key: 'ifba', label: 'IF', name: 'IF', count: row.ifba, color: 'bg-[#10B981]', textColor: 'text-[#10B981]' },
+                ]
+                  .filter(s => s.count > 0)
+                  .sort((a, b) => b.count - a.count);
 
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
-                    {row.federal > 0 && (
-                      <div className="h-full bg-[#1D3557] transition-all duration-500" style={{ width: `${(row.federal / row.total) * 100}%` }} title={`Federal: ${row.federal}`} />
-                    )}
-                    {row.estadual > 0 && (
-                      <div className="h-full bg-[#2563EB] transition-all duration-500" style={{ width: `${(row.estadual / row.total) * 100}%` }} title={`Estadual: ${row.estadual}`} />
-                    )}
-                    {row.ifba > 0 && (
-                      <div className="h-full bg-[#10B981] transition-all duration-500" style={{ width: `${(row.ifba / row.total) * 100}%` }} title={`IF: ${row.ifba}`} />
-                    )}
-                    {row.privada > 0 && (
-                      <div className="h-full bg-[#F59E0B] transition-all duration-500" style={{ width: `${(row.privada / row.total) * 100}%` }} title={`Privada: ${row.privada}`} />
-                    )}
-                  </div>
+                return (
+                  <div key={idx} className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[52px]">
+                    <div className="flex items-center justify-between text-[12.5px] leading-tight gap-1 shrink-0">
+                      <span className="font-extrabold text-[#1D3557] truncate flex-1 min-w-0" title={row.categoria}>
+                        {row.categoria}
+                      </span>
+                      <span className="font-bold text-[#457B9D] text-[11.5px] shrink-0">
+                        <strong className="text-[#1D3557] font-black">{row.total}</strong> cursos
+                      </span>
+                    </div>
 
-                  <div className="flex items-center gap-2.5 text-[10px] font-extrabold text-[#64748B]">
-                    {row.federal > 0 && <span className="text-[#1D3557]">Fed: {row.federal}</span>}
-                    {row.estadual > 0 && <span className="text-[#2563EB]">Est: {row.estadual}</span>}
-                    {row.ifba > 0 && <span className="text-[#10B981]">IF: {row.ifba}</span>}
-                    {row.privada > 0 && <span className="text-[#D97706]">Priv: {row.privada}</span>}
+                    {/* BARRA COM FATIAS ORDENADAS DE MAIOR PARA MENOR */}
+                    <div className="w-full h-[7px] shrink-0 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-1">
+                      {segments.map(seg => (
+                        <div
+                          key={seg.key}
+                          className={`h-full ${seg.color} transition-all duration-500`}
+                          style={{ width: `${(seg.count / row.total) * 100}%` }}
+                          title={`${seg.name}: ${seg.count} (${((seg.count / row.total) * 100).toFixed(1)}%)`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* VALORES DAS REDES ORDENADOS DE MAIOR PARA MENOR */}
+                    <div className="flex items-center gap-2.5 text-[10px] font-extrabold text-[#64748B] shrink-0">
+                      {segments.map(seg => (
+                        <span key={seg.key} className={seg.textColor}>
+                          {seg.label}: {seg.count}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -796,7 +812,7 @@ export default function RelatorioEnsinoPage() {
 
             <div className="flex-1 flex flex-col justify-between gap-1.5 min-h-0 py-0.5">
               {rnpStackedData.map((cat, idx) => (
-                <div key={idx} className="flex flex-col justify-between p-2 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[54px]">
+                <div key={idx} className="flex flex-col justify-between p-1.5 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 h-[46px]">
                   <div className="flex items-center justify-between text-[13px] leading-tight gap-1">
                     <span className="font-extrabold text-[#1D3557] truncate flex-1 min-w-0" title={cat.name}>
                       {cat.name}
@@ -807,8 +823,8 @@ export default function RelatorioEnsinoPage() {
                   </div>
 
                   {/* BARRA */}
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
-                    <div 
+                  <div className="w-full h-[7px] shrink-0 rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
+                    <div
                       className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
                       style={{ width: `${cat.pctTotal}%` }}
                       title={`${cat.name}: ${cat.comRnpTotal} de ${cat.total} (${cat.pctTotal}%)`}
