@@ -38,6 +38,7 @@ import { normalize } from '../utils/normalization';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
+import ExportPdfButton from './pdf/ExportPdfButton';
 
 const MUN_LOOKUP = (() => {
   const byId = {};
@@ -144,7 +145,6 @@ export default function RelatorioPage() {
   const [sortField, setSortField] = useState(null);
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedCadeia, setSelectedCadeia] = useState(null);
-  const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [isExportingPng, setIsExportingPng] = useState(false);
 
 
@@ -700,54 +700,6 @@ export default function RelatorioPage() {
     return 'Síntese Executiva';
   }, [reportType]);
 
-  const handleExportPDF = async (overrideType = null) => {
-    if (isExportingPdf) return;
-    setIsExportingPdf(true);
-
-    const type = overrideType || reportType;
-    let fileBase = 'relatorio_sintese';
-    if (type === 'ativos') {
-      fileBase = 'relatorio_ativos';
-    } else if (type === 'cursos') {
-      fileBase = 'relatorio_ensino';
-    } else if (type === 'cadeias') {
-      fileBase = 'relatorio_cadeias';
-    } else if (type === 'sintese') {
-      fileBase = 'relatorio_sintese';
-    }
-
-    const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
-      ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
-      : 'territorio=bahia';
-
-    const modoParam = `&modo=${reportMode}`;
-    const filename = `${fileBase}_${reportMode}.pdf`;
-
-    try {
-      const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
-      const res = await fetch(apiUrl);
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Erro HTTP ${res.status} ao gerar PDF.`);
-      }
-
-      const blob = await res.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
-    } catch (err) {
-      console.error('[Exportação PDF] Erro:', err);
-      alert(`Erro ao gerar PDF via Playwright: ${err.message || err}`);
-    } finally {
-      setIsExportingPdf(false);
-    }
-  };
-
   const handleExportPNG = async (overrideType = null) => {
     if (isExportingPng) return;
     setIsExportingPng(true);
@@ -785,16 +737,6 @@ export default function RelatorioPage() {
     } finally {
       setIsExportingPng(false);
     }
-  };
-
-  const handleTestReactToPrint = () => {
-    const type = reportType === 'cursos' ? 'cursos' : (reportType === 'ativos' ? 'ativos' : (reportType === 'cadeias' ? 'cadeias' : 'sintese'));
-    const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
-      ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
-      : 'territorio=bahia';
-    const modoParam = `&modo=${reportMode}`;
-    const url = `/relatorio/${type}?${terrParam}${modoParam}&autoprint=true`;
-    window.open(url, '_blank');
   };
 
 
@@ -1007,35 +949,15 @@ export default function RelatorioPage() {
 
   {/* BOTÕES DE EXPORTAÇÃO E IMPRESSÃO (MOVIDOS PARA A CAIXA 2) */}
   <div className="tour-relatorio-export flex items-center gap-1.5 h-[32px] shrink-0 print:hidden">
-   <button
-     type="button"
-     disabled={isExportingPdf}
-     onClick={() => handleExportPDF()}
-     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-primary-900 text-white hover:bg-primary-800 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Exportar Relatório Executivo em PDF (${currentReportLabel})`}
-   >
-    {isExportingPdf ? (
-      <>
-        <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-        <span>Gerando PDF...</span>
-      </>
-    ) : (
-      <>
-        <Printer size={15} />
-        <span>Exportar PDF</span>
-      </>
-    )}
-  </button>
 
-    <button
-      type="button"
-      onClick={handleTestReactToPrint}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-700 text-white hover:bg-emerald-800 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-      title={`Abrir Relatório em Tela Cheia e Baixar PDF Proporcional (${currentReportLabel})`}
-    >
-      <Printer size={15} />
-      <span>Exportar PDF (Proporção da Tela)</span>
-    </button>
+    <ExportPdfButton
+      reportType={reportType}
+      territorioId={selectedTerritoryId}
+      reportMode={reportMode}
+      size="sm"
+      variant="primary"
+      title={`Exportar Relatório Executivo em PDF na proporção da tela (${currentReportLabel})`}
+    />
 
   <button
     type="button"

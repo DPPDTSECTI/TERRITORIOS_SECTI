@@ -10,7 +10,6 @@ import {
   Wheat,
   Award,
   Compass,
-  Printer,
   ArrowLeft
 } from 'lucide-react';
 
@@ -23,6 +22,7 @@ import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
+import ExportPdfButton from './ExportPdfButton';
 
 function normalizeName(name) {
   if (!name) return '';
@@ -799,15 +799,12 @@ export default function RelatorioCadeiasPage() {
             <ArrowLeft size={14} />
             <span>Voltar</span>
           </button>
-          <button
-            type="button"
+          <ExportPdfButton
             onClick={() => handlePrint()}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1D3557] text-white hover:bg-[#2563EB] shadow-xs transition-all cursor-pointer"
+            size="md"
+            variant="navy"
             title="Exportar PDF nativo na proporção exata da tela (1920×1080)"
-          >
-            <Printer size={14} />
-            <span>Exportar PDF</span>
-          </button>
+          />
         </div>
       </div>
 
