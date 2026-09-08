@@ -42,7 +42,8 @@ export default function RankingBarChart({
     bottomSubtitle = "Top 5 menores",
     highlightLabel = null,
     maxScale = 1,
-    badge = null
+    badge = null,
+    cardClassName = ''
 }) {
     const [filterMode, setFilterMode] = useState('top');
 
@@ -124,7 +125,7 @@ export default function RankingBarChart({
     }, [allRanked, filterMode, highlightedItem]);
 
     return (
-        <div className="flex-1 bg-surface rounded-xl border border-border shadow-sm p-6 relative flex flex-col group cursor-default h-full">
+        <div className={`flex-1 bg-surface rounded-xl border border-border shadow-sm transition-all duration-500 hover:shadow-card-elevated p-6 relative flex flex-col group cursor-default h-full ${cardClassName}`}>
 
             {/* HEADER + CONTROLES */}
             <div className="flex justify-between items-start mb-4">

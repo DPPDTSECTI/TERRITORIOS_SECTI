@@ -787,6 +787,16 @@ export default function RelatorioPage() {
     }
   };
 
+  const handleTestReactToPrint = () => {
+    const type = reportType === 'cursos' ? 'cursos' : (reportType === 'ativos' ? 'ativos' : (reportType === 'cadeias' ? 'cadeias' : 'sintese'));
+    const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
+      ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
+      : 'territorio=bahia';
+    const modoParam = `&modo=${reportMode}`;
+    const url = `/relatorio/${type}?${terrParam}${modoParam}&autoprint=true`;
+    window.open(url, '_blank');
+  };
+
 
  const ativosPorTipo = useMemo(() => {
  if (reportType !== 'ativos') return [];
@@ -817,11 +827,58 @@ export default function RelatorioPage() {
  }, [statsSintese]);
 
  return (
- <>
- <div className={`flex-1 w-full h-full flex flex-col p-4 sm:p-6 lg:p-7 min-h-0 overflow-hidden font-sans select-none bg-surface-soft print:hidden`}>
+    <>
+      <div className={`flex-1 w-full h-full flex flex-col p-4 sm:p-6 lg:p-7 min-h-0 overflow-hidden font-sans select-none bg-surface-soft relative print:hidden`}>
 
- {/* ================= TOPO: CABEÇALHO DO MÓDULO DE RELATÓRIOS ================= */}
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 shrink-0 pr-4 print:hidden">
+        {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
+            reportMode === 'semiarido' ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {/* 1. HALO RADIAL DIFUSO (Região de calor com opacidade sutil entre 6% e 12%) */}
+          <div
+            className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+            style={{
+              background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
+              filter: 'blur(35px)',
+            }}
+          />
+
+          {/* 2. ARCO / ANEL LUMINOSO (Círculo gigante parcialmente fora da viewport) */}
+          <div
+            className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+            style={{
+              border: '1.5px solid rgba(245, 158, 11, 0.22)',
+              boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
+              maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+              WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+            }}
+          />
+
+          {/* 3. SEGUNDO ARCO EXPANSIVO (Halo sutil e elegante) */}
+          <div
+            className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+            style={{
+              border: '1px solid rgba(217, 119, 6, 0.11)',
+              maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+              WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+            }}
+          />
+
+          {/* 4. GLOW DOURADO DE TOPO (Suave difusão atmosférica no topo direito) */}
+          <div
+            className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+            style={{
+              background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
+              filter: 'blur(40px)',
+            }}
+          />
+        </div>
+
+        {/* ================= TOPO: CABEÇALHO DO MÓDULO DE RELATÓRIOS ================= */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 shrink-0 pr-4 relative z-10 print:hidden">
  <div>
  <div className="flex items-center gap-2">
  <span className="bg-primary-600/10 text-primary-600 p-1.5 rounded-xl flex items-center justify-center">
@@ -892,8 +949,12 @@ export default function RelatorioPage() {
  {/* -------------------------------------------------------------
  CAIXA 2: TIPOS DE RELATÓRIO E OS SEUS DADOS (DIREITA)
  ------------------------------------------------------------- */}
- <div
-  className={`flex-1 bg-surface rounded-xl border border-border shadow-sm p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0`}
+  <div
+    className={`flex-1 rounded-xl border shadow-sm p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden transition-all duration-700 print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0 relative z-10 ${
+      reportMode === 'semiarido'
+        ? 'bg-white/95 border-amber-200/50 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.05)]'
+        : 'bg-surface border-border'
+    }`}
   >
 
   {/* CABEÇALHO DA CAIXA 2: SELETOR DOS TIPOS DE RELATÓRIO */}
@@ -965,6 +1026,16 @@ export default function RelatorioPage() {
       </>
     )}
   </button>
+
+   <button
+     type="button"
+     onClick={handleTestReactToPrint}
+     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-700 text-white hover:bg-emerald-800 shadow-2xs transition-all cursor-pointer justify-center leading-none"
+     title={`Testar Impressão Nativa via react-to-print (${currentReportLabel})`}
+   >
+     <Printer size={15} />
+     <span>Testar PDF (react-to-print)</span>
+   </button>
 
   <button
     type="button"
@@ -1038,13 +1109,19 @@ export default function RelatorioPage() {
  </div>
  </div>
 
-  {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO */}
-  <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 h-[98px] shrink-0">
+  {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO COM WARMTH DOURADO SUAVE */}
+  <div className={`tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 h-[98px] shrink-0 transition-colors duration-700 ${
+    reportMode === 'semiarido' ? 'bg-gradient-to-br from-amber-500/[0.02] to-transparent rounded-2xl' : ''
+  }`}>
     {/* CARD 1: Ativos */}
-    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel bg-primary-900/10 border border-primary-500/20 shadow-sm">
+    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
+      reportMode === 'semiarido'
+        ? 'semiarido-card-warmth-1'
+        : 'surface-panel bg-primary-900/10 border border-primary-500/20 shadow-sm'
+    }`}>
       <div className="flex items-center gap-2.5 w-full min-w-0">
         <div className="flex items-center justify-center shrink-0 mr-1">
-          <Database size={16} strokeWidth={2} className="text-primary-400" />
+          <Database size={16} strokeWidth={2} className={reportMode === 'semiarido' ? 'text-amber-500' : 'text-primary-400'} />
         </div>
         <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
           Ativos de CT&I
@@ -1061,7 +1138,11 @@ export default function RelatorioPage() {
     </div>
 
     {/* CARD 2: Cursos */}
-    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
+    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
+      reportMode === 'semiarido'
+        ? 'semiarido-card-warmth-2'
+        : 'surface-panel border border-border/50 shadow-sm'
+    }`}>
       <div className="flex items-center gap-2.5 w-full min-w-0">
         <div className="flex items-center justify-center shrink-0 mr-1">
           <GraduationCap size={16} strokeWidth={2} className="text-[#14B8A6]" />
@@ -1078,7 +1159,11 @@ export default function RelatorioPage() {
     </div>
 
     {/* CARD 3: Cadeias */}
-    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm">
+    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
+      reportMode === 'semiarido'
+        ? 'semiarido-card-warmth-3'
+        : 'surface-panel border border-border/50 shadow-sm'
+    }`}>
       <div className="flex items-center gap-2.5 w-full min-w-0">
         <div className="flex items-center justify-center shrink-0 mr-1">
           <GitPullRequest size={16} strokeWidth={2} className="text-warning-400" />
@@ -1098,7 +1183,11 @@ export default function RelatorioPage() {
     </div>
 
     {/* CARD 4: Cobertura */}
-    <div className="relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-200 hover:shadow-md surface-panel border border-border/50 shadow-sm" title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
+    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
+      reportMode === 'semiarido'
+        ? 'semiarido-card-warmth-4'
+        : 'surface-panel border border-border/50 shadow-sm'
+    }`} title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
       <div className="flex items-center gap-2.5 w-full min-w-0">
         <div className="flex items-center justify-center shrink-0 mr-1">
           <MapPin size={16} strokeWidth={2} className="text-danger-400" />

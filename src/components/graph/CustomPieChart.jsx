@@ -28,6 +28,7 @@ export default function CustomPieChart({
  valueKey = "value",
  colorKey = "colorHex",
  badge = null,
+ cardClassName = '',
  children
 }) {
  const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -56,7 +57,7 @@ export default function CustomPieChart({
  const chartData = normalizedData.length > 0 ? normalizedData : [{ [valueKey]: 1, fill: 'rgb(var(--color-border))', [labelKey]: 'Sem dados' }];
 
   return (
-  <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-300 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default">
+  <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
   
   {/* CABEÇALHO */}
   <div className="flex justify-between items-start mb-4 relative z-10 w-full pr-8">

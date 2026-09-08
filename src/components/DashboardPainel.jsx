@@ -553,8 +553,55 @@ export default function DashboardPainel() {
   return (
     <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
+      {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
+          filtroSemiarido ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {/* 1. HALO RADIAL DIFUSO (Região de calor com opacidade sutil entre 6% e 12%) */}
+        <div
+          className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+          style={{
+            background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
+            filter: 'blur(35px)',
+          }}
+        />
+
+        {/* 2. ARCO / ANEL LUMINOSO (Círculo gigante parcialmente fora da viewport) */}
+        <div
+          className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+          style={{
+            border: '1.5px solid rgba(245, 158, 11, 0.22)',
+            boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
+            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+          }}
+        />
+
+        {/* 3. SEGUNDO ARCO EXPANSIVO (Halo sutil e elegante) */}
+        <div
+          className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+          style={{
+            border: '1px solid rgba(217, 119, 6, 0.11)',
+            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+          }}
+        />
+
+        {/* 4. GLOW DOURADO DE TOPO (Suave difusão atmosférica no topo direito) */}
+        <div
+          className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+          style={{
+            background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
+            filter: 'blur(40px)',
+          }}
+        />
+      </div>
+
       {/* HEADER DA PÁGINA */}
-      <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
+      <div className="flex items-center justify-between w-full pr-[320px] shrink-0 relative z-10">
         <div>
           <div className="flex items-center gap-3 relative z-10">
             <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
@@ -588,10 +635,12 @@ export default function DashboardPainel() {
               <div
                 key={index}
                 title={kpi.tooltip || kpi.label}
-                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-200 hover:shadow-card-elevated ${
+                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
                   isHero
                     ? 'bg-primary-900 text-white shadow-card-elevated'
-                    : 'bg-surface border border-neutral-100 shadow-card'
+                    : (filtroSemiarido
+                        ? 'bg-white/95 border border-amber-200/40 shadow-card'
+                        : 'bg-surface border border-neutral-100 shadow-card')
                 }`}
               >
                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
@@ -605,13 +654,6 @@ export default function DashboardPainel() {
                   >
                     {kpi.label}
                   </span>
-                  {filtroSemiarido && (
-                    <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md shrink-0 leading-none inline-flex items-center justify-center ${
-                      isHero ? 'bg-amber-400 text-primary-950 font-bold' : 'bg-amber-500/15 text-amber-600 border border-amber-500/30'
-                    }`}>
-                      Semiárido
-                    </span>
-                  )}
                   {!filtroSemiarido && kpi.isIndex && (
                     <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md shrink-0 leading-none inline-flex items-center justify-center ${
                       isHero ? 'bg-white/15 text-white/80' : 'bg-primary-100 text-primary-700'
@@ -662,14 +704,16 @@ export default function DashboardPainel() {
           </div>
         </div>
 
-        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) */}
+        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) COM TRANSIÇÃO DOURADA SUAVE */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-          <div className="tour-charts flex-1 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full">
+          <div className={`tour-charts flex-1 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
+            filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-2xl' : ''
+          }`}>
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
                 <React.Fragment key={cardId}>
 
-                  {/* CARD 1: DONUT CHART (CURSOS) */}
+                  {/* CARD 1: DONUT CHART (CURSOS) - Superior Esquerdo */}
                   {cardId === 'card-donut' && (
                     <SortableCard id="card-donut">
                       <DonutChart
@@ -679,12 +723,13 @@ export default function DashboardPainel() {
                         listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições na Região' : 'Top 5 Instituições com mais cursos')}
                         data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 1, color: '#E2E8F0' }]}
                         topList={topEntidadesCursos}
-                        badge={filtroSemiarido ? "Semiárido" : null}
+                        badge={null}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-1' : ''}
                       />
                     </SortableCard>
                   )}
 
-                  {/* CARD 2: PIE CHART (ATIVOS CT&I) */}
+                  {/* CARD 2: PIE CHART (ATIVOS CT&I) - Superior Direito (Mais próximo do Sol) */}
                   {cardId === 'card-pie' && (
                     <SortableCard id="card-pie">
                       <CustomPieChart
@@ -697,12 +742,13 @@ export default function DashboardPainel() {
                         labelKey="region"
                         valueKey="value"
                         colorKey="colorHex"
-                        badge={filtroSemiarido ? "Semiárido" : null}
+                        badge={null}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-2' : ''}
                       />
                     </SortableCard>
                   )}
 
-                  {/* CARD 3: RANKING IFDM */}
+                  {/* CARD 3: RANKING IFDM - Inferior Esquerdo (Mais distante do Sol) */}
                   {cardId === 'card-ranking' && (
                     <SortableCard id="card-ranking">
                       <RankingBarChart
@@ -717,12 +763,13 @@ export default function DashboardPainel() {
                         bottomSubtitle={filtroSemiarido ? "Menores no Semiárido" : "Top 5 piores"}
                         highlightLabel={territoryName}
                         maxScale={1}
-                        badge={filtroSemiarido ? "Semiárido" : null}
+                        badge={null}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-3' : ''}
                       />
                     </SortableCard>
                   )}
 
-                  {/* CARD 4: PROPORTION RNP OU BARRAS EMPILHADAS SEMIÁRIDO */}
+                  {/* CARD 4: PROPORTION RNP OU BARRAS EMPILHADAS - Inferior Direito */}
                   {cardId === 'card-mapeamento' && (
                     <SortableCard id="card-mapeamento">
                       <ProportionBarChart
@@ -735,7 +782,8 @@ export default function DashboardPainel() {
                         negativeColor={filtroSemiarido ? "bg-blue-600" : "bg-neutral-200"}
                         positiveTextColor={filtroSemiarido ? "text-amber-600" : "text-primary-700"}
                         negativeTextColor={filtroSemiarido ? "text-blue-600" : "text-text-muted"}
-                        badge={filtroSemiarido ? "Semiárido" : null}
+                        badge={null}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-4' : ''}
                       />
                     </SortableCard>
                   )}

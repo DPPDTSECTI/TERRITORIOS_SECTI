@@ -195,6 +195,76 @@
   background: rgba(var(--color-neutral-400), 0.8);
 }
 
+/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */
+@keyframes sunBreath {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate3d(-4px, 3px, 0) scale(1.025);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.85;
+  }
+}
+
+@keyframes sunArcGlow {
+  0% {
+    opacity: 0.72;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.96;
+    transform: translate3d(-3px, 2px, 0) scale(1.018);
+  }
+  100% {
+    opacity: 0.72;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-sun-breath {
+  animation: sunBreath 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-sun-arc {
+  animation: sunArcGlow 11s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Transições de calor (Warmth) suave para os cards no modo Semiárido */
+.semiarido-card-warmth-1 {
+  /* Superior Esquerdo */
+  background: linear-gradient(225deg, rgba(251, 191, 36, 0.05) 0%, rgba(255, 255, 255, 0.98) 40%, #ffffff 100%) !important;
+  border-color: rgba(245, 158, 11, 0.24) !important;
+  box-shadow: 0 4px 20px -2px rgba(217, 119, 6, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.semiarido-card-warmth-2 {
+  /* Superior Direito: mais próximo da luz do sol */
+  background: linear-gradient(225deg, rgba(251, 191, 36, 0.08) 0%, rgba(255, 255, 255, 0.96) 45%, #ffffff 100%) !important;
+  border-color: rgba(245, 158, 11, 0.30) !important;
+  box-shadow: 0 4px 24px -2px rgba(217, 119, 6, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.semiarido-card-warmth-3 {
+  /* Inferior Esquerdo: mais distante da luz do sol */
+  background: linear-gradient(225deg, rgba(251, 191, 36, 0.03) 0%, rgba(255, 255, 255, 0.99) 35%, #ffffff 100%) !important;
+  border-color: rgba(245, 158, 11, 0.18) !important;
+  box-shadow: 0 4px 16px -2px rgba(217, 119, 6, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.semiarido-card-warmth-4 {
+  /* Inferior Direito */
+  background: linear-gradient(225deg, rgba(251, 191, 36, 0.05) 0%, rgba(255, 255, 255, 0.98) 40%, #ffffff 100%) !important;
+  border-color: rgba(245, 158, 11, 0.24) !important;
+  box-shadow: 0 4px 20px -2px rgba(217, 119, 6, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
 /* ================= PRINT RULES (A4 LANDSCAPE EXECUTIVE REPORTS) ================= */
 @media print {
   @page {

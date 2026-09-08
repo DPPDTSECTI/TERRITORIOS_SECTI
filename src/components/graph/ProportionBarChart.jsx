@@ -25,6 +25,7 @@ export default function ProportionBarChart({
     positiveTextColor = "text-amber-600",
     negativeTextColor = "text-blue-600",
     badge = null,
+    cardClassName = '',
     isReport = false
 }) {
     if (isReport) {
@@ -93,7 +94,7 @@ export default function ProportionBarChart({
 
     // MODO DASHBOARD INTERATIVO (Perfeito para o painel principal, auto-ajustável sem overflow)
     return (
-        <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-300 hover:shadow-card-elevated p-4 lg:p-5 relative flex flex-col justify-between h-full group cursor-default overflow-hidden">
+        <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 lg:p-5 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
             {/* CABEÇALHO COM PADDING À DIREITA PARA NÃO COLIDIR COM O DRAG HANDLE */}
             <div className="flex justify-between items-start mb-2 relative z-10 w-full pr-9 shrink-0">
                 <div className="flex flex-col min-w-0">

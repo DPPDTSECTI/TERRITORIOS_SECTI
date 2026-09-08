@@ -1,5 +1,6 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react';
+import React, { useContext, useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
 import {
   Building2,
   MapPin,
@@ -19,6 +20,7 @@ import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { getDynamicAssetTypeConfig } from '../../constants/assetTypes';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
+import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
 
 const PALETTE = ['#2563EB', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#1D3557'];
 
@@ -194,16 +196,27 @@ export default function RelatorioAtivosPage() {
 
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
-  // Fallback de auto-impressão caso explicitamente solicitado
+  // React-to-print: referência do relatório 1920x1080 para renderização e impressão nativa
+  const contentRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef,
+    documentTitle: `relatorio_ativos_${isSemiarido ? 'semiarido' : (selectedTerritory ? territoryName : 'bahia')}`,
+    pageStyle: REPORT_PRINT_PAGE_STYLE,
+    onBeforePrint: prepareReportForPrint,
+    print: (iframe) => printWithCanvasSync(iframe, contentRef)
+  });
+
+  // Auto-impressão caso explicitamente solicitado via query param (ex: autoPrint=1 ou autoprint=true)
   useEffect(() => {
-    const autoPrint = searchParams.get('autoPrint');
+    const autoPrint = searchParams.get('autoPrint') || searchParams.get('autoprint');
     if ((autoPrint === '1' || autoPrint === 'true') && !loadingStats) {
       const timer = setTimeout(() => {
-        window.print();
+        handlePrint();
       }, 900);
       return () => clearTimeout(timer);
     }
-  }, [searchParams, loadingStats]);
+  }, [searchParams, loadingStats, handlePrint]);
 
   // 0. Processamento Completo dos Ativos
   const ativosProcessados = useMemo(() => {
@@ -502,7 +515,7 @@ export default function RelatorioAtivosPage() {
   }, [filteredAtivos]);
 
   return (
-    <main id="pdf-report" className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-white select-none">
+    <main id="pdf-report" ref={contentRef} className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-white select-none">
       {/* CABEÇALHO */}
       <div className="flex items-center justify-between w-full shrink-0">
         <div className="flex flex-col">
@@ -547,6 +560,27 @@ export default function RelatorioAtivosPage() {
               ? 'Diagnóstico territorial e mapeamento estrutural dos ativos de CT&I nos 278 municípios do Semiárido'
               : 'Diagnóstico territorial e mapeamento estrutural dos ativos de ciência, tecnologia e inovação na Bahia'}
           </p>
+        </div>
+
+        {/* CONTROLES DE TESTE DE IMPRESSÃO (OCULTOS NO PRINT) */}
+        <div className="flex items-center gap-2 print:hidden shrink-0">
+          <button
+            type="button"
+            onClick={() => navigate('/relatorio')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-xs"
+          >
+            <ArrowLeft size={14} />
+            <span>Voltar</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handlePrint()}
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1D3557] text-white hover:bg-[#2563EB] shadow-xs transition-all cursor-pointer"
+            title="Testar geração nativa de PDF via motor de impressão do navegador (react-to-print)"
+          >
+            <Printer size={14} />
+            <span>Testar PDF (react-to-print)</span>
+          </button>
         </div>
       </div>
 

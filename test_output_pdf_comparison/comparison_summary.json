@@ -1,0 +1,86 @@
+[
+  {
+    "id": "ativos",
+    "name": "Ativos de CT&I",
+    "playwright": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\ativos_playwright.pdf",
+      "pngPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\ativos_playwright.png",
+      "sizeKb": "1225.6",
+      "timeMs": 8478,
+      "isRaster": true,
+      "textSelectable": false
+    },
+    "reactToPrint": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\ativos_react_to_print.pdf",
+      "sizeKb": "608.0",
+      "timeMs": 4531,
+      "isRaster": false,
+      "hasFontDescriptor": true,
+      "hasVectorStreams": true,
+      "textSelectable": true
+    }
+  },
+  {
+    "id": "cursos",
+    "name": "Cursos Superiores",
+    "playwright": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\cursos_playwright.pdf",
+      "pngPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\cursos_playwright.png",
+      "sizeKb": "1006.8",
+      "timeMs": 6243,
+      "isRaster": true,
+      "textSelectable": false
+    },
+    "reactToPrint": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\cursos_react_to_print.pdf",
+      "sizeKb": "547.9",
+      "timeMs": 4378,
+      "isRaster": false,
+      "hasFontDescriptor": true,
+      "hasVectorStreams": true,
+      "textSelectable": true
+    }
+  },
+  {
+    "id": "cadeias",
+    "name": "Cadeias Produtivas & IGs",
+    "playwright": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\cadeias_playwright.pdf",
+      "pngPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\cadeias_playwright.png",
+      "sizeKb": "1220.7",
+      "timeMs": 6030,
+      "isRaster": true,
+      "textSelectable": false
+    },
+    "reactToPrint": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\cadeias_react_to_print.pdf",
+      "sizeKb": "638.2",
+      "timeMs": 4394,
+      "isRaster": false,
+      "hasFontDescriptor": true,
+      "hasVectorStreams": true,
+      "textSelectable": true
+    }
+  },
+  {
+    "id": "sintese",
+    "name": "Síntese Executiva",
+    "playwright": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\sintese_playwright.pdf",
+      "pngPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\sintese_playwright.png",
+      "sizeKb": "1700.2",
+      "timeMs": 7142,
+      "isRaster": true,
+      "textSelectable": false
+    },
+    "reactToPrint": {
+      "pdfPath": "C:\\Users\\gustavo.silva\\TERRITORIOS_SECTI\\test_output_pdf_comparison\\sintese_react_to_print.pdf",
+      "sizeKb": "716.6",
+      "timeMs": 5221,
+      "isRaster": false,
+      "hasFontDescriptor": true,
+      "hasVectorStreams": true,
+      "textSelectable": true
+    }
+  }
+]

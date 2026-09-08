@@ -12,6 +12,7 @@ export default function DonutChart({
  listTitle = "Top 5 Instituições",
  showTopList = true, 
  badge = null,
+ cardClassName = '',
  children 
 }) {
  const [mounted, setMounted] = useState(false);
@@ -47,7 +48,7 @@ export default function DonutChart({
  : totalLabel;
 
  return (
-  <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-300 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default">
+  <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
 
   {/* HEADER */}
   <div className="flex justify-between items-start mb-4 relative z-10 w-full pr-8">
