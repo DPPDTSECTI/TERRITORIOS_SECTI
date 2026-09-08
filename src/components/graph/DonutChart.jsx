@@ -24,20 +24,20 @@ export default function DonutChart({
  return () => clearTimeout(timer);
  }, []);
 
- const sortedData = [...data].sort((a, b) => b.value - a.value);
+ const sortedData = [...data].sort((a, b) => b.value - a.value).slice(0, 5);
  const maxValue = sortedData.length > 0 ? sortedData[0].value : 0;
- const totalValue = sortedData.reduce((acc, item) => acc + item.value, 0);
+ const totalValue = data.reduce((acc, item) => acc + item.value, 0);
 
  const normalizedData = sortedData.map(d => ({
  ...d,
  percent: maxValue > 0 ? d.value / maxValue : 0
  }));
 
-  const size = 115;
-  const strokeWidth = 6.5; 
-  const gap = 10.5; 
+  const size = 130;
+  const strokeWidth = 8.5; 
+  const gap = 9.6; 
   const center = size / 2;
-  const baseRadius = 48;
+  const baseRadius = 58;
   const arcFraction = 0.75;
 
  const displayValue = hoveredIndex !== null && normalizedData[hoveredIndex] 
@@ -72,7 +72,7 @@ export default function DonutChart({
   <div className="flex flex-row items-center justify-between flex-1 gap-2.5 min-w-0">
   
   {/* LADO ESQUERDO: GRÁFICO E RÓTULOS */}
-  <div className="flex flex-col items-center justify-center w-[115px] shrink-0">
+  <div className="flex flex-col items-center justify-center w-[130px] shrink-0">
   <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
   <svg width={size} height={size} className="absolute inset-0" style={{ transform: 'rotate(45deg)' }}>
   {normalizedData.map((item, index) => {
@@ -93,7 +93,8 @@ export default function DonutChart({
   >
   <circle
   cx={center} cy={center} r={radius} fill="none"
-  stroke="rgb(var(--color-neutral-100))" strokeWidth={strokeWidth}
+  stroke={isSemiarido ? 'rgba(245, 158, 11, 0.15)' : 'rgba(226, 232, 240, 0.8)'}
+  strokeWidth={strokeWidth}
   strokeLinecap="round" strokeDasharray={`${trackLength} ${circumference}`}
   className={`transition-opacity duration-300 pointer-events-none ${isOtherHovered ? 'opacity-20' : 'opacity-60'}`}
   />

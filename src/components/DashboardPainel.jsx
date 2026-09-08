@@ -197,13 +197,38 @@ export default function DashboardPainel() {
       counts[cat] = (counts[cat] || 0) + 1;
     });
 
-    const palette = ['#1D3557', '#2563EB', '#457B9D', '#A8DADC', '#F87171', '#F59E0B'];
+    const bluePalette = [
+      '#1D3557', // 1. Deep Navy
+      '#2563EB', // 2. Primary Royal Blue
+      '#0284C7', // 3. Vibrant Ocean Blue
+      '#3B82F6', // 4. Bright Blue
+      '#1E40AF', // 5. Cobalt Blue
+      '#0EA5E9', // 6. Sky Cyan Blue
+      '#38BDF8', // 7. Light Sky Blue
+      '#60A5FA', // 8. Soft Blue
+    ];
+
+    const goldenPalette = [
+      '#D97706', // 1. Amber 600 (Rich Gold)
+      '#F59E0B', // 2. Amber 500 (Vibrant Sun Gold)
+      '#B45309', // 3. Amber 700 (Deep Warm Bronze)
+      '#EAB308', // 4. Yellow 500 (Bright Gold)
+      '#FBBF24', // 5. Amber 400 (Warm Sun Yellow)
+      '#CA8A04', // 6. Yellow 600 (Deep Ochre Gold)
+      '#92400E', // 7. Amber 800 (Rich Dark Caramel)
+      '#FCD34D', // 8. Amber 300 (Soft Warm Gold)
+    ];
+
+    const palette = filtroSemiarido ? goldenPalette : bluePalette;
+
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .map(([label, value], idx) => ({
-        label, value, color: palette[idx % palette.length]
+        label,
+        value,
+        color: palette[idx % palette.length]
       }));
-  }, [activeScopedCursos]);
+  }, [activeScopedCursos, filtroSemiarido]);
 
   // Top Instituições de Ensino com Cursos
   const topEntidadesCursos = useMemo(() => {
@@ -259,7 +284,33 @@ export default function DashboardPainel() {
       counts[tipo] = (counts[tipo] || 0) + 1;
     });
 
-    const palette = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+    const bluePalette = [
+      '#1D3557', // 1. Deep Navy
+      '#2563EB', // 2. Primary Royal Blue
+      '#0284C7', // 3. Vibrant Ocean Blue
+      '#3B82F6', // 4. Bright Blue
+      '#1E40AF', // 5. Cobalt Blue
+      '#0EA5E9', // 6. Sky Cyan Blue
+      '#38BDF8', // 7. Light Sky Blue
+      '#1E3A8A', // 8. Midnight Blue
+      '#60A5FA', // 9. Soft Blue
+      '#93C5FD'  // 10. Ice Sky Blue
+    ];
+
+    const goldenPalette = [
+      '#D97706', // 1. Amber 600 (Rich Gold)
+      '#F59E0B', // 2. Amber 500 (Vibrant Sun Gold)
+      '#B45309', // 3. Amber 700 (Deep Warm Bronze)
+      '#EAB308', // 4. Yellow 500 (Bright Gold)
+      '#FBBF24', // 5. Amber 400 (Warm Sun Yellow)
+      '#CA8A04', // 6. Yellow 600 (Deep Ochre Gold)
+      '#92400E', // 7. Amber 800 (Rich Dark Caramel)
+      '#FCD34D', // 8. Amber 300 (Soft Warm Gold)
+      '#A16207', // 9. Yellow 700 (Antique Gold)
+      '#FDE68A'  // 10. Amber 200 (Light Cream Gold)
+    ];
+
+    const palette = filtroSemiarido ? goldenPalette : bluePalette;
 
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
@@ -268,7 +319,7 @@ export default function DashboardPainel() {
         value,
         colorHex: palette[idx % palette.length]
       }));
-  }, [activeScopedAtivos]);
+  }, [activeScopedAtivos, filtroSemiarido]);
 
   // Top Territórios (ou Municípios se território selecionado) com mais ativos
   const topTerritoriosOuMunicipiosAtivos = useMemo(() => {

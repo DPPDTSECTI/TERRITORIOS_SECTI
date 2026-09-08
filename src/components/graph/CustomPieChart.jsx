@@ -81,20 +81,20 @@ export default function CustomPieChart({
   <div className="flex flex-row items-center justify-between flex-1 gap-2.5 min-w-0">
   
   {/* GRÁFICO */}
-  <div className="flex flex-col items-center justify-center w-[115px] shrink-0">
+  <div className="flex flex-col items-center justify-center w-[130px] shrink-0">
   <div className="relative">
-  <PieChart width={115} height={115}>
+  <PieChart width={130} height={130}>
   <Pie
   data={chartData}
   cx="50%"
   cy="50%"
-  innerRadius={0}
-  outerRadius={48}
-  paddingAngle={4}
-  cornerRadius={5}
+  innerRadius={26}
+  outerRadius={58}
+  paddingAngle={3}
+  cornerRadius={4}
   dataKey={valueKey}
   stroke="none"
-  minAngle={15}
+  minAngle={12}
   shape={(props) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, cornerRadius, index } = props;
   const isHovered = hoveredIndex === index;
@@ -103,7 +103,7 @@ export default function CustomPieChart({
   return (
   <g
   style={{
-  transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+  transform: isHovered ? 'scale(1.06)' : 'scale(1)',
   transformOrigin: `${cx}px ${cy}px`,
   transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)'
   }}
