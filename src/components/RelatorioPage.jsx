@@ -1027,15 +1027,15 @@ export default function RelatorioPage() {
     )}
   </button>
 
-   <button
-     type="button"
-     onClick={handleTestReactToPrint}
-     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-700 text-white hover:bg-emerald-800 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Testar Impressão Nativa via react-to-print (${currentReportLabel})`}
-   >
-     <Printer size={15} />
-     <span>Testar PDF (react-to-print)</span>
-   </button>
+    <button
+      type="button"
+      onClick={handleTestReactToPrint}
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-700 text-white hover:bg-emerald-800 shadow-2xs transition-all cursor-pointer justify-center leading-none"
+      title={`Abrir Relatório em Tela Cheia e Baixar PDF Proporcional (${currentReportLabel})`}
+    >
+      <Printer size={15} />
+      <span>Exportar PDF (Proporção da Tela)</span>
+    </button>
 
   <button
     type="button"
