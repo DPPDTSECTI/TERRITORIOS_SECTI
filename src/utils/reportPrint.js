@@ -5,7 +5,7 @@
 
 export const REPORT_PRINT_PAGE_STYLE = `
   @page {
-    size: 16in 9in;
+    size: 1920px 1080px;
     margin: 0;
   }
 
@@ -13,6 +13,7 @@ export const REPORT_PRINT_PAGE_STYLE = `
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
+    box-sizing: border-box !important;
   }
 
   html, body {
@@ -25,7 +26,7 @@ export const REPORT_PRINT_PAGE_STYLE = `
     max-width: 1920px !important;
     max-height: 1080px !important;
     overflow: hidden !important;
-    background: #ffffff !important;
+    background: #f8fafc !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -39,6 +40,8 @@ export const REPORT_PRINT_PAGE_STYLE = `
     max-height: 1080px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    padding: 24px 32px !important;
+    background: #f8fafc !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-before: avoid !important;
@@ -47,6 +50,7 @@ export const REPORT_PRINT_PAGE_STYLE = `
 
   .print\\:hidden,
   .print-hidden,
+  [data-html2canvas-ignore="true"],
   .leaflet-control-zoom,
   .leaflet-control-attribution,
   .leaflet-top.leaflet-right,

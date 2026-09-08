@@ -265,23 +265,36 @@
   box-shadow: 0 4px 20px -2px rgba(217, 119, 6, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
 }
 
-/* ================= PRINT RULES (A4 LANDSCAPE EXECUTIVE REPORTS) ================= */
+/* ================= PRINT RULES (16:9 1920x1080 EXECUTIVE REPORTS) ================= */
 @media print {
   @page {
-    size: A4 landscape;
-    margin: 6mm 8mm;
+    size: 1920px 1080px;
+    margin: 0;
   }
   
   html, body {
-    background: #ffffff !important;
+    background: #f8fafc !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 1920px !important;
+    height: 1080px !important;
+    overflow: hidden !important;
+  }
+
+  #pdf-report {
+    width: 1920px !important;
+    height: 1080px !important;
+    padding: 24px 32px !important;
+    box-sizing: border-box !important;
   }
 
   .print\\:hidden,
-  .print-hidden {
+  .print-hidden,
+  [data-html2canvas-ignore="true"],
+  .leaflet-control-zoom,
+  .leaflet-control-attribution {
     display: none !important;
   }
 }
