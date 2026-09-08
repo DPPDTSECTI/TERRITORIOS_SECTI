@@ -26,7 +26,9 @@ export default function ProportionBarChart({
     negativeTextColor = "text-blue-600",
     badge = null,
     cardClassName = '',
-    isReport = false
+    isReport = false,
+    isVisaoGeral = false,
+    isSemiarido = false
 }) {
     if (isReport) {
         // MODO RELATÓRIO PDF (Tipografia institucional ampliada para 1920x1080)
@@ -92,7 +94,138 @@ export default function ProportionBarChart({
         );
     }
 
-    // MODO DASHBOARD INTERATIVO (Perfeito para o painel principal, auto-ajustável sem overflow)
+    // MODO VISÃO GERAL (Novo padrão de pílulas comparativas proporcionais: [ A (xx%) ] [ B (yy%) ] [ TOTAL ])
+    if (isVisaoGeral) {
+        const isSemi = isSemiarido || cardClassName.includes('semiarido') || !!badge;
+        const posPillColor = isSemi ? 'bg-amber-600' : (positiveColor || 'bg-primary-500');
+        const negPillStyle = isSemi
+            ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
+            : 'bg-primary-100 text-primary-700 border border-primary-200/60';
+        const totalPillStyle = isSemi
+            ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
+            : 'bg-primary-50 text-primary-700 border border-primary-200/60';
+
+        return (
+            <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
+                {/* CABEÇALHO */}
+                <div className="flex justify-between items-start mb-1.5 relative z-10 w-full pr-9 shrink-0">
+                    <div className="flex flex-col min-w-0">
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-text-primary font-semibold text-[15px] tracking-tight truncate">{title}</h2>
+                            {badge && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 border border-amber-500/30 shrink-0">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                    {badge}
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-neutral-500 text-[11px] font-normal mt-0.5 truncate">{subtitle}</p>
+                    </div>
+                </div>
+
+                <div className="w-full h-px bg-neutral-100 mb-1.5 shrink-0"></div>
+
+                {/* LISTA COMPARATIVA: NOME + [ A (xx%) ] [ B (yy%) ] [ TOTAL ] */}
+                <div className={`flex flex-col justify-between flex-1 w-full ${data.length > 4 ? 'gap-1 py-0' : 'gap-2 py-0.5'} my-auto min-h-0 overflow-hidden`}>
+                    {data.map((item, idx) => {
+                        const pos = Number(item.positive || 0);
+                        const neg = Number(item.negative || 0);
+                        const total = Number(item.total || (pos + neg)) || 1;
+                        const percentPos = Number(((pos / total) * 100).toFixed(1));
+                        const percentNeg = Number(((neg / total) * 100).toFixed(1));
+
+                        const isCompact = data.length > 4;
+                        const pillH = isCompact ? 'h-[20px]' : 'h-[24px]';
+                        const textMain = isCompact ? 'text-[10.5px]' : 'text-[11.5px]';
+                        const textSub = isCompact ? 'text-[8.5px]' : 'text-[9.5px]';
+                        const labelText = isCompact ? 'text-[10.5px]' : 'text-[11.5px]';
+                        const minWPos = isCompact ? '50px' : '56px';
+                        const minWNeg = isCompact ? '48px' : '54px';
+
+                        return (
+                            <div key={idx} className="flex flex-col gap-0.5 w-full group/item">
+                                {/* NOME */}
+                                <div className={`${labelText} font-medium text-text-primary leading-tight truncate px-0.5`} title={item.label}>
+                                    {item.label}
+                                </div>
+
+                                {/* BARRAS COMPARATIVAS [ A (xx%) ] [ B (yy%) ] [ TOTAL ] */}
+                                <div className="flex items-center gap-1.5 w-full">
+                                    {/* PARTE A (Positivo) */}
+                                    {pos > 0 && (
+                                        <div
+                                            className={`${pillH} rounded-full ${posPillColor} flex items-center px-2 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs`}
+                                            style={{
+                                                flexGrow: pos,
+                                                flexBasis: 0,
+                                                minWidth: neg > 0 ? minWPos : 'auto'
+                                            }}
+                                            title={`${positiveLabel}: ${pos} (${percentPos}%)`}
+                                        >
+                                            <span className={`${textMain} font-semibold tabular-nums leading-none`}>
+                                                {pos}
+                                            </span>
+                                            <span className={`${textSub} font-normal opacity-90 ml-1 tabular-nums leading-none`}>
+                                                ({percentPos}%)
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* PARTE B (Negativo) */}
+                                    {neg > 0 && (
+                                        <div
+                                            className={`${pillH} rounded-full ${negPillStyle} flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs`}
+                                            style={{
+                                                flexGrow: neg,
+                                                flexBasis: 0,
+                                                minWidth: pos > 0 ? minWNeg : 'auto'
+                                            }}
+                                            title={`${negativeLabel}: ${neg} (${percentNeg}%)`}
+                                        >
+                                            <span className={`${textMain} font-semibold tabular-nums leading-none`}>
+                                                {neg}
+                                            </span>
+                                            <span className={`${textSub} font-normal opacity-85 ml-1 tabular-nums leading-none`}>
+                                                ({percentNeg}%)
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* TOTAL PILL */}
+                                    <div
+                                        className={`${pillH} min-w-[30px] px-2 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                        title={`Total: ${total}`}
+                                    >
+                                        <span className={`${textMain} font-semibold tabular-nums leading-none`}>
+                                            {total}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* LEGENDA NO RODAPÉ */}
+                <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-neutral-100 shrink-0 text-[10px] font-medium mt-auto">
+                    <div className="flex items-center gap-1.5">
+                        <span className={`w-2 h-2 rounded-full ${posPillColor} shadow-2xs`}></span>
+                        <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{positiveLabel}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-500/40' : 'bg-primary-200'} shadow-2xs`}></span>
+                        <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{negativeLabel}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-text-muted">
+                        <span className="w-2 h-2 rounded-full bg-neutral-300 shadow-2xs"></span>
+                        <span>Total</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // MODO DASHBOARD INTERATIVO PADRÃO (Mantido intacto para qualquer outro chamador genérico)
     return (
         <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 lg:p-5 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
             {/* CABEÇALHO COM PADDING À DIREITA PARA NÃO COLIDIR COM O DRAG HANDLE */}

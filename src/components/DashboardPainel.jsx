@@ -351,7 +351,6 @@ export default function DashboardPainel() {
       'Univ. Federal': { semi: 0, nonSemi: 0 },
       'Univ. Estadual': { semi: 0, nonSemi: 0 },
       'Inst. Federal': { semi: 0, nonSemi: 0 },
-      'ICTs e Centros': { semi: 0, nonSemi: 0 },
       'Cursos Presenciais': { semi: 0, nonSemi: 0 }
     };
 
@@ -363,7 +362,6 @@ export default function DashboardPainel() {
       if (str.includes('federal') && str.includes('universidade')) cat = 'Univ. Federal';
       else if (str.includes('estadual')) cat = 'Univ. Estadual';
       else if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if baiano')) cat = 'Inst. Federal';
-      else if (str.includes('ict') || str.includes('pesquisa') || str.includes('centro')) cat = 'ICTs e Centros';
 
       if (cat) {
         if (isSemi) stats[cat].semi += 1;
@@ -384,7 +382,7 @@ export default function DashboardPainel() {
         negative: v.nonSemi,
         total: v.semi + v.nonSemi
       }))
-      .filter(row => row.total > 0);
+      .filter(row => row.total > 0 && row.positive > 0);
   }, [scopedAtivos, scopedCursos, ativosData]);
 
   // Territórios filtrados por presença no Semiárido para o ranking
@@ -605,13 +603,6 @@ export default function DashboardPainel() {
         <div>
           <div className="flex items-center gap-3 relative z-10">
             <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
-            <div className="carto-node mt-2 opacity-80"></div>
-            {filtroSemiarido && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-600 border border-amber-500/30 shadow-2xs">
-                <SunMedium size={13} className="text-amber-500" />
-                Semiárido Ativo ({semiaridoMetrics.munSemi} mun.)
-              </span>
-            )}
           </div>
           <p className="text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
           <div className="divider-territorial w-48 mt-3"></div>
@@ -637,7 +628,9 @@ export default function DashboardPainel() {
                 title={kpi.tooltip || kpi.label}
                 className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
                   isHero
-                    ? 'bg-primary-900 text-white shadow-card-elevated'
+                    ? (filtroSemiarido
+                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
+                        : 'bg-primary-900 text-white shadow-card-elevated')
                     : (filtroSemiarido
                         ? 'bg-white/95 border border-amber-200/40 shadow-card'
                         : 'bg-surface border border-neutral-100 shadow-card')
@@ -645,10 +638,10 @@ export default function DashboardPainel() {
               >
                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
                 <div className="flex items-center gap-2 w-full min-w-0">
-                  <kpi.icon size={16} strokeWidth={2} className={isHero ? accentColors[0] : accentColors[index]} />
+                  <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
                   <span
                     className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
-                      isHero ? 'text-white/60' : 'text-text-muted'
+                      isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
                     }`}
                     title={kpi.label}
                   >
@@ -673,7 +666,7 @@ export default function DashboardPainel() {
                     </span>
                     {filtroSemiarido && kpi.percent && (
                       <span className={`text-[12px] font-semibold ${
-                        isHero ? 'text-amber-300' : 'text-amber-600'
+                        isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
                       }`}>
                         ({kpi.percent})
                       </span>
@@ -776,15 +769,17 @@ export default function DashboardPainel() {
                   {cardId === 'card-mapeamento' && (
                     <SortableCard id="card-mapeamento">
                       <ProportionBarChart
+                        isVisaoGeral={true}
+                        isSemiarido={filtroSemiarido}
                         data={filtroSemiarido ? semiaridoStackedComparisonData : rnpComparisonData}
                         title={filtroSemiarido ? "Distribuição no Semiárido" : "Infraestrutura RNP"}
                         subtitle={filtroSemiarido ? "No Semiárido vs. Fora do Semiárido" : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
                         positiveLabel={filtroSemiarido ? "No Semiárido" : "Com RNP"}
                         negativeLabel={filtroSemiarido ? "Fora do Semiárido" : "Sem RNP"}
-                        positiveColor={filtroSemiarido ? "bg-amber-500" : "bg-primary-600"}
-                        negativeColor={filtroSemiarido ? "bg-blue-600" : "bg-neutral-200"}
-                        positiveTextColor={filtroSemiarido ? "text-amber-600" : "text-primary-700"}
-                        negativeTextColor={filtroSemiarido ? "text-blue-600" : "text-text-muted"}
+                        positiveColor={filtroSemiarido ? "bg-amber-600" : "bg-primary-500"}
+                        negativeColor={filtroSemiarido ? "bg-amber-500/15" : "bg-primary-100"}
+                        positiveTextColor={filtroSemiarido ? "text-amber-700" : "text-primary-700"}
+                        negativeTextColor={filtroSemiarido ? "text-amber-800" : "text-primary-700"}
                         badge={null}
                         cardClassName={filtroSemiarido ? 'semiarido-card-warmth-4' : ''}
                       />
