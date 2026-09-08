@@ -724,6 +724,7 @@ export default function DashboardPainel() {
                         data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 1, color: '#E2E8F0' }]}
                         topList={topEntidadesCursos}
                         badge={null}
+                        isSemiarido={filtroSemiarido}
                         cardClassName={filtroSemiarido ? 'semiarido-card-warmth-1' : ''}
                       />
                     </SortableCard>
@@ -743,6 +744,7 @@ export default function DashboardPainel() {
                         valueKey="value"
                         colorKey="colorHex"
                         badge={null}
+                        isSemiarido={filtroSemiarido}
                         cardClassName={filtroSemiarido ? 'semiarido-card-warmth-2' : ''}
                       />
                     </SortableCard>
@@ -764,6 +766,7 @@ export default function DashboardPainel() {
                         highlightLabel={territoryName}
                         maxScale={1}
                         badge={null}
+                        isSemiarido={filtroSemiarido}
                         cardClassName={filtroSemiarido ? 'semiarido-card-warmth-3' : ''}
                       />
                     </SortableCard>

@@ -12,6 +12,7 @@ export default function DonutChart({
  listTitle = "Top 5 Instituições",
  showTopList = true, 
  badge = null,
+ isSemiarido = false,
  cardClassName = '',
  children 
 }) {
@@ -32,12 +33,12 @@ export default function DonutChart({
  percent: maxValue > 0 ? d.value / maxValue : 0
  }));
 
- const size = 130;
- const strokeWidth = 7; 
- const gap = 12; 
- const center = size / 2;
- const baseRadius = 55;
- const arcFraction = 0.75;
+  const size = 115;
+  const strokeWidth = 6.5; 
+  const gap = 10.5; 
+  const center = size / 2;
+  const baseRadius = 48;
+  const arcFraction = 0.75;
 
  const displayValue = hoveredIndex !== null && normalizedData[hoveredIndex] 
  ? normalizedData[hoveredIndex].value 
@@ -68,10 +69,10 @@ export default function DonutChart({
   <div className="w-full h-px bg-neutral-100 mb-4"></div>
 
   {/* HORIZONTAL LAYOUT */}
-  <div className="flex flex-row items-center justify-between flex-1 gap-4 min-w-0">
+  <div className="flex flex-row items-center justify-between flex-1 gap-2.5 min-w-0">
   
   {/* LADO ESQUERDO: GRÁFICO E RÓTULOS */}
-  <div className="flex flex-col items-center justify-center w-[140px] shrink-0">
+  <div className="flex flex-col items-center justify-center w-[115px] shrink-0">
   <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
   <svg width={size} height={size} className="absolute inset-0" style={{ transform: 'rotate(45deg)' }}>
   {normalizedData.map((item, index) => {
@@ -116,11 +117,11 @@ export default function DonutChart({
   </svg>
   </div>
 
-  <div className="flex flex-col items-center justify-center text-center w-full mt-3 h-[38px]">
-  <span className="text-text-primary font-semibold text-[22px] leading-none mb-1 tracking-tight transition-all duration-300">
+  <div className="flex flex-col items-center justify-center text-center w-full mt-2 h-[34px]">
+  <span className="text-text-primary font-semibold text-[20px] leading-none mb-0.5 tracking-tight transition-all duration-300">
   {displayValue.toLocaleString('pt-BR')}
   </span>
-  <span className="text-neutral-500 font-normal text-[10px] leading-tight transition-all duration-300 px-1 w-full truncate">
+  <span className="text-neutral-500 font-normal text-[9.5px] leading-tight transition-all duration-300 px-1 w-full truncate">
   {displayLabel}
   </span>
   </div>
@@ -130,62 +131,71 @@ export default function DonutChart({
             {children ? (
               children
             ) : showTopList && topList.length > 0 ? (
-              <div className="flex flex-col flex-1 pl-5 border-l border-neutral-100 justify-center h-full py-0.5 min-w-0">
-                <div className="flex items-center justify-between mb-2.5">
+              <div className="flex flex-col flex-1 pl-3 border-l border-neutral-100 justify-center h-full py-0.5 min-w-0">
+                <div className="flex items-center justify-between mb-2">
                   <h3 className="text-neutral-400 font-bold text-[10px] uppercase tracking-wider truncate">
                     {listTitle}
                   </h3>
-                  <span className="text-[9.5px] font-medium text-neutral-400 uppercase tracking-wider shrink-0">
-                    Qtd
-                  </span>
                 </div>
 
-                <div className="flex flex-col gap-2 w-full">
-                  {topList.map((item, index) => {
-                    const maxCount = Math.max(...topList.map(t => Number(t.count) || 0), 1);
-                    const percentOfMax = Math.min(100, Math.round(((Number(item.count) || 0) / maxCount) * 100));
+                <div className="flex flex-col gap-3 w-full">
+                  {topList.slice(0, 5).map((item, index) => {
+                    const maxCount = Math.max(...topList.slice(0, 5).map(t => Number(t.count) || 0), 1);
+                    const count = Number(item.count) || 0;
+                    const percentOfMax = Math.min(100, Math.round((count / maxCount) * 100));
+                    const rankNum = item.rank || index + 1;
+                    const rankStr = String(rankNum).padStart(2, '0');
+                    const isFirst = index === 0;
+                    const isSemi = isSemiarido || !!badge;
+                    const displayName = item.sigla || item.name;
+                    // Rank badge style
+                    const rankStyle = isFirst
+                      ? (isSemi ? 'bg-amber-600 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
+                      : (isSemi ? 'bg-amber-500/15 text-amber-800 border border-amber-500/25' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
 
-                    const badgeStyle = index === 0
-                      ? (badge ? 'bg-amber-500 text-white shadow-2xs font-bold' : 'bg-primary-600 text-white shadow-2xs font-bold')
-                      : index === 1
-                      ? (badge ? 'bg-amber-500/15 text-amber-700 font-bold' : 'bg-primary-100 text-primary-700 font-bold')
-                      : index === 2
-                      ? 'bg-neutral-100 text-neutral-700 font-semibold'
-                      : 'bg-neutral-50 text-neutral-500 font-medium';
+                    // Bar fill color
+                    const fillColor = isFirst
+                      ? (isSemi ? 'bg-amber-600' : 'bg-primary-500')
+                      : (isSemi ? 'bg-amber-500/15' : 'bg-primary-200');
 
-                    const barColor = index === 0
-                      ? (badge ? 'bg-amber-500' : 'bg-primary-600')
-                      : index === 1
-                      ? (badge ? 'bg-amber-400/80' : 'bg-primary-500/80')
-                      : index === 2
-                      ? 'bg-primary-400/50'
-                      : 'bg-neutral-300/60';
+                    // Label text style inside the bar
+                    const textStyle = isFirst
+                      ? 'font-medium text-white'
+                      : (isSemi ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
+
+                    // Value pill style
+                    const valueStyle = isFirst
+                      ? (isSemi ? 'bg-amber-500/15 text-amber-800 border border-amber-500/25' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
+                      : (isSemi ? 'bg-amber-500/10 text-amber-800 border border-amber-500/20' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
 
                     return (
                       <div 
                         key={index} 
-                        title={`${item.name || item.sigla}: ${item.count} cursos`}
-                        className="flex items-center gap-2.5 group p-1 -mx-1 rounded-lg hover:bg-surface-soft/80 transition-all min-w-0"
+                        title={`${displayName}: ${count} cursos`}
+                        className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
                       >
-                        <div className={`w-5 h-5 rounded-md ${badgeStyle} flex items-center justify-center text-[10px] shrink-0 leading-none`}>
-                          {item.rank || (index + 1)}
+                        {/* RANK */}
+                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                          {rankStr}
                         </div>
 
-                        <div className="flex flex-col flex-1 min-w-0 justify-center">
-                          <div className="flex items-center justify-between gap-1.5 leading-tight">
-                            <span className="text-[11.5px] font-semibold text-text-primary group-hover:text-primary-600 transition-colors truncate" title={item.name}>
-                              {item.sigla || item.name}
-                            </span>
-                            <span className="font-bold text-text-primary text-[12px] shrink-0 tabular-nums">
-                              {item.count}
-                            </span>
-                          </div>
-                          <div className="w-full bg-neutral-100 h-1 rounded-full overflow-hidden mt-1">
-                            <div 
-                              className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
-                              style={{ width: `${percentOfMax}%` }}
-                            />
-                          </div>
+                        {/* BARRA: TRACK + FILL + NOME */}
+                        <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                          {/* Fill proporcional */}
+                          <div 
+                            className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                            style={{ width: `${percentOfMax}%` }}
+                          />
+
+                          {/* Nome perfeitamente integrado à barra */}
+                          <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                            {displayName}
+                          </span>
+                        </div>
+
+                        {/* VALOR PILL */}
+                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                          {count.toLocaleString('pt-BR')}
                         </div>
                       </div>
                     );

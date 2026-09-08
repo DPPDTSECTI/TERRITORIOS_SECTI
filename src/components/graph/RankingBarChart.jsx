@@ -43,6 +43,7 @@ export default function RankingBarChart({
     highlightLabel = null,
     maxScale = 1,
     badge = null,
+    isSemiarido = false,
     cardClassName = ''
 }) {
     const [filterMode, setFilterMode] = useState('top');
@@ -181,61 +182,89 @@ export default function RankingBarChart({
                 </div>
             </div>
 
-            {/* ÁREA DO GRÁFICO */}
-            <div className="flex-1 flex items-end justify-between gap-1.5 lg:gap-4 mt-2 px-1 pb-2 relative min-h-[140px]">
-                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none border-b border-border/30 pb-6 z-0">
-                    <div className="w-full h-px bg-border/20"></div>
-                    <div className="w-full h-px bg-border/20"></div>
-                    <div className="w-full h-px bg-border/20"></div>
-                </div>
-
+            {/* ÁREA DO GRÁFICO (BARRAS HORIZONTAIS) */}
+            <div className="flex-1 flex flex-col justify-center gap-5 w-full my-auto py-1">
                 {processedData.map((item, idx) => {
                     const isSelected = highlightedItem && item.normName === highlightedItem.normName;
-                    const ratio = maxScale > 1 ? (item.val / maxScale) * 100 : item.val * 100;
-                    const barHeightPercent = Math.min(100, Math.max(10, ratio));
+                    const maxVal = Math.max(...processedData.map(d => Number(d.val) || 0), 0.001);
+                    const val = Number(item.val) || 0;
+                    const percentOfMax = Math.min(100, Math.round((val / maxVal) * 100));
+                    const rankNum = item.rank || idx + 1;
+                    const rankStr = String(rankNum).padStart(2, '0');
+                    const isFirst = idx === 0 && (filterMode === 'top' || filterMode === 'focus');
+                    const isSemi = isSemiarido || !!badge;
+
+                    // Rank badge style
+                    const rankStyle = isFirst
+                        ? (isSemi ? 'bg-amber-600 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
+                        : isSelected
+                            ? 'bg-primary-700 text-white shadow-2xs'
+                            : (isSemi ? 'bg-amber-500/15 text-amber-800 border border-amber-500/25' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
+
+                    // Bar fill color
+                    const fillColor = isFirst
+                        ? (isSemi ? 'bg-amber-600' : 'bg-primary-500')
+                        : isSelected
+                            ? 'bg-primary-400'
+                            : (isSemi ? 'bg-amber-500/15' : 'bg-primary-200');
+
+                    // Label text style inside the bar
+                    const textStyle = isFirst
+                        ? 'font-medium text-white'
+                        : (isSemi ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
+
+                    // Value pill style
+                    const valueStyle = isFirst
+                        ? (isSemi ? 'bg-amber-500/15 text-amber-800 border border-amber-500/25' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
+                        : (isSemi ? 'bg-amber-500/10 text-amber-800 border border-amber-500/20' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
+
+                    const formattedVal = val < 1 && val > 0 ? val.toFixed(3).replace('.', ',') : String(val);
 
                     return (
-                        <div key={idx} className="flex flex-col items-center flex-1 h-full justify-end relative z-10 min-w-0 group/col">
-                            <div className="flex items-end justify-center w-full h-[80%] relative transition-transform duration-200">
-                                <div
-                                    className={`w-full max-w-[20px] rounded-lg relative flex justify-center transition-all duration-300 ease-out ${isSelected
-                                        ? 'bg-primary-600 shadow-sm ring-2 ring-primary-500/30'
-                                        : 'bg-primary-500 group-hover/col:bg-primary-600'
-                                        }`}
-                                    style={{ height: `${barHeightPercent}%` }}
-                                >
-                                    <div className={`absolute -top-1 w-2.5 h-2.5 rounded-full border-[2px] border-surface transition-opacity duration-200 z-20 shadow-xs flex items-center justify-center ${isSelected ? 'opacity-100 bg-primary-600' : 'bg-neutral-300 opacity-0 group-hover/col:opacity-100'
-                                        }`}>
-                                        <div className="w-1 h-1 bg-white rounded-full"></div>
-                                    </div>
-
-                                    <span className={`absolute -top-6 text-[9px] ${isSelected ? 'text-primary-700 font-bold' : 'font-medium text-text-muted'} group-hover/col:opacity-0 transition-opacity whitespace-nowrap`}>
-                                        {item.val < 1 && item.val > 0 ? item.val.toFixed(3) : item.val}
-                                    </span>
-
-                                    {/* TOOLTIP FLUTUANTE */}
-                                    <div className="absolute bottom-[calc(100%+14px)] bg-surface border border-border shadow-card-hover rounded-lg px-3 py-2 flex flex-col justify-center opacity-0 group-hover/col:opacity-100 transition-opacity duration-200 pointer-events-none z-30 min-w-[110px] left-1/2 -translate-x-1/2 ">
-                                        <div className="text-[10px] font-semibold text-text-primary mb-0.5 leading-tight">{item.rank}º · {item.cleanName}</div>
-                                        <div className="flex items-center text-[10px] text-text-secondary">
-                                            <span>IFDM: <strong className="text-text-primary font-medium">{item.val.toFixed(3)}</strong></span>
-                                        </div>
-                                        {item.extra > 0 && (
-                                            <div className="flex items-center text-[10px] text-text-muted mt-0.5">
-                                                <span>{item.extra} {extraLabel}</span>
-                                            </div>
-                                        )}
-                                        <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-surface border-b border-r border-border rotate-45 rounded-xs"></div>
-                                    </div>
-                                </div>
+                        <div
+                            key={idx}
+                            className={`group/row relative flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default ${
+                                isSelected ? 'ring-1 ring-primary-400/80 rounded-full p-0.5 -m-0.5' : ''
+                            }`}
+                        >
+                            {/* RANK */}
+                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                {rankStr}
                             </div>
 
-                            {/* RÓTULO INFERIOR */}
-                            <div
-                                className={`text-[9px] text-center leading-tight truncate w-full transition-colors mt-2 px-0.5 ${isSelected ? 'font-bold text-primary-700' : 'font-normal text-text-muted group-hover/col:text-text-primary'
-                                    }`}
-                                title={`${item.rank}º ${item.cleanName}`}
-                            >
-                                {isSelected ? `${item.cleanName}` : item.cleanName}
+                            {/* BARRA: TRACK + FILL + NOME */}
+                            <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                {/* Fill proporcional */}
+                                <div
+                                    className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                    style={{ width: `${percentOfMax}%` }}
+                                />
+
+                                {/* Nome perfeitamente integrado à barra */}
+                                <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                    {item.cleanName}
+                                </span>
+                            </div>
+
+                            {/* VALOR PILL */}
+                            <div className={`h-[24px] min-w-[50px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                {formattedVal}
+                            </div>
+
+                            {/* TOOLTIP FLUTUANTE */}
+                            <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 bg-surface border border-border shadow-card-hover rounded-lg px-3 py-1.5 flex flex-col justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-200 pointer-events-none z-30 min-w-[125px]">
+                                <div className="text-[10px] font-semibold text-text-primary mb-0.5 leading-tight">
+                                    {item.rank}º · {item.cleanName}
+                                </div>
+                                <div className="flex items-center text-[10px] text-text-secondary">
+                                    <span>IFDM: <strong className="text-text-primary font-medium">{formattedVal}</strong></span>
+                                </div>
+                                {item.extra > 0 && (
+                                    <div className="flex items-center text-[10px] text-text-muted mt-0.5">
+                                        <span>{item.extra} {extraLabel}</span>
+                                    </div>
+                                )}
+                                <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-surface border-b border-r border-border rotate-45 rounded-xs"></div>
                             </div>
                         </div>
                     );
