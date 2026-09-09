@@ -206,8 +206,11 @@ export default function RelatorioEnsinoPage() {
         const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
         const normTerr = normalizeName(rawTerr);
 
-        if (tid && idTerr && idTerr === tid) return true;
-        if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+        if (tid && idTerr) return idTerr === tid;
+
+        if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) {
+            if (normTerr.length > 3 && tNorm.length > 3) return true;
+        }
         return false;
       });
     }

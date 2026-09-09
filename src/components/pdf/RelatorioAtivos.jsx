@@ -291,9 +291,15 @@ export default function RelatorioAtivosPage() {
       const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
 
       list = list.filter(a => {
-        if (tid && a.id_territorio && String(a.id_territorio) === tid) return true;
+        const idTerr = a.id_territorio ? String(a.id_territorio) : null;
         const normTerr = normalizeName(a.territorio || '');
-        if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+
+        if (tid && a.id_territorio && String(a.id_territorio) === tid) return true;
+        if (tid && idTerr) return idTerr === tid;
+
+        if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) {
+            if (normTerr.length > 3 && tNorm.length > 3) return true;
+        }
         return false;
       });
     }

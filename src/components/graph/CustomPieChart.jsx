@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { PieChart, Pie, Sector } from 'recharts';
+import { X } from 'lucide-react';
 
 
 /**
@@ -55,13 +56,14 @@ export default function CustomPieChart({
  const displayValue = hoveredIndex !== null && normalizedData[hoveredIndex] ? normalizedData[hoveredIndex][valueKey] : totalValue;
  const displayLabel = hoveredIndex !== null && normalizedData[hoveredIndex] ? normalizedData[hoveredIndex][labelKey] : defaultCenterLabel;
 
- const chartData = normalizedData.length > 0 ? normalizedData : [{ [valueKey]: 1, fill: 'rgb(var(--color-border))', [labelKey]: 'Sem dados' }];
+ const isEmpty = normalizedData.length === 0 || totalValue === 0;
+ const chartData = !isEmpty ? normalizedData : [{ [valueKey]: 1, fill: 'rgb(var(--color-border))', [labelKey]: 'Sem dados' }];
 
   return (
   <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
   
   {/* CABEÇALHO */}
-  <div className="flex justify-between items-start mb-4 relative z-10 w-full pr-8">
+  <div className="flex justify-between items-start mb-4 relative z-10 w-full pr-8 shrink-0">
   <div className="flex flex-col">
   <div className="flex items-center gap-2">
   <h2 className="text-text-primary font-semibold text-[16px] tracking-tight">{title}</h2>
@@ -72,13 +74,19 @@ export default function CustomPieChart({
     </span>
   )}
   </div>
-  <p className="text-neutral-500 text-[11px] font-normal mt-1">{subtitle}</p>
+  <p className="text-neutral-500 text-[11px] font-medium mt-0.5">{subtitle}</p>
   </div>
   </div>
-  <div className="w-full h-px bg-neutral-100 mb-4"></div>
+  <div className="w-full h-px bg-neutral-100 mb-4 shrink-0"></div>
 
-  {/* CONTEÚDO */}
-  <div className="flex flex-row items-center justify-between flex-1 gap-2.5 min-w-0">
+  {isEmpty ? (
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
+      <X size={80} className="text-primary-500" strokeWidth={2.5} />
+      <span className="text-neutral-500 font-medium text-[13px]">Nenhum dado disponível</span>
+    </div>
+  ) : (
+  /* CONTEÚDO */
+  <div className="flex flex-row items-center justify-between flex-1 gap-2.5 min-h-0">
   
   {/* GRÁFICO */}
   <div className="flex flex-col items-center justify-center w-[130px] shrink-0">
@@ -216,6 +224,7 @@ export default function CustomPieChart({
   )}
 
   </div>
+  )}
   </div>
   );
 }

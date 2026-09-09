@@ -3,7 +3,7 @@ import { supabase } from '../services/supabase';
 
 export const DataContext = createContext();
 
-const CACHE_KEY = '@SectiPainel_Data_v10_NO_EAD';
+const CACHE_KEY = '@SectiPainel_Data_v11_NO_EAD';
 const CACHE_TIME_MS = 15 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
@@ -18,6 +18,7 @@ export const DataProvider = ({ children }) => {
  const [tiposAtivos, setTiposAtivos] = useState([]);
  const [tiposCursos, setTiposCursos] = useState([]);
  const [tiposCadeias, setTiposCadeias] = useState([]);
+ const [firjanData, setFirjanData] = useState([]);
 
  const [loadingStats, setLoadingStats] = useState(true);
  const [selectedTerritory, setSelectedTerritory] = useState(null);
@@ -43,6 +44,7 @@ export const DataProvider = ({ children }) => {
  setTiposAtivos(cache.tiposAtivos || []);
  setTiposCursos(cache.tiposCursos || []);
  setTiposCadeias(cache.tiposCadeias || []);
+ setFirjanData(cache.firjanData || []);
  setLoadingStats(false);
  return;
  }
@@ -64,7 +66,8 @@ export const DataProvider = ({ children }) => {
  tAtivosRes,
  tCursosRes,
  tCadeiasRes,
- cursosRawRes
+ cursosRawRes,
+ firjanRes
  ] = await Promise.all([
  supabase.from('stats_ti').select('*'),
  supabase.from('lista_ativos_cti').select('*').range(0, 3000),
@@ -75,7 +78,8 @@ export const DataProvider = ({ children }) => {
  supabase.from('tipo_ativos').select('*'),
  supabase.from('tipo_cursos').select('*'),
  supabase.from('tipo_cadeia').select('*'),
- supabase.from('cursos').select('id_curso, ead').range(0, 3000)
+ supabase.from('cursos').select('id_curso, ead').range(0, 3000),
+ supabase.from('firjan').select('*').range(0, 1000)
  ]);
 
  // Mapeamento explícito de EAD da tabela base
@@ -125,6 +129,7 @@ export const DataProvider = ({ children }) => {
  tiposAtivos: tAtivosRes.data || [],
  tiposCursos: tCursosRes.data || [],
  tiposCadeias: tCadeiasRes.data || [],
+ firjanData: firjanRes.data || [],
  timestamp: Date.now()
  };
 
@@ -144,6 +149,7 @@ export const DataProvider = ({ children }) => {
  setTiposAtivos(novoCache.tiposAtivos);
  setTiposCursos(novoCache.tiposCursos);
  setTiposCadeias(novoCache.tiposCadeias);
+ setFirjanData(novoCache.firjanData);
  
  setLoadingStats(false);
  };
@@ -200,6 +206,7 @@ export const DataProvider = ({ children }) => {
  tiposAtivos,
  tiposCursos,
  tiposCadeias,
+ firjanData,
  territoriesDynamicStats,
  kpisGlobais, 
  loadingStats,

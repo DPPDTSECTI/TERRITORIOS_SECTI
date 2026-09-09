@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Minus, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronUp, Minus, MapPin, X } from 'lucide-react';
 
 function normalizeSimple(str) {
     if (!str) return '';
@@ -140,7 +140,11 @@ export default function RankingBarChart({
                             </span>
                         )}
                         {highlightedItem && (
-                            <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-primary-100 text-primary-700 border border-primary-200 shrink-0 inline-flex items-center justify-center leading-none">
+                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md shrink-0 inline-flex items-center justify-center leading-none ${
+                                (isSemiarido || !!badge)
+                                    ? 'bg-amber-500/15 text-amber-700 border border-amber-500/30'
+                                    : 'bg-primary-100 text-primary-700 border border-primary-200'
+                            }`}>
                                 {highlightedItem.rank}º no Estado
                             </span>
                         )}
@@ -152,7 +156,7 @@ export default function RankingBarChart({
                     {highlightedItem && (
                         <button
                             onClick={() => setFilterMode('focus')}
-                            className={`p-1 rounded transition-colors duration-200 flex items-center justify-center ${filterMode === 'focus' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
+                            className={`p-1 rounded transition-colors duration-200 flex items-center justify-center ${filterMode === 'focus' ? ((isSemiarido || !!badge) ? 'text-amber-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
                             title={`Foco em ${highlightedItem.cleanName} (${highlightedItem.rank}º de ${allRanked.length})`}
                         >
                             <MapPin size={16} strokeWidth={2} />
@@ -160,21 +164,21 @@ export default function RankingBarChart({
                     )}
                     <button
                         onClick={() => setFilterMode('top')}
-                        className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'top' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
+                        className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'top' ? ((isSemiarido || !!badge) ? 'text-amber-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
                         title={topSubtitle}
                     >
                         <ChevronUp size={16} strokeWidth={2} />
                     </button>
                     <button
                         onClick={() => setFilterMode('medium')}
-                        className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'medium' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
+                        className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'medium' ? ((isSemiarido || !!badge) ? 'text-amber-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
                         title={mediumSubtitle}
                     >
                         <Minus size={16} strokeWidth={2} />
                     </button>
                     <button
                         onClick={() => setFilterMode('bottom')}
-                        className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'bottom' ? 'text-primary-600 bg-surface shadow-xs' : 'text-text-muted hover:text-text-primary'}`}
+                        className={`p-0.5 rounded transition-colors duration-200 ${filterMode === 'bottom' ? ((isSemiarido || !!badge) ? 'text-amber-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
                         title={bottomSubtitle}
                     >
                         <ChevronDown size={16} strokeWidth={2} />
@@ -183,7 +187,13 @@ export default function RankingBarChart({
             </div>
 
             {/* ÁREA DO GRÁFICO (BARRAS HORIZONTAIS) */}
-            <div className="flex-1 flex flex-col justify-center gap-5 w-full my-auto py-1">
+            {data.length === 0 ? (
+                <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
+                    <X size={80} className={(isSemiarido || !!badge) ? "text-amber-500" : "text-primary-500"} strokeWidth={2.5} />
+                    <span className="text-neutral-500 font-medium text-[13px]">Nenhum dado disponível</span>
+                </div>
+            ) : (
+                <div className="flex-1 flex flex-col justify-center gap-5 w-full my-auto py-1">
                 {processedData.map((item, idx) => {
                     const isSelected = highlightedItem && item.normName === highlightedItem.normName;
                     const maxVal = Math.max(...processedData.map(d => Number(d.val) || 0), 0.001);
@@ -198,25 +208,27 @@ export default function RankingBarChart({
                     const rankStyle = isFirst
                         ? (isSemi ? 'bg-amber-600 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
                         : isSelected
-                            ? 'bg-primary-700 text-white shadow-2xs'
+                            ? (isSemi ? 'bg-amber-700 text-white shadow-2xs' : 'bg-primary-700 text-white shadow-2xs')
                             : (isSemi ? 'bg-amber-500/15 text-amber-800 border border-amber-500/25' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
 
                     // Bar fill color
                     const fillColor = isFirst
                         ? (isSemi ? 'bg-amber-600' : 'bg-primary-500')
                         : isSelected
-                            ? 'bg-primary-400'
+                            ? (isSemi ? 'bg-amber-500' : 'bg-primary-400')
                             : (isSemi ? 'bg-amber-500/15' : 'bg-primary-200');
 
                     // Label text style inside the bar
-                    const textStyle = isFirst
+                    const textStyle = (isFirst || isSelected)
                         ? 'font-medium text-white'
                         : (isSemi ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
 
                     // Value pill style
                     const valueStyle = isFirst
                         ? (isSemi ? 'bg-amber-500/15 text-amber-800 border border-amber-500/25' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
-                        : (isSemi ? 'bg-amber-500/10 text-amber-800 border border-amber-500/20' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
+                        : isSelected
+                            ? (isSemi ? 'bg-amber-500/20 text-amber-900 border border-amber-500/40 font-semibold' : 'bg-primary-100 text-primary-800 border border-primary-300 font-semibold')
+                            : (isSemi ? 'bg-amber-500/10 text-amber-800 border border-amber-500/20' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
 
                     const formattedVal = val < 1 && val > 0 ? val.toFixed(3).replace('.', ',') : String(val);
 
@@ -224,7 +236,7 @@ export default function RankingBarChart({
                         <div
                             key={idx}
                             className={`group/row relative flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default ${
-                                isSelected ? 'ring-1 ring-primary-400/80 rounded-full p-0.5 -m-0.5' : ''
+                                isSelected ? (isSemi ? 'ring-1 ring-amber-500/80 rounded-full p-0.5 -m-0.5' : 'ring-1 ring-primary-400/80 rounded-full p-0.5 -m-0.5') : ''
                             }`}
                         >
                             {/* RANK */}
@@ -233,7 +245,7 @@ export default function RankingBarChart({
                             </div>
 
                             {/* BARRA: TRACK + FILL + NOME */}
-                            <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                            <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-amber-500/10' : 'bg-primary-50/50'} overflow-hidden min-w-0 flex items-center`}>
                                 {/* Fill proporcional */}
                                 <div
                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
@@ -270,6 +282,7 @@ export default function RankingBarChart({
                     );
                 })}
             </div>
+            )}
         </div>
     );
 }

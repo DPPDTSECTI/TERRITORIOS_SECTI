@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 
 /**
  * Gráfico genérico de Barras Horizontais Proporcionais (100% Stacked).
@@ -101,9 +102,7 @@ export default function ProportionBarChart({
         const negPillStyle = isSemi
             ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
             : 'bg-primary-100 text-primary-700 border border-primary-200/60';
-        const totalPillStyle = isSemi
-            ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
-            : 'bg-primary-50 text-primary-700 border border-primary-200/60';
+        const totalPillStyle = 'bg-blue-100 text-blue-700 border border-blue-200/80';
 
         return (
             <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
@@ -125,8 +124,15 @@ export default function ProportionBarChart({
 
                 <div className="w-full h-px bg-neutral-100 mb-1.5 shrink-0"></div>
 
-                {/* LISTA COMPARATIVA: NOME + [ A (xx%) ] [ B (yy%) ] [ TOTAL ] */}
-                <div className={`flex flex-col justify-between flex-1 w-full ${data.length > 4 ? 'gap-1 py-0' : 'gap-2 py-0.5'} my-auto min-h-0 overflow-hidden`}>
+                {data.length === 0 ? (
+                    <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
+                        <X size={80} className="text-primary-500" strokeWidth={2.5} />
+                        <span className="text-neutral-500 font-medium text-[13px]">Nenhum dado disponível</span>
+                    </div>
+                ) : (
+                    <>
+                        {/* LISTA COMPARATIVA: NOME + [ A (xx%) ] [ B (yy%) ] [ TOTAL ] */}
+                        <div className={`flex flex-col justify-center flex-1 w-full ${data.length > 4 ? 'gap-1 py-0' : 'gap-2 py-0.5'} my-auto min-h-0 overflow-hidden`}>
                     {data.map((item, idx) => {
                         const pos = Number(item.positive || 0);
                         const neg = Number(item.negative || 0);
@@ -204,23 +210,25 @@ export default function ProportionBarChart({
                             </div>
                         );
                     })}
-                </div>
+                        </div>
 
-                {/* LEGENDA NO RODAPÉ */}
-                <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-neutral-100 shrink-0 text-[10px] font-medium mt-auto">
-                    <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${posPillColor} shadow-2xs`}></span>
-                        <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{positiveLabel}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-500/40' : 'bg-primary-200'} shadow-2xs`}></span>
-                        <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{negativeLabel}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-text-muted">
-                        <span className="w-2 h-2 rounded-full bg-neutral-300 shadow-2xs"></span>
-                        <span>Total</span>
-                    </div>
-                </div>
+                        {/* LEGENDA NO RODAPÉ */}
+                        <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-neutral-100 shrink-0 text-[10px] font-medium mt-auto">
+                            <div className="flex items-center gap-1.5">
+                                <span className={`w-2 h-2 rounded-full ${posPillColor} shadow-2xs`}></span>
+                                <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{positiveLabel}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-500/40' : 'bg-primary-200'} shadow-2xs`}></span>
+                                <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{negativeLabel}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-text-muted">
+                                <span className="w-2 h-2 rounded-full bg-blue-300 shadow-2xs"></span>
+                                <span>Total</span>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         );
     }
@@ -246,8 +254,15 @@ export default function ProportionBarChart({
             
             <div className="w-full h-px bg-neutral-100 mb-2 shrink-0"></div>
 
-            {/* LISTA DE ITENS PROPORCIONAIS - ALTURA FLEXÍVEL (EVITA QUALQUER SOBREPOSIÇÃO) */}
-            <div className="flex flex-col justify-between flex-1 w-full gap-1.5 my-auto min-h-0 overflow-hidden py-0.5">
+            {data.length === 0 ? (
+                <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
+                    <X size={80} className="text-primary-500" strokeWidth={2.5} />
+                    <span className="text-neutral-500 font-medium text-[13px]">Nenhum dado disponível</span>
+                </div>
+            ) : (
+                <>
+                    {/* LISTA DE ITENS PROPORCIONAIS - ALTURA FLEXÍVEL (EVITA QUALQUER SOBREPOSIÇÃO) */}
+                    <div className="flex flex-col justify-between flex-1 w-full gap-1.5 my-auto min-h-0 overflow-hidden py-0.5">
                 {data.map((item, idx) => {
                     const pos = Number(item.positive || 0);
                     const neg = Number(item.negative || 0);
@@ -288,8 +303,10 @@ export default function ProportionBarChart({
                 <div className="flex items-center gap-1.5">
                     <span className={`w-2.5 h-2.5 rounded-full ${negativeColor} shadow-2xs`}></span>
                     <span className={negativeTextColor || "text-[#D97706]"}>{negativeLabel}</span>
-                </div>
-            </div>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

@@ -164,12 +164,14 @@ export default function AtivosPage() {
         const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
 
         return ativosProcessados.filter(a => {
-            if (tid && a.id_territorio && String(a.id_territorio) === tid) return true;
+            if (tid && a.id_territorio) return String(a.id_territorio) === tid;
             if (tNorm && a.normTerritorio && (
                 a.normTerritorio === tNorm ||
                 a.normTerritorio.includes(tNorm) ||
                 tNorm.includes(a.normTerritorio)
-            )) return true;
+            )) {
+                if (a.normTerritorio.length > 3 && tNorm.length > 3) return true;
+            }
             return false;
         });
     }, [ativosProcessados, selectedTerritory]);

@@ -94,7 +94,9 @@ export default function DashboardPainel() {
     cursosData,
     territoriesDynamicStats,
     selectedTerritory,
-    setSelectedTerritory
+    setSelectedTerritory,
+    firjanData,
+    municipiosTerritorios
   } = useContext(DataContext);
 
   const [filtroSemiarido, setFiltroSemiarido] = useState(false);
@@ -112,11 +114,18 @@ export default function DashboardPainel() {
       const munKey = normalizeName(a.municipio || '');
       const munRow = MUN_LOOKUP.byName[munKey];
       const idTerr = a.id_territorio != null && a.id_territorio !== '' ? String(a.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+      
+      if (tid && idTerr) return idTerr === tid;
+
       const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
       const normTerr = normalizeTerritoryName(rawTerr);
 
-      if (tid && idTerr && idTerr === tid) return true;
-      if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+      if (tNorm && normTerr && (normTerr === tNorm || tNorm.includes(normTerr) || normTerr.includes(tNorm))) {
+          // Avoid matching very short strings like "do", "de", "sul"
+          if (normTerr.length > 3 && tNorm.length > 3) {
+              return true;
+          }
+      }
       return false;
     });
   }, [ativosData, selectedTerritory]);
@@ -133,11 +142,17 @@ export default function DashboardPainel() {
       const munKey = normalizeName(c.municipio || '');
       const munRow = MUN_LOOKUP.byName[munKey];
       const idTerr = c.id_territorio != null && c.id_territorio !== '' ? String(c.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+      
+      if (tid && idTerr) return idTerr === tid;
+
       const rawTerr = c.territorio_identidade || c.territorio || munRow?.nome_territorio || '';
       const normTerr = normalizeTerritoryName(rawTerr);
 
-      if (tid && idTerr && idTerr === tid) return true;
-      if (tNorm && normTerr && (normTerr === tNorm || normTerr.includes(tNorm) || tNorm.includes(normTerr))) return true;
+      if (tNorm && normTerr && (normTerr === tNorm || tNorm.includes(normTerr) || normTerr.includes(tNorm))) {
+          if (normTerr.length > 3 && tNorm.length > 3) {
+              return true;
+          }
+      }
       return false;
     });
   }, [cursosData, selectedTerritory]);
@@ -149,9 +164,14 @@ export default function DashboardPainel() {
     const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
 
     return territoriosData.find(t => {
-      if (tid && String(t.id_territorio) === tid) return true;
+      const tIdStr = t.id_territorio != null ? String(t.id_territorio) : null;
+      if (tid && tIdStr) return tid === tIdStr;
+
       const norm = normalizeTerritoryName(t.territorio || t.nome_territorio || '');
-      return norm === tNorm || norm.includes(tNorm) || tNorm.includes(norm);
+      if (tNorm && norm && (norm === tNorm || norm.includes(tNorm) || tNorm.includes(norm))) {
+          if (norm.length > 3 && tNorm.length > 3) return true;
+      }
+      return false;
     });
   }, [selectedTerritory, territoriosData]);
 
@@ -386,12 +406,15 @@ export default function DashboardPainel() {
       }
     });
 
-    return Object.entries(stats).map(([label, valores]) => ({
-      label,
-      positive: valores.com,
-      negative: valores.sem,
-      total: valores.com + valores.sem
-    }));
+    return Object.entries(stats)
+      .map(([label, valores]) => ({
+        label,
+        positive: valores.com,
+        negative: valores.sem,
+        total: valores.com + valores.sem
+      }))
+      .filter(item => item.total > 0)
+      .sort((a, b) => b.total - a.total);
   }, [scopedAtivos]);
 
   // 8. Comparativo de Barras Empilhadas: Semiárido vs Demais Regiões
@@ -441,6 +464,33 @@ export default function DashboardPainel() {
     if (!territoriosData) return [];
     return territoriosData.filter(t => Number(t.pct_semiarido || t.qtd_mun_semiarido || 0) > 0);
   }, [territoriosData]);
+
+  // Ranking de IFDM por Município (quando um território é selecionado)
+  const rankingIfdmData = useMemo(() => {
+    if (!selectedTerritory || !firjanData || firjanData.length === 0 || !municipiosTerritorios) return [];
+    
+    const tid = String(selectedTerritory.id_territorio);
+    const munIdsDoTerritorio = municipiosTerritorios
+      .filter(m => String(m.id_territorio) === tid)
+      .map(m => m.id_municipio);
+
+    let dadosMuns = firjanData
+      .filter(f => munIdsDoTerritorio.includes(f.id_municipio))
+      .map(f => {
+        const munInfo = municipiosTerritorios.find(m => m.id_municipio === f.id_municipio);
+        return {
+          ...f,
+          nome_municipio: munInfo ? (munInfo.municipio || munInfo.nome_municipio) : `Município ${f.id_municipio}`,
+          media_ifdm: f.ifdm != null ? Number(f.ifdm).toFixed(3) : 0
+        };
+      });
+
+    if (filtroSemiarido) {
+      dadosMuns = dadosMuns.filter(m => isMunicipioSemiarido(m.nome_municipio));
+    }
+
+    return dadosMuns.sort((a, b) => Number(b.media_ifdm) - Number(a.media_ifdm));
+  }, [selectedTerritory, firjanData, municipiosTerritorios, filtroSemiarido]);
 
   // Configurações DnD
   const INITIAL_CARDS = ['card-donut', 'card-pie', 'card-ranking', 'card-mapeamento'];
@@ -765,7 +815,7 @@ export default function DashboardPainel() {
                         subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos mapeados na região` : 'Distribuição oficial de cursos no estado')}
                         totalLabel="Total de Cursos"
                         listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições na Região' : 'Top 5 Instituições com mais cursos')}
-                        data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 1, color: '#E2E8F0' }]}
+                        data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 0, color: '#E2E8F0', isEmpty: true }]}
                         topList={topEntidadesCursos}
                         badge={null}
                         isSemiarido={filtroSemiarido}
@@ -798,16 +848,16 @@ export default function DashboardPainel() {
                   {cardId === 'card-ranking' && (
                     <SortableCard id="card-ranking">
                       <RankingBarChart
-                        data={filtroSemiarido ? rankingDataSemiarido : territoriosData}
-                        title={filtroSemiarido ? "Ranking IFDM · Semiárido" : "Ranking IFDM"}
+                        data={selectedTerritory ? rankingIfdmData : (filtroSemiarido ? rankingDataSemiarido : territoriosData)}
+                        title={selectedTerritory ? `Ranking IFDM · ${territoryName}` : (filtroSemiarido ? "Ranking IFDM · Semiárido" : "Ranking IFDM")}
                         valueKey="media_ifdm"
-                        labelKey="territorio"
-                        extraKey="cadeias_produtivas"
-                        extraLabel="Cadeias"
-                        topSubtitle={filtroSemiarido ? "Top no Semiárido" : "Top 5 melhores"}
-                        mediumSubtitle="5 na média"
-                        bottomSubtitle={filtroSemiarido ? "Menores no Semiárido" : "Top 5 piores"}
-                        highlightLabel={territoryName}
+                        labelKey={selectedTerritory ? "nome_municipio" : "territorio"}
+                        extraKey={selectedTerritory ? "populacao" : "cadeias_produtivas"}
+                        extraLabel={selectedTerritory ? "População" : "Cadeias"}
+                        topSubtitle={selectedTerritory ? "Top Municípios" : (filtroSemiarido ? "Top no Semiárido" : "Top 5 melhores")}
+                        mediumSubtitle={selectedTerritory ? "" : "5 na média"}
+                        bottomSubtitle={selectedTerritory ? "Menores IFDMs" : (filtroSemiarido ? "Menores no Semiárido" : "Top 5 piores")}
+                        highlightLabel={selectedTerritory ? null : territoryName}
                         maxScale={1}
                         badge={null}
                         isSemiarido={filtroSemiarido}
