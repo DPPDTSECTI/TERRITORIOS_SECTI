@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Printer } from 'lucide-react';
 
 /**
@@ -15,33 +15,63 @@ export default function ExportPdfButton({
   reportMode = 'normal',
   isLoading = false,
   className = '',
-  title = 'Exportar Relatório Executivo em PDF',
+  title = 'Exportar Relatório Executivo em PDF via Playwright',
   label = 'Exportar PDF',
   size = 'md', // 'sm' | 'md'
   variant = 'primary' // 'primary' | 'navy' | 'emerald'
 }) {
-  const handleClick = (e) => {
-    if (isLoading) return;
+  const [internalLoading, setInternalLoading] = useState(false);
+  const loading = isLoading || internalLoading;
+
+  const handleClick = async (e) => {
+    if (loading) return;
     if (onClick) {
       onClick(e);
       return;
     }
 
-    // Comportamento padrão quando usado em páginas de navegação (ex: RelatorioPage):
-    // Abre a rota correspondente em tela cheia com auto-impressão nativa na proporção 16:9
+    setInternalLoading(true);
     const type = reportType === 'cursos'
       ? 'cursos'
       : (reportType === 'ativos'
           ? 'ativos'
           : (reportType === 'cadeias' ? 'cadeias' : 'sintese'));
 
+    let fileBase = 'relatorio_sintese';
+    if (type === 'ativos') fileBase = 'relatorio_ativos';
+    else if (type === 'cursos') fileBase = 'relatorio_ensino';
+    else if (type === 'cadeias') fileBase = 'relatorio_cadeias';
+
     const terrParam = territorioId && territorioId !== 'bahia'
       ? `territorio=${encodeURIComponent(territorioId)}`
       : 'territorio=bahia';
 
     const modoParam = `&modo=${reportMode}`;
-    const url = `/relatorio/${type}?${terrParam}${modoParam}&autoprint=true`;
-    window.open(url, '_blank');
+    const filename = `${fileBase}_${reportMode}.pdf`;
+
+    try {
+      const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
+      const res = await fetch(apiUrl);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro HTTP ${res.status} ao gerar PDF.`);
+      }
+
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
+    } catch (err) {
+      console.error('[Exportação PDF] Erro:', err);
+      alert(`Erro ao gerar PDF via Playwright: ${err.message || err}`);
+    } finally {
+      setInternalLoading(false);
+    }
   };
 
   const variantStyles = {

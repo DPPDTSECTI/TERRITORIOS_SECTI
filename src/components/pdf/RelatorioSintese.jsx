@@ -19,7 +19,6 @@ import PtiMap from '../maps/PtiMap';
 import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
-import ExportPdfButton from './ExportPdfButton';
 
 export default function RelatorioSintese() {
   const {
@@ -263,12 +262,15 @@ export default function RelatorioSintese() {
               <ArrowLeft size={14} />
               <span>Voltar</span>
             </button>
-            <ExportPdfButton
+            <button
+              type="button"
               onClick={() => handlePrint()}
-              size="md"
-              variant="navy"
-              title="Exportar PDF nativo na proporção exata da tela (1920×1080)"
-            />
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1D3557] text-white hover:bg-[#2563EB] shadow-xs transition-all cursor-pointer"
+              title="Testar geração nativa de PDF via motor de impressão do navegador (react-to-print)"
+            >
+              <Printer size={14} />
+              <span>Testar PDF (react-to-print)</span>
+            </button>
           </div>
         </div>
       </div>
