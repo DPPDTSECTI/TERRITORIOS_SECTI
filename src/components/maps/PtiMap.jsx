@@ -326,97 +326,134 @@ export default function PtiMap({
  return avgLng > -41.5;
  }, [selectedTerritory]);
 
- const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
+  useEffect(() => {
+    if (!geoJsonData || !mapRef.current) return;
+    const timer = setTimeout(() => {
+      if (geoJsonLayerRef.current && mapRef.current) {
+        const b = geoJsonLayerRef.current.getBounds();
+        if (b.isValid()) {
+          mapRef.current.fitBounds(b, { padding: [12, 12] });
+        }
+      }
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [geoJsonData]);
 
- return (
- <div
- ref={mapContainerRef}
- className="relative isolate w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10"
- onMouseMove={handleMouseMove}
- onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
- >
- {loading || !geoJsonData ? (
- <div className="flex flex-col items-center text-primary-600">
- <svg className="animate-spin h-6 w-6 mb-2 text-primary-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
- <span className="text-[11px] font-medium uppercase">Processando Malha...</span>
- </div>
- ) : (
- <MapContainer
- ref={mapRef}
- preferCanvas={true}
- center={[-12.5, -41.5]}
- zoom={6}
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (selectedTerritory && selectedTerritory.id_territorio) {
+      const layers = layersByTerritory.current[selectedTerritory.id_territorio];
+      if (layers && layers.length > 0) {
+        const group = L.featureGroup(layers);
+        const b = group.getBounds();
+        if (b.isValid()) {
+          mapRef.current.fitBounds(b, { padding: [24, 24], maxZoom: 8.5, duration: 0.8 });
+        }
+      }
+    } else {
+      if (geoJsonLayerRef.current) {
+        const b = geoJsonLayerRef.current.getBounds();
+        if (b.isValid()) {
+          mapRef.current.fitBounds(b, { padding: [12, 12], duration: 0.8 });
+        }
+      } else {
+        mapRef.current.flyTo([-12.8, -41.2], 5.8, { duration: 0.8 });
+      }
+    }
+  }, [selectedTerritory]);
 
- // ==========================================
- // NOVAS TRAVAS DE LIMITES (BAHIA)
- // ==========================================
- minZoom={6}
- maxBounds={[
- [-18.5, -47.0], // Canto Inferior Esquerdo (Sudoeste)
- [-8.0, -37.0] // Canto Superior Direito (Nordeste)
- ]}
- maxBoundsViscosity={1.0}
- // ==========================================
+  const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
 
- zoomControl={false}
- attributionControl={false}
- scrollWheelZoom={true}
- doubleClickZoom={false}
- className="w-full h-full outline-none z-0"
- style={{ background: 'transparent' }}
- >
- <TileLayer
- url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
- opacity={0.7}
- maxZoom={16}
- crossOrigin="anonymous"
- />
+  return (
+    <div
+      ref={mapContainerRef}
+      className="relative isolate w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
+    >
+      {loading || !geoJsonData ? (
+        <div className="flex flex-col items-center text-primary-600">
+          <svg className="animate-spin h-6 w-6 mb-2 text-primary-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <span className="text-[11px] font-medium uppercase">Processando Malha...</span>
+        </div>
+      ) : (
+        <MapContainer
+          ref={mapRef}
+          preferCanvas={true}
+          center={[-12.8, -41.2]}
+          zoom={5.8}
+          minZoom={5.0}
+          maxBounds={[
+            [-19.0, -47.5],
+            [-7.5, -36.5]
+          ]}
+          maxBoundsViscosity={0.7}
+          zoomControl={false}
+          attributionControl={false}
+          scrollWheelZoom={true}
+          doubleClickZoom={false}
+          className="w-full h-full outline-none z-0"
+          style={{ background: 'transparent' }}
+        >
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+            opacity={0.7}
+            maxZoom={16}
+            crossOrigin="anonymous"
+          />
 
- <GeoJSON
- key={`${selectedTerritory?.id_territorio || 'muns'}-semi${filtroSemiarido ? '1' : '0'}`}
- ref={geoJsonLayerRef}
- data={geoJsonData}
- style={styleFeature}
- onEachFeature={onEachFeature}
- />
- </MapContainer>
- )}
+          <GeoJSON
+            key={`${selectedTerritory?.id_territorio || 'muns'}-semi${filtroSemiarido ? '1' : '0'}`}
+            ref={geoJsonLayerRef}
+            data={geoJsonData}
+            style={styleFeature}
+            onEachFeature={onEachFeature}
+          />
+        </MapContainer>
+      )}
 
- {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
- <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-white/90 backdrop-blur-xl rounded-xl border border-white shadow-[0_8px_32px_rgba(29,53,87,0.1)] overflow-hidden">
- <button
- onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
- className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
- title="Aproximar"
- >
- <span className="text-lg font-medium leading-none">+</span>
- </button>
- <button
- onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
- className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
- title="Afastar"
- >
- <span className="text-lg font-medium leading-none">−</span>
- </button>
- <button
- onClick={() => {
- mapRef.current?.flyTo([-12.5, -41.5], 6, { duration: 0.8, easeLinearity: 0.25 });
- onSelectTerritory(null);
- }}
- className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
- selectedTerritory
- ? 'text-danger-600 bg-danger-50 hover:bg-danger-100'
- : 'text-primary-600 hover:text-primary-950 hover:bg-surface-soft'
- }`}
- title="Limpar seleção"
- >
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
- <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
- <path d="M22 21H7"/>
- <path d="m5 11 9 9"/>
- </svg>
- </button>
- </div>
+      {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
+      <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-white/90 backdrop-blur-xl rounded-xl border border-white shadow-[0_8px_32px_rgba(29,53,87,0.1)] overflow-hidden">
+        <button
+          onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
+          className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
+          title="Aproximar"
+        >
+          <span className="text-lg font-medium leading-none">+</span>
+        </button>
+        <button
+          onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
+          className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
+          title="Afastar"
+        >
+          <span className="text-lg font-medium leading-none">−</span>
+        </button>
+        <button
+          onClick={() => {
+            if (geoJsonLayerRef.current) {
+              const b = geoJsonLayerRef.current.getBounds();
+              if (b.isValid()) {
+                mapRef.current?.fitBounds(b, { padding: [12, 12], duration: 0.8 });
+              }
+            } else {
+              mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.8, easeLinearity: 0.25 });
+            }
+            onSelectTerritory(null);
+          }}
+          className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
+            selectedTerritory
+              ? 'text-danger-600 bg-danger-50 hover:bg-danger-100'
+              : 'text-primary-600 hover:text-primary-950 hover:bg-surface-soft'
+          }`}
+          title="Limpar seleção e ver toda a Bahia"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
+            <path d="M22 21H7"/>
+            <path d="m5 11 9 9"/>
+          </svg>
+        </button>
+      </div>
 
  {/* ================= TOGGLE SEMIÁRIDO (CANTO SUPERIOR DIREITO) ================= */}
  {Boolean(onToggleSemiarido) && (

@@ -389,71 +389,50 @@ export default function CursosPage() {
             </div>
 
             {/* GRID DE KPIS */}
-            <div className="w-full relative z-10 shrink-0">
+            <div className="tour-kpis w-full relative z-10 shrink-0">
                 <div className="grid grid-cols-5 gap-4 items-stretch w-full">
                     {kpis.map((kpi, index) => {
-                        const styles = [
-                            {
-                                bg: 'surface-panel bg-primary-900/10',
-                                border: 'border-primary-500/20',
-                                iconBg: 'bg-primary-500/15',
-                                iconColor: 'text-primary-400',
-                                accent: 'bg-primary-500'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-[#0D9488]/15',
-                                iconColor: 'text-[#14B8A6]',
-                                accent: 'bg-[#0D9488]'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-primary-400/15',
-                                iconColor: 'text-primary-400',
-                                accent: 'bg-primary-400'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-accent-500/15',
-                                iconColor: 'text-accent-400',
-                                accent: 'bg-accent-500'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-success-500/15',
-                                iconColor: 'text-success-400',
-                                accent: 'bg-success-500'
-                            }
+                        const isHero = index === 0;
+                        const accentColors = [
+                            'text-white/70',
+                            'text-[#0D9488]',
+                            'text-accent-600',
+                            'text-warning-600',
+                            'text-success-600'
                         ];
-                        const s = styles[index] || styles[1];
 
                         return (
                             <div
                                 key={index}
-                                className={`relative rounded-[16px] p-[16px] flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md ${s.bg} border ${s.border} shadow-sm`}
+                                title={kpi.tooltip || kpi.label}
+                                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
+                                    isHero
+                                        ? 'bg-primary-900 text-white shadow-card-elevated'
+                                        : 'bg-surface border border-neutral-100 shadow-card'
+                                }`}
                             >
                                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                <div className="flex items-center gap-2.5 w-full min-w-0">
-                                    <div className="flex items-center justify-center shrink-0 mr-1">
-                                        <kpi.icon size={16} strokeWidth={2.5} className={s.iconColor} />
-                                    </div>
+                                <div className="flex items-center gap-2 w-full min-w-0">
+                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? accentColors[0] : accentColors[index]} />
                                     <span
-                                        className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1"
+                                        className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
+                                            isHero ? 'text-white/60' : 'text-text-muted'
+                                        }`}
                                         title={kpi.label}
                                     >
                                         {kpi.label}
                                     </span>
                                 </div>
 
-                                {/* LINHA INFERIOR: NÚMERO À ESQUERDA */}
-                                <div className="mt-3.5 flex items-baseline w-full">
-                                    <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
-                                        {kpi.value}
-                                    </span>
+                                {/* LINHA INFERIOR: NÚMERO */}
+                                <div className="flex items-baseline w-full justify-between">
+                                    <div className="flex items-baseline gap-1.5 min-w-0">
+                                        <span className={`text-[28px] font-bold tracking-tight leading-none ${
+                                            isHero ? 'text-white' : 'text-text-primary'
+                                        }`}>
+                                            {kpi.value}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -467,7 +446,7 @@ export default function CursosPage() {
                 {/* LADO ESQUERDO: MAPA */}
                 <div
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 bg-surface rounded-xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
+                    className="shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cursos"
@@ -583,7 +562,7 @@ export default function CursosPage() {
                     <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
                         {/* BARRA SUPERIOR DE ABAS */}
-                        <div className="bg-surface rounded-xl p-2.5 border border-border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
 
                             <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
                                 <button
@@ -677,7 +656,7 @@ export default function CursosPage() {
                         </div>
 
                         {/* CONTEÚDO DAS ABAS */}
-                        <div className="flex-1 bg-surface rounded-xl border border-transparent shadow-card-soft p-5 flex flex-col min-h-0 overflow-hidden">
+                        <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
 
                             {/* ABA 1: CATÁLOGO COMPLETO DE CURSOS PRESENCIAIS */}
                             {activeTab === 'catalogo' && (
@@ -901,7 +880,7 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0">
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0">
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat) => {
                                                 const isSelected = selectedCategory === cat.name;
@@ -910,9 +889,9 @@ export default function CursosPage() {
                                                     <div
                                                         key={cat.name}
                                                         onClick={() => setSelectedCategory(isSelected ? 'todas' : cat.name)}
-                                                        className={`rounded-xl p-3.5 border transition-all cursor-pointer ${isSelected
+                                                        className={`rounded-2xl p-3 border transition-all cursor-pointer ${isSelected
                                                                 ? 'bg-surface border-primary-600 shadow-md ring-2 ring-primary-600/20'
-                                                                : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs'
+                                                                : 'bg-surface-soft/60 border-neutral-100 hover:bg-surface hover:border-primary-200 shadow-2xs'
                                                             }`}
                                                     >
                                                         <div className="flex items-center justify-between mb-2">
@@ -938,9 +917,9 @@ export default function CursosPage() {
                                                             </div>
                                                         </div>
 
-                                                        <div className="w-full h-2 rounded-full bg-border overflow-hidden">
+                                                        <div className="w-full h-[18px] rounded-full bg-primary-50/50 overflow-hidden relative flex items-center">
                                                             <div
-                                                                className="h-full rounded-lg transition-all duration-500"
+                                                                className="h-full rounded-full transition-all duration-500"
                                                                 style={{ width: `${cat.percent}%`, backgroundColor: cat.color }}
                                                             />
                                                         </div>
@@ -980,45 +959,51 @@ export default function CursosPage() {
                                         </span>
                                     </div>
 
+                                    {/* LISTA RANKING: RANK + BARRA PROPORCIONAL COM NOME + PILULA DE VALOR */}
                                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
-                                                municipalityRanking.map((m) => (
-                                                    <div
-                                                        key={m.name}
-                                                        className="rounded-xl p-2.5 border bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs transition-all flex items-center justify-between gap-3"
-                                                    >
-                                                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 ${m.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-border text-text-secondary'
-                                                                }`}>
-                                                                {m.rank}
-                                                            </span>
-                                                            <div className="flex flex-col min-w-0 flex-1">
-                                                                <span className="text-[11px] font-semibold text-text-primary truncate">
+                                                municipalityRanking.map((m, index) => {
+                                                    const isFirst = index === 0;
+                                                    const rankStr = String(m.rank || index + 1).padStart(2, '0');
+                                                    const rankStyle = isFirst
+                                                        ? 'bg-primary-500 text-white shadow-2xs'
+                                                        : 'bg-primary-100 text-primary-700 border border-primary-200/50';
+                                                    const fillColor = isFirst ? 'bg-primary-500' : 'bg-primary-200';
+                                                    const textStyle = isFirst ? 'font-medium text-white' : 'font-medium text-primary-950';
+                                                    const valueStyle = isFirst
+                                                        ? 'bg-primary-50 text-primary-800 border border-primary-200/70'
+                                                        : 'bg-primary-50 text-primary-700 border border-primary-200/50';
+
+                                                    return (
+                                                        <div
+                                                            key={m.name}
+                                                            title={`${m.name}: ${m.count} cursos`}
+                                                            className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
+                                                        >
+                                                            {/* RANK */}
+                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                                {rankStr}
+                                                            </div>
+
+                                                            {/* BARRA: TRACK + FILL + NOME */}
+                                                            <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                                                <div 
+                                                                    className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                                                    style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
+                                                                />
+                                                                <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                     {m.name}
                                                                 </span>
-                                                                <div className="w-full h-1.5 rounded-full bg-border overflow-hidden mt-1">
-                                                                    <div
-                                                                        className="h-full rounded-lg transition-all duration-300"
-                                                                        style={{
-                                                                            width: `${m.percentBar}%`,
-                                                                            backgroundColor: m.heatColor === '#E2E8F0' ? '#64748B' : m.heatColor
-                                                                        }}
-                                                                    />
-                                                                </div>
+                                                            </div>
+
+                                                            {/* VALOR PILL */}
+                                                            <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                                {m.count}
                                                             </div>
                                                         </div>
-
-                                                        <div className="flex items-center gap-2 shrink-0">
-                                                            <span
-                                                                className="text-[11px] font-medium px-2 py-0.5 rounded-full text-white shadow-2xs inline-flex items-center justify-center leading-none"
-                                                                style={{ backgroundColor: m.heatColor === '#E2E8F0' ? '#64748B' : m.heatColor }}
-                                                            >
-                                                                {m.count} {m.count === 1 ? 'curso' : 'cursos'}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                ))
+                                                    );
+                                                })
                                             ) : (
                                                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
                                                     <MapPin size={24} className="mb-2 opacity-40 text-text-secondary" />
@@ -1026,46 +1011,51 @@ export default function CursosPage() {
                                                 </div>
                                             )
                                         ) : (
-                                            territoryRanking.map((t) => (
-                                                <div
-                                                    key={t.id}
-                                                    onClick={() => {
-                                                        const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
-                                                        setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
-                                                    }}
-                                                    className="rounded-xl p-2.5 border transition-all cursor-pointer flex items-center justify-between gap-3 bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs"
-                                                >
-                                                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 ${t.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-border text-text-secondary'
-                                                            }`}>
-                                                            {t.rank}
-                                                        </span>
-                                                        <div className="flex flex-col min-w-0 flex-1">
-                                                            <span className="text-[11px] font-semibold text-text-primary truncate">
+                                            territoryRanking.map((t, index) => {
+                                                const isFirst = index === 0;
+                                                const rankStr = String(t.rank || index + 1).padStart(2, '0');
+                                                const rankStyle = isFirst
+                                                    ? 'bg-primary-500 text-white shadow-2xs'
+                                                    : 'bg-primary-100 text-primary-700 border border-primary-200/50';
+                                                const fillColor = isFirst ? 'bg-primary-500' : 'bg-primary-200';
+                                                const textStyle = isFirst ? 'font-medium text-white' : 'font-medium text-primary-950';
+                                                const valueStyle = isFirst
+                                                    ? 'bg-primary-50 text-primary-800 border border-primary-200/70'
+                                                    : 'bg-primary-50 text-primary-700 border border-primary-200/50';
+
+                                                return (
+                                                    <div
+                                                        key={t.id}
+                                                        onClick={() => {
+                                                            const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
+                                                            setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                                                        }}
+                                                        title={`${t.name}: ${t.count} cursos`}
+                                                        className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+                                                    >
+                                                        {/* RANK */}
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                            {rankStr}
+                                                        </div>
+
+                                                        {/* BARRA: TRACK + FILL + NOME */}
+                                                        <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                                            <div 
+                                                                className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                                                style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
+                                                            />
+                                                            <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                 {t.name}
                                                             </span>
-                                                            <div className="w-full h-1.5 rounded-full bg-border overflow-hidden mt-1">
-                                                                <div
-                                                                    className="h-full rounded-lg transition-all duration-300"
-                                                                    style={{
-                                                                        width: `${t.percentBar}%`,
-                                                                        backgroundColor: t.heatColor === '#E2E8F0' ? '#64748B' : t.heatColor
-                                                                    }}
-                                                                />
-                                                            </div>
+                                                        </div>
+
+                                                        {/* VALOR PILL */}
+                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                            {t.count}
                                                         </div>
                                                     </div>
-
-                                                    <div className="flex items-center gap-2 shrink-0">
-                                                        <span
-                                                            className="text-[11px] font-medium px-2 py-0.5 rounded-full text-white shadow-2xs inline-flex items-center justify-center leading-none"
-                                                            style={{ backgroundColor: t.heatColor === '#E2E8F0' ? '#64748B' : t.heatColor }}
-                                                        >
-                                                            {t.count} cursos
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         )}
                                     </div>
                                 </div>
@@ -1097,6 +1087,7 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
+                                    {/* LISTA RANKING IES COM PADRÃO VISÃO GERAL */}
                                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
                                         {iesRanking.length > 0 ? (
                                             iesRanking.map((ies, idx) => {
@@ -1104,46 +1095,56 @@ export default function CursosPage() {
                                                     (ies.sigla && selectedIES.toUpperCase() === ies.sigla.toUpperCase()) ||
                                                     selectedIES === ies.fullName
                                                 );
+                                                const isFirst = idx === 0;
+                                                const maxCount = iesRanking[0]?.count || 1;
+                                                const pct = Math.min(100, Math.round((ies.count / maxCount) * 100));
+                                                const rankStr = String(idx + 1).padStart(2, '0');
+                                                const rankStyle = isFirst
+                                                    ? 'bg-primary-500 text-white shadow-2xs'
+                                                    : 'bg-primary-100 text-primary-700 border border-primary-200/50';
+                                                const fillColor = isSelected
+                                                    ? 'bg-primary-600'
+                                                    : (isFirst ? 'bg-primary-500' : 'bg-primary-200');
+                                                const textStyle = isFirst || isSelected
+                                                    ? 'font-medium text-white'
+                                                    : 'font-medium text-primary-950';
+                                                const valueStyle = isFirst
+                                                    ? 'bg-primary-50 text-primary-800 border border-primary-200/70'
+                                                    : 'bg-primary-50 text-primary-700 border border-primary-200/50';
 
                                                 return (
                                                     <div
                                                         key={ies.sigla}
                                                         onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
-                                                        className={`rounded-xl p-3 flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer ${isSelected
-                                                                ? 'bg-surface border-primary-600 shadow-md ring-2 ring-primary-600/20 border'
-                                                                : 'bg-surface-soft hover:bg-surface hover:border-primary-200 border border-transparent shadow-2xs'
-                                                            }`}
+                                                        title={`${ies.fullName}: ${ies.count} cursos em ${ies.municipios.size} cidades`}
+                                                        className={`flex items-center gap-2 w-full min-w-0 transition-all duration-200 hover:opacity-95 cursor-pointer p-1 rounded-xl ${
+                                                            isSelected ? 'bg-primary-50/80 ring-1 ring-primary-500/30' : ''
+                                                        }`}
                                                     >
-                                                        <div className="flex items-center gap-3 min-w-0">
-                                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-[11px] shrink-0 transition-colors ${isSelected ? 'bg-primary-600 text-white' : 'bg-primary-600/10 text-primary-600'
-                                                                }`}>
-                                                                #{idx + 1}
-                                                            </div>
-                                                            <div className="flex flex-col min-w-0">
-                                                                <div className="flex items-center gap-1.5">
-                                                                    <h4 className="text-[12px] font-semibold text-text-primary truncate">
-                                                                        {ies.sigla}
-                                                                    </h4>
-                                                                    {isSelected && (
-                                                                        <span className="bg-primary-600 text-white text-[9px] font-semibold px-1.5 py-0.2 rounded-md flex items-center gap-0.5 justify-center leading-none">
-                                                                            <Check size={16} strokeWidth={2} />
-                                                                            Ativa no Mapa
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                                <span className="text-[11px] text-text-secondary font-medium truncate" title={ies.fullName}>
-                                                                    {ies.fullName}
-                                                                </span>
-                                                            </div>
+                                                        {/* RANK */}
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                            {rankStr}
                                                         </div>
 
-                                                        <div className="flex items-center gap-2 shrink-0">
-                                                            <span className="text-[10px] font-medium text-text-secondary bg-border/50 px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
-                                                                {ies.municipios.size} {ies.municipios.size === 1 ? 'cidade' : 'cidades'}
+                                                        {/* BARRA: TRACK + FILL + NOME */}
+                                                        <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                                            <div 
+                                                                className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                                                style={{ width: `${Math.max(4, pct)}%` }}
+                                                            />
+                                                            <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                                {ies.sigla} <span className="opacity-75 text-[10px]">· {ies.fullName}</span>
                                                             </span>
-                                                            <span className="text-[11px] font-medium text-text-primary bg-primary-200 px-2.5 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
-                                                                {ies.count} {ies.count === 1 ? 'curso' : 'cursos'}
-                                                            </span>
+                                                        </div>
+
+                                                        {/* BADGE CIDADES */}
+                                                        <div className="h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none bg-primary-100/80 text-primary-800 border border-primary-200/60">
+                                                            {ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}
+                                                        </div>
+
+                                                        {/* VALOR PILL */}
+                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                            {ies.count}
                                                         </div>
                                                     </div>
                                                 );

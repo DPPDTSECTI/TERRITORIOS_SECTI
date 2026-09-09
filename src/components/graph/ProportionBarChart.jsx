@@ -102,7 +102,9 @@ export default function ProportionBarChart({
         const negPillStyle = isSemi
             ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
             : 'bg-primary-100 text-primary-700 border border-primary-200/60';
-        const totalPillStyle = 'bg-blue-100 text-blue-700 border border-blue-200/80';
+        const totalPillStyle = isSemi
+            ? 'bg-amber-100 text-amber-800 border border-amber-300/70'
+            : 'bg-primary-100 text-primary-700 border border-primary-200/80';
 
         return (
             <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
@@ -126,7 +128,7 @@ export default function ProportionBarChart({
 
                 {data.length === 0 ? (
                     <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
-                        <X size={80} className="text-primary-500" strokeWidth={2.5} />
+                        <X size={80} className={isSemi ? "text-amber-500" : "text-primary-500"} strokeWidth={2.5} />
                         <span className="text-neutral-500 font-medium text-[13px]">Nenhum dado disponível</span>
                     </div>
                 ) : (
@@ -223,8 +225,8 @@ export default function ProportionBarChart({
                                 <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{negativeLabel}</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-text-muted">
-                                <span className="w-2 h-2 rounded-full bg-blue-300 shadow-2xs"></span>
-                                <span>Total</span>
+                                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-400' : 'bg-primary-300'} shadow-2xs`}></span>
+                                <span className={isSemi ? "text-amber-800" : ""}>Total</span>
                             </div>
                         </div>
                     </>

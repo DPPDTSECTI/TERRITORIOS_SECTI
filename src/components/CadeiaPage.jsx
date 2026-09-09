@@ -568,9 +568,9 @@ export default function CadeiaPage() {
                                                 if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
                                             }
                                         }}
-                                        className={`rounded-xl p-3.5 flex flex-col justify-between gap-2 shadow-2xs transition-all duration-200 group cursor-pointer border w-full ${isSelected
-                                                ? 'bg-[#EFF6FF] border-primary-600 ring-2 ring-primary-600/25 shadow-md'
-                                                : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-xs'
+                                        className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 transition-all duration-300 group cursor-pointer border w-full ${isSelected
+                                                ? 'bg-primary-50/50 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated'
+                                                : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated'
                                             }`}
                                     >
                                         <div className="flex items-start justify-between gap-3 w-full">
@@ -660,30 +660,33 @@ export default function CadeiaPage() {
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0 w-full">
+                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full">
                         {segmentStats.map((seg) => {
                             const isSelected = selectedSegmento === seg.name;
                             return (
                                 <div
                                     key={seg.name}
                                     onClick={() => setSelectedSegmento(isSelected ? null : seg.name)}
-                                    className={`rounded-xl p-3.5 border transition-all cursor-pointer ${isSelected ? 'bg-surface border-primary-600 shadow-md ring-2 ring-primary-600/20' : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs'
-                                        }`}
+                                    className={`rounded-2xl p-3 border transition-all cursor-pointer ${
+                                        isSelected
+                                            ? 'bg-primary-50/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20'
+                                            : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated'
+                                    }`}
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2 min-w-0">
-                                            <span className="w-3 h-3 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: seg.color }} />
+                                            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: seg.color }} />
                                             <span className="text-[12px] font-semibold text-text-primary truncate">{seg.name}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-[12px] font-semibold text-text-primary">{seg.count} arranjos</span>
-                                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none" style={{ backgroundColor: `${seg.color}15`, color: seg.color }}>
+                                            <span className="text-[11.5px] font-medium text-text-secondary">{seg.count} arranjos</span>
+                                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none" style={{ backgroundColor: `${seg.color}15`, color: seg.color }}>
                                                 {seg.percent}%
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="w-full h-2 rounded-full bg-border overflow-hidden">
-                                        <div className="h-full rounded-lg transition-all duration-500" style={{ width: `${seg.percent}%`, backgroundColor: seg.color }} />
+                                    <div className="w-full h-[18px] rounded-full bg-primary-50/50 overflow-hidden relative flex items-center">
+                                        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${seg.percent}%`, backgroundColor: seg.color }} />
                                     </div>
                                 </div>
                             );
@@ -711,9 +714,9 @@ export default function CadeiaPage() {
                         </span>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full">
+                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0 w-full">
                         {selectedTerritory ? (
-                            municipalityRanking.map((m) => (
+                            municipalityRanking.map((m, index) => (
                                 <div
                                     key={m.name}
                                     onClick={() => {
@@ -721,39 +724,61 @@ export default function CadeiaPage() {
                                         const coords = findMunicipioCoords(munKey);
                                         if (coords) setFocusedAsset(coords);
                                     }}
-                                    className="p-2.5 flex items-center justify-between gap-3 transition-colors duration-200 cursor-pointer border-b border-neutral-200/50 bg-transparent hover:bg-surface-soft"
+                                    className="flex items-center gap-2 p-1 rounded-xl hover:bg-neutral-50/80 transition-colors cursor-pointer group"
                                 >
-                                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 ${m.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-border text-text-secondary'
-                                            }`}>
-                                            {m.rank}
+                                    <span className={`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10.5px] font-bold shrink-0 shadow-xs ${
+                                        index === 0
+                                            ? 'bg-primary-500 text-white ring-2 ring-primary-100'
+                                            : 'bg-primary-100 text-primary-700'
+                                    }`}>
+                                        {m.rank}
+                                    </span>
+
+                                    <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                        <div
+                                            className="absolute left-0 top-0 bottom-0 rounded-full bg-primary-200/50 transition-all duration-500"
+                                            style={{ width: `${m.percentBar}%` }}
+                                        />
+                                        <span className="relative z-10 px-2.5 text-[11.5px] font-medium text-primary-900 truncate flex-1">
+                                            {m.name}
                                         </span>
-                                        <span className="text-[11px] font-semibold text-text-primary truncate">{m.name}</span>
                                     </div>
-                                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full text-white shadow-2xs inline-flex items-center justify-center leading-none" style={{ backgroundColor: m.heatColor }}>
-                                        {m.count} {m.count === 1 ? 'cadeia' : 'cadeias'}
+
+                                    <span className="h-[24px] min-w-[34px] px-2 rounded-full bg-primary-100 text-primary-700 text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0">
+                                        {m.count}
                                     </span>
                                 </div>
                             ))
                         ) : (
-                            territoryRanking.map((t) => (
+                            territoryRanking.map((t, index) => (
                                 <div
                                     key={t.id}
                                     onClick={() => {
                                         const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
                                         handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
                                     }}
-                                    className="p-2.5 flex items-center justify-between gap-3 transition-colors duration-200 cursor-pointer border-b border-neutral-200/50 bg-transparent hover:bg-surface-soft"
+                                    className="flex items-center gap-2 p-1 rounded-xl hover:bg-neutral-50/80 transition-colors cursor-pointer group"
                                 >
-                                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 ${t.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-border text-text-secondary'
-                                            }`}>
-                                            {t.rank}
+                                    <span className={`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10.5px] font-bold shrink-0 shadow-xs ${
+                                        index === 0
+                                            ? 'bg-primary-500 text-white ring-2 ring-primary-100'
+                                            : 'bg-primary-100 text-primary-700'
+                                    }`}>
+                                        {t.rank}
+                                    </span>
+
+                                    <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                        <div
+                                            className="absolute left-0 top-0 bottom-0 rounded-full bg-primary-200/50 transition-all duration-500"
+                                            style={{ width: `${t.percentBar}%` }}
+                                        />
+                                        <span className="relative z-10 px-2.5 text-[11.5px] font-medium text-primary-900 truncate flex-1">
+                                            {t.name}
                                         </span>
-                                        <span className="text-[11px] font-semibold text-text-primary truncate">{t.name}</span>
                                     </div>
-                                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full text-white shadow-2xs inline-flex items-center justify-center leading-none" style={{ backgroundColor: t.heatColor }}>
-                                        {t.count} {t.count === 1 ? 'cadeia' : 'cadeias'}
+
+                                    <span className="h-[24px] min-w-[34px] px-2 rounded-full bg-primary-100 text-primary-700 text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0">
+                                        {t.count}
                                     </span>
                                 </div>
                             ))
@@ -791,68 +816,45 @@ export default function CadeiaPage() {
 
             {/* GRID DE KPIS */}
             <div className="w-full relative z-10 shrink-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 items-stretch w-full">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
                     {kpis.map((kpi, index) => {
-                        const styles = [
-                            {
-                                bg: 'surface-panel bg-primary-900/10',
-                                border: 'border-primary-500/20',
-                                iconBg: 'bg-primary-500/15',
-                                iconColor: 'text-primary-400',
-                                accent: 'bg-primary-500'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-[#0D9488]/15',
-                                iconColor: 'text-[#14B8A6]',
-                                accent: 'bg-[#0D9488]'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-primary-400/15',
-                                iconColor: 'text-primary-400',
-                                accent: 'bg-primary-400'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-accent-500/15',
-                                iconColor: 'text-accent-400',
-                                accent: 'bg-accent-500'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-success-500/15',
-                                iconColor: 'text-success-400',
-                                accent: 'bg-success-500'
-                            }
+                        const isHero = index === 0;
+                        const accentColors = [
+                            'text-white/70',
+                            'text-[#0D9488]',
+                            'text-accent-600',
+                            'text-warning-600',
+                            'text-success-600'
                         ];
-                        const s = styles[index] || styles[1];
 
                         return (
                             <div
                                 key={index}
-                                className={`relative rounded-[16px] p-[16px] flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md ${s.bg} border ${s.border} shadow-sm`}
+                                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
+                                    isHero
+                                        ? 'bg-primary-900 text-white shadow-card-elevated'
+                                        : 'bg-surface border border-neutral-100 shadow-card'
+                                }`}
                             >
                                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                <div className="flex items-center gap-2.5 w-full min-w-0">
-                                    <div className="flex items-center justify-center shrink-0 mr-1">
-                                        <kpi.icon size={16} strokeWidth={2.5} className={s.iconColor} />
-                                    </div>
+                                <div className="flex items-center gap-2 w-full min-w-0">
+                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? accentColors[0] : accentColors[index]} />
                                     <span
-                                        className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1"
-                                        title={kpi.label}
+                                        className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
+                                            isHero ? 'text-white/60' : 'text-text-muted'
+                                        }`}
                                     >
                                         {kpi.label}
                                     </span>
                                 </div>
 
-                                {/* LINHA INFERIOR: NÚMERO À ESQUERDA */}
-                                <div className="mt-3.5 flex items-baseline w-full">
-                                    <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+                                {/* LINHA INFERIOR: NÚMERO */}
+                                <div className="flex items-baseline w-full justify-between">
+                                    <span
+                                        className={`text-[28px] font-bold tracking-tight leading-none ${
+                                            isHero ? 'text-white' : 'text-text-primary'
+                                        }`}
+                                    >
                                         {kpi.value}
                                     </span>
                                 </div>
@@ -868,7 +870,7 @@ export default function CadeiaPage() {
                 {/* MAPA DE CADEIAS */}
                 <div
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 h-[480px] lg:h-full bg-surface rounded-xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-0 transition-[width] duration-300"
+                    className="shrink-0 h-[480px] lg:h-full bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-0 transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cadeias"

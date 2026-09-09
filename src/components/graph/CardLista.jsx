@@ -86,7 +86,7 @@ function CardLista({
  
  {/* SE HOUVER ABAS DINÂMICAS: RENDERIZA A BARRA DE NAVEGAÇÃO E BUSCA */}
  {hasTabs && (
- <div className="bg-surface rounded-xl p-2.5 border border-border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+ <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
  <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
  {tabs.map((tab) => {
  const TabIcon = tab.icon;
@@ -97,9 +97,9 @@ function CardLista({
  key={tab.id}
  type="button"
  onClick={() => onTabChange(tab.id)}
- className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+ className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
  isActive
- ? 'bg-primary-900 text-white shadow-sm'
+ ? 'bg-primary-900 text-white shadow-xs'
  : 'text-text-secondary hover:text-text-primary'
  }`}
  >
@@ -149,7 +149,7 @@ function CardLista({
  )}
 
  {/* CONTAINER PRINCIPAL DO CARD */}
- <div className={`bg-surface rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow p-6 relative flex flex-col justify-start flex-1 group cursor-default min-h-0 ${
+ <div className={`bg-surface rounded-2xl border border-neutral-100 shadow-card hover:shadow-card-elevated transition-shadow p-5 relative flex flex-col justify-start flex-1 group cursor-default min-h-0 ${
  isDropdownOpen ? '!z-50' : 'z-10'
  }`}>
 

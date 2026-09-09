@@ -471,45 +471,62 @@ export default function RelatorioPage() {
 
     const totalCadeias = scopedCadeias.length;
 
- // Municípios atendidos com pelo menos 1 ativo ou curso
- const munComAtivo = new Set(scopedAtivos.map(a => a.id_municipio || a.municipio));
- const munComCurso = new Set(scopedCursos.map(c => c.id_municipio || c.municipio));
- const munAtendidos = new Set([...munComAtivo, ...munComCurso]);
+    // Municípios atendidos com pelo menos 1 ativo ou curso
+    const munComAtivo = new Set(scopedAtivos.map(a => a.id_municipio || a.municipio));
+    const munComCurso = new Set(scopedCursos.map(c => c.id_municipio || c.municipio));
+    const munAtendidos = new Set([...munComAtivo, ...munComCurso]);
 
- const totalMunEscopo = scopedMunicipios.length || (selectedTerritoryId === 'bahia' ? 417 : 0);
+    const totalMunEscopo = scopedMunicipios.length || (selectedTerritoryId === 'bahia' ? (reportMode === 'semiarido' ? SEMIARIDO_TOTAL_MUNICIPIOS : BAHIA_TOTAL_MUNICIPIOS) : 0);
 
- // População e IFDM
- let populacaoTotal = 0;
- let ifdmMedio = null;
+    // População e IFDM
+    let populacaoTotal = 0;
+    let ifdmMedio = null;
 
- if (selectedTerritory) {
- populacaoTotal = Number(selectedTerritory.populacao) || 0;
- ifdmMedio = selectedTerritory.media_ifdm;
- } else {
- populacaoTotal = territoriosData.reduce((acc, t) => acc + (Number(t.populacao) || 0), 0);
- const validIfdms = territoriosData.map(t => Number(t.media_ifdm)).filter(n => !isNaN(n) && n > 0);
- ifdmMedio = validIfdms.length > 0 ? (validIfdms.reduce((a, b) => a + b, 0) / validIfdms.length).toFixed(3) : '0.620';
- }
+    if (selectedTerritory) {
+      if (reportMode === 'semiarido') {
+        const pct = Number(selectedTerritory.pct_semiarido || 0);
+        populacaoTotal = pct > 0 ? Math.round((Number(selectedTerritory.populacao) || 0) * (pct / 100)) : 0;
+      } else {
+        populacaoTotal = Number(selectedTerritory.populacao) || 0;
+      }
+      ifdmMedio = selectedTerritory.media_ifdm;
+    } else {
+      if (reportMode === 'semiarido') {
+        const semiTerrs = (territoriosData || []).filter(t => Number(t.pct_semiarido || t.qtd_mun_semiarido || 0) > 0);
+        const somaPop = semiTerrs.reduce((acc, t) => {
+          const pct = Number(t.pct_semiarido || 100);
+          return acc + Math.round((Number(t.populacao) || 0) * (pct / 100));
+        }, 0);
+        populacaoTotal = somaPop > 0 ? somaPop : 7150000;
 
- return {
- totalAtivos,
- rnpAtivos,
- rnpTaxa,
- totalCursos,
- federalCursos,
- estadualCursos,
- privadaCursos,
- federalTaxa,
- estadualTaxa,
- privadaTaxa,
- totalCadeias,
- totalMunEscopo,
- munAtendidosCount: munAtendidos.size,
- taxaCoberturaMun: totalMunEscopo > 0 ? ((munAtendidos.size / totalMunEscopo) * 100).toFixed(1) : '0.0',
- populacaoTotal: populacaoTotal ? populacaoTotal.toLocaleString('pt-BR') : '14.141.626',
- ifdmMedio
- };
- }, [scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, selectedTerritory, selectedTerritoryId, territoriosData]);
+        const validIfdms = semiTerrs.map(t => Number(t.media_ifdm)).filter(n => !isNaN(n) && n > 0);
+        ifdmMedio = validIfdms.length > 0 ? (validIfdms.reduce((a, b) => a + b, 0) / validIfdms.length).toFixed(3) : '0.598';
+      } else {
+        populacaoTotal = territoriosData.reduce((acc, t) => acc + (Number(t.populacao) || 0), 0);
+        const validIfdms = territoriosData.map(t => Number(t.media_ifdm)).filter(n => !isNaN(n) && n > 0);
+        ifdmMedio = validIfdms.length > 0 ? (validIfdms.reduce((a, b) => a + b, 0) / validIfdms.length).toFixed(3) : '0.620';
+      }
+    }
+
+    return {
+      totalAtivos,
+      rnpAtivos,
+      rnpTaxa,
+      totalCursos,
+      federalCursos,
+      estadualCursos,
+      privadaCursos,
+      federalTaxa,
+      estadualTaxa,
+      privadaTaxa,
+      totalCadeias,
+      totalMunEscopo,
+      munAtendidosCount: munAtendidos.size,
+      taxaCoberturaMun: totalMunEscopo > 0 ? ((munAtendidos.size / totalMunEscopo) * 100).toFixed(1) : '0.0',
+      populacaoTotal: populacaoTotal ? populacaoTotal.toLocaleString('pt-BR') : (reportMode === 'semiarido' ? '7.150.000' : '14.141.626'),
+      ifdmMedio
+    };
+  }, [scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, selectedTerritory, selectedTerritoryId, territoriosData, reportMode]);
 
  // TIPOS DE RELATÓRIO CONFIGURADOS
  const reportOptions = [
@@ -748,16 +765,6 @@ export default function RelatorioPage() {
     }
   };
 
-  const handleTestReactToPrint = () => {
-    const type = reportType === 'cursos' ? 'cursos' : (reportType === 'ativos' ? 'ativos' : (reportType === 'cadeias' ? 'cadeias' : 'sintese'));
-    const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
-      ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
-      : 'territorio=bahia';
-    const modoParam = `&modo=${reportMode}`;
-    const url = `/relatorio/${type}?${terrParam}${modoParam}&autoprint=true`;
-    window.open(url, '_blank');
-  };
-
   const handleExportPNG = async (overrideType = null) => {
     if (isExportingPng) return;
     setIsExportingPng(true);
@@ -908,9 +915,9 @@ export default function RelatorioPage() {
  <div className={`flex-1 flex flex-col lg:flex-row gap-5 min-h-0 `}>
 
  {/* NOVO CARD DO MAPA (MEIO) */}
- <div className={`w-full lg:w-[400px] xl:w-[500px] shrink-0 bg-surface rounded-xl border border-border shadow-sm p-4 sm:p-5 flex flex-col print:hidden min-h-0`}>
+ <div className={`w-full lg:w-[420px] xl:w-[480px] shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card p-4 sm:p-5 flex flex-col print:hidden min-h-0`}>
  <h3 className="text-sm font-semibold text-text-primary tracking-tight mb-3">Visão Espacial</h3>
- <div className="flex-1 w-full rounded-xl overflow-hidden border border-border shadow-sm relative z-0 bg-surface-soft">
+ <div className="flex-1 w-full rounded-2xl overflow-hidden border border-neutral-100 shadow-card relative z-0 bg-surface-soft">
  {(() => {
  const handleMapSelect = (t) => {
  if (t && t.id_territorio) setSelectedTerritoryId(String(t.id_territorio));
@@ -950,10 +957,10 @@ export default function RelatorioPage() {
  CAIXA 2: TIPOS DE RELATÓRIO E OS SEUS DADOS (DIREITA)
  ------------------------------------------------------------- */}
   <div
-    className={`flex-1 rounded-xl border shadow-sm p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden transition-all duration-700 print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0 relative z-10 ${
+    className={`flex-1 rounded-2xl border p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden transition-all duration-700 print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0 relative z-10 ${
       reportMode === 'semiarido'
         ? 'bg-white/95 border-amber-200/50 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.05)]'
-        : 'bg-surface border-border'
+        : 'bg-surface border-neutral-100 shadow-card'
     }`}
   >
 
@@ -1027,16 +1034,6 @@ export default function RelatorioPage() {
     )}
   </button>
 
-   <button
-     type="button"
-     onClick={handleTestReactToPrint}
-     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-700 text-white hover:bg-emerald-800 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Testar Impressão Nativa via react-to-print (${currentReportLabel})`}
-   >
-     <Printer size={15} />
-     <span>Testar PDF (react-to-print)</span>
-   </button>
-
   <button
     type="button"
     disabled={isExportingPng}
@@ -1096,8 +1093,8 @@ export default function RelatorioPage() {
  setTableSearch('');
  setSelectedCadeia(null);
  }}
- className={`px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 flex-1 justify-center ${isActive
- ? 'bg-primary-900 text-white shadow-xs'
+ className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 flex-1 justify-center ${isActive
+ ? (reportMode === 'semiarido' ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
  : 'text-text-secondary hover:text-text-primary hover:bg-surface/60'
  }`}
  >
@@ -1110,70 +1107,66 @@ export default function RelatorioPage() {
  </div>
 
   {/* CARTÕES DE RESUMO / KPIS DINÂMICOS DO RELATÓRIO SELECIONADO COM WARMTH DOURADO SUAVE */}
-  <div className={`tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 h-[98px] shrink-0 transition-colors duration-700 ${
-    reportMode === 'semiarido' ? 'bg-gradient-to-br from-amber-500/[0.02] to-transparent rounded-2xl' : ''
-  }`}>
-    {/* CARD 1: Ativos */}
-    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
+  <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-4 shrink-0 transition-colors duration-700">
+    {/* CARD 1: Ativos (Hero) */}
+    <div className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
       reportMode === 'semiarido'
-        ? 'semiarido-card-warmth-1'
-        : 'surface-panel bg-primary-900/10 border border-primary-500/20 shadow-sm'
+        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
+        : 'bg-primary-900 text-white shadow-card-elevated'
     }`}>
-      <div className="flex items-center gap-2.5 w-full min-w-0">
-        <div className="flex items-center justify-center shrink-0 mr-1">
-          <Database size={16} strokeWidth={2} className={reportMode === 'semiarido' ? 'text-amber-500' : 'text-primary-400'} />
-        </div>
-        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+      <div className="flex items-center gap-2 w-full min-w-0">
+        <Database size={16} strokeWidth={2} className={reportMode === 'semiarido' ? 'text-white/90' : 'text-white/70'} />
+        <span className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
+          reportMode === 'semiarido' ? 'text-amber-100' : 'text-white/60'
+        }`}>
           Ativos de CT&I
         </span>
       </div>
-      <div className="flex items-baseline gap-2 w-full">
-        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+      <div className="flex items-baseline w-full justify-between">
+        <span className="text-[28px] font-bold tracking-tight leading-none text-white">
           {statsSintese.totalAtivos}
         </span>
-        <span className="text-[11px] font-medium text-success-500">
+        <span className={`text-[11px] font-semibold ${
+          reportMode === 'semiarido' ? 'text-amber-100/90' : 'text-white/80'
+        }`}>
           {statsSintese.rnpAtivos} RNP ({statsSintese.rnpTaxa}%)
         </span>
       </div>
     </div>
 
     {/* CARD 2: Cursos */}
-    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
+    <div className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
       reportMode === 'semiarido'
-        ? 'semiarido-card-warmth-2'
-        : 'surface-panel border border-border/50 shadow-sm'
+        ? 'bg-white/95 border border-amber-200/40 shadow-card'
+        : 'bg-surface border border-neutral-100 shadow-card'
     }`}>
-      <div className="flex items-center gap-2.5 w-full min-w-0">
-        <div className="flex items-center justify-center shrink-0 mr-1">
-          <GraduationCap size={16} strokeWidth={2} className="text-[#14B8A6]" />
-        </div>
-        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+      <div className="flex items-center gap-2 w-full min-w-0">
+        <GraduationCap size={16} strokeWidth={2} className="text-[#0D9488]" />
+        <span className="text-[11px] font-medium uppercase tracking-wider truncate flex-1 text-text-muted">
           Cursos CT&I
         </span>
       </div>
-      <div className="flex items-baseline w-full">
-        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+      <div className="flex items-baseline w-full justify-between">
+        <span className="text-[28px] font-bold tracking-tight leading-none text-text-primary">
           {statsSintese.totalCursos}
         </span>
       </div>
     </div>
 
     {/* CARD 3: Cadeias */}
-    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
+    <div className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
       reportMode === 'semiarido'
-        ? 'semiarido-card-warmth-3'
-        : 'surface-panel border border-border/50 shadow-sm'
+        ? 'bg-white/95 border border-amber-200/40 shadow-card'
+        : 'bg-surface border border-neutral-100 shadow-card'
     }`}>
-      <div className="flex items-center gap-2.5 w-full min-w-0">
-        <div className="flex items-center justify-center shrink-0 mr-1">
-          <GitPullRequest size={16} strokeWidth={2} className="text-warning-400" />
-        </div>
-        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+      <div className="flex items-center gap-2 w-full min-w-0">
+        <GitPullRequest size={16} strokeWidth={2} className="text-accent-600" />
+        <span className="text-[11px] font-medium uppercase tracking-wider truncate flex-1 text-text-muted">
           Cadeias Mapeadas
         </span>
       </div>
-      <div className="flex items-baseline gap-2 w-full">
-        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
+      <div className="flex items-baseline w-full justify-between">
+        <span className="text-[28px] font-bold tracking-tight leading-none text-text-primary">
           {statsSintese.totalCadeias}
         </span>
         <span className="text-[11px] font-medium text-text-secondary">
@@ -1183,25 +1176,31 @@ export default function RelatorioPage() {
     </div>
 
     {/* CARD 4: Cobertura */}
-    <div className={`relative rounded-[16px] p-4 flex flex-col justify-between h-[98px] box-border cursor-default overflow-hidden transition-all duration-500 hover:shadow-md ${
-      reportMode === 'semiarido'
-        ? 'semiarido-card-warmth-4'
-        : 'surface-panel border border-border/50 shadow-sm'
-    }`} title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado">
-      <div className="flex items-center gap-2.5 w-full min-w-0">
-        <div className="flex items-center justify-center shrink-0 mr-1">
-          <MapPin size={16} strokeWidth={2} className="text-danger-400" />
-        </div>
-        <span className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1">
+    <div
+      title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado"
+      className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
+        reportMode === 'semiarido'
+          ? 'bg-white/95 border border-amber-200/40 shadow-card'
+          : 'bg-surface border border-neutral-100 shadow-card'
+      }`}
+    >
+      <div className="flex items-center gap-2 w-full min-w-0">
+        <MapPin size={16} strokeWidth={2} className="text-warning-600" />
+        <span className="text-[11px] font-medium uppercase tracking-wider truncate flex-1 text-text-muted">
           Cobertura CT&I
         </span>
       </div>
-      <div className="flex items-baseline gap-2 w-full">
-        <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
-          {statsSintese.munAtendidosCount} <span className="text-sm font-medium text-text-secondary">/ {statsSintese.totalMunEscopo}</span>
-        </span>
-        <span className="text-[11px] font-medium text-success-500">
-          {statsSintese.taxaCoberturaMun}% do total
+      <div className="flex items-baseline w-full justify-between">
+        <div className="flex items-baseline gap-1.5 min-w-0">
+          <span className="text-[28px] font-bold tracking-tight leading-none text-text-primary">
+            {statsSintese.munAtendidosCount}
+          </span>
+          <span className="text-sm font-medium text-text-secondary">
+            / {statsSintese.totalMunEscopo}
+          </span>
+        </div>
+        <span className="text-[11px] font-semibold text-success-600">
+          {statsSintese.taxaCoberturaMun}%
         </span>
       </div>
     </div>
@@ -1214,165 +1213,195 @@ export default function RelatorioPage() {
   {reportType === 'sintese' && (
     <div className="flex-1 overflow-y-auto [scrollbar-gutter:stable] pr-1 flex flex-col gap-4 min-h-0">
 
- {/* CARTÃO DE APRESENTAÇÃO DO ESCOPO */}
- <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-primary-900 to-primary-800 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
- <div className="flex flex-col max-w-xl">
- <div className="flex items-center gap-2 mb-1">
- <Award size={16} className="text-primary-300" />
- <span className="text-[11px] font-medium uppercase text-primary-300">
- Documento Analítico SECTI
- </span>
- </div>
- <h3 className="text-lg sm:text-base font-semibold leading-tight">
- {territoryTitle}
- </h3>
- <p className="text-xs text-white/80 mt-1 leading-relaxed">
- {selectedTerritory
- ? `Relatório territorial consolidado abrangendo ${statsSintese.totalMunEscopo} municípios pertencentes a este Território de Identidade, integrando infraestrutura física, formação superior e vocações produtivas.`
- : 'Panorama executivo estadual consolidando os 27 Territórios de Identidade e todos os 417 municípios da Bahia cadastrados na infraestrutura pública e privada de Ciência, Tecnologia e Inovação.'
- }
- </p>
- </div>
+  {/* CARTÃO DE APRESENTAÇÃO DO ESCOPO */}
+  <div className={`p-4 sm:p-5 rounded-2xl text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-500 shadow-card ${
+    reportMode === 'semiarido'
+      ? 'bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-amber-600/20'
+      : 'bg-gradient-to-br from-primary-900 to-primary-800'
+  }`}>
+  <div className="flex flex-col max-w-xl">
+  <div className="flex items-center gap-2 mb-1">
+  <Award size={16} className={reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'} />
+  <span className={`text-[11px] font-semibold uppercase tracking-wider ${
+    reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'
+  }`}>
+  {reportMode === 'semiarido' ? 'Recorte Estratégico Semiárido • SECTI' : 'Documento Analítico SECTI'}
+  </span>
+  </div>
+  <h3 className="text-lg sm:text-base font-bold leading-tight">
+  {territoryTitle}
+  </h3>
+  <p className="text-xs text-white/85 mt-1 leading-relaxed">
+  {selectedTerritory
+    ? (reportMode === 'semiarido'
+        ? `Relatório territorial consolidado com foco nos ${statsSintese.totalMunEscopo} municípios pertencentes ao Semiárido neste território, integrando infraestrutura científica, capacitação tecnológica e vocações produtivas resilientes.`
+        : `Relatório territorial consolidado abrangendo ${statsSintese.totalMunEscopo} municípios pertencentes a este Território de Identidade, integrando infraestrutura física, formação superior e vocações produtivas.`
+      )
+    : (reportMode === 'semiarido'
+        ? 'Panorama executivo estadual consolidando os 278 municípios do Semiárido Baiano com dados homologados de infraestrutura de CT&I, oferta universitária presencial e cadeias produtivas prioritárias.'
+        : 'Panorama executivo estadual consolidando os 27 Territórios de Identidade e todos os 417 municípios da Bahia cadastrados na infraestrutura pública e privada de Ciência, Tecnologia e Inovação.'
+      )
+  }
+  </p>
+  </div>
 
- <div className="flex flex-row sm:flex-col gap-2 shrink-0 sm:items-end">
- <div className="bg-surface/10 px-3 py-1.5 rounded-xl border border-white/15">
- <span className="text-[9px] text-white/70 block">População Estimada</span>
- <strong className="text-sm font-medium">{statsSintese.populacaoTotal} hab.</strong>
- </div>
- {statsSintese.ifdmMedio && (
- <div className="bg-surface/10 px-3 py-1.5 rounded-xl border border-white/15">
- <span className="text-[9px] text-white/70 block">IFDM Médio FIRJAN</span>
- <strong className="text-sm font-medium">{statsSintese.ifdmMedio}</strong>
- </div>
- )}
- </div>
- </div>
+  <div className="flex flex-row sm:flex-col gap-2 shrink-0 sm:items-end">
+  <div className="bg-white/10 backdrop-blur-xs px-3.5 py-1.5 rounded-xl border border-white/15">
+  <span className="text-[9px] text-white/75 block font-medium">
+    {reportMode === 'semiarido' ? 'População Semiárido' : 'População Estimada'}
+  </span>
+  <strong className="text-sm font-semibold">{statsSintese.populacaoTotal} hab.</strong>
+  </div>
+  {statsSintese.ifdmMedio && (
+  <div className="bg-white/10 backdrop-blur-xs px-3.5 py-1.5 rounded-xl border border-white/15">
+  <span className="text-[9px] text-white/75 block font-medium">
+    {reportMode === 'semiarido' ? 'IFDM Médio (Semiárido)' : 'IFDM Médio FIRJAN'}
+  </span>
+  <strong className="text-sm font-semibold">{statsSintese.ifdmMedio}</strong>
+  </div>
+  )}
+  </div>
+  </div>
 
- {/* GRIDS DE ANÁLISE COMPARATIVA */}
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  {/* GRIDS DE ANÁLISE COMPARATIVA */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
- {/* BLOCO 1: INFRAESTRUTURA DE ATIVOS E CONECTIVIDADE */}
- <div className="p-4 rounded-xl bg-surface-soft border border-border flex flex-col gap-3">
- <div className="flex items-center justify-between border-b border-border pb-2">
- <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
- <Database size={16} className="text-primary-600" />
- Infraestrutura de CT&I & RNP
- </h4>
- <span className="text-[10px] font-semibold text-primary-600 bg-primary-600/10 px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
- {scopedAtivos.length} Registros
- </span>
- </div>
+  {/* BLOCO 1: INFRAESTRUTURA DE ATIVOS E CONECTIVIDADE */}
+  <div className={`p-4.5 rounded-2xl border flex flex-col gap-3 transition-colors ${
+    reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
+  }`}>
+  <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
+  <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
+  <Database size={16} className={reportMode === 'semiarido' ? 'text-amber-600' : 'text-primary-600'} />
+  Infraestrutura de CT&I & RNP
+  </h4>
+  <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center justify-center leading-none shrink-0 ${
+    reportMode === 'semiarido' ? 'text-amber-700 bg-amber-50 border border-amber-200/80' : 'text-primary-600 bg-primary-600/10'
+  }`}>
+  {scopedAtivos.length} Registros
+  </span>
+  </div>
 
- <p className="text-[11px] text-text-secondary">
- Distribuição da conectividade avançada e polos de tecnologia operando no escopo:
- </p>
+  <p className="text-[11px] text-text-secondary">
+  Distribuição da conectividade avançada e polos de tecnologia operando no escopo:
+  </p>
 
- <div className="space-y-3 mt-1">
- <div className="flex flex-col gap-1.5">
- <div className="flex justify-between items-center text-[11px] text-text-primary">
- <div className="flex items-center gap-1.5 font-medium">
- <span className="w-2 h-2 rounded-full bg-primary-600"></span>
- Pontos de Presença / Conexão RNP
- </div>
- <span className="font-medium">{statsSintese.rnpAtivos} de {statsSintese.totalAtivos} <span className="text-text-secondary font-medium">({statsSintese.rnpTaxa}%)</span></span>
- </div>
- <div className="flex justify-between items-center text-[11px] text-text-primary">
- <div className="flex items-center gap-1.5 font-medium">
- <span className="w-2 h-2 rounded-full bg-neutral-200"></span>
- Demais Ativos Institucionais / Lab
- </div>
- <span className="font-medium">{statsSintese.totalAtivos - statsSintese.rnpAtivos} <span className="text-text-secondary font-medium">({(100 - Number(statsSintese.rnpTaxa)).toFixed(1)}%)</span></span>
- </div>
- </div>
- <div className="w-full h-2.5 rounded-full bg-neutral-200 overflow-hidden flex">
- <div
- className="h-full bg-primary-600 transition-all"
- style={{ width: `${statsSintese.rnpTaxa}%` }}
- />
- <div
- className="h-full bg-neutral-200 transition-all"
- style={{ width: `${100 - Number(statsSintese.rnpTaxa)}%` }}
- />
- </div>
- </div>
- </div>
+  <div className="space-y-3 mt-1">
+  <div className="flex flex-col gap-1.5">
+  <div className="flex justify-between items-center text-[11px] text-text-primary">
+  <div className="flex items-center gap-1.5 font-medium">
+  <span className={`w-2 h-2 rounded-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'}`}></span>
+  Pontos de Presença / Conexão RNP
+  </div>
+  <span className="font-medium">{statsSintese.rnpAtivos} de {statsSintese.totalAtivos} <span className="text-text-secondary font-medium">({statsSintese.rnpTaxa}%)</span></span>
+  </div>
+  <div className="flex justify-between items-center text-[11px] text-text-primary">
+  <div className="flex items-center gap-1.5 font-medium">
+  <span className="w-2 h-2 rounded-full bg-neutral-200"></span>
+  Demais Ativos Institucionais / Lab
+  </div>
+  <span className="font-medium">{statsSintese.totalAtivos - statsSintese.rnpAtivos} <span className="text-text-secondary font-medium">({(100 - Number(statsSintese.rnpTaxa)).toFixed(1)}%)</span></span>
+  </div>
+  </div>
+  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div
+  className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`}
+  style={{ width: `${statsSintese.rnpTaxa}%` }}
+  />
+  <div
+  className="h-full bg-neutral-200 transition-all rounded-full"
+  style={{ width: `${100 - Number(statsSintese.rnpTaxa)}%` }}
+  />
+  </div>
+  </div>
+  </div>
 
- {/* BLOCO 2: FORMAÇÃO SUPERIOR E MODALIDADES */}
- <div className="p-4 rounded-xl bg-surface-soft border border-border flex flex-col gap-3">
- <div className="flex items-center justify-between border-b border-border pb-2">
- <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
- <GraduationCap size={16} className="text-[#8B5CF6]" />
- Oferta Educacional CT&I
- </h4>
- <span className="text-[10px] font-semibold text-[#8B5CF6] bg-[#8B5CF6]/10 px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
- {scopedCursos.length} Cursos
- </span>
- </div>
+  {/* BLOCO 2: FORMAÇÃO SUPERIOR E MODALIDADES */}
+  <div className={`p-4.5 rounded-2xl border flex flex-col gap-3 transition-colors ${
+    reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
+  }`}>
+  <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
+  <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
+  <GraduationCap size={16} className={reportMode === 'semiarido' ? 'text-amber-600' : 'text-[#8B5CF6]'} />
+  Oferta Educacional CT&I
+  </h4>
+  <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center justify-center leading-none shrink-0 ${
+    reportMode === 'semiarido' ? 'text-amber-700 bg-amber-50 border border-amber-200/80' : 'text-indigo-600 bg-indigo-50 border border-indigo-200/60'
+  }`}>
+  {scopedCursos.length} Cursos
+  </span>
+  </div>
 
- <p className="text-[11px] text-text-secondary">
- Cursos superiores de ciência, tecnologia e inovação mapeados e ativos no escopo:
- </p>
+  <p className="text-[11px] text-text-secondary">
+  Cursos superiores presenciais de ciência, tecnologia e inovação mapeados e ativos:
+  </p>
 
- <div className="space-y-3 mt-1">
- <div>
- <div className="flex justify-between items-center text-[11px] font-medium text-text-primary mb-1">
- <span>Rede Pública Estadual</span>
- <span>{statsSintese.estadualCursos} ({statsSintese.estadualTaxa}%)</span>
- </div>
- <div className="w-full h-2 rounded-full bg-border overflow-hidden flex">
- <div className="h-full bg-primary-600 transition-all" style={{ width: `${statsSintese.estadualTaxa}%` }} />
- </div>
- </div>
+  <div className="space-y-3 mt-1">
+  <div>
+  <div className="flex justify-between items-center text-[11px] font-medium text-text-primary mb-1">
+  <span>Rede Pública Estadual</span>
+  <span>{statsSintese.estadualCursos} ({statsSintese.estadualTaxa}%)</span>
+  </div>
+  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`} style={{ width: `${statsSintese.estadualTaxa}%` }} />
+  </div>
+  </div>
 
- <div>
- <div className="flex justify-between items-center text-[11px] font-medium text-text-primary mb-1">
- <span>Rede Pública Federal</span>
- <span>{statsSintese.federalCursos} ({statsSintese.federalTaxa}%)</span>
- </div>
- <div className="w-full h-2 rounded-full bg-border overflow-hidden flex">
- <div className="h-full bg-success-700 transition-all" style={{ width: `${statsSintese.federalTaxa}%` }} />
- </div>
- </div>
+  <div>
+  <div className="flex justify-between items-center text-[11px] font-medium text-text-primary mb-1">
+  <span>Rede Pública Federal</span>
+  <span>{statsSintese.federalCursos} ({statsSintese.federalTaxa}%)</span>
+  </div>
+  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div className="h-full bg-emerald-600 transition-all rounded-full" style={{ width: `${statsSintese.federalTaxa}%` }} />
+  </div>
+  </div>
 
- <div>
- <div className="flex justify-between items-center text-[11px] font-medium text-text-primary mb-1">
- <span>Rede Privada / Outros</span>
- <span>{statsSintese.privadaCursos} ({statsSintese.privadaTaxa}%)</span>
- </div>
- <div className="w-full h-2 rounded-full bg-border overflow-hidden flex">
- <div className="h-full bg-[#8B5CF6] transition-all" style={{ width: `${statsSintese.privadaTaxa}%` }} />
- </div>
- </div>
- </div>
- </div>
+  <div>
+  <div className="flex justify-between items-center text-[11px] font-medium text-text-primary mb-1">
+  <span>Rede Privada / Outros</span>
+  <span>{statsSintese.privadaCursos} ({statsSintese.privadaTaxa}%)</span>
+  </div>
+  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div className="h-full bg-indigo-500 transition-all rounded-full" style={{ width: `${statsSintese.privadaTaxa}%` }} />
+  </div>
+  </div>
+  </div>
+  </div>
 
- </div>
+  </div>
 
- {/* VOCAÇÕES PRODUTIVAS MAPEADAS */}
- <div className="p-4 rounded-xl bg-surface-soft border border-border">
- <div className="flex items-center justify-between mb-2">
- <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
- <GitPullRequest size={16} className="text-warning-600" />
- Vocações Econômicas e Cadeias Produtivas Mapeadas ({statsSintese.totalCadeias})
- </h4>
- <span className="text-[10px] text-text-secondary font-medium">
- Fonte: Base Oficial SECTI / SDR
- </span>
- </div>
- <div className="flex flex-wrap gap-1.5">
- {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx) => (
- <span
- key={idx}
- className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-surface border border-border text-text-primary shadow-2xs inline-flex items-center justify-center leading-none"
- >
- {cad}
- </span>
- ))}
- {scopedCadeias.length === 0 && (
- <span className="text-xs text-text-muted">Nenhuma cadeia produtiva mapeada individualmente neste escopo.</span>
- )}
- </div>
- </div>
+  {/* VOCAÇÕES PRODUTIVAS MAPEADAS */}
+  <div className={`p-4.5 rounded-2xl border transition-colors ${
+    reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
+  }`}>
+  <div className="flex items-center justify-between mb-2">
+  <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
+  <GitPullRequest size={16} className={reportMode === 'semiarido' ? 'text-amber-600' : 'text-warning-600'} />
+  Vocações Econômicas e Cadeias Produtivas Mapeadas ({statsSintese.totalCadeias})
+  </h4>
+  <span className="text-[10px] text-text-secondary font-medium">
+  Fonte: Base Oficial SECTI / SDR
+  </span>
+  </div>
+  <div className="flex flex-wrap gap-1.5">
+  {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx) => (
+  <span
+  key={idx}
+  className={`text-[11px] font-medium px-2.5 py-1 rounded-full shadow-2xs inline-flex items-center justify-center leading-none transition-colors ${
+    reportMode === 'semiarido'
+      ? 'bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100/70'
+      : 'bg-primary-50/50 border border-primary-100 text-primary-900'
+  }`}
+  >
+  {cad}
+  </span>
+  ))}
+  {scopedCadeias.length === 0 && (
+  <span className="text-xs text-text-muted">Nenhuma cadeia produtiva mapeada individualmente neste escopo.</span>
+  )}
+  </div>
+  </div>
 
  </div>
  )}
@@ -1390,7 +1419,9 @@ export default function RelatorioPage() {
  value={tableSearch}
  onChange={(e) => setTableSearch(e.target.value)}
  placeholder={`Pesquisar nos ${tableData.length} registros...`}
- className="w-full pl-9 pr-7 py-1.5 rounded-xl bg-surface-soft border border-border text-xs text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
+ className={`w-full pl-9 pr-7 py-1.5 rounded-xl bg-surface-soft border border-border text-xs text-text-primary placeholder-text-muted focus:bg-surface focus:outline-none transition-colors ${
+    reportMode === 'semiarido' ? 'focus:border-amber-500 focus:ring-1 focus:ring-amber-400' : 'focus:border-primary-600'
+  }`}
  />
  {tableSearch && (
  <button
@@ -1409,7 +1440,9 @@ export default function RelatorioPage() {
  </div>
 
  {/* TABELA - CABEÇALHO (Estático, fora do scroll) */}
- <div className={`border border-border border-b-0 rounded-t-2xl bg-surface-soft print:hidden `}>
+ <div className={`border border-b-0 rounded-t-2xl transition-colors print:hidden ${
+    reportMode === 'semiarido' ? 'border-amber-200/80 bg-amber-50/50' : 'border-border bg-surface-soft'
+  }`}>
  <table className="w-full text-left border-collapse text-xs table-fixed">
  <colgroup>
  <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
@@ -1419,7 +1452,9 @@ export default function RelatorioPage() {
  {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
  {reportType !== 'cadeias' && <col className="w-[10%]" />}
  </colgroup>
- <thead className="text-text-muted font-semibold text-[11px] uppercase ">
+ <thead className={`font-semibold text-[11px] uppercase ${
+    reportMode === 'semiarido' ? 'text-amber-900/80' : 'text-text-muted'
+  }`}>
  <tr>
  <th className="py-2.5 px-3">
  {reportType === 'ativos' && 'Nome do Ativo'}
@@ -1465,7 +1500,9 @@ export default function RelatorioPage() {
  </div>
 
  {/* TABELA DE DADOS COM SCROLL INTERNO */}
- <div className={`flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] border border-border rounded-b-2xl shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0`}>
+ <div className={`flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] border rounded-b-2xl shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0 transition-colors ${
+    reportMode === 'semiarido' ? 'border-amber-200/80' : 'border-border'
+  }`}>
  <table className="w-full text-left border-collapse text-xs table-fixed">
  <colgroup>
  <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
@@ -1488,8 +1525,10 @@ export default function RelatorioPage() {
       setSelectedCadeia((prev) => (prev?.id === row.raw.id ? null : row.raw));
     }
   }}
-  className={`hover:bg-surface-soft transition-colors group cursor-pointer ${
-    isRowSelected ? 'bg-primary-50/80 font-semibold border-l-4 border-primary-600' : ''
+  className={`transition-colors group cursor-pointer ${
+    isRowSelected 
+      ? (reportMode === 'semiarido' ? 'bg-amber-50/90 font-semibold border-l-4 border-amber-600' : 'bg-primary-50/80 font-semibold border-l-4 border-primary-600') 
+      : (reportMode === 'semiarido' ? 'hover:bg-amber-50/40' : 'hover:bg-surface-soft')
   }`}
  >
  <td className="py-2 px-3 font-medium text-text-primary truncate" title={row.col1}>

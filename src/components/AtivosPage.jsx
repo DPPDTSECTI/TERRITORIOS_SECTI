@@ -398,71 +398,50 @@ export default function AtivosPage() {
             </div>
 
             {/* GRID DE KPIS */}
-            <div className="w-full relative z-10 shrink-0">
+            <div className="tour-kpis w-full relative z-10 shrink-0">
                 <div className="grid grid-cols-5 gap-4 items-stretch w-full">
                     {kpis.map((kpi, index) => {
-                        const styles = [
-                            {
-                                bg: 'surface-panel bg-primary-900/10',
-                                border: 'border-primary-500/20',
-                                iconBg: 'bg-primary-500/15',
-                                iconColor: 'text-primary-400',
-                                accent: 'bg-primary-500'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-[#0D9488]/15',
-                                iconColor: 'text-[#14B8A6]',
-                                accent: 'bg-[#0D9488]'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-primary-400/15',
-                                iconColor: 'text-primary-400',
-                                accent: 'bg-primary-400'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-accent-500/15',
-                                iconColor: 'text-accent-400',
-                                accent: 'bg-accent-500'
-                            },
-                            {
-                                bg: 'surface-panel',
-                                border: 'border-border/50',
-                                iconBg: 'bg-success-500/15',
-                                iconColor: 'text-success-400',
-                                accent: 'bg-success-500'
-                            }
+                        const isHero = index === 0;
+                        const accentColors = [
+                            'text-white/70',
+                            'text-[#0D9488]',
+                            'text-accent-600',
+                            'text-warning-600',
+                            'text-success-600'
                         ];
-                        const s = styles[index] || styles[1];
 
                         return (
                             <div
                                 key={index}
-                                className={`relative rounded-[16px] p-[16px] flex flex-col items-start cursor-default overflow-hidden transition-all duration-200 hover:shadow-md ${s.bg} border ${s.border} shadow-sm`}
+                                title={kpi.tooltip || kpi.label}
+                                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
+                                    isHero
+                                        ? 'bg-primary-900 text-white shadow-card-elevated'
+                                        : 'bg-surface border border-neutral-100 shadow-card'
+                                }`}
                             >
                                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                <div className="flex items-center gap-2.5 w-full min-w-0">
-                                    <div className="flex items-center justify-center shrink-0 mr-1">
-                                        <kpi.icon size={16} strokeWidth={2.5} className={s.iconColor} />
-                                    </div>
+                                <div className="flex items-center gap-2 w-full min-w-0">
+                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? accentColors[0] : accentColors[index]} />
                                     <span
-                                        className="text-[12px] font-medium text-text-secondary uppercase tracking-wide truncate flex-1"
+                                        className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
+                                            isHero ? 'text-white/60' : 'text-text-muted'
+                                        }`}
                                         title={kpi.label}
                                     >
                                         {kpi.label}
                                     </span>
                                 </div>
 
-                                {/* LINHA INFERIOR: NÚMERO À ESQUERDA */}
-                                <div className="mt-3.5 flex items-baseline w-full">
-                                    <span className="text-[32px] font-bold text-text-primary tracking-tight leading-none">
-                                        {kpi.value}
-                                    </span>
+                                {/* LINHA INFERIOR: NÚMERO */}
+                                <div className="flex items-baseline w-full justify-between">
+                                    <div className="flex items-baseline gap-1.5 min-w-0">
+                                        <span className={`text-[28px] font-bold tracking-tight leading-none ${
+                                            isHero ? 'text-white' : 'text-text-primary'
+                                        }`}>
+                                            {kpi.value}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -476,7 +455,7 @@ export default function AtivosPage() {
                 {/* LADO ESQUERDO: MAPA DE PONTOS DE ATIVOS */}
                 <div
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 bg-surface rounded-xl border border-border shadow-sm relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
+                    className="shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
                 >
                     <SideMap
                         mode="ativos"
@@ -492,7 +471,7 @@ export default function AtivosPage() {
 
                 {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
                 {isMapExpanded ? (
-                    <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-xl border border-transparent shadow-card-soft p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-2xl border border-neutral-100 shadow-card p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
                         {/* CABEÇALHO DA LISTA COMPACTA */}
                         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
                             <div className="flex items-center gap-2 min-w-0">
@@ -520,13 +499,13 @@ export default function AtivosPage() {
 
                         {/* BUSCA COMPACTA */}
                         <div className="relative my-2 shrink-0">
-                            <Search size={16} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+                            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
                             <input
                                 type="text"
                                 value={sidebarSearch}
                                 onChange={(e) => setSidebarSearch(e.target.value)}
-                                placeholder="Filtrar ativo, tipo ou cidade..."
-                                className="w-full pl-7 pr-3 py-1.5 text-[11px] bg-surface-soft border border-border rounded-xl focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors placeholder-text-muted"
+                                placeholder="Filtrar por nome, cidade..."
+                                className="w-full pl-8 pr-2.5 py-1 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
                             />
                             {sidebarSearch && (
                                 <button
@@ -539,8 +518,8 @@ export default function AtivosPage() {
                             )}
                         </div>
 
-                        {/* LISTA SCROLLÁVEL COMPACTA */}
-                        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
+                        {/* LISTA DE CARDS COMPACTOS */}
+                        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1 min-h-0 divide-y divide-border/40">
                             {compactAtivosList.length > 0 ? (
                                 compactAtivosList.map((ativo) => {
                                     const IconComp = ativo.icone || Database;
@@ -568,7 +547,7 @@ export default function AtivosPage() {
                                                     }
                                                 }
                                             }}
-                                            className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 w-full ${isSelected
+                                            className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer w-full ${isSelected
                                                     ? 'bg-primary-50/50'
                                                     : 'bg-transparent hover:bg-surface-soft'
                                                 }`}
@@ -615,7 +594,7 @@ export default function AtivosPage() {
                     <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
                         {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
-                        <div className="bg-surface rounded-xl p-2.5 border border-border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
 
                             {/* ABAS */}
                             <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
@@ -685,7 +664,7 @@ export default function AtivosPage() {
                         </div>
 
                         {/* CONTEÚDO DA ABA SELECIONADA */}
-                        <div className="flex-1 bg-surface rounded-xl border border-transparent shadow-card-soft p-5 flex flex-col min-h-0 overflow-hidden">
+                        <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
 
                             {/* ABA 1: CATÁLOGO DE ATIVOS */}
                             {activeTab === 'catalogo' && (
@@ -885,7 +864,7 @@ export default function AtivosPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0">
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0">
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat) => {
                                                 const isSelected = selectedTipo === cat.name;
@@ -895,37 +874,37 @@ export default function AtivosPage() {
                                                     <div
                                                         key={cat.name}
                                                         onClick={() => setSelectedTipo(isSelected ? 'todos' : cat.name)}
-                                                        className={`rounded-xl p-3.5 border transition-all cursor-pointer ${isSelected
+                                                        className={`rounded-2xl p-3 border transition-all cursor-pointer ${isSelected
                                                             ? 'bg-surface border-primary-500 shadow-md ring-2 ring-primary-500/20'
-                                                            : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 shadow-2xs'
+                                                            : 'bg-surface-soft/60 border-neutral-100 hover:bg-surface hover:border-primary-200 shadow-2xs'
                                                             }`}
                                                     >
                                                         <div className="flex items-center justify-between mb-2">
                                                             <div className="flex items-center gap-2 min-w-0">
                                                                 <div
-                                                                    className="w-5 h-5 rounded-md flex items-center justify-center shrink-0"
+                                                                    className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
                                                                     style={{ backgroundColor: `${cat.corHex}20`, color: cat.corHex }}
                                                                 >
-                                                                    <IconComponent size={12} />
+                                                                    <IconComponent size={13} />
                                                                 </div>
                                                                 <span className="text-[12px] font-semibold text-text-primary truncate">
                                                                     {cat.name}
                                                                 </span>
                                                             </div>
                                                             <div className="flex items-center gap-2">
-                                                                <span className="text-[12px] font-semibold text-text-primary w-[64px] text-right inline-block">
+                                                                <span className="text-[12px] font-semibold text-text-primary">
                                                                     {cat.count} {cat.count === 1 ? 'ativo' : 'ativos'}
                                                                 </span>
                                                                 <span
-                                                                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary-300/10 text-primary-700 inline-flex items-center justify-center leading-none"
+                                                                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 inline-flex items-center justify-center leading-none"
                                                                     title={`${cat.percent}% do total de ativos`}
                                                                 >
                                                                     {cat.percent}%
                                                                 </span>
                                                                 {cat.rnpCount > 0 && (
                                                                     <span
-                                                                        className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-primary-700/15 text-primary-800 border border-primary-700/20 shadow-2xs w-[92px] text-center inline-block shrink-0 inline-flex items-center justify-center leading-none"
-                                                                        title={`${cat.rnpCount} de ${cat.count} ativo(s) com conexão RNP (${cat.rnpPercent.toFixed(1)}%)`}
+                                                                        className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-primary-700/15 text-primary-800 border border-primary-700/20 shadow-2xs shrink-0 inline-flex items-center justify-center leading-none"
+                                                                        title={`${cat.rnpCount} com RNP`}
                                                                     >
                                                                         {cat.rnpCount} RNP ({cat.rnpPercent % 1 === 0 ? cat.rnpPercent.toFixed(0) : cat.rnpPercent.toFixed(1)}%)
                                                                     </span>
@@ -933,25 +912,25 @@ export default function AtivosPage() {
                                                             </div>
                                                         </div>
 
-                                                        {/* BARRA DE PROGRESSO EMPILHADA */}
-                                                        <div className="w-full h-2 rounded-full bg-border overflow-hidden relative">
+                                                        {/* TRACK DE BARRA COMPARATIVA */}
+                                                        <div className="w-full h-[18px] rounded-full bg-primary-50/50 overflow-hidden relative flex items-center">
                                                             <div
-                                                                className="h-full flex rounded-lg overflow-hidden transition-all duration-500"
+                                                                className="h-full flex rounded-full overflow-hidden transition-all duration-500"
                                                                 style={{ width: `${cat.percent}%` }}
                                                             >
                                                                 {cat.rnpCount > 0 && (
                                                                     <div
-                                                                        className="h-full bg-primary-700 transition-all duration-300"
+                                                                        className="h-full bg-primary-600 transition-all duration-300"
                                                                         style={{ width: `${cat.rnpPercent}%` }}
-                                                                        title={`${cat.name}: ${cat.rnpCount} com RNP (${cat.rnpPercent.toFixed(0)}%)`}
-                                                                    ></div>
+                                                                        title={`${cat.name}: ${cat.rnpCount} com RNP`}
+                                                                    />
                                                                 )}
                                                                 {cat.outrosCount > 0 && (
                                                                     <div
-                                                                        className="h-full bg-primary-300 transition-all duration-300"
+                                                                        className="h-full bg-primary-200 transition-all duration-300"
                                                                         style={{ width: `${cat.outrosPercent}%` }}
-                                                                        title={`${cat.name}: ${cat.outrosCount} demais (${cat.outrosPercent.toFixed(0)}%)`}
-                                                                    ></div>
+                                                                        title={`${cat.name}: ${cat.outrosCount} demais`}
+                                                                    />
                                                                 )}
                                                             </div>
                                                         </div>
@@ -968,7 +947,7 @@ export default function AtivosPage() {
                                 </div>
                             )}
 
-                            {/* ABA 3: RANKING TERRITORIAL OU MUNICIPAL (BARRAS EMPILHADAS COM RNP) */}
+                            {/* ABA 3: RANKING TERRITORIAL OU MUNICIPAL (BARRAS COMPARATIVAS VISÃO GERAL) */}
                             {activeTab === 'ranking' && (
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="mb-3 shrink-0 flex items-center justify-between flex-wrap gap-2">
@@ -988,19 +967,6 @@ export default function AtivosPage() {
                                         </div>
 
                                         <div className="flex items-center gap-2.5">
-                                            {/* LEGENDA BARRAS EMPILHADAS */}
-                                            <div className="flex items-center gap-2.5 bg-surface-soft border border-border px-2.5 py-1 rounded-full text-[10px] font-medium shadow-2xs justify-center leading-none">
-                                                <div className="flex items-center gap-1">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-primary-700"></span>
-                                                    <span className="text-primary-800">Com RNP</span>
-                                                </div>
-                                                <span className="text-gray-300">|</span>
-                                                <div className="flex items-center gap-1">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-primary-300"></span>
-                                                    <span className="text-primary-700">Demais Ativos</span>
-                                                </div>
-                                            </div>
-
                                             {selectedTerritory ? (
                                                 <button
                                                     type="button"
@@ -1017,79 +983,70 @@ export default function AtivosPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
+                                    {/* LISTA RANKING: RANK + BARRA PROPORCIONAL COM NOME + PILULA DE VALOR */}
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
-                                                municipalityRanking.map((m) => (
-                                                    <div
-                                                        key={m.name}
-                                                        onClick={() => {
-                                                            const munKey = String(m.name || '').trim();
-                                                            const coords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()];
-                                                            if (coords) {
-                                                                setFocusedAsset({
-                                                                    lat: coords[0],
-                                                                    lng: coords[1],
-                                                                    zoom: 12,
-                                                                    ts: Date.now()
-                                                                });
-                                                            }
-                                                        }}
-                                                        className="p-2.5 flex items-center justify-between gap-3 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 bg-transparent hover:bg-surface-soft"
-                                                    >
-                                                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 ${m.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-border text-text-secondary'
-                                                                }`}>
-                                                                {m.rank}
-                                                            </span>
-                                                            <div className="flex flex-col min-w-0 flex-1">
-                                                                <span className="text-[11px] font-semibold text-text-primary truncate">
+                                                municipalityRanking.map((m, index) => {
+                                                    const isFirst = index === 0;
+                                                    const rankStr = String(m.rank || index + 1).padStart(2, '0');
+                                                    const rankStyle = isFirst
+                                                        ? 'bg-primary-500 text-white shadow-2xs'
+                                                        : 'bg-primary-100 text-primary-700 border border-primary-200/50';
+                                                    const fillColor = isFirst ? 'bg-primary-500' : 'bg-primary-200';
+                                                    const textStyle = isFirst ? 'font-medium text-white' : 'font-medium text-primary-950';
+                                                    const valueStyle = isFirst
+                                                        ? 'bg-primary-50 text-primary-800 border border-primary-200/70'
+                                                        : 'bg-primary-50 text-primary-700 border border-primary-200/50';
+
+                                                    return (
+                                                        <div
+                                                            key={m.name}
+                                                            onClick={() => {
+                                                                const munKey = String(m.name || '').trim();
+                                                                const coords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()];
+                                                                if (coords) {
+                                                                    setFocusedAsset({
+                                                                        lat: coords[0],
+                                                                        lng: coords[1],
+                                                                        zoom: 12,
+                                                                        ts: Date.now()
+                                                                    });
+                                                                }
+                                                            }}
+                                                            title={`${m.name}: ${m.count} ativos (${m.rnpCount} com RNP)`}
+                                                            className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+                                                        >
+                                                            {/* RANK */}
+                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                                {rankStr}
+                                                            </div>
+
+                                                            {/* BARRA: TRACK + FILL + NOME */}
+                                                            <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                                                <div 
+                                                                    className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                                                    style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
+                                                                />
+                                                                <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                     {m.name}
                                                                 </span>
+                                                            </div>
 
-                                                                {/* BARRA EMPILHADA */}
-                                                                <div className="w-full h-2 rounded-full bg-border overflow-hidden mt-1.5 relative">
-                                                                    <div
-                                                                        className="h-full flex rounded-lg overflow-hidden transition-all duration-500"
-                                                                        style={{ width: `${m.percentBar}%` }}
-                                                                    >
-                                                                        {m.rnpCount > 0 && (
-                                                                            <div
-                                                                                className="h-full bg-primary-700 transition-all duration-300"
-                                                                                style={{ width: `${m.rnpPercent}%` }}
-                                                                                title={`${m.name}: ${m.rnpCount} ativo(s) com RNP (${m.rnpPercent.toFixed(0)}%)`}
-                                                                            ></div>
-                                                                        )}
-                                                                        {m.outrosCount > 0 && (
-                                                                            <div
-                                                                                className="h-full bg-primary-300 transition-all duration-300"
-                                                                                style={{ width: `${m.outrosPercent}%` }}
-                                                                                title={`${m.name}: ${m.outrosCount} demais ativo(s) (${m.outrosPercent.toFixed(0)}%)`}
-                                                                            ></div>
-                                                                        )}
-                                                                    </div>
+                                                            {/* RNP PILL */}
+                                                            {m.rnpCount > 0 && (
+                                                                <div className="h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none bg-primary-100/80 text-primary-800 border border-primary-200/60" title={`${m.rnpCount} com RNP`}>
+                                                                    {m.rnpCount} RNP
                                                                 </div>
+                                                            )}
+
+                                                            {/* VALOR PILL */}
+                                                            <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                                {m.count}
                                                             </div>
                                                         </div>
-
-                                                        <div className="flex items-center gap-1.5 shrink-0">
-                                                            <span
-                                                                className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary-300 text-white shadow-2xs w-[68px] text-center inline-block shrink-0 inline-flex items-center justify-center leading-none"
-                                                                title={`Total: ${m.count} ativo(s)`}
-                                                            >
-                                                                {m.count} {m.count === 1 ? 'ativo' : 'ativos'}
-                                                            </span>
-                                                            {m.rnpCount > 0 && (
-                                                                <span
-                                                                    className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-primary-700/15 text-primary-800 border border-primary-700/20 shadow-2xs w-[92px] text-center inline-block shrink-0 inline-flex items-center justify-center leading-none"
-                                                                    title={`${m.rnpCount} de ${m.count} ativo(s) com conexão RNP (${m.rnpPercent.toFixed(1)}%)`}
-                                                                >
-                                                                    {m.rnpCount} RNP ({m.rnpPercent % 1 === 0 ? m.rnpPercent.toFixed(0) : m.rnpPercent.toFixed(1)}%)
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                ))
+                                                    );
+                                                })
                                             ) : (
                                                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
                                                     <MapPin size={24} className="mb-2 opacity-40 text-text-secondary" />
@@ -1097,68 +1054,58 @@ export default function AtivosPage() {
                                                 </div>
                                             )
                                         ) : (
-                                            territoryRanking.map((t) => (
-                                                <div
-                                                    key={t.id || t.name}
-                                                    onClick={() => {
-                                                        const found = territoriosData.find(x => String(x.id_territorio) === String(t.id) || normalizeName(x.territorio) === normalizeName(t.name));
-                                                        setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
-                                                    }}
-                                                    className="p-2.5 flex items-center justify-between gap-3 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 bg-transparent hover:bg-surface-soft"
-                                                >
-                                                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 ${t.rank <= 3 ? 'bg-primary-900 text-white' : 'bg-border text-text-secondary'
-                                                            }`}>
-                                                            {t.rank}
-                                                        </span>
-                                                        <div className="flex flex-col min-w-0 flex-1">
-                                                            <span className="text-[11px] font-semibold text-text-primary truncate">
+                                            territoryRanking.map((t, index) => {
+                                                const isFirst = index === 0;
+                                                const rankStr = String(t.rank || index + 1).padStart(2, '0');
+                                                const rankStyle = isFirst
+                                                    ? 'bg-primary-500 text-white shadow-2xs'
+                                                    : 'bg-primary-100 text-primary-700 border border-primary-200/50';
+                                                const fillColor = isFirst ? 'bg-primary-500' : 'bg-primary-200';
+                                                const textStyle = isFirst ? 'font-medium text-white' : 'font-medium text-primary-950';
+                                                const valueStyle = isFirst
+                                                    ? 'bg-primary-50 text-primary-800 border border-primary-200/70'
+                                                    : 'bg-primary-50 text-primary-700 border border-primary-200/50';
+
+                                                return (
+                                                    <div
+                                                        key={t.id || t.name}
+                                                        onClick={() => {
+                                                            const found = territoriosData.find(x => String(x.id_territorio) === String(t.id) || normalizeName(x.territorio) === normalizeName(t.name));
+                                                            setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                                                        }}
+                                                        title={`${t.name}: ${t.count} ativos (${t.rnpCount} com RNP)`}
+                                                        className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+                                                    >
+                                                        {/* RANK */}
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                            {rankStr}
+                                                        </div>
+
+                                                        {/* BARRA: TRACK + FILL + NOME */}
+                                                        <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                                            <div 
+                                                                className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                                                style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
+                                                            />
+                                                            <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                 {t.name}
                                                             </span>
+                                                        </div>
 
-                                                            {/* BARRA EMPILHADA */}
-                                                            <div className="w-full h-2 rounded-full bg-border overflow-hidden mt-1.5 relative">
-                                                                <div
-                                                                    className="h-full flex rounded-lg overflow-hidden transition-all duration-500"
-                                                                    style={{ width: `${t.percentBar}%` }}
-                                                                >
-                                                                    {t.rnpCount > 0 && (
-                                                                        <div
-                                                                            className="h-full bg-primary-700 transition-all duration-300"
-                                                                            style={{ width: `${t.rnpPercent}%` }}
-                                                                            title={`${t.name}: ${t.rnpCount} ativo(s) com RNP (${t.rnpPercent.toFixed(0)}%)`}
-                                                                        ></div>
-                                                                    )}
-                                                                    {t.outrosCount > 0 && (
-                                                                        <div
-                                                                            className="h-full bg-primary-300 transition-all duration-300"
-                                                                            style={{ width: `${t.outrosPercent}%` }}
-                                                                            title={`${t.name}: ${t.outrosCount} demais ativo(s) (${t.outrosPercent.toFixed(0)}%)`}
-                                                                        ></div>
-                                                                    )}
-                                                                </div>
+                                                        {/* RNP PILL */}
+                                                        {t.rnpCount > 0 && (
+                                                            <div className="h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none bg-primary-100/80 text-primary-800 border border-primary-200/60" title={`${t.rnpCount} com RNP`}>
+                                                                {t.rnpCount} RNP
                                                             </div>
+                                                        )}
+
+                                                        {/* VALOR PILL */}
+                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                            {t.count}
                                                         </div>
                                                     </div>
-
-                                                    <div className="flex items-center gap-1.5 shrink-0">
-                                                        <span
-                                                            className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary-300 text-white shadow-2xs w-[68px] text-center inline-block shrink-0 inline-flex items-center justify-center leading-none"
-                                                            title={`Total: ${t.count} ativo(s)`}
-                                                        >
-                                                            {t.count} {t.count === 1 ? 'ativo' : 'ativos'}
-                                                        </span>
-                                                        {t.rnpCount > 0 && (
-                                                            <span
-                                                                className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-primary-700/15 text-primary-800 border border-primary-700/20 shadow-2xs w-[92px] text-center inline-block shrink-0 inline-flex items-center justify-center leading-none"
-                                                                title={`${t.rnpCount} de ${t.count} ativo(s) com conexão RNP (${t.rnpPercent.toFixed(1)}%)`}
-                                                            >
-                                                                {t.rnpCount} RNP ({t.rnpPercent % 1 === 0 ? t.rnpPercent.toFixed(0) : t.rnpPercent.toFixed(1)}%)
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         )}
                                     </div>
                                 </div>
