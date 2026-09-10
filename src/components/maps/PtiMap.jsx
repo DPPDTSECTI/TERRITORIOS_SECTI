@@ -1,22 +1,52 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { MapContainer, GeoJSON, TileLayer } from 'react-leaflet';
+import { MapContainer, GeoJSON, TileLayer, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
-import { SunMedium } from 'lucide-react';
 
 // IMPORTANDO A NOSSA NOVA BASE DE IDs
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
 
-// Paleta Soft Blue & Teal
+// Paleta Soft Blue & Teal (Modo Normal)
 const TERRITORY_COLORS = [
  '#1D3557', '#2A4665', '#385874', '#457B9D', '#548FB4', '#64A4CB',
  '#75B8E3', '#87CBEB', '#9FDDF3', '#A8DADC', '#96C6C8', '#85B2B4',
  '#739DA0', '#62898D', '#507479', '#3F6065', '#2E4C51', '#213B40',
  '#274D60', '#2C5E80', '#3270A0', '#3881C0', '#4293D8', '#4FA4EF',
  '#26597A', '#336D96', '#3D81B2'
+];
+
+// Paleta Ampliada e Contrastante de Tons de Amarelo, Dourado, Âmbar e Ocre para o Semiárido
+const SEMIARIDO_TERRITORY_COLORS = [
+  '#F6E05E', // 0: Bacia do Rio Grande (amarelo quente)
+  '#B85D19', // 1: Bacia do Rio Corrente (âmbar acobreado)
+  '#EAB308', // 2: Velho Chico (girassol vibrante)
+  '#78350F', // 3: Sertão do São Francisco (castanho âmbar profundo)
+  '#FEE140', // 4: Piemonte Norte do Itapicuru (amarelo citrino)
+  '#CA8A04', // 5: Itaparica (ouro envelhecido)
+  '#C67800', // 6: Irecê (açafrão escuro)
+  '#FDE68A', // 7: Chapada Diamantina (amarelo pastel iluminado)
+  '#F59E0B', // 8: Piemonte da Diamantina (âmbar clássico)
+  '#C2410C', // 9: Sisal (âmbar terracota)
+  '#FFF59D', // 10: Bacia do Jacuípe (amarelo creme suave)
+  '#FDE047', // 11: Semiárido Nordeste II (amarelo canário)
+  '#B8860B', // 12: Litoral Norte e Agreste Baiano (goldenrod escuro)
+  '#FACC15', // 13: Portal do Sertão (amarelo ouro vibrante)
+  '#92400E', // 14: Metropolitano de Salvador (castanho âmbar)
+  '#FEF08A', // 15: Recôncavo (amarelo manteiga suave)
+  '#CD7F32', // 16: Baixo Sul (bronze dourado)
+  '#FBBF24', // 17: Vale do Jiquiriçá (calêndula / ouro solar)
+  '#A16207', // 18: Piemonte do Paraguaçu (ocre dourado)
+  '#854D0E', // 19: Médio Rio de Contas (ocre escuro)
+  '#ECC94B', // 20: Sudoeste Baiano (trigo dourado)
+  '#D97706', // 21: Sertão Produtivo (ouro mostarda)
+  '#9A3412', // 22: Bacia do Paramirim (caramelo tostado)
+  '#D48806', // 23: Médio Sudoeste da Bahia (mel queimado)
+  '#F5D061', // 24: Litoral Sul (ouro areia)
+  '#B45309', // 25: Costa do Descobrimento (âmbar conhaque)
+  '#FCD34D'  // 26: Extremo Sul (damasco dourado)
 ];
 
 const GEOGRAPHICAL_ORDER = [
@@ -70,22 +100,40 @@ const uniqueTerritories = Object.values(
 
 // 2. Agora as cores são indexadas pelo ID DO TERRITÓRIO (Zero chance de falha!)
 const territoryColorMap = {};
+const semiaridoTerritoryColorMap = {};
 uniqueTerritories.forEach((territorio, index) => {
  territoryColorMap[territorio.id] = TERRITORY_COLORS[index] || '#333333';
+ semiaridoTerritoryColorMap[territorio.id] = SEMIARIDO_TERRITORY_COLORS[index] || '#F59E0B';
 });
 
 // 3. Ponte de cruzamento: Nome do GeoJSON -> Objeto de IDs do Supabase
 const buildMunicipioTerritoryMap = () => {
  const m = {};
  municipiosDB.forEach((row) => {
- m[normalizeName(row.nome_municipio)] = {
- id_municipio: row.id_municipio,
- id_territorio: row.id_territorio,
- nome_territorio: row.nome_territorio
- };
+  m[normalizeName(row.nome_municipio)] = {
+  id_municipio: row.id_municipio,
+  id_territorio: row.id_territorio,
+  nome_territorio: row.nome_territorio,
+  nome_municipio: row.nome_municipio
+  };
  });
  return m;
 };
+
+// Rastreador de zoom do Leaflet
+function ZoomTracker({ onZoomChange }) {
+  const map = useMapEvents({
+    zoomend: () => {
+      onZoomChange(map.getZoom());
+    }
+  });
+
+  useEffect(() => {
+    onZoomChange(map.getZoom());
+  }, [map, onZoomChange]);
+
+  return null;
+}
 
 // ================= MAPA PRINCIPAL =================
 export default function PtiMap({
@@ -98,172 +146,322 @@ export default function PtiMap({
 	semiaridoMunicipios = [],
 	onToggleSemiarido = null
 }) {
- const [geoJsonData, setGeoJsonData] = useState(null);
- const [loading, setLoading] = useState(true);
+  const [geoJsonData, setGeoJsonData] = useState(null);
+  const [mergedNormalData, setMergedNormalData] = useState(null);
+  const [mergedSemiData, setMergedSemiData] = useState(null);
+  const [territoryMeshes, setTerritoryMeshes] = useState({});
+  const [allTerritoryMesh, setAllTerritoryMesh] = useState(null);
+  const [loading, setLoading] = useState(true);
 
- // Estados do Hover e Tooltip usam IDs
- const [hoveredTerritoryId, setHoveredTerritoryId] = useState(null);
- const [hoveredMunicipalityId, setHoveredMunicipalityId] = useState(null);
+  // Controle de Zoom para exibição dinâmica de divisas municipais
+  const [currentZoom, setCurrentZoom] = useState(5.8);
+  const isZoomedIn = currentZoom >= 6.7;
+  const showMunicipalityLines = Boolean(selectedTerritory) || isZoomedIn;
 
- const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
- const [isMunListExpanded, setIsMunListExpanded] = useState(false);
+  // Estados do Hover e Tooltip usam IDs
+  const [hoveredTerritoryId, setHoveredTerritoryId] = useState(null);
+  const [hoveredMunicipalityId, setHoveredMunicipalityId] = useState(null);
 
- const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
- const geoJsonLayerRef = useRef(null);
- const mapContainerRef = useRef(null);
- const mapRef = useRef(null);
- const layersByTerritory = useRef({});
+  const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0 });
+  const [isMunListExpanded, setIsMunListExpanded] = useState(false);
 
- useEffect(() => {
- setLoading(true);
- layersByTerritory.current = {};
+  const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
+  const geoJsonLayerRef = useRef(null);
+  const mapContainerRef = useRef(null);
+  const mapRef = useRef(null);
+  const layersByTerritory = useRef({});
 
- fetch('/BA_(1)9396399957704198.json')
- .then((resp) => resp.json())
- .then((topology) => {
- const geojson = topojson.feature(topology, topology.objects.BA);
- const groups = {};
+  useEffect(() => {
+    layersByTerritory.current = {};
+  }, [selectedTerritory, filtroSemiarido, isZoomedIn]);
 
- geojson.features.forEach(feat => {
- const nome = feat.properties?.NOME || feat.properties?.nome || '';
- const dbInfo = municipioTerritoryMap[normalizeName(nome)];
+  useEffect(() => {
+    setLoading(true);
+    layersByTerritory.current = {};
 
- if (dbInfo) {
- feat.properties.id_municipio = dbInfo.id_municipio;
- feat.properties.id_territorio = dbInfo.id_territorio;
- feat.properties.nome_territorio = dbInfo.nome_territorio;
- feat.properties.nome_municipio_oficial = dbInfo.nome_municipio;
+    fetch('/BA_(1)9396399957704198.json')
+      .then((resp) => resp.json())
+      .then((topology) => {
+        const groupsNormal = {};
+        const groupsSemi = {};
 
- if (!groups[dbInfo.id_territorio]) groups[dbInfo.id_territorio] = [];
- groups[dbInfo.id_territorio].push(feat);
- } else {
- // Verificacao de municipios sem par no banco:
- console.warn(`Aviso: A cidade "${nome}" do GeoJSON nao achou par no BD.`);
- feat.properties.id_territorio = null;
- }
- });
+        // 1. Mapear id_territorio nas geometrias TopoJSON
+        topology.objects.BA.geometries.forEach(geom => {
+          const nome = geom.properties?.NOME || geom.properties?.nome || '';
+          const dbInfo = municipioTerritoryMap[normalizeName(nome)];
+          geom.id_territorio = dbInfo ? dbInfo.id_territorio : null;
+          geom.nome_territorio = dbInfo ? dbInfo.nome_territorio : null;
+          const isSemi = dbInfo ? isMunicipioSemiarido(dbInfo.nome_municipio) : false;
+          geom.is_semiarido = isSemi;
 
- setGeoJsonData(geojson);
- setLoading(false);
- })
- .catch(err => {
- console.error("Erro ao carregar mapa:", err);
- setLoading(false);
- });
- }, [municipioTerritoryMap]);
+          if (dbInfo) {
+            if (!groupsNormal[dbInfo.id_territorio]) groupsNormal[dbInfo.id_territorio] = [];
+            groupsNormal[dbInfo.id_territorio].push(geom);
 
- // ================= ESTILO DOS MUNICÍPIOS =================
-	const styleFeature = (feature) => {
-		const idTer = feature.properties.id_territorio;
-		if (!idTer) return { fillOpacity: 0.1, weight: 1, color: '#f87171', fillColor: '#fee2e2' };
+            const semiKey = `${dbInfo.id_territorio}_${isSemi ? '1' : '0'}`;
+            if (!groupsSemi[semiKey]) {
+              groupsSemi[semiKey] = {
+                id_territorio: dbInfo.id_territorio,
+                nome_territorio: dbInfo.nome_territorio,
+                is_semiarido: isSemi,
+                geoms: []
+              };
+            }
+            groupsSemi[semiKey].geoms.push(geom);
+          }
+        });
 
-		const dStats = territoriesDynamicStats[idTer];
-		const matchesFilters = dStats ? dStats.matchesFilters : true;
-		const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
-		const isMunSemi = isMunicipioSemiarido(feature.properties.nome_municipio_oficial || feature.properties.NOME || feature.properties.nome || '');
-		const blockClickAndColor = (filtroSemiarido && !isMunSemi) || (!isSelectedMap && !matchesFilters);
+        // 2. Mesclar territórios em polígonos únicos (SEM LINHAS INTERNAS DE MUNICÍPIOS)
+        const mergedNormal = {
+          type: 'FeatureCollection',
+          features: Object.entries(groupsNormal).map(([idTer, geoms]) => ({
+            type: 'Feature',
+            id: `ter-${idTer}`,
+            properties: {
+              id_territorio: Number(idTer),
+              nome_territorio: geoms[0]?.nome_territorio || ''
+            },
+            geometry: topojson.merge(topology, geoms)
+          }))
+        };
 
-		let opacity = 0.85;
-		let fillColor = territoryColorMap[idTer] || '#D6EAF8';
-		let weight = 0.8;
-		let color = '#FFFFFF';
+        const mergedSemi = {
+          type: 'FeatureCollection',
+          features: Object.values(groupsSemi).map(item => ({
+            type: 'Feature',
+            id: `semi-${item.id_territorio}-${item.is_semiarido ? '1' : '0'}`,
+            properties: {
+              id_territorio: Number(item.id_territorio),
+              nome_territorio: item.nome_territorio,
+              is_semiarido: item.is_semiarido
+            },
+            geometry: topojson.merge(topology, item.geoms)
+          }))
+        };
 
-		if (filtroSemiarido && !selectedTerritory) {
-			if (isMunSemi) {
-				fillColor = '#F59E0B';
-				opacity = 0.92;
-				weight = 1.0;
-				color = '#FFFFFF';
-			} else {
-				fillColor = '#E2E8F0';
-				opacity = 0.35;
-				weight = 0.6;
-				color = '#CBD5E1';
-			}
-		} else if (blockClickAndColor && !selectedTerritory) {
-			fillColor = '#E2E8F0';
-			opacity = 0.50;
-		} else if (selectedTerritory) {
-			if (isSelectedMap) {
-				opacity = 0.95;
-				weight = 1.2;
-				if (filtroSemiarido && isMunSemi) {
-					fillColor = '#F59E0B';
-				} else if (filtroSemiarido && !isMunSemi) {
-					fillColor = '#E2E8F0';
-					opacity = 0.40;
-				}
-			} else {
-				fillColor = '#E2E8F0';
-				opacity = 0.35;
-				weight = 0.6;
-			}
-		}
+        // 3. Pré-computar os contornos perimetrais de cada território
+        const tMeshes = {};
+        uniqueTerritories.forEach(t => {
+          tMeshes[t.id] = topojson.mesh(
+            topology,
+            topology.objects.BA,
+            (a, b) => (a.id_territorio === t.id) !== (b.id_territorio === t.id)
+          );
+        });
 
-		return { fillColor, weight, opacity: 1, color, fillOpacity: opacity, className: 'outline-none' };
-	};
+        // 3b. Mesh único com TODOS os contornos de território (para modo semiárido)
+        const combinedTerritoryMesh = topojson.mesh(
+          topology,
+          topology.objects.BA,
+          (a, b) => a.id_territorio !== b.id_territorio
+        );
 
- // ================= CONTROLE DE HOVER =================
- const onEachFeature = (feature, layer) => {
- const idTer = feature.properties.id_territorio;
- if (!idTer) return;
+        // 4. Gerar GeoJSON padrão das features dos municípios (usado quando um território é selecionado)
+        const geojson = topojson.feature(topology, topology.objects.BA);
+        geojson.features.forEach(feat => {
+          const nome = feat.properties?.NOME || feat.properties?.nome || '';
+          const dbInfo = municipioTerritoryMap[normalizeName(nome)];
 
- if (!layersByTerritory.current[idTer]) {
- layersByTerritory.current[idTer] = [];
- }
- layersByTerritory.current[idTer].push(layer);
+          if (dbInfo) {
+            feat.properties.id_municipio = dbInfo.id_municipio;
+            feat.properties.id_territorio = dbInfo.id_territorio;
+            feat.properties.nome_territorio = dbInfo.nome_territorio;
+            feat.properties.nome_municipio_oficial = dbInfo.nome_municipio;
+          } else {
+            console.warn(`Aviso: A cidade "${nome}" do GeoJSON nao achou par no BD.`);
+            feat.properties.id_territorio = null;
+          }
+        });
 
- layer.on({
- mouseover: (e) => {
- const isSelectedMap = selectedTerritory && selectedTerritory.id_territorio === idTer;
+        setMergedNormalData(mergedNormal);
+        setMergedSemiData(mergedSemi);
+        setTerritoryMeshes(tMeshes);
+        setAllTerritoryMesh(combinedTerritoryMesh);
+        setGeoJsonData(geojson);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Erro ao carregar mapa:", err);
+        setLoading(false);
+      });
+  }, [municipioTerritoryMap]);
 
- if (selectedTerritory && !isSelectedMap) return;
+  // ================= ESTILO DOS TERRITÓRIOS / MUNICÍPIOS =================
+  const styleFeature = (feature) => {
+    const idTer = Number(feature.properties.id_territorio);
+    if (!idTer) return { fillOpacity: 0.1, stroke: false, fillColor: '#fee2e2' };
 
- if (!selectedTerritory) {
- setHoveredTerritoryId(idTer);
- setHoveredMunicipalityId(null);
+    const isSelectedMap = selectedTerritory && Number(selectedTerritory.id_territorio) === idTer;
 
- layersByTerritory.current[idTer].forEach(l => {
- l.setStyle({ fillOpacity: 1, color: '#FFFFFF', weight: 1.5 });
- l.bringToFront();
- });
- } else {
- setHoveredMunicipalityId(feature.properties.id_municipio);
- e.target.setStyle({ fillOpacity: 1, color: '#1D3557', weight: 2 });
- e.target.bringToFront();
- }
- },
- mouseout: (e) => {
- if (!selectedTerritory) {
- layersByTerritory.current[idTer].forEach(l => {
- if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(l);
- });
- } else {
- if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(e.target);
- }
+    // 1. QUANDO HÁ UM TERRITÓRIO SELECIONADO / FILTRADO:
+    if (selectedTerritory) {
+      if (isSelectedMap) {
+        const isMunSemi = isMunicipioSemiarido(feature.properties.nome_municipio_oficial || feature.properties.NOME || feature.properties.nome || '');
+        let fillColor = territoryColorMap[idTer] || '#D6EAF8';
+        let opacity = 0.95;
 
- setHoveredTerritoryId(null);
- setHoveredMunicipalityId(null);
- setTooltip({ visible: false, x: 0, y: 0 });
- },
- click: (e) => {
-  const isMunSemi = isMunicipioSemiarido(feature.properties.nome_municipio_oficial || feature.properties.NOME || feature.properties.nome || '');
- const blockClick = (filtroSemiarido && !isMunSemi);
+        if (filtroSemiarido) {
+          if (isMunSemi) {
+            fillColor = semiaridoTerritoryColorMap[idTer] || '#F59E0B';
+          } else {
+            fillColor = '#E2E8F0';
+            opacity = 0.40;
+          }
+        }
 
- if (!blockClick) {
- const foundData = territoriosData.find(t => t.id_territorio === idTer);
- if (selectedTerritory && selectedTerritory.id_territorio === idTer) {
- onSelectTerritory(null);
- } else if (foundData) {
- onSelectTerritory(foundData);
- } else {
- // Se clicar num território que não voltou da API, manda só o básico
- onSelectTerritory({ id_territorio: idTer, nome_territorio: feature.properties.nome_territorio });
- }
- }
- }
- });
- };
+        return {
+          fillColor,
+          stroke: true,
+          weight: 1.2,
+          color: '#FFFFFF',
+          fillOpacity: opacity,
+          className: 'outline-none'
+        };
+      }
+
+      // Demais territórios esmaecidos sem linhas
+      return {
+        fillColor: '#E2E8F0',
+        stroke: false,
+        weight: 0,
+        color: 'transparent',
+        fillOpacity: 0.35,
+        className: 'outline-none'
+      };
+    }
+
+    // 2. QUANDO NÃO HÁ SELEÇÃO, MAS O USUÁRIO DEU ZOOM (zoom >= 6.7):
+    // Aparecem as divisas dos municípios com traço branco!
+    if (isZoomedIn) {
+      if (filtroSemiarido) {
+        const isMunSemi = isMunicipioSemiarido(feature.properties.nome_municipio_oficial || feature.properties.NOME || feature.properties.nome || '');
+        if (isMunSemi) {
+          return {
+            fillColor: semiaridoTerritoryColorMap[idTer] || '#F59E0B',
+            stroke: true,
+            weight: 1.0,
+            color: '#FFFFFF',
+            fillOpacity: 0.92,
+            className: 'outline-none'
+          };
+        } else {
+          return {
+            fillColor: '#E2E8F0',
+            stroke: true,
+            weight: 0.6,
+            color: '#CBD5E1',
+            fillOpacity: 0.35,
+            className: 'outline-none'
+          };
+        }
+      }
+
+      const dStats = territoriesDynamicStats[idTer];
+      const matchesFilters = dStats ? dStats.matchesFilters : true;
+      return {
+        fillColor: matchesFilters ? (territoryColorMap[idTer] || '#D6EAF8') : '#E2E8F0',
+        stroke: true,
+        weight: 1.0,
+        color: '#FFFFFF',
+        fillOpacity: matchesFilters ? 0.90 : 0.40,
+        className: 'outline-none'
+      };
+    }
+
+    // 3. VISÃO GERAL (SEM ZOOM E SEM FILTRO):
+    // ZERO LINHAS! Polígonos mesclados puros e sem divisas.
+    if (filtroSemiarido) {
+      const isSemi = feature.properties.is_semiarido;
+      return {
+        fillColor: isSemi ? (semiaridoTerritoryColorMap[idTer] || '#F59E0B') : '#E2E8F0',
+        stroke: false,
+        weight: 0,
+        color: 'transparent',
+        fillOpacity: isSemi ? 0.95 : 0.35,
+        className: 'outline-none'
+      };
+    }
+
+    const dStats = territoriesDynamicStats[idTer];
+    const matchesFilters = dStats ? dStats.matchesFilters : true;
+    return {
+      fillColor: matchesFilters ? (territoryColorMap[idTer] || '#D6EAF8') : '#E2E8F0',
+      stroke: false,
+      weight: 0,
+      color: 'transparent',
+      fillOpacity: matchesFilters ? 0.92 : 0.40,
+      className: 'outline-none'
+    };
+  };
+
+  // ================= CONTROLE DE HOVER =================
+  const onEachFeature = (feature, layer) => {
+    const idTer = Number(feature.properties.id_territorio);
+    if (!idTer) return;
+
+    if (!layersByTerritory.current[idTer]) {
+      layersByTerritory.current[idTer] = [];
+    }
+    layersByTerritory.current[idTer].push(layer);
+
+    layer.on({
+      mouseover: (e) => {
+        const isSelectedMap = selectedTerritory && Number(selectedTerritory.id_territorio) === idTer;
+
+        if (selectedTerritory && !isSelectedMap) return;
+
+        if (!selectedTerritory && !isZoomedIn) {
+          setHoveredTerritoryId(idTer);
+          setHoveredMunicipalityId(null);
+
+          // Aumenta a opacidade do território na visão geral
+          layersByTerritory.current[idTer]?.forEach(l => {
+            l.setStyle({ fillOpacity: 1.0 });
+          });
+        } else {
+          setHoveredTerritoryId(idTer);
+          setHoveredMunicipalityId(feature.properties.id_municipio);
+          e.target.setStyle({
+            fillOpacity: 1,
+            color: filtroSemiarido ? '#78350F' : '#1D3557',
+            weight: 2.2
+          });
+          e.target.bringToFront();
+        }
+      },
+      mouseout: (e) => {
+        if (!selectedTerritory && !isZoomedIn) {
+          layersByTerritory.current[idTer]?.forEach(l => {
+            if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(l);
+          });
+        } else {
+          if (geoJsonLayerRef.current) geoJsonLayerRef.current.resetStyle(e.target);
+        }
+
+        setHoveredTerritoryId(null);
+        setHoveredMunicipalityId(null);
+        setTooltip({ visible: false, x: 0, y: 0 });
+      },
+      click: (e) => {
+        const isSemi = feature.properties.is_semiarido !== undefined
+          ? feature.properties.is_semiarido
+          : isMunicipioSemiarido(feature.properties.nome_municipio_oficial || feature.properties.NOME || feature.properties.nome || '');
+        const blockClick = (filtroSemiarido && !isSemi);
+
+        if (!blockClick) {
+          const foundData = territoriosData.find(t => Number(t.id_territorio) === idTer);
+          if (selectedTerritory && Number(selectedTerritory.id_territorio) === idTer) {
+            onSelectTerritory(null);
+          } else if (foundData) {
+            onSelectTerritory(foundData);
+          } else {
+            // Se clicar num território que não voltou da API, manda só o básico
+            onSelectTerritory({ id_territorio: idTer, nome_territorio: feature.properties.nome_territorio });
+          }
+        }
+      }
+    });
+  };
 
  const handleMouseMove = (e) => {
  if (!hoveredTerritoryId && !hoveredMunicipalityId) return;
@@ -280,51 +478,54 @@ export default function PtiMap({
  setTooltip({ visible: true, x, y });
  };
 
- const hoveredData = hoveredTerritoryId ? territoriosData.find(t => t.id_territorio === hoveredTerritoryId) : null;
+  const hoveredData = hoveredTerritoryId ? territoriosData.find(t => Number(t.id_territorio) === hoveredTerritoryId) : null;
 
- // Dados temporários pro tooltip quando não tem dados da API
- const fallbackName = hoveredTerritoryId ? uniqueTerritories.find(t => t.id === hoveredTerritoryId)?.nome : '';
+  // Dados temporários pro tooltip quando não tem dados da API
+  const fallbackName = hoveredTerritoryId ? uniqueTerritories.find(t => t.id === hoveredTerritoryId)?.nome : '';
+
+  const hoveredMunName = hoveredMunicipalityId
+    ? municipiosDB.find(m => m.id_municipio === hoveredMunicipalityId)?.nome_municipio
+    : null;
 
  const selectedTerritoryMunicipalities = useMemo(() => {
- if (!selectedTerritory || !selectedTerritory.id_territorio) return [];
+    if (!selectedTerritory || !selectedTerritory.id_territorio) return [];
+    const terId = Number(selectedTerritory.id_territorio);
 
- let muns = municipiosDB
- .filter(m => m.id_territorio === selectedTerritory.id_territorio)
- .map(m => m.nome_municipio);
+    let muns = municipiosDB
+      .filter(m => Number(m.id_territorio) === terId)
+      .map(m => m.nome_municipio);
 
-  if (filtroSemiarido) {
-  muns = muns.filter(m => isMunicipioSemiarido(m));
-  }
- return muns.sort();
- }, [selectedTerritory, filtroSemiarido, semiaridoMunicipios]);
+    if (filtroSemiarido) {
+      muns = muns.filter(m => isMunicipioSemiarido(m));
+    }
+    return muns.sort();
+  }, [selectedTerritory, filtroSemiarido, semiaridoMunicipios]);
 
- // Determina se o território selecionado está a Leste (Direita) ou Oeste (Esquerda) da Bahia
- const isTerritoryOnRight = useMemo(() => {
- if (!selectedTerritory) return false;
- const idTer = selectedTerritory.id_territorio;
- const muns = idTer 
- ? municipiosDB.filter(m => m.id_territorio === idTer)
- : municipiosDB.filter(m => normalizeName(m.nome_territorio) === normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || ''));
- 
- if (muns.length === 0) return false;
+  // Determina se o território selecionado está a Leste (Direita) ou Oeste (Esquerda) da Bahia
+  const isTerritoryOnRight = useMemo(() => {
+    if (!selectedTerritory) return false;
+    const idTer = Number(selectedTerritory.id_territorio);
+    const muns = idTer 
+      ? municipiosDB.filter(m => Number(m.id_territorio) === idTer)
+      : municipiosDB.filter(m => normalizeName(m.nome_territorio) === normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || ''));
+  
+    if (muns.length === 0) return false;
 
- let sumLng = 0;
- let count = 0;
- muns.forEach(m => {
- const munNorm = normalizeName(m.nome_municipio);
- const coords = MUNICIPIOS_COORDS[m.nome_municipio] || MUNICIPIOS_COORDS[munNorm];
- if (coords) {
- sumLng += coords[1];
- count++;
- }
- });
+    let sumLng = 0;
+    let count = 0;
+    muns.forEach(m => {
+      const munNorm = normalizeName(m.nome_municipio);
+      const coords = MUNICIPIOS_COORDS[m.nome_municipio] || MUNICIPIOS_COORDS[munNorm];
+      if (coords) {
+        sumLng += coords[1];
+        count++;
+      }
+    });
 
- if (count === 0) return false;
- const avgLng = sumLng / count;
- // Se a longitude média for maior que -41.5 (Leste/Direita), o território fica no lado direito do mapa
- // Portanto, a caixa deve ficar no lado OPOSTO (Esquerda / left-4) para não cobrir a região!
- return avgLng > -41.5;
- }, [selectedTerritory]);
+    if (count === 0) return false;
+    const avgLng = sumLng / count;
+    return avgLng > -41.5;
+  }, [selectedTerritory]);
 
   useEffect(() => {
     if (!geoJsonData || !mapRef.current) return;
@@ -342,25 +543,33 @@ export default function PtiMap({
   useEffect(() => {
     if (!mapRef.current) return;
     if (selectedTerritory && selectedTerritory.id_territorio) {
-      const layers = layersByTerritory.current[selectedTerritory.id_territorio];
-      if (layers && layers.length > 0) {
-        const group = L.featureGroup(layers);
-        const b = group.getBounds();
-        if (b.isValid()) {
-          mapRef.current.fitBounds(b, { padding: [24, 24], maxZoom: 8.5, duration: 0.8 });
+      const terId = Number(selectedTerritory.id_territorio);
+      const timer = setTimeout(() => {
+        const layers = layersByTerritory.current[terId];
+        if (layers && layers.length > 0) {
+          const group = L.featureGroup(layers);
+          const b = group.getBounds();
+          if (b.isValid()) {
+            mapRef.current?.fitBounds(b, { padding: [24, 24], maxZoom: 8.5, duration: 0.8 });
+          }
         }
-      }
+      }, 60);
+      return () => clearTimeout(timer);
     } else {
       if (geoJsonLayerRef.current) {
         const b = geoJsonLayerRef.current.getBounds();
         if (b.isValid()) {
-          mapRef.current.fitBounds(b, { padding: [12, 12], duration: 0.8 });
+          mapRef.current?.fitBounds(b, { padding: [12, 12], duration: 0.8 });
         }
       } else {
-        mapRef.current.flyTo([-12.8, -41.2], 5.8, { duration: 0.8 });
+        mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.8 });
       }
     }
   }, [selectedTerritory]);
+
+  const currentData = showMunicipalityLines
+    ? geoJsonData
+    : (filtroSemiarido ? mergedSemiData : mergedNormalData);
 
   const municipalitiesToShow = isMunListExpanded ? selectedTerritoryMunicipalities : selectedTerritoryMunicipalities.slice(0, 4);
 
@@ -371,7 +580,7 @@ export default function PtiMap({
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
     >
-      {loading || !geoJsonData ? (
+      {loading || !currentData ? (
         <div className="flex flex-col items-center text-primary-600">
           <svg className="animate-spin h-6 w-6 mb-2 text-primary-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
           <span className="text-[11px] font-medium uppercase">Processando Malha...</span>
@@ -395,6 +604,8 @@ export default function PtiMap({
           className="w-full h-full outline-none z-0"
           style={{ background: 'transparent' }}
         >
+          <ZoomTracker onZoomChange={setCurrentZoom} />
+
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
             opacity={0.7}
@@ -403,12 +614,57 @@ export default function PtiMap({
           />
 
           <GeoJSON
-            key={`${selectedTerritory?.id_territorio || 'muns'}-semi${filtroSemiarido ? '1' : '0'}`}
+            key={`${selectedTerritory ? `sel-${selectedTerritory.id_territorio}` : (isZoomedIn ? `zoom-${filtroSemiarido ? '1' : '0'}` : `overview-${filtroSemiarido ? '1' : '0'}`)}`}
             ref={geoJsonLayerRef}
-            data={geoJsonData}
+            data={currentData}
             style={styleFeature}
             onEachFeature={onEachFeature}
           />
+
+          {/* Destaque externo do território apenas ao passar o mouse quando visão geral não aproximada */}
+          {hoveredTerritoryId && !selectedTerritory && !isZoomedIn && territoryMeshes[hoveredTerritoryId] && (
+            <GeoJSON
+              key={`hover-mesh-${hoveredTerritoryId}`}
+              data={territoryMeshes[hoveredTerritoryId]}
+              style={{
+                color: '#FFFFFF',
+                weight: 2.5,
+                opacity: 1,
+                fill: false
+              }}
+              interactive={false}
+            />
+          )}
+
+          {/* Contornos de TODOS os territórios no modo semiárido (visão geral) */}
+          {filtroSemiarido && !selectedTerritory && allTerritoryMesh && (
+            <GeoJSON
+              key={`semi-all-meshes`}
+              data={allTerritoryMesh}
+              style={{
+                color: '#78350F',
+                weight: 1.8,
+                opacity: 0.5,
+                fill: false
+              }}
+              interactive={false}
+            />
+          )}
+
+          {/* Contorno perimetral externo do território selecionado quando filtrado */}
+          {selectedTerritory && territoryMeshes[selectedTerritory.id_territorio] && (
+            <GeoJSON
+              key={`selected-mesh-${selectedTerritory.id_territorio}-${filtroSemiarido ? '1' : '0'}`}
+              data={territoryMeshes[selectedTerritory.id_territorio]}
+              style={{
+                color: filtroSemiarido ? '#78350F' : '#1D3557',
+                weight: 2.8,
+                opacity: 1,
+                fill: false
+              }}
+              interactive={false}
+            />
+          )}
         </MapContainer>
       )}
 
@@ -536,13 +792,27 @@ export default function PtiMap({
  className="absolute z-[1000] overflow-hidden rounded-xl border bg-white/95 backdrop-blur-md border-white shadow-card-soft pointer-events-none transition-opacity duration-150"
  style={{ top: tooltip.y, left: tooltip.x, width: 240 }}
  >
- <div className="h-1.5 w-full" style={{ backgroundColor: territoryColorMap[hoveredTerritoryId] || 'rgb(var(--color-primary-600))' }}></div>
- <div className="p-4">
- <div className="flex justify-between items-start mb-3">
- <h2 className="font-medium text-[13px] text-primary-950 leading-tight pr-2">
- {hoveredData ? hoveredData.territorio : fallbackName}
- </h2>
- </div>
+          <div
+            className="h-1.5 w-full"
+            style={{
+              backgroundColor: filtroSemiarido
+                ? (semiaridoTerritoryColorMap[hoveredTerritoryId] || '#F59E0B')
+                : (territoryColorMap[hoveredTerritoryId] || 'rgb(var(--color-primary-600))')
+            }}
+          ></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex flex-col">
+                {hoveredMunName && (
+                  <span className="text-[11px] font-semibold text-primary-600 uppercase tracking-wide mb-0.5">
+                    {hoveredMunName}
+                  </span>
+                )}
+                <h2 className="font-medium text-[13px] text-primary-950 leading-tight pr-2">
+                  {hoveredData ? hoveredData.territorio : fallbackName}
+                </h2>
+              </div>
+            </div>
  <div className="grid grid-cols-2 gap-2 mb-2">
  <div className="rounded-xl p-2 border bg-surface-soft border-border flex flex-col">
  <span className="text-[10px] text-text-muted font-medium mb-0.5">Ativos</span>

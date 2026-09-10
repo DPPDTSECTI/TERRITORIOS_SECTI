@@ -789,25 +789,11 @@ export default function RelatorioCadeiasPage() {
           </p>
         </div>
 
-        {/* CONTROLES DE IMPRESSÃO (OCULTOS NO PRINT) */}
-        <div className="flex items-center gap-2 print:hidden shrink-0">
-          <button
-            type="button"
-            onClick={() => navigate('/relatorio')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-xs"
-          >
-            <ArrowLeft size={14} />
-            <span>Voltar</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => handlePrint()}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1D3557] text-white hover:bg-[#2563EB] shadow-xs transition-all cursor-pointer"
-            title="Testar geração nativa de PDF via motor de impressão do navegador (react-to-print)"
-          >
-            <Printer size={14} />
-            <span>Testar PDF (react-to-print)</span>
-          </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[12px] font-bold text-[#1D3557] bg-[#D6EAF8]/50 border border-[#BAE6FD] px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
+            <Award size={14} className="text-[#2563EB]" />
+            Dados Oficiais SECTI/BA
+          </span>
         </div>
       </div>
 

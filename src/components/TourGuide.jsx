@@ -226,7 +226,7 @@ export default function TourGuide() {
     {
       target: '.tour-relatorio-export',
       title: 'Exportação de Dados',
-      content: 'Precisa dos dados para planilhas ou sistemas? Exporte facilmente tudo em formatos CSV (Excel) ou JSON!',
+      content: 'Precisa dos dados para apresentações ou análises? Exporte facilmente em planilha Excel (.xlsx), PDF executivo ou imagem PNG de alta resolução!',
       placement: 'left',
     },
     {

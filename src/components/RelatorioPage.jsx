@@ -24,8 +24,10 @@ import {
  Award,
  BarChart3,
  Image as ImageIcon,
- Compass
+ Compass,
+ FileSpreadsheet
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { DataContext } from '../context/DataContext';
 import {
  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
@@ -328,7 +330,8 @@ export default function RelatorioPage() {
           lng += Math.sin(offsetAngle) * offsetRadius;
         }
 
-        const rawUrl = row.fonte || fontesMap.get(idCadeia) || row.url_referencia || '';
+        const rawFonte = row.fonte || fontesMap.get(idCadeia) || '';
+        const rawUrl = rawFonte || row.url_referencia || '';
 
         mapCadeias.set(idCadeia, {
           id: idCadeia,
@@ -351,6 +354,7 @@ export default function RelatorioPage() {
           corHex: configTipo.corHex,
           icone: configTipo.icone,
           iconSvg: configTipo.iconSvg,
+          fonte: rawFonte,
           urlReferencia: rawUrl,
           semiarido: isSedeSemi,
           municipios_cobertos: []
@@ -658,57 +662,191 @@ export default function RelatorioPage() {
  return list;
  }, [reportType, scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, tableSearch, sortField, sortAsc]);
 
- // FUNÇÕES DE EXPORTAÇÃO
- const handleExportCSV = () => {
- if (!tableData || tableData.length === 0) {
- alert('Nenhum dado disponível para exportar no momento.');
- return;
- }
+  // FUNÇÕES DE EXPORTAÇÃO EXCEL (.XLSX)
+  const handleExportExcel = () => {
+    try {
+      const wb = XLSX.utils.book_new();
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const safeTerritoryName = (territoryTitle || 'bahia')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
 
- let headers = [];
- if (reportType === 'ativos') headers = ['Nome do Ativo', 'Sigla', 'Tipo', 'Município', 'Território', 'RNP'];
- else if (reportType === 'cursos') headers = ['Curso', 'Instituição / IES', 'Área de Conhecimento', 'Município', 'Território', 'Modalidade'];
- else if (reportType === 'cadeias') headers = ['Cadeia Produtiva', 'Tipo / Setor', 'Qtd Territórios', 'Territórios de Abrangência', 'Status', 'Situação'];
- else if (reportType === 'municipios') headers = ['Município', 'Território de Identidade', 'Código IBGE', 'Qtd Ativos', 'Qtd Cursos', 'Status CT&I'];
- else headers = ['Indicador', 'Valor', 'Categoria', 'Escopo', 'Data', 'Status'];
+      // Helper para ajustar larguras de coluna automaticamente no Excel
+      const fitCols = (data) => {
+        if (!data || data.length === 0) return [];
+        const keys = Object.keys(data[0]);
+        return keys.map((key) => {
+          let maxLen = key.length;
+          for (let i = 0; i < Math.min(data.length, 1000); i++) {
+            const val = data[i][key] != null ? String(data[i][key]) : '';
+            if (val.length > maxLen) maxLen = Math.min(val.length, 60);
+          }
+          return { wch: Math.max(maxLen + 3, 12) };
+        });
+      };
 
- const rows = tableData.map(r => [
- `"${String(r.col1 || '').replace(/"/g, '""')}"`,
- `"${String(r.col2 || '').replace(/"/g, '""')}"`,
- `"${String(r.col3 || '').replace(/"/g, '""')}"`,
- `"${String(r.col4 || '').replace(/"/g, '""')}"`,
- `"${String(r.col5 || '').replace(/"/g, '""')}"`,
- `"${String(r.col6 || '').replace(/"/g, '""')}"`
- ]);
+      // 1. DADOS BRUTOS DE ATIVOS DE CT&I
+      const rawAtivosData = scopedAtivos.map((a, idx) => ({
+        'ID': a.id_ativo || idx + 1,
+        'Nome do Ativo': a.nome_ativo || a.nome || 'Ativo sem nome',
+        'Sigla': a.sigla || '',
+        'Tipo de Ativo': a.tipo || 'Geral',
+        'Município': a.municipio || '',
+        'Território de Identidade': a.territorio_identidade || a.territorio || '',
+        'Conexão RNP': a.rnp ? 'Sim' : 'Não',
+        'Pertence ao Semiárido': a.semiarido ? 'Sim' : 'Não',
+        'Latitude': a.latitude != null ? a.latitude : '',
+        'Longitude': a.longitude != null ? a.longitude : '',
+        'Título Referência': a.tituloReferencia || a.titulo_referencia || '',
+        'URL Referência': a.urlReferencia || a.url_referencia || ''
+      }));
 
- const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
- const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
- const url = URL.createObjectURL(blob);
- const link = document.createElement('a');
- link.href = url;
- link.setAttribute('download', `relatorio_${reportType}_${selectedTerritoryId}_${new Date().toISOString().slice(0, 10)}.csv`);
- document.body.appendChild(link);
- link.click();
- document.body.removeChild(link);
- };
+      // 2. DADOS BRUTOS DE CURSOS SUPERIORES
+      const rawCursosData = scopedCursos.map((c, idx) => ({
+        'ID': c.id_curso || c.id || idx + 1,
+        'Curso': c.nome || c.curso || 'Curso sem nome',
+        'Instituição / IES': c.entidade || c.instituicao || cleanIes(c.instituicao) || '',
+        'Sigla IES': c.sigla || '',
+        'Grau / Nível': c.grau || c.nivel || 'Graduação',
+        'Modalidade': c.ead ? 'EaD' : 'Presencial',
+        'Área de Conhecimento': c.tipo || c.area_conhecimento || c.categoria || 'Geral',
+        'Município': c.municipio || '',
+        'Território de Identidade': c.territorio_identidade || c.territorio || '',
+        'Pertence ao Semiárido': (c.semiarido || isMunicipioSemiarido(c.municipio)) ? 'Sim' : 'Não'
+      }));
 
- const handleExportJSON = () => {
- const exportObject = {
- relatorio: reportType,
- abrangencia: territoryTitle,
- data_geracao: new Date().toISOString(),
- estatisticas: statsSintese,
- itens: tableData.map(r => r.raw)
- };
- const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
- const url = URL.createObjectURL(blob);
- const link = document.createElement('a');
- link.href = url;
- link.setAttribute('download', `relatorio_${reportType}_${selectedTerritoryId}.json`);
- document.body.appendChild(link);
- link.click();
- document.body.removeChild(link);
- };
+      // 3. DADOS BRUTOS DE CADEIAS PRODUTIVAS
+      const rawCadeiasData = scopedCadeias.map((cad, idx) => {
+        const terrs = new Set();
+        if (cad.territorio && cad.territorio !== 'Não identificado') {
+          terrs.add(cad.territorio.replace(/^Território de Identidade\s+/i, ''));
+        }
+        (cad.municipios_cobertos || []).forEach((m) => {
+          if (m.nome_territorio && m.nome_territorio !== 'Não identificado') {
+            terrs.add(m.nome_territorio.replace(/^Território de Identidade\s+/i, ''));
+          }
+        });
+        const muns = (cad.municipios_cobertos || []).map((m) => m.nome_municipio || m.municipio).filter(Boolean);
+
+        return {
+          'ID': cad.id_cadeia || cad.id || idx + 1,
+          'Cadeia Produtiva': cad.nome || cad.entidade || 'Cadeia Produtiva',
+          'Tipo / Segmento': cad.shortTipo || cad.tipo || 'APL',
+          'Território Sede': cad.territorio_identidade || cad.territorio || '',
+          'Município Sede': cad.municipio_sede || cad.municipio || '',
+          'Qtd Municípios de Abrangência': muns.length || (cad.municipio_sede ? 1 : 0),
+          'Municípios de Abrangência': muns.join('; '),
+          'Territórios de Abrangência': Array.from(terrs).join('; '),
+          'Fonte': cad.fonte || cad.urlReferencia || 'SECTI / SDR'
+        };
+      });
+
+      // 4. DADOS BRUTOS DE MUNICÍPIOS DO ESCOPO
+      const ativosPorMun = {};
+      scopedAtivos.forEach((a) => {
+        const m = a.municipio;
+        if (m) ativosPorMun[m] = (ativosPorMun[m] || 0) + 1;
+      });
+      const cursosPorMun = {};
+      scopedCursos.forEach((c) => {
+        const m = c.municipio;
+        if (m) cursosPorMun[m] = (cursosPorMun[m] || 0) + 1;
+      });
+
+      const rawMunicipiosData = scopedMunicipios.map((m) => {
+        const nomeMun = m.nome_municipio || m.municipio || 'Município';
+        const qAtivos = ativosPorMun[nomeMun] || 0;
+        const qCursos = cursosPorMun[nomeMun] || 0;
+        return {
+          'Município': nomeMun,
+          'Território de Identidade': m.nome_territorio || m.territorio || '',
+          'Código IBGE': m.codigo_ibge || m.id_municipio || '',
+          'Pertence ao Semiárido': isMunicipioSemiarido(nomeMun) ? 'Sim' : 'Não',
+          'Qtd Ativos de CT&I': qAtivos,
+          'Qtd Cursos Superiores': qCursos,
+          'Atendido por CT&I': (qAtivos > 0 || qCursos > 0) ? 'Sim' : 'Não'
+        };
+      });
+
+      // 5. RESUMO DE INDICADORES (KPIs DA SÍNTESE)
+      const rawIndicadoresData = [
+        { 'Indicador': 'Escopo Territorial', 'Valor': territoryTitle, 'Detalhamento': `Modo: ${reportMode === 'semiarido' ? 'Semiárido Baiano' : 'Normal (Todos os Municípios)'}` },
+        { 'Indicador': 'População Estimada', 'Valor': `${statsSintese.populacaoTotal} hab.`, 'Detalhamento': 'Estimativa populacional no escopo territorial' },
+        { 'Indicador': 'IFDM Médio FIRJAN', 'Valor': String(statsSintese.ifdmMedio || 'N/A'), 'Detalhamento': 'Índice FIRJAN de Desenvolvimento Municipal médio' },
+        { 'Indicador': 'Total de Ativos de CT&I', 'Valor': statsSintese.totalAtivos, 'Detalhamento': 'Infraestrutura física científica e tecnológica mapeada' },
+        { 'Indicador': 'Ativos com Conexão RNP', 'Valor': statsSintese.rnpAtivos, 'Detalhamento': 'Conexão avançada de alta velocidade da Rede Nacional de Ensino e Pesquisa' },
+        { 'Indicador': 'Taxa de Conectividade RNP', 'Valor': `${statsSintese.rnpTaxa}%`, 'Detalhamento': 'Percentual dos ativos conectados à rede acadêmica RNP' },
+        { 'Indicador': 'Total de Cursos Superiores', 'Valor': statsSintese.totalCursos, 'Detalhamento': 'Oferta universitária mapeada em CT&I' },
+        { 'Indicador': 'Cursos - Rede Estadual', 'Valor': `${statsSintese.estadualCursos} (${statsSintese.estadualTaxa}%)`, 'Detalhamento': 'Cursos das universidades públicas estaduais (UEFS, UESC, UESB, UNEB)' },
+        { 'Indicador': 'Cursos - Rede Federal', 'Valor': `${statsSintese.federalCursos} (${statsSintese.federalTaxa}%)`, 'Detalhamento': 'Cursos das universidades e institutos públicos federais (UFBA, UFRB, IFBA, etc.)' },
+        { 'Indicador': 'Cursos - Rede Privada / Outros', 'Valor': `${statsSintese.privadaCursos} (${statsSintese.privadaTaxa}%)`, 'Detalhamento': 'Cursos ofertados pela rede de ensino privado' },
+        { 'Indicador': 'Cadeias Produtivas Mapeadas', 'Valor': statsSintese.totalCadeias, 'Detalhamento': 'Vocações econômicas e arranjos produtivos locais' },
+        { 'Indicador': 'Municípios com Atendimento CT&I', 'Valor': `${statsSintese.munAtendidosCount} de ${statsSintese.totalMunEscopo}`, 'Detalhamento': 'Municípios com presença de ao menos 1 ativo ou curso superior' },
+        { 'Indicador': 'Taxa de Cobertura Territorial', 'Valor': `${statsSintese.taxaCoberturaMun}%`, 'Detalhamento': 'Percentual de municípios atendidos no escopo' },
+        { 'Indicador': 'Data de Emissão da Planilha', 'Valor': new Date().toLocaleDateString('pt-BR'), 'Detalhamento': 'Dados oficiais do Sistema de Gestão Territorial de CT&I - SECTI/BA' }
+      ];
+
+      let filename = '';
+
+      if (reportType === 'sintese') {
+        // Na síntese geral: exportar TODOS os dados brutos em abas dedicadas
+        const wsIndicadores = XLSX.utils.json_to_sheet(rawIndicadoresData);
+        wsIndicadores['!cols'] = fitCols(rawIndicadoresData);
+        XLSX.utils.book_append_sheet(wb, wsIndicadores, 'Síntese Executiva');
+
+        const wsAtivos = XLSX.utils.json_to_sheet(rawAtivosData);
+        wsAtivos['!cols'] = fitCols(rawAtivosData);
+        XLSX.utils.book_append_sheet(wb, wsAtivos, 'Dados Brutos - Ativos');
+
+        const wsCursos = XLSX.utils.json_to_sheet(rawCursosData);
+        wsCursos['!cols'] = fitCols(rawCursosData);
+        XLSX.utils.book_append_sheet(wb, wsCursos, 'Dados Brutos - Cursos');
+
+        const wsCadeias = XLSX.utils.json_to_sheet(rawCadeiasData);
+        wsCadeias['!cols'] = fitCols(rawCadeiasData);
+        XLSX.utils.book_append_sheet(wb, wsCadeias, 'Dados Brutos - Cadeias');
+
+        const wsMun = XLSX.utils.json_to_sheet(rawMunicipiosData);
+        wsMun['!cols'] = fitCols(rawMunicipiosData);
+        XLSX.utils.book_append_sheet(wb, wsMun, 'Dados Brutos - Municípios');
+
+        filename = `relatorio_sintese_geral_dados_brutos_${safeTerritoryName}_${reportMode}_${dateStr}.xlsx`;
+      } else if (reportType === 'ativos') {
+        const ws = XLSX.utils.json_to_sheet(rawAtivosData);
+        ws['!cols'] = fitCols(rawAtivosData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Ativos de CT&I');
+        filename = `relatorio_ativos_${safeTerritoryName}_${reportMode}_${dateStr}.xlsx`;
+      } else if (reportType === 'cursos') {
+        const ws = XLSX.utils.json_to_sheet(rawCursosData);
+        ws['!cols'] = fitCols(rawCursosData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Cursos Superiores');
+        filename = `relatorio_cursos_${safeTerritoryName}_${reportMode}_${dateStr}.xlsx`;
+      } else if (reportType === 'cadeias') {
+        const ws = XLSX.utils.json_to_sheet(rawCadeiasData);
+        ws['!cols'] = fitCols(rawCadeiasData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Cadeias Produtivas');
+        filename = `relatorio_cadeias_${safeTerritoryName}_${reportMode}_${dateStr}.xlsx`;
+      }
+
+      // Download da planilha Excel (.xlsx)
+      const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    } catch (err) {
+      console.error('[Exportação Excel] Erro:', err);
+      alert(`Erro ao gerar planilha Excel: ${err.message || err}`);
+    }
+  };
 
   const currentReportLabel = useMemo(() => {
     if (reportType === 'ativos') return 'Ativos de CT&I';
@@ -1054,25 +1192,16 @@ export default function RelatorioPage() {
     )}
   </button>
 
- <button
- type="button"
- onClick={handleExportCSV}
- className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft hover:border-primary-600 shadow-2xs transition-all cursor-pointer justify-center leading-none"
- title="Baixar dados tabulares em formato CSV para Excel"
- >
- <Download size={16} className="text-primary-600" />
- <span className="hidden xl:inline">Exportar CSV</span>
- <span className="inline xl:hidden">CSV</span>
- </button>
-
- <button
- type="button"
- onClick={handleExportJSON}
- className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-surface border border-primary-200 text-text-primary hover:bg-surface-soft shadow-2xs transition-all cursor-pointer leading-none"
- title="Baixar em formato estruturado JSON"
- >
- <span>JSON</span>
- </button>
+   <button
+     type="button"
+     onClick={handleExportExcel}
+     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-surface border border-emerald-600/30 text-emerald-800 hover:bg-emerald-50 hover:border-emerald-600 shadow-2xs transition-all cursor-pointer justify-center leading-none"
+     title={`Exportar Planilha Excel (.xlsx) com dados consolidados (${currentReportLabel})`}
+   >
+     <FileSpreadsheet size={15} className="text-emerald-600" />
+     <span className="hidden xl:inline">Exportar Excel</span>
+     <span className="inline xl:hidden">Excel</span>
+   </button>
 
 
  </div>
@@ -1211,10 +1340,10 @@ export default function RelatorioPage() {
 
   {/* CASO 1: SÍNTESE EXECUTIVA TERRITORIAL */}
   {reportType === 'sintese' && (
-    <div className="flex-1 overflow-y-auto [scrollbar-gutter:stable] pr-1 flex flex-col gap-4 min-h-0">
+    <div className="flex-1 overflow-y-auto [scrollbar-gutter:stable] px-1 pr-3 pb-8 flex flex-col gap-5 min-h-0">
 
   {/* CARTÃO DE APRESENTAÇÃO DO ESCOPO */}
-  <div className={`p-4 sm:p-5 rounded-2xl text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-500 shadow-card ${
+  <div className={`p-5 sm:p-6 rounded-2xl text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-500 shadow-card ${
     reportMode === 'semiarido'
       ? 'bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-amber-600/20'
       : 'bg-gradient-to-br from-primary-900 to-primary-800'
@@ -1267,7 +1396,7 @@ export default function RelatorioPage() {
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
   {/* BLOCO 1: INFRAESTRUTURA DE ATIVOS E CONECTIVIDADE */}
-  <div className={`p-4.5 rounded-2xl border flex flex-col gap-3 transition-colors ${
+  <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col gap-3.5 transition-colors ${
     reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
   }`}>
   <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
@@ -1317,7 +1446,7 @@ export default function RelatorioPage() {
   </div>
 
   {/* BLOCO 2: FORMAÇÃO SUPERIOR E MODALIDADES */}
-  <div className={`p-4.5 rounded-2xl border flex flex-col gap-3 transition-colors ${
+  <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col gap-3.5 transition-colors ${
     reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
   }`}>
   <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
@@ -1372,7 +1501,7 @@ export default function RelatorioPage() {
   </div>
 
   {/* VOCAÇÕES PRODUTIVAS MAPEADAS */}
-  <div className={`p-4.5 rounded-2xl border transition-colors ${
+  <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col gap-3 transition-colors ${
     reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
   }`}>
   <div className="flex items-center justify-between mb-2">
