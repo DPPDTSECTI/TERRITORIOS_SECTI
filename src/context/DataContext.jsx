@@ -68,7 +68,8 @@ export const DataProvider = ({ children }) => {
  tCursosRes,
  tCadeiasRes,
  cursosRawRes,
- referenciasRes
+ referenciasRes,
+ firjanRes
  ] = await Promise.all([
  supabase.from('stats_ti').select('*'),
  supabase.from('lista_ativos_cti').select('*').range(0, 3000),
@@ -80,7 +81,8 @@ export const DataProvider = ({ children }) => {
  supabase.from('tipo_cursos').select('*'),
  supabase.from('tipo_cadeia').select('*'),
  supabase.from('cursos').select('id_curso, ead').range(0, 3000),
- supabase.from('referencias').select('id_referencia, titulo_referencia, texto_referencia, url_referencia')
+ supabase.from('referencias').select('id_referencia, titulo_referencia, texto_referencia, url_referencia'),
+ supabase.from('firjan').select('*').range(0, 1000)
  ]);
 
  // Mapeamento explícito de EAD da tabela base
