@@ -17,7 +17,7 @@ export default function Sidebar({ username, navOnly = false }) {
       { path: '/territorios', label: 'Visão Geral', icon: LayoutDashboard, tourClass: 'tour-nav-visao' },
       { path: '/ativos', label: 'Ativos', icon: Database, tourClass: 'tour-nav-ativos' },
       { path: '/cadeia', label: 'Cadeia', icon: GitPullRequest, tourClass: 'tour-nav-cadeias' },
-      { path: '/cursos', label: 'Cursos', icon: GraduationCap, tourClass: 'tour-nav-cursos' },
+      { path: '/cursos', label: 'Cursos CT&I', icon: GraduationCap, tourClass: 'tour-nav-cursos' },
    ];
 
    const adminItems = [

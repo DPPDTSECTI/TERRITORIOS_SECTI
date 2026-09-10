@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
-import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2 } from 'lucide-react';
+import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2, BookOpen } from 'lucide-react';
 
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
@@ -484,6 +484,16 @@ function SingleCadeiaPopupContent({ cadeia }) {
               {cadeia.municipios_cobertos.length}
             </span>
             <span>municípios atendidos</span>
+          </div>
+        )}
+
+        {cadeia.texto_referencia && (
+          <div className="mt-2 p-2 rounded-lg bg-amber-50/90 border border-amber-200 text-[10px] text-amber-950 leading-snug">
+            <div className="flex items-center gap-1 font-bold text-[9px] uppercase tracking-wider text-amber-800 mb-0.5">
+              <BookOpen size={11} className="text-amber-700 shrink-0" />
+              <span>Artigo / Referência Acadêmica:</span>
+            </div>
+            <span className="italic line-clamp-3 text-neutral-800">"{cadeia.texto_referencia}"</span>
           </div>
         )}
       </div>

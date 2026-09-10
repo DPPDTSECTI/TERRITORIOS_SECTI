@@ -19,6 +19,7 @@ import StackedBarChart from '../graph/StackedBarChart';
 import ProportionBarChart from '../graph/ProportionBarChart';
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
+import { getTextoReferencia } from '../../data/referenciasDB';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
@@ -291,6 +292,8 @@ export default function RelatorioCadeiasPage() {
         }
 
         const rawUrl = row.fonte || fontesMap.get(idCadeia) || row.url_referencia || '';
+        const isIgPot = tipoNome.toLowerCase().includes('potencial') || configTipo.label === 'IG Potencial';
+        const textoRef = isIgPot ? (row.texto_referencia || getTextoReferencia(rawUrl, row.entidade)) : null;
 
         mapCadeias.set(idCadeia, {
           id: idCadeia,
@@ -311,6 +314,7 @@ export default function RelatorioCadeiasPage() {
           corHex: configTipo.corHex,
           icone: configTipo.icone,
           fonte: rawUrl,
+          texto_referencia: textoRef,
           semiarido: isSedeSemi,
           municipios_cobertos: []
         });
@@ -581,7 +585,8 @@ export default function RelatorioCadeiasPage() {
           municipioSede: munSedeNome,
           territorioSede: terrSedeNome,
           totalMunicipios: Math.max(totalMunicipios, 1),
-          semiMunicipios
+          semiMunicipios,
+          texto_referencia: c.texto_referencia
         };
       }
 
@@ -601,7 +606,8 @@ export default function RelatorioCadeiasPage() {
         municipioSede: munSedeNome,
         territorioSede: terrSedeNome,
         totalMunicipios,
-        semiMunicipios
+        semiMunicipios,
+        texto_referencia: c.texto_referencia
       };
     });
 
@@ -1000,6 +1006,11 @@ export default function RelatorioCadeiasPage() {
                           <strong className="text-[#475569]">{item.segmento}</strong>
                           <span> • Sede: <span className="font-semibold text-[#1D3557]">{item.municipioSede}</span> ({item.territorioSede})</span>
                         </span>
+                        {item.texto_referencia && (
+                          <span className="text-[8.5px] text-[#92400E] italic line-clamp-1 mt-0.5" title={item.texto_referencia}>
+                            "{item.texto_referencia}"
+                          </span>
+                        )}
                       </div>
                     </div>
 

@@ -1,295 +1,476 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
- ArrowUpRight, User, Map as MapIcon, Target, Eye, Users, Lightbulb, 
- Info, Zap, TrendingUp, GraduationCap, Milestone, Building2 
-} from 'lucide-react';
+import { ArrowRight, ArrowDown } from 'lucide-react';
+import { DataContext } from '../context/DataContext';
 
 // ================= COMPONENTE DE ANIMAÇÃO DOS NÚMEROS =================
 const AnimatedCounter = ({ value, duration = 2000 }) => {
- const [count, setCount] = useState(0);
+  const [count, setCount] = useState(0);
 
- useEffect(() => {
- let startTime = null;
- const target = parseInt(value, 10);
- 
- // Fallback caso o valor não seja um número
- if (isNaN(target)) {
- setCount(value);
- return;
- }
+  useEffect(() => {
+    let startTime = null;
+    const target = parseInt(value, 10);
 
- const animate = (currentTime) => {
- if (!startTime) startTime = currentTime;
- const progress = Math.min((currentTime - startTime) / duration, 1);
- 
- // Curva de desaceleração suave (easeOutQuart)
- const easeOut = 1 - Math.pow(1 - progress, 4);
- setCount(Math.floor(easeOut * target));
+    if (isNaN(target)) {
+      setCount(value);
+      return;
+    }
 
- if (progress < 1) {
- requestAnimationFrame(animate);
- } else {
- setCount(target); // Garante que termine exatamente no alvo
- }
- };
+    const animate = (currentTime) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.round(easeOut * target));
 
- requestAnimationFrame(animate);
- }, [value, duration]);
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(target);
+      }
+    };
 
- return <>{count}</>;
+    requestAnimationFrame(animate);
+  }, [value, duration]);
+
+  return <>{count}</>;
 };
 
-// ================= PÁGINA PRINCIPAL (HERO CLARO ALINHADO AO DASHBOARD) =================
+// ================= DADOS DOS MÓDULOS DA PLATAFORMA =================
+const modulosPlataforma = [
+  {
+    id: 'visao-geral',
+    tag: 'Painel Central',
+    title: 'Visão Geral & Dashboard Integrado',
+    btnLabel: 'Acessar Visão Geral & Dashboard',
+    rota: '/territorios',
+    descricao: 'Centro de comando executivo com mapa dinâmico da Bahia e cards analíticos de inteligência territorial.',
+    destaques: [
+      'KPIs consolidados com atualização em tempo real ao selecionar territórios.',
+      'Mapa interativo com recorte por Território de Identidade e município.',
+      'Distribuição de cursos de CT&I por grandes áreas de conhecimento e principais IES.',
+      'Ranking IFDM entre os municípios do território selecionado.',
+      'Proporção de conectividade RNP nas tipologias de ensino e pesquisa.'
+    ]
+  },
+  {
+    id: 'ativos',
+    tag: 'Infraestrutura',
+    title: 'Ativos de Ciência, Tecnologia & Inovação',
+    btnLabel: 'Acessar Ativos de Ciência, Tecnologia & Inovação',
+    rota: '/ativos',
+    descricao: 'Catálogo espacializado e georreferenciado de toda a rede física e institucional de pesquisa e inovação da Bahia.',
+    destaques: [
+      'Mapeamento de 10+ tipologias: Universidades, IFs, Parques Tecnológicos, ICTs e Hubs.',
+      'Rede de Espaços Dinamizadores Colaborar interiorizando a cultura maker e inovadora.',
+      'Filtros combinados simultâneos por Território, Município, Tipologia e Conexão RNP.',
+      'Alternância ágil entre visualização no mapa interativo e tabela cadastral com busca.'
+    ]
+  },
+  {
+    id: 'cursos',
+    tag: 'Capital Humano em CT&I',
+    title: 'Ensino Superior em CT&I (Cursos Presenciais)',
+    btnLabel: 'Acessar Ensino Superior em CT&I',
+    rota: '/cursos',
+    descricao: 'Diagnóstico da oferta formativa presencial de graduação e pós-graduação voltada a Ciência, Tecnologia e Inovação (CT&I).',
+    destaques: [
+      'Mapeamento de cursos de CT&I: Engenharias, Computação/TIC, Ciências Agrárias, Biotecnologia e Exatas.',
+      'Identificação territorial de campi universitários públicos e privados credenciados com oferta em CT&I.',
+      'Mapeamento da densidade de oferta formativa de CT&I por território e identificação de vocações locais.',
+      'Subsídio para editais e políticas estaduais de atração e fixação de talentos científicos.'
+    ]
+  },
+  {
+    id: 'cadeias',
+    tag: 'Economia Regional',
+    title: 'Cadeias Produtivas, APLs & IGs',
+    btnLabel: 'Acessar Cadeias Produtivas, APLs & IGs',
+    rota: '/cadeia',
+    descricao: 'Mapeamento das matrizes produtivas e ativos de propriedade intelectual que geram valor econômico no interior baiano.',
+    destaques: [
+      'Arranjos Produtivos Locais (APLs) estruturados e em consolidação em setores agropecuários e industriais.',
+      'Indicações Geográficas (IGs) certificadas pelo INPI agregando notoriedade aos produtos baianos.',
+      'Cruzamento direto entre a vocação econômica regional e a infraestrutura científica instalada.',
+      'Identificação de oportunidades concretas de transferência de tecnologia e pesquisa aplicada.'
+    ]
+  },
+  {
+    id: 'relatorios',
+    tag: 'Exportação & BI',
+    title: 'Central de Relatórios & Impressão PDF',
+    btnLabel: 'Acessar Central de Relatórios',
+    rota: '/relatorio',
+    descricao: 'Gerador sob demanda de relatórios executivos em alta definição (padrões paisagem e A4) para impressão.',
+    destaques: [
+      'Modelos oficiais diagramados: Síntese Territorial, Relatório de Ativos de CT&I e Relatório de Ensino.',
+      'Padronização visual governamental de alto padrão para apresentações e audiências públicas.',
+      'Exportação instantânea com suporte a vetores nítidos e paginação inteligente.'
+    ]
+  }
+];
+
+// ================= DADOS DOS INDICADORES ESTRATÉGICOS =================
+const indicadoresEstrategicos = [
+  {
+    titulo: 'Conectividade Avançada RNP',
+    tag: 'Infraestrutura Digital & Redes',
+    descricao: 'Monitoramento da presença de rede óptica de altíssima capacidade operada pela RNP nas 5 tipologias prioritárias de ensino e pesquisa (Universidades Federais, Estaduais, IFs, IES Privadas e ICTs).'
+  },
+  {
+    titulo: 'Índice IFDM (FIRJAN)',
+    tag: 'Desenvolvimento Territorial',
+    descricao: 'Índice FIRJAN de Desenvolvimento Municipal (2023), medido a partir de estatísticas oficiais de Emprego & Renda, Educação e Saúde, permitindo rankings internos municipais.'
+  },
+  {
+    titulo: 'Densidade de Ativos CT&I',
+    tag: 'Capacidade Instalada',
+    descricao: 'Mapeamento consolidado das estruturas de pesquisa e inovação: Universidades Públicas, IFs, Faculdades Privadas, Parques Tecnológicos, ICTs, Incubadoras e Espaços Colaborar.'
+  },
+  {
+    titulo: 'Cursos Superiores de CT&I',
+    tag: 'Formação em CT&I',
+    descricao: 'Mapeamento da oferta presencial de ensino superior nas áreas de Ciência, Tecnologia e Inovação (Engenharias, Computação, Exatas, Biotecnologia e Agrárias).'
+  },
+  {
+    titulo: 'Cadeias Produtivas & APLs',
+    tag: 'Economia Regional',
+    descricao: 'Aglomerações territoriais de micro, pequenas e médias empresas com especialização produtiva comum, fomentadas pelo Estado para gerar agregação de valor tecnológico.'
+  },
+  {
+    titulo: 'Indicações Geográficas (IGs)',
+    tag: 'Propriedade Intelectual',
+    descricao: 'Reconhecimento oficial de produtos cuja notoriedade e qualidades se devem exclusivamente à origem geográfica baiana (cacau, café, cachaça, farinha, etc.), incluindo IGs registradas e potenciais.'
+  },
+  {
+    titulo: 'Segmentos Econômicos',
+    tag: 'Matrizes Produtivas',
+    descricao: '41 segmentos econômicos catalogados detalhando a vocação produtiva, polos industriais e oportunidades de desenvolvimento socioeconômico em todo o território baiano.'
+  },
+  {
+    titulo: 'Recorte do Semiárido Baiano',
+    tag: 'Equidade Territorial',
+    descricao: 'Indicador transversal que computa o percentual de municípios, ativos e cursos inseridos na delimitação oficial do Semiárido (definido pela SUDENE), orientando investimentos compensatórios.'
+  }
+];
+
+// ================= COMPONENTE PRINCIPAL (LANDING HERO) =================
 export default function LandingHero() {
- const navigate = useNavigate();
- 
- // Controle de Animação ao rolar a página
- const introRef = useRef(null);
- const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
+  const introRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
 
- // Controle do Efeito de Digitação
- const subtitleText = "Uma plataforma interativa desenvolvida pela SECTI para a visualização das características inerentes à ciência, tecnologia e inovação nos territórios de identidade do Estado da Bahia.";
- const [typedText, setTypedText] = useState("");
+  const {
+    territoriosData = [],
+    ativosData = [],
+    cursosData = [],
+    listaCadeias = [],
+    distribuicaoCadeias = []
+  } = useContext(DataContext);
 
- useEffect(() => {
- let i = 0;
- const typingInterval = setInterval(() => {
- if (i < subtitleText.length) {
- setTypedText(subtitleText.slice(0, i + 1));
- i++;
- } else {
- clearInterval(typingInterval);
- }
- }, 25); // Velocidade da digitação (25ms por letra)
+  const qtdCadeias = (distribuicaoCadeias && distribuicaoCadeias.length > 0)
+    ? 88
+    : (listaCadeias?.length || 88);
 
- return () => clearInterval(typingInterval);
- }, []);
+  const qtdSegmentos = 41;
 
- useEffect(() => {
- const observer = new IntersectionObserver(([entry]) => {
- if (entry.isIntersecting) setIsVisible(true);
- }, { threshold: 0.10 });
+  // Controle do Efeito de Digitação
+  const subtitleText = "Uma plataforma interativa desenvolvida pela SECTI para consolidar, analisar e dar transparência aos dados de Ciência, Tecnologia e Inovação nos 27 Territórios de Identidade da Bahia.";
+  const [typedText, setTypedText] = useState("");
 
- if (introRef.current) observer.observe(introRef.current);
- return () => observer.disconnect();
- }, []);
+  useEffect(() => {
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      if (i < subtitleText.length) {
+        setTypedText(subtitleText.slice(0, i + 1));
+        i++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 20);
 
- const scrollToIntro = (e) => {
- e.preventDefault();
- document.getElementById('introducao')?.scrollIntoView({ behavior: 'smooth' });
- };
+    return () => clearInterval(typingInterval);
+  }, []);
 
- const kpis = [
- { prefix: '+', number: '200', label: 'Ativos de CT&I' },
- { prefix: '+', number: '600', label: 'Cursos Superiores' },
- { prefix: '+', number: '50', label: 'Cadeias Produtivas' },
- { prefix: '', number: '27', label: 'Territórios' },
- ];
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setIsVisible(true);
+    }, { threshold: 0.05 });
 
- return (
- <main className="w-full min-h-screen font-sans relative text-text-primary scroll-smooth bg-gradient-to-b from-surface via-[#F0F7FD] to-border overflow-x-clip">
- 
- {/* ================= FUNDO FIXO COM DEGRADÊ SUAVE E AURA AZUL SECTI ================= */}
- <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
- <div className="absolute -top-[10%] -left-[10%] w-[500px] h-[500px] lg:w-[800px] lg:h-[800px] bg-primary-200/80 rounded-lg mix-blend-multiply filter blur-[120px] lg:blur-[180px] opacity-70"></div>
- <div className="absolute top-[25%] right-[-10%] w-[400px] h-[400px] lg:w-[600px] lg:h-[600px] bg-primary-300/50 rounded-lg mix-blend-multiply filter blur-[100px] lg:blur-[160px] opacity-60"></div>
- <div className="absolute -bottom-[20%] left-[15%] w-[500px] h-[500px] lg:w-[900px] lg:h-[900px] bg-[#BFDBFE]/40 rounded-lg mix-blend-multiply filter blur-[140px] lg:blur-[200px] opacity-50"></div>
- 
- {/* Linhas orbitais arquitetônicas sutis */}
- <div className="absolute top-[-5%] right-[-40%] lg:right-[-25%] w-[1200px] h-[1200px] lg:w-[1800px] lg:h-[1800px] border-[1.5px] rounded-[40%] border-primary-600/10 rotate-[35deg]" />
- <div className="absolute top-[15%] right-[-30%] lg:right-[-15%] w-[1300px] h-[1300px] lg:w-[2000px] lg:h-[2000px] border-[1px] rounded-[35%] border-primary-600/5 rotate-[60deg]" />
- </div>
+    if (introRef.current) observer.observe(introRef.current);
+    return () => observer.disconnect();
+  }, []);
 
- {/* ================= BRASÃO FIXO ================= */}
- <div className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50 pointer-events-none opacity-100 drop-shadow-md transition-opacity duration-500">
- <img
- src="/img/brasao_preto.webp"
- alt="Governo do Estado da Bahia"
- className="h-6 sm:h-8 lg:h-20 object-contain invert brightness-0 opacity-70"
- />
- </div>
+  return (
+    <main className="w-full min-h-screen font-sans relative text-neutral-900 scroll-smooth bg-slate-50 overflow-x-hidden">
 
- {/* ================= SEÇÃO 1: HERO ================= */}
- <section className="relative w-full min-h-screen flex flex-col justify-between px-6 lg:px-16 pb-20 z-10">
- 
- {/* HEADER SUPERIOR */}
- <header className="relative absolute top-0 left-0 w-full px-6 lg:px-16 py-8 flex items-center justify-between z-50 animate-soft-fade before:content-[''] before:absolute before:inset-0 before:bg-carto-grid before:bg-[length:200px] before:opacity-10 before:pointer-events-none before:z-0 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-8 after:h-8 after:bg-carto-node after:opacity-30 after:pointer-events-none after:z-0">
- <div className="flex items-center gap-3">
- <div className="flex items-end gap-1 h-5">
- <div className="w-[3px] h-2.5 bg-primary-300 rounded-full" />
- <div className="w-[3px] h-4 bg-primary-600 rounded-full" />
- <div className="w-[3px] h-5 bg-primary-900 rounded-full" />
- </div>
- <span className="font-sans font-light text-lg tracking-[0.2em] text-text-primary">
- Painel Territorial
- </span>
- </div>
+      {/* ================= FUNDO SUTIL E LIMPO (SEM BLOBS QUE PREJUDIQUEM A LEITURA) ================= */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-[10%] -left-[10%] w-[500px] h-[500px] lg:w-[800px] lg:h-[800px] bg-primary-100/50 rounded-full filter blur-[140px] opacity-40"></div>
+        <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] lg:w-[600px] lg:h-[600px] bg-primary-100/40 rounded-full filter blur-[140px] opacity-30"></div>
+        <div className="absolute -bottom-[20%] left-[15%] w-[500px] h-[500px] lg:w-[900px] lg:h-[900px] bg-blue-50/50 rounded-full filter blur-[160px] opacity-30"></div>
 
- <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-12 bg-white/70 backdrop-blur-md px-8 py-3 rounded-lg border border-primary-200 shadow-glass">
- <Link to="/" className="text-xs font-medium text-text-primary uppercase relative after:content-[''] after:absolute after:-bottom-1.5 after:left-1/2 after:-translate-x-1/2 after: after:w-1.5 after:h-1.5 after:bg-primary-600 after:rounded-full transition-all">
- Início
- </Link>
- <button onClick={() => navigate('/territorios')} className="text-xs font-semibold text-text-secondary hover:text-text-primary uppercase transition-colors duration-300 cursor-pointer">
- Dashboard
- </button>
- <a href="#introducao" onClick={scrollToIntro} className="text-xs font-semibold text-text-secondary hover:text-text-primary uppercase transition-colors duration-300">
- Sobre
- </a>
- <Link to="/relatorio" className="text-xs font-semibold text-text-secondary hover:text-text-primary uppercase transition-colors duration-300">
- Relatório
- </Link>
- </nav>
+        {/* Linhas orbitais arquitetônicas sutis */}
+        <div className="absolute top-[-5%] right-[-40%] lg:right-[-25%] w-[1200px] h-[1200px] lg:w-[1800px] lg:h-[1800px] border border-primary-900/[0.04] rounded-[40%] rotate-[35deg]" />
+        <div className="absolute top-[15%] right-[-30%] lg:right-[-15%] w-[1300px] h-[1300px] lg:w-[2000px] lg:h-[2000px] border border-primary-900/[0.03] rounded-[35%] rotate-[60deg]" />
+      </div>
 
- <div className="flex items-center gap-4">
- <span className="relative col-span-full py-8 text-center text-[11px] font-semibold text-text-muted before:content-[''] before:absolute before:inset-0 before:bg-carto-dots before:bg-[length:150px] before:opacity-5 before:pointer-events-none before:z-0 after:content-[''] after:absolute after:bottom-2 after:left-2 after:w-4 after:h-4 after:bg-carto-node after:opacity-10 after:pointer-events-none after:z-0">
- SECTI Bahia
- </span>
- <button className="w-10 h-10 rounded-full border border-primary-200 bg-white/90 backdrop-blur-md flex items-center justify-center hover:bg-white hover:border-primary-600 transition-all duration-300 group shadow-sm">
- <User size={18} className="text-text-secondary group-hover:text-text-primary transition-colors" />
- </button>
- </div>
- </header>
+      {/* ================= SEÇÃO 1: HERO ================= */}
+      <section className="relative w-full min-h-[calc(100vh-22px)] flex flex-col justify-between px-6 sm:px-10 lg:px-12 pt-6 sm:pt-8 pb-12 sm:pb-16 z-10 max-w-[1600px] mx-auto">
 
- {/* HERO TITLE & CALL TO ACTION */}
- <div className="w-full relative z-10 flex flex-col justify-center mt-32 lg:mt-60 mb-12">
- <div className="max-w-[820px] animate-soft-fade">
- <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-primary-200 text-xs font-medium uppercase text-primary-600 mb-6 shadow-sm justify-center leading-none">
- <span className="w-2 h-2 rounded-full bg-primary-600 animate-pulse"></span>
- Plataforma de Inteligência Territorial
- </div>
+        {/* HEADER SUPERIOR */}
+        <header className="w-full flex items-center justify-between pb-4 sm:pb-5 border-b border-neutral-200">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="flex items-end gap-1 h-5">
+                <div className="w-[3px] h-2.5 bg-primary-300 rounded-full" />
+                <div className="w-[3px] h-4 bg-primary-600 rounded-full" />
+                <div className="w-[3px] h-5 bg-primary-900 rounded-full" />
+              </div>
+              <span className="font-sans font-bold text-sm sm:text-base tracking-wider uppercase text-neutral-900">
+                Painel Territorial CT&I
+              </span>
+            </div>
 
- <h1 className="font-sans font-bold text-5xl sm:text-6xl lg:text-[76px] leading-[1.08] mb-6 text-text-primary tracking-tight">
- Ciência, Tecnologia <br />
- <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-900 via-primary-600 to-primary-600">
- & Inovação
- </span>
- </h1>
- 
- {/* Texto com Efeito de Digitação */}
- <p className="font-sans font-medium text-base sm:text-lg lg:text-xl leading-relaxed max-w-[700px] mb-10 text-text-secondary min-h-[100px] lg:min-h-[80px]">
- {typedText}
- <span className="inline-block w-1.5 h-4 lg:h-5 ml-1 bg-primary-600 animate-pulse align-middle" />
- </p>
+            <span className="text-neutral-300 font-light text-xl select-none">|</span>
 
- <button 
- onClick={() => navigate('/territorios')}
- className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary-900 via-primary-800 to-primary-600 flex items-center gap-3 shadow-card-soft hover:shadow-card-hover hover:scale-[1.02] active:scale-[0.98] transition-colors transition-transform duration-300 text-white w-fit cursor-pointer group"
- >
- <span className="font-sans font-semibold text-base lg:text-lg ">
- Explorar o Painel
- </span>
- <ArrowUpRight size={20} strokeWidth={2} className="group-hover:translate-x-0.5  transition-transform " />
- </button>
- </div>
- </div>
+            <img
+              src="/img/brasao_preto.webp"
+              alt="Governo do Estado da Bahia"
+              className="h-10 sm:h-12 w-auto object-contain shrink-0"
+            />
+          </div>
 
- {/* CARDS DE INDICADORES (KPIS) EM VIDRO BRANCO */}
- <div className="w-full relative z-30 transform translate-y-3/4">
- <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 animate-soft-fade">
- {kpis.map((kpi, idx) => (
- <div 
- key={idx} 
- className="p-6 rounded-xl bg-white/90 border border-primary-200 backdrop-blur-2xl shadow-card-soft hover:shadow-card-hover flex flex-col justify-center min-h-[120px] lg:min-h-[150px] hover:bg-white hover:border-primary-600/40 transition-all duration-300 group cursor-default "
- >
- <h3 className="text-4xl lg:text-6xl font-bold text-text-primary mb-1 flex items-center font-sans tracking-tight">
- {kpi.prefix && <span className="text-primary-600 font-bold text-2xl lg:text-4xl mr-1">{kpi.prefix}</span>}
- <AnimatedCounter value={kpi.number} duration={2500} />
- </h3>
- <span className="text-[11px] lg:text-[13px] font-medium tracking-[0.1em] text-text-secondary uppercase">
- {kpi.label}
- </span>
- </div>
- ))}
- </div>
- </div>
- </section>
+          <nav className="flex items-center gap-5 sm:gap-8 text-xs sm:text-sm font-semibold text-neutral-700">
+            <Link to="/" className="text-primary-700 font-bold transition-colors">
+              Início
+            </Link>
+            <Link to="/territorios" className="hover:text-neutral-900 transition-colors">
+              Dashboard
+            </Link>
+            <Link to="/sobre" className="hover:text-neutral-900 transition-colors">
+              Sobre
+            </Link>
+            <Link to="/relatorio" className="hover:text-neutral-900 transition-colors">
+              Relatório
+            </Link>
+          </nav>
+        </header>
 
- {/* ================= SEÇÃO 2: INTRODUÇÃO ================= */}
- <section id="introducao" ref={introRef} className="w-full relative z-20 px-6 lg:px-16 pt-44 pb-32 flex flex-col items-center min-h-screen">
- <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-[#F0F7FD] z-[-1] pointer-events-none" />
+        {/* HERO TITLE & CALL TO ACTION (CENTRALIZADO VERTICALMENTE, TEXTO À ESQUERDA) */}
+        <div className="w-full flex-1 flex flex-col justify-center my-auto py-8 sm:py-14">
+          <div className="max-w-4xl lg:max-w-5xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-primary-200 text-xs font-bold uppercase text-primary-700 mb-4 sm:mb-6 shadow-xs justify-center leading-none">
+              <span className="w-2 h-2 rounded-full bg-primary-600 animate-pulse"></span>
+              Plataforma de Inteligência Territorial · SECTI
+            </div>
 
- <div className="max-w-7xl w-full z-10 flex flex-col justify-start">
- 
- <div className={`text-center flex flex-col items-center mb-24 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
- <div className="px-4 py-1.5 rounded-full border border-primary-200 text-xs font-medium uppercase flex items-center gap-2 bg-white text-text-secondary shadow-sm mb-6 justify-center leading-none">
- <Info size={16} className="text-primary-600" /> Documentação
- </div>
- <h2 className="text-4xl lg:text-6xl font-bold tracking-tight text-text-primary max-w-4xl leading-tight">
- O que é o <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-900 via-primary-600 to-primary-600">Painel Territorial</span>?
- </h2>
- <p className="text-lg lg:text-xl max-w-2xl leading-relaxed mt-6 text-text-secondary font-medium">
- Uma plataforma digital interativa desenvolvida para consolidar, analisar e dar transparência aos principais dados do ecossistema de inovação nos 27 Territórios de Identidade da Bahia.
- </p>
- </div>
+            <h1 className="font-sans font-extrabold text-4xl sm:text-5xl lg:text-[68px] leading-[1.08] mb-4 sm:mb-6 text-neutral-900 tracking-tight text-left">
+              Ciência, Tecnologia <br />
+              <span className="text-primary-700">
+                & Inovação
+              </span>
+            </h1>
 
- <div className="space-y-32 pb-20">
+            <p className="text-base sm:text-lg lg:text-xl text-neutral-800 font-medium leading-relaxed mb-6 sm:mb-8 min-h-[50px] max-w-3xl text-left">
+              {typedText}
+              <span className="inline-block w-1.5 h-4 ml-1 bg-primary-600 animate-pulse align-middle" />
+            </p>
 
- {/* BLOCO 1: Nossos Objetivos */}
- <div className={`flex flex-col lg:flex-row items-start gap-12 lg:gap-20 transition-all duration-1000 delay-200 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
- <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4 self-start">
- <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary-200 text-primary-600 shadow-sm mb-2">
- <Target size={24} strokeWidth={2} />
- </div>
- <h3 className="text-3xl lg:text-3xl font-bold text-text-primary">Nossos Objetivos</h3>
- <p className="text-text-secondary leading-relaxed text-base lg:text-lg font-medium">
- Criamos esta plataforma com metas claras para integrar e potencializar o ecossistema baiano.
- </p>
- </div>
- 
- <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
- {[
- { t: 'Apoiar Decisões', d: 'Dados qualificados para formular e calibrar políticas públicas regionais.', i: <MapIcon /> },
- { t: 'Transparência', d: 'Visualização aberta de investimentos, cadeias produtivas e indicadores.', i: <Eye /> },
- { t: 'Articulação', d: 'Sinergias entre governo, setor produtivo, academia e sociedade civil.', i: <Users /> },
- { t: 'Democratização', d: 'Fonte confiável para pesquisadores, gestores públicos e investidores.', i: <Lightbulb /> },
- ].map((item, idx) => (
- <div key={idx} className="p-8 rounded-xl flex flex-col gap-4 transition-all duration-300 bg-white border border-primary-200 shadow-card-soft hover:shadow-card-hover hover:border-primary-600/40 group cursor-default ">
- <div className="text-primary-600 p-3 rounded-xl bg-primary-200 w-fit group-hover:bg-primary-600 group-hover:text-white transition-colors duration-300">
- {React.cloneElement(item.i, { size: 26, strokeWidth: 2.2 })}
- </div>
- <div>
- <strong className="block text-base font-semibold mb-2 text-text-primary">{item.t}</strong>
- <span className="text-sm leading-relaxed text-text-secondary font-medium">{item.d}</span>
- </div>
- </div>
- ))}
- </div>
- </div>
+            <div className="flex flex-wrap items-center gap-3.5">
+              <button
+                onClick={() => navigate('/territorios')}
+                className="px-7 py-3.5 rounded-xl bg-primary-700 hover:bg-primary-800 flex items-center gap-3 shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 text-white w-fit cursor-pointer group"
+              >
+                <span className="font-sans font-bold text-sm sm:text-base">
+                  Explorar o Painel
+                </span>
+                <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
+              </button>
 
- {/* BLOCO 2: Definições e KPIs */}
- <div className={`flex flex-col lg:flex-row-reverse items-start gap-12 lg:gap-20 transition-all duration-1000 delay-300 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
- <div className="lg:w-1/3 lg:sticky lg:top-32 flex flex-col gap-4 self-start">
- <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary-200 text-primary-600 shadow-sm mb-2">
- <Zap size={24} strokeWidth={2} />
- </div>
- <h3 className="text-3xl lg:text-3xl font-bold text-text-primary">Indicadores Chave</h3>
- <p className="text-text-secondary leading-relaxed text-base lg:text-lg font-medium">
- Nossas métricas mapeiam as estruturas fundamentais que impulsionam o desenvolvimento regional.
- </p>
- </div>
- 
- <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
- {[
- { t: 'Capacidade em CT&I', d: 'Universidades, IFs, ICTs, Parques Tecnológicos e Incubadoras.', i: <Building2 /> },
- { t: 'Desenvolvimento', d: 'Índice FIRJAN (IFDM), média sócio-econômica dos municípios.', i: <TrendingUp /> },
- { t: 'Cursos Superiores', d: 'Capacidade local de formação de novos talentos e pesquisadores.', i: <GraduationCap /> },
- { t: 'APLs e IGs', d: 'Arranjos Produtivos e certificações de Indicações Geográficas.', i: <Milestone /> }
- ].map((item, idx) => (
- <div key={idx} className="p-8 rounded-xl transition-all duration-300 bg-white border border-primary-200 shadow-card-soft hover:shadow-card-hover hover:border-primary-600/40 group cursor-default ">
- <div className="w-12 h-12 mb-6 rounded-xl flex items-center justify-center bg-primary-200 text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors duration-300">
- {React.cloneElement(item.i, { size: 24, strokeWidth: 2.2 })}
- </div>
- <strong className="block font-semibold mb-2 text-xl text-text-primary">{item.t}</strong>
- <span className="text-sm leading-relaxed text-text-secondary font-medium">{item.d}</span>
- </div>
- ))}
- </div>
- </div>
+              <a
+                href="#modulos"
+                className="px-5 py-3.5 rounded-xl bg-white border border-neutral-300 text-neutral-800 font-semibold text-sm hover:bg-neutral-50 hover:border-neutral-400 transition-all inline-flex items-center gap-2 shadow-xs"
+              >
+                <span>Conhecer os Módulos</span>
+                <ArrowDown size={15} />
+              </a>
 
- </div>
- </div>
- </section>
- </main>
- );
+              <Link
+                to="/sobre"
+                className="px-4 py-3.5 text-neutral-700 hover:text-neutral-950 font-semibold text-sm transition-colors"
+              >
+                Documentação Completa
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= SEÇÃO 2: O PROJETO & OBJETIVOS ================= */}
+      <section id="introducao" ref={introRef} className="w-full px-6 sm:px-10 lg:px-12 pt-16 sm:pt-24 pb-20 max-w-[1600px] mx-auto">
+        <div className="flex flex-col gap-10">
+
+          <div className="flex flex-col gap-2 max-w-4xl lg:max-w-5xl">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-neutral-900 leading-tight">
+              O que é o Painel Territorial?
+            </h2>
+
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary-700 mt-1">
+              Sobre a Iniciativa · SECTI Bahia
+            </span>
+
+            <p className="text-sm sm:text-base text-neutral-900 font-normal leading-relaxed mt-2">
+              O <strong>Painel Territorial de CT&I da Bahia</strong> é uma plataforma digital interativa, desenvolvida pela <strong>Secretaria de Ciência, Tecnologia e Inovação (SECTI)</strong>, para consolidar, analisar e dar transparência aos principais dados do ecossistema de CT&I nos <strong>27 Territórios de Identidade</strong> do estado.
+            </p>
+            <p className="text-xs sm:text-sm text-neutral-800 font-normal leading-relaxed">
+              A ferramenta foi concebida como um instrumento estratégico para mapear as capacidades, vocações e desafios de cada região, oferecendo uma visão integrada e georreferenciada de ativos cruciais para o desenvolvimento socioeconômico.
+            </p>
+          </div>
+
+          {/* NOSSOS OBJETIVOS (4 CARDS MINIMALISTAS) */}
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary-700 block mb-3">
+              Nossos Objetivos Estratégicos
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {[
+                {
+                  t: 'Apoiar a Tomada de Decisão',
+                  d: 'Fornecer dados qualificados para subsidiar o planejamento e a formulação de políticas públicas.'
+                },
+                {
+                  t: 'Promover a Transparência',
+                  d: 'Disponibilizar de forma aberta informações sobre investimentos, infraestrutura e indicadores de CT&I.'
+                },
+                {
+                  t: 'Fomentar a Articulação',
+                  d: 'Facilitar a identificação de sinergias entre governo, setor produtivo, academia e sociedade civil.'
+                },
+                {
+                  t: 'Democratizar a Informação',
+                  d: 'Servir como fonte de consulta para pesquisadores, estudantes, gestores e investidores.'
+                }
+              ].map((obj, idx) => (
+                <div key={idx} className="p-4 sm:p-5 rounded-xl bg-white border border-neutral-200/80 flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-2xs">
+                  <h3 className="font-semibold text-sm sm:text-base text-neutral-900 mb-1.5">
+                    {obj.t}
+                  </h3>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-normal">
+                    {obj.d}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ================= SEÇÃO 3: MÓDULOS DA PLATAFORMA & O QUE OS COMPÕE ================= */}
+      <section id="modulos" className="w-full px-6 sm:px-10 lg:px-12 py-16 max-w-[1600px] mx-auto border-t border-neutral-200/70">
+        <div className="flex flex-col gap-8">
+
+          <div className="flex flex-col gap-1.5 max-w-4xl lg:max-w-5xl">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary-700">
+              Arquitetura & Navegação
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
+              Módulos da Plataforma
+            </h2>
+            <p className="text-sm text-neutral-800 font-normal leading-relaxed">
+              Conheça as ferramentas analíticas disponíveis em cada módulo do Painel SECTI e o que compõe cada área da plataforma.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5 sm:gap-6">
+            {modulosPlataforma.map((modulo, idx) => {
+              const colSpan = idx < 3 ? 'lg:col-span-2' : 'md:col-span-1 lg:col-span-3';
+              return (
+                <div
+                  key={modulo.id}
+                  className={`bg-white rounded-xl border border-neutral-200/80 p-5 sm:p-6 flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-2xs ${colSpan}`}
+                >
+                  <div>
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-primary-700 block mb-1">
+                      {modulo.tag}
+                    </span>
+                    <h3 className="text-base sm:text-lg font-bold text-neutral-900 tracking-tight leading-snug mb-2">
+                      {modulo.title}
+                    </h3>
+
+                    <p className="text-xs sm:text-sm text-neutral-800 font-normal leading-relaxed mb-4">
+                      {modulo.descricao}
+                    </p>
+
+                    <div className="space-y-1.5 border-t border-neutral-100 pt-3.5 mb-5">
+                      <span className="text-[11px] font-semibold text-neutral-900 block mb-1">
+                        O que compõe:
+                      </span>
+                      {modulo.destaques.map((item, dIdx) => (
+                        <div key={dIdx} className="flex items-start gap-2 text-xs text-neutral-800 leading-relaxed">
+                          <span className="text-primary-600 font-bold shrink-0">•</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Link
+                    to={modulo.rota}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-700 hover:text-primary-800 transition-colors pt-3 border-t border-neutral-100"
+                  >
+                    <span>{modulo.btnLabel}</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ================= SEÇÃO 4: INDICADORES ESTRATÉGICOS & NOVAS MÉTRICAS ================= */}
+      <section id="indicadores" className="w-full px-6 sm:px-10 lg:px-12 pt-16 pb-24 max-w-[1600px] mx-auto border-t border-neutral-200/70">
+        <div className="flex flex-col gap-8">
+
+          <div className="flex flex-col gap-1.5 max-w-4xl lg:max-w-5xl">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary-700">
+              Métricas & Dados Territoriais
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
+              Indicadores Estratégicos
+            </h2>
+            <p className="text-sm text-neutral-800 font-normal leading-relaxed">
+              Definições e conceitos das métricas processadas pela plataforma para diagnósticos regionais e subsidiar políticas públicas de CT&I.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+            {indicadoresEstrategicos.map((ind, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-xl border border-neutral-200/80 p-5 flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-2xs"
+              >
+                <div>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-700 block mb-1">
+                    {ind.tag}
+                  </span>
+                  <h3 className="font-semibold text-sm sm:text-base text-neutral-900 mb-2">
+                    {ind.titulo}
+                  </h3>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-normal">
+                    {ind.descricao}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  );
 }

@@ -761,9 +761,9 @@ export default function DashboardPainel() {
                   {cardId === 'card-donut' && (
                     <SortableCard id="card-donut">
                       <DonutChart
-                        title={filtroSemiarido ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos no Semiárido') : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos por Área')}
-                        subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos mapeados na região` : 'Distribuição oficial de cursos no estado')}
-                        totalLabel="Total de Cursos"
+                        title={filtroSemiarido ? (selectedTerritory ? `Cursos CT&I no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido') : (selectedTerritory ? `Cursos CT&I em ${territoryName}` : 'Cursos de CT&I por Área')}
+                        subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos de CT&I mapeados na região` : 'Oferta presencial de cursos superiores em CT&I')}
+                        totalLabel="Total Cursos CT&I"
                         listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições na Região' : 'Top 5 Instituições com mais cursos')}
                         data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 1, color: '#E2E8F0' }]}
                         topList={topEntidadesCursos}

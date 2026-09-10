@@ -340,7 +340,7 @@ export default function CursosPage() {
 
     const kpis = [
         {
-            label: 'Cursos Presenciais',
+            label: 'Cursos Presenciais de CT&I',
             value: loadingStats ? '...' : (kpisGlobais?.cursos != null ? kpisGlobais.cursos : cursosData.length),
             icon: GraduationCap
         },
@@ -374,15 +374,15 @@ export default function CursosPage() {
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <h1 className="text-3xl font-bold text-text-primary tracking-tight">
-                            Módulo de Cursos de CT&I
+                            Módulo de Ensino Superior em CT&I
                         </h1>
                         <span className="bg-primary-600/10 text-primary-600 text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border border-primary-600/20 flex items-center gap-1 justify-center leading-none">
                             <Flame size={16} className="text-primary-600" />
-                            Heatmap Territorial
+                            Somente Oferta de CT&I
                         </span>
                     </div>
                     <p className="text-sm text-text-secondary mt-0.5 font-medium">
-                        Mapeamento territorial e densidade de cursos de ensino superior em Ciência, Tecnologia e Inovação
+                        Mapeamento territorial da oferta presencial de ensino superior voltada exclusivamente a Ciência, Tecnologia e Inovação (CT&I)
                     </p>
                     <div className="divider-territorial w-48 mt-3"></div>
                 </div>
