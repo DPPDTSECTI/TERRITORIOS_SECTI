@@ -1,9 +1,10 @@
 import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { supabase } from '../services/supabase';
+import { getTextoReferencia } from '../data/referenciasDB';
 
 export const DataContext = createContext();
 
-const CACHE_KEY = '@SectiPainel_Data_v11_NO_EAD';
+const CACHE_KEY = '@SectiPainel_Data_v12_TEXTO_REF';
 const CACHE_TIME_MS = 15 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
@@ -67,7 +68,7 @@ export const DataProvider = ({ children }) => {
  tCursosRes,
  tCadeiasRes,
  cursosRawRes,
- firjanRes
+ referenciasRes
  ] = await Promise.all([
  supabase.from('stats_ti').select('*'),
  supabase.from('lista_ativos_cti').select('*').range(0, 3000),
@@ -79,7 +80,7 @@ export const DataProvider = ({ children }) => {
  supabase.from('tipo_cursos').select('*'),
  supabase.from('tipo_cadeia').select('*'),
  supabase.from('cursos').select('id_curso, ead').range(0, 3000),
- supabase.from('firjan').select('*').range(0, 1000)
+ supabase.from('referencias').select('id_referencia, titulo_referencia, texto_referencia, url_referencia')
  ]);
 
  // Mapeamento explícito de EAD da tabela base
@@ -117,14 +118,46 @@ export const DataProvider = ({ children }) => {
  };
  });
 
+ // Mapeamento e enriquecimento da coluna texto_referencia para IG Potencial
+ const refMapByUrl = new Map();
+ (referenciasRes?.data || []).forEach(r => {
+ if (r.url_referencia && r.texto_referencia) {
+ refMapByUrl.set(String(r.url_referencia).trim().toLowerCase(), r.texto_referencia);
+ }
+ });
+
+ const getTextoRef = (fonte, entidade) => {
+ if (fonte) {
+ const direct = refMapByUrl.get(String(fonte).trim().toLowerCase());
+ if (direct) return direct;
+ }
+ return getTextoReferencia(fonte, entidade);
+ };
+
+ const listaCadeiasTratadas = (listaCadeiasRes.data || []).map(c => {
+ const isPotencial = (c.id_tipo_cadeia === 3) || String(c.tipo || '').toLowerCase().includes('potencial');
+ return {
+ ...c,
+ texto_referencia: isPotencial ? getTextoRef(c.fonte, c.entidade) : null
+ };
+ });
+
+ const distCadeiasTratadas = (distCadeiasRes.data || []).map(c => {
+ const isPotencial = (c.id_tipo_cadeia === 3) || String(c.nome_tipo || c.tipo || '').toLowerCase().includes('potencial');
+ return {
+ ...c,
+ texto_referencia: isPotencial ? getTextoRef(c.fonte, c.entidade) : null
+ };
+ });
+
  // 3. GRAVA NO CACHE
  const novoCache = {
  stats: dadosTratados,
  ativos: ativosRes.data || [],
  cursos: cursosPresenciais,
  cursosEad: cursosEad,
- distCadeias: distCadeiasRes.data || [],
- listaCadeias: listaCadeiasRes.data || [],
+ distCadeias: distCadeiasTratadas,
+ listaCadeias: listaCadeiasTratadas,
  munTer: munTerRes.data || [],
  tiposAtivos: tAtivosRes.data || [],
  tiposCursos: tCursosRes.data || [],

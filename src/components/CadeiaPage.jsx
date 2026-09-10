@@ -13,11 +13,13 @@ import {
     CheckCircle2,
     Building2,
     X,
-    Search
+    Search,
+    BookOpen
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
+import { getTextoReferencia } from '../data/referenciasDB';
 import SideMap from './maps/SideMap';
 import CardLista from './graph/CardLista';
 
@@ -163,10 +165,12 @@ export default function CadeiaPage() {
     const enrichedCadeias = useMemo(() => {
         const fontesMap = new Map();
         const coordsMap = new Map();
+        const textoRefMap = new Map();
 
         (listaCadeias || []).forEach(lc => {
             const id = Number(lc.id_cadeia);
             if (id && lc.fonte) fontesMap.set(id, lc.fonte);
+            if (id && lc.texto_referencia) textoRefMap.set(id, lc.texto_referencia);
             const cLat = Number(lc.latitude || lc.lat);
             const cLng = Number(lc.longitude || lc.lng);
             if (id && cLat && cLng && cLat >= -18.5 && cLat <= -8.0 && cLng >= -47.0 && cLng <= -36.5) {
@@ -254,6 +258,11 @@ export default function CadeiaPage() {
                         ? 'https://www.gov.br/inpi/pt-br/servicos/indicacoes-geograficas'
                         : 'http://observatorioapl.mdic.gov.br/');
 
+                const isIgPotencial = tipoNome.toLowerCase().includes('potencial') || configTipo.label === 'IG Potencial';
+                const textoRefFinal = isIgPotencial
+                    ? (row.texto_referencia || textoRefMap.get(idCadeia) || getTextoReferencia(urlFinal, row.entidade))
+                    : null;
+
                 mapCadeias.set(idCadeia, {
                     id: idCadeia,
                     id_cadeia: idCadeia,
@@ -278,6 +287,7 @@ export default function CadeiaPage() {
                     iconSvg: configTipo.iconSvg,
                     fonte: urlFinal,
                     urlReferencia: urlFinal,
+                    texto_referencia: textoRefFinal,
                     municipios_cobertos: []
                 });
             }
@@ -345,7 +355,8 @@ export default function CadeiaPage() {
                 normalizeName(c.tipo).includes(q) ||
                 normalizeName(c.municipio).includes(q) ||
                 normalizeName(c.municipio_sede).includes(q) ||
-                normalizeName(c.territorio_identidade).includes(q)
+                normalizeName(c.territorio_identidade).includes(q) ||
+                (c.texto_referencia && normalizeName(c.texto_referencia).includes(q))
             );
         }
         return list;
@@ -631,6 +642,22 @@ export default function CadeiaPage() {
                                                 {listaNomes}
                                             </span>
                                         </div>
+
+                                        {/* CITAÇÃO / ARTIGO CIENTÍFICO PARA IG POTENCIAL */}
+                                        {c.texto_referencia && (
+                                            <div className={`mt-1.5 text-[11px] leading-relaxed break-words rounded-xl p-2.5 transition-colors border ${isSelected
+                                                    ? 'bg-amber-100/70 border-amber-300 text-amber-950 shadow-2xs'
+                                                    : 'bg-amber-50/80 border-amber-200/90 text-amber-950'
+                                                }`}>
+                                                <div className="flex items-center gap-1.5 font-bold text-[9px] uppercase tracking-wider text-amber-800 mb-1">
+                                                    <BookOpen size={12} className="text-amber-700 shrink-0" />
+                                                    <span>Referência / Citação do Artigo:</span>
+                                                </div>
+                                                <p className="text-[10.5px] leading-relaxed italic text-neutral-800">
+                                                    "{c.texto_referencia}"
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 );
                             })

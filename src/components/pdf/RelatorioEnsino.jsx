@@ -501,7 +501,7 @@ export default function RelatorioEnsinoPage() {
         <div className="flex flex-col">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-[30px] lg:text-[32px] font-black text-[#1D3557] tracking-tight leading-none">
-              Relatório Executivo de Cursos e Ensino Superior de CT&I
+              Relatório Executivo de Ensino Superior em CT&I
             </h1>
 
             {isSemiarido ? (
@@ -537,8 +537,8 @@ export default function RelatorioEnsinoPage() {
           </div>
           <p className="text-[13.5px] text-[#457B9D] font-medium mt-1">
             {isSemiarido
-              ? 'Diagnóstico territorial da densidade de cursos e distribuição dos campi universitários nos 278 municípios do Semiárido'
-              : 'Diagnóstico territorial da densidade de cursos e distribuição dos campi universitários na Bahia'}
+              ? 'Diagnóstico territorial exclusivo da oferta presencial de ensino superior voltada a Ciência, Tecnologia e Inovação nos 278 municípios do Semiárido'
+              : 'Diagnóstico territorial exclusivo da oferta presencial de ensino superior voltada a Ciência, Tecnologia e Inovação na Bahia'}
           </p>
         </div>
 
