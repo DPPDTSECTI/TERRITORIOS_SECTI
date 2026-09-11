@@ -67,8 +67,9 @@ export async function waitForReportReady(targetDoc, element, maxWaitMs = 15000) 
   // 2. Aguarda sumiço de loaders/spinners
   while (Date.now() - startTime < maxWaitMs) {
     const hasSpinner = element.querySelector('.animate-spin') !== null;
-    const hasLoadingText = element.innerText?.includes('Carregando') || element.innerText?.includes('loadingStats');
-    if (!hasSpinner && !hasLoadingText) {
+    const text = element.innerText || '';
+    const hasLoadingIndicator = text.includes('Carregando') || text.includes('loadingStats');
+    if (!hasSpinner && !hasLoadingIndicator) {
       break;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -95,7 +96,7 @@ export async function waitForReportReady(targetDoc, element, maxWaitMs = 15000) 
   await new Promise((resolve) => {
     targetWin.requestAnimationFrame(() => {
       targetWin.requestAnimationFrame(() => {
-        setTimeout(resolve, 300);
+        setTimeout(resolve, 400);
       });
     });
   });
@@ -119,8 +120,6 @@ async function captureReportElementToCanvas(element, scale = 2) {
     scale,
     width,
     height,
-    x: 0,
-    y: 0,
     scrollX: 0,
     scrollY: 0,
     useCORS: true,
@@ -140,12 +139,14 @@ async function captureReportElementToCanvas(element, scale = 2) {
       const clonedWin = clonedDoc.defaultView || window;
       patchCanvasGradient(clonedWin);
 
-      // Neutraliza maskImage com gradiente que causam NaN no html2canvas
-      const masked = clonedDoc.querySelectorAll('[style*="mask"], [style*="gradient"]');
-      masked.forEach((el) => {
-        if (el.style) {
-          if (el.style.maskImage?.includes('gradient')) el.style.maskImage = 'none';
-          if (el.style.webkitMaskImage?.includes('gradient')) el.style.webkitMaskImage = 'none';
+      const allNodes = clonedDoc.querySelectorAll('*');
+      allNodes.forEach((node) => {
+        if (node.style) {
+          if (node.style.opacity && parseFloat(node.style.opacity) < 0.9) {
+            node.style.opacity = '1';
+          }
+          if (node.style.maskImage?.includes('gradient')) node.style.maskImage = 'none';
+          if (node.style.webkitMaskImage?.includes('gradient')) node.style.webkitMaskImage = 'none';
         }
       });
     }
@@ -208,7 +209,7 @@ function downloadCanvasAsPdf(canvas, filename) {
 
 /**
  * Cria um iframe padronizado em 1920x1080 em viewport real para carregar o relatório,
- * garantindo proporção e nitidez oficiais independente da tela do usuário.
+ * garantindo proporção, opacidade 100% e dados completos antes da captura.
  */
 async function captureReportViaIframe(route, scale = 2) {
   return new Promise((resolve, reject) => {
@@ -219,7 +220,9 @@ async function captureReportViaIframe(route, scale = 2) {
     const iframe = document.createElement('iframe');
     iframe.id = iframeId;
     iframe.src = route;
-    // Posiciona em (0,0) com z-index negativo e opacidade mínima para forçar o Chromium a renderizar o layout real de 1920x1080
+
+    // IMPORTANTE: opacity DEVE ser 1 para que o html2canvas capture com 100% de cor e nitidez
+    // O z-index negativo (-999999) posiciona o iframe atrás da página, tornando-o imperceptível ao usuário
     iframe.style.position = 'fixed';
     iframe.style.top = '0';
     iframe.style.left = '0';
@@ -227,7 +230,7 @@ async function captureReportViaIframe(route, scale = 2) {
     iframe.style.height = '1080px';
     iframe.width = '1920';
     iframe.height = '1080';
-    iframe.style.opacity = '0.01';
+    iframe.style.opacity = '1';
     iframe.style.pointerEvents = 'none';
     iframe.style.border = 'none';
     iframe.style.zIndex = '-999999';
@@ -242,8 +245,8 @@ async function captureReportViaIframe(route, scale = 2) {
 
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error('Tempo limite de renderização do relatório excedido (15s).'));
-    }, 18000);
+      reject(new Error('Tempo limite de renderização do relatório excedido (20s).'));
+    }, 22000);
 
     iframe.onload = async () => {
       try {
@@ -253,27 +256,31 @@ async function captureReportViaIframe(route, scale = 2) {
           throw new Error('Não foi possível acessar o documento do relatório no iframe.');
         }
 
-        // Protege addColorStop dentro da janela do iframe
         patchCanvasGradient(iframeWin);
 
-        // Aguarda até o elemento #pdf-report ser montado pelo React
+        // 1. Aguarda até o React montar a rota lazy do relatório (vencendo o Suspense)
         let reportEl = null;
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 60; i++) {
           reportEl = iframeDoc.getElementById('pdf-report') || iframeDoc.querySelector('main');
-          if (reportEl) break;
-          await new Promise((r) => setTimeout(r, 200));
+          if (reportEl && reportEl.clientHeight > 300) {
+            break;
+          }
+          await new Promise((r) => setTimeout(r, 250));
         }
 
         if (!reportEl) {
           throw new Error('Elemento do relatório não encontrado na página.');
         }
 
-        // Injeta folha de estilo para garantir 1920x1080 exatos sem scroll ou margens externas
+        // 2. Injeta folha de estilo para garantir 1920x1080 exatos, opacidade 1 e neutralizar animações
         const styleEl = iframeDoc.createElement('style');
         styleEl.id = 'report-capture-override-style';
         styleEl.textContent = `
           *, *::before, *::after {
             box-sizing: border-box !important;
+            animation: none !important;
+            transition: none !important;
+            opacity: 1 !important;
           }
           html, body {
             margin: 0 !important;
@@ -286,6 +293,7 @@ async function captureReportViaIframe(route, scale = 2) {
             max-height: 1080px !important;
             overflow: hidden !important;
             background: #f8fafc !important;
+            opacity: 1 !important;
           }
           #pdf-report {
             margin: 0 !important;
@@ -299,6 +307,7 @@ async function captureReportViaIframe(route, scale = 2) {
             box-sizing: border-box !important;
             overflow: hidden !important;
             background: #f8fafc !important;
+            opacity: 1 !important;
           }
           .print\\:hidden, [data-html2canvas-ignore="true"] {
             display: none !important;
@@ -306,9 +315,18 @@ async function captureReportViaIframe(route, scale = 2) {
         `;
         iframeDoc.head.appendChild(styleEl);
 
-        // Notifica componentes para recalcular viewBox e dimensões
+        // 3. Aguarda os dados do Supabase preencherem os cartões de KPIs (ausência de spinners e de '...')
+        for (let i = 0; i < 50; i++) {
+          const hasSpinner = reportEl.querySelector('.animate-spin') !== null;
+          const text = reportEl.innerText || '';
+          const isStillLoading = hasSpinner || (text.includes('...') && !text.includes('245') && !text.includes('550'));
+          if (!isStillLoading) break;
+          await new Promise((r) => setTimeout(r, 200));
+        }
+
+        // 4. Notifica componentes para recalcular viewBox e dimensões
         iframeWin?.dispatchEvent(new Event('resize'));
-        await new Promise((r) => setTimeout(r, 500));
+        await new Promise((r) => setTimeout(r, 800));
 
         await waitForReportReady(iframeDoc, reportEl);
 
@@ -316,8 +334,6 @@ async function captureReportViaIframe(route, scale = 2) {
           scale,
           width: 1920,
           height: 1080,
-          x: 0,
-          y: 0,
           scrollX: 0,
           scrollY: 0,
           windowWidth: 1920,
@@ -339,9 +355,12 @@ async function captureReportViaIframe(route, scale = 2) {
             const clonedWin = clonedDoc.defaultView || window;
             patchCanvasGradient(clonedWin);
 
-            const masked = clonedDoc.querySelectorAll('[style*="mask"], [style*="gradient"]');
-            masked.forEach((el) => {
+            const allElements = clonedDoc.querySelectorAll('*');
+            allElements.forEach((el) => {
               if (el.style) {
+                if (el.style.opacity && parseFloat(el.style.opacity) < 0.9) {
+                  el.style.opacity = '1';
+                }
                 if (el.style.maskImage?.includes('gradient')) el.style.maskImage = 'none';
                 if (el.style.webkitMaskImage?.includes('gradient')) el.style.webkitMaskImage = 'none';
               }
@@ -426,14 +445,15 @@ export async function exportReportAsPng({
     // API não disponível
   }
 
-  // 2. Geração padronizada no navegador (Client-Side)
+  // 2. Geração direta / padronizada no navegador (Client-Side)
   const currentEl = document.getElementById('pdf-report');
   let canvas = null;
 
-  // Se o elemento na tela atual já tiver resolução próxima a 1920px, captura direto; senão, usa o viewport padronizado
-  if (currentEl && Math.abs(currentEl.getBoundingClientRect().width - 1920) < 50) {
+  // Se o relatório já está aberto e visível na tela em modo desktop (>= 1000px), captura direto da tela (instantâneo e com dados/mapas já prontos)
+  if (currentEl && (window.innerWidth >= 1000 || currentEl.getBoundingClientRect().width >= 900)) {
     canvas = await captureReportElementToCanvas(currentEl, scale);
   } else {
+    // Caso contrário (ex: disparado do painel geral /relatorio ou de tela mobile), renderiza via iframe padronizado em 1920x1080
     const route = getReportRoute(type, territorioId, modo);
     canvas = await captureReportViaIframe(route, scale);
   }
@@ -486,13 +506,15 @@ export async function exportReportAsPdf({
     // API não disponível
   }
 
-  // 2. Geração padronizada no navegador (Client-Side)
+  // 2. Geração direta / padronizada no navegador (Client-Side)
   const currentEl = document.getElementById('pdf-report');
   let canvas = null;
 
-  if (currentEl && Math.abs(currentEl.getBoundingClientRect().width - 1920) < 50) {
+  // Se o relatório já está aberto e visível na tela em modo desktop (>= 1000px), captura direto da tela (instantâneo e com dados/mapas já prontos)
+  if (currentEl && (window.innerWidth >= 1000 || currentEl.getBoundingClientRect().width >= 900)) {
     canvas = await captureReportElementToCanvas(currentEl, scale);
   } else {
+    // Caso contrário (ex: disparado do painel geral /relatorio ou de tela mobile), renderiza via iframe padronizado em 1920x1080
     const route = getReportRoute(type, territorioId, modo);
     canvas = await captureReportViaIframe(route, scale);
   }
