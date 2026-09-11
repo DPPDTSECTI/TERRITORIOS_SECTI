@@ -11,7 +11,8 @@ import {
   Award,
   Compass,
   Printer,
-  ArrowLeft
+  ArrowLeft,
+  Image as ImageIcon
 } from 'lucide-react';
 
 import { DataContext } from '../../context/DataContext';
@@ -24,6 +25,7 @@ import { getTextoReferencia } from '../../data/referenciasDB';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
+import { exportReportAsPdf, exportReportAsPng } from '../../utils/exportReportClient';
 
 function normalizeName(name) {
   if (!name) return '';
@@ -183,6 +185,7 @@ export default function RelatorioCadeiasPage() {
 
   // React-to-print: referência do relatório 1920x1080 para renderização e impressão nativa
   const contentRef = useRef(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const handlePrint = useReactToPrint({
     contentRef,
@@ -191,6 +194,42 @@ export default function RelatorioCadeiasPage() {
     onBeforePrint: prepareReportForPrint,
     print: (iframe) => printWithCanvasSync(iframe, contentRef)
   });
+
+  const handleExportDirectPdf = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      await exportReportAsPdf({
+        type: 'cadeias',
+        territorioId: selectedTerritoryId,
+        modo: reportMode,
+        scale: 2
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao exportar PDF: ' + (e.message || e));
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportDirectPng = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      await exportReportAsPng({
+        type: 'cadeias',
+        territorioId: selectedTerritoryId,
+        modo: reportMode,
+        scale: 2
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao exportar PNG: ' + (e.message || e));
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Auto-impressão caso explicitamente solicitado via query param (ex: autoPrint=1 ou autoprint=true)
   useEffect(() => {
@@ -796,6 +835,47 @@ export default function RelatorioCadeiasPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <div data-html2canvas-ignore="true" className="flex items-center gap-1.5 print:hidden mr-2">
+            <button
+              type="button"
+              onClick={() => navigate('/relatorio')}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-2xs transition-all cursor-pointer"
+              title="Voltar ao Painel Geral de Relatórios"
+            >
+              <ArrowLeft size={13} />
+              <span>Painel</span>
+            </button>
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={handleExportDirectPdf}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#1D3557] text-white hover:bg-[#2563EB] disabled:opacity-50 shadow-2xs transition-all cursor-pointer"
+              title="Exportar como documento PDF 16:9"
+            >
+              <Printer size={13} />
+              <span>{isExporting ? 'Gerando...' : 'PDF'}</span>
+            </button>
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={handleExportDirectPng}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 disabled:opacity-50 shadow-2xs transition-all cursor-pointer"
+              title="Exportar imagem PNG de alta resolução"
+            >
+              <ImageIcon size={13} className="text-[#2563EB]" />
+              <span>PNG</span>
+            </button>
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-2xs transition-all cursor-pointer"
+              title="Imprimir ou Salvar pelo Navegador"
+            >
+              <Printer size={13} className="text-slate-500" />
+              <span>Imprimir</span>
+            </button>
+          </div>
+
           <span className="text-[12px] font-bold text-[#1D3557] bg-[#D6EAF8]/50 border border-[#BAE6FD] px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
             <Award size={14} className="text-[#2563EB]" />
             Dados Oficiais SECTI/BA
