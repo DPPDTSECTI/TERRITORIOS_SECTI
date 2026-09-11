@@ -381,7 +381,7 @@ export default function DashboardPainel() {
 
   // 7. Infraestrutura RNP
   const rnpComparisonData = useMemo(() => {
-    if (!scopedAtivos || scopedAtivos.length === 0) return [];
+    if (!activeScopedAtivos || activeScopedAtivos.length === 0) return [];
 
     const stats = {
       'Univ. Federal': { com: 0, sem: 0 },
@@ -390,7 +390,7 @@ export default function DashboardPainel() {
       'ICT': { com: 0, sem: 0 }
     };
 
-    scopedAtivos.forEach(a => {
+    activeScopedAtivos.forEach(a => {
       const str = String(a.tipo || a.nome_tipo || '').toLowerCase();
       let categoria = null;
 
@@ -415,7 +415,7 @@ export default function DashboardPainel() {
       }))
       .filter(item => item.total > 0)
       .sort((a, b) => b.total - a.total);
-  }, [scopedAtivos]);
+  }, [activeScopedAtivos]);
 
   // 8. Comparativo de Barras Empilhadas: Semiárido vs Demais Regiões
   const semiaridoStackedComparisonData = useMemo(() => {
@@ -869,17 +869,17 @@ export default function DashboardPainel() {
                     </SortableCard>
                   )}
 
-                  {/* CARD 4: PROPORTION RNP OU BARRAS EMPILHADAS - Inferior Direito */}
+                  {/* CARD 4: PROPORTION RNP - Inferior Direito */}
                   {cardId === 'card-mapeamento' && (
                     <SortableCard id="card-mapeamento">
                       <ProportionBarChart
                         isVisaoGeral={true}
                         isSemiarido={filtroSemiarido}
-                        data={filtroSemiarido ? semiaridoStackedComparisonData : rnpComparisonData}
-                        title={filtroSemiarido ? "Distribuição no Semiárido" : "Infraestrutura RNP"}
-                        subtitle={filtroSemiarido ? "No Semiárido vs. Fora do Semiárido" : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
-                        positiveLabel={filtroSemiarido ? "No Semiárido" : "Com RNP"}
-                        negativeLabel={filtroSemiarido ? "Fora do Semiárido" : "Sem RNP"}
+                        data={rnpComparisonData}
+                        title={filtroSemiarido ? (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP · Semiárido") : (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP")}
+                        subtitle={filtroSemiarido ? (selectedTerritory ? `Proporção de ativos conectados à RNP no Semiárido (${territoryName})` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa no Semiárido') : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
+                        positiveLabel="Com RNP"
+                        negativeLabel="Sem RNP"
                         positiveColor={filtroSemiarido ? "bg-amber-600" : "bg-primary-500"}
                         negativeColor={filtroSemiarido ? "bg-amber-500/15" : "bg-primary-100"}
                         positiveTextColor={filtroSemiarido ? "text-amber-700" : "text-primary-700"}

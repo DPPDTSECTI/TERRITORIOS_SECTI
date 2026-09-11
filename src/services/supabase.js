@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const DEFAULT_SUPABASE_URL = 'https://vicaqpcluxkwbbbwdpkg.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_jpW0W_VeeQXuHJ0XoKJwMg_FNiwdmzE';
 
-// Um teste rápido para você fazer:
-console.log("URL lida pelo Vite:", supabaseUrl); 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
