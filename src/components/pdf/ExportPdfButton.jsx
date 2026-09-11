@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Printer } from 'lucide-react';
-import { exportReportAsPdf } from '../../utils/exportReportClient';
+import { getReportRoute } from '../../utils/exportReportClient';
 
 /**
  * Componente unificado para exportação de relatório em PDF na proporção nativa da tela.
@@ -21,36 +21,21 @@ export default function ExportPdfButton({
   size = 'md', // 'sm' | 'md'
   variant = 'primary' // 'primary' | 'navy' | 'emerald'
 }) {
-  const [internalLoading, setInternalLoading] = useState(false);
-  const loading = isLoading || internalLoading;
-
-  const handleClick = async (e) => {
-    if (loading) return;
+  const handleClick = (e) => {
+    if (isLoading) return;
     if (onClick) {
       onClick(e);
       return;
     }
 
-    setInternalLoading(true);
     const type = reportType === 'cursos'
       ? 'cursos'
       : (reportType === 'ativos'
           ? 'ativos'
           : (reportType === 'cadeias' ? 'cadeias' : 'sintese'));
 
-    try {
-      await exportReportAsPdf({
-        type,
-        territorioId,
-        modo: reportMode,
-        scale: 2
-      });
-    } catch (err) {
-      console.error('[Exportação PDF] Erro:', err);
-      alert(`Erro ao exportar PDF: ${err.message || err}`);
-    } finally {
-      setInternalLoading(false);
-    }
+    const route = getReportRoute(type, territorioId, reportMode) + '&autoPrint=1';
+    window.open(route, '_blank');
   };
 
   const variantStyles = {

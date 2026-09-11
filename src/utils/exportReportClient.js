@@ -463,62 +463,19 @@ export async function exportReportAsPng({
 }
 
 /**
- * Executa a exportação de um relatório em formato PDF Widescreen 16:9
+ * Executa a exportação de um relatório em formato PDF Widescreen 16:9 via react-to-print / motor nativo
  */
 export async function exportReportAsPdf({
   type = 'sintese',
   territorioId = null,
-  modo = 'normal',
-  filename = null,
-  scale = 2
+  modo = 'normal'
 }) {
-  let fileBase = 'relatorio_sintese';
-  if (type === 'ativos') fileBase = 'relatorio_ativos';
-  else if (type === 'cursos') fileBase = 'relatorio_ensino';
-  else if (type === 'cadeias') fileBase = 'relatorio_cadeias';
-
-  const defaultFilename = filename || `${fileBase}_${modo}.pdf`;
-
-  // 1. Tenta API local (caso esteja rodando no Vite Dev Server com Playwright)
-  try {
-    const terrParam = territorioId && territorioId !== 'bahia'
-      ? `territorio=${encodeURIComponent(territorioId)}`
-      : 'territorio=bahia';
-    const apiUrl = `/api/export-pdf?type=${type}&${terrParam}&modo=${modo}`;
-    const res = await fetch(apiUrl);
-    const contentType = res.headers.get('content-type') || '';
-
-    if (res.ok && contentType.includes('application/pdf')) {
-      const blob = await res.blob();
-      if (blob.size > 1000) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = defaultFilename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 5000);
-        return true;
-      }
-    }
-  } catch (apiErr) {
-    // API não disponível
-  }
-
-  // 2. Geração direta / padronizada no navegador (Client-Side)
   const currentEl = document.getElementById('pdf-report');
-  let canvas = null;
-
-  // Se o relatório já está aberto e visível na tela em modo desktop (>= 1000px), captura direto da tela (instantâneo e com dados/mapas já prontos)
-  if (currentEl && (window.innerWidth >= 1000 || currentEl.getBoundingClientRect().width >= 900)) {
-    canvas = await captureReportElementToCanvas(currentEl, scale);
-  } else {
-    // Caso contrário (ex: disparado do painel geral /relatorio ou de tela mobile), renderiza via iframe padronizado em 1920x1080
-    const route = getReportRoute(type, territorioId, modo);
-    canvas = await captureReportViaIframe(route, scale);
+  if (currentEl) {
+    window.print();
+    return true;
   }
-
-  downloadCanvasAsPdf(canvas, defaultFilename);
+  const route = getReportRoute(type, territorioId, modo) + '&autoPrint=1';
+  window.open(route, '_blank');
   return true;
 }

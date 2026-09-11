@@ -856,24 +856,10 @@ export default function RelatorioPage() {
     return 'Síntese Executiva';
   }, [reportType]);
 
-  const handleExportPDF = async (overrideType = null) => {
-    if (isExportingPdf) return;
-    setIsExportingPdf(true);
-
+  const handleExportPDF = (overrideType = null) => {
     const type = overrideType || reportType;
-    try {
-      await exportReportAsPdf({
-        type,
-        territorioId: selectedTerritoryId,
-        modo: reportMode,
-        scale: 2
-      });
-    } catch (err) {
-      console.error('[Exportação PDF] Erro:', err);
-      alert(`Erro ao exportar PDF: ${err.message || err}`);
-    } finally {
-      setIsExportingPdf(false);
-    }
+    const route = getReportRoute(type, selectedTerritoryId, reportMode) + '&autoPrint=1';
+    window.open(route, '_blank');
   };
 
   const handleExportPNG = async (overrideType = null) => {
@@ -1116,7 +1102,7 @@ export default function RelatorioPage() {
      disabled={isExportingPdf}
      onClick={() => handleExportPDF()}
      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-primary-900 text-white hover:bg-primary-800 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Exportar Relatório Executivo em PDF 16:9 (${currentReportLabel})`}
+     title={`Abrir Relatório Executivo e Salvar como PDF / Imprimir em Widescreen 16:9 (${currentReportLabel})`}
    >
      {isExportingPdf ? (
        <>
@@ -1126,7 +1112,7 @@ export default function RelatorioPage() {
      ) : (
        <>
          <Printer size={15} />
-         <span>Exportar PDF</span>
+         <span>Salvar PDF / Imprimir</span>
        </>
      )}
    </button>

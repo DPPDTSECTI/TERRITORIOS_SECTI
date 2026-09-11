@@ -32,7 +32,6 @@ import { municipiosDB } from '../../data/municipiosDB';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
-import { exportReportAsPdf, exportReportAsPng } from '../../utils/exportReportClient';
 
 const PALETTE = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
 
@@ -132,51 +131,22 @@ export default function RelatorioEnsinoPage() {
 
   // React-to-print: referência do relatório 1920x1080 para renderização e impressão nativa
   const contentRef = useRef(null);
-  const [isExporting, setIsExporting] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   const handlePrint = useReactToPrint({
     contentRef,
     documentTitle: `relatorio_cursos_${isSemiarido ? 'semiarido' : (selectedTerritory ? territoryName : 'bahia')}`,
     pageStyle: REPORT_PRINT_PAGE_STYLE,
-    onBeforePrint: prepareReportForPrint,
-    print: (iframe) => printWithCanvasSync(iframe, contentRef)
+    onBeforePrint: async () => {
+      setIsPrinting(true);
+      await prepareReportForPrint();
+    },
+    onAfterPrint: () => setIsPrinting(false),
+    print: (iframe) => {
+      setIsPrinting(false);
+      return printWithCanvasSync(iframe, contentRef);
+    }
   });
-
-  const handleExportDirectPdf = async () => {
-    if (isExporting) return;
-    setIsExporting(true);
-    try {
-      await exportReportAsPdf({
-        type: 'cursos',
-        territorioId: selectedTerritoryId,
-        modo: reportMode,
-        scale: 2
-      });
-    } catch (e) {
-      console.error(e);
-      alert('Erro ao exportar PDF: ' + (e.message || e));
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const handleExportDirectPng = async () => {
-    if (isExporting) return;
-    setIsExporting(true);
-    try {
-      await exportReportAsPng({
-        type: 'cursos',
-        territorioId: selectedTerritoryId,
-        modo: reportMode,
-        scale: 2
-      });
-    } catch (e) {
-      console.error(e);
-      alert('Erro ao exportar PNG: ' + (e.message || e));
-    } finally {
-      setIsExporting(false);
-    }
-  };
 
   // Auto-impressão caso explicitamente solicitado via query param (ex: autoPrint=1 ou autoprint=true)
   useEffect(() => {
@@ -582,7 +552,7 @@ export default function RelatorioEnsinoPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <div data-html2canvas-ignore="true" className="flex items-center gap-1.5 print:hidden mr-2">
+          <div className="flex items-center gap-1.5 print:hidden mr-2">
             <button
               type="button"
               onClick={() => navigate('/relatorio')}
@@ -594,32 +564,13 @@ export default function RelatorioEnsinoPage() {
             </button>
             <button
               type="button"
-              disabled={isExporting}
-              onClick={handleExportDirectPdf}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#1D3557] text-white hover:bg-[#2563EB] disabled:opacity-50 shadow-2xs transition-all cursor-pointer"
-              title="Exportar como documento PDF 16:9"
+              disabled={isPrinting}
+              onClick={handlePrint}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1D3557] text-white hover:bg-[#2563EB] disabled:opacity-60 shadow-2xs transition-all cursor-pointer"
+              title="Salvar como PDF ou Imprimir em Widescreen 16:9"
             >
               <Printer size={13} />
-              <span>{isExporting ? 'Gerando...' : 'PDF'}</span>
-            </button>
-            <button
-              type="button"
-              disabled={isExporting}
-              onClick={handleExportDirectPng}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 disabled:opacity-50 shadow-2xs transition-all cursor-pointer"
-              title="Exportar imagem PNG de alta resolução"
-            >
-              <ImageIcon size={13} className="text-[#2563EB]" />
-              <span>PNG</span>
-            </button>
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-2xs transition-all cursor-pointer"
-              title="Imprimir ou Salvar pelo Navegador"
-            >
-              <Printer size={13} className="text-slate-500" />
-              <span>Imprimir</span>
+              <span>{isPrinting ? 'Preparando...' : 'Salvar PDF / Imprimir'}</span>
             </button>
           </div>
 
