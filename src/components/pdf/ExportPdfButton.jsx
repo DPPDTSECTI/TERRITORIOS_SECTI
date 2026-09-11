@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Printer } from 'lucide-react';
+import { captureReportViaIframe } from '../../utils/clientExport';
 
 /**
  * Componente unificado para exportação de relatório em PDF na proporção nativa da tela.
@@ -15,7 +16,7 @@ export default function ExportPdfButton({
   reportMode = 'normal',
   isLoading = false,
   className = '',
-  title = 'Exportar Relatório Executivo em PDF via Playwright',
+  title = 'Exportar Relatório Executivo em PDF',
   label = 'Exportar PDF',
   size = 'md', // 'sm' | 'md'
   variant = 'primary' // 'primary' | 'navy' | 'emerald'
@@ -48,30 +49,52 @@ export default function ExportPdfButton({
 
     const modoParam = `&modo=${reportMode}`;
     const filename = `${fileBase}_${reportMode}.pdf`;
+    const fullRoute = `/relatorio/${type}?${terrParam}${modoParam}`;
 
-    try {
-      const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
-      const res = await fetch(apiUrl);
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Erro HTTP ${res.status} ao gerar PDF.`);
+    const isLocalDev = Boolean(
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    );
+
+    let downloaded = false;
+
+    // 1. TENTA API DO PLAYWRIGHT SE ESTIVER EXECUTANDO LOCALMENTE
+    if (isLocalDev) {
+      try {
+        const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
+        const res = await fetch(apiUrl);
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && !contentType.includes('text/html')) {
+          const blob = await res.blob();
+          if (blob && blob.size > 2000) {
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
+            downloaded = true;
+          }
+        }
+      } catch (err) {
+        console.warn('[Exportação PDF] Servidor Playwright local indisponível, usando cliente:', err);
       }
-
-      const blob = await res.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
-    } catch (err) {
-      console.error('[Exportação PDF] Erro:', err);
-      alert(`Erro ao gerar PDF via Playwright: ${err.message || err}`);
-    } finally {
-      setInternalLoading(false);
     }
+
+    // 2. EXPORTAÇÃO CLIENT-SIDE (VERCEL / PRODUÇÃO / FALLBACK NATIVO)
+    if (!downloaded) {
+      try {
+        await captureReportViaIframe(fullRoute, 'pdf', filename);
+        downloaded = true;
+      } catch (iframeErr) {
+        console.warn('[Exportação PDF] Iframe falhou, abrindo para impressão nativa do navegador:', iframeErr);
+        window.open(`${fullRoute}&autoPrint=1`, '_blank');
+      }
+    }
+
+    setInternalLoading(false);
   };
 
   const variantStyles = {
