@@ -243,11 +243,11 @@ export default function LandingHero() {
         <header className="w-full flex items-center justify-between pb-4 sm:pb-5 border-b border-neutral-200">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-2.5 sm:gap-3">
-              <div className="flex items-end gap-1 h-5">
-                <div className="w-[3px] h-2.5 bg-primary-300 rounded-full" />
-                <div className="w-[3px] h-4 bg-primary-600 rounded-full" />
-                <div className="w-[3px] h-5 bg-primary-900 rounded-full" />
-              </div>
+              <img
+                src="/img/favicon-96x96.webp"
+                alt="Favicon Painel Territorial CT&I"
+                className="h-6 sm:h-7 w-auto object-contain shrink-0"
+              />
               <span className="font-sans font-bold text-sm sm:text-base tracking-wider uppercase text-neutral-900">
                 Painel Territorial CT&I
               </span>
