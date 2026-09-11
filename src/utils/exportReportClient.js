@@ -66,19 +66,25 @@ export async function waitForReportReady(targetDoc, element, maxWaitMs = 15000) 
 }
 
 /**
- * Captura um elemento DOM de relatório com html2canvas em 1920x1080 fixos
+ * Captura um elemento DOM de relatório com html2canvas de forma perfeitamente ajustada
  */
 async function captureReportElementToCanvas(element, scale = 2) {
   const targetDoc = element.ownerDocument || document;
 
   await waitForReportReady(targetDoc, element);
 
+  const rect = element.getBoundingClientRect();
+  const width = Math.round(rect.width) || element.offsetWidth || 1920;
+  const height = Math.round(rect.height) || element.offsetHeight || 1080;
+
   const canvas = await html2canvas(element, {
     scale,
-    width: 1920,
-    height: 1080,
-    windowWidth: 1920,
-    windowHeight: 1080,
+    width,
+    height,
+    x: 0,
+    y: 0,
+    scrollX: 0,
+    scrollY: 0,
     useCORS: true,
     allowTaint: false,
     backgroundColor: '#f8fafc',
@@ -91,19 +97,6 @@ async function captureReportElementToCanvas(element, scale = 2) {
       if (el.classList?.contains('leaflet-control-zoom')) return true;
       if (el.classList?.contains('leaflet-control-attribution')) return true;
       return false;
-    },
-    onclone: (clonedDoc) => {
-      const clonedReport = clonedDoc.getElementById('pdf-report') || clonedDoc.querySelector('main');
-      if (clonedReport) {
-        clonedReport.style.width = '1920px';
-        clonedReport.style.height = '1080px';
-        clonedReport.style.minWidth = '1920px';
-        clonedReport.style.minHeight = '1080px';
-        clonedReport.style.maxWidth = '1920px';
-        clonedReport.style.maxHeight = '1080px';
-        clonedReport.style.overflow = 'hidden';
-        clonedReport.style.boxSizing = 'border-box';
-      }
     }
   });
 
@@ -133,27 +126,38 @@ function downloadCanvasAsPng(canvas, filename) {
 }
 
 /**
- * Converte um Canvas em documento PDF Widescreen 16:9 (300mm x 168.75mm) via jsPDF e faz o download
+ * Converte um Canvas em documento PDF na proporção exata do canvas,
+ * cobrindo 100% da página sem nenhuma borda branca.
  */
 function downloadCanvasAsPdf(canvas, filename) {
-  const pdfWidth = 300; // mm
-  const pdfHeight = 168.75; // mm (300 * 9 / 16 exato)
+  const canvasWidth = canvas.width;
+  const canvasHeight = canvas.height;
+  const ratio = canvasWidth / canvasHeight;
+
+  // Largura base de 300mm (padrão landscape widescreen)
+  const pdfWidth = 300;
+  // A altura do PDF é calculada exatamente proporcional à imagem capturada
+  const pdfHeight = Number((pdfWidth / ratio).toFixed(2));
 
   const pdf = new jsPDF({
-    orientation: 'landscape',
+    orientation: pdfWidth >= pdfHeight ? 'landscape' : 'portrait',
     unit: 'mm',
     format: [pdfWidth, pdfHeight],
     compress: true
   });
 
-  const imgData = canvas.toDataURL('image/png', 0.95);
-  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+  const finalPageWidth = pdf.internal.pageSize.getWidth();
+  const finalPageHeight = pdf.internal.pageSize.getHeight();
+
+  const imgData = canvas.toDataURL('image/png', 0.98);
+  // Adiciona preenchendo exatamente toda a extensão do documento
+  pdf.addImage(imgData, 'PNG', 0, 0, finalPageWidth, finalPageHeight, undefined, 'FAST');
   pdf.save(filename);
 }
 
 /**
- * Cria um iframe oculto isolado para carregar a rota executiva oficial do relatório,
- * aguardar a renderização dos dados e capturar o elemento.
+ * Cria um iframe padronizado em 1920x1080 em viewport real para carregar o relatório,
+ * garantindo proporção e nitidez oficiais independente da tela do usuário.
  */
 async function captureReportViaIframe(route, scale = 2) {
   return new Promise((resolve, reject) => {
@@ -164,17 +168,18 @@ async function captureReportViaIframe(route, scale = 2) {
     const iframe = document.createElement('iframe');
     iframe.id = iframeId;
     iframe.src = route;
+    // Posiciona em (0,0) com z-index negativo e opacidade mínima para forçar o Chromium a renderizar o layout real de 1920x1080
     iframe.style.position = 'fixed';
-    iframe.style.top = '-9999px';
-    iframe.style.left = '-9999px';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
     iframe.style.width = '1920px';
     iframe.style.height = '1080px';
     iframe.width = '1920';
     iframe.height = '1080';
-    iframe.style.opacity = '0';
+    iframe.style.opacity = '0.01';
     iframe.style.pointerEvents = 'none';
     iframe.style.border = 'none';
-    iframe.style.zIndex = '-9999';
+    iframe.style.zIndex = '-999999';
 
     const cleanup = () => {
       setTimeout(() => {
@@ -208,10 +213,75 @@ async function captureReportViaIframe(route, scale = 2) {
           throw new Error('Elemento do relatório não encontrado na página.');
         }
 
-        // Dá tempo para context e dados de Supabase carregarem dentro do iframe
-        await new Promise((r) => setTimeout(r, 600));
+        // Injeta folha de estilo para garantir 1920x1080 exatos sem scroll ou margens externas
+        const styleEl = iframeDoc.createElement('style');
+        styleEl.id = 'report-capture-override-style';
+        styleEl.textContent = `
+          *, *::before, *::after {
+            box-sizing: border-box !important;
+          }
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 1920px !important;
+            height: 1080px !important;
+            min-width: 1920px !important;
+            min-height: 1080px !important;
+            max-width: 1920px !important;
+            max-height: 1080px !important;
+            overflow: hidden !important;
+            background: #f8fafc !important;
+          }
+          #pdf-report {
+            margin: 0 !important;
+            padding: 24px 32px !important;
+            width: 1920px !important;
+            height: 1080px !important;
+            min-width: 1920px !important;
+            min-height: 1080px !important;
+            max-width: 1920px !important;
+            max-height: 1080px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            background: #f8fafc !important;
+          }
+          .print\\:hidden, [data-html2canvas-ignore="true"] {
+            display: none !important;
+          }
+        `;
+        iframeDoc.head.appendChild(styleEl);
 
-        const canvas = await captureReportElementToCanvas(reportEl, scale);
+        // Notifica componentes para recalcular viewBox e dimensões
+        iframe.contentWindow?.dispatchEvent(new Event('resize'));
+        await new Promise((r) => setTimeout(r, 500));
+
+        await waitForReportReady(iframeDoc, reportEl);
+
+        const canvas = await html2canvas(reportEl, {
+          scale,
+          width: 1920,
+          height: 1080,
+          x: 0,
+          y: 0,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: 1920,
+          windowHeight: 1080,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: '#f8fafc',
+          logging: false,
+          ignoreElements: (el) => {
+            if (el.getAttribute?.('data-html2canvas-ignore') === 'true') return true;
+            if (el.classList?.contains('print:hidden')) return true;
+            if (el.classList?.contains('print-hidden')) return true;
+            if (el.classList?.contains('recharts-tooltip-wrapper')) return true;
+            if (el.classList?.contains('leaflet-control-zoom')) return true;
+            if (el.classList?.contains('leaflet-control-attribution')) return true;
+            return false;
+          }
+        });
+
         clearTimeout(timeout);
         cleanup();
         resolve(canvas);
@@ -222,7 +292,7 @@ async function captureReportViaIframe(route, scale = 2) {
       }
     };
 
-    iframe.onerror = (e) => {
+    iframe.onerror = () => {
       clearTimeout(timeout);
       cleanup();
       reject(new Error('Erro ao carregar a página do relatório para captura.'));
@@ -271,7 +341,6 @@ export async function exportReportAsPng({
     const res = await fetch(apiUrl);
     const contentType = res.headers.get('content-type') || '';
 
-    // Se o servidor respondeu OK com uma imagem PNG real (e NÃO com o index.html da SPA)
     if (res.ok && contentType.includes('image/png')) {
       const blob = await res.blob();
       if (blob.size > 1000) {
@@ -287,18 +356,17 @@ export async function exportReportAsPng({
       }
     }
   } catch (apiErr) {
-    // API não disponível ou ambiente de produção estático (Vercel)
+    // API não disponível
   }
 
-  // 2. Geração direta no navegador (Client-Side)
-  // Caso o usuário já esteja na página do relatório executivo
+  // 2. Geração padronizada no navegador (Client-Side)
   const currentEl = document.getElementById('pdf-report');
   let canvas = null;
 
-  if (currentEl) {
+  // Se o elemento na tela atual já tiver resolução próxima a 1920px, captura direto; senão, usa o viewport padronizado
+  if (currentEl && Math.abs(currentEl.getBoundingClientRect().width - 1920) < 50) {
     canvas = await captureReportElementToCanvas(currentEl, scale);
   } else {
-    // Carrega a rota oficial em um iframe temporário
     const route = getReportRoute(type, territorioId, modo);
     canvas = await captureReportViaIframe(route, scale);
   }
@@ -333,7 +401,6 @@ export async function exportReportAsPdf({
     const res = await fetch(apiUrl);
     const contentType = res.headers.get('content-type') || '';
 
-    // Se o servidor respondeu OK com um PDF real (e NÃO com o index.html da SPA)
     if (res.ok && contentType.includes('application/pdf')) {
       const blob = await res.blob();
       if (blob.size > 1000) {
@@ -349,17 +416,16 @@ export async function exportReportAsPdf({
       }
     }
   } catch (apiErr) {
-    // API não disponível ou ambiente de produção estático (Vercel)
+    // API não disponível
   }
 
-  // 2. Geração direta no navegador (Client-Side)
+  // 2. Geração padronizada no navegador (Client-Side)
   const currentEl = document.getElementById('pdf-report');
   let canvas = null;
 
-  if (currentEl) {
+  if (currentEl && Math.abs(currentEl.getBoundingClientRect().width - 1920) < 50) {
     canvas = await captureReportElementToCanvas(currentEl, scale);
   } else {
-    // Carrega a rota oficial em um iframe temporário
     const route = getReportRoute(type, territorioId, modo);
     canvas = await captureReportViaIframe(route, scale);
   }
