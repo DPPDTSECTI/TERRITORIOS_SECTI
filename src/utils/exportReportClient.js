@@ -7,6 +7,42 @@ import { jsPDF } from 'jspdf';
  */
 
 /**
+ * Protege contra o bug clássico do html2canvas:
+ * "Failed to execute 'addColorStop' on 'CanvasGradient': The provided double value is non-finite."
+ * Ocorre quando o parser do html2canvas calcula offset como NaN ou Infinity em gradientes com ângulos complexos ou dimensões nulas.
+ */
+function patchCanvasGradient(win = (typeof window !== 'undefined' ? window : null)) {
+  try {
+    if (!win) return;
+    const proto = win.CanvasRenderingContext2D?.prototype;
+    if (proto && !proto.__sectiAddColorStopPatched) {
+      const origAddColorStop = proto.addColorStop;
+      proto.addColorStop = function (offset, color) {
+        let safeOffset = Number(offset);
+        if (!isFinite(safeOffset) || isNaN(safeOffset)) {
+          safeOffset = 0;
+        } else if (safeOffset < 0) {
+          safeOffset = 0;
+        } else if (safeOffset > 1) {
+          safeOffset = 1;
+        }
+        try {
+          return origAddColorStop.call(this, safeOffset, color);
+        } catch (e) {
+          // Ignora se for cor temporariamente mal formatada no parser
+        }
+      };
+      proto.__sectiAddColorStopPatched = true;
+    }
+  } catch (err) {
+    console.warn('[ExportReport] Aviso ao proteger addColorStop:', err);
+  }
+}
+
+// Inicializa a proteção na janela principal imediatamente
+patchCanvasGradient();
+
+/**
  * Aguarda a estabilização e renderização completa de um elemento de relatório:
  * 1. Fontes da página carregadas
  * 2. Desaparecimento de spinners ou mensagens de 'Carregando...'
@@ -70,6 +106,8 @@ export async function waitForReportReady(targetDoc, element, maxWaitMs = 15000) 
  */
 async function captureReportElementToCanvas(element, scale = 2) {
   const targetDoc = element.ownerDocument || document;
+  const targetWin = targetDoc.defaultView || window;
+  patchCanvasGradient(targetWin);
 
   await waitForReportReady(targetDoc, element);
 
@@ -97,6 +135,19 @@ async function captureReportElementToCanvas(element, scale = 2) {
       if (el.classList?.contains('leaflet-control-zoom')) return true;
       if (el.classList?.contains('leaflet-control-attribution')) return true;
       return false;
+    },
+    onclone: (clonedDoc) => {
+      const clonedWin = clonedDoc.defaultView || window;
+      patchCanvasGradient(clonedWin);
+
+      // Neutraliza maskImage com gradiente que causam NaN no html2canvas
+      const masked = clonedDoc.querySelectorAll('[style*="mask"], [style*="gradient"]');
+      masked.forEach((el) => {
+        if (el.style) {
+          if (el.style.maskImage?.includes('gradient')) el.style.maskImage = 'none';
+          if (el.style.webkitMaskImage?.includes('gradient')) el.style.webkitMaskImage = 'none';
+        }
+      });
     }
   });
 
@@ -197,9 +248,13 @@ async function captureReportViaIframe(route, scale = 2) {
     iframe.onload = async () => {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        const iframeWin = iframe.contentWindow || iframeDoc?.defaultView;
         if (!iframeDoc) {
           throw new Error('Não foi possível acessar o documento do relatório no iframe.');
         }
+
+        // Protege addColorStop dentro da janela do iframe
+        patchCanvasGradient(iframeWin);
 
         // Aguarda até o elemento #pdf-report ser montado pelo React
         let reportEl = null;
@@ -252,7 +307,7 @@ async function captureReportViaIframe(route, scale = 2) {
         iframeDoc.head.appendChild(styleEl);
 
         // Notifica componentes para recalcular viewBox e dimensões
-        iframe.contentWindow?.dispatchEvent(new Event('resize'));
+        iframeWin?.dispatchEvent(new Event('resize'));
         await new Promise((r) => setTimeout(r, 500));
 
         await waitForReportReady(iframeDoc, reportEl);
@@ -279,6 +334,18 @@ async function captureReportViaIframe(route, scale = 2) {
             if (el.classList?.contains('leaflet-control-zoom')) return true;
             if (el.classList?.contains('leaflet-control-attribution')) return true;
             return false;
+          },
+          onclone: (clonedDoc) => {
+            const clonedWin = clonedDoc.defaultView || window;
+            patchCanvasGradient(clonedWin);
+
+            const masked = clonedDoc.querySelectorAll('[style*="mask"], [style*="gradient"]');
+            masked.forEach((el) => {
+              if (el.style) {
+                if (el.style.maskImage?.includes('gradient')) el.style.maskImage = 'none';
+                if (el.style.webkitMaskImage?.includes('gradient')) el.style.webkitMaskImage = 'none';
+              }
+            });
           }
         });
 
