@@ -1,0 +1,901 @@
+import React, { useState, useContext, useMemo } from 'react';
+import {
+  Settings, GraduationCap, TrendingUp, Database, Building2, GripHorizontal, SunMedium
+} from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+
+// IMPORTAÇÃO DOS DADOS E COMPONENTES
+import { DataContext } from '../context/DataContext';
+import { municipiosDB } from '../data/municipiosDB';
+import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS_NORMALIZADOS } from '../constants/semiarido';
+import PtiMap from './maps/PtiMap.jsx';
+
+// COMPONENTES DE GRÁFICOS MODULARIZADOS
+import DonutChart from './graph/DonutChart.jsx';
+import CustomPieChart from './graph/CustomPieChart.jsx';
+import RankingBarChart from './graph/RankingBarChart.jsx';
+import ProportionBarChart from './graph/ProportionBarChart.jsx';
+
+function normalizeName(value) {
+  if (!value) return '';
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeTerritoryName(name) {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/^(territorio\s+de\s+identidade|territorio\s+identidade|territorio)\s+/i, '')
+    .trim();
+}
+
+const MUN_LOOKUP = (() => {
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byName };
+})();
+
+function SortableCard({ id, className = '', children }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS?.Transform?.toString(transform) ?? undefined,
+    transition: isDragging ? undefined : transition,
+    zIndex: isDragging ? 50 : 1,
+    position: 'relative',
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`relative h-full flex flex-col min-h-0 backface-hidden ${className} ${isDragging ? 'opacity-40 scale-[1.02] shadow-card-hover' : ''
+        }`}
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-text-muted hover:text-text-primary rounded-md hover:bg-surface-soft transition-colors duration-200"
+        title="Arrastar card"
+      >
+        <GripHorizontal size={18} />
+      </button>
+      {children}
+    </div>
+  );
+}
+
+export default function DashboardPainel() {
+  const {
+    kpisGlobais,
+    loadingStats,
+    territoriosData,
+    ativosData,
+    cursosData,
+    territoriesDynamicStats,
+    selectedTerritory,
+    setSelectedTerritory,
+    firjanData,
+    municipiosTerritorios,
+    filtroSemiarido = false,
+    setFiltroSemiarido
+  } = useContext(DataContext);
+  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  // 1. Ativos Filtrados pelo Território Selecionado
+  const scopedAtivos = useMemo(() => {
+    if (!ativosData || ativosData.length === 0) return [];
+    if (!selectedTerritory) return ativosData;
+
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+    return ativosData.filter(a => {
+      const munKey = normalizeName(a.municipio || '');
+      const munRow = MUN_LOOKUP.byName[munKey];
+      const idTerr = a.id_territorio != null && a.id_territorio !== '' ? String(a.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+      
+      if (tid && idTerr) return idTerr === tid;
+
+      const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
+      const normTerr = normalizeTerritoryName(rawTerr);
+
+      if (tNorm && normTerr && (normTerr === tNorm || tNorm.includes(normTerr) || normTerr.includes(tNorm))) {
+          // Avoid matching very short strings like "do", "de", "sul"
+          if (normTerr.length > 3 && tNorm.length > 3) {
+              return true;
+          }
+      }
+      return false;
+    });
+  }, [ativosData, selectedTerritory]);
+
+  // 2. Cursos Filtrados pelo Território Selecionado
+  const scopedCursos = useMemo(() => {
+    if (!cursosData || cursosData.length === 0) return [];
+    if (!selectedTerritory) return cursosData;
+
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+    return cursosData.filter(c => {
+      const munKey = normalizeName(c.municipio || '');
+      const munRow = MUN_LOOKUP.byName[munKey];
+      const idTerr = c.id_territorio != null && c.id_territorio !== '' ? String(c.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
+      
+      if (tid && idTerr) return idTerr === tid;
+
+      const rawTerr = c.territorio_identidade || c.territorio || munRow?.nome_territorio || '';
+      const normTerr = normalizeTerritoryName(rawTerr);
+
+      if (tNorm && normTerr && (normTerr === tNorm || tNorm.includes(normTerr) || normTerr.includes(tNorm))) {
+          if (normTerr.length > 3 && tNorm.length > 3) {
+              return true;
+          }
+      }
+      return false;
+    });
+  }, [cursosData, selectedTerritory]);
+
+  // 3. Dados Consolidados do Território Selecionado
+  const scopedTerritorioRow = useMemo(() => {
+    if (!selectedTerritory || !territoriosData) return null;
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+    return territoriosData.find(t => {
+      const tIdStr = t.id_territorio != null ? String(t.id_territorio) : null;
+      if (tid && tIdStr) return tid === tIdStr;
+
+      const norm = normalizeTerritoryName(t.territorio || t.nome_territorio || '');
+      if (tNorm && norm && (norm === tNorm || norm.includes(tNorm) || tNorm.includes(norm))) {
+          if (norm.length > 3 && tNorm.length > 3) return true;
+      }
+      return false;
+    });
+  }, [selectedTerritory, territoriosData]);
+
+  // 4. Cálculo de municípios do Semiárido (global ou por território)
+  const semiaridoStats = useMemo(() => {
+    if (!territoriosData || territoriosData.length === 0) return { semiarido: 0, total: 0 };
+
+    if (selectedTerritory && scopedTerritorioRow) {
+      const semiarido = Number(scopedTerritorioRow.qtd_mun_semiarido || 0);
+      const total = Number(scopedTerritorioRow.qtd_mun_total || (semiarido + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0)));
+      return { semiarido, total };
+    }
+
+    const semiarido = territoriosData.reduce((acc, t) => acc + Number(t.qtd_mun_semiarido || 0), 0);
+    const naoSemiarido = territoriosData.reduce((acc, t) => acc + Number(t.qtd_mun_nao_semiarido || 0), 0);
+    const total = semiarido + naoSemiarido;
+
+    return {
+      semiarido,
+      total: total > 0 ? total : 417
+    };
+  }, [territoriosData, selectedTerritory, scopedTerritorioRow]);
+
+  // Subconjuntos ativos quando o filtro de semiárido está ativado
+  const activeScopedCursos = useMemo(() => {
+    if (!scopedCursos || scopedCursos.length === 0) return [];
+    if (!filtroSemiarido) return scopedCursos;
+    return scopedCursos.filter(c => isMunicipioSemiarido(c.municipio));
+  }, [scopedCursos, filtroSemiarido]);
+
+  const activeScopedAtivos = useMemo(() => {
+    if (!scopedAtivos || scopedAtivos.length === 0) return [];
+    if (!filtroSemiarido) return scopedAtivos;
+    return scopedAtivos.filter(a => isMunicipioSemiarido(a.municipio));
+  }, [scopedAtivos, filtroSemiarido]);
+
+  // 5. DonutChart (Cursos por Área)
+  const donutChartData = useMemo(() => {
+    if (!activeScopedCursos || activeScopedCursos.length === 0) return [];
+    const counts = {};
+    activeScopedCursos.forEach(c => {
+      const cat = c.categoria || 'Outras Áreas';
+      counts[cat] = (counts[cat] || 0) + 1;
+    });
+
+    const bluePalette = [
+      '#1D3557', // 1. Deep Navy
+      '#2563EB', // 2. Primary Royal Blue
+      '#0284C7', // 3. Vibrant Ocean Blue
+      '#3B82F6', // 4. Bright Blue
+      '#1E40AF', // 5. Cobalt Blue
+      '#0EA5E9', // 6. Sky Cyan Blue
+      '#38BDF8', // 7. Light Sky Blue
+      '#60A5FA', // 8. Soft Blue
+    ];
+
+    const goldenPalette = [
+      '#D97706', // 1. Amber 600 (Rich Gold)
+      '#F59E0B', // 2. Amber 500 (Vibrant Sun Gold)
+      '#B45309', // 3. Amber 700 (Deep Warm Bronze)
+      '#EAB308', // 4. Yellow 500 (Bright Gold)
+      '#FBBF24', // 5. Amber 400 (Warm Sun Yellow)
+      '#CA8A04', // 6. Yellow 600 (Deep Ochre Gold)
+      '#92400E', // 7. Amber 800 (Rich Dark Caramel)
+      '#FCD34D', // 8. Amber 300 (Soft Warm Gold)
+    ];
+
+    const palette = filtroSemiarido ? goldenPalette : bluePalette;
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, value], idx) => ({
+        label,
+        value,
+        color: palette[idx % palette.length]
+      }));
+  }, [activeScopedCursos, filtroSemiarido]);
+
+  // Top Instituições de Ensino com Cursos
+  const topEntidadesCursos = useMemo(() => {
+    if (!activeScopedCursos || activeScopedCursos.length === 0) return [];
+
+    const mapEntidades = {};
+    activeScopedCursos.forEach(c => {
+      // Pega a instituição com fallback em cascata (instituicao -> nome_ativo -> sigla -> entidade)
+      const nomeInst = c.instituicao || c.nome_ativo || c.entidade || c.sigla || 'Outras Instituições';
+      const siglaInst = (c.sigla && String(c.sigla).trim() !== '')
+        ? String(c.sigla).toUpperCase().trim()
+        : nomeInst;
+
+      const chaveAgrupamento = siglaInst;
+
+      if (!mapEntidades[chaveAgrupamento]) {
+        mapEntidades[chaveAgrupamento] = {
+          name: nomeInst,
+          sigla: siglaInst,
+          count: 0
+        };
+      }
+      mapEntidades[chaveAgrupamento].count += 1;
+    });
+
+    const styles = [
+      { bg: 'bg-primary-900', text: 'text-white' },
+      { bg: 'bg-primary-600/10', text: 'text-primary-600' },
+      { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
+      { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
+      { bg: 'bg-border/50', text: 'text-text-primary' }
+    ];
+
+    return Object.values(mapEntidades)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5)
+      .map((item, idx) => ({
+        rank: idx + 1,
+        name: item.name,
+        sigla: item.sigla,
+        count: item.count,
+        color: styles[idx % styles.length].bg,
+        text: styles[idx % styles.length].text
+      }));
+  }, [activeScopedCursos]);
+
+  // 6. CustomPieChart (Distribuição dos Ativos de CT&I)
+  const ecosystemData = useMemo(() => {
+    if (!activeScopedAtivos || activeScopedAtivos.length === 0) return [];
+    const counts = {};
+    activeScopedAtivos.forEach(a => {
+      const tipo = a.tipo || a.nome_tipo || 'Outros';
+      counts[tipo] = (counts[tipo] || 0) + 1;
+    });
+
+    const bluePalette = [
+      '#1D3557', // 1. Deep Navy
+      '#2563EB', // 2. Primary Royal Blue
+      '#0284C7', // 3. Vibrant Ocean Blue
+      '#3B82F6', // 4. Bright Blue
+      '#1E40AF', // 5. Cobalt Blue
+      '#0EA5E9', // 6. Sky Cyan Blue
+      '#38BDF8', // 7. Light Sky Blue
+      '#1E3A8A', // 8. Midnight Blue
+      '#60A5FA', // 9. Soft Blue
+      '#93C5FD'  // 10. Ice Sky Blue
+    ];
+
+    const goldenPalette = [
+      '#D97706', // 1. Amber 600 (Rich Gold)
+      '#F59E0B', // 2. Amber 500 (Vibrant Sun Gold)
+      '#B45309', // 3. Amber 700 (Deep Warm Bronze)
+      '#EAB308', // 4. Yellow 500 (Bright Gold)
+      '#FBBF24', // 5. Amber 400 (Warm Sun Yellow)
+      '#CA8A04', // 6. Yellow 600 (Deep Ochre Gold)
+      '#92400E', // 7. Amber 800 (Rich Dark Caramel)
+      '#FCD34D', // 8. Amber 300 (Soft Warm Gold)
+      '#A16207', // 9. Yellow 700 (Antique Gold)
+      '#FDE68A'  // 10. Amber 200 (Light Cream Gold)
+    ];
+
+    const palette = filtroSemiarido ? goldenPalette : bluePalette;
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([region, value], idx) => ({
+        region,
+        value,
+        colorHex: palette[idx % palette.length]
+      }));
+  }, [activeScopedAtivos, filtroSemiarido]);
+
+  // Top Territórios (ou Municípios se território selecionado) com mais ativos
+  const topTerritoriosOuMunicipiosAtivos = useMemo(() => {
+    if (!activeScopedAtivos || activeScopedAtivos.length === 0) return [];
+    const counts = {};
+
+    activeScopedAtivos.forEach(a => {
+      let key;
+      if (selectedTerritory) {
+        key = a.municipio || 'Não informado';
+      } else {
+        const munKey = normalizeName(a.municipio || '');
+        const munRow = MUN_LOOKUP.byName[munKey];
+        const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || 'Não identificado';
+        key = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
+      }
+      counts[key] = (counts[key] || 0) + 1;
+    });
+
+    const styles = [
+      { bg: 'bg-primary-900', text: 'text-white' },
+      { bg: 'bg-primary-600/10', text: 'text-primary-600' },
+      { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
+      { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
+      { bg: 'bg-border/50', text: 'text-text-primary' }
+    ];
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, count], idx) => ({
+        rank: idx + 1,
+        name,
+        count,
+        color: styles[idx % styles.length].bg,
+        text: styles[idx % styles.length].text
+      }));
+  }, [activeScopedAtivos, selectedTerritory]);
+
+  // 7. Infraestrutura RNP
+  const rnpComparisonData = useMemo(() => {
+    if (!activeScopedAtivos || activeScopedAtivos.length === 0) return [];
+
+    const stats = {
+      'Univ. Federal': { com: 0, sem: 0 },
+      'Univ. Estadual': { com: 0, sem: 0 },
+      'Inst. Federal': { com: 0, sem: 0 },
+      'ICT': { com: 0, sem: 0 }
+    };
+
+    activeScopedAtivos.forEach(a => {
+      const str = String(a.tipo || a.nome_tipo || '').toLowerCase();
+      let categoria = null;
+
+      if (str.includes('federal') && str.includes('universidade')) categoria = 'Univ. Federal';
+      else if (str.includes('estadual')) categoria = 'Univ. Estadual';
+      else if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if baiano')) categoria = 'Inst. Federal';
+      else if (str.includes('ict') || str.includes('pesquisa')) categoria = 'ICT';
+
+      if (categoria) {
+        const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || a.rnp === '1' || a.rnp === 't' || a.rnp === 'T' || String(a.rnp || '').toLowerCase() === 'sim' || String(a.rnp || '').toLowerCase() === 'true';
+        if (hasRnp) stats[categoria].com += 1;
+        else stats[categoria].sem += 1;
+      }
+    });
+
+    return Object.entries(stats)
+      .map(([label, valores]) => ({
+        label,
+        positive: valores.com,
+        negative: valores.sem,
+        total: valores.com + valores.sem
+      }))
+      .filter(item => item.total > 0)
+      .sort((a, b) => b.total - a.total);
+  }, [activeScopedAtivos]);
+
+  // 8. Comparativo de Barras Empilhadas: Semiárido vs Demais Regiões
+  const semiaridoStackedComparisonData = useMemo(() => {
+    if (!ativosData || ativosData.length === 0) return [];
+
+    const stats = {
+      'Univ. Federal': { semi: 0, nonSemi: 0 },
+      'Univ. Estadual': { semi: 0, nonSemi: 0 },
+      'Inst. Federal': { semi: 0, nonSemi: 0 },
+      'Cursos Presenciais': { semi: 0, nonSemi: 0 }
+    };
+
+    scopedAtivos.forEach(a => {
+      const str = String(a.tipo || a.nome_tipo || '').toLowerCase();
+      const isSemi = isMunicipioSemiarido(a.municipio);
+      let cat = null;
+
+      if (str.includes('federal') && str.includes('universidade')) cat = 'Univ. Federal';
+      else if (str.includes('estadual')) cat = 'Univ. Estadual';
+      else if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if baiano')) cat = 'Inst. Federal';
+
+      if (cat) {
+        if (isSemi) stats[cat].semi += 1;
+        else stats[cat].nonSemi += 1;
+      }
+    });
+
+    scopedCursos.forEach(c => {
+      const isSemi = isMunicipioSemiarido(c.municipio);
+      if (isSemi) stats['Cursos Presenciais'].semi += 1;
+      else stats['Cursos Presenciais'].nonSemi += 1;
+    });
+
+    return Object.entries(stats)
+      .map(([label, v]) => ({
+        label,
+        positive: v.semi,
+        negative: v.nonSemi,
+        total: v.semi + v.nonSemi
+      }))
+      .filter(row => row.total > 0 && row.positive > 0);
+  }, [scopedAtivos, scopedCursos, ativosData]);
+
+  // Territórios filtrados por presença no Semiárido para o ranking
+  const rankingDataSemiarido = useMemo(() => {
+    if (!territoriosData) return [];
+    return territoriosData.filter(t => Number(t.pct_semiarido || t.qtd_mun_semiarido || 0) > 0);
+  }, [territoriosData]);
+
+  // Ranking de IFDM por Município (quando um território é selecionado)
+  const rankingIfdmData = useMemo(() => {
+    if (!selectedTerritory || !firjanData || firjanData.length === 0 || !municipiosTerritorios) return [];
+    
+    const tid = String(selectedTerritory.id_territorio);
+    const munIdsDoTerritorio = municipiosTerritorios
+      .filter(m => String(m.id_territorio) === tid)
+      .map(m => m.id_municipio);
+
+    let dadosMuns = firjanData
+      .filter(f => munIdsDoTerritorio.includes(f.id_municipio))
+      .map(f => {
+        const munInfo = municipiosTerritorios.find(m => m.id_municipio === f.id_municipio);
+        return {
+          ...f,
+          nome_municipio: munInfo ? (munInfo.municipio || munInfo.nome_municipio) : `Município ${f.id_municipio}`,
+          media_ifdm: f.ifdm != null ? Number(f.ifdm).toFixed(3) : 0
+        };
+      });
+
+    if (filtroSemiarido) {
+      dadosMuns = dadosMuns.filter(m => isMunicipioSemiarido(m.nome_municipio));
+    }
+
+    return dadosMuns.sort((a, b) => Number(b.media_ifdm) - Number(a.media_ifdm));
+  }, [selectedTerritory, firjanData, municipiosTerritorios, filtroSemiarido]);
+
+  // Configurações DnD
+  const INITIAL_CARDS = ['card-donut', 'card-pie', 'card-ranking', 'card-mapeamento'];
+  const [cardsOrder, setCardsOrder] = useState(() => {
+    const saved = localStorage.getItem('dashboard-cards-order');
+    if (saved) {
+      try {
+        const order = JSON.parse(saved);
+        if (order.length === INITIAL_CARDS.length) return order;
+      } catch (e) { }
+    }
+    return INITIAL_CARDS;
+  });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      setCardsOrder((items) => {
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+        const newArray = arrayMove(items, oldIndex, newIndex);
+        localStorage.setItem('dashboard-cards-order', JSON.stringify(newArray));
+        return newArray;
+      });
+    }
+  };
+
+  // Formatação com vírgula para o índice IFDM
+  const formattedIfdm = useMemo(() => {
+    if (loadingStats) return '...';
+    if (selectedTerritory) {
+      const raw = scopedTerritorioRow?.media_ifdm != null ? Number(scopedTerritorioRow.media_ifdm).toFixed(3) : kpisGlobais.ifdmMedio;
+      if (raw === null || raw === undefined || raw === '') return '-';
+      return String(raw).replace('.', ',');
+    }
+    if (filtroSemiarido) {
+      const semiTerrs = (territoriosData || []).filter(t => Number(t.pct_semiarido || t.qtd_mun_semiarido || 0) > 0 && t.media_ifdm);
+      if (semiTerrs.length === 0) return kpisGlobais.ifdmMedio ? String(kpisGlobais.ifdmMedio).replace('.', ',') : '-';
+      const soma = semiTerrs.reduce((acc, t) => acc + Number(t.media_ifdm), 0);
+      return (soma / semiTerrs.length).toFixed(3).replace('.', ',');
+    }
+    const raw = kpisGlobais.ifdmMedio;
+    if (raw === null || raw === undefined || raw === '') return '-';
+    return String(raw).replace('.', ',');
+  }, [selectedTerritory, scopedTerritorioRow, kpisGlobais.ifdmMedio, loadingStats, filtroSemiarido, territoriosData]);
+
+  // Cálculos de métricas do Semiárido com percentuais
+  const semiaridoMetrics = useMemo(() => {
+    const totalAtivos = scopedAtivos.length || 1;
+    const semiAtivos = scopedAtivos.filter(a => isMunicipioSemiarido(a.municipio)).length;
+    const pctAtivos = ((semiAtivos / totalAtivos) * 100).toFixed(0);
+
+    const totalCursos = scopedCursos.length || 1;
+    const semiCursos = scopedCursos.filter(c => isMunicipioSemiarido(c.municipio)).length;
+    const pctCursos = ((semiCursos / totalCursos) * 100).toFixed(0);
+
+    let semiCadeias = 0;
+    let totalCadeias = 1;
+    if (selectedTerritory) {
+      semiCadeias = scopedTerritorioRow?.cadeias_produtivas ?? 0;
+      totalCadeias = semiCadeias || 1;
+    } else {
+      totalCadeias = kpisGlobais.cadeias || 1;
+      semiCadeias = (territoriosData || [])
+        .filter(t => Number(t.pct_semiarido || t.qtd_mun_semiarido || 0) > 0)
+        .reduce((acc, t) => acc + Number(t.cadeias_produtivas || 0), 0);
+    }
+    const pctCadeias = ((semiCadeias / totalCadeias) * 100).toFixed(0);
+
+    let munSemi = 278;
+    let munTot = 417;
+    if (selectedTerritory && scopedTerritorioRow) {
+      munSemi = Number(scopedTerritorioRow.qtd_mun_semiarido || 0);
+      const ns = Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0);
+      munTot = Number(scopedTerritorioRow.qtd_mun_total || (munSemi + ns)) || 1;
+    }
+    const pctMun = ((munSemi / munTot) * 100).toFixed(0);
+
+    return {
+      semiAtivos,
+      pctAtivos,
+      semiCursos,
+      pctCursos,
+      semiCadeias,
+      pctCadeias,
+      munSemi,
+      munTot,
+      pctMun
+    };
+  }, [scopedAtivos, scopedCursos, selectedTerritory, scopedTerritorioRow, kpisGlobais.cadeias, territoriosData]);
+
+  // KPIs Dinâmicos contextuais à região e ao filtro de Semiárido
+  const kpis = [
+    {
+      label: filtroSemiarido
+        ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido')
+        : (selectedTerritory ? `Ativos em ${territoryName}` : 'Ativos de CT&I'),
+      value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiAtivos : (selectedTerritory ? scopedAtivos.length : kpisGlobais.ativos)),
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}% do total de ativos` : null,
+      tooltip: filtroSemiarido
+        ? `No Semiárido: ${semiaridoMetrics.semiAtivos} (${semiaridoMetrics.pctAtivos}% do total de ativos) | Fora: ${Math.max(0, scopedAtivos.length - semiaridoMetrics.semiAtivos)}`
+        : undefined,
+      icon: Settings,
+      isIndex: false
+    },
+    {
+      label: filtroSemiarido
+        ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos no Semiárido')
+        : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos de CT&I'),
+      value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCursos : (selectedTerritory ? scopedCursos.length : kpisGlobais.cursos)),
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctCursos}% do total de cursos` : null,
+      tooltip: filtroSemiarido
+        ? `No Semiárido: ${semiaridoMetrics.semiCursos} (${semiaridoMetrics.pctCursos}% do total de cursos) | Fora: ${Math.max(0, scopedCursos.length - semiaridoMetrics.semiCursos)}`
+        : undefined,
+      icon: GraduationCap,
+      isIndex: false
+    },
+    {
+      label: filtroSemiarido
+        ? (selectedTerritory ? `IFDM · ${territoryName}` : 'IFDM Médio · Semiárido')
+        : (selectedTerritory ? `IFDM · ${territoryName}` : 'D. Territorial (IFDM)'),
+      value: formattedIfdm,
+      percent: null,
+      tooltip: filtroSemiarido ? 'Média dos territórios com área semiárida' : undefined,
+      icon: TrendingUp,
+      isIndex: true
+    },
+    {
+      label: filtroSemiarido
+        ? (selectedTerritory ? `Cadeias no Território` : 'Cadeias no Semiárido')
+        : (selectedTerritory ? `Cadeias no Território` : 'Cadeias Produtivas'),
+      value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCadeias : (selectedTerritory ? (scopedTerritorioRow?.cadeias_produtivas ?? 0) : kpisGlobais.cadeias)),
+      percent: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}% do total de cadeias` : null,
+      tooltip: filtroSemiarido && !selectedTerritory
+        ? `No Semiárido: ${semiaridoMetrics.semiCadeias} (${semiaridoMetrics.pctCadeias}% do total de cadeias) | Fora: ${Math.max(0, (kpisGlobais.cadeias || 0) - semiaridoMetrics.semiCadeias)}`
+        : undefined,
+      icon: Database,
+      isIndex: false
+    },
+    {
+      label: filtroSemiarido
+        ? (selectedTerritory ? 'Municípios no Semiárido' : 'Municípios no Semiárido')
+        : (selectedTerritory ? 'Municípios no Território' : 'Municípios Semiárido'),
+      value: loadingStats ? '...' : (filtroSemiarido ? `${semiaridoMetrics.munSemi}` : (selectedTerritory ? (scopedTerritorioRow ? `${scopedTerritorioRow.qtd_mun_total || (Number(scopedTerritorioRow.qtd_mun_semiarido || 0) + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0))} mun.` : '-') : `${semiaridoStats.semiarido}`)),
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctMun}% do total de municípios` : null,
+      tooltip: filtroSemiarido
+        ? `No Semiárido: ${semiaridoMetrics.munSemi} (${semiaridoMetrics.pctMun}% do total de municípios) | Fora: ${semiaridoMetrics.munTot - semiaridoMetrics.munSemi}`
+        : undefined,
+      icon: Building2,
+      isIndex: false
+    }
+  ];
+
+  return (
+    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
+
+      {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
+          filtroSemiarido ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {/* 1. HALO RADIAL DIFUSO (Região de calor com opacidade sutil entre 6% e 12%) */}
+        <div
+          className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+          style={{
+            background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
+            filter: 'blur(35px)',
+          }}
+        />
+
+        {/* 2. ARCO / ANEL LUMINOSO (Círculo gigante parcialmente fora da viewport) */}
+        <div
+          className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+          style={{
+            border: '1.5px solid rgba(245, 158, 11, 0.22)',
+            boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
+            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+          }}
+        />
+
+        {/* 3. SEGUNDO ARCO EXPANSIVO (Halo sutil e elegante) */}
+        <div
+          className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+          style={{
+            border: '1px solid rgba(217, 119, 6, 0.11)',
+            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+          }}
+        />
+
+        {/* 4. GLOW DOURADO DE TOPO (Suave difusão atmosférica no topo direito) */}
+        <div
+          className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+          style={{
+            background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
+            filter: 'blur(40px)',
+          }}
+        />
+      </div>
+
+      {/* HEADER DA PÁGINA */}
+      <div className="flex items-center justify-between w-full pr-[320px] shrink-0 relative z-10">
+        <div>
+          <div className="flex items-center gap-3 relative z-10">
+            <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
+          </div>
+          <p className="text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
+          <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
+        </div>
+      </div>
+
+      {/* GRID DE KPIs */}
+      <div className="tour-kpis w-full relative z-10 shrink-0">
+        <div className="grid grid-cols-5 gap-4 items-stretch w-full">
+          {kpis.map((kpi, index) => {
+            const isHero = index === 0;
+            const accentColors = [
+              'text-white/70',
+              'text-[#0D9488]',
+              'text-accent-600',
+              'text-warning-600',
+              'text-success-600'
+            ];
+
+            return (
+              <div
+                key={index}
+                title={kpi.tooltip || kpi.label}
+                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
+                  isHero
+                    ? (filtroSemiarido
+                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
+                        : 'bg-primary-900 text-white shadow-card-elevated')
+                    : (filtroSemiarido
+                        ? 'bg-white/95 border border-amber-200/40 shadow-card'
+                        : 'bg-surface border border-neutral-100 shadow-card')
+                }`}
+              >
+                {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                <div className="flex items-center gap-2 w-full min-w-0">
+                  <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
+                  <span
+                    className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
+                      isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
+                    }`}
+                    title={kpi.label}
+                  >
+                    {kpi.label}
+                  </span>
+                  {!filtroSemiarido && kpi.isIndex && (
+                    <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md shrink-0 leading-none inline-flex items-center justify-center ${
+                      isHero ? 'bg-white/15 text-white/80' : 'bg-primary-100 text-primary-700'
+                    }`}>
+                      Índice
+                    </span>
+                  )}
+                </div>
+
+                {/* LINHA INFERIOR: NÚMERO */}
+                <div className="flex items-baseline w-full justify-between min-w-0">
+                  <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                    <span className={`text-[28px] font-bold tracking-tight leading-none shrink-0 ${
+                      isHero ? 'text-white' : 'text-text-primary'
+                    }`}>
+                      {kpi.value}
+                    </span>
+                    {filtroSemiarido && kpi.percent && (
+                      <span
+                        title={`(${kpi.percent})`}
+                        className={`text-[11px] font-semibold truncate ${
+                          isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
+                        }`}
+                      >
+                        ({kpi.percent})
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* GRID PRINCIPAL */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+
+        {/* LADO ESQUERDO: MAPA INTEGRADO */}
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-[400px]">
+          <div className="flex-1 w-full h-full relative">
+            <PtiMap
+              selectedTerritory={selectedTerritory}
+              onSelectTerritory={setSelectedTerritory}
+              territoriosData={territoriosData}
+              territoriesDynamicStats={territoriesDynamicStats}
+              semiaridoMunicipios={Array.from(SEMIARIDO_MUNICIPIOS_NORMALIZADOS)}
+              filtroSemiarido={filtroSemiarido}
+              onToggleSemiarido={setFiltroSemiarido}
+            />
+          </div>
+        </div>
+
+        {/* LADO DIREITO: DASHBOARD DE CARDS (DND) COM TRANSIÇÃO DOURADA SUAVE */}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
+          <div className={`tour-charts flex-1 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
+            filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-2xl' : ''
+          }`}>
+            <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
+              {cardsOrder.map(cardId => (
+                <React.Fragment key={cardId}>
+
+                  {/* CARD 1: DONUT CHART (CURSOS) - Superior Esquerdo */}
+                  {cardId === 'card-donut' && (
+                    <SortableCard id="card-donut">
+                      <DonutChart
+                        title={filtroSemiarido ? (selectedTerritory ? `Cursos CT&I no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido') : (selectedTerritory ? `Cursos CT&I em ${territoryName}` : 'Cursos de CT&I por Área')}
+                        subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos de CT&I mapeados na região` : 'Oferta presencial de cursos superiores em CT&I')}
+                        totalLabel="Total Cursos CT&I"
+                        listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições na Região' : 'Top 5 Instituições com mais cursos')}
+                        data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 0, color: '#E2E8F0', isEmpty: true }]}
+                        topList={topEntidadesCursos}
+                        badge={null}
+                        isSemiarido={filtroSemiarido}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-1' : ''}
+                      />
+                    </SortableCard>
+                  )}
+
+                  {/* CARD 2: PIE CHART (ATIVOS CT&I) - Superior Direito (Mais próximo do Sol) */}
+                  {cardId === 'card-pie' && (
+                    <SortableCard id="card-pie">
+                      <CustomPieChart
+                        data={ecosystemData}
+                        topList={topTerritoriosOuMunicipiosAtivos}
+                        title={filtroSemiarido ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido') : (selectedTerritory ? `Ativos em ${territoryName}` : 'Distribuição dos Ativos de CT&I')}
+                        subtitle={filtroSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking')}
+                        listTitle={filtroSemiarido ? 'Top Municípios do Semiárido' : (selectedTerritory ? 'Top Municípios com Mais Ativos' : 'Top 5 Territórios com Mais Ativos')}
+                        defaultCenterLabel="Ativos Mapeados"
+                        labelKey="region"
+                        valueKey="value"
+                        colorKey="colorHex"
+                        badge={null}
+                        isSemiarido={filtroSemiarido}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-2' : ''}
+                      />
+                    </SortableCard>
+                  )}
+
+                  {/* CARD 3: RANKING IFDM - Inferior Esquerdo (Mais distante do Sol) */}
+                  {cardId === 'card-ranking' && (
+                    <SortableCard id="card-ranking">
+                      <RankingBarChart
+                        data={selectedTerritory ? rankingIfdmData : (filtroSemiarido ? rankingDataSemiarido : territoriosData)}
+                        title={selectedTerritory ? `Ranking IFDM · ${territoryName}` : (filtroSemiarido ? "Ranking IFDM · Semiárido" : "Ranking IFDM")}
+                        valueKey="media_ifdm"
+                        labelKey={selectedTerritory ? "nome_municipio" : "territorio"}
+                        extraKey={selectedTerritory ? "populacao" : "cadeias_produtivas"}
+                        extraLabel={selectedTerritory ? "População" : "Cadeias"}
+                        topSubtitle={selectedTerritory ? "Top Municípios" : (filtroSemiarido ? "Top no Semiárido" : "Top 5 melhores")}
+                        mediumSubtitle={selectedTerritory ? "" : "5 na média"}
+                        bottomSubtitle={selectedTerritory ? "Menores IFDMs" : (filtroSemiarido ? "Menores no Semiárido" : "Top 5 piores")}
+                        highlightLabel={selectedTerritory ? null : territoryName}
+                        maxScale={1}
+                        badge={null}
+                        isSemiarido={filtroSemiarido}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-3' : ''}
+                      />
+                    </SortableCard>
+                  )}
+
+                  {/* CARD 4: PROPORTION RNP - Inferior Direito */}
+                  {cardId === 'card-mapeamento' && (
+                    <SortableCard id="card-mapeamento">
+                      <ProportionBarChart
+                        isVisaoGeral={true}
+                        isSemiarido={filtroSemiarido}
+                        data={rnpComparisonData}
+                        title={filtroSemiarido ? (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP · Semiárido") : (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP")}
+                        subtitle={filtroSemiarido ? (selectedTerritory ? `Proporção de ativos conectados à RNP no Semiárido (${territoryName})` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa no Semiárido') : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
+                        positiveLabel="Com RNP"
+                        negativeLabel="Sem RNP"
+                        positiveColor={filtroSemiarido ? "bg-amber-600" : "bg-primary-500"}
+                        negativeColor={filtroSemiarido ? "bg-amber-500/15" : "bg-primary-100"}
+                        positiveTextColor={filtroSemiarido ? "text-amber-700" : "text-primary-700"}
+                        negativeTextColor={filtroSemiarido ? "text-amber-800" : "text-primary-700"}
+                        badge={null}
+                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-4' : ''}
+                      />
+                    </SortableCard>
+                  )}
+
+                </React.Fragment>
+              ))}
+            </SortableContext>
+          </div>
+        </DndContext>
+      </div>
+    </main>
+  );
+}

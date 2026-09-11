@@ -1,0 +1,1295 @@
+import React, { useContext, useState, useMemo, useRef } from 'react';
+import {
+    Database,
+    Building2,
+    Layers,
+    MapPin,
+    Search,
+    TrendingUp,
+    Sparkles,
+    ExternalLink,
+    Filter,
+    GraduationCap,
+    Microscope,
+    Rocket,
+    Cpu,
+    Network,
+    Wifi,
+    X,
+    SunMedium
+} from 'lucide-react';
+import { DataContext } from '../context/DataContext';
+import { isMunicipioSemiarido } from '../constants/semiarido';
+import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
+import { municipiosDB } from '../data/municipiosDB';
+import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
+import SideMap, { getSemiaridoPointColor } from './maps/SideMap';
+
+function normalizeName(name) {
+    if (!name) return '';
+    return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+
+function normalizeTerritoryName(name) {
+    if (!name) return '';
+    return name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/^(territorio\s+de\s+identidade|territorio\s+identidade|territorio)\s+/i, '')
+        .trim();
+}
+
+const MUN_LOOKUP = (() => {
+    const byName = {};
+    municipiosDB.forEach((row) => {
+        byName[normalizeName(row.nome_municipio)] = row;
+    });
+    return { byName };
+})();
+
+export default function AtivosPage() {
+    const {
+        ativosData = [],
+        territoriosData = [],
+        loadingStats = false,
+        filtroSemiarido = false,
+        setFiltroSemiarido
+    } = useContext(DataContext);
+
+    const [selectedTerritory, setSelectedTerritory] = useState(null);
+    const [focusedAsset, setFocusedAsset] = useState(null);
+    const [selectedAssetId, setSelectedAssetId] = useState(null);
+    const [selectedTipo, setSelectedTipo] = useState('todos');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'categorias' | 'ranking'
+    const [isMapExpanded, setIsMapExpanded] = useState(false);
+    const [sidebarSearch, setSidebarSearch] = useState('');
+
+    const itemRefs = useRef({});
+    const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+    const handleSelectFromMap = (ativo) => {
+        if (!ativo || selectedAssetId === ativo.id) {
+            setSelectedAssetId(null);
+            setFocusedAsset(null);
+            return;
+        }
+        setSelectedAssetId(ativo.id);
+        if (ativo?.lat && ativo?.lng) {
+            setFocusedAsset({
+                lat: ativo.lat,
+                lng: ativo.lng,
+                id: ativo.id,
+                tipo: ativo.tipo,
+                zoom: 15,
+                ts: Date.now()
+            });
+        }
+        setActiveTab('catalogo');
+
+        setTimeout(() => {
+            if (ativo?.id && itemRefs.current[ativo.id]) {
+                itemRefs.current[ativo.id].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+        }, 150);
+    };
+
+    // 1. Processamento e Normalização de Ativos com Coordenadas, Territórios e Estilos
+    const ativosProcessados = useMemo(() => {
+        if (!ativosData || ativosData.length === 0) return [];
+
+        return ativosData.map((a, idx) => {
+            const nomeTipoColuna = a.tipo || a.nome_tipo || 'Outros';
+            const configEstilo = getDynamicAssetTypeConfig(nomeTipoColuna);
+
+            const munKey = normalizeName(a.municipio || '');
+            const munRow = MUN_LOOKUP.byName[munKey];
+
+            const rawLat = a.latitude != null && a.latitude !== '' ? Number(a.latitude) : null;
+            const rawLng = a.longitude != null && a.longitude !== '' ? Number(a.longitude) : null;
+
+            let lat = rawLat;
+            let lng = rawLng;
+
+            if (lat == null || lng == null || isNaN(lat) || isNaN(lng) || lat === 0) {
+                const fallback = MUNICIPIOS_COORDS[String(a.municipio || '').trim()] ||
+                    MUNICIPIOS_COORDS[munKey] ||
+                    [-12.9714, -38.5014];
+                lat = fallback[0];
+                lng = fallback[1];
+            }
+
+            const hasRnp = a.rnp === true || a.rnp === 'true' || a.rnp === 1 || a.rnp === '1' || a.rnp === 't' || a.rnp === 'T' || String(a.rnp || '').toLowerCase() === 'sim' || String(a.rnp || '').toLowerCase() === 'true';
+
+            const id_territorio = a.id_territorio != null && a.id_territorio !== ''
+                ? Number(a.id_territorio)
+                : (munRow?.id_territorio || null);
+
+            const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
+            const cleanTerr = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
+            const normTerr = normalizeTerritoryName(cleanTerr);
+
+            return {
+                id: a.id_ativo || idx + 1,
+                id_territorio,
+                normTerritorio: normTerr,
+                nome: a.nome_ativo || a.sigla || 'Ativo de CT&I',
+                sigla: a.sigla || '',
+                tipo: nomeTipoColuna,
+                idTipoAtivo: configEstilo.id,
+                shortTipo: configEstilo.shortLabel,
+                municipio: a.municipio || munRow?.nome_municipio || 'Bahia',
+                territorio: cleanTerr || 'Bahia',
+                territorio_identidade: cleanTerr || 'Bahia',
+                lat,
+                lng,
+                icone: configEstilo.icone,
+                iconSvg: configEstilo.iconSvg,
+                cor: configEstilo.bgClass,
+                textCor: configEstilo.textClass,
+                corHex: configEstilo.corHex,
+                urlReferencia: a.url_referencia || '',
+                tituloReferencia: a.titulo_referencia || '',
+                rnp: hasRnp
+            };
+        });
+    }, [ativosData]);
+
+    // Ativos Filtrados pelo Território Selecionado
+    const territoryAtivos = useMemo(() => {
+        if (!ativosProcessados || ativosProcessados.length === 0) return [];
+        if (!selectedTerritory) return ativosProcessados;
+
+        const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+        const tNorm = normalizeTerritoryName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+
+        return ativosProcessados.filter(a => {
+            if (tid && a.id_territorio) return String(a.id_territorio) === tid;
+            if (tNorm && a.normTerritorio && (
+                a.normTerritorio === tNorm ||
+                a.normTerritorio.includes(tNorm) ||
+                tNorm.includes(a.normTerritorio)
+            )) {
+                if (a.normTerritorio.length > 3 && tNorm.length > 3) return true;
+            }
+            return false;
+        });
+    }, [ativosProcessados, selectedTerritory]);
+
+    // Subconjunto ativo com respeito ao Semiárido
+    const activeScopedAtivos = useMemo(() => {
+        if (!territoryAtivos || territoryAtivos.length === 0) return [];
+        if (!filtroSemiarido) return territoryAtivos;
+        return territoryAtivos.filter(a => isMunicipioSemiarido(a.municipio));
+    }, [territoryAtivos, filtroSemiarido]);
+
+    // 2. Filtragem Geral (Tipo, Busca, Território e Semiárido)
+    const filteredAtivosList = useMemo(() => {
+        let list = activeScopedAtivos;
+
+        if (selectedTipo !== 'todos') {
+            list = list.filter(a => a.tipo === selectedTipo || a.shortTipo === selectedTipo);
+        }
+
+        if (searchQuery.trim()) {
+            const q = normalizeName(searchQuery);
+            list = list.filter(a =>
+                normalizeName(a.nome).includes(q) ||
+                normalizeName(a.sigla).includes(q) ||
+                normalizeName(a.tipo).includes(q) ||
+                normalizeName(a.shortTipo).includes(q) ||
+                normalizeName(a.municipio).includes(q) ||
+                normalizeName(a.territorio).includes(q)
+            );
+        }
+
+        return list;
+    }, [activeScopedAtivos, selectedTipo, searchQuery]);
+
+    const compactAtivosList = useMemo(() => {
+        if (!sidebarSearch.trim()) return filteredAtivosList;
+        const q = normalizeName(sidebarSearch);
+        return filteredAtivosList.filter(a =>
+            normalizeName(a.nome).includes(q) ||
+            normalizeName(a.sigla).includes(q) ||
+            normalizeName(a.tipo).includes(q) ||
+            normalizeName(a.shortTipo).includes(q) ||
+            normalizeName(a.municipio).includes(q)
+        );
+    }, [filteredAtivosList, sidebarSearch]);
+
+    // 3. Distribuição por Tipos / Categorias de Ativos (com dados empilhados de RNP)
+    const categoryStats = useMemo(() => {
+        if (!activeScopedAtivos || activeScopedAtivos.length === 0) return [];
+        const counts = {};
+        const total = activeScopedAtivos.length;
+
+        activeScopedAtivos.forEach(a => {
+            const t = a.tipo || 'Outros';
+            if (!counts[t]) {
+                counts[t] = {
+                    name: t,
+                    shortName: a.shortTipo || t,
+                    count: 0,
+                    rnpCount: 0,
+                    corHex: a.corHex || '#3B82F6',
+                    icone: a.icone || Database
+                };
+            }
+            counts[t].count += 1;
+            if (a.rnp) {
+                counts[t].rnpCount += 1;
+            }
+        });
+
+        return Object.values(counts)
+            .map(c => {
+                const outrosCount = c.count - c.rnpCount;
+                const rnpPercent = c.count > 0 ? (c.rnpCount / c.count) * 100 : 0;
+                const outrosPercent = c.count > 0 ? (outrosCount / c.count) * 100 : 0;
+
+                return {
+                    ...c,
+                    outrosCount,
+                    rnpPercent,
+                    outrosPercent,
+                    percent: total > 0 ? ((c.count / total) * 100).toFixed(1) : '0.0'
+                };
+            })
+            .sort((a, b) => b.count - a.count);
+    }, [activeScopedAtivos]);
+
+    // 4A. Ranking Territorial de Ativos (com dados empilhados de RNP e filtro de Semiárido)
+    const territoryRanking = useMemo(() => {
+        if (!ativosProcessados || ativosProcessados.length === 0) return [];
+        const baseAtivos = filtroSemiarido 
+            ? ativosProcessados.filter(a => isMunicipioSemiarido(a.municipio)) 
+            : ativosProcessados;
+        const counts = {};
+
+        baseAtivos.forEach(a => {
+            const tid = a.id_territorio ? String(a.id_territorio) : null;
+            const tName = (a.territorio || 'Outros').replace(/^Território de Identidade\s+/i, '').trim();
+            const key = tid || normalizeName(tName);
+
+            if (!counts[key]) {
+                counts[key] = { id: tid, name: tName, count: 0, rnpCount: 0 };
+            }
+            counts[key].count += 1;
+            if (a.rnp) {
+                counts[key].rnpCount += 1;
+            }
+        });
+
+        const maxCount = Math.max(...Object.values(counts).map(t => t.count), 1);
+
+        return Object.values(counts)
+            .sort((a, b) => b.count - a.count)
+            .map((t, idx) => {
+                const outrosCount = t.count - t.rnpCount;
+                const rnpPercent = t.count > 0 ? (t.rnpCount / t.count) * 100 : 0;
+                const outrosPercent = t.count > 0 ? (outrosCount / t.count) * 100 : 0;
+                return {
+                    ...t,
+                    rank: idx + 1,
+                    percentBar: Math.min(100, (t.count / maxCount) * 100),
+                    rnpPercent,
+                    outrosCount,
+                    outrosPercent
+                };
+            });
+    }, [ativosProcessados, filtroSemiarido]);
+
+    // 4B. Ranking de Municípios (com dados empilhados de RNP e filtro de Semiárido)
+    const municipalityRanking = useMemo(() => {
+        const targetList = selectedTerritory ? activeScopedAtivos : (filtroSemiarido ? activeScopedAtivos : territoryAtivos);
+        if (!targetList || targetList.length === 0) return [];
+        const counts = {};
+
+        targetList.forEach(a => {
+            const mun = a.municipio || 'Bahia';
+            if (!counts[mun]) {
+                counts[mun] = { count: 0, rnpCount: 0 };
+            }
+            counts[mun].count += 1;
+            if (a.rnp) {
+                counts[mun].rnpCount += 1;
+            }
+        });
+
+        const maxCount = Math.max(...Object.values(counts).map(c => c.count), 1);
+
+        return Object.entries(counts)
+            .sort((a, b) => b[1].count - a[1].count)
+            .map(([name, data], idx) => {
+                const outrosCount = data.count - data.rnpCount;
+                const rnpPercent = data.count > 0 ? (data.rnpCount / data.count) * 100 : 0;
+                const outrosPercent = data.count > 0 ? (outrosCount / data.count) * 100 : 0;
+                return {
+                    name,
+                    count: data.count,
+                    rnpCount: data.rnpCount,
+                    outrosCount,
+                    rnpPercent,
+                    outrosPercent,
+                    rank: idx + 1,
+                    percentBar: Math.min(100, (data.count / maxCount) * 100)
+                };
+            });
+    }, [selectedTerritory, activeScopedAtivos, territoryAtivos, filtroSemiarido]);
+
+    // 5. Contagens Globais e por Grupo (Scoped para a região selecionada e filtro de Semiárido)
+    const totalEnsinoPesquisa = useMemo(() => {
+        return activeScopedAtivos.filter(a => {
+            const t = (a.tipo || '').toLowerCase();
+            return t.includes('universidade') || t.includes('faculdade') || t.includes('instituto federal') || t.includes('ict') || t.includes('pesquisa');
+        }).length;
+    }, [activeScopedAtivos]);
+
+    const totalRnp = useMemo(() => {
+        return activeScopedAtivos.filter(a => a.rnp).length;
+    }, [activeScopedAtivos]);
+
+    const territoriosComAtivosCount = useMemo(() => {
+        if (!filtroSemiarido && territoriosData && territoriosData.length > 0) {
+            return territoriosData.filter(t => Number(t.ativos_cti || 0) > 0).length;
+        }
+        return territoryRanking.length;
+    }, [territoriosData, territoryRanking, filtroSemiarido]);
+
+    const semiaridoMetrics = useMemo(() => {
+        const totalAtivos = territoryAtivos.length || 1;
+        const semiAtivos = territoryAtivos.filter(a => isMunicipioSemiarido(a.municipio)).length;
+        const pctAtivos = ((semiAtivos / totalAtivos) * 100).toFixed(0);
+        return { semiAtivos, pctAtivos };
+    }, [territoryAtivos]);
+
+    // 7. 5 Indicadores Estratégicos (KPIs com adaptação contextual à região e ao Semiárido)
+    const kpis = [
+        {
+            label: filtroSemiarido
+                ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido')
+                : (selectedTerritory ? `Ativos em ${territoryName}` : 'Total de Ativos CT&I'),
+            value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiAtivos : (selectedTerritory ? territoryAtivos.length : (ativosData?.length || territoryAtivos.length))),
+            percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}% do total` : null,
+            tooltip: filtroSemiarido
+                ? `No Semiárido: ${semiaridoMetrics.semiAtivos} (${semiaridoMetrics.pctAtivos}% do total de ativos) | Fora: ${Math.max(0, territoryAtivos.length - semiaridoMetrics.semiAtivos)}`
+                : undefined,
+            icon: Database
+        },
+        {
+            label: filtroSemiarido ? 'Ensino & Pesquisa (Semiárido)' : 'Ensino & Pesquisa (ICTs)',
+            value: loadingStats ? '...' : totalEnsinoPesquisa,
+            icon: GraduationCap
+        },
+        {
+            label: filtroSemiarido ? 'Ativos com RNP (Semiárido)' : 'Ativos com RNP',
+            value: loadingStats ? '...' : totalRnp,
+            icon: Network
+        },
+        {
+            label: filtroSemiarido ? 'Municípios com Ativos' : (selectedTerritory ? 'Municípios com Ativos' : 'Territórios Cobertos'),
+            value: loadingStats ? '...' : (selectedTerritory || filtroSemiarido ? `${municipalityRanking.length} munic.` : `${territoriosComAtivosCount} / ${territoriosData.length || 27}`),
+            icon: MapPin
+        },
+        {
+            label: categoryStats[0] ? (filtroSemiarido ? `Principal: ${categoryStats[0].shortName}` : categoryStats[0].shortName) : 'Principal Tipo',
+            value: loadingStats ? '...' : (categoryStats[0] ? `${categoryStats[0].percent}%` : '-'),
+            icon: Sparkles
+        }
+    ];
+
+    return (
+        <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
+
+            {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
+            <div
+                aria-hidden="true"
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
+                    filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                }`}
+            >
+                {/* 1. HALO RADIAL DIFUSO */}
+                <div
+                    className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+                    style={{
+                        background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
+                        filter: 'blur(35px)',
+                    }}
+                />
+
+                {/* 2. ARCO / ANEL LUMINOSO */}
+                <div
+                    className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+                    style={{
+                        border: '1.5px solid rgba(245, 158, 11, 0.22)',
+                        boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+                    }}
+                />
+
+                {/* 3. SEGUNDO ARCO EXPANSIVO */}
+                <div
+                    className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+                    style={{
+                        border: '1px solid rgba(217, 119, 6, 0.11)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+                    }}
+                />
+
+                {/* 4. GLOW DOURADO DE TOPO */}
+                <div
+                    className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+                    style={{
+                        background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
+                        filter: 'blur(40px)',
+                    }}
+                />
+            </div>
+
+            {/* HEADER DA PÁGINA */}
+            <div className="flex items-center justify-between w-full pr-[320px] shrink-0 relative z-10">
+                <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-3xl font-bold text-text-primary tracking-tight">
+                            Módulo de Ativos de CT&I
+                        </h1>
+                        <span className={`text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
+                            filtroSemiarido
+                                ? 'bg-amber-500/15 text-amber-800 border-amber-500/30'
+                                : 'bg-primary-600/10 text-primary-700 border-primary-600/20'
+                        }`}>
+                            <Sparkles size={16} className={filtroSemiarido ? 'text-amber-700' : 'text-primary-700'} />
+                            Ecossistema de Inovação da Bahia
+                        </span>
+                    </div>
+                    <p className="text-sm text-text-secondary mt-0.5 font-medium">
+                        Explore universidades, ICTs, parques tecnológicos, hubs e centros de pesquisa distribuídos pelo estado
+                    </p>
+                    <div 
+                        className="divider-territorial w-48 mt-3"
+                        style={filtroSemiarido ? { background: 'linear-gradient(90deg, #F59E0B 0%, #D97706 50%, transparent 100%)' } : undefined}
+                    />
+                </div>
+            </div>
+
+            {/* GRID DE KPIS */}
+            <div className="tour-kpis w-full relative z-10 shrink-0">
+                <div className="grid grid-cols-5 gap-4 items-stretch w-full">
+                    {kpis.map((kpi, index) => {
+                        const isHero = index === 0;
+                        const accentColors = [
+                            'text-white/70',
+                            'text-[#0D9488]',
+                            'text-accent-600',
+                            'text-warning-600',
+                            'text-success-600'
+                        ];
+
+                        return (
+                            <div
+                                key={index}
+                                title={kpi.tooltip || kpi.label}
+                                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
+                                    isHero
+                                        ? (filtroSemiarido
+                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
+                                            : 'bg-primary-900 text-white shadow-card-elevated')
+                                        : (filtroSemiarido
+                                            ? 'bg-white/95 border border-amber-200/40 shadow-card'
+                                            : 'bg-surface border border-neutral-100 shadow-card')
+                                }`}
+                            >
+                                {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                                <div className="flex items-center gap-2 w-full min-w-0">
+                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
+                                    <span
+                                        className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
+                                            isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
+                                        }`}
+                                        title={kpi.label}
+                                    >
+                                        {kpi.label}
+                                    </span>
+                                </div>
+
+                                {/* LINHA INFERIOR: NÚMERO */}
+                                <div className="flex items-baseline w-full justify-between">
+                                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                        <span className={`text-[28px] font-bold tracking-tight leading-none ${
+                                            isHero ? 'text-white' : 'text-text-primary'
+                                        }`}>
+                                            {kpi.value}
+                                        </span>
+                                        {filtroSemiarido && kpi.percent && (
+                                            <span
+                                                title={`(${kpi.percent})`}
+                                                className={`text-[11px] font-semibold truncate ${
+                                                    isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
+                                                }`}
+                                            >
+                                                ({kpi.percent})
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* GRID PRINCIPAL: MAPA (calc(40% - 12px) ou Expandido) + DASHBOARD / KPIS VERTICAIS */}
+            <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+
+                {/* LADO ESQUERDO: MAPA DE PONTOS DE ATIVOS */}
+                <div
+                    style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
+                    className="shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
+                >
+                    <SideMap
+                        mode="ativos"
+                        processedAtivos={filteredAtivosList}
+                        selectedTipo={selectedTipo}
+                        onSelectTipo={setSelectedTipo}
+                        focusedAsset={focusedAsset}
+                        selectedTerritory={selectedTerritory}
+                        onSelectTerritory={setSelectedTerritory}
+                        onAssetClick={handleSelectFromMap}
+                        isExpanded={isMapExpanded}
+                        onToggleExpand={() => setIsMapExpanded(prev => !prev)}
+                    />
+                </div>
+
+                {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
+                {isMapExpanded ? (
+                    <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-2xl border border-neutral-100 shadow-card p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+                        {/* CABEÇALHO DA LISTA COMPACTA */}
+                        <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-[12px] font-semibold text-text-primary truncate">
+                                    Ativos de CT&I
+                                </span>
+                                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none ${
+                                    filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-700'
+                                }`}>
+                                    {compactAtivosList.length}
+                                </span>
+                            </div>
+                            {selectedAssetId && (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedAssetId(null);
+                                        setFocusedAsset(null);
+                                    }}
+                                    className="text-[10px] font-medium text-text-secondary hover:text-red-600 bg-surface-soft hover:bg-danger-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0 justify-center leading-none"
+                                >
+                                    <span>Limpar</span>
+                                    <X size={16} />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* BUSCA COMPACTA */}
+                        <div className="relative my-2 shrink-0">
+                            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+                            <input
+                                type="text"
+                                value={sidebarSearch}
+                                onChange={(e) => setSidebarSearch(e.target.value)}
+                                placeholder="Filtrar por nome, cidade..."
+                                className={`w-full pl-8 pr-2.5 py-1 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${
+                                    filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                } focus:outline-none transition-colors`}
+                            />
+                            {sidebarSearch && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSidebarSearch('')}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[11px] font-medium"
+                                >
+                                    ×
+                                </button>
+                            )}
+                        </div>
+
+                        {/* LISTA DE CARDS COMPACTOS */}
+                        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1 min-h-0 divide-y divide-border/40">
+                            {compactAtivosList.length > 0 ? (
+                                compactAtivosList.map((ativo) => {
+                                    const IconComp = ativo.icone || Database;
+                                    const itemColor = filtroSemiarido 
+                                        ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome) 
+                                        : (ativo.corHex || '#3B82F6');
+                                    const isSelected = selectedAssetId === ativo.id;
+
+                                    return (
+                                        <div
+                                            key={ativo.id}
+                                            ref={(el) => { itemRefs.current[ativo.id] = el; }}
+                                            onClick={() => {
+                                                if (isSelected) {
+                                                    setSelectedAssetId(null);
+                                                    setFocusedAsset(null);
+                                                } else {
+                                                    setSelectedAssetId(ativo.id);
+                                                    if (ativo.lat && ativo.lng) {
+                                                        setFocusedAsset({
+                                                            lat: ativo.lat,
+                                                            lng: ativo.lng,
+                                                            id: ativo.id,
+                                                            tipo: ativo.tipo,
+                                                            zoom: 15,
+                                                            ts: Date.now()
+                                                        });
+                                                    }
+                                                }
+                                            }}
+                                            className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer w-full ${isSelected
+                                                    ? (filtroSemiarido ? 'bg-amber-50/80 border-amber-300' : 'bg-primary-50/50')
+                                                    : 'bg-transparent hover:bg-surface-soft'
+                                                }`}
+                                        >
+                                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                <div
+                                                    className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${isSelected ? 'scale-105 shadow-2xs' : ''
+                                                        }`}
+                                                    style={{
+                                                        backgroundColor: `${itemColor}20`,
+                                                        color: itemColor
+                                                    }}
+                                                >
+                                                    <IconComp size={12} />
+                                                </div>
+                                                <div className="flex flex-col min-w-0 flex-1">
+                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${
+                                                        isSelected 
+                                                            ? (filtroSemiarido ? 'text-amber-900' : 'text-primary-800') 
+                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-700')
+                                                        }`}>
+                                                        {ativo.nome}
+                                                    </h5>
+                                                    <span className="text-[10px] text-text-secondary truncate leading-tight">
+                                                        {ativo.shortTipo || ativo.tipo} • <strong className="font-semibold text-text-secondary">{ativo.municipio}</strong>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {ativo.sigla ? (
+                                                <span
+                                                    className="text-[8px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
+                                                    style={{
+                                                        backgroundColor: `${itemColor}20`,
+                                                        color: itemColor
+                                                    }}
+                                                >
+                                                    {ativo.sigla}
+                                                </span>
+                                            ) : null}
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-text-muted">
+                                    <p className="text-[11px] font-medium">Nenhum ativo encontrado</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    /* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS */
+                    <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
+
+                        {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
+                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+
+                            {/* ABAS */}
+                            <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab('catalogo')}
+                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'catalogo'
+                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
+                                        : 'text-text-secondary hover:text-text-primary'
+                                        }`}
+                                >
+                                    <Database size={16} />
+                                    Catálogo ({filteredAtivosList.length})
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab('categorias')}
+                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'categorias'
+                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
+                                        : 'text-text-secondary hover:text-text-primary'
+                                        }`}
+                                >
+                                    <Filter size={16} />
+                                    Categorias ({categoryStats.length})
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab('ranking')}
+                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ranking'
+                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
+                                        : 'text-text-secondary hover:text-text-primary'
+                                        }`}
+                                >
+                                    <TrendingUp size={16} />
+                                    {selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios'}
+                                </button>
+                            </div>
+
+                            {/* INPUT DE BUSCA */}
+                            <div className="relative w-full sm:w-64">
+                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value.trim() && activeTab !== 'catalogo') {
+                                            setActiveTab('catalogo');
+                                        }
+                                    }}
+                                    placeholder="Buscar ativo, tipo, cidade ou sigla..."
+                                    className={`w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${
+                                        filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                    } focus:outline-none transition-colors`}
+                                />
+                                {searchQuery && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setSearchQuery('')}
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[12px] font-medium"
+                                    >
+                                        ×
+                                    </button>
+                                )}
+                            </div>
+
+                        </div>
+
+                        {/* CONTEÚDO DA ABA SELECIONADA */}
+                        <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
+
+                            {/* ABA 1: CATÁLOGO DE ATIVOS */}
+                            {activeTab === 'catalogo' && (
+                                <div className="flex-1 flex flex-col min-h-0">
+                                    <div className="flex items-center justify-between mb-3 shrink-0">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                                {selectedTerritory ? `Ativos de CT&I em ${territoryName}` : 'Catálogo de Ativos do Estado'}
+                                            </h3>
+                                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none ${
+                                                filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-700'
+                                            }`}>
+                                                {filteredAtivosList.length} ativos
+                                            </span>
+                                        </div>
+
+                                        {/* CHIPS DE FILTRAGEM RÁPIDA */}
+                                        <div className="flex items-center gap-1.5 overflow-x-auto max-w-full">
+                                            <button
+                                                type="button"
+                                                onClick={() => setSelectedTipo('todos')}
+                                                className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${selectedTipo === 'todos'
+                                                    ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-900 text-white')
+                                                    : 'bg-surface-soft text-text-secondary hover:bg-border'
+                                                    }`}
+                                            >
+                                                Todos
+                                            </button>
+                                            {categoryStats.slice(0, 3).map((cat) => {
+                                                const catSemiaridoColor = getSemiaridoPointColor(cat.corHex, cat.name || cat.key);
+                                                const isSelected = selectedTipo === cat.name;
+                                                return (
+                                                    <button
+                                                        key={cat.name}
+                                                        type="button"
+                                                        onClick={() => setSelectedTipo(selectedTipo === cat.name ? 'todos' : cat.name)}
+                                                        className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${isSelected
+                                                            ? 'text-white'
+                                                            : 'hover:opacity-80'
+                                                            }`}
+                                                        style={{
+                                                             backgroundColor: isSelected
+                                                                 ? (filtroSemiarido ? catSemiaridoColor : cat.corHex)
+                                                                 : (filtroSemiarido ? `${catSemiaridoColor}20` : `${cat.corHex}15`),
+                                                             color: isSelected ? '#ffffff' : (filtroSemiarido ? catSemiaridoColor : cat.corHex)
+                                                         }}
+                                                    >
+                                                        {cat.shortName}
+                                                    </button>
+                                                );
+                                            })}
+                                            {selectedTerritory && (
+                                                <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 whitespace-nowrap justify-center leading-none ${
+                                                    filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'text-text-primary bg-primary-200/40'
+                                                }`}>
+                                                    <MapPin size={16} className={filtroSemiarido ? "text-amber-700" : "text-primary-700"} />
+                                                    {territoryName}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* LISTAGEM SCROLLÁVEL */}
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
+                                        {filteredAtivosList.length > 0 ? (
+                                            filteredAtivosList.map((ativo, idx) => {
+                                                const IconComponent = ativo.icone || Database;
+                                                const isSelected = selectedAssetId === ativo.id;
+                                                const itemColor = filtroSemiarido 
+                                                    ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome) 
+                                                    : (ativo.corHex || '#3B82F6');
+
+                                                return (
+                                                    <div
+                                                        key={ativo.id || idx}
+                                                        ref={(el) => {
+                                                            if (el && ativo.id) itemRefs.current[ativo.id] = el;
+                                                        }}
+                                                        onClick={() => {
+                                                            if (isSelected) {
+                                                                setSelectedAssetId(null);
+                                                                setFocusedAsset(null);
+                                                            } else {
+                                                                setSelectedAssetId(ativo.id);
+                                                                if (ativo.lat && ativo.lng) {
+                                                                    setFocusedAsset({
+                                                                        lat: ativo.lat,
+                                                                        lng: ativo.lng,
+                                                                        id: ativo.id,
+                                                                        tipo: ativo.tipo,
+                                                                        zoom: 15,
+                                                                        ts: Date.now()
+                                                                    });
+                                                                }
+                                                            }
+                                                        }}
+                                                        className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 ${isSelected
+                                                                ? (filtroSemiarido ? 'bg-amber-50/80 border-amber-300' : 'bg-primary-50/50')
+                                                                : `bg-transparent hover:bg-surface-soft ${ativo.rnp ? (filtroSemiarido ? 'shadow-[inset_3px_0_0_#F59E0B]' : 'shadow-[inset_3px_0_0_var(--color-info-500)]') : ''
+                                                                }`
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-start gap-3 min-w-0">
+                                                             <div
+                                                                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform"
+                                                                 style={{
+                                                                     backgroundColor: `${itemColor}20`,
+                                                                     color: itemColor
+                                                                 }}
+                                                             >
+                                                                 <IconComponent size={16} />
+                                                             </div>
+                                                             <div className="flex flex-col min-w-0">
+                                                                 <div className="flex items-center gap-2">
+                                                                     <h4 className={`text-[12px] font-semibold text-text-primary ${
+                                                                         filtroSemiarido ? 'group-hover:text-amber-700' : 'group-hover:text-blue-600'
+                                                                     } transition-colors leading-tight truncate`}>
+                                                                         {ativo.nome}
+                                                                     </h4>
+                                                                     {ativo.sigla && (
+                                                                         <span className="text-[9px] font-medium px-1.5 py-0.2 bg-border text-text-primary rounded-md shrink-0 inline-flex items-center justify-center leading-none">
+                                                                             {ativo.sigla}
+                                                                         </span>
+                                                                     )}
+                                                                     {ativo.rnp && (
+                                                                         <span
+                                                                             className={`inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 shadow-2xs justify-center leading-none border ${
+                                                                                 filtroSemiarido
+                                                                                     ? 'bg-amber-500/15 text-amber-900 border-amber-500/30'
+                                                                                     : 'bg-primary-700/15 text-primary-800 border-info-500/30'
+                                                                             }`}
+                                                                             title="Ponto de Presença / Conexão RNP"
+                                                                         >
+                                                                             <Network size={16} className={filtroSemiarido ? "text-amber-600 shrink-0" : "text-info-500 shrink-0"} />
+                                                                             <span>RNP</span>
+                                                                         </span>
+                                                                     )}
+                                                                 </div>
+                                                                 <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
+                                                                     <span
+                                                                         className="font-medium px-1.5 py-0.2 rounded-md"
+                                                                         style={{
+                                                                             backgroundColor: `${itemColor}20`,
+                                                                             color: itemColor
+                                                                         }}
+                                                                     >
+                                                                         {ativo.shortTipo || ativo.tipo}
+                                                                     </span>
+                                                                     <span>•</span>
+                                                                     <span>{ativo.municipio}</span>
+                                                                     <span>•</span>
+                                                                     <span className="text-text-secondary">{ativo.territorio}</span>
+                                                                 </div>
+                                                             </div>
+                                                         </div>
+
+                                                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                                            {ativo.urlReferencia && (
+                                                                <a
+                                                                    href={ativo.urlReferencia}
+                                                                    target="_blank"
+                                                                    rel="noreferrer"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                    className={`flex items-center gap-1 px-2.5 py-1 rounded-xl transition-all text-[11px] font-medium shrink-0 justify-center leading-none ${
+                                                                        filtroSemiarido
+                                                                            ? 'bg-amber-500/15 hover:bg-amber-600 text-amber-800 hover:text-white'
+                                                                            : 'bg-primary-600/10 hover:bg-primary-600 text-primary-700 hover:text-white'
+                                                                    }`}
+                                                                    title="Acessar Página / Informações"
+                                                                >
+                                                                    <span>Acessar</span>
+                                                                    <ExternalLink size={16} />
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
+                                                <Database size={24} className="mb-2 opacity-40 text-text-secondary" />
+                                                <p className="text-[12px] font-medium text-text-primary">Nenhum ativo encontrado</p>
+                                                <p className="text-[10px] mt-1 text-text-secondary">Tente ajustar o termo de busca ou filtros de tipo.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ABA 2: CLASSIFICAÇÃO DOS ATIVOS (ESTILO DE PÍLULAS PROPORCIONAIS RNP) */}
+                            {activeTab === 'categorias' && (
+                                <div className="flex-1 flex flex-col min-h-0">
+                                    <div className="mb-3 shrink-0 flex items-center justify-between flex-wrap gap-2">
+                                        <div>
+                                            <h3 className="text-[14px] font-bold text-text-primary tracking-tight">
+                                                {selectedTerritory
+                                                    ? `Categorias de Ativos em ${territoryName}`
+                                                    : 'Classificação dos Ativos de CT&I do Estado'
+                                                }
+                                            </h3>
+                                            <p className="text-[11px] text-text-secondary font-medium">
+                                                Proporção de ativos conectados à Rede Nacional de Pesquisa
+                                            </p>
+                                        </div>
+
+                                        {selectedTerritory && (
+                                            <span className={`text-[11px] font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none ${filtroSemiarido ? 'bg-amber-200/60' : 'bg-primary-200/40'}`}>
+                                                <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-500'} />
+                                                {territoryName}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
+                                        {categoryStats.length > 0 ? (
+                                            categoryStats.map((cat) => {
+                                                const isSelected = selectedTipo === cat.name;
+                                                const catColor = filtroSemiarido 
+                                                    ? getSemiaridoPointColor(cat.corHex, cat.name || cat.key) 
+                                                    : '#2563EB';
+                                                
+                                                const pos = Number(cat.rnpCount || 0);
+                                                const total = Number(cat.count || 0);
+                                                const neg = Math.max(0, total - pos);
+                                                const percentPos = total > 0 ? ((pos / total) * 100).toFixed(1) : '0.0';
+                                                const percentNeg = total > 0 ? ((neg / total) * 100).toFixed(1) : '0.0';
+
+                                                const posPillColor = filtroSemiarido ? catColor : '#2563EB';
+                                                const negPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
+                                                    : 'bg-[#F1F5F9] text-[#334155] border border-[#E2E8F0]';
+                                                const totalPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-100 text-amber-900 border border-amber-300/70'
+                                                    : 'bg-[#F1F5F9] text-[#1E293B] border border-[#E2E8F0]';
+
+                                                return (
+                                                    <div
+                                                        key={cat.name}
+                                                        onClick={() => setSelectedTipo(isSelected ? 'todos' : cat.name)}
+                                                        className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
+                                                            ? (filtroSemiarido ? 'bg-amber-50/70 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
+                                                            : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-neutral-200')
+                                                            }`}
+                                                    >
+                                                        {/* RÓTULO COM NOME DA CATEGORIA */}
+                                                        <div className="text-[12px] font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                            <div className="flex items-center gap-1.5 min-w-0">
+                                                                <span className="truncate">{cat.shortName || cat.name}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* BARRAS DE PÍLULAS: [ COM RNP (xx%) ] [ SEM RNP (yy%) ] [ TOTAL ] */}
+                                                        <div className="flex items-center gap-2 w-full">
+                                                            {/* COM RNP (Positivo) */}
+                                                            {pos > 0 && (
+                                                                <div
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-3 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
+                                                                    style={{
+                                                                        flexGrow: pos,
+                                                                        flexBasis: 0,
+                                                                        backgroundColor: posPillColor,
+                                                                        minWidth: neg > 0 ? '64px' : 'auto'
+                                                                    }}
+                                                                    title={`Com RNP: ${pos} (${percentPos}%)`}
+                                                                >
+                                                                    <span className="text-[11.5px] font-bold tabular-nums leading-none">
+                                                                        {pos} <span className="text-[9.5px] font-medium opacity-90">({percentPos}%)</span>
+                                                                    </span>
+                                                                </div>
+                                                            )}
+
+                                                            {/* SEM RNP (Negativo) */}
+                                                            {neg > 0 && (
+                                                                <div
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-3 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs`}
+                                                                    style={{
+                                                                        flexGrow: neg,
+                                                                        flexBasis: 0,
+                                                                        minWidth: pos > 0 ? '64px' : 'auto'
+                                                                    }}
+                                                                    title={`Sem RNP: ${neg} (${percentNeg}%)`}
+                                                                >
+                                                                    <span className="text-[11.5px] font-bold tabular-nums leading-none">
+                                                                        {neg} <span className="text-[9.5px] font-medium opacity-85">({percentNeg}%)</span>
+                                                                    </span>
+                                                                </div>
+                                                            )}
+
+                                                            {/* TOTAL */}
+                                                            <div
+                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`Total de ativos: ${total}`}
+                                                            >
+                                                                <span className="text-[12px] font-bold tabular-nums leading-none">
+                                                                    {total}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
+                                                <Filter size={24} className="mb-2 opacity-40 text-text-secondary" />
+                                                <p className="text-[12px] font-medium text-text-primary">Nenhum ativo registrado neste território</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* LEGENDA NO RODAPÉ (PADRÃO IDÊNTICO AO REFERENCIAL) */}
+                                    <div className="flex items-center justify-between gap-4 pt-3 border-t border-neutral-100 shrink-0 text-[11px] font-medium mt-auto">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-[#2563EB]'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-900 font-semibold' : 'text-neutral-700 font-semibold'}>Com RNP</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-500/20' : 'bg-[#E2E8F0]'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-800' : 'text-neutral-600'}>Sem RNP</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 ml-auto">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-300' : 'bg-[#CBD5E1]'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-800 font-medium' : 'text-neutral-600 font-medium'}>Total</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ABA 3: RANKING TERRITORIAL OU MUNICIPAL (BARRAS COMPARATIVAS VISÃO GERAL) */}
+                            {activeTab === 'ranking' && (
+                                <div className="flex-1 flex flex-col min-h-0">
+                                    <div className="mb-3 shrink-0 flex items-center justify-between flex-wrap gap-2">
+                                        <div>
+                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                                {selectedTerritory
+                                                    ? `Ranking de Municípios · ${territoryName}`
+                                                    : 'Ranking Territorial de Ativos de CT&I'
+                                                }
+                                            </h3>
+                                            <p className="text-[11px] text-text-secondary font-medium">
+                                                {selectedTerritory
+                                                    ? 'Distribuição de ativos e proporção com conexão à rede RNP nos municípios'
+                                                    : 'Densidade de infraestrutura e proporção com conexão RNP nos 27 Territórios'
+                                                }
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center gap-2.5">
+                                            {selectedTerritory ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedTerritory(null)}
+                                                    className={`text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${
+                                                        filtroSemiarido
+                                                            ? 'text-amber-800 hover:text-amber-950 bg-amber-100/70 hover:bg-amber-100 border border-amber-200'
+                                                            : 'text-primary-700 hover:text-[#0369A1] hover:underline bg-primary-200/50'
+                                                    }`}
+                                                >
+                                                    ← Ver Todos os Territórios
+                                                </button>
+                                            ) : (
+                                                <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
+                                                    {territoryRanking.length} territórios
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* LISTA RANKING: RANK + BARRA PROPORCIONAL COM NOME + PILULA DE VALOR */}
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
+                                        {selectedTerritory ? (
+                                            municipalityRanking.length > 0 ? (
+                                                municipalityRanking.map((m, index) => {
+                                                    const isFirst = index === 0;
+                                                    const rankStr = String(m.rank || index + 1).padStart(2, '0');
+                                                    const rankStyle = isFirst
+                                                        ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white shadow-2xs')
+                                                        : (filtroSemiarido ? 'bg-amber-100 text-amber-800 border border-amber-200/60' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
+                                                    const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300' : 'bg-primary-200');
+                                                    const textStyle = isFirst ? 'font-medium text-white' : (filtroSemiarido ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
+                                                    const valueStyle = isFirst
+                                                        ? (filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border border-amber-300/70' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
+                                                        : (filtroSemiarido ? 'bg-amber-50 text-amber-800 border border-amber-200/60' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
+
+                                                    return (
+                                                        <div
+                                                            key={m.name}
+                                                            onClick={() => {
+                                                                const munKey = String(m.name || '').trim();
+                                                                const coords = MUNICIPIOS_COORDS[munKey] || MUNICIPIOS_COORDS[munKey.toLowerCase()];
+                                                                if (coords) {
+                                                                    setFocusedAsset({
+                                                                        lat: coords[0],
+                                                                        lng: coords[1],
+                                                                        zoom: 12,
+                                                                        ts: Date.now()
+                                                                    });
+                                                                }
+                                                            }}
+                                                            title={`${m.name}: ${m.count} ativos (${m.rnpCount} com RNP)`}
+                                                            className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+                                                        >
+                                                            {/* RANK */}
+                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                                {rankStr}
+                                                            </div>
+
+                                                            {/* BARRA: TRACK + FILL + NOME */}
+                                                            <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
+                                                                filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                                            }`}>
+                                                                <div 
+                                                                    className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                                                    style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
+                                                                />
+                                                                <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                                    {m.name}
+                                                                </span>
+                                                            </div>
+
+                                                            {/* RNP PILL */}
+                                                            {m.rnpCount > 0 && (
+                                                                <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none border ${
+                                                                    filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border-amber-300/70' : 'bg-primary-100/80 text-primary-800 border border-primary-200/60'
+                                                                }`} title={`${m.rnpCount} com RNP`}>
+                                                                    {m.rnpCount} RNP
+                                                                </div>
+                                                            )}
+
+                                                            {/* VALOR PILL */}
+                                                            <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                                {m.count}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            ) : (
+                                                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
+                                                    <MapPin size={24} className="mb-2 opacity-40 text-text-secondary" />
+                                                    <p className="text-[12px] font-medium text-text-primary">Nenhum ativo registrado neste território</p>
+                                                </div>
+                                            )
+                                        ) : (
+                                            territoryRanking.map((t, index) => {
+                                                const isFirst = index === 0;
+                                                const rankStr = String(t.rank || index + 1).padStart(2, '0');
+                                                const rankStyle = isFirst
+                                                    ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white shadow-2xs')
+                                                    : (filtroSemiarido ? 'bg-amber-100 text-amber-800 border border-amber-200/60' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
+                                                const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300' : 'bg-primary-200');
+                                                const textStyle = isFirst ? 'font-medium text-white' : (filtroSemiarido ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
+                                                const valueStyle = isFirst
+                                                    ? (filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border border-amber-300/70' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
+                                                    : (filtroSemiarido ? 'bg-amber-50 text-amber-800 border border-amber-200/60' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
+
+                                                return (
+                                                    <div
+                                                        key={t.id || t.name}
+                                                        onClick={() => {
+                                                            const found = territoriosData.find(x => String(x.id_territorio) === String(t.id) || normalizeName(x.territorio) === normalizeName(t.name));
+                                                            setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                                                        }}
+                                                        title={`${t.name}: ${t.count} ativos (${t.rnpCount} com RNP)`}
+                                                        className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
+                                                    >
+                                                        {/* RANK */}
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                            {rankStr}
+                                                        </div>
+
+                                                        {/* BARRA: TRACK + FILL + NOME */}
+                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
+                                                            filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                                        }`}>
+                                                            <div 
+                                                                className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                                                                style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
+                                                            />
+                                                            <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                                {t.name}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* RNP PILL */}
+                                                        {t.rnpCount > 0 && (
+                                                            <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none border ${
+                                                                filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border-amber-300/70' : 'bg-primary-100/80 text-primary-800 border border-primary-200/60'
+                                                            }`} title={`${t.rnpCount} com RNP`}>
+                                                                {t.rnpCount} RNP
+                                                            </div>
+                                                        )}
+
+                                                        {/* VALOR PILL */}
+                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                            {t.count}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                )}
+
+            </div>
+
+        </main>
+    );
+}

@@ -1,0 +1,1169 @@
+import React, { useContext, useState, useMemo, useEffect, useRef } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import {
+  Boxes,
+  MapPin,
+  Layers,
+  X,
+  ListOrdered,
+  BarChart2,
+  Wheat,
+  Award,
+  Compass,
+  Printer,
+  ArrowLeft
+} from 'lucide-react';
+
+import { DataContext } from '../../context/DataContext';
+import SideMap from '../maps/SideMap';
+import StackedBarChart from '../graph/StackedBarChart';
+import ProportionBarChart from '../graph/ProportionBarChart';
+import { municipiosDB } from '../../data/municipiosDB';
+import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
+import { getTextoReferencia } from '../../data/referenciasDB';
+import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
+import { useReactToPrint } from 'react-to-print';
+import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
+
+function normalizeName(name) {
+  if (!name) return '';
+  return String(name)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function checkSemiaridoValue(val) {
+  if (val === true || val === 1) return true;
+  const s = String(val ?? '').toLowerCase().trim();
+  return s === 'sim' || s === 'true' || s === '1' || s === 't';
+}
+
+const MUN_LOOKUP = (() => {
+  const byId = {};
+  const byName = {};
+  municipiosDB.forEach((row) => {
+    byId[row.id_municipio] = row;
+    byName[normalizeName(row.nome_municipio)] = row;
+  });
+  return { byId, byName };
+})();
+
+function isMunicipioInTerritory(mObjOrName, tid, tNorm) {
+  if (!mObjOrName) return false;
+
+  if (typeof mObjOrName === 'object') {
+    if (tid && mObjOrName.id_territorio && Number(mObjOrName.id_territorio) === tid) return true;
+    if (tNorm && mObjOrName.nome_territorio && normalizeName(mObjOrName.nome_territorio) === tNorm) return true;
+  }
+
+  const munName = typeof mObjOrName === 'string'
+    ? mObjOrName
+    : (mObjOrName.nome_municipio || mObjOrName.municipio || '');
+
+  if (munName) {
+    const clean = normalizeName(munName);
+    const lookup = MUN_LOOKUP.byName[clean];
+    if (lookup) {
+      if (tid && lookup.id_territorio && Number(lookup.id_territorio) === tid) return true;
+      if (tNorm && lookup.nome_territorio && normalizeName(lookup.nome_territorio) === tNorm) return true;
+    }
+  }
+
+  if (typeof mObjOrName === 'object' && mObjOrName.id_municipio) {
+    const lookup = MUN_LOOKUP.byId[mObjOrName.id_municipio];
+    if (lookup) {
+      if (tid && lookup.id_territorio && Number(lookup.id_territorio) === tid) return true;
+      if (tNorm && lookup.nome_territorio && normalizeName(lookup.nome_territorio) === tNorm) return true;
+    }
+  }
+
+  return false;
+}
+
+function findMunicipioCoords(nome) {
+  if (!nome) return null;
+  const raw = String(nome).trim();
+  const clean = normalizeName(raw);
+
+  if (MUNICIPIOS_COORDS[raw]) return MUNICIPIOS_COORDS[raw];
+  if (MUNICIPIOS_COORDS[clean]) return MUNICIPIOS_COORDS[clean];
+  if (MUNICIPIOS_COORDS[raw.toLowerCase()]) return MUNICIPIOS_COORDS[raw.toLowerCase()];
+
+  const aliases = {
+    'petrolina': [-9.3989, -40.5008],
+    'sao francisco': [-9.427268, -40.505742],
+    'lem': [-12.087454, -45.796046],
+    'saj': [-12.968813, -39.257965]
+  };
+
+  if (aliases[clean]) return aliases[clean];
+
+  const lookup = MUN_LOOKUP.byName[clean];
+  if (lookup && MUNICIPIOS_COORDS[lookup.nome_municipio]) {
+    return MUNICIPIOS_COORDS[lookup.nome_municipio];
+  }
+
+  for (const key of Object.keys(MUNICIPIOS_COORDS)) {
+    if (normalizeName(key).includes(clean) || clean.includes(normalizeName(key))) {
+      return MUNICIPIOS_COORDS[key];
+    }
+  }
+
+  return null;
+}
+
+const getTipoCadeiaConfig = (nomeTipo) => {
+  const str = String(nomeTipo || '').toLowerCase();
+  if (str.includes('potencial')) {
+    return {
+      corHex: '#F59E0B',
+      label: 'IG Potencial',
+      icone: Compass
+    };
+  }
+  if (str.includes('ig') || str.includes('indica')) {
+    return {
+      corHex: '#10B981',
+      label: 'IG',
+      icone: Award
+    };
+  }
+  return {
+    corHex: '#2563EB',
+    label: 'APL',
+    icone: Wheat
+  };
+};
+
+const CADEIA_CATEGORIES = [
+  { key: 'apl', label: 'Arranjo Produtivo Local (APL)', shortLabel: 'APL', colorHex: '#2563EB' },
+  { key: 'ig', label: 'Indicação Geográfica (IG)', shortLabel: 'IG', colorHex: '#10B981' },
+  { key: 'ig_potencial', label: 'IG Potencial', shortLabel: 'IG Potencial', colorHex: '#F59E0B' }
+];
+
+const CADEIA_PRESENCA_CATEGORIES = [
+  { key: 'sede', label: 'Cadeia Sediada (Município Sede)', shortLabel: 'Sede', colorHex: '#F59E0B' },
+  { key: 'abrangente', label: 'Cadeia Abrangente (Atuação Local)', shortLabel: 'Abrangente', colorHex: '#2563EB' }
+];
+
+export default function RelatorioCadeiasPage() {
+  const {
+    listaCadeias = [],
+    distribuicaoCadeias = [],
+    territoriosData = [],
+    loadingStats = false
+  } = useContext(DataContext);
+
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const reportMode = searchParams.get('modo') || 'normal';
+  const isSemiarido = reportMode === 'semiarido';
+
+  const [selectedTerritory, setSelectedTerritory] = useState(null);
+
+  // Inicializa o território a partir dos parâmetros de busca na URL
+  useEffect(() => {
+    const terrParam = searchParams.get('territorio');
+    if (terrParam && terrParam !== 'bahia' && territoriosData.length > 0) {
+      const match = territoriosData.find(t => String(t.id_territorio) === String(terrParam));
+      if (match) {
+        setSelectedTerritory(match);
+      }
+    } else if (terrParam === 'bahia') {
+      setSelectedTerritory(null);
+    }
+  }, [searchParams, territoriosData]);
+
+  const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  // React-to-print: referência do relatório 1920x1080 para renderização e impressão nativa
+  const contentRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef,
+    documentTitle: `relatorio_cadeias_${isSemiarido ? 'semiarido' : (selectedTerritory ? territoryName : 'bahia')}`,
+    pageStyle: REPORT_PRINT_PAGE_STYLE,
+    onBeforePrint: prepareReportForPrint,
+    print: (iframe) => printWithCanvasSync(iframe, contentRef)
+  });
+
+  // Auto-impressão caso explicitamente solicitado via query param (ex: autoPrint=1 ou autoprint=true)
+  useEffect(() => {
+    const autoPrint = searchParams.get('autoPrint') || searchParams.get('autoprint');
+    if ((autoPrint === '1' || autoPrint === 'true') && !loadingStats) {
+      const timer = setTimeout(() => {
+        handlePrint();
+      }, 900);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, loadingStats, handlePrint]);
+
+  // 1. Enriquecimento dos Dados (Idêntico ao CadeiaPage)
+  const enrichedCadeias = useMemo(() => {
+    const fontesMap = new Map();
+    const coordsMap = new Map();
+
+    (listaCadeias || []).forEach(lc => {
+      const id = Number(lc.id_cadeia);
+      if (id && lc.fonte) fontesMap.set(id, lc.fonte);
+      const cLat = Number(lc.latitude || lc.lat);
+      const cLng = Number(lc.longitude || lc.lng);
+      if (id && cLat && cLng && cLat >= -18.5 && cLat <= -8.0 && cLng >= -47.0 && cLng <= -36.5) {
+        coordsMap.set(id, [cLat, cLng]);
+      }
+    });
+
+    const sourceData = (distribuicaoCadeias && distribuicaoCadeias.length > 0) ? distribuicaoCadeias : listaCadeias;
+    if (!sourceData || sourceData.length === 0) return [];
+
+    const mapCadeias = new Map();
+
+    sourceData.forEach((row, idx) => {
+      const idCadeia = Number(row.id_cadeia || idx + 1);
+      const tipoNome = row.nome_tipo || row.tipo || 'APL';
+      const configTipo = getTipoCadeiaConfig(tipoNome);
+      const entidadeStr = String(row.entidade || '').toLowerCase();
+
+      let overrideSede = null;
+      let overrideTerritorioId = null;
+      let overrideTerritorioNome = null;
+
+      if (entidadeStr.includes('sao francisco') || entidadeStr.includes('uvas de mesa') || entidadeStr.includes('vinho do vale')) {
+        overrideSede = 'Juazeiro';
+        overrideTerritorioId = 21;
+        overrideTerritorioNome = 'Sertão do São Francisco';
+      } else if (entidadeStr.includes('luis eduardo') || entidadeStr.includes('oeste da bahia')) {
+        overrideSede = 'Luís Eduardo Magalhães';
+        overrideTerritorioId = 4;
+        overrideTerritorioNome = 'Bacia do Rio Grande';
+      } else if (entidadeStr.includes('cachaça de abaíra') || entidadeStr.includes('abaira')) {
+        overrideSede = 'Abaíra';
+        overrideTerritorioId = 11;
+        overrideTerritorioNome = 'Chapada Diamantina';
+      } else if (entidadeStr.includes('cacau do sul') || entidadeStr.includes('sul da bahia')) {
+        overrideSede = 'Ilhéus';
+        overrideTerritorioId = 6;
+        overrideTerritorioNome = 'Litoral Sul';
+      }
+
+      let rawMunSede = overrideSede || row.sede || row.municipio_sede || '';
+      if ((!rawMunSede || rawMunSede.toLowerCase() === 'bahia') && row.nome_municipio && row.nome_municipio.toLowerCase() !== 'bahia') {
+        rawMunSede = row.nome_municipio;
+      }
+
+      const lookupSede = (row.id_sede && MUN_LOOKUP.byId[row.id_sede]) ||
+        (rawMunSede && MUN_LOOKUP.byName[normalizeName(rawMunSede)]);
+
+      const nomeSedeFinal = lookupSede ? lookupSede.nome_municipio : (rawMunSede || 'Juazeiro');
+      const idTerrSede = overrideTerritorioId || (lookupSede ? lookupSede.id_territorio : (row.id_territorio || null));
+      const nomeTerrSede = overrideTerritorioNome || (lookupSede ? lookupSede.nome_territorio : (row.nome_territorio || 'Não identificado'));
+      const isSedeSemi = lookupSede ? checkSemiaridoValue(lookupSede.semiarido) : isMunicipioSemiarido(nomeSedeFinal);
+
+      if (!mapCadeias.has(idCadeia)) {
+        let lat = row.latitude ? Number(row.latitude) : (row.lat ? Number(row.lat) : null);
+        let lng = row.longitude ? Number(row.longitude) : (row.lng ? Number(row.lng) : null);
+
+        // Garantir limites da Bahia
+        if (lat && (lat < -18.5 || lat > -8.0)) lat = null;
+        if (lng && (lng < -47.0 || lng > -36.5)) lng = null;
+
+        if ((!lat || !lng) && coordsMap.has(idCadeia)) {
+          const [cLat, cLng] = coordsMap.get(idCadeia);
+          lat = cLat;
+          lng = cLng;
+        }
+
+        if (!lat || !lng) {
+          const huntedCoords = findMunicipioCoords(nomeSedeFinal) ||
+            (overrideSede ? findMunicipioCoords(overrideSede) : null) ||
+            [-9.4167, -40.5000];
+          lat = huntedCoords[0];
+          lng = huntedCoords[1];
+
+          const offsetAngle = (idCadeia * 137.5 * Math.PI) / 180;
+          const offsetRadius = 0.008 + ((idCadeia % 5) * 0.003);
+          lat += Math.cos(offsetAngle) * offsetRadius;
+          lng += Math.sin(offsetAngle) * offsetRadius;
+        }
+
+        const rawUrl = row.fonte || fontesMap.get(idCadeia) || row.url_referencia || '';
+        const isIgPot = tipoNome.toLowerCase().includes('potencial') || configTipo.label === 'IG Potencial';
+        const textoRef = isIgPot ? (row.texto_referencia || getTextoReferencia(rawUrl, row.entidade)) : null;
+
+        mapCadeias.set(idCadeia, {
+          id: idCadeia,
+          id_cadeia: idCadeia,
+          nome: row.entidade || `Arranjo #${idCadeia}`,
+          entidade: row.entidade || `Arranjo #${idCadeia}`,
+          segmento: row.segmento || row.nome_cadeia || 'Outros',
+          tipo: tipoNome,
+          shortTipo: configTipo.label,
+          id_sede: lookupSede ? lookupSede.id_municipio : (row.id_sede || 1),
+          municipio: nomeSedeFinal,
+          municipio_sede: nomeSedeFinal,
+          id_territorio: idTerrSede,
+          territorio: nomeTerrSede,
+          territorio_identidade: nomeTerrSede,
+          lat,
+          lng,
+          corHex: configTipo.corHex,
+          icone: configTipo.icone,
+          fonte: rawUrl,
+          texto_referencia: textoRef,
+          semiarido: isSedeSemi,
+          municipios_cobertos: []
+        });
+      }
+
+      if (row.id_municipio || row.nome_municipio) {
+        const cadeiaObj = mapCadeias.get(idCadeia);
+        const lookupMun = (row.id_municipio && MUN_LOOKUP.byId[row.id_municipio]) ||
+          (row.nome_municipio && MUN_LOOKUP.byName[normalizeName(row.nome_municipio)]);
+
+        const mId = row.id_municipio || (lookupMun ? lookupMun.id_municipio : null);
+        const mNome = row.nome_municipio || (lookupMun ? lookupMun.nome_municipio : '');
+        const mTerrId = (lookupMun && lookupMun.id_territorio) ? lookupMun.id_territorio : (row.id_territorio || idTerrSede);
+        const mTerrNome = (lookupMun && lookupMun.nome_territorio) ? lookupMun.nome_territorio : (row.nome_territorio || nomeTerrSede);
+        const mSemi = lookupMun ? checkSemiaridoValue(lookupMun.semiarido) : isMunicipioSemiarido(mNome);
+
+        let munCoords = findMunicipioCoords(mNome);
+        if (!munCoords || munCoords[0] < -18.5 || munCoords[0] > -8.0 || munCoords[1] < -47.0 || munCoords[1] > -36.5) {
+          munCoords = null;
+        }
+
+        if (mId && !cadeiaObj.municipios_cobertos.some(m => m.id_municipio === mId)) {
+          cadeiaObj.municipios_cobertos.push({
+            id_municipio: mId,
+            nome_municipio: mNome,
+            id_territorio: mTerrId,
+            nome_territorio: mTerrNome,
+            lat: munCoords ? munCoords[0] : null,
+            lng: munCoords ? munCoords[1] : null,
+            semiarido: mSemi
+          });
+          // Se qualquer município de abrangência for do semiárido, a cadeia atende ao semiárido
+          if (mSemi) cadeiaObj.semiarido = true;
+        }
+      }
+    });
+
+    return Array.from(mapCadeias.values());
+  }, [listaCadeias, distribuicaoCadeias]);
+
+  const totalCadeiasBahia = useMemo(() => enrichedCadeias.length, [enrichedCadeias]);
+
+  // 2. Filtragem por Território Selecionado e Modo
+  const filteredCadeias = useMemo(() => {
+    if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
+    let list = enrichedCadeias;
+
+    if (selectedTerritory) {
+      const tid = Number(selectedTerritory.id_territorio);
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
+
+      list = list.filter(c => {
+        const matchSedeId = tid && Number(c.id_territorio) === tid;
+        const matchSedeNome = tNorm && normalizeName(c.territorio_identidade) === tNorm;
+        const matchSedeMun = isMunicipioInTerritory(c.municipio_sede, tid, tNorm);
+        const matchAbrangencia = c.municipios_cobertos?.some(m => isMunicipioInTerritory(m, tid, tNorm));
+        return matchSedeId || matchSedeNome || matchSedeMun || matchAbrangencia;
+      });
+    }
+
+    if (isSemiarido) {
+      list = list.filter(c =>
+        c.semiarido === true ||
+        isMunicipioSemiarido(c.municipio_sede) ||
+        c.municipios_cobertos?.some(m => m.semiarido || isMunicipioSemiarido(m.nome_municipio))
+      );
+    }
+
+    return list;
+  }, [enrichedCadeias, selectedTerritory, isSemiarido]);
+
+  // Cadeias com SEDE no território selecionado (ou universo estadual/semiárido)
+  const cadeiasSediadas = useMemo(() => {
+    if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
+    let list = enrichedCadeias;
+
+    if (selectedTerritory) {
+      const tid = Number(selectedTerritory.id_territorio);
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
+
+      list = list.filter(c => {
+        if (c.municipio_sede) {
+          return isMunicipioInTerritory(c.municipio_sede, tid, tNorm);
+        }
+        const matchSedeId = tid && Number(c.id_territorio) === tid;
+        const matchSedeNome = tNorm && normalizeName(c.territorio_identidade) === tNorm;
+        return matchSedeId || matchSedeNome;
+      });
+    }
+
+    if (isSemiarido) {
+      list = list.filter(c =>
+        c.semiarido === true || isMunicipioSemiarido(c.municipio_sede)
+      );
+    }
+
+    return list;
+  }, [enrichedCadeias, selectedTerritory, isSemiarido]);
+
+  // 3. Indicadores Executivos (KPIs)
+  const statsKpis = useMemo(() => {
+    const totalArranjosPresenca = filteredCadeias.length;
+    const arranjosSediados = cadeiasSediadas.length;
+    const arranjosSemiCount = filteredCadeias.filter(c => c.semiarido).length;
+
+    const munBeneficiadosSet = new Set();
+    const munSemiBeneficiadosSet = new Set();
+    const munSedeSet = new Set();
+    const terrSet = new Set();
+
+    const tid = selectedTerritory ? Number(selectedTerritory.id_territorio) : null;
+    const tNorm = selectedTerritory ? normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+    // Coleta municípios de abrangência
+    filteredCadeias.forEach(c => {
+      if (c.municipios_cobertos && c.municipios_cobertos.length > 0) {
+        c.municipios_cobertos.forEach(m => {
+          if (selectedTerritory) {
+            if (isMunicipioInTerritory(m, tid, tNorm)) {
+              const mNorm = normalizeName(m.nome_municipio || m.municipio);
+              if (mNorm) {
+                munBeneficiadosSet.add(mNorm);
+                if (m.semiarido) munSemiBeneficiadosSet.add(mNorm);
+              }
+              terrSet.add(tNorm);
+            }
+          } else {
+            if (m.nome_municipio) {
+              const mNorm = normalizeName(m.nome_municipio);
+              munBeneficiadosSet.add(mNorm);
+              if (m.semiarido) munSemiBeneficiadosSet.add(mNorm);
+            }
+            if (m.nome_territorio) terrSet.add(normalizeName(m.nome_territorio));
+          }
+        });
+      }
+
+      if (c.municipio_sede) {
+        if (selectedTerritory) {
+          if (isMunicipioInTerritory(c.municipio_sede, tid, tNorm)) {
+            const mNorm = normalizeName(c.municipio_sede);
+            munBeneficiadosSet.add(mNorm);
+            if (c.semiarido) munSemiBeneficiadosSet.add(mNorm);
+            terrSet.add(tNorm);
+          }
+        } else {
+          const mNorm = normalizeName(c.municipio_sede);
+          munBeneficiadosSet.add(mNorm);
+          if (c.semiarido) munSemiBeneficiadosSet.add(mNorm);
+        }
+      }
+
+      if (!selectedTerritory && c.territorio_identidade) {
+        terrSet.add(normalizeName(c.territorio_identidade));
+      }
+    });
+
+    // Municípios SEDE (distintos municípios com ao menos uma cadeia sediada)
+    cadeiasSediadas.forEach(c => {
+      if (c.municipio_sede) {
+        if (selectedTerritory) {
+          if (isMunicipioInTerritory(c.municipio_sede, tid, tNorm)) {
+            munSedeSet.add(normalizeName(c.municipio_sede));
+          }
+        } else {
+          munSedeSet.add(normalizeName(c.municipio_sede));
+        }
+      }
+    });
+
+    // KPI de maior segmento: tem que vir SOMENTE de cadeias sedes referente àquele território
+    const baseCadeiasSegmento = selectedTerritory ? cadeiasSediadas : filteredCadeias;
+    const segmentoCounts = {};
+    baseCadeiasSegmento.forEach(c => {
+      const seg = c.segmento || 'Outros';
+      segmentoCounts[seg] = (segmentoCounts[seg] || 0) + 1;
+    });
+
+    let maiorSegmento = null;
+    const entries = Object.entries(segmentoCounts).sort((a, b) => b[1] - a[1]);
+    const baseTotalSeg = baseCadeiasSegmento.length;
+    if (entries.length > 0) {
+      const [name, count] = entries[0];
+      maiorSegmento = {
+        name,
+        count,
+        percent: baseTotalSeg > 0 ? ((count / baseTotalSeg) * 100).toFixed(1) : '0.0'
+      };
+    }
+
+    const pctCadeiasBahia = totalCadeiasBahia > 0 ? ((arranjosSediados / totalCadeiasBahia) * 100).toFixed(1) : '0.0';
+
+    let totalMunUniverso = BAHIA_TOTAL_MUNICIPIOS;
+    if (isSemiarido) {
+      totalMunUniverso = SEMIARIDO_TOTAL_MUNICIPIOS;
+    } else if (selectedTerritory) {
+      const munsInTerr = municipiosDB.filter(m =>
+        (tid && Number(m.id_territorio) === tid) ||
+        (tNorm && normalizeName(m.nome_territorio) === tNorm)
+      );
+      totalMunUniverso = munsInTerr.length > 0 ? munsInTerr.length : (munBeneficiadosSet.size || 1);
+    }
+
+    const taxaMun = totalMunUniverso > 0 ? ((munBeneficiadosSet.size / totalMunUniverso) * 100).toFixed(1) : '0.0';
+
+    const totalTerrUniverso = isSemiarido ? 22 : (selectedTerritory ? 1 : (territoriosData.length || 27));
+    const territoriosAtendidos = selectedTerritory ? (terrSet.size > 0 ? 1 : 0) : terrSet.size;
+    const taxaTerr = totalTerrUniverso > 0 ? ((territoriosAtendidos / totalTerrUniverso) * 100).toFixed(1) : '0.0';
+
+    return {
+      totalArranjos: arranjosSediados,
+      arranjosSediados,
+      totalArranjosPresenca,
+      pctCadeiasBahia,
+      arranjosSemiCount,
+      municipiosBeneficiados: munBeneficiadosSet.size,
+      municipiosSede: munSedeSet.size,
+      totalMunUniverso,
+      taxaMun,
+      totalTerrUniverso,
+      taxaTerr,
+      municipiosSemiBeneficiados: munSemiBeneficiadosSet.size,
+      territoriosAtendidos,
+      maiorSegmento
+    };
+  }, [filteredCadeias, cadeiasSediadas, isSemiarido, selectedTerritory, totalCadeiasBahia, territoriosData]);
+
+  // 4. Top 10 Arranjos / Cadeias Produtivas (Duas Bandas: 2 colunas x 5 linhas)
+  const topCadeiasData = useMemo(() => {
+    if (!filteredCadeias || filteredCadeias.length === 0) return [];
+
+    const tid = selectedTerritory ? Number(selectedTerritory.id_territorio) : null;
+    const tNorm = selectedTerritory ? normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+    const items = filteredCadeias.map(c => {
+      const munList = c.municipios_cobertos || [];
+      const munSedeNome = c.municipio_sede || 'Não informado';
+      const terrSedeNome = c.territorio_identidade || c.territorio || 'Bahia';
+
+      if (selectedTerritory) {
+        const isSede = isMunicipioInTerritory(c.municipio_sede, tid, tNorm) ||
+          (tid && Number(c.id_territorio) === tid) ||
+          (tNorm && normalizeName(c.territorio_identidade) === tNorm);
+
+        // Apenas municípios cobertos que pertencem a este território
+        const localMuns = munList.filter(m => isMunicipioInTerritory(m, tid, tNorm));
+        let totalMunicipios = localMuns.length;
+
+        // Se a sede for neste território e não estiver listada explicitamente entre os cobertos, soma 1
+        if (isSede) {
+          const sedeInList = localMuns.some(m => normalizeName(m.nome_municipio || m.municipio) === normalizeName(c.municipio_sede));
+          if (!sedeInList) {
+            totalMunicipios += 1;
+          }
+        }
+
+        const semiMunicipios = localMuns.filter(m => m.semiarido).length || (c.semiarido ? 1 : 0);
+
+        return {
+          id: c.id_cadeia,
+          nome: c.entidade || c.nome,
+          segmento: c.segmento,
+          tipo: c.shortTipo || c.tipo,
+          isSede,
+          tipoPresenca: isSede ? 'sede' : 'abrangente',
+          labelPresenca: isSede ? 'Sede' : 'Abrangente',
+          corHex: isSede ? '#F59E0B' : '#2563EB',
+          municipioSede: munSedeNome,
+          territorioSede: terrSedeNome,
+          totalMunicipios: Math.max(totalMunicipios, 1),
+          semiMunicipios,
+          texto_referencia: c.texto_referencia
+        };
+      }
+
+      // Modo estadual ou semiárido
+      const semiMunicipios = munList.filter(m => m.semiarido).length || (c.semiarido ? 1 : 0);
+      const totalMunicipios = munList.length > 0 ? munList.length : 1;
+
+      return {
+        id: c.id_cadeia,
+        nome: c.entidade || c.nome,
+        segmento: c.segmento,
+        tipo: c.shortTipo || c.tipo,
+        isSede: false,
+        tipoPresenca: 'estadual',
+        labelPresenca: c.shortTipo || c.tipo,
+        corHex: c.corHex || '#2563EB',
+        municipioSede: munSedeNome,
+        territorioSede: terrSedeNome,
+        totalMunicipios,
+        semiMunicipios,
+        texto_referencia: c.texto_referencia
+      };
+    });
+
+    return items
+      .sort((a, b) => {
+        if (b.totalMunicipios !== a.totalMunicipios) {
+          return b.totalMunicipios - a.totalMunicipios;
+        }
+        if (selectedTerritory && a.isSede !== b.isSede) {
+          return a.isSede ? -1 : 1;
+        }
+        return (a.nome || '').localeCompare(b.nome || '');
+      })
+      .slice(0, 5);
+  }, [filteredCadeias, selectedTerritory]);
+
+  // 5. Concentração por Território / Municípios (StackedBarChart)
+  const concentracaoTerritorialStackedData = useMemo(() => {
+    if (!filteredCadeias || filteredCadeias.length === 0) return [];
+    const groups = {};
+
+    if (selectedTerritory) {
+      const tid = Number(selectedTerritory.id_territorio);
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
+
+      // Colunas empilhadas retornando números de cadeias sedes e abrangentes
+      filteredCadeias.forEach(c => {
+        const sedeMun = c.municipio_sede;
+        const isSedeNoTerr = isMunicipioInTerritory(sedeMun, tid, tNorm);
+
+        // Se a sede deste arranjo é neste território
+        if (isSedeNoTerr && sedeMun) {
+          const mNome = sedeMun;
+          if (!groups[mNome]) {
+            groups[mNome] = { label: mNome, total: 0, segments: { sede: 0, abrangente: 0 } };
+          }
+          groups[mNome].segments.sede += 1;
+          groups[mNome].total += 1;
+        }
+
+        // Municípios de abrangência (atuação local)
+        (c.municipios_cobertos || []).forEach(m => {
+          if (isMunicipioInTerritory(m, tid, tNorm)) {
+            const mNome = m.nome_municipio || m.municipio;
+            if (mNome) {
+              const isSameAsSede = isSedeNoTerr && normalizeName(mNome) === normalizeName(sedeMun);
+              if (!isSameAsSede) {
+                if (!groups[mNome]) {
+                  groups[mNome] = { label: mNome, total: 0, segments: { sede: 0, abrangente: 0 } };
+                }
+                groups[mNome].segments.abrangente += 1;
+                groups[mNome].total += 1;
+              }
+            }
+          }
+        });
+      });
+
+      return Object.values(groups)
+        .sort((a, b) => {
+          if (b.segments.sede !== a.segments.sede) {
+            return b.segments.sede - a.segments.sede;
+          }
+          return b.total - a.total;
+        })
+        .slice(0, 10)
+        .map(g => ({ ...g, totalLabel: String(g.total) }));
+    }
+
+    // Default: agrupamento estadual por Território de Identidade com APL, IG, IG Potencial
+    filteredCadeias.forEach(c => {
+      const terr = c.territorio_identidade || c.territorio || 'Não identificado';
+      if (!groups[terr]) {
+        groups[terr] = { label: terr, total: 0, segments: { apl: 0, ig: 0, ig_potencial: 0 } };
+      }
+      const rawTipo = String(c.shortTipo || c.tipo || '').toLowerCase();
+      if (rawTipo.includes('potencial')) {
+        groups[terr].segments.ig_potencial += 1;
+      } else if (rawTipo.includes('indicação') || rawTipo.includes('ig')) {
+        groups[terr].segments.ig += 1;
+      } else {
+        groups[terr].segments.apl += 1;
+      }
+      groups[terr].total += 1;
+    });
+
+    return Object.values(groups)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 10)
+      .map(g => ({ ...g, totalLabel: String(g.total) }));
+  }, [filteredCadeias, selectedTerritory]);
+
+  // 6. Distribuição das Top 6 Segmentos Econômicos (2 Colunas x 3 Linhas DESC)
+  const segmentosEmpilhadosData = useMemo(() => {
+    const sourceData = selectedTerritory ? cadeiasSediadas : filteredCadeias;
+    if (!sourceData || sourceData.length === 0) return [];
+    const stats = {};
+    const totalGeral = sourceData.length;
+
+    sourceData.forEach(c => {
+      const seg = c.segmento || 'Outros';
+      if (!stats[seg]) {
+        stats[seg] = { name: seg, total: 0 };
+      }
+      stats[seg].total += 1;
+    });
+
+    return Object.values(stats)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 6)
+      .map(item => ({
+        ...item,
+        pctTotal: totalGeral > 0 ? ((item.total / totalGeral) * 100).toFixed(1) : '0.0'
+      }));
+  }, [filteredCadeias, cadeiasSediadas, selectedTerritory]);
+
+  // 7. Tipologias de Arranjo por Abrangência (Intermunicipal vs Local)
+  const tiposProportionData = useMemo(() => {
+    const sourceData = selectedTerritory ? cadeiasSediadas : filteredCadeias;
+    if (!sourceData || sourceData.length === 0) return [];
+    const stats = {};
+
+    sourceData.forEach(c => {
+      const tipo = c.shortTipo || c.tipo || 'APL';
+      if (!stats[tipo]) {
+        stats[tipo] = { label: tipo, positive: 0, negative: 0, total: 0 };
+      }
+      const isRegional = (c.municipios_cobertos?.length || 1) > 1;
+      if (isRegional) {
+        stats[tipo].positive += 1;
+      } else {
+        stats[tipo].negative += 1;
+      }
+      stats[tipo].total += 1;
+    });
+
+    return Object.values(stats).sort((a, b) => b.total - a.total);
+  }, [filteredCadeias, cadeiasSediadas, selectedTerritory]);
+
+  return (
+    <main id="pdf-report" ref={contentRef} className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-white select-none">
+      {/* CABEÇALHO */}
+      <div className="flex items-center justify-between w-full shrink-0">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-[30px] lg:text-[32px] font-black text-[#1D3557] tracking-tight leading-none">
+              Relatório Executivo de Cadeias Produtivas & IGs
+            </h1>
+
+            {isSemiarido ? (
+              <div className="flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3.5 py-1 rounded-full">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]" />
+                <span className="text-[12px] font-bold text-[#92400E]">
+                  Recorte Oficial: <strong>Semiárido Baiano (278 Municípios)</strong>
+                </span>
+              </div>
+            ) : selectedTerritory ? (
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-3 py-1 rounded-full">
+                <MapPin size={13} className="text-[#0284C7]" />
+                <span className="text-[12px] font-bold text-[#0369A1]">
+                  Recorte: <strong className="text-[#0C4A6E]">{territoryName}</strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedTerritory(null)}
+                  className="text-[#0369A1] hover:text-red-500 transition-colors ml-0.5 cursor-pointer"
+                  title="Limpar seleção territorial"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 border border-[#BAE6FD] px-3.5 py-1 rounded-full">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
+                <span className="text-[12px] font-bold text-[#0369A1]">
+                  Cenário Geral: <strong className="text-[#0C4A6E]">Estado da Bahia (417 Municípios)</strong>
+                </span>
+              </div>
+            )}
+          </div>
+          <p className="text-[13.5px] text-[#457B9D] font-medium mt-1">
+            {isSemiarido
+              ? 'Diagnóstico territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas nos 278 municípios do Semiárido'
+              : 'Diagnóstico territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas da Bahia'}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[12px] font-bold text-[#1D3557] bg-[#D6EAF8]/50 border border-[#BAE6FD] px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
+            <Award size={14} className="text-[#2563EB]" />
+            Dados Oficiais SECTI/BA
+          </span>
+        </div>
+      </div>
+
+      {/* GRID DE KPIS UNIFICADO (h-[96px]) */}
+      <div className="w-full relative z-10 shrink-0">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 items-stretch w-full">
+
+          {/* KPI 1: ARRANJOS MAPEADOS */}
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+            <div className="flex items-center gap-2 text-[#457B9D]">
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <Boxes size={16} strokeWidth={2.5} />
+              </div>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">Arranjos & IGs Sediados</span>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-[34px] lg:text-[38px] font-black text-[#1D3557] leading-none tracking-tight">
+                  {loadingStats ? '...' : statsKpis.arranjosSediados}
+                </span>
+                <span className="text-[12px] font-bold text-[#64748B]">sediados</span>
+              </div>
+
+              {selectedTerritory ? (
+                <div className="flex flex-col items-end leading-tight text-right shrink-0">
+                  <span className="text-[9.5px] font-bold text-[#64748B] uppercase tracking-wider">Abrangência Total</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-[20px] lg:text-[22px] font-black text-[#2563EB] leading-none">
+                      {loadingStats ? '...' : statsKpis.totalArranjosPresenca}
+                    </span>
+                    <span className="text-[10px] font-bold text-[#64748B]">arranjos</span>
+                  </div>
+                </div>
+              ) : (
+                <span
+                  className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido
+                    ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                    : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                    }`}
+                  title={`${statsKpis.totalArranjos} arranjos estaduais`}
+                >
+                  {isSemiarido ? `${statsKpis.pctCadeiasBahia}% da Bahia` : 'Ecossistema Produtivo'}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* KPI 2: MAIOR SEGMENTO */}
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+            <div className="flex items-center gap-2 text-[#457B9D]">
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <Wheat size={16} strokeWidth={2.5} />
+              </div>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">
+                {selectedTerritory ? 'Maior Segmento Sediado' : 'Maior Segmento'}
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-[34px] lg:text-[38px] font-black text-[#1D3557] leading-none tracking-tight">
+                {loadingStats ? '...' : (statsKpis.maiorSegmento ? `${statsKpis.maiorSegmento.percent}%` : '-')}
+              </span>
+              <span className="text-[11px] font-bold text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2 py-0.5 rounded-lg whitespace-nowrap truncate max-w-[135px]" title={statsKpis.maiorSegmento?.name}>
+                {statsKpis.maiorSegmento ? statsKpis.maiorSegmento.name : 'Sem dados'}
+              </span>
+            </div>
+          </div>
+
+          {/* KPI 3: MUNICÍPIOS BENEFICIADOS */}
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+            <div className="flex items-center gap-2 text-[#457B9D]">
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <MapPin size={16} strokeWidth={2.5} />
+              </div>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">Municípios de Abrangência</span>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-[30px] lg:text-[34px] font-black text-[#1D3557] leading-none tracking-tight">
+                  {loadingStats ? '...' : statsKpis.municipiosBeneficiados}
+                </span>
+                <span className="text-[16px] lg:text-[18px] font-bold text-[#94A3B8]">/</span>
+                <span className="text-[26px] lg:text-[30px] font-extrabold text-[#2563EB] leading-none tracking-tight">
+                  {loadingStats ? '...' : statsKpis.municipiosSede}
+                </span>
+              </div>
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
+              >
+                {selectedTerritory
+                  ? `${statsKpis.municipiosBeneficiados} abrangidos / ${statsKpis.municipiosSede} ${statsKpis.municipiosSede === 1 ? 'sede' : 'sedes'}`
+                  : `${statsKpis.municipiosBeneficiados} abrangidos / ${statsKpis.municipiosSede} sedes`}
+              </span>
+            </div>
+          </div>
+
+          {/* KPI 4: TERRITÓRIOS COM ARRANJOS */}
+          <div className="h-[96px] bg-white rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] border border-transparent">
+            <div className="flex items-center gap-2 text-[#457B9D]">
+              <div className="w-7 h-7 rounded-lg bg-[#D6EAF8]/70 flex items-center justify-center text-[#2563EB] shrink-0">
+                <Layers size={16} strokeWidth={2.5} />
+              </div>
+              <span className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider">Territórios com Arranjos</span>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="flex items-baseline gap-1">
+                <span className="text-[34px] lg:text-[38px] font-black text-[#1D3557] leading-none tracking-tight">
+                  {loadingStats ? '...' : (selectedTerritory ? (statsKpis.territoriosAtendidos > 0 ? '1' : '0') : statsKpis.territoriosAtendidos)}
+                </span>
+                <span className="text-[13px] font-bold text-[#64748B]">/ {statsKpis.totalTerrUniverso}</span>
+              </div>
+              <span
+                className={`text-[11px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${isSemiarido
+                  ? 'text-[#B45309] bg-[#F59E0B]/12 border border-[#F59E0B]/25'
+                  : 'text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20'
+                  }`}
+              >
+                {selectedTerritory ? 'Território Selecionado' : `${statsKpis.taxaTerr}% dos territórios`}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* GRID PRINCIPAL: 4 GRÁFICOS (70%) EM 2x2 SIMÉTRICO + SIDEMAP (30%) */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-0 w-full overflow-hidden">
+
+        {/* COLUNA ESQUERDA: GRID 2x2 */}
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
+
+          {/* GRÁFICO 1: TOP 5 ARRANJOS */}
+          <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
+            <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
+              <div className="min-w-0 flex-1 pr-2">
+                <h3 className="text-[17px] lg:text-[18px] font-bold text-[#1D3557] flex items-center gap-1.5">
+                  <ListOrdered size={18} className={isSemiarido ? "text-[#D97706] shrink-0" : "text-[#2563EB] shrink-0"} />
+                  {selectedTerritory ? `Top 5 Arranjos em ${territoryName}` : 'Top 5 Arranjos & IGs'}
+                </h3>
+                <p className="text-[12px] text-[#457B9D]">
+                  {selectedTerritory ? `Arranjos sediados e com abrangência em ${territoryName}` : 'Maior extensão municipal de abrangência'}
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {selectedTerritory ? (
+                  <div className="flex items-center gap-2 text-[11px] font-bold">
+                    <span className="flex items-center gap-1 text-[#B45309] bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#FDE68A]">
+                      <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Sede
+                    </span>
+                    <span className="flex items-center gap-1 text-[#1D4ED8] bg-[#EFF6FF] px-2 py-0.5 rounded-full border border-[#BFDBFE]">
+                      <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Abrangente
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-[11px] font-bold text-[#64748B] bg-[#F1F5F9] px-2.5 py-0.5 rounded-full border border-[#E2E8F0]">
+                    Municípios
+                  </span>
+                )}
+                {isSemiarido && (
+                  <span className="text-[11px] font-bold text-[#B45309] bg-[#F59E0B]/15 px-2.5 py-0.5 rounded-full border border-[#F59E0B]/20">Semiárido</span>
+                )}
+              </div>
+            </div>
+
+            {/* DUAS BANDAS (2 COLUNAS x 5 LINHAS) */}
+            {topCadeiasData.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-[#64748B]">
+                <Boxes size={28} className="text-[#94A3B8] mb-1.5" />
+                <span className="text-[12.5px] font-bold text-[#1D3557]">Nenhum arranjo identificado em {territoryName}</span>
+                <span className="text-[11px] text-[#64748B]">Não há registros de cadeias sediadas ou abrangentes para este recorte.</span>
+              </div>
+            ) : (
+              <div className="flex-1 grid grid-cols-2 gap-x-2.5 gap-y-1 min-h-0 overflow-y-auto py-0.5 items-stretch">
+                {topCadeiasData.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start justify-between py-1 px-2.5 rounded-xl bg-[#F8FAFC] hover:bg-[#F1F5F9] transition-colors text-[10px] min-w-0 border border-[#E2E8F0]/40"
+                  >
+                    <div className="flex items-start gap-2 flex-1 min-w-0 pr-1">
+                      <span
+                        className="w-5 h-5 rounded-md flex items-center justify-center text-[10.5px] font-black text-white shrink-0 shadow-2xs mt-0.5"
+                        style={{ backgroundColor: item.corHex }}
+                      >
+                        {idx + 1}
+                      </span>
+                      <div className="flex flex-col min-w-0 leading-tight flex-1">
+                        <span className="font-extrabold text-[11.5px] leading-tight text-[#1D3557] break-words" title={item.nome}>
+                          {item.nome}
+                        </span>
+                        <span className="text-[9.5px] text-[#64748B] font-medium leading-tight mt-0.5 break-words" title={`${item.segmento} • Sede: ${item.municipioSede} (${item.territorioSede})`}>
+                          <strong className="text-[#475569]">{item.segmento}</strong>
+                          <span> • Sede: <span className="font-semibold text-[#1D3557]">{item.municipioSede}</span> ({item.territorioSede})</span>
+                        </span>
+                        {item.texto_referencia && (
+                          <span className="text-[8.5px] text-[#92400E] italic line-clamp-1 mt-0.5" title={item.texto_referencia}>
+                            "{item.texto_referencia}"
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {isSemiarido && (
+                      <div className="flex items-center gap-1.5 shrink-0 ml-1">
+                        <span className="text-[#B45309] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-2 py-0.5 rounded-md text-[11.5px] min-w-[26px] text-center font-black">
+                          {item.semiMunicipios}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* GRÁFICO 2: CONCENTRAÇÃO POR TERRITÓRIO OU MUNICÍPIOS */}
+          <div className="h-full min-h-0 overflow-hidden">
+            <StackedBarChart
+              data={concentracaoTerritorialStackedData}
+              categories={selectedTerritory ? CADEIA_PRESENCA_CATEGORIES : CADEIA_CATEGORIES}
+              title={
+                selectedTerritory
+                  ? `Concentração em ${territoryName}`
+                  : (isSemiarido ? "Concentração no Semiárido" : "Concentração por Território")
+              }
+              subtitle={
+                selectedTerritory
+                  ? `Cadeias Sedes vs Abrangentes por município em ${territoryName}`
+                  : (isSemiarido ? "Territórios do Semiárido líderes em cadeias produtivas" : "Top 10 Territórios em Cadeias e APLs na Bahia")
+              }
+              allowToggleView={false}
+              showTotalLabel={true}
+            />
+          </div>
+
+          {/* GRÁFICO 3: DISTRIBUIÇÃO DOS SEGMENTOS (DUAS COLUNAS DESC) */}
+          <div className="bg-white rounded-[24px] p-4 border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] flex flex-col justify-between min-h-0 h-full overflow-hidden">
+            <div className="flex items-center justify-between mb-1.5 shrink-0 border-b border-[#F1F5F9] pb-1.5">
+              <div>
+                <h3 className="text-[17px] lg:text-[18px] font-bold text-[#1D3557] flex items-center gap-1.5">
+                  <BarChart2 size={18} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+                  {selectedTerritory
+                    ? `Segmentos Sediados em ${territoryName}`
+                    : (isSemiarido ? "Distribuição por Segmento no Semiárido" : 'Distribuição Estadual por Segmento')}
+                </h3>
+                <p className="text-[12px] text-[#457B9D]">
+                  {selectedTerritory
+                    ? `Top segmentos de cadeias sediadas em ${territoryName}`
+                    : (isSemiarido ? "Top 6 Segmentos com atuação no Semiárido" : "Top 6 Segmentos Produtivos no Estado da Bahia")}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2.5 text-[11.5px] font-bold">
+                {selectedTerritory ? (
+                  <span className="flex items-center gap-1.5 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-0.5 rounded-full">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>Sediados no Território
+                  </span>
+                ) : isSemiarido ? (
+                  <span className="flex items-center gap-1.5 text-[#B45309] bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 rounded-full">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>Vocações do Semiárido
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5 text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 px-2.5 py-0.5 rounded-full">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>Volume Estadual
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* GRID SIMÉTRICO DE 2 COLUNAS X 3 LINHAS */}
+            {segmentosEmpilhadosData.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-[#64748B]">
+                <Wheat size={28} className="text-[#94A3B8] mb-1.5" />
+                <span className="text-[12.5px] font-bold text-[#1D3557]">Nenhum segmento com sede em {territoryName}</span>
+              </div>
+            ) : (
+              <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-1.5 min-h-0 overflow-hidden py-0.5">
+                {segmentosEmpilhadosData.map((cat, idx) => (
+                  <div key={idx} className="flex flex-col justify-between p-2 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 min-h-[54px]">
+                    <div className="flex items-start justify-between text-[13px] leading-tight gap-1">
+                      <span className="font-extrabold text-[#1D3557] truncate flex-1 min-w-0" title={cat.name}>
+                        {cat.name}
+                      </span>
+                      <span className="font-bold text-[#457B9D] text-[12px] shrink-0">
+                        <strong className="text-[#1D3557] font-black">{cat.total}</strong> ({cat.pctTotal}%)
+                      </span>
+                    </div>
+
+                    {/* BARRA */}
+                    <div className="w-full h-[7px] rounded-full bg-[#E2E8F0] overflow-hidden flex shadow-2xs my-0.5">
+                      <div
+                        className={`h-full transition-all duration-500 ${isSemiarido ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'}`}
+                        style={{ width: `${cat.pctTotal}%` }}
+                        title={`${cat.name}: ${cat.total} (${cat.pctTotal}%)`}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-bold">
+                      {isSemiarido ? (
+                        <>
+                          <span className="text-[#B45309]">
+                            No Semiárido: <strong>{cat.total}</strong>
+                          </span>
+                          <span className="text-[#64748B]">
+                            <strong>{cat.pctTotal}%</strong> do recorte
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-[#2563EB]">
+                            {selectedTerritory ? 'Sediadas no Território: ' : 'No Estado: '}<strong>{cat.total}</strong>
+                          </span>
+                          <span className="text-[#64748B]">
+                            <strong>{cat.pctTotal}%</strong> {selectedTerritory ? 'das sedes' : 'do total'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* GRÁFICO 4: MATRIZ DE TIPOLOGIAS (APL vs IG vs IG POTENCIAL) */}
+          <div className="h-full min-h-0 overflow-hidden">
+            <ProportionBarChart
+              data={tiposProportionData}
+              title={
+                selectedTerritory
+                  ? `Tipologias Sediadas em ${territoryName}`
+                  : (isSemiarido ? "Tipologias de Reconhecimento no Semiárido" : "Tipologias de Reconhecimento")
+              }
+              subtitle={
+                selectedTerritory
+                  ? `Abrangência das cadeias sediadas em ${territoryName}`
+                  : (isSemiarido ? "Abrangência: Intermunicipal vs Local no Semiárido" : "Abrangência: Intermunicipal vs Local na Bahia")
+              }
+              positiveLabel="Intermunicipal"
+              negativeLabel="Local / Sede"
+              positiveColor="bg-[#2563EB]"
+              negativeColor="bg-[#F59E0B]"
+              positiveTextColor="text-[#2563EB]"
+              negativeTextColor="text-[#D97706]"
+              isReport={true}
+            />
+          </div>
+
+        </div>
+
+        {/* COLUNA DIREITA: SIDEMAP INTEGRADO NO MODO CADEIAS */}
+        <div style={{ width: 'calc(30% - 12px)' }} className="shrink-0 h-full bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_20px_rgba(29,53,87,0.04)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0">
+          <SideMap
+            mode="cadeias"
+            cadeiasData={filteredCadeias}
+            processedAtivos={filteredCadeias}
+            selectedTerritory={selectedTerritory}
+            onSelectTerritory={setSelectedTerritory}
+          />
+        </div>
+
+      </div>
+
+    </main>
+  );
+}
