@@ -1007,11 +1007,11 @@ export default function RelatorioPage() {
  else setSelectedTerritoryId('bahia');
  };
 
- if (reportType === 'ativos') return <SideMap key={`map-ativos-${reportMode}-${selectedTerritoryId}`} mode="ativos" processedAtivos={scopedAtivos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
- if (reportType === 'cursos') return <SideMap key={`map-cursos-${reportMode}-${selectedTerritoryId}`} mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
+ if (reportType === 'ativos') return <SideMap key={`map-ativos-${reportMode}`} mode="ativos" processedAtivos={scopedAtivos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
+ if (reportType === 'cursos') return <SideMap key={`map-cursos-${reportMode}`} mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
  if (reportType === 'cadeias') return (
     <SideMap
-      key={`map-cadeias-${reportMode}-${selectedTerritoryId}`}
+      key={`map-cadeias-${reportMode}`}
       mode="cadeias"
       cadeiasData={scopedCadeias}
       processedAtivos={scopedCadeias.map(c => ({...c, coords: c.coords || [0,0]}))}

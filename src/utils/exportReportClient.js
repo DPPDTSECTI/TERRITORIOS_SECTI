@@ -13,27 +13,41 @@ import { jsPDF } from 'jspdf';
  */
 function patchCanvasGradient(win = (typeof window !== 'undefined' ? window : null)) {
   try {
-    if (!win) return;
-    const proto = win.CanvasRenderingContext2D?.prototype;
-    if (proto && !proto.__sectiAddColorStopPatched) {
-      const origAddColorStop = proto.addColorStop;
-      proto.addColorStop = function (offset, color) {
-        let safeOffset = Number(offset);
-        if (!isFinite(safeOffset) || isNaN(safeOffset)) {
-          safeOffset = 0;
-        } else if (safeOffset < 0) {
-          safeOffset = 0;
-        } else if (safeOffset > 1) {
-          safeOffset = 1;
-        }
-        try {
-          return origAddColorStop.call(this, safeOffset, color);
-        } catch (e) {
-          // Ignora se for cor temporariamente mal formatada no parser
-        }
-      };
-      proto.__sectiAddColorStopPatched = true;
+    const targets = [];
+    if (win) {
+      if (win.CanvasGradient?.prototype) targets.push(win.CanvasGradient.prototype);
+      if (win.CanvasRenderingContext2D?.prototype) targets.push(win.CanvasRenderingContext2D.prototype);
     }
+    if (typeof CanvasGradient !== 'undefined' && CanvasGradient?.prototype) {
+      targets.push(CanvasGradient.prototype);
+    }
+    if (typeof window !== 'undefined' && window.CanvasGradient?.prototype) {
+      targets.push(window.CanvasGradient.prototype);
+    }
+
+    targets.forEach((proto) => {
+      if (proto && !proto.__sectiAddColorStopPatched) {
+        const origAddColorStop = proto.addColorStop;
+        if (typeof origAddColorStop === 'function') {
+          proto.addColorStop = function (offset, color) {
+            let safeOffset = Number(offset);
+            if (!Number.isFinite(safeOffset) || isNaN(safeOffset)) {
+              safeOffset = 0;
+            } else if (safeOffset < 0) {
+              safeOffset = 0;
+            } else if (safeOffset > 1) {
+              safeOffset = 1;
+            }
+            try {
+              return origAddColorStop.call(this, safeOffset, String(color || '#000000'));
+            } catch (e) {
+              // Previne estouro caso a cor seja inválida durante cálculo interno
+            }
+          };
+          proto.__sectiAddColorStopPatched = true;
+        }
+      }
+    });
   } catch (err) {
     console.warn('[ExportReport] Aviso ao proteger addColorStop:', err);
   }
