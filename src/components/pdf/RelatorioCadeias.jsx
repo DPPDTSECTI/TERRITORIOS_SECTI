@@ -11,7 +11,8 @@ import {
   Award,
   Compass,
   Printer,
-  ArrowLeft
+  ArrowLeft,
+  Image as ImageIcon
 } from 'lucide-react';
 
 import { DataContext } from '../../context/DataContext';
@@ -183,13 +184,21 @@ export default function RelatorioCadeiasPage() {
 
   // React-to-print: referência do relatório 1920x1080 para renderização e impressão nativa
   const contentRef = useRef(null);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   const handlePrint = useReactToPrint({
     contentRef,
     documentTitle: `relatorio_cadeias_${isSemiarido ? 'semiarido' : (selectedTerritory ? territoryName : 'bahia')}`,
     pageStyle: REPORT_PRINT_PAGE_STYLE,
-    onBeforePrint: prepareReportForPrint,
-    print: (iframe) => printWithCanvasSync(iframe, contentRef)
+    onBeforePrint: async () => {
+      setIsPrinting(true);
+      await prepareReportForPrint();
+    },
+    onAfterPrint: () => setIsPrinting(false),
+    print: (iframe) => {
+      setIsPrinting(false);
+      return printWithCanvasSync(iframe, contentRef);
+    }
   });
 
   // Auto-impressão caso explicitamente solicitado via query param (ex: autoPrint=1 ou autoprint=true)
@@ -796,6 +805,28 @@ export default function RelatorioCadeiasPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 print:hidden mr-2">
+            <button
+              type="button"
+              onClick={() => navigate('/relatorio')}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-2xs transition-all cursor-pointer"
+              title="Voltar ao Painel Geral de Relatórios"
+            >
+              <ArrowLeft size={13} />
+              <span>Painel</span>
+            </button>
+            <button
+              type="button"
+              disabled={isPrinting}
+              onClick={handlePrint}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1D3557] text-white hover:bg-[#2563EB] disabled:opacity-60 shadow-2xs transition-all cursor-pointer"
+              title="Salvar como PDF ou Imprimir em Widescreen 16:9"
+            >
+              <Printer size={13} />
+              <span>{isPrinting ? 'Preparando...' : 'Salvar PDF / Imprimir'}</span>
+            </button>
+          </div>
+
           <span className="text-[12px] font-bold text-[#1D3557] bg-[#D6EAF8]/50 border border-[#BAE6FD] px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
             <Award size={14} className="text-[#2563EB]" />
             Dados Oficiais SECTI/BA

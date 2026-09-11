@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Printer } from 'lucide-react';
+import { getReportRoute } from '../../utils/exportReportClient';
 
 /**
  * Componente unificado para exportação de relatório em PDF na proporção nativa da tela.
  *
  * Pode ser utilizado de duas formas:
  * 1. Com `onClick`: executa a função de impressão fornecida (ex: handlePrint do react-to-print).
- * 2. Com `reportType`, `territorioId`, `reportMode`: abre a rota oficial em tela cheia com auto-impressão.
+ * 2. Com `reportType`, `territorioId`, `reportMode`: exporta o relatório executivo em PDF widescreen 16:9.
  */
 export default function ExportPdfButton({
   onClick,
@@ -15,63 +16,26 @@ export default function ExportPdfButton({
   reportMode = 'normal',
   isLoading = false,
   className = '',
-  title = 'Exportar Relatório Executivo em PDF via Playwright',
+  title = 'Exportar Relatório Executivo em PDF 16:9',
   label = 'Exportar PDF',
   size = 'md', // 'sm' | 'md'
   variant = 'primary' // 'primary' | 'navy' | 'emerald'
 }) {
-  const [internalLoading, setInternalLoading] = useState(false);
-  const loading = isLoading || internalLoading;
-
-  const handleClick = async (e) => {
-    if (loading) return;
+  const handleClick = (e) => {
+    if (isLoading) return;
     if (onClick) {
       onClick(e);
       return;
     }
 
-    setInternalLoading(true);
     const type = reportType === 'cursos'
       ? 'cursos'
       : (reportType === 'ativos'
           ? 'ativos'
           : (reportType === 'cadeias' ? 'cadeias' : 'sintese'));
 
-    let fileBase = 'relatorio_sintese';
-    if (type === 'ativos') fileBase = 'relatorio_ativos';
-    else if (type === 'cursos') fileBase = 'relatorio_ensino';
-    else if (type === 'cadeias') fileBase = 'relatorio_cadeias';
-
-    const terrParam = territorioId && territorioId !== 'bahia'
-      ? `territorio=${encodeURIComponent(territorioId)}`
-      : 'territorio=bahia';
-
-    const modoParam = `&modo=${reportMode}`;
-    const filename = `${fileBase}_${reportMode}.pdf`;
-
-    try {
-      const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
-      const res = await fetch(apiUrl);
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Erro HTTP ${res.status} ao gerar PDF.`);
-      }
-
-      const blob = await res.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
-    } catch (err) {
-      console.error('[Exportação PDF] Erro:', err);
-      alert(`Erro ao gerar PDF via Playwright: ${err.message || err}`);
-    } finally {
-      setInternalLoading(false);
-    }
+    const route = getReportRoute(type, territorioId, reportMode) + '&autoPrint=1';
+    window.open(route, '_blank');
   };
 
   const variantStyles = {
