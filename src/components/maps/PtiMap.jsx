@@ -9,13 +9,35 @@ import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
 
-// Paleta Soft Blue & Teal (Modo Normal)
+// Paleta Soft Blue & Teal com Alto Contraste Geográfico entre Territórios Vizinhos (Modo Normal)
 const TERRITORY_COLORS = [
- '#1D3557', '#2A4665', '#385874', '#457B9D', '#548FB4', '#64A4CB',
- '#75B8E3', '#87CBEB', '#9FDDF3', '#A8DADC', '#96C6C8', '#85B2B4',
- '#739DA0', '#62898D', '#507479', '#3F6065', '#2E4C51', '#213B40',
- '#274D60', '#2C5E80', '#3270A0', '#3881C0', '#4293D8', '#4FA4EF',
- '#26597A', '#336D96', '#3D81B2'
+  '#1D3557', // 0: Bacia do Rio Grande (Deep Navy)
+  '#38BDF8', // 1: Bacia do Rio Corrente (Sky Blue vibrante - contrasta com o 0)
+  '#0D9488', // 2: Velho Chico (Teal rico - contrasta com 0 e 1)
+  '#1E40AF', // 3: Sertão do São Francisco (Royal Blue profundo)
+  '#7DD3FC', // 4: Piemonte Norte do Itapicuru (Celeste suave)
+  '#0F766E', // 5: Itaparica (Teal floresta profundo)
+  '#2563EB', // 6: Irecê (Cobalto vibrante)
+  '#A8DADC', // 7: Chapada Diamantina (Teal pastel luminoso)
+  '#334155', // 8: Piemonte da Diamantina (Slate escuro elegante)
+  '#0284C7', // 9: Sisal (Azul Oceano)
+  '#93C5FD', // 10: Bacia do Jacuípe (Azul Gelo suave)
+  '#1E293B', // 11: Semiárido Nordeste II (Grafite Navy profundo)
+  '#14B8A6', // 12: Litoral Norte e Agreste Baiano (Teal vibrante)
+  '#38BDF8', // 13: Portal do Sertão (Céu luminoso)
+  '#1D3557', // 14: Metropolitano de Salvador (Navy imponente)
+  '#5EEAD4', // 15: Recôncavo (Turquesa suave)
+  '#1E40AF', // 16: Baixo Sul (Safira profundo)
+  '#93C5FD', // 17: Vale do Jiquiriçá (Azul suave)
+  '#475569', // 18: Piemonte do Paraguaçu (Slate intermediário)
+  '#0284C7', // 19: Médio Rio de Contas (Azul Mediterrâneo)
+  '#1E293B', // 20: Sudoeste Baiano (Azul Meia-Noite)
+  '#38BDF8', // 21: Sertão Produtivo (Azul Céu claro - contrasta com 20 e 2)
+  '#0D9488', // 22: Bacia do Paramirim (Teal Médio)
+  '#60A5FA', // 23: Médio Sudoeste da Bahia (Azul Real luminoso)
+  '#0F766E', // 24: Litoral Sul (Teal profundo)
+  '#38BDF8', // 25: Costa do Descobrimento (Azul Mar claro)
+  '#1D3557'  // 26: Extremo Sul (Deep Navy)
 ];
 
 // Paleta Ampliada e Contrastante de Tons de Amarelo, Dourado, Âmbar e Ocre para o Semiárido
@@ -151,6 +173,7 @@ export default function PtiMap({
   const [mergedSemiData, setMergedSemiData] = useState(null);
   const [territoryMeshes, setTerritoryMeshes] = useState({});
   const [allTerritoryMesh, setAllTerritoryMesh] = useState(null);
+  const [stateBoundaryMesh, setStateBoundaryMesh] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Controle de Zoom para exibição dinâmica de divisas municipais
@@ -249,11 +272,18 @@ export default function PtiMap({
           );
         });
 
-        // 3b. Mesh único com TODOS os contornos de território (para modo semiárido)
+        // 3b. Mesh único com TODOS os contornos de território (divisas internas entre territórios de identidade)
         const combinedTerritoryMesh = topojson.mesh(
           topology,
           topology.objects.BA,
           (a, b) => a.id_territorio !== b.id_territorio
+        );
+
+        // 3c. Contorno perimetral externo do Estado da Bahia
+        const stateMesh = topojson.mesh(
+          topology,
+          topology.objects.BA,
+          (a, b) => a === b
         );
 
         // 4. Gerar GeoJSON padrão das features dos municípios (usado quando um território é selecionado)
@@ -277,6 +307,7 @@ export default function PtiMap({
         setMergedSemiData(mergedSemi);
         setTerritoryMeshes(tMeshes);
         setAllTerritoryMesh(combinedTerritoryMesh);
+        setStateBoundaryMesh(stateMesh);
         setGeoJsonData(geojson);
         setLoading(false);
       })
@@ -369,15 +400,17 @@ export default function PtiMap({
     }
 
     // 3. VISÃO GERAL (SEM ZOOM E SEM FILTRO):
-    // ZERO LINHAS! Polígonos mesclados puros e sem divisas.
+    // Divisas nítidas e elegantes entre os 27 Territórios de Identidade
     if (filtroSemiarido) {
       const isSemi = feature.properties.is_semiarido;
       return {
         fillColor: isSemi ? (semiaridoTerritoryColorMap[idTer] || '#F59E0B') : '#E2E8F0',
-        stroke: false,
-        weight: 0,
-        color: 'transparent',
+        stroke: true,
+        weight: 1.2,
+        color: '#FFFFFF',
         fillOpacity: isSemi ? 0.95 : 0.35,
+        lineCap: 'round',
+        lineJoin: 'round',
         className: 'outline-none'
       };
     }
@@ -386,9 +419,12 @@ export default function PtiMap({
     const matchesFilters = dStats ? dStats.matchesFilters : true;
     return {
       fillColor: matchesFilters ? (territoryColorMap[idTer] || '#D6EAF8') : '#E2E8F0',
-      stroke: false,
-      weight: 0,
-      color: 'transparent',
+      stroke: true,
+      weight: 1.4,
+      color: '#FFFFFF',
+      opacity: 1,
+      lineCap: 'round',
+      lineJoin: 'round',
       fillOpacity: matchesFilters ? 0.92 : 0.40,
       className: 'outline-none'
     };
@@ -414,9 +450,14 @@ export default function PtiMap({
           setHoveredTerritoryId(idTer);
           setHoveredMunicipalityId(null);
 
-          // Aumenta a opacidade do território na visão geral
+          // Aumenta o destaque do território na visão geral
           layersByTerritory.current[idTer]?.forEach(l => {
-            l.setStyle({ fillOpacity: 1.0 });
+            l.setStyle({
+              fillOpacity: 1.0,
+              weight: 2.2,
+              color: filtroSemiarido ? '#92400E' : '#1D3557'
+            });
+            l.bringToFront();
           });
         } else {
           setHoveredTerritoryId(idTer);
@@ -621,31 +662,52 @@ export default function PtiMap({
             onEachFeature={onEachFeature}
           />
 
-          {/* Destaque externo do território apenas ao passar o mouse quando visão geral não aproximada */}
-          {hoveredTerritoryId && !selectedTerritory && !isZoomedIn && territoryMeshes[hoveredTerritoryId] && (
+          {/* Contornos nítidos de TODOS os territórios de identidade na visão geral */}
+          {!selectedTerritory && allTerritoryMesh && (
             <GeoJSON
-              key={`hover-mesh-${hoveredTerritoryId}`}
-              data={territoryMeshes[hoveredTerritoryId]}
+              key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'normal'}`}
+              data={allTerritoryMesh}
               style={{
-                color: '#FFFFFF',
-                weight: 2.5,
-                opacity: 1,
-                fill: false
+                color: filtroSemiarido ? '#78350F' : '#FFFFFF',
+                weight: filtroSemiarido ? 1.6 : 1.8,
+                opacity: filtroSemiarido ? 0.70 : 0.95,
+                fill: false,
+                lineCap: 'round',
+                lineJoin: 'round'
               }}
               interactive={false}
             />
           )}
 
-          {/* Contornos de TODOS os territórios no modo semiárido (visão geral) */}
-          {filtroSemiarido && !selectedTerritory && allTerritoryMesh && (
+          {/* Contorno perimetral externo da Bahia para acabamento refinado */}
+          {!selectedTerritory && stateBoundaryMesh && (
             <GeoJSON
-              key={`semi-all-meshes`}
-              data={allTerritoryMesh}
+              key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'normal'}`}
+              data={stateBoundaryMesh}
               style={{
-                color: '#78350F',
-                weight: 1.8,
-                opacity: 0.5,
-                fill: false
+                color: filtroSemiarido ? '#92400E' : '#FFFFFF',
+                weight: 2.2,
+                opacity: 1,
+                fill: false,
+                lineCap: 'round',
+                lineJoin: 'round'
+              }}
+              interactive={false}
+            />
+          )}
+
+          {/* Destaque externo do território apenas ao passar o mouse quando visão geral não aproximada */}
+          {hoveredTerritoryId && !selectedTerritory && !isZoomedIn && territoryMeshes[hoveredTerritoryId] && (
+            <GeoJSON
+              key={`hover-mesh-${hoveredTerritoryId}-${filtroSemiarido ? '1' : '0'}`}
+              data={territoryMeshes[hoveredTerritoryId]}
+              style={{
+                color: filtroSemiarido ? '#92400E' : '#1D3557',
+                weight: 3.2,
+                opacity: 1,
+                fill: false,
+                lineCap: 'round',
+                lineJoin: 'round'
               }}
               interactive={false}
             />
@@ -658,9 +720,11 @@ export default function PtiMap({
               data={territoryMeshes[selectedTerritory.id_territorio]}
               style={{
                 color: filtroSemiarido ? '#78350F' : '#1D3557',
-                weight: 2.8,
+                weight: 3.0,
                 opacity: 1,
-                fill: false
+                fill: false,
+                lineCap: 'round',
+                lineJoin: 'round'
               }}
               interactive={false}
             />

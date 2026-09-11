@@ -269,7 +269,7 @@ export default function SobrePage() {
               {
                 t: 'Conectividade Avançada RNP',
                 tag: 'Infraestrutura Digital & Redes',
-                d: 'Monitoramento da presença de rede óptica de altíssima capacidade operada pela RNP nas 5 tipologias prioritárias de ensino e pesquisa (Universidades Federais, Estaduais, IFs, IES Privadas e ICTs), mensurando o suporte a dados de alta performance e inovação.'
+                d: 'Monitoramento da presença de rede banda larga de altíssima capacidade operada pela RNP nas 5 tipologias prioritárias de ensino e pesquisa (Universidades Federais, Estaduais, IFs, IES Privadas e ICTs), mensurando o suporte a dados de alta performance e inovação.'
               },
               {
                 t: 'Índice IFDM (FIRJAN)',
@@ -279,7 +279,7 @@ export default function SobrePage() {
               {
                 t: 'Densidade de Ativos CT&I',
                 tag: 'Capacidade Instalada',
-                d: 'Mapeamento consolidado das estruturas de pesquisa e inovação: Universidades Públicas, IFs, Faculdades Privadas, Parques Tecnológicos, Centros de P&D, Incubadoras, Aceleradoras e Espaços Dinamizadores Colaborar.'
+                d: 'Mapeamento consolidado das estruturas de pesquisa e inovação: Universidades Públicas, IFs, Faculdades Privadas, Parques Tecnológicos, Centros de Pesquisa, Incubadoras, Aceleradoras e Espaços Dinamizadores Colaborar.'
               },
               {
                 t: 'Cursos Superiores de CT&I',
@@ -289,7 +289,7 @@ export default function SobrePage() {
               {
                 t: 'Arranjos Produtivos (APLs)',
                 tag: 'Economia Regional',
-                d: 'Aglomerações territoriais de micro, pequenas e médias empresas com especialização produtiva comum, fomentadas pelo Governo Estadual para gerar emprego qualificado e agregação de valor tecnológico.'
+                d: 'Aglomerações territoriais de micro, pequenas e médias empresas com especialização produtiva comum, fomentadas pelo Governo para gerar emprego qualificado e agregação de valor tecnológico.'
               },
               {
                 t: 'Indicações Geográficas (IGs)',
@@ -299,7 +299,7 @@ export default function SobrePage() {
               {
                 t: 'Recorte do Semiárido Baiano',
                 tag: 'Equidade Territorial',
-                d: 'Indicador transversal que computa o percentual de municípios, ativos e cursos inseridos na delimitação oficial do Semiárido (definido pela SUDENE), orientando investimentos compensatórios contra desigualdades regionais.'
+                d: 'Indicador transversal que computa o percentual de municípios, ativos e cursos inseridos na delimitação oficial do Semiárido.'
               }
             ].map((kpi, idx) => (
               <div

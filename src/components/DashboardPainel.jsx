@@ -594,9 +594,9 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido')
         : (selectedTerritory ? `Ativos em ${territoryName}` : 'Ativos de CT&I'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiAtivos : (selectedTerritory ? scopedAtivos.length : kpisGlobais.ativos)),
-      percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}%` : null,
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}% do total de ativos` : null,
       tooltip: filtroSemiarido
-        ? `No Semiárido: ${semiaridoMetrics.semiAtivos} (${semiaridoMetrics.pctAtivos}%) | Fora: ${Math.max(0, scopedAtivos.length - semiaridoMetrics.semiAtivos)}`
+        ? `No Semiárido: ${semiaridoMetrics.semiAtivos} (${semiaridoMetrics.pctAtivos}% do total de ativos) | Fora: ${Math.max(0, scopedAtivos.length - semiaridoMetrics.semiAtivos)}`
         : undefined,
       icon: Settings,
       isIndex: false
@@ -606,9 +606,9 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos no Semiárido')
         : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos de CT&I'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCursos : (selectedTerritory ? scopedCursos.length : kpisGlobais.cursos)),
-      percent: filtroSemiarido ? `${semiaridoMetrics.pctCursos}%` : null,
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctCursos}% do total de cursos` : null,
       tooltip: filtroSemiarido
-        ? `No Semiárido: ${semiaridoMetrics.semiCursos} (${semiaridoMetrics.pctCursos}%) | Fora: ${Math.max(0, scopedCursos.length - semiaridoMetrics.semiCursos)}`
+        ? `No Semiárido: ${semiaridoMetrics.semiCursos} (${semiaridoMetrics.pctCursos}% do total de cursos) | Fora: ${Math.max(0, scopedCursos.length - semiaridoMetrics.semiCursos)}`
         : undefined,
       icon: GraduationCap,
       isIndex: false
@@ -628,9 +628,9 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? `Cadeias no Território` : 'Cadeias no Semiárido')
         : (selectedTerritory ? `Cadeias no Território` : 'Cadeias Produtivas'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCadeias : (selectedTerritory ? (scopedTerritorioRow?.cadeias_produtivas ?? 0) : kpisGlobais.cadeias)),
-      percent: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}%` : null,
+      percent: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}% do total de cadeias` : null,
       tooltip: filtroSemiarido && !selectedTerritory
-        ? `No Semiárido: ${semiaridoMetrics.semiCadeias} (${semiaridoMetrics.pctCadeias}%) | Fora: ${Math.max(0, (kpisGlobais.cadeias || 0) - semiaridoMetrics.semiCadeias)}`
+        ? `No Semiárido: ${semiaridoMetrics.semiCadeias} (${semiaridoMetrics.pctCadeias}% do total de cadeias) | Fora: ${Math.max(0, (kpisGlobais.cadeias || 0) - semiaridoMetrics.semiCadeias)}`
         : undefined,
       icon: Database,
       isIndex: false
@@ -640,9 +640,9 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? 'Municípios no Semiárido' : 'Municípios no Semiárido')
         : (selectedTerritory ? 'Municípios no Território' : 'Municípios Semiárido'),
       value: loadingStats ? '...' : (filtroSemiarido ? `${semiaridoMetrics.munSemi}` : (selectedTerritory ? (scopedTerritorioRow ? `${scopedTerritorioRow.qtd_mun_total || (Number(scopedTerritorioRow.qtd_mun_semiarido || 0) + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0))} mun.` : '-') : `${semiaridoStats.semiarido}`)),
-      percent: filtroSemiarido ? `${semiaridoMetrics.pctMun}%` : null,
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctMun}% do total de municípios` : null,
       tooltip: filtroSemiarido
-        ? `No Semiárido: ${semiaridoMetrics.munSemi} (${semiaridoMetrics.pctMun}%) | Fora: ${semiaridoMetrics.munTot - semiaridoMetrics.munSemi}`
+        ? `No Semiárido: ${semiaridoMetrics.munSemi} (${semiaridoMetrics.pctMun}% do total de municípios) | Fora: ${semiaridoMetrics.munTot - semiaridoMetrics.munSemi}`
         : undefined,
       icon: Building2,
       isIndex: false
@@ -758,17 +758,20 @@ export default function DashboardPainel() {
                 </div>
 
                 {/* LINHA INFERIOR: NÚMERO */}
-                <div className="flex items-baseline w-full justify-between">
-                  <div className="flex items-baseline gap-1.5 min-w-0">
-                    <span className={`text-[28px] font-bold tracking-tight leading-none ${
+                <div className="flex items-baseline w-full justify-between min-w-0">
+                  <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                    <span className={`text-[28px] font-bold tracking-tight leading-none shrink-0 ${
                       isHero ? 'text-white' : 'text-text-primary'
                     }`}>
                       {kpi.value}
                     </span>
                     {filtroSemiarido && kpi.percent && (
-                      <span className={`text-[12px] font-semibold ${
-                        isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
-                      }`}>
+                      <span
+                        title={`(${kpi.percent})`}
+                        className={`text-[11px] font-semibold truncate ${
+                          isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
+                        }`}
+                      >
                         ({kpi.percent})
                       </span>
                     )}
