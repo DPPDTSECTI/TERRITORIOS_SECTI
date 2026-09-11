@@ -195,10 +195,6 @@ export default function PtiMap({
   const layersByTerritory = useRef({});
 
   useEffect(() => {
-    layersByTerritory.current = {};
-  }, [selectedTerritory, filtroSemiarido, isZoomedIn]);
-
-  useEffect(() => {
     setLoading(true);
     layersByTerritory.current = {};
 
@@ -585,17 +581,47 @@ export default function PtiMap({
     if (!mapRef.current) return;
     if (selectedTerritory && selectedTerritory.id_territorio) {
       const terId = Number(selectedTerritory.id_territorio);
-      const timer = setTimeout(() => {
-        const layers = layersByTerritory.current[terId];
-        if (layers && layers.length > 0) {
-          const group = L.featureGroup(layers);
+
+      const tryZoomToTerritory = () => {
+        if (!mapRef.current) return false;
+        // 1. Tenta pelo layersByTerritory indexado
+        const indexed = layersByTerritory.current[terId];
+        if (indexed && indexed.length > 0) {
+          const group = L.featureGroup(indexed);
           const b = group.getBounds();
           if (b.isValid()) {
-            mapRef.current?.fitBounds(b, { padding: [24, 24], maxZoom: 8.5, duration: 0.8 });
+            mapRef.current.fitBounds(b, { padding: [30, 30], maxZoom: 8.5, duration: 0.8 });
+            return true;
           }
         }
-      }, 60);
-      return () => clearTimeout(timer);
+        // 2. Fallback: vasculha geoJsonLayerRef diretamente pelas features
+        if (geoJsonLayerRef.current) {
+          const matched = [];
+          geoJsonLayerRef.current.eachLayer((l) => {
+            if (Number(l.feature?.properties?.id_territorio) === terId) {
+              matched.push(l);
+            }
+          });
+          if (matched.length > 0) {
+            const group = L.featureGroup(matched);
+            const b = group.getBounds();
+            if (b.isValid()) {
+              mapRef.current.fitBounds(b, { padding: [30, 30], maxZoom: 8.5, duration: 0.8 });
+              return true;
+            }
+          }
+        }
+        return false;
+      };
+
+      if (!tryZoomToTerritory()) {
+        const t1 = setTimeout(tryZoomToTerritory, 120);
+        const t2 = setTimeout(tryZoomToTerritory, 350);
+        return () => {
+          clearTimeout(t1);
+          clearTimeout(t2);
+        };
+      }
     } else {
       if (geoJsonLayerRef.current) {
         const b = geoJsonLayerRef.current.getBounds();
@@ -606,7 +632,7 @@ export default function PtiMap({
         mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.8 });
       }
     }
-  }, [selectedTerritory]);
+  }, [selectedTerritory, geoJsonData]);
 
   const currentData = showMunicipalityLines
     ? geoJsonData

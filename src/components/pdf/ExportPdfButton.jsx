@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Printer } from 'lucide-react';
 import { captureReportViaIframe } from '../../utils/clientExport';
 
@@ -7,7 +7,7 @@ import { captureReportViaIframe } from '../../utils/clientExport';
  *
  * Pode ser utilizado de duas formas:
  * 1. Com `onClick`: executa a função de impressão fornecida (ex: handlePrint do react-to-print).
- * 2. Com `reportType`, `territorioId`, `reportMode`: abre a rota oficial em tela cheia com auto-impressão.
+ * 2. Com `reportType`, `territorioId`, `reportMode`: exporta o relatório executivo em PDF widescreen 16:9.
  */
 export default function ExportPdfButton({
   onClick,
@@ -21,17 +21,13 @@ export default function ExportPdfButton({
   size = 'md', // 'sm' | 'md'
   variant = 'primary' // 'primary' | 'navy' | 'emerald'
 }) {
-  const [internalLoading, setInternalLoading] = useState(false);
-  const loading = isLoading || internalLoading;
-
-  const handleClick = async (e) => {
-    if (loading) return;
+  const handleClick = (e) => {
+    if (isLoading) return;
     if (onClick) {
       onClick(e);
       return;
     }
 
-    setInternalLoading(true);
     const type = reportType === 'cursos'
       ? 'cursos'
       : (reportType === 'ativos'

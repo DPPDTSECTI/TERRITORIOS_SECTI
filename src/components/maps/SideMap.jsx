@@ -338,19 +338,44 @@ function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryR
   const prevTerritoryRef = useRef(selectedTerritory);
 
   useEffect(() => {
-  if (selectedTerritory) {
-  const idTerr = selectedTerritory.id_territorio;
-  const nome = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
-  const layer = (idTerr && geoJsonLayersByTerritoryRef.current[idTerr]) || geoJsonLayersByTerritoryRef.current[nome];
+    if (selectedTerritory) {
+      const idTerr = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+      const numId = idTerr ? Number(idTerr) : null;
+      const rawNome = selectedTerritory.nome_territorio || selectedTerritory.territorio || '';
+      const nome = normalizeName(rawNome.replace(/^Território de Identidade\s+/i, '').trim());
 
-  if (layer) {
-  const bounds = layer.getBounds();
-  map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.8 });
-  }
-  } else if (prevTerritoryRef.current && !selectedTerritory) {
-  map.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
-  }
-  prevTerritoryRef.current = selectedTerritory;
+      const tryZoom = () => {
+        if (!map) return false;
+        const dict = geoJsonLayersByTerritoryRef?.current || {};
+        const layer = (idTerr && dict[idTerr]) ||
+          (numId && dict[numId]) ||
+          (nome && dict[nome]) ||
+          dict[rawNome];
+
+        if (layer && typeof layer.getBounds === 'function') {
+          const bounds = layer.getBounds();
+          if (bounds && bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.8 });
+            return true;
+          }
+        }
+        return false;
+      };
+
+      if (!tryZoom()) {
+        const t1 = setTimeout(tryZoom, 120);
+        const t2 = setTimeout(tryZoom, 350);
+        const t3 = setTimeout(tryZoom, 800);
+        return () => {
+          clearTimeout(t1);
+          clearTimeout(t2);
+          clearTimeout(t3);
+        };
+      }
+    } else if (prevTerritoryRef.current && !selectedTerritory) {
+      map.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
+    }
+    prevTerritoryRef.current = selectedTerritory;
   }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
 
   return null;

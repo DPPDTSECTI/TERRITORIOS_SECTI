@@ -23,7 +23,6 @@ import {
  Sparkles,
  Award,
  BarChart3,
- Image as ImageIcon,
  Compass,
  FileSpreadsheet
 } from 'lucide-react';
@@ -41,6 +40,7 @@ import { normalize } from '../utils/normalization';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
+import { exportReportAsPdf, getReportRoute } from '../utils/exportReportClient';
 
 const MUN_LOOKUP = (() => {
   const byId = {};
@@ -148,7 +148,6 @@ export default function RelatorioPage() {
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedCadeia, setSelectedCadeia] = useState(null);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
-  const [isExportingPng, setIsExportingPng] = useState(false);
 
 
   // Território selecionado (objeto) ou null se for Toda a Bahia
@@ -861,10 +860,7 @@ export default function RelatorioPage() {
     return 'Síntese Executiva';
   }, [reportType]);
 
-  const handleExportPDF = async (overrideType = null) => {
-    if (isExportingPdf) return;
-    setIsExportingPdf(true);
-
+  const handleExportPDF = (overrideType = null) => {
     const type = overrideType || reportType;
     let fileBase = 'relatorio_sintese';
     if (type === 'ativos') {
@@ -1146,11 +1142,11 @@ export default function RelatorioPage() {
  else setSelectedTerritoryId('bahia');
  };
 
- if (reportType === 'ativos') return <SideMap key={`map-ativos-${reportMode}-${selectedTerritoryId}`} mode="ativos" processedAtivos={scopedAtivos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
- if (reportType === 'cursos') return <SideMap key={`map-cursos-${reportMode}-${selectedTerritoryId}`} mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
+ if (reportType === 'ativos') return <SideMap key={`map-ativos-${reportMode}`} mode="ativos" processedAtivos={scopedAtivos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
+ if (reportType === 'cursos') return <SideMap key={`map-cursos-${reportMode}`} mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
  if (reportType === 'cadeias') return (
     <SideMap
-      key={`map-cadeias-${reportMode}-${selectedTerritoryId}`}
+      key={`map-cadeias-${reportMode}`}
       mode="cadeias"
       cadeiasData={scopedCadeias}
       processedAtivos={scopedCadeias.map(c => ({...c, coords: c.coords || [0,0]}))}
@@ -1241,40 +1237,30 @@ export default function RelatorioPage() {
      disabled={isExportingPdf}
      onClick={() => handleExportPDF()}
      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-primary-900 text-white hover:bg-primary-800 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Exportar Relatório Executivo em PDF (${currentReportLabel})`}
+     title={`Abrir Relatório Executivo e Salvar como PDF / Imprimir em Widescreen 16:9 (${currentReportLabel})`}
    >
-    {isExportingPdf ? (
-      <>
-        <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-        <span>Gerando PDF...</span>
-      </>
-    ) : (
-      <>
-        <Printer size={15} />
-        <span>Exportar PDF</span>
-      </>
-    )}
-  </button>
+     {isExportingPdf ? (
+       <>
+         <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+         <span>Gerando PDF...</span>
+       </>
+     ) : (
+       <>
+         <Printer size={15} />
+         <span>Salvar PDF / Imprimir</span>
+       </>
+     )}
+   </button>
 
-  <button
-    type="button"
-    disabled={isExportingPng}
-    onClick={() => handleExportPNG()}
-    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-surface border border-primary-300 text-primary-900 hover:bg-primary-50 hover:border-primary-600 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-    title={`Exportar Imagem PNG em Ultra-Alta Resolução 5760×3240 (${currentReportLabel})`}
-  >
-    {isExportingPng ? (
-      <>
-        <div className="w-3.5 h-3.5 border-2 border-primary-600/20 border-t-primary-600 rounded-full animate-spin" />
-        <span>Gerando PNG...</span>
-      </>
-    ) : (
-      <>
-        <ImageIcon size={15} className="text-primary-600" />
-        <span>Exportar PNG</span>
-      </>
-    )}
-  </button>
+   <button
+     type="button"
+     onClick={handleOpenFullscreenReport}
+     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-surface border border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 shadow-2xs transition-all cursor-pointer justify-center leading-none"
+     title={`Abrir versão oficial do relatório em tela cheia para apresentação ou impressão nativa (${currentReportLabel})`}
+   >
+     <ExternalLink size={14} className="text-neutral-500" />
+     <span className="hidden xl:inline">Tela Cheia</span>
+   </button>
 
    <button
      type="button"
