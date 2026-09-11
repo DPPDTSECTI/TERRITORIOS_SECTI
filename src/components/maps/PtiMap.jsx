@@ -782,7 +782,7 @@ export default function PtiMap({
        type="button"
        onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
        title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-       className={`relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
+       className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
          filtroSemiarido
            ? 'bg-amber-50/95 border-amber-300 text-amber-800 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
            : 'bg-white/95 border-white/80 text-text-secondary hover:border-slate-300 hover:text-text-primary shadow-sm'

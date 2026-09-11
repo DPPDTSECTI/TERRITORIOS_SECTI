@@ -188,11 +188,11 @@ export default function TourGuide() {
       placement: 'right',
     },
     {
-      target: '.tour-user-menu',
-      title: 'Seu Perfil e Ajustes',
-      content: 'Aqui você tem acesso rápido ao seu perfil, configurações de sistema e também a opção de sair (logout).',
-      placement: 'bottom-end',
-      spotlightPadding: 4,
+      target: '.tour-toggle-semiarido',
+      title: 'Filtro do Semiárido',
+      content: 'Ative este botão para alternar instantaneamente para o recorte oficial do Semiárido Baiano. Todos os KPIs, gráficos e mapas serão filtrados dinamicamente em tempo real.',
+      placement: 'left',
+      spotlightPadding: 6,
     },
     {
       target: '.tour-help-button',
