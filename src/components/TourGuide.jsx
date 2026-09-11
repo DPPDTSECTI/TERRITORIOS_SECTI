@@ -226,7 +226,7 @@ export default function TourGuide() {
     {
       target: '.tour-relatorio-export',
       title: 'Exportação de Dados',
-      content: 'Precisa dos dados para apresentações ou análises? Exporte facilmente em planilha Excel (.xlsx), PDF executivo ou imagem PNG de alta resolução!',
+      content: 'Precisa dos dados para apresentações ou análises? Exporte facilmente em planilha Excel (.xlsx) ou PDF executivo!',
       placement: 'left',
     },
     {

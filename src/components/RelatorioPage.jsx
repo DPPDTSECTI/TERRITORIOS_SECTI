@@ -23,7 +23,6 @@ import {
  Sparkles,
  Award,
  BarChart3,
- Image as ImageIcon,
  Compass,
  FileSpreadsheet
 } from 'lucide-react';
@@ -40,7 +39,7 @@ import { normalize } from '../utils/normalization';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
-import { exportReportAsPdf, exportReportAsPng, getReportRoute } from '../utils/exportReportClient';
+import { exportReportAsPdf, getReportRoute } from '../utils/exportReportClient';
 
 const MUN_LOOKUP = (() => {
   const byId = {};
@@ -148,7 +147,6 @@ export default function RelatorioPage() {
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedCadeia, setSelectedCadeia] = useState(null);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
-  const [isExportingPng, setIsExportingPng] = useState(false);
 
 
   // Território selecionado (objeto) ou null se for Toda a Bahia
@@ -862,26 +860,6 @@ export default function RelatorioPage() {
     window.open(route, '_blank');
   };
 
-  const handleExportPNG = async (overrideType = null) => {
-    if (isExportingPng) return;
-    setIsExportingPng(true);
-
-    const type = overrideType || reportType;
-    try {
-      await exportReportAsPng({
-        type,
-        territorioId: selectedTerritoryId,
-        modo: reportMode,
-        scale: 2
-      });
-    } catch (err) {
-      console.error('[Exportação PNG] Erro:', err);
-      alert(`Erro ao exportar PNG: ${err.message || err}`);
-    } finally {
-      setIsExportingPng(false);
-    }
-  };
-
   const handleOpenFullscreenReport = () => {
     const route = getReportRoute(reportType, selectedTerritoryId, reportMode);
     window.open(route, '_blank');
@@ -1113,26 +1091,6 @@ export default function RelatorioPage() {
        <>
          <Printer size={15} />
          <span>Salvar PDF / Imprimir</span>
-       </>
-     )}
-   </button>
-
-   <button
-     type="button"
-     disabled={isExportingPng}
-     onClick={() => handleExportPNG()}
-     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-surface border border-primary-300 text-primary-900 hover:bg-primary-50 hover:border-primary-600 disabled:opacity-60 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Exportar Imagem PNG em Alta Resolução 16:9 (${currentReportLabel})`}
-   >
-     {isExportingPng ? (
-       <>
-         <div className="w-3.5 h-3.5 border-2 border-primary-600/20 border-t-primary-600 rounded-full animate-spin" />
-         <span>Gerando PNG...</span>
-       </>
-     ) : (
-       <>
-         <ImageIcon size={15} className="text-primary-600" />
-         <span>Exportar PNG</span>
        </>
      )}
    </button>
