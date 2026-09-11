@@ -15,13 +15,15 @@ import {
     Cpu,
     Network,
     Wifi,
-    X
+    X,
+    SunMedium
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
+import { isMunicipioSemiarido } from '../constants/semiarido';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
-import SideMap from './maps/SideMap';
+import SideMap, { getSemiaridoPointColor } from './maps/SideMap';
 
 function normalizeName(name) {
     if (!name) return '';
@@ -50,7 +52,9 @@ export default function AtivosPage() {
     const {
         ativosData = [],
         territoriosData = [],
-        loadingStats = false
+        loadingStats = false,
+        filtroSemiarido = false,
+        setFiltroSemiarido
     } = useContext(DataContext);
 
     const [selectedTerritory, setSelectedTerritory] = useState(null);
@@ -176,9 +180,16 @@ export default function AtivosPage() {
         });
     }, [ativosProcessados, selectedTerritory]);
 
-    // 2. Filtragem Geral (Tipo, Busca e Território)
+    // Subconjunto ativo com respeito ao Semiárido
+    const activeScopedAtivos = useMemo(() => {
+        if (!territoryAtivos || territoryAtivos.length === 0) return [];
+        if (!filtroSemiarido) return territoryAtivos;
+        return territoryAtivos.filter(a => isMunicipioSemiarido(a.municipio));
+    }, [territoryAtivos, filtroSemiarido]);
+
+    // 2. Filtragem Geral (Tipo, Busca, Território e Semiárido)
     const filteredAtivosList = useMemo(() => {
-        let list = territoryAtivos;
+        let list = activeScopedAtivos;
 
         if (selectedTipo !== 'todos') {
             list = list.filter(a => a.tipo === selectedTipo || a.shortTipo === selectedTipo);
@@ -197,7 +208,7 @@ export default function AtivosPage() {
         }
 
         return list;
-    }, [territoryAtivos, selectedTipo, searchQuery]);
+    }, [activeScopedAtivos, selectedTipo, searchQuery]);
 
     const compactAtivosList = useMemo(() => {
         if (!sidebarSearch.trim()) return filteredAtivosList;
@@ -213,11 +224,11 @@ export default function AtivosPage() {
 
     // 3. Distribuição por Tipos / Categorias de Ativos (com dados empilhados de RNP)
     const categoryStats = useMemo(() => {
-        if (!territoryAtivos || territoryAtivos.length === 0) return [];
+        if (!activeScopedAtivos || activeScopedAtivos.length === 0) return [];
         const counts = {};
-        const total = territoryAtivos.length;
+        const total = activeScopedAtivos.length;
 
-        territoryAtivos.forEach(a => {
+        activeScopedAtivos.forEach(a => {
             const t = a.tipo || 'Outros';
             if (!counts[t]) {
                 counts[t] = {
@@ -250,14 +261,17 @@ export default function AtivosPage() {
                 };
             })
             .sort((a, b) => b.count - a.count);
-    }, [territoryAtivos]);
+    }, [activeScopedAtivos]);
 
-    // 4A. Ranking Territorial de Ativos (com dados empilhados de RNP)
+    // 4A. Ranking Territorial de Ativos (com dados empilhados de RNP e filtro de Semiárido)
     const territoryRanking = useMemo(() => {
         if (!ativosProcessados || ativosProcessados.length === 0) return [];
+        const baseAtivos = filtroSemiarido 
+            ? ativosProcessados.filter(a => isMunicipioSemiarido(a.municipio)) 
+            : ativosProcessados;
         const counts = {};
 
-        ativosProcessados.forEach(a => {
+        baseAtivos.forEach(a => {
             const tid = a.id_territorio ? String(a.id_territorio) : null;
             const tName = (a.territorio || 'Outros').replace(/^Território de Identidade\s+/i, '').trim();
             const key = tid || normalizeName(tName);
@@ -288,14 +302,15 @@ export default function AtivosPage() {
                     outrosPercent
                 };
             });
-    }, [ativosProcessados]);
+    }, [ativosProcessados, filtroSemiarido]);
 
-    // 4B. Ranking de Municípios do Território (com dados empilhados de RNP)
+    // 4B. Ranking de Municípios (com dados empilhados de RNP e filtro de Semiárido)
     const municipalityRanking = useMemo(() => {
-        if (!selectedTerritory || !territoryAtivos || territoryAtivos.length === 0) return [];
+        const targetList = selectedTerritory ? activeScopedAtivos : (filtroSemiarido ? activeScopedAtivos : territoryAtivos);
+        if (!targetList || targetList.length === 0) return [];
         const counts = {};
 
-        territoryAtivos.forEach(a => {
+        targetList.forEach(a => {
             const mun = a.municipio || 'Bahia';
             if (!counts[mun]) {
                 counts[mun] = { count: 0, rnpCount: 0 };
@@ -325,51 +340,64 @@ export default function AtivosPage() {
                     percentBar: Math.min(100, (data.count / maxCount) * 100)
                 };
             });
-    }, [selectedTerritory, territoryAtivos]);
+    }, [selectedTerritory, activeScopedAtivos, territoryAtivos, filtroSemiarido]);
 
-    // 5. Contagens Globais e por Grupo (Scoped para a região selecionada)
+    // 5. Contagens Globais e por Grupo (Scoped para a região selecionada e filtro de Semiárido)
     const totalEnsinoPesquisa = useMemo(() => {
-        return territoryAtivos.filter(a => {
+        return activeScopedAtivos.filter(a => {
             const t = (a.tipo || '').toLowerCase();
             return t.includes('universidade') || t.includes('faculdade') || t.includes('instituto federal') || t.includes('ict') || t.includes('pesquisa');
         }).length;
-    }, [territoryAtivos]);
+    }, [activeScopedAtivos]);
 
     const totalRnp = useMemo(() => {
-        return territoryAtivos.filter(a => a.rnp).length;
-    }, [territoryAtivos]);
+        return activeScopedAtivos.filter(a => a.rnp).length;
+    }, [activeScopedAtivos]);
 
     const territoriosComAtivosCount = useMemo(() => {
-        if (territoriosData && territoriosData.length > 0) {
+        if (!filtroSemiarido && territoriosData && territoriosData.length > 0) {
             return territoriosData.filter(t => Number(t.ativos_cti || 0) > 0).length;
         }
         return territoryRanking.length;
-    }, [territoriosData, territoryRanking]);
+    }, [territoriosData, territoryRanking, filtroSemiarido]);
 
-    // 7. 5 Indicadores Estratégicos (KPIs com adaptação contextual à região)
+    const semiaridoMetrics = useMemo(() => {
+        const totalAtivos = territoryAtivos.length || 1;
+        const semiAtivos = territoryAtivos.filter(a => isMunicipioSemiarido(a.municipio)).length;
+        const pctAtivos = ((semiAtivos / totalAtivos) * 100).toFixed(0);
+        return { semiAtivos, pctAtivos };
+    }, [territoryAtivos]);
+
+    // 7. 5 Indicadores Estratégicos (KPIs com adaptação contextual à região e ao Semiárido)
     const kpis = [
         {
-            label: selectedTerritory ? `Ativos em ${territoryName}` : 'Total de Ativos CT&I',
-            value: loadingStats ? '...' : territoryAtivos.length,
+            label: filtroSemiarido
+                ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido')
+                : (selectedTerritory ? `Ativos em ${territoryName}` : 'Total de Ativos CT&I'),
+            value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiAtivos : (selectedTerritory ? territoryAtivos.length : (ativosData?.length || territoryAtivos.length))),
+            percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}% do total` : null,
+            tooltip: filtroSemiarido
+                ? `No Semiárido: ${semiaridoMetrics.semiAtivos} (${semiaridoMetrics.pctAtivos}% do total de ativos) | Fora: ${Math.max(0, territoryAtivos.length - semiaridoMetrics.semiAtivos)}`
+                : undefined,
             icon: Database
         },
         {
-            label: 'Ensino & Pesquisa (ICTs)',
+            label: filtroSemiarido ? 'Ensino & Pesquisa (Semiárido)' : 'Ensino & Pesquisa (ICTs)',
             value: loadingStats ? '...' : totalEnsinoPesquisa,
             icon: GraduationCap
         },
         {
-            label: 'Ativos com RNP',
+            label: filtroSemiarido ? 'Ativos com RNP (Semiárido)' : 'Ativos com RNP',
             value: loadingStats ? '...' : totalRnp,
             icon: Network
         },
         {
-            label: selectedTerritory ? 'Municípios com Ativos' : 'Territórios Cobertos',
-            value: loadingStats ? '...' : (selectedTerritory ? `${municipalityRanking.length} munic.` : `${territoriosComAtivosCount} / ${territoriosData.length || 27}`),
+            label: filtroSemiarido ? 'Municípios com Ativos' : (selectedTerritory ? 'Municípios com Ativos' : 'Territórios Cobertos'),
+            value: loadingStats ? '...' : (selectedTerritory || filtroSemiarido ? `${municipalityRanking.length} munic.` : `${territoriosComAtivosCount} / ${territoriosData.length || 27}`),
             icon: MapPin
         },
         {
-            label: categoryStats[0] ? categoryStats[0].shortName : 'Principal Tipo',
+            label: categoryStats[0] ? (filtroSemiarido ? `Principal: ${categoryStats[0].shortName}` : categoryStats[0].shortName) : 'Principal Tipo',
             value: loadingStats ? '...' : (categoryStats[0] ? `${categoryStats[0].percent}%` : '-'),
             icon: Sparkles
         }
@@ -378,22 +406,76 @@ export default function AtivosPage() {
     return (
         <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
+            {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
+            <div
+                aria-hidden="true"
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
+                    filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                }`}
+            >
+                {/* 1. HALO RADIAL DIFUSO */}
+                <div
+                    className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+                    style={{
+                        background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
+                        filter: 'blur(35px)',
+                    }}
+                />
+
+                {/* 2. ARCO / ANEL LUMINOSO */}
+                <div
+                    className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+                    style={{
+                        border: '1.5px solid rgba(245, 158, 11, 0.22)',
+                        boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+                    }}
+                />
+
+                {/* 3. SEGUNDO ARCO EXPANSIVO */}
+                <div
+                    className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+                    style={{
+                        border: '1px solid rgba(217, 119, 6, 0.11)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+                    }}
+                />
+
+                {/* 4. GLOW DOURADO DE TOPO */}
+                <div
+                    className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+                    style={{
+                        background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
+                        filter: 'blur(40px)',
+                    }}
+                />
+            </div>
+
             {/* HEADER DA PÁGINA */}
-            <div className="flex items-center justify-between w-full pr-[320px] shrink-0">
+            <div className="flex items-center justify-between w-full pr-[320px] shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <h1 className="text-3xl font-bold text-text-primary tracking-tight">
                             Módulo de Ativos de CT&I
                         </h1>
-                        <span className="bg-primary-600/10 text-primary-700 text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border border-primary-600/20 flex items-center gap-1 justify-center leading-none">
-                            <Sparkles size={16} className="text-primary-700" />
+                        <span className={`text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
+                            filtroSemiarido
+                                ? 'bg-amber-500/15 text-amber-800 border-amber-500/30'
+                                : 'bg-primary-600/10 text-primary-700 border-primary-600/20'
+                        }`}>
+                            <Sparkles size={16} className={filtroSemiarido ? 'text-amber-700' : 'text-primary-700'} />
                             Ecossistema de Inovação da Bahia
                         </span>
                     </div>
                     <p className="text-sm text-text-secondary mt-0.5 font-medium">
                         Explore universidades, ICTs, parques tecnológicos, hubs e centros de pesquisa distribuídos pelo estado
                     </p>
-                    <div className="divider-territorial w-48 mt-3"></div>
+                    <div 
+                        className="divider-territorial w-48 mt-3"
+                        style={filtroSemiarido ? { background: 'linear-gradient(90deg, #F59E0B 0%, #D97706 50%, transparent 100%)' } : undefined}
+                    />
                 </div>
             </div>
 
@@ -416,16 +498,20 @@ export default function AtivosPage() {
                                 title={kpi.tooltip || kpi.label}
                                 className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
                                     isHero
-                                        ? 'bg-primary-900 text-white shadow-card-elevated'
-                                        : 'bg-surface border border-neutral-100 shadow-card'
+                                        ? (filtroSemiarido
+                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
+                                            : 'bg-primary-900 text-white shadow-card-elevated')
+                                        : (filtroSemiarido
+                                            ? 'bg-white/95 border border-amber-200/40 shadow-card'
+                                            : 'bg-surface border border-neutral-100 shadow-card')
                                 }`}
                             >
                                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
                                 <div className="flex items-center gap-2 w-full min-w-0">
-                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? accentColors[0] : accentColors[index]} />
+                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
                                     <span
                                         className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
-                                            isHero ? 'text-white/60' : 'text-text-muted'
+                                            isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
                                         }`}
                                         title={kpi.label}
                                     >
@@ -435,12 +521,22 @@ export default function AtivosPage() {
 
                                 {/* LINHA INFERIOR: NÚMERO */}
                                 <div className="flex items-baseline w-full justify-between">
-                                    <div className="flex items-baseline gap-1.5 min-w-0">
+                                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
                                         <span className={`text-[28px] font-bold tracking-tight leading-none ${
                                             isHero ? 'text-white' : 'text-text-primary'
                                         }`}>
                                             {kpi.value}
                                         </span>
+                                        {filtroSemiarido && kpi.percent && (
+                                            <span
+                                                title={`(${kpi.percent})`}
+                                                className={`text-[11px] font-semibold truncate ${
+                                                    isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
+                                                }`}
+                                            >
+                                                ({kpi.percent})
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -459,7 +555,9 @@ export default function AtivosPage() {
                 >
                     <SideMap
                         mode="ativos"
-                        processedAtivos={ativosProcessados}
+                        processedAtivos={filteredAtivosList}
+                        selectedTipo={selectedTipo}
+                        onSelectTipo={setSelectedTipo}
                         focusedAsset={focusedAsset}
                         selectedTerritory={selectedTerritory}
                         onSelectTerritory={setSelectedTerritory}
@@ -478,7 +576,9 @@ export default function AtivosPage() {
                                 <span className="text-[12px] font-semibold text-text-primary truncate">
                                     Ativos de CT&I
                                 </span>
-                                <span className="bg-primary-600/10 text-primary-700 text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
+                                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none ${
+                                    filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-700'
+                                }`}>
                                     {compactAtivosList.length}
                                 </span>
                             </div>
@@ -505,7 +605,9 @@ export default function AtivosPage() {
                                 value={sidebarSearch}
                                 onChange={(e) => setSidebarSearch(e.target.value)}
                                 placeholder="Filtrar por nome, cidade..."
-                                className="w-full pl-8 pr-2.5 py-1 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
+                                className={`w-full pl-8 pr-2.5 py-1 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${
+                                    filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                } focus:outline-none transition-colors`}
                             />
                             {sidebarSearch && (
                                 <button
@@ -523,6 +625,9 @@ export default function AtivosPage() {
                             {compactAtivosList.length > 0 ? (
                                 compactAtivosList.map((ativo) => {
                                     const IconComp = ativo.icone || Database;
+                                    const itemColor = filtroSemiarido 
+                                        ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome) 
+                                        : (ativo.corHex || '#3B82F6');
                                     const isSelected = selectedAssetId === ativo.id;
 
                                     return (
@@ -548,7 +653,7 @@ export default function AtivosPage() {
                                                 }
                                             }}
                                             className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer w-full ${isSelected
-                                                    ? 'bg-primary-50/50'
+                                                    ? (filtroSemiarido ? 'bg-amber-50/80 border-amber-300' : 'bg-primary-50/50')
                                                     : 'bg-transparent hover:bg-surface-soft'
                                                 }`}
                                         >
@@ -556,12 +661,18 @@ export default function AtivosPage() {
                                                 <div
                                                     className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${isSelected ? 'scale-105 shadow-2xs' : ''
                                                         }`}
-                                                    style={{ backgroundColor: `${ativo.corHex}18`, color: ativo.corHex }}
+                                                    style={{
+                                                        backgroundColor: `${itemColor}20`,
+                                                        color: itemColor
+                                                    }}
                                                 >
                                                     <IconComp size={12} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? 'text-primary-800' : 'text-text-primary group-hover:text-primary-700'
+                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${
+                                                        isSelected 
+                                                            ? (filtroSemiarido ? 'text-amber-900' : 'text-primary-800') 
+                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-700')
                                                         }`}>
                                                         {ativo.nome}
                                                     </h5>
@@ -574,7 +685,10 @@ export default function AtivosPage() {
                                             {ativo.sigla ? (
                                                 <span
                                                     className="text-[8px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
-                                                    style={{ backgroundColor: `${ativo.corHex}15`, color: ativo.corHex }}
+                                                    style={{
+                                                        backgroundColor: `${itemColor}20`,
+                                                        color: itemColor
+                                                    }}
                                                 >
                                                     {ativo.sigla}
                                                 </span>
@@ -602,7 +716,7 @@ export default function AtivosPage() {
                                     type="button"
                                     onClick={() => setActiveTab('catalogo')}
                                     className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'catalogo'
-                                        ? 'bg-primary-900 text-white shadow-xs'
+                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
                                         : 'text-text-secondary hover:text-text-primary'
                                         }`}
                                 >
@@ -614,7 +728,7 @@ export default function AtivosPage() {
                                     type="button"
                                     onClick={() => setActiveTab('categorias')}
                                     className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'categorias'
-                                        ? 'bg-primary-900 text-white shadow-xs'
+                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
                                         : 'text-text-secondary hover:text-text-primary'
                                         }`}
                                 >
@@ -626,7 +740,7 @@ export default function AtivosPage() {
                                     type="button"
                                     onClick={() => setActiveTab('ranking')}
                                     className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ranking'
-                                        ? 'bg-primary-900 text-white shadow-xs'
+                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
                                         : 'text-text-secondary hover:text-text-primary'
                                         }`}
                                 >
@@ -648,7 +762,9 @@ export default function AtivosPage() {
                                         }
                                     }}
                                     placeholder="Buscar ativo, tipo, cidade ou sigla..."
-                                    className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
+                                    className={`w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${
+                                        filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                    } focus:outline-none transition-colors`}
                                 />
                                 {searchQuery && (
                                     <button
@@ -674,7 +790,9 @@ export default function AtivosPage() {
                                             <h3 className="text-[13px] font-semibold text-text-primary">
                                                 {selectedTerritory ? `Ativos de CT&I em ${territoryName}` : 'Catálogo de Ativos do Estado'}
                                             </h3>
-                                            <span className="bg-primary-600/10 text-primary-700 text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
+                                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none ${
+                                                filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-700'
+                                            }`}>
                                                 {filteredAtivosList.length} ativos
                                             </span>
                                         </div>
@@ -685,32 +803,40 @@ export default function AtivosPage() {
                                                 type="button"
                                                 onClick={() => setSelectedTipo('todos')}
                                                 className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${selectedTipo === 'todos'
-                                                    ? 'bg-primary-900 text-white'
+                                                    ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-900 text-white')
                                                     : 'bg-surface-soft text-text-secondary hover:bg-border'
                                                     }`}
                                             >
                                                 Todos
                                             </button>
-                                            {categoryStats.slice(0, 3).map((cat) => (
-                                                <button
-                                                    key={cat.name}
-                                                    type="button"
-                                                    onClick={() => setSelectedTipo(selectedTipo === cat.name ? 'todos' : cat.name)}
-                                                    className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${selectedTipo === cat.name
-                                                        ? 'text-white'
-                                                        : 'hover:opacity-80'
-                                                        }`}
-                                                    style={{
-                                                        backgroundColor: selectedTipo === cat.name ? cat.corHex : `${cat.corHex}15`,
-                                                        color: selectedTipo === cat.name ? '#ffffff' : cat.corHex
-                                                    }}
-                                                >
-                                                    {cat.shortName}
-                                                </button>
-                                            ))}
+                                            {categoryStats.slice(0, 3).map((cat) => {
+                                                const catSemiaridoColor = getSemiaridoPointColor(cat.corHex, cat.name || cat.key);
+                                                const isSelected = selectedTipo === cat.name;
+                                                return (
+                                                    <button
+                                                        key={cat.name}
+                                                        type="button"
+                                                        onClick={() => setSelectedTipo(selectedTipo === cat.name ? 'todos' : cat.name)}
+                                                        className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer whitespace-nowrap ${isSelected
+                                                            ? 'text-white'
+                                                            : 'hover:opacity-80'
+                                                            }`}
+                                                        style={{
+                                                             backgroundColor: isSelected
+                                                                 ? (filtroSemiarido ? catSemiaridoColor : cat.corHex)
+                                                                 : (filtroSemiarido ? `${catSemiaridoColor}20` : `${cat.corHex}15`),
+                                                             color: isSelected ? '#ffffff' : (filtroSemiarido ? catSemiaridoColor : cat.corHex)
+                                                         }}
+                                                    >
+                                                        {cat.shortName}
+                                                    </button>
+                                                );
+                                            })}
                                             {selectedTerritory && (
-                                                <span className="text-[11px] font-medium text-text-primary bg-primary-200/40 px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 whitespace-nowrap justify-center leading-none">
-                                                    <MapPin size={16} className="text-primary-700" />
+                                                <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 whitespace-nowrap justify-center leading-none ${
+                                                    filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'text-text-primary bg-primary-200/40'
+                                                }`}>
+                                                    <MapPin size={16} className={filtroSemiarido ? "text-amber-700" : "text-primary-700"} />
                                                     {territoryName}
                                                 </span>
                                             )}
@@ -723,6 +849,9 @@ export default function AtivosPage() {
                                             filteredAtivosList.map((ativo, idx) => {
                                                 const IconComponent = ativo.icone || Database;
                                                 const isSelected = selectedAssetId === ativo.id;
+                                                const itemColor = filtroSemiarido 
+                                                    ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome) 
+                                                    : (ativo.corHex || '#3B82F6');
 
                                                 return (
                                                     <div
@@ -749,52 +878,64 @@ export default function AtivosPage() {
                                                             }
                                                         }}
                                                         className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 ${isSelected
-                                                                ? 'bg-primary-50/50'
-                                                                : `bg-transparent hover:bg-surface-soft ${ativo.rnp ? 'shadow-[inset_3px_0_0_var(--color-info-500)]' : ''
+                                                                ? (filtroSemiarido ? 'bg-amber-50/80 border-amber-300' : 'bg-primary-50/50')
+                                                                : `bg-transparent hover:bg-surface-soft ${ativo.rnp ? (filtroSemiarido ? 'shadow-[inset_3px_0_0_#F59E0B]' : 'shadow-[inset_3px_0_0_var(--color-info-500)]') : ''
                                                                 }`
                                                             }`}
                                                     >
                                                         <div className="flex items-start gap-3 min-w-0">
-                                                            <div
-                                                                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5  transition-transform"
-                                                                style={{ backgroundColor: `${ativo.corHex || '#3B82F6'}15`, color: ativo.corHex || '#3B82F6' }}
-                                                            >
-                                                                <IconComponent size={16} />
-                                                            </div>
-                                                            <div className="flex flex-col min-w-0">
-                                                                <div className="flex items-center gap-2">
-                                                                    <h4 className="text-[12px] font-semibold text-text-primary group-hover:text-blue-600 transition-colors leading-tight truncate">
-                                                                        {ativo.nome}
-                                                                    </h4>
-                                                                    {ativo.sigla && (
-                                                                        <span className="text-[9px] font-medium px-1.5 py-0.2 bg-border text-text-primary rounded-md shrink-0 inline-flex items-center justify-center leading-none">
-                                                                            {ativo.sigla}
-                                                                        </span>
-                                                                    )}
-                                                                    {ativo.rnp && (
-                                                                        <span
-                                                                            className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 bg-primary-700/15 text-primary-800 border border-info-500/30 rounded-md shrink-0 shadow-2xs justify-center leading-none"
-                                                                            title="Ponto de Presença / Conexão RNP"
-                                                                        >
-                                                                            <Network size={16} className="text-info-500 shrink-0" />
-                                                                            <span>RNP</span>
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                                <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
-                                                                    <span
-                                                                        className="font-medium px-1.5 py-0.2 rounded-md"
-                                                                        style={{ backgroundColor: `${ativo.corHex || '#3B82F6'}12`, color: ativo.corHex || '#3B82F6' }}
-                                                                    >
-                                                                        {ativo.shortTipo || ativo.tipo}
-                                                                    </span>
-                                                                    <span>•</span>
-                                                                    <span>{ativo.municipio}</span>
-                                                                    <span>•</span>
-                                                                    <span className="text-text-secondary">{ativo.territorio}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                             <div
+                                                                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform"
+                                                                 style={{
+                                                                     backgroundColor: `${itemColor}20`,
+                                                                     color: itemColor
+                                                                 }}
+                                                             >
+                                                                 <IconComponent size={16} />
+                                                             </div>
+                                                             <div className="flex flex-col min-w-0">
+                                                                 <div className="flex items-center gap-2">
+                                                                     <h4 className={`text-[12px] font-semibold text-text-primary ${
+                                                                         filtroSemiarido ? 'group-hover:text-amber-700' : 'group-hover:text-blue-600'
+                                                                     } transition-colors leading-tight truncate`}>
+                                                                         {ativo.nome}
+                                                                     </h4>
+                                                                     {ativo.sigla && (
+                                                                         <span className="text-[9px] font-medium px-1.5 py-0.2 bg-border text-text-primary rounded-md shrink-0 inline-flex items-center justify-center leading-none">
+                                                                             {ativo.sigla}
+                                                                         </span>
+                                                                     )}
+                                                                     {ativo.rnp && (
+                                                                         <span
+                                                                             className={`inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 shadow-2xs justify-center leading-none border ${
+                                                                                 filtroSemiarido
+                                                                                     ? 'bg-amber-500/15 text-amber-900 border-amber-500/30'
+                                                                                     : 'bg-primary-700/15 text-primary-800 border-info-500/30'
+                                                                             }`}
+                                                                             title="Ponto de Presença / Conexão RNP"
+                                                                         >
+                                                                             <Network size={16} className={filtroSemiarido ? "text-amber-600 shrink-0" : "text-info-500 shrink-0"} />
+                                                                             <span>RNP</span>
+                                                                         </span>
+                                                                     )}
+                                                                 </div>
+                                                                 <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
+                                                                     <span
+                                                                         className="font-medium px-1.5 py-0.2 rounded-md"
+                                                                         style={{
+                                                                             backgroundColor: `${itemColor}20`,
+                                                                             color: itemColor
+                                                                         }}
+                                                                     >
+                                                                         {ativo.shortTipo || ativo.tipo}
+                                                                     </span>
+                                                                     <span>•</span>
+                                                                     <span>{ativo.municipio}</span>
+                                                                     <span>•</span>
+                                                                     <span className="text-text-secondary">{ativo.territorio}</span>
+                                                                 </div>
+                                                             </div>
+                                                         </div>
 
                                                         <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                                                             {ativo.urlReferencia && (
@@ -803,7 +944,11 @@ export default function AtivosPage() {
                                                                     target="_blank"
                                                                     rel="noreferrer"
                                                                     onClick={(e) => e.stopPropagation()}
-                                                                    className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-primary-600/10 hover:bg-primary-600 text-primary-700 hover:text-white transition-all text-[11px] font-medium shrink-0 justify-center leading-none"
+                                                                    className={`flex items-center gap-1 px-2.5 py-1 rounded-xl transition-all text-[11px] font-medium shrink-0 justify-center leading-none ${
+                                                                        filtroSemiarido
+                                                                            ? 'bg-amber-500/15 hover:bg-amber-600 text-amber-800 hover:text-white'
+                                                                            : 'bg-primary-600/10 hover:bg-primary-600 text-primary-700 hover:text-white'
+                                                                    }`}
                                                                     title="Acessar Página / Informações"
                                                                 >
                                                                     <span>Acessar</span>
@@ -825,113 +970,113 @@ export default function AtivosPage() {
                                 </div>
                             )}
 
-                            {/* ABA 2: TIPOS & CATEGORIAS (BARRAS EMPILHADAS COM RNP) */}
+                            {/* ABA 2: CLASSIFICAÇÃO DOS ATIVOS (ESTILO DE PÍLULAS PROPORCIONAIS RNP) */}
                             {activeTab === 'categorias' && (
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="mb-3 shrink-0 flex items-center justify-between flex-wrap gap-2">
                                         <div>
-                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                            <h3 className="text-[14px] font-bold text-text-primary tracking-tight">
                                                 {selectedTerritory
                                                     ? `Categorias de Ativos em ${territoryName}`
                                                     : 'Classificação dos Ativos de CT&I do Estado'
                                                 }
                                             </h3>
                                             <p className="text-[11px] text-text-secondary font-medium">
-                                                Distribuição quantitativa e proporção com conexão à rede RNP por tipologia oficial
+                                                Proporção de ativos conectados à Rede Nacional de Pesquisa
                                             </p>
                                         </div>
 
-                                        <div className="flex items-center gap-2.5">
-                                            {/* LEGENDA BARRAS EMPILHADAS */}
-                                            <div className="flex items-center gap-2.5 bg-surface-soft border border-border px-2.5 py-1 rounded-full text-[10px] font-medium shadow-2xs justify-center leading-none">
-                                                <div className="flex items-center gap-1">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-primary-700"></span>
-                                                    <span className="text-primary-800">Com RNP</span>
-                                                </div>
-                                                <span className="text-gray-300">|</span>
-                                                <div className="flex items-center gap-1">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-primary-300"></span>
-                                                    <span className="text-primary-700">Demais Ativos</span>
-                                                </div>
-                                            </div>
-
-                                            {selectedTerritory && (
-                                                <span className="text-[11px] font-medium text-text-primary bg-primary-200/40 px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none">
-                                                    <MapPin size={16} className="text-primary-500" />
-                                                    {territoryName}
-                                                </span>
-                                            )}
-                                        </div>
+                                        {selectedTerritory && (
+                                            <span className={`text-[11px] font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none ${filtroSemiarido ? 'bg-amber-200/60' : 'bg-primary-200/40'}`}>
+                                                <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-500'} />
+                                                {territoryName}
+                                            </span>
+                                        )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0">
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat) => {
                                                 const isSelected = selectedTipo === cat.name;
-                                                const IconComponent = cat.icone || Database;
+                                                const catColor = filtroSemiarido 
+                                                    ? getSemiaridoPointColor(cat.corHex, cat.name || cat.key) 
+                                                    : '#2563EB';
+                                                
+                                                const pos = Number(cat.rnpCount || 0);
+                                                const total = Number(cat.count || 0);
+                                                const neg = Math.max(0, total - pos);
+                                                const percentPos = total > 0 ? ((pos / total) * 100).toFixed(1) : '0.0';
+                                                const percentNeg = total > 0 ? ((neg / total) * 100).toFixed(1) : '0.0';
+
+                                                const posPillColor = filtroSemiarido ? catColor : '#2563EB';
+                                                const negPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
+                                                    : 'bg-[#F1F5F9] text-[#334155] border border-[#E2E8F0]';
+                                                const totalPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-100 text-amber-900 border border-amber-300/70'
+                                                    : 'bg-[#F1F5F9] text-[#1E293B] border border-[#E2E8F0]';
 
                                                 return (
                                                     <div
                                                         key={cat.name}
                                                         onClick={() => setSelectedTipo(isSelected ? 'todos' : cat.name)}
-                                                        className={`rounded-2xl p-3 border transition-all cursor-pointer ${isSelected
-                                                            ? 'bg-surface border-primary-500 shadow-md ring-2 ring-primary-500/20'
-                                                            : 'bg-surface-soft/60 border-neutral-100 hover:bg-surface hover:border-primary-200 shadow-2xs'
+                                                        className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
+                                                            ? (filtroSemiarido ? 'bg-amber-50/70 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
+                                                            : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-neutral-200')
                                                             }`}
                                                     >
-                                                        <div className="flex items-center justify-between mb-2">
-                                                            <div className="flex items-center gap-2 min-w-0">
-                                                                <div
-                                                                    className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
-                                                                    style={{ backgroundColor: `${cat.corHex}20`, color: cat.corHex }}
-                                                                >
-                                                                    <IconComponent size={13} />
-                                                                </div>
-                                                                <span className="text-[12px] font-semibold text-text-primary truncate">
-                                                                    {cat.name}
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-[12px] font-semibold text-text-primary">
-                                                                    {cat.count} {cat.count === 1 ? 'ativo' : 'ativos'}
-                                                                </span>
-                                                                <span
-                                                                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 inline-flex items-center justify-center leading-none"
-                                                                    title={`${cat.percent}% do total de ativos`}
-                                                                >
-                                                                    {cat.percent}%
-                                                                </span>
-                                                                {cat.rnpCount > 0 && (
-                                                                    <span
-                                                                        className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-primary-700/15 text-primary-800 border border-primary-700/20 shadow-2xs shrink-0 inline-flex items-center justify-center leading-none"
-                                                                        title={`${cat.rnpCount} com RNP`}
-                                                                    >
-                                                                        {cat.rnpCount} RNP ({cat.rnpPercent % 1 === 0 ? cat.rnpPercent.toFixed(0) : cat.rnpPercent.toFixed(1)}%)
-                                                                    </span>
-                                                                )}
+                                                        {/* RÓTULO COM NOME DA CATEGORIA */}
+                                                        <div className="text-[12px] font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                            <div className="flex items-center gap-1.5 min-w-0">
+                                                                <span className="truncate">{cat.shortName || cat.name}</span>
                                                             </div>
                                                         </div>
 
-                                                        {/* TRACK DE BARRA COMPARATIVA */}
-                                                        <div className="w-full h-[18px] rounded-full bg-primary-50/50 overflow-hidden relative flex items-center">
+                                                        {/* BARRAS DE PÍLULAS: [ COM RNP (xx%) ] [ SEM RNP (yy%) ] [ TOTAL ] */}
+                                                        <div className="flex items-center gap-2 w-full">
+                                                            {/* COM RNP (Positivo) */}
+                                                            {pos > 0 && (
+                                                                <div
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-3 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
+                                                                    style={{
+                                                                        flexGrow: pos,
+                                                                        flexBasis: 0,
+                                                                        backgroundColor: posPillColor,
+                                                                        minWidth: neg > 0 ? '64px' : 'auto'
+                                                                    }}
+                                                                    title={`Com RNP: ${pos} (${percentPos}%)`}
+                                                                >
+                                                                    <span className="text-[11.5px] font-bold tabular-nums leading-none">
+                                                                        {pos} <span className="text-[9.5px] font-medium opacity-90">({percentPos}%)</span>
+                                                                    </span>
+                                                                </div>
+                                                            )}
+
+                                                            {/* SEM RNP (Negativo) */}
+                                                            {neg > 0 && (
+                                                                <div
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-3 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs`}
+                                                                    style={{
+                                                                        flexGrow: neg,
+                                                                        flexBasis: 0,
+                                                                        minWidth: pos > 0 ? '64px' : 'auto'
+                                                                    }}
+                                                                    title={`Sem RNP: ${neg} (${percentNeg}%)`}
+                                                                >
+                                                                    <span className="text-[11.5px] font-bold tabular-nums leading-none">
+                                                                        {neg} <span className="text-[9.5px] font-medium opacity-85">({percentNeg}%)</span>
+                                                                    </span>
+                                                                </div>
+                                                            )}
+
+                                                            {/* TOTAL */}
                                                             <div
-                                                                className="h-full flex rounded-full overflow-hidden transition-all duration-500"
-                                                                style={{ width: `${cat.percent}%` }}
+                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`Total de ativos: ${total}`}
                                                             >
-                                                                {cat.rnpCount > 0 && (
-                                                                    <div
-                                                                        className="h-full bg-primary-600 transition-all duration-300"
-                                                                        style={{ width: `${cat.rnpPercent}%` }}
-                                                                        title={`${cat.name}: ${cat.rnpCount} com RNP`}
-                                                                    />
-                                                                )}
-                                                                {cat.outrosCount > 0 && (
-                                                                    <div
-                                                                        className="h-full bg-primary-200 transition-all duration-300"
-                                                                        style={{ width: `${cat.outrosPercent}%` }}
-                                                                        title={`${cat.name}: ${cat.outrosCount} demais`}
-                                                                    />
-                                                                )}
+                                                                <span className="text-[12px] font-bold tabular-nums leading-none">
+                                                                    {total}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -943,6 +1088,22 @@ export default function AtivosPage() {
                                                 <p className="text-[12px] font-medium text-text-primary">Nenhum ativo registrado neste território</p>
                                             </div>
                                         )}
+                                    </div>
+
+                                    {/* LEGENDA NO RODAPÉ (PADRÃO IDÊNTICO AO REFERENCIAL) */}
+                                    <div className="flex items-center justify-between gap-4 pt-3 border-t border-neutral-100 shrink-0 text-[11px] font-medium mt-auto">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-[#2563EB]'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-900 font-semibold' : 'text-neutral-700 font-semibold'}>Com RNP</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-500/20' : 'bg-[#E2E8F0]'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-800' : 'text-neutral-600'}>Sem RNP</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 ml-auto">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-300' : 'bg-[#CBD5E1]'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-800 font-medium' : 'text-neutral-600 font-medium'}>Total</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -971,7 +1132,11 @@ export default function AtivosPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedTerritory(null)}
-                                                    className="text-[10px] font-medium text-primary-700 hover:text-[#0369A1] hover:underline bg-primary-200/50 px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none"
+                                                    className={`text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${
+                                                        filtroSemiarido
+                                                            ? 'text-amber-800 hover:text-amber-950 bg-amber-100/70 hover:bg-amber-100 border border-amber-200'
+                                                            : 'text-primary-700 hover:text-[#0369A1] hover:underline bg-primary-200/50'
+                                                    }`}
                                                 >
                                                     ← Ver Todos os Territórios
                                                 </button>
@@ -991,13 +1156,13 @@ export default function AtivosPage() {
                                                     const isFirst = index === 0;
                                                     const rankStr = String(m.rank || index + 1).padStart(2, '0');
                                                     const rankStyle = isFirst
-                                                        ? 'bg-primary-500 text-white shadow-2xs'
-                                                        : 'bg-primary-100 text-primary-700 border border-primary-200/50';
-                                                    const fillColor = isFirst ? 'bg-primary-500' : 'bg-primary-200';
-                                                    const textStyle = isFirst ? 'font-medium text-white' : 'font-medium text-primary-950';
+                                                        ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white shadow-2xs')
+                                                        : (filtroSemiarido ? 'bg-amber-100 text-amber-800 border border-amber-200/60' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
+                                                    const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300' : 'bg-primary-200');
+                                                    const textStyle = isFirst ? 'font-medium text-white' : (filtroSemiarido ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
                                                     const valueStyle = isFirst
-                                                        ? 'bg-primary-50 text-primary-800 border border-primary-200/70'
-                                                        : 'bg-primary-50 text-primary-700 border border-primary-200/50';
+                                                        ? (filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border border-amber-300/70' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
+                                                        : (filtroSemiarido ? 'bg-amber-50 text-amber-800 border border-amber-200/60' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
 
                                                     return (
                                                         <div
@@ -1023,7 +1188,9 @@ export default function AtivosPage() {
                                                             </div>
 
                                                             {/* BARRA: TRACK + FILL + NOME */}
-                                                            <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                                            <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
+                                                                filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                                            }`}>
                                                                 <div 
                                                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                     style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
@@ -1035,7 +1202,9 @@ export default function AtivosPage() {
 
                                                             {/* RNP PILL */}
                                                             {m.rnpCount > 0 && (
-                                                                <div className="h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none bg-primary-100/80 text-primary-800 border border-primary-200/60" title={`${m.rnpCount} com RNP`}>
+                                                                <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none border ${
+                                                                    filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border-amber-300/70' : 'bg-primary-100/80 text-primary-800 border border-primary-200/60'
+                                                                }`} title={`${m.rnpCount} com RNP`}>
                                                                     {m.rnpCount} RNP
                                                                 </div>
                                                             )}
@@ -1058,13 +1227,13 @@ export default function AtivosPage() {
                                                 const isFirst = index === 0;
                                                 const rankStr = String(t.rank || index + 1).padStart(2, '0');
                                                 const rankStyle = isFirst
-                                                    ? 'bg-primary-500 text-white shadow-2xs'
-                                                    : 'bg-primary-100 text-primary-700 border border-primary-200/50';
-                                                const fillColor = isFirst ? 'bg-primary-500' : 'bg-primary-200';
-                                                const textStyle = isFirst ? 'font-medium text-white' : 'font-medium text-primary-950';
+                                                    ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white shadow-2xs')
+                                                    : (filtroSemiarido ? 'bg-amber-100 text-amber-800 border border-amber-200/60' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
+                                                const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300' : 'bg-primary-200');
+                                                const textStyle = isFirst ? 'font-medium text-white' : (filtroSemiarido ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
                                                 const valueStyle = isFirst
-                                                    ? 'bg-primary-50 text-primary-800 border border-primary-200/70'
-                                                    : 'bg-primary-50 text-primary-700 border border-primary-200/50';
+                                                    ? (filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border border-amber-300/70' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
+                                                    : (filtroSemiarido ? 'bg-amber-50 text-amber-800 border border-amber-200/60' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
 
                                                 return (
                                                     <div
@@ -1082,7 +1251,9 @@ export default function AtivosPage() {
                                                         </div>
 
                                                         {/* BARRA: TRACK + FILL + NOME */}
-                                                        <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
+                                                            filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                                        }`}>
                                                             <div 
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
@@ -1094,7 +1265,9 @@ export default function AtivosPage() {
 
                                                         {/* RNP PILL */}
                                                         {t.rnpCount > 0 && (
-                                                            <div className="h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none bg-primary-100/80 text-primary-800 border border-primary-200/60" title={`${t.rnpCount} com RNP`}>
+                                                            <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none border ${
+                                                                filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border-amber-300/70' : 'bg-primary-100/80 text-primary-800 border border-primary-200/60'
+                                                            }`} title={`${t.rnpCount} com RNP`}>
                                                                 {t.rnpCount} RNP
                                                             </div>
                                                         )}

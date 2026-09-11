@@ -23,6 +23,7 @@ export const DataProvider = ({ children }) => {
 
   const [loadingStats, setLoadingStats] = useState(true);
   const [selectedTerritory, setSelectedTerritory] = useState(null);
+  const [filtroSemiarido, setFiltroSemiarido] = useState(false);
 
   useEffect(() => {
     const carregarEstatisticas = async () => {
@@ -258,7 +259,9 @@ export const DataProvider = ({ children }) => {
  kpisGlobais, 
  loadingStats,
  selectedTerritory,
- setSelectedTerritory 
+ setSelectedTerritory,
+ filtroSemiarido,
+ setFiltroSemiarido 
  }}>
  {children}
  </DataContext.Provider>

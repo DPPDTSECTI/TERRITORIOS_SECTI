@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, memo, useContext } from 'react';
 import { 
  MapPin, 
  Filter, 
@@ -10,6 +10,7 @@ import {
  ExternalLink
 } from 'lucide-react';
 import { normalize } from '../../utils/normalization';
+import { DataContext } from '../../context/DataContext';
 
 function CardLista({
  // --- Props Comuns ---
@@ -38,6 +39,7 @@ function CardLista({
  showSearch = false,
  searchPlaceholder = "Buscar..."
 }) {
+ const { filtroSemiarido } = useContext(DataContext) || {};
  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
  const [internalSearch, setInternalSearch] = useState('');
  const dropdownRef = useRef(null);
@@ -99,7 +101,7 @@ function CardLista({
  onClick={() => onTabChange(tab.id)}
  className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
  isActive
- ? 'bg-primary-900 text-white shadow-xs'
+ ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
  : 'text-text-secondary hover:text-text-primary'
  }`}
  >
@@ -129,7 +131,9 @@ function CardLista({
  if (onSearchChange) onSearchChange(val);
  }}
  placeholder={searchPlaceholder}
- className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors"
+ className={`w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${
+ filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+ } focus:outline-none transition-colors`}
  />
  {currentSearch && (
  <button
@@ -190,7 +194,7 @@ function CardLista({
  }}
  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors duration-150 border cursor-pointer select-none ${
  selectedFilter !== 'todos'
- ? 'bg-primary-900 text-white border-primary-900 shadow-sm'
+ ? (filtroSemiarido ? 'bg-amber-600 text-white border-amber-600 shadow-sm' : 'bg-primary-900 text-white border-primary-900 shadow-sm')
  : 'bg-surface text-text-secondary border-border hover:bg-surface-soft'
  }`}
  >
@@ -217,7 +221,9 @@ function CardLista({
  setIsDropdownOpen(false); 
  }}
  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors text-left cursor-pointer ${
- selectedFilter === 'todos' ? 'bg-surface-soft text-text-primary font-semibold' : 'text-text-secondary hover:bg-surface-soft'
+ selectedFilter === 'todos' 
+ ? (filtroSemiarido ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-surface-soft text-text-primary font-semibold')
+ : 'text-text-secondary hover:bg-surface-soft'
  }`}
  >
  <span className="truncate">Todos</span>
@@ -233,7 +239,9 @@ function CardLista({
  setIsDropdownOpen(false); 
  }}
  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition-colors text-left cursor-pointer ${
- selectedFilter === option ? 'bg-surface-soft text-text-primary font-bold' : 'text-text-secondary hover:bg-surface-soft'
+ selectedFilter === option 
+ ? (filtroSemiarido ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-surface-soft text-text-primary font-bold')
+ : 'text-text-secondary hover:bg-surface-soft'
  }`}
  >
  <span className="truncate pr-2">{option}</span>
@@ -262,7 +270,9 @@ function CardLista({
  <div
  key={item.id}
  onClick={() => onItemClick(item)}
- className="flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-surface-soft transition-colors duration-150 cursor-pointer border border-transparent hover:border-border group shrink-0"
+ className={`flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-surface-soft transition-colors duration-150 cursor-pointer border border-transparent ${
+ filtroSemiarido ? 'hover:border-amber-300' : 'hover:border-border'
+ } group shrink-0`}
  >
  <div 
  className="w-9 h-9 rounded-full flex items-center justify-center shrink-0  transition-transform duration-200"
@@ -272,7 +282,9 @@ function CardLista({
  </div>
 
  <div className="flex flex-col flex-1 min-w-0">
- <span className="text-[12px] font-medium text-text-primary leading-tight mb-0.5 group-hover:text-primary-600 transition-colors line-clamp-1 truncate" title={item.nome || item.entidade}>
+ <span className={`text-[12px] font-medium text-text-primary leading-tight mb-0.5 ${
+ filtroSemiarido ? 'group-hover:text-amber-700' : 'group-hover:text-primary-600'
+ } transition-colors line-clamp-1 truncate`} title={item.nome || item.entidade}>
  {item.nome || item.entidade}
  </span>
  <div className="flex items-center justify-between mt-0.5 gap-1.5">

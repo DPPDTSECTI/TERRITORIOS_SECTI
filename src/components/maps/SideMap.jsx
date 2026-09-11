@@ -1,13 +1,21 @@
-import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback, useContext } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, Polyline, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
-import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2, BookOpen } from 'lucide-react';
+import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2, BookOpen, SunMedium } from 'lucide-react';
+import { DataContext } from '../../context/DataContext';
 
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
+import { isMunicipioSemiarido } from '../../constants/semiarido';
+
+const SEMIARIDO_TERRITORY_IDS = new Set(
+  municipiosDB
+    .filter((m) => isMunicipioSemiarido(m.nome_municipio))
+    .map((m) => String(m.id_territorio))
+);
 
 function normalizeName(value) {
  if (!value) return '';
@@ -99,101 +107,131 @@ export function isInsideBahia(lat, lng) {
 }
 
 // Marcador do Cluster
-const createClusterIcon = (count) => {
- const size = 20;
- const fontSize = 9.5;
+const createClusterIcon = (count, isSemiarido = false) => {
+  const size = 20;
+  const fontSize = 9.5;
+  const bg = isSemiarido ? '#D97706' : '#1E40AF';
+  const shadow = isSemiarido ? 'rgba(217, 119, 6, 0.45)' : 'rgba(30, 64, 175, 0.3)';
 
- return L.divIcon({
- html: `
- <div style="
- width: ${size}px;
- height: ${size}px;
- background: #1E40AF;
- color: #FFFFFF;
- border: 1.5px solid #FFFFFF;
- border-radius: 50%;
- display: flex;
- align-items: center;
- justify-content: center;
- font-weight: 700;
- font-size: ${fontSize}px;
- box-shadow: 0 1px 3px rgba(30, 64, 175, 0.3);
- cursor: pointer;
- font-family: inherit;
- transform: none !important;
- ">
- ${count}
- </div>
- `,
- className: 'custom-cluster-marker',
- iconSize: [size, size],
- iconAnchor: [size / 2, size / 2]
- });
+  return L.divIcon({
+    html: `
+    <div style="
+      width: ${size}px;
+      height: ${size}px;
+      background: ${bg};
+      color: #FFFFFF;
+      border: 1.5px solid #FFFFFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: ${fontSize}px;
+      box-shadow: 0 1px 4px ${shadow};
+      cursor: pointer;
+      font-family: inherit;
+      transform: none !important;
+    ">
+      ${count}
+    </div>
+    `,
+    className: 'custom-cluster-marker',
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2]
+  });
 };
+
+export function getSemiaridoPointColor(corHex, nameOrTipo = '') {
+  const str = String(nameOrTipo || '').toLowerCase();
+  if (str.includes('privada')) return '#F59E0B'; // Âmbar dourado
+  if (str.includes('estadual')) return '#D97706'; // Âmbar profundo
+  if (str.includes('federal') && str.includes('universidade')) return '#B45309'; // Âmbar terracota
+  if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if')) return '#EAB308'; // Ouro girassol
+  if (str.includes('aceleradora')) return '#CA8A04'; // Ouro mostarda
+  if (str.includes('dinamizador')) return '#FBBF24'; // Calêndula
+  if (str.includes('incubadora')) return '#D48806'; // Mel ocre
+  if (str.includes('parque')) return '#78350F'; // Castanho âmbar
+  if (str.includes('ict')) return '#B8860B'; // Dark goldenrod
+  if (str.includes('hub') || str.includes('coworking') || str.includes('fablab') || str.includes('maker')) return '#ECC94B'; // Trigo dourado
+  if (str.includes('centro') || str.includes('p&d')) return '#F59E0B'; // Âmbar P&D
+  if (str.includes('investimento') || str.includes('fundo') || str.includes('fomento')) return '#CD7F32'; // Bronze dourado
+  if (str.includes('pesquisa')) return '#A16207'; // Ocre dourado
+  if (str.includes('apl') || str.includes('arranjo')) return '#B45309'; // Âmbar Terracota APL
+  if (str.includes('ig potencial') || str.includes('potencial')) return '#FBBF24'; // Amarelo IG Potencial
+  if (str.includes('ig') || str.includes('indica')) return '#CA8A04'; // Ouro Mostarda IG
+  return '#D97706';
+}
 
 // Marcador Individual
-const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false) => {
- const size = isSelected ? 24 : 18;
- const safeColor = corHex || '#3B82F6';
+const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false, isSemiarido = false, assetTipo = '') => {
+  const size = isSelected ? 24 : 18;
+  const safeColor = isSemiarido
+    ? getSemiaridoPointColor(corHex, assetTipo)
+    : (corHex || '#3B82F6');
+  const selectedBorderColor = isSemiarido ? '#78350F' : '#1E40AF';
+  const selectedShadow = isSemiarido ? '0 3px 10px rgba(217, 119, 6, 0.5)' : '0 3px 10px rgba(30, 64, 175, 0.45)';
 
- const defaultSvg = `<svg width="${isSelected ? 13 : 10}" height="${isSelected ? 13 : 10}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
- const innerSvg = svgMarkup || defaultSvg;
+  const defaultSvg = `<svg width="${isSelected ? 13 : 10}" height="${isSelected ? 13 : 10}" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
+  let innerSvg = svgMarkup || defaultSvg;
+  if (isSemiarido && innerSvg) {
+    innerSvg = innerSvg.replace(/stroke="[^"]+"/g, 'stroke="#ffffff"');
+  }
 
- return L.divIcon({
- html: `
- <div style="
- width: ${size}px;
- height: ${size}px;
- background-color: ${safeColor};
- color: #ffffff;
- border: ${isSelected ? '2.5px solid #1E40AF' : '1.5px solid #ffffff'};
- border-radius: 50%;
- display: flex;
- align-items: center;
- justify-content: center;
- box-shadow: ${isSelected ? '0 3px 10px rgba(30, 64, 175, 0.45)' : '0 1px 3px rgba(0, 0, 0, 0.15)'};
- cursor: pointer;
- transform: none !important;
- ">
- ${innerSvg}
- </div>
- `,
- className: `custom-single-asset-marker ${isSelected ? 'z-50' : ''}`,
- iconSize: [size, size],
- iconAnchor: [size / 2, size / 2]
- });
+  return L.divIcon({
+    html: `
+    <div style="
+      width: ${size}px;
+      height: ${size}px;
+      background-color: ${safeColor};
+      color: #ffffff;
+      border: ${isSelected ? `2.5px solid ${selectedBorderColor}` : '1.5px solid #ffffff'};
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: ${isSelected ? selectedShadow : '0 1px 3px rgba(0, 0, 0, 0.15)'};
+      cursor: pointer;
+      transform: none !important;
+    ">
+      ${innerSvg}
+    </div>
+    `,
+    className: `custom-single-asset-marker ${isSelected ? 'z-50' : ''}`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2]
+  });
 };
 
-const partnerPinIcon = L.divIcon({
- html: `
- <div style="
- background-color: #3B82F6;
- width: 6px;
- height: 6px;
- border-radius: 50%;
- border: 1px solid #FFFFFF;
- box-shadow: 0 1px 2px rgba(37, 99, 235, 0.3);
- "></div>
- `,
- className: 'partner-map-pin',
- iconSize: [6, 6],
- iconAnchor: [3, 3]
+const createPartnerPinIcon = (isSemiarido = false) => L.divIcon({
+  html: `
+  <div style="
+    background-color: ${isSemiarido ? '#F59E0B' : '#3B82F6'};
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 1px solid #FFFFFF;
+    box-shadow: 0 1px 2px ${isSemiarido ? 'rgba(245, 158, 11, 0.4)' : 'rgba(37, 99, 235, 0.3)'};
+  "></div>
+  `,
+  className: 'partner-map-pin',
+  iconSize: [6, 6],
+  iconAnchor: [3, 3]
 });
 
-const selectedPartnerPinIcon = L.divIcon({
- html: `
- <div style="
- background-color: #1E40AF;
- width: 7px;
- height: 7px;
- border-radius: 50%;
- border: 1px solid #FFFFFF;
- box-shadow: 0 1px 3px rgba(30, 64, 175, 0.4);
- "></div>
- `,
- className: 'partner-map-pin-selected',
- iconSize: [7, 7],
- iconAnchor: [3.5, 3.5]
+const createSelectedPartnerPinIcon = (isSemiarido = false) => L.divIcon({
+  html: `
+  <div style="
+    background-color: ${isSemiarido ? '#B45309' : '#1E40AF'};
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid #FFFFFF;
+    box-shadow: 0 1px 3px ${isSemiarido ? 'rgba(180, 83, 9, 0.45)' : 'rgba(30, 64, 175, 0.4)'};
+  "></div>
+  `,
+  className: 'partner-map-pin-selected',
+  iconSize: [7, 7],
+  iconAnchor: [3.5, 3.5]
 });
 
 export const HEAT_LEVELS = [
@@ -205,7 +243,24 @@ export const HEAT_LEVELS = [
   { min: 71, max: Infinity, label: '70+ cursos', color: '#0F1D30', text: '#38BDF8' },
 ];
 
-export const getHeatColor = (count) => {
+export const SEMIARIDO_HEAT_LEVELS = [
+  { min: 0, max: 0, label: '0 cursos', color: '#FEF9C3', text: '#854D0E' },
+  { min: 1, max: 5, label: '1 a 5', color: '#FDE68A', text: '#92400E' },
+  { min: 6, max: 15, label: '6 a 15', color: '#FBBF24', text: '#78350F' },
+  { min: 16, max: 35, label: '16 a 35', color: '#F59E0B', text: '#FFFFFF' },
+  { min: 36, max: 70, label: '36 a 70', color: '#D97706', text: '#FFFFFF' },
+  { min: 71, max: Infinity, label: '70+ cursos', color: '#78350F', text: '#FEF3C7' },
+];
+
+export const getHeatColor = (count, isSemiarido = false) => {
+  if (isSemiarido) {
+    if (count === 0) return '#FEF9C3';
+    if (count <= 5) return '#FDE68A';
+    if (count <= 15) return '#FBBF24';
+    if (count <= 35) return '#F59E0B';
+    if (count <= 70) return '#D97706';
+    return '#78350F';
+  }
   if (count === 0) return '#F1F5F9';
   if (count <= 5) return '#BAE6FD';
   if (count <= 15) return '#38BDF8';
@@ -215,7 +270,21 @@ export const getHeatColor = (count) => {
 };
 
 // Escala Logarítmica para mitigar o impacto de grandes outliers e destacar valores intermediários
-export const getRelativeHeatColor = (count, maxCount) => {
+export const getRelativeHeatColor = (count, maxCount, isSemiarido = false) => {
+  if (isSemiarido) {
+    if (!count || count === 0) return '#FEF9C3';
+    if (maxCount <= 0) return '#FEF9C3';
+    const logVal = Math.log(count + 1);
+    const logMax = Math.log(maxCount + 1);
+    const ratio = logMax > 0 ? logVal / logMax : 0;
+
+    if (ratio <= 0.15) return '#FDE68A';
+    if (ratio <= 0.35) return '#FBBF24';
+    if (ratio <= 0.60) return '#F59E0B';
+    if (ratio <= 0.85) return '#D97706';
+    return '#78350F';
+  }
+
   if (!count || count === 0) return '#F1F5F9';
   if (maxCount <= 0) return '#F1F5F9';
 
@@ -391,65 +460,76 @@ function ChangeMapView({ coords }) {
   return null;
 }
 
-function SingleAssetPopupContent({ ativo }) {
- if (!ativo) return null;
+function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
+  if (!ativo) return null;
 
- const IconComp = ativo.icone;
+  const IconComp = ativo.icone;
+  const iconColor = filtroSemiarido
+    ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome)
+    : (ativo.corHex || '#2563EB');
 
- return (
- <div className="p-2 min-w-[220px] max-w-[260px] flex flex-col gap-1.5 font-sans">
- <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-1">
- <div className="flex items-center gap-1.5 min-w-0">
- <div
- className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-xs"
- style={{ backgroundColor: ativo.corHex || '#2563EB' }}
- >
- {IconComp && <IconComp size={11} className="text-white" />}
- </div>
- <span className="text-[11px] font-medium text-text-primary uppercase truncate">
- {ativo.shortTipo || ativo.tipo}
- </span>
- </div>
- </div>
+  return (
+    <div className="p-2 min-w-[220px] max-w-[260px] flex flex-col gap-1.5 font-sans">
+      <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-1">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div
+            className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-xs"
+            style={{ backgroundColor: iconColor }}
+          >
+            {IconComp && <IconComp size={11} className="text-white" />}
+          </div>
+          <span className="text-[11px] font-medium text-text-primary uppercase truncate">
+            {ativo.shortTipo || ativo.tipo}
+          </span>
+        </div>
+      </div>
 
- <h4 className="font-medium text-text-primary text-[13px] leading-tight tracking-tight">
- {ativo.nome || ativo.entidade}
- </h4>
+      <h4 className="font-medium text-text-primary text-[13px] leading-tight tracking-tight">
+        {ativo.nome || ativo.entidade}
+      </h4>
 
- <div className="flex flex-col gap-1 bg-surface-soft p-2 rounded-xl border border-border/70 text-[11px]">
- <div className="flex items-center gap-1.5 text-text-secondary">
- <MapPin size={16} className="text-primary-600 shrink-0" />
- <span className="font-semibold text-text-primary truncate">{ativo.municipio}</span>
- </div>
- {ativo.territorio && (
- <div className="flex items-center gap-1.5 text-text-secondary">
- <Building size={16} className="text-text-secondary shrink-0" />
- <span className="font-medium text-text-secondary truncate">
- {ativo.territorio.replace(/^Território de Identidade\s+/i, '')}
- </span>
- </div>
- )}
- {ativo.rnp && (
- <div className="flex items-center gap-1.5 text-[11px] font-medium text-info-600 bg-info-500/15 px-2 py-0.5 rounded-lg border border-info-500/20 justify-center leading-none">
- <span className="w-1.5 h-1.5 rounded-full bg-info-500"></span>
- <span>Ponto de Presença / Conexão RNP</span>
- </div>
- )}
- </div>
- </div>
- );
+      <div className="flex flex-col gap-1 bg-surface-soft p-2 rounded-xl border border-border/70 text-[11px]">
+        <div className="flex items-center gap-1.5 text-text-secondary">
+          <MapPin size={16} className={filtroSemiarido ? 'text-amber-600 shrink-0' : 'text-primary-600 shrink-0'} />
+          <span className="font-semibold text-text-primary truncate">{ativo.municipio}</span>
+        </div>
+        {ativo.territorio && (
+          <div className="flex items-center gap-1.5 text-text-secondary">
+            <Building size={16} className="text-text-secondary shrink-0" />
+            <span className="font-medium text-text-secondary truncate">
+              {ativo.territorio.replace(/^Território de Identidade\s+/i, '')}
+            </span>
+          </div>
+        )}
+        {ativo.rnp && (
+          <div className={`flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-lg border justify-center leading-none ${
+            filtroSemiarido
+              ? 'text-amber-800 bg-amber-500/15 border-amber-500/30'
+              : 'text-info-600 bg-info-500/15 border-info-500/20'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-info-500'}`}></span>
+            <span>Ponto de Presença / Conexão RNP</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
-function SingleCadeiaPopupContent({ cadeia }) {
+function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false }) {
   if (!cadeia) return null;
+  const badgeColor = filtroSemiarido
+    ? getSemiaridoPointColor(cadeia.corHex, cadeia.tipo || cadeia.shortTipo || cadeia.nome)
+    : (cadeia.corHex || '#2563EB');
+
   return (
     <div className="p-3 max-w-[260px] text-left select-text font-sans">
       <div className="flex items-center gap-2 mb-1.5">
         <span
           className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded"
           style={{
-            backgroundColor: `${cadeia.corHex || '#2563EB'}20`,
-            color: cadeia.corHex || '#2563EB'
+            backgroundColor: `${badgeColor}20`,
+            color: badgeColor
           }}
         >
           {cadeia.shortTipo || cadeia.tipo || 'Cadeia Produtiva'}
@@ -501,12 +581,12 @@ function SingleCadeiaPopupContent({ cadeia }) {
   );
 }
 
-function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode }) {
+function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false }) {
   return (
     <Marker
       key={elem.key}
       position={[elem.lat, elem.lng]}
-      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected)}
+      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected, filtroSemiarido, ativo.tipo || ativo.shortTipo || ativo.categoria || ativo.nome)}
       eventHandlers={{
         click: (e) => {
           L.DomEvent.stopPropagation(e);
@@ -522,39 +602,39 @@ function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, o
     >
       {mode !== 'cadeias' ? (
         <Popup className="custom-premium-popup" autoPan={true}>
-          <SingleAssetPopupContent ativo={ativo} />
+          <SingleAssetPopupContent ativo={ativo} filtroSemiarido={filtroSemiarido} />
         </Popup>
       ) : (
         <Popup className="custom-premium-popup" autoPan={true}>
-          <SingleCadeiaPopupContent cadeia={ativo} />
+          <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} />
         </Popup>
       )}
     </Marker>
   );
 }
 
-function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode }) {
- const map = useMap();
- const [bounds, setBounds] = useState(null);
- const [zoom, setZoom] = useState(map.getZoom());
+function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode, filtroSemiarido = false }) {
+  const map = useMap();
+  const [bounds, setBounds] = useState(null);
+  const [zoom, setZoom] = useState(map.getZoom());
 
- const deduplicatedAtivos = useMemo(() => {
- const seen = new Map();
+  const deduplicatedAtivos = useMemo(() => {
+    const seen = new Map();
 
- processedAtivos.forEach((a) => {
- if (!a.lat || !a.lng || isNaN(a.lat) || isNaN(a.lng) || a.lat === 0) return;
+    processedAtivos.forEach((a) => {
+      if (!a.lat || !a.lng || isNaN(a.lat) || isNaN(a.lng) || a.lat === 0) return;
 
- const normNome = normalizeName(a.nome || a.entidade || a.nome_ativo || '');
- const latKey = Number(a.lat).toFixed(5);
- const lngKey = Number(a.lng).toFixed(5);
- const key = `${normNome}_${latKey}_${lngKey}_${a.tipo || ''}`;
+      const normNome = normalizeName(a.nome || a.entidade || a.nome_ativo || '');
+      const latKey = Number(a.lat).toFixed(5);
+      const lngKey = Number(a.lng).toFixed(5);
+      const key = `${normNome}_${latKey}_${lngKey}_${a.tipo || ''}`;
 
- if (!seen.has(key)) {
- seen.set(key, a);
- }
- });
+      if (!seen.has(key)) {
+        seen.set(key, a);
+      }
+    });
 
- const rawList = Array.from(seen.values());
+    const rawList = Array.from(seen.values());
 
     const coordGroups = new Map();
     rawList.forEach((a) => {
@@ -565,12 +645,12 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
       coordGroups.get(cKey).push(a);
     });
 
- const fixedAtivos = [];
- coordGroups.forEach((group) => {
- const total = group.length;
- group.forEach((a, idx) => {
- let fixedLat = Number(a.lat);
- let fixedLng = Number(a.lng);
+    const fixedAtivos = [];
+    coordGroups.forEach((group) => {
+      const total = group.length;
+      group.forEach((a, idx) => {
+        let fixedLat = Number(a.lat);
+        let fixedLng = Number(a.lng);
 
         if (total > 1) {
           const SPREAD = 0.00065;
@@ -583,143 +663,144 @@ function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedA
           }
         }
 
- fixedAtivos.push({
- ...a,
- lat: fixedLat,
- lng: fixedLng
- });
- });
- });
+        fixedAtivos.push({
+          ...a,
+          lat: fixedLat,
+          lng: fixedLng
+        });
+      });
+    });
 
- return fixedAtivos;
- }, [processedAtivos]);
+    return fixedAtivos;
+  }, [processedAtivos]);
 
- const superclusterIndex = useMemo(() => {
- if (selectedCadeia) return null;
+  const superclusterIndex = useMemo(() => {
+    if (selectedCadeia) return null;
 
- const points = deduplicatedAtivos.map((a) => ({
- type: 'Feature',
- properties: {
- cluster: false,
- ativoId: a.id,
- ativoData: a
- },
- geometry: {
- type: 'Point',
- coordinates: [a.lng, a.lat]
- }
- }));
+    const points = deduplicatedAtivos.map((a) => ({
+      type: 'Feature',
+      properties: {
+        cluster: false,
+        ativoId: a.id,
+        ativoData: a
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [a.lng, a.lat]
+      }
+    }));
 
- const sc = new Supercluster({
- radius: 40,
- maxZoom: 14,
- minPoints: 2
- });
+    const sc = new Supercluster({
+      radius: 40,
+      maxZoom: 14,
+      minPoints: 2
+    });
 
- sc.load(points);
- return sc;
- }, [deduplicatedAtivos, selectedCadeia]);
+    sc.load(points);
+    return sc;
+  }, [deduplicatedAtivos, selectedCadeia]);
 
- const updateBoundsAndZoom = useCallback(() => {
- const b = map.getBounds();
- setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
- setZoom(map.getZoom());
- }, [map]);
+  const updateBoundsAndZoom = useCallback(() => {
+    const b = map.getBounds();
+    setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+    setZoom(map.getZoom());
+  }, [map]);
 
- useMapEvents({
- moveend: updateBoundsAndZoom,
- zoomend: updateBoundsAndZoom
- });
+  useMapEvents({
+    moveend: updateBoundsAndZoom,
+    zoomend: updateBoundsAndZoom
+  });
 
- useEffect(() => {
- updateBoundsAndZoom();
- }, [updateBoundsAndZoom]);
+  useEffect(() => {
+    updateBoundsAndZoom();
+  }, [updateBoundsAndZoom]);
 
- const renderedElements = useMemo(() => {
- if (selectedCadeia) {
- return deduplicatedAtivos.map((ativo, idx) => ({
- isCluster: false,
- lng: ativo.lng,
- lat: ativo.lat,
- ativo,
- key: `ativo-focused-${ativo.id}-${idx}`
- }));
- }
+  const renderedElements = useMemo(() => {
+    if (selectedCadeia) {
+      return deduplicatedAtivos.map((ativo, idx) => ({
+        isCluster: false,
+        lng: ativo.lng,
+        lat: ativo.lat,
+        ativo,
+        key: `ativo-focused-${ativo.id}-${idx}`
+      }));
+    }
 
- if (!bounds || !superclusterIndex) return [];
+    if (!bounds || !superclusterIndex) return [];
 
- const clusters = superclusterIndex.getClusters(bounds, Math.floor(zoom));
- const elements = [];
+    const clusters = superclusterIndex.getClusters(bounds, Math.floor(zoom));
+    const elements = [];
 
- clusters.forEach((c) => {
- if (c.properties.cluster) {
- elements.push({
- isCluster: true,
- lng: c.geometry.coordinates[0],
- lat: c.geometry.coordinates[1],
- pointCount: c.properties.point_count,
- clusterId: c.properties.cluster_id,
- key: `cluster-${c.properties.cluster_id}`
- });
- } else {
- const ativo = c.properties.ativoData;
- elements.push({
- isCluster: false,
- lng: c.geometry.coordinates[0],
- lat: c.geometry.coordinates[1],
- ativo,
- key: `ativo-${c.properties.ativoId}`
- });
- }
- });
+    clusters.forEach((c) => {
+      if (c.properties.cluster) {
+        elements.push({
+          isCluster: true,
+          lng: c.geometry.coordinates[0],
+          lat: c.geometry.coordinates[1],
+          pointCount: c.properties.point_count,
+          clusterId: c.properties.cluster_id,
+          key: `cluster-${c.properties.cluster_id}`
+        });
+      } else {
+        const ativo = c.properties.ativoData;
+        elements.push({
+          isCluster: false,
+          lng: c.geometry.coordinates[0],
+          lat: c.geometry.coordinates[1],
+          ativo,
+          key: `ativo-${c.properties.ativoId}`
+        });
+      }
+    });
 
- return elements;
- }, [bounds, zoom, superclusterIndex, selectedCadeia, deduplicatedAtivos]);
+    return elements;
+  }, [bounds, zoom, superclusterIndex, selectedCadeia, deduplicatedAtivos]);
 
- return (
- <>
- {renderedElements.map((elem) => {
- if (elem.isCluster) {
- return (
- <Marker
- key={elem.key}
- position={[elem.lat, elem.lng]}
- icon={createClusterIcon(elem.pointCount)}
- eventHandlers={{
- click: () => {
- const expansionZoom = Math.min(
- superclusterIndex.getClusterExpansionZoom(elem.clusterId),
- 16
- );
- map.flyTo([elem.lat, elem.lng], expansionZoom, { duration: 0.8 });
- }
- }}
- />
- );
- }
+  return (
+    <>
+      {renderedElements.map((elem) => {
+        if (elem.isCluster) {
+          return (
+            <Marker
+              key={elem.key}
+              position={[elem.lat, elem.lng]}
+              icon={createClusterIcon(elem.pointCount, filtroSemiarido)}
+              eventHandlers={{
+                click: () => {
+                  const expansionZoom = Math.min(
+                    superclusterIndex.getClusterExpansionZoom(elem.clusterId),
+                    16
+                  );
+                  map.flyTo([elem.lat, elem.lng], expansionZoom, { duration: 0.8 });
+                }
+              }}
+            />
+          );
+        }
 
- const ativo = elem.ativo;
- if (!ativo) return null;
- const isSelected = Boolean(
- (selectedCadeia && (selectedCadeia.id_cadeia === ativo.id_cadeia || selectedCadeia.id === ativo.id)) ||
- (pinnedAssetId != null && (pinnedAssetId === ativo.id || pinnedAssetId === ativo.id_ativo))
- );
+        const ativo = elem.ativo;
+        if (!ativo) return null;
+        const isSelected = Boolean(
+          (selectedCadeia && (selectedCadeia.id_cadeia === ativo.id_cadeia || selectedCadeia.id === ativo.id)) ||
+          (pinnedAssetId != null && (pinnedAssetId === ativo.id || pinnedAssetId === ativo.id_ativo))
+        );
 
- return (
- <SingleAssetMarkerItem
- key={elem.key}
- elem={elem}
- ativo={ativo}
- pinnedAssetId={pinnedAssetId}
- setPinnedAssetId={setPinnedAssetId}
- onAssetClick={onAssetClick}
- isSelected={isSelected}
- mode={mode}
- />
- );
- })}
- </>
- );
+        return (
+          <SingleAssetMarkerItem
+            key={elem.key}
+            elem={elem}
+            ativo={ativo}
+            pinnedAssetId={pinnedAssetId}
+            setPinnedAssetId={setPinnedAssetId}
+            onAssetClick={onAssetClick}
+            isSelected={isSelected}
+            mode={mode}
+            filtroSemiarido={filtroSemiarido}
+          />
+        );
+      })}
+    </>
+  );
 }
 
 function MapResizeHandler({ isExpanded }) {
@@ -758,10 +839,15 @@ export default function SideMap({
   onSelectIES = () => { },
   selectedSegmento = null,
   onSelectSegmento = () => { },
+  selectedTipo = null,
+  onSelectTipo = () => { },
+  selectedCategory = null,
+  onSelectCategory = () => { },
   onAssetClick = () => { },
   isExpanded = false,
   onToggleExpand = null
 }) {
+  const { filtroSemiarido, setFiltroSemiarido } = useContext(DataContext) || {};
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
   const [municipiosGeoJson, setMunicipiosGeoJson] = useState(null);
@@ -875,6 +961,10 @@ export default function SideMap({
     if (mode !== 'ativos') return [];
     let list = processedAtivos.filter((a) => activeCategoryKeys.has(a.tipo || 'Outros'));
 
+    if (selectedTipo && selectedTipo !== 'todos') {
+      list = list.filter((a) => a.tipo === selectedTipo || a.shortTipo === selectedTipo);
+    }
+
     if (selectedTerritory) {
       const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
       const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
@@ -886,12 +976,16 @@ export default function SideMap({
     }
 
     return list;
-  }, [processedAtivos, activeCategoryKeys, selectedTerritory, mode]);
+  }, [processedAtivos, activeCategoryKeys, selectedTerritory, selectedTipo, mode]);
 
   const visibleCursos = useMemo(() => {
     if (mode !== 'cursos') return [];
-    return cursosData.filter((c) => activeCategoryKeys.has(c.categoria || 'Outras Áreas'));
-  }, [cursosData, activeCategoryKeys, mode]);
+    let list = cursosData;
+    if (selectedCategory && selectedCategory !== 'todas') {
+      list = list.filter((c) => (c.categoria || c.tipo) === selectedCategory);
+    }
+    return list.filter((c) => activeCategoryKeys.has(c.categoria || 'Outras Áreas'));
+  }, [cursosData, activeCategoryKeys, selectedCategory, mode]);
 
   const visibleCadeias = useMemo(() => {
     if (mode !== 'cadeias') return [];
@@ -899,6 +993,10 @@ export default function SideMap({
 
     if (selectedSegmento) {
       list = list.filter((c) => c.segmento === selectedSegmento);
+    }
+
+    if (selectedTipo && selectedTipo !== 'todos') {
+      list = list.filter((c) => c.tipo === selectedTipo || c.shortTipo === selectedTipo);
     }
 
     if (selectedTerritory) {
@@ -913,7 +1011,7 @@ export default function SideMap({
     }
 
     return list;
-  }, [cadeiasData, activeCategoryKeys, selectedSegmento, selectedTerritory, mode]);
+  }, [cadeiasData, activeCategoryKeys, selectedSegmento, selectedTipo, selectedTerritory, mode]);
 
   // Linhas de conexão
   const connectionLines = useMemo(() => {
@@ -1182,6 +1280,7 @@ export default function SideMap({
     const nome = rawNome.replace(/^Território de Identidade\s+/i, '').trim();
     const idTerr = feature?.properties?.id_territorio;
     const norm = normalizeName(nome);
+    const isTerrSemiarido = SEMIARIDO_TERRITORY_IDS.has(String(idTerr));
 
     const isHovered = hoveredFeatureName === nome;
     const isSelected = selectedTerritory && (
@@ -1192,14 +1291,27 @@ export default function SideMap({
     if (mode === 'cursos') {
       const tStat = cursosStatsByTerritory[`id_${idTerr}`] || cursosStatsByTerritory[norm];
       const count = tStat ? tStat.count : 0;
-      const heatColor = getHeatColor(count);
+      const heatColor = getHeatColor(count, filtroSemiarido);
+
+      if (filtroSemiarido && !isTerrSemiarido) {
+        return {
+          fillColor: '#E2E8F0',
+          fillOpacity: 0.35,
+          color: '#CBD5E1',
+          weight: 0.8,
+          opacity: 0.8,
+          lineCap: 'round',
+          lineJoin: 'round',
+          className: 'outline-none pointer-events-none'
+        };
+      }
 
       if (selectedTerritory) {
         if (isSelected) {
           return {
             fillColor: 'transparent',
             fillOpacity: 0,
-            color: '#1E293B',
+            color: filtroSemiarido ? '#78350F' : '#1E293B',
             weight: 2.2,
             opacity: 0.95,
             lineCap: 'round',
@@ -1222,7 +1334,7 @@ export default function SideMap({
       return {
         fillColor: heatColor,
         fillOpacity: isHovered ? 1.0 : 0.92,
-        color: '#FFFFFF',
+        color: filtroSemiarido && isHovered ? '#D97706' : '#FFFFFF',
         weight: isHovered ? 1.8 : 1.1,
         opacity: 1,
         lineCap: 'round',
@@ -1231,12 +1343,26 @@ export default function SideMap({
       };
     }
 
+    // mode !== 'cursos' (Ativos ou Cadeias)
+    if (filtroSemiarido && !isTerrSemiarido) {
+      return {
+        fillColor: '#E2E8F0',
+        fillOpacity: 0.35,
+        color: '#CBD5E1',
+        weight: 0.8,
+        opacity: 0.8,
+        lineCap: 'round',
+        lineJoin: 'round',
+        className: 'outline-none pointer-events-none'
+      };
+    }
+
     if (selectedTerritory) {
       if (isSelected) {
         return {
-          fillColor: '#EFF6FF',
+          fillColor: filtroSemiarido ? '#FEF3C7' : '#EFF6FF',
           fillOpacity: 1,
-          color: '#1D4ED8',
+          color: filtroSemiarido ? '#D97706' : '#1D4ED8',
           weight: 2.2,
           opacity: 1,
           lineCap: 'round',
@@ -1257,9 +1383,9 @@ export default function SideMap({
     }
 
     return {
-      fillColor: isHovered ? '#EFF6FF' : '#FFFFFF',
+      fillColor: isHovered ? (filtroSemiarido ? '#FEF3C7' : '#EFF6FF') : (filtroSemiarido ? '#FFFBEB' : '#FFFFFF'),
       fillOpacity: 1,
-      color: isHovered ? '#2563EB' : '#CBD5E1',
+      color: isHovered ? (filtroSemiarido ? '#D97706' : '#2563EB') : (filtroSemiarido ? '#F59E0B' : '#CBD5E1'),
       weight: isHovered ? 1.8 : 0.9,
       opacity: 1,
       lineCap: 'round',
@@ -1294,12 +1420,23 @@ export default function SideMap({
       };
     }
 
+    if (filtroSemiarido && !isMunicipioSemiarido(munNome)) {
+      return {
+        fillColor: '#E2E8F0',
+        fillOpacity: 0.35,
+        color: '#CBD5E1',
+        weight: 0.6,
+        opacity: 0.8,
+        stroke: true
+      };
+    }
+
     const munStat = cursosStatsByMunicipio[munNorm];
     const count = munStat ? munStat.count : 0;
     const isHovered = hoveredFeatureName === munNome;
     
     // Aplicação da Escala Logarítmica para equilibrar o contraste visual
-    const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado);
+    const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado, filtroSemiarido);
 
     return {
       fillColor: relativeHeatColor,
@@ -1329,9 +1466,9 @@ export default function SideMap({
         setHoveredFeatureName(nome);
         if (mode !== 'cursos' && !selectedTerritory) {
           e.target.setStyle({
-            fillColor: '#EFF6FF',
+            fillColor: filtroSemiarido ? '#FEF3C7' : '#EFF6FF',
             fillOpacity: 1,
-            color: '#2563EB',
+            color: filtroSemiarido ? '#D97706' : '#2563EB',
             weight: 1.8
           });
         }
@@ -1411,11 +1548,17 @@ export default function SideMap({
     selectedCadeia ||
     selectedIES ||
     selectedSegmento ||
+    (selectedTipo && selectedTipo !== 'todos') ||
+    (selectedCategory && selectedCategory !== 'todas') ||
     (allCategories.length > 0 && activeCategoryKeys.size < allCategories.length)
   );
 
+  const partnerPin = useMemo(() => createPartnerPinIcon(filtroSemiarido), [filtroSemiarido]);
+  const selectedPartnerPin = useMemo(() => createSelectedPartnerPinIcon(filtroSemiarido), [filtroSemiarido]);
+  const currentHeatLevels = filtroSemiarido ? SEMIARIDO_HEAT_LEVELS : HEAT_LEVELS;
+
   return (
-    <div className="relative w-full h-full min-h-0 flex items-center justify-center bg-[#EBF1F6] bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1">
+    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-[#FFFDF7]' : 'bg-[#EBF1F6]'} bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1`}>
       <MapContainer
         ref={mapRef}
         center={[-13.1, -41.7]}
@@ -1453,7 +1596,7 @@ export default function SideMap({
 
         {territoriosGeoJson && (
           <GeoJSON
-            key={`territorios-layer-${mode}-${selectedTerritory?.id_territorio || 'none'}-${activeCategoryKeys.size}`}
+            key={`territorios-layer-${mode}-${filtroSemiarido ? 'semi' : 'norm'}-${selectedTerritory?.id_territorio || 'none'}-${selectedCategory || 'all'}-${selectedTipo || 'all'}-${selectedSegmento || 'all'}-${activeCategoryKeys.size}-${mode === 'cursos' ? visibleCursos.length : mode === 'cadeias' ? visibleCadeias.length : visibleAtivos.length}`}
             data={territoriosGeoJson}
             style={territoryBorderStyle}
             onEachFeature={onEachTerritoryFeature}
@@ -1462,7 +1605,7 @@ export default function SideMap({
 
         {mode === 'cursos' && selectedTerritory && municipiosGeoJson && (
           <GeoJSON
-            key={`municipios-heat-layer-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${activeCategoryKeys.size}`}
+            key={`municipios-heat-layer-${filtroSemiarido ? 'semi' : 'norm'}-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${selectedCategory || 'all'}-${activeCategoryKeys.size}-${visibleCursos.length}`}
             data={municipiosGeoJson}
             style={municipioBorderStyle}
             onEachFeature={onEachMunicipioFeature}
@@ -1477,9 +1620,11 @@ export default function SideMap({
             pane="connectionsPane"
             positions={line.positions}
             pathOptions={{
-              color: line.isSelected ? '#1E40AF' : '#3B82F6',
+              color: line.isSelected 
+                ? (filtroSemiarido ? '#B45309' : '#1E40AF') 
+                : (filtroSemiarido ? '#F59E0B' : '#3B82F6'),
               weight: line.isSelected ? 2.4 : 1.15,
-              opacity: line.isSelected ? 0.95 : 0.38,
+              opacity: line.isSelected ? 0.95 : (filtroSemiarido ? 0.45 : 0.38),
               dashArray: null
             }}
           />
@@ -1489,7 +1634,7 @@ export default function SideMap({
           const showLabel = Boolean(p.isSelected && currentZoom >= 8.0);
 
           return (
-            <Marker key={`partner-pin-${p.municipio}-${idx}`} position={p.position} icon={p.isSelected ? selectedPartnerPinIcon : partnerPinIcon}>
+            <Marker key={`partner-pin-${p.municipio}-${idx}`} position={p.position} icon={p.isSelected ? selectedPartnerPin : partnerPin}>
               <Tooltip
                 key={`city-tip-${p.municipio}-${p.isSelected ? 'sel' : 'norm'}-${showLabel ? 'perm' : 'hover'}`}
                 direction="top"
@@ -1500,8 +1645,8 @@ export default function SideMap({
               >
                 <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
                   p.isSelected
-                    ? 'text-white bg-[#1E40AF] border-[#1E40AF] font-bold'
-                    : 'text-[#1E40AF] bg-white/95 backdrop-blur-xs border-[#E2E8F0]'
+                    ? (filtroSemiarido ? 'text-white bg-[#B45309] border-[#B45309] font-bold' : 'text-white bg-[#1E40AF] border-[#1E40AF] font-bold')
+                    : (filtroSemiarido ? 'text-[#92400E] bg-white/95 backdrop-blur-xs border-amber-200' : 'text-[#1E40AF] bg-white/95 backdrop-blur-xs border-[#E2E8F0]')
                 }`}>
                   {p.municipio}
                 </span>
@@ -1518,42 +1663,82 @@ export default function SideMap({
             onAssetClick={onAssetClick}
             selectedCadeia={selectedCadeia}
             mode={mode}
+            filtroSemiarido={filtroSemiarido}
           />
         )}
       </MapContainer>
 
-      {hoveredInfo && (
-        <div className="absolute top-3 left-3.5 z-[400] pointer-events-none select-none flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
-          {mode === 'cursos' && <Flame size={13} className="text-[#2563EB]" />}
-          <span className="text-[#1D3557] font-extrabold text-[12px] tracking-tight">
-            {hoveredInfo.label}
-          </span>
-          <span className="text-[#2563EB] font-black text-[11px] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
-            {hoveredInfo.count} {hoveredInfo.count === 1 ? 'curso' : 'cursos'}
-          </span>
-        </div>
-      )}
+      {/* PAINEL SUPERIOR ESQUERDO: FILTRO ATIVO DA ABA + HOVER */}
+      <div className="absolute top-3 left-3.5 z-[400] flex flex-col gap-1.5 pointer-events-none select-none max-w-[280px]">
+        {/* BADGE DE FILTRO ATIVO DA ABA (CATEGORIA, ÁREA OU SEGMENTO) */}
+        {(
+          (mode === 'ativos' && selectedTipo && selectedTipo !== 'todos') ||
+          (mode === 'cursos' && selectedCategory && selectedCategory !== 'todas') ||
+          (mode === 'cadeias' && (selectedSegmento || (selectedTipo && selectedTipo !== 'todos')))
+        ) && (
+          <div className="pointer-events-auto flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+            <span
+              className="w-2 h-2 rounded-full animate-pulse shrink-0"
+              style={{ backgroundColor: filtroSemiarido ? '#D97706' : '#2563EB' }}
+            />
+            <span className="text-[11px] font-semibold text-text-primary truncate">
+              {mode === 'ativos' && `Categoria: ${selectedTipo}`}
+              {mode === 'cursos' && `Área: ${selectedCategory}`}
+              {mode === 'cadeias' && (selectedSegmento ? `Segmento: ${selectedSegmento}` : `Tipo: ${selectedTipo}`)}
+            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (mode === 'ativos') onSelectTipo?.('todos');
+                if (mode === 'cursos') onSelectCategory?.('todas');
+                if (mode === 'cadeias') {
+                  if (selectedSegmento) onSelectSegmento?.(null);
+                  else onSelectTipo?.('todos');
+                }
+              }}
+              className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-neutral-100 transition-colors ml-auto cursor-pointer leading-none text-xs font-bold"
+              title="Remover filtro"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
+        {/* INFO AO PASSAR O MOUSE (HOVER) */}
+        {hoveredInfo && (
+          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
+            {mode === 'cursos' && <Flame size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />}
+            <span className="text-[#1D3557] font-extrabold text-[12px] tracking-tight">
+              {hoveredInfo.label}
+            </span>
+            <span className={`font-black text-[11px] px-2 py-0.5 rounded-full ${filtroSemiarido ? 'text-amber-800 bg-amber-500/15' : 'text-[#2563EB] bg-[#2563EB]/10'}`}>
+              {hoveredInfo.count} {hoveredInfo.count === 1 ? 'curso' : 'cursos'}
+            </span>
+          </div>
+        )}
+      </div>
 
       {mode === 'cursos' && (
         <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-md rounded-2xl p-2.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1">
-              <Flame size={12} className="text-[#2563EB]" />
-              <span className="text-[9.5px] font-extrabold text-[#1D3557] uppercase tracking-wider">
+              <Flame size={12} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
+              <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${filtroSemiarido ? 'text-amber-900' : 'text-[#1D3557]'}`}>
                 {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
               </span>
             </div>
             {selectedTerritory && (
-              <span className="text-[8.5px] font-black bg-[#2563EB]/10 text-[#2563EB] px-1.5 py-0.2 rounded-md">
+              <span className={`text-[8.5px] font-black px-1.5 py-0.2 rounded-md ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-[#2563EB]/10 text-[#2563EB]'}`}>
                 Máx: {maxCursosNoTerritorioSelecionado}
               </span>
             )}
           </div>
           
           <div className="flex items-center gap-1.5">
-            {HEAT_LEVELS.map((lvl, idx) => {
+            {currentHeatLevels.map((lvl, idx) => {
               const labelText = selectedTerritory 
-                ? (idx === 0 ? '0' : idx === HEAT_LEVELS.length - 1 ? `${maxCursosNoTerritorioSelecionado}` : '')
+                ? (idx === 0 ? '0' : idx === currentHeatLevels.length - 1 ? `${maxCursosNoTerritorioSelecionado}` : '')
                 : lvl.label.replace(' cursos', '');
 
               return (
@@ -1563,7 +1748,7 @@ export default function SideMap({
                     style={{ backgroundColor: lvl.color }}
                     title={lvl.label}
                   />
-                  <span className="text-[7.5px] font-bold text-[#64748B] whitespace-nowrap">
+                  <span className={`text-[7.5px] font-bold whitespace-nowrap ${filtroSemiarido ? 'text-amber-800' : 'text-[#64748B]'}`}>
                     {labelText}
                   </span>
                 </div>
@@ -1581,12 +1766,33 @@ export default function SideMap({
             onClick={() => setShowAllConnections((prev) => !prev)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
               showAllConnections
-                ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
-                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+                ? (filtroSemiarido
+                    ? 'bg-amber-600 text-white border-amber-600 shadow-[0_3px_12px_rgba(217,119,6,0.3)]'
+                    : 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]')
+                : (filtroSemiarido
+                    ? 'bg-white/95 backdrop-blur-md text-amber-900 border-amber-200 hover:bg-white hover:border-amber-400'
+                    : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]')
             }`}
           >
-            <Network size={13} className={showAllConnections ? 'text-[#00B4D8]' : 'text-[#2563EB]'} />
+            <Network size={13} className={showAllConnections ? (filtroSemiarido ? 'text-amber-200' : 'text-[#00B4D8]') : (filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]')} />
             <span>Teia de Conexões</span>
+          </button>
+        )}
+
+        {/* BOTÃO MODO SEMIÁRIDO AO LADO DO EXPANDIR */}
+        {Boolean(setFiltroSemiarido) && (
+          <button
+            type="button"
+            onClick={() => setFiltroSemiarido(prev => !prev)}
+            title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm backdrop-blur-md ${
+              filtroSemiarido
+                ? 'bg-amber-500 text-white border-amber-600 shadow-[0_3px_12px_rgba(245,158,11,0.35)]'
+                : 'bg-white/95 text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-amber-400'
+            }`}
+          >
+            <SunMedium size={13} className={filtroSemiarido ? 'text-amber-100' : 'text-amber-500'} />
+            <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
           </button>
         )}
 
@@ -1596,11 +1802,19 @@ export default function SideMap({
             onClick={onToggleExpand}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
               isExpanded
-                ? 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]'
-                : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]'
+                ? (filtroSemiarido
+                    ? 'bg-amber-600 text-white border-amber-600 shadow-[0_3px_12px_rgba(217,119,6,0.3)]'
+                    : 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]')
+                : (filtroSemiarido
+                    ? 'bg-white/95 backdrop-blur-md text-amber-900 border-amber-200 hover:bg-white hover:border-amber-400'
+                    : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]')
             }`}
           >
-            {isExpanded ? <Minimize2 size={13} className="text-[#00B4D8]" /> : <Maximize2 size={13} className="text-[#2563EB]" />}
+            {isExpanded ? (
+              <Minimize2 size={13} className={filtroSemiarido ? 'text-amber-200' : 'text-[#00B4D8]'} />
+            ) : (
+              <Maximize2 size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
+            )}
             <span>{isExpanded ? 'Modo Normal' : 'Expandir'}</span>
           </button>
         )}
@@ -1609,14 +1823,18 @@ export default function SideMap({
       <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-white/95 backdrop-blur-md rounded-[18px] border border-[#CBD5E1] shadow-sm overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-          className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#E2E8F0] cursor-pointer"
+          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-[#E2E8F0] cursor-pointer ${
+            filtroSemiarido ? 'text-amber-800 hover:text-amber-950 hover:bg-amber-100/50' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+          }`}
           title="Aproximar"
         >
           <span className="text-lg font-medium leading-none">+</span>
         </button>
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-          className="w-10 h-10 flex items-center justify-center text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50 transition-colors border-b border-[#E2E8F0] cursor-pointer"
+          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-[#E2E8F0] cursor-pointer ${
+            filtroSemiarido ? 'text-amber-800 hover:text-amber-950 hover:bg-amber-100/50' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+          }`}
           title="Afastar"
         >
           <span className="text-lg font-medium leading-none">−</span>
@@ -1629,10 +1847,14 @@ export default function SideMap({
             onSelectTerritory(null);
             onSelectIES?.(null);
             onSelectSegmento?.(null);
+            onSelectTipo?.('todos');
+            onSelectCategory?.('todas');
             onAssetClick?.(null);
           }}
           className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
-            hasActiveFilter ? 'text-red-500 bg-red-50 hover:bg-red-100' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+            hasActiveFilter
+              ? 'text-red-500 bg-red-50 hover:bg-red-100'
+              : (filtroSemiarido ? 'text-amber-800 hover:text-amber-950 hover:bg-amber-100/50' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50')
           }`}
           title="Limpar filtros"
         >

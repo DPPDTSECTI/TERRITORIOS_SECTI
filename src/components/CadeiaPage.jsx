@@ -14,9 +14,11 @@ import {
     Building2,
     X,
     Search,
-    BookOpen
+    BookOpen,
+    SunMedium
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
+import { isMunicipioSemiarido } from '../constants/semiarido';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getTextoReferencia } from '../data/referenciasDB';
@@ -28,6 +30,28 @@ const SEGMENT_PALETTE = [
     '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#84CC16',
     '#A855F7', '#E11D48', '#0EA5E9', '#D97706'
 ];
+
+const SEMIARIDO_SEGMENT_PALETTE = [
+    '#D97706', // Âmbar Intenso
+    '#F59E0B', // Âmbar Dourado
+    '#CA8A04', // Ouro Mostarda
+    '#B45309', // Âmbar Terracota
+    '#EAB308', // Ouro Girassol
+    '#FBBF24', // Calêndula Solar
+    '#92400E', // Castanho Dourado
+    '#CD7F32', // Bronze Âmbar
+    '#D48806', // Mel Queimado
+    '#ECC94B', // Trigo Ouro
+    '#B8860B', // Dark Goldenrod
+    '#78350F'  // Ocre Profundo
+];
+
+export const getSemiaridoArrangementColor = (nomeTipo) => {
+    const str = String(nomeTipo || '').toLowerCase();
+    if (str.includes('potencial')) return '#FBBF24'; // IG Potencial: Amarelo Ouro Solar
+    if (str.includes('ig') || str.includes('indica')) return '#CA8A04'; // IG: Ouro Mostarda
+    return '#B45309'; // APL: Âmbar Terracota
+};
 
 function normalizeName(name) {
     if (!name) return '';
@@ -116,7 +140,9 @@ export default function CadeiaPage() {
         listaCadeias = [],
         distribuicaoCadeias = [],
         territoriosData = [],
-        loadingStats = false
+        loadingStats = false,
+        filtroSemiarido = false,
+        setFiltroSemiarido
     } = useContext(DataContext);
 
     const [selectedTerritory, setSelectedTerritory] = useState(null);
@@ -329,18 +355,33 @@ export default function CadeiaPage() {
         return Array.from(tipos);
     }, [enrichedCadeias]);
 
+    // Helper para verificar se a cadeia tem sede ou municípios cobertos no semiárido
+    const isCadeiaSemiarido = (c) => {
+        if (!c) return false;
+        if (isMunicipioSemiarido(c.municipio_sede || c.municipio)) return true;
+        if (c.municipios_cobertos && c.municipios_cobertos.some(m => isMunicipioSemiarido(m.nome_municipio))) return true;
+        return false;
+    };
+
+    // Subconjunto ativo com respeito ao Semiárido
+    const activeScopedCadeias = useMemo(() => {
+        if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
+        if (!filtroSemiarido) return enrichedCadeias;
+        return enrichedCadeias.filter(isCadeiaSemiarido);
+    }, [enrichedCadeias, filtroSemiarido]);
+
     // FILTRO ESTRITO POR SEDE
     const territoryCadeias = useMemo(() => {
-        if (!selectedTerritory) return enrichedCadeias;
+        if (!selectedTerritory) return activeScopedCadeias;
         const targetId = Number(selectedTerritory.id_territorio);
         const targetNome = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio);
 
-        return enrichedCadeias.filter(c => {
+        return activeScopedCadeias.filter(c => {
             const matchId = Number(c.id_territorio) === targetId;
             const matchNome = normalizeName(c.territorio_identidade) === targetNome;
             return matchId || matchNome;
         });
-    }, [enrichedCadeias, selectedTerritory]);
+    }, [activeScopedCadeias, selectedTerritory]);
 
     const filteredCadeias = useMemo(() => {
         let list = territoryCadeias;
@@ -375,52 +416,70 @@ export default function CadeiaPage() {
         );
     }, [filteredCadeias, sidebarSearch]);
 
-    const segmentStats = useMemo(() => {
-        if (!filteredCadeias || filteredCadeias.length === 0) return [];
-        const counts = {};
-        const total = filteredCadeias.length;
+    const baseCadeiasForStats = useMemo(() => {
+        let list = territoryCadeias;
+        if (selectedTipo !== 'todos') list = list.filter(c => c.tipo === selectedTipo);
+        return list;
+    }, [territoryCadeias, selectedTipo]);
 
-        filteredCadeias.forEach(c => {
+    const segmentStats = useMemo(() => {
+        if (!baseCadeiasForStats || baseCadeiasForStats.length === 0) return [];
+        const counts = {};
+        const total = baseCadeiasForStats.length;
+
+        baseCadeiasForStats.forEach(c => {
             const seg = c.segmento || 'Outros Segmentos';
             counts[seg] = (counts[seg] || 0) + 1;
         });
 
+        const palette = filtroSemiarido ? SEMIARIDO_SEGMENT_PALETTE : SEGMENT_PALETTE;
+
         return Object.entries(counts)
             .map(([name, count], idx) => {
                 const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
-                const color = SEGMENT_PALETTE[idx % SEGMENT_PALETTE.length];
+                const color = palette[idx % palette.length];
                 return { name, count, percent, color };
             })
             .sort((a, b) => b.count - a.count);
-    }, [filteredCadeias]);
+    }, [baseCadeiasForStats, filtroSemiarido]);
 
     const totalMunicipiosBeneficiados = useMemo(() => {
         const munSet = new Set();
         filteredCadeias.forEach(c => {
             if (c.municipios_cobertos && c.municipios_cobertos.length > 0) {
                 c.municipios_cobertos.forEach(m => {
-                    if (m.nome_municipio) munSet.add(normalizeName(m.nome_municipio));
+                    if (m.nome_municipio) {
+                        if (!filtroSemiarido || isMunicipioSemiarido(m.nome_municipio)) {
+                            munSet.add(normalizeName(m.nome_municipio));
+                        }
+                    }
                 });
             } else if (c.municipio_sede) {
-                munSet.add(normalizeName(c.municipio_sede));
+                if (!filtroSemiarido || isMunicipioSemiarido(c.municipio_sede)) {
+                    munSet.add(normalizeName(c.municipio_sede));
+                }
             }
         });
         return munSet.size;
-    }, [filteredCadeias]);
+    }, [filteredCadeias, filtroSemiarido]);
 
     const totalMunicipiosSede = useMemo(() => {
         const sedeSet = new Set();
         filteredCadeias.forEach(c => {
-            if (c.municipio_sede) sedeSet.add(normalizeName(c.municipio_sede));
+            if (c.municipio_sede) {
+                if (!filtroSemiarido || isMunicipioSemiarido(c.municipio_sede)) {
+                    sedeSet.add(normalizeName(c.municipio_sede));
+                }
+            }
         });
         return sedeSet.size;
-    }, [filteredCadeias]);
+    }, [filteredCadeias, filtroSemiarido]);
 
     const territoryRanking = useMemo(() => {
-        if (!enrichedCadeias || enrichedCadeias.length === 0) return [];
+        if (!activeScopedCadeias || activeScopedCadeias.length === 0) return [];
         const counts = {};
 
-        enrichedCadeias.forEach(c => {
+        activeScopedCadeias.forEach(c => {
             const tid = Number(c.id_territorio) || 0;
             const tName = c.territorio_identidade || 'Não identificado';
 
@@ -438,9 +497,9 @@ export default function CadeiaPage() {
                 ...t,
                 rank: idx + 1,
                 percentBar: Math.min(100, (t.count / maxCount) * 100),
-                heatColor: t.count >= 8 ? '#1D3557' : t.count >= 4 ? '#2563EB' : '#60A5FA'
+                heatColor: t.count >= 8 ? (filtroSemiarido ? '#B45309' : '#1D3557') : t.count >= 4 ? (filtroSemiarido ? '#D97706' : '#2563EB') : (filtroSemiarido ? '#F59E0B' : '#60A5FA')
             }));
-    }, [enrichedCadeias]);
+    }, [activeScopedCadeias, filtroSemiarido]);
 
     const municipalityRanking = useMemo(() => {
         if (!filteredCadeias || filteredCadeias.length === 0) return [];
@@ -463,35 +522,50 @@ export default function CadeiaPage() {
                 count,
                 rank: idx + 1,
                 percentBar: Math.min(100, (count / maxCount) * 100),
-                heatColor: count >= 5 ? '#1D3557' : count >= 2 ? '#2563EB' : '#60A5FA'
+                heatColor: count >= 5 ? (filtroSemiarido ? '#B45309' : '#1D3557') : count >= 2 ? (filtroSemiarido ? '#D97706' : '#2563EB') : (filtroSemiarido ? '#F59E0B' : '#60A5FA')
             }));
-    }, [selectedTerritory, filteredCadeias]);
+    }, [selectedTerritory, filteredCadeias, filtroSemiarido]);
 
     const topSegment = segmentStats[0];
 
+    const semiaridoMetrics = useMemo(() => {
+        const total = enrichedCadeias.length || 1;
+        const semi = enrichedCadeias.filter(isCadeiaSemiarido).length;
+        const pct = ((semi / total) * 100).toFixed(0);
+        return { total, semi, pct };
+    }, [enrichedCadeias]);
+
     const kpis = [
         {
-            label: 'Arranjos & IGs Mapeados',
+            label: filtroSemiarido
+                ? (selectedTerritory ? `Arranjos no Semiárido · ${territoryName}` : 'Arranjos no Semiárido')
+                : (selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos & IGs Mapeados'),
             value: loadingStats ? '...' : filteredCadeias.length,
+            percent: filtroSemiarido ? `${semiaridoMetrics.pct}% do total` : null,
+            tooltip: filtroSemiarido
+                ? `No Semiárido: ${filteredCadeias.length} (${semiaridoMetrics.pct}% do total de cadeias) | Fora: ${Math.max(0, enrichedCadeias.length - filteredCadeias.length)}`
+                : undefined,
             icon: GitPullRequest
         },
         {
-            label: 'Municípios Beneficiados',
+            label: filtroSemiarido ? 'Municípios Beneficiados (Semiárido)' : 'Municípios Beneficiados',
             value: loadingStats ? '...' : totalMunicipiosBeneficiados,
             icon: CheckCircle2
         },
         {
-            label: selectedTerritory ? 'Municípios Sede' : 'Territórios com Arranjos',
+            label: filtroSemiarido
+                ? (selectedTerritory ? 'Municípios Sede no Semiárido' : 'Territórios no Semiárido')
+                : (selectedTerritory ? 'Municípios Sede' : 'Territórios com Arranjos'),
             value: loadingStats ? '...' : (selectedTerritory ? `${totalMunicipiosSede} munic.` : `${territoryRanking.length} de ${territoriosData.length || 27}`),
             icon: selectedTerritory ? Building2 : MapPin
         },
         {
-            label: 'Qtd. de Segmentos',
+            label: filtroSemiarido ? 'Segmentos no Semiárido' : 'Qtd. de Segmentos',
             value: loadingStats ? '...' : `${segmentStats.length} Segmentos`,
             icon: Layers
         },
         {
-            label: topSegment ? `Maior Segmento: ${topSegment.name}` : 'Maior Segmento',
+            label: topSegment ? (filtroSemiarido ? `Maior Segmento: ${topSegment.name}` : `Maior Segmento: ${topSegment.name}`) : 'Maior Segmento',
             value: loadingStats ? '...' : (topSegment ? `${topSegment.percent}%` : '-'),
             icon: Sparkles
         }
@@ -510,7 +584,7 @@ export default function CadeiaPage() {
                             <h3 className="text-[13px] font-semibold text-text-primary">
                                 {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
                             </h3>
-                            <span className="bg-primary-600/10 text-primary-600 text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
+                            <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-600'} text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none`}>
                                 {filteredCadeias.length}
                             </span>
                         </div>
@@ -519,8 +593,11 @@ export default function CadeiaPage() {
                             <button
                                 type="button"
                                 onClick={() => setSelectedTipo('todos')}
-                                className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${selectedTipo === 'todos' ? 'bg-primary-900 text-white' : 'bg-surface-soft text-text-secondary hover:bg-border'
-                                    }`}
+                                className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                                    selectedTipo === 'todos'
+                                        ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-900 text-white')
+                                        : (filtroSemiarido ? 'bg-surface-soft text-text-secondary hover:bg-amber-100/50' : 'bg-surface-soft text-text-secondary hover:bg-border')
+                                }`}
                             >
                                 Todos
                             </button>
@@ -528,14 +605,23 @@ export default function CadeiaPage() {
                             {availableTipos.map((tipo) => {
                                 const conf = getTipoCadeiaConfig(tipo);
                                 const isSelected = selectedTipo === tipo;
+                                const semiaridoColor = getSemiaridoArrangementColor(tipo);
                                 return (
                                     <button
                                         key={tipo}
                                         type="button"
                                         onClick={() => setSelectedTipo(tipo)}
-                                        className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${isSelected ? 'text-white' : `${conf.bgBadge} hover:opacity-80`
-                                            }`}
-                                        style={{ backgroundColor: isSelected ? conf.corHex : undefined }}
+                                        className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                                            isSelected 
+                                                ? 'text-white' 
+                                                : (filtroSemiarido ? 'hover:opacity-80' : `${conf.bgBadge} hover:opacity-80`)
+                                        }`}
+                                        style={{ 
+                                            backgroundColor: isSelected 
+                                                ? (filtroSemiarido ? semiaridoColor : conf.corHex) 
+                                                : (filtroSemiarido ? `${semiaridoColor}20` : undefined),
+                                            color: isSelected ? '#ffffff' : (filtroSemiarido ? semiaridoColor : undefined)
+                                        }}
                                     >
                                         {tipo}
                                     </button>
@@ -546,9 +632,11 @@ export default function CadeiaPage() {
                                 <button
                                     type="button"
                                     onClick={() => handleSelectTerritory(null)}
-                                    className="text-[11px] font-medium text-text-primary bg-primary-200/40 hover:bg-primary-200 px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors justify-center leading-none"
+                                    className={`text-[11px] font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors justify-center leading-none ${
+                                        filtroSemiarido ? 'bg-amber-200/60 hover:bg-amber-200' : 'bg-primary-200/40 hover:bg-primary-200'
+                                    }`}
                                 >
-                                    <MapPin size={16} className="text-primary-600" />
+                                    <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
                                     <span>{territoryName}</span>
                                 </button>
                             )}
@@ -561,6 +649,7 @@ export default function CadeiaPage() {
                                 const IconComp = c.icone;
                                 const totalAbrangencia = (c.municipios_cobertos && c.municipios_cobertos.length > 0) ? c.municipios_cobertos.length : 1;
                                 const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
+                                const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo) : c.corHex;
 
                                 const listaNomes = (c.municipios_cobertos && c.municipios_cobertos.length > 0)
                                     ? c.municipios_cobertos.map(m => m.nome_municipio).join(', ')
@@ -580,8 +669,8 @@ export default function CadeiaPage() {
                                             }
                                         }}
                                         className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 transition-all duration-300 group cursor-pointer border w-full ${isSelected
-                                                ? 'bg-primary-50/50 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated'
-                                                : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated'
+                                                ? (filtroSemiarido ? 'bg-amber-50/70 border-amber-500 ring-2 ring-amber-500/20 shadow-card-elevated' : 'bg-primary-50/50 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated')
+                                                : (filtroSemiarido ? 'bg-surface border-neutral-100 hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated')
                                             }`}
                                     >
                                         <div className="flex items-start justify-between gap-3 w-full">
@@ -589,12 +678,18 @@ export default function CadeiaPage() {
                                                 <div
                                                     className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform ${isSelected ? 'scale-110 shadow-sm' : 'group-hover:scale-105'
                                                         }`}
-                                                    style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
+                                                    style={{ 
+                                                        backgroundColor: `${itemColor}20`, 
+                                                        color: itemColor 
+                                                    }}
                                                 >
                                                     <IconComp size={16} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h4 className={`text-[13px] font-semibold leading-tight break-words transition-colors ${isSelected ? 'text-primary-600' : 'text-text-primary group-hover:text-primary-600'
+                                                    <h4 className={`text-[13px] font-semibold leading-tight break-words transition-colors ${
+                                                        isSelected 
+                                                            ? (filtroSemiarido ? 'text-amber-800' : 'text-primary-600') 
+                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
                                                         }`}>
                                                         {c.entidade}
                                                     </h4>
@@ -612,7 +707,10 @@ export default function CadeiaPage() {
                                             <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
                                                 <span
                                                     className="text-[9px] font-medium px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none"
-                                                    style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
+                                                    style={{ 
+                                                        backgroundColor: `${itemColor}20`, 
+                                                        color: itemColor 
+                                                    }}
                                                 >
                                                     {c.tipo}
                                                 </span>
@@ -621,7 +719,9 @@ export default function CadeiaPage() {
                                                         href={c.fonte}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="p-1 rounded-lg text-text-muted hover:text-primary-600 hover:bg-primary-200/50 transition-colors"
+                                                        className={`p-1 rounded-lg text-text-muted transition-colors ${
+                                                            filtroSemiarido ? 'hover:text-amber-700 hover:bg-amber-100' : 'hover:text-primary-600 hover:bg-primary-200/50'
+                                                        }`}
                                                         title="Acessar Fonte Oficial"
                                                         onClick={(e) => e.stopPropagation()}
                                                     >
@@ -632,7 +732,7 @@ export default function CadeiaPage() {
                                         </div>
 
                                         <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors ${isSelected
-                                                ? 'bg-surface/90 border border-[#BFDBFE] text-primary-800'
+                                                ? (filtroSemiarido ? 'bg-surface/90 border border-amber-200 text-amber-900' : 'bg-surface/90 border border-[#BFDBFE] text-primary-800')
                                                 : 'bg-surface/60 border border-border/60 text-[#475569]'
                                             }`}>
                                             <span className="font-medium text-text-primary">
@@ -690,30 +790,47 @@ export default function CadeiaPage() {
                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full">
                         {segmentStats.map((seg) => {
                             const isSelected = selectedSegmento === seg.name;
+                            const dotColor = seg.color;
+
                             return (
                                 <div
                                     key={seg.name}
-                                    onClick={() => setSelectedSegmento(isSelected ? null : seg.name)}
+                                    onClick={() => {
+                                        const nextSeg = isSelected ? null : seg.name;
+                                        setSelectedSegmento(nextSeg);
+                                        if (selectedCadeia && nextSeg && selectedCadeia.segmento !== nextSeg) {
+                                            setSelectedCadeia(null);
+                                            setFocusedAsset(null);
+                                        }
+                                    }}
                                     className={`rounded-2xl p-3 border transition-all cursor-pointer ${
                                         isSelected
-                                            ? 'bg-primary-50/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20'
-                                            : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated'
+                                            ? (filtroSemiarido ? 'bg-amber-50/50 border-amber-500 shadow-sm ring-2 ring-amber-500/20' : 'bg-primary-50/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20')
+                                            : (filtroSemiarido ? 'bg-surface border-neutral-100 hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated')
                                     }`}
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2 min-w-0">
-                                            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: seg.color }} />
+                                            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: dotColor }} />
                                             <span className="text-[12px] font-semibold text-text-primary truncate">{seg.name}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className="text-[11.5px] font-medium text-text-secondary">{seg.count} arranjos</span>
-                                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none" style={{ backgroundColor: `${seg.color}15`, color: seg.color }}>
+                                            <span
+                                                className="text-[11px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
+                                                style={{ backgroundColor: `${seg.color}20`, color: seg.color }}
+                                            >
                                                 {seg.percent}%
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="w-full h-[18px] rounded-full bg-primary-50/50 overflow-hidden relative flex items-center">
-                                        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${seg.percent}%`, backgroundColor: seg.color }} />
+                                    <div className={`w-full h-[18px] rounded-full overflow-hidden relative flex items-center ${
+                                        filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                    }`}>
+                                        <div
+                                            className="h-full rounded-full transition-all duration-500"
+                                            style={{ width: `${seg.percent}%`, backgroundColor: seg.color }}
+                                        />
                                     </div>
                                 </div>
                             );
@@ -755,23 +872,31 @@ export default function CadeiaPage() {
                                 >
                                     <span className={`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10.5px] font-bold shrink-0 shadow-xs ${
                                         index === 0
-                                            ? 'bg-primary-500 text-white ring-2 ring-primary-100'
-                                            : 'bg-primary-100 text-primary-700'
+                                            ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white ring-2 ring-primary-100')
+                                            : (filtroSemiarido ? 'bg-amber-100 text-amber-800' : 'bg-primary-100 text-primary-700')
                                     }`}>
                                         {m.rank}
                                     </span>
 
-                                    <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                    <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
+                                        filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                    }`}>
                                         <div
-                                            className="absolute left-0 top-0 bottom-0 rounded-full bg-primary-200/50 transition-all duration-500"
+                                            className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
+                                                filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
+                                            }`}
                                             style={{ width: `${m.percentBar}%` }}
                                         />
-                                        <span className="relative z-10 px-2.5 text-[11.5px] font-medium text-primary-900 truncate flex-1">
+                                        <span className={`relative z-10 px-2.5 text-[11.5px] font-medium truncate flex-1 ${
+                                            filtroSemiarido ? 'text-amber-950' : 'text-primary-900'
+                                        }`}>
                                             {m.name}
                                         </span>
                                     </div>
 
-                                    <span className="h-[24px] min-w-[34px] px-2 rounded-full bg-primary-100 text-primary-700 text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0">
+                                    <span className={`h-[24px] min-w-[34px] px-2 rounded-full text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0 ${
+                                        filtroSemiarido ? 'bg-amber-100 text-amber-800' : 'bg-primary-100 text-primary-700'
+                                    }`}>
                                         {m.count}
                                     </span>
                                 </div>
@@ -788,23 +913,31 @@ export default function CadeiaPage() {
                                 >
                                     <span className={`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10.5px] font-bold shrink-0 shadow-xs ${
                                         index === 0
-                                            ? 'bg-primary-500 text-white ring-2 ring-primary-100'
-                                            : 'bg-primary-100 text-primary-700'
+                                            ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white ring-2 ring-primary-100')
+                                            : (filtroSemiarido ? 'bg-amber-100 text-amber-800' : 'bg-primary-100 text-primary-700')
                                     }`}>
                                         {t.rank}
                                     </span>
 
-                                    <div className="relative flex-1 h-[24px] rounded-full bg-primary-50/50 overflow-hidden min-w-0 flex items-center">
+                                    <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
+                                        filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                    }`}>
                                         <div
-                                            className="absolute left-0 top-0 bottom-0 rounded-full bg-primary-200/50 transition-all duration-500"
+                                            className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
+                                                filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
+                                            }`}
                                             style={{ width: `${t.percentBar}%` }}
                                         />
-                                        <span className="relative z-10 px-2.5 text-[11.5px] font-medium text-primary-900 truncate flex-1">
+                                        <span className={`relative z-10 px-2.5 text-[11.5px] font-medium truncate flex-1 ${
+                                            filtroSemiarido ? 'text-amber-950' : 'text-primary-900'
+                                        }`}>
                                             {t.name}
                                         </span>
                                     </div>
 
-                                    <span className="h-[24px] min-w-[34px] px-2 rounded-full bg-primary-100 text-primary-700 text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0">
+                                    <span className={`h-[24px] min-w-[34px] px-2 rounded-full text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0 ${
+                                        filtroSemiarido ? 'bg-amber-100 text-amber-800' : 'bg-primary-100 text-primary-700'
+                                    }`}>
                                         {t.count}
                                     </span>
                                 </div>
@@ -814,7 +947,7 @@ export default function CadeiaPage() {
                 </div>
             )
         }
-    ], [filteredCadeias, segmentStats, territoryRanking, municipalityRanking, selectedTerritory, territoryName, selectedTipo, selectedSegmento, availableTipos, selectedCadeia, territoriosData]);
+    ], [filteredCadeias, segmentStats, territoryRanking, municipalityRanking, selectedTerritory, territoryName, selectedTipo, selectedSegmento, availableTipos, selectedCadeia, territoriosData, filtroSemiarido]);
 
     const activeSelectionName = selectedCadeia ? selectedCadeia.entidade : (selectedTerritory ? territoryName : null);
     const activeSelectionCount = selectedCadeia ? 1 : (selectedTerritory ? filteredCadeias.length : 0);
@@ -822,22 +955,76 @@ export default function CadeiaPage() {
     return (
         <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full">
 
+            {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
+            <div
+                aria-hidden="true"
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
+                    filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                }`}
+            >
+                {/* 1. HALO RADIAL DIFUSO */}
+                <div
+                    className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+                    style={{
+                        background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
+                        filter: 'blur(35px)',
+                    }}
+                />
+
+                {/* 2. ARCO / ANEL LUMINOSO */}
+                <div
+                    className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+                    style={{
+                        border: '1.5px solid rgba(245, 158, 11, 0.22)',
+                        boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+                    }}
+                />
+
+                {/* 3. SEGUNDO ARCO EXPANSIVO */}
+                <div
+                    className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+                    style={{
+                        border: '1px solid rgba(217, 119, 6, 0.11)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+                    }}
+                />
+
+                {/* 4. GLOW DOURADO DE TOPO */}
+                <div
+                    className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+                    style={{
+                        background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
+                        filter: 'blur(40px)',
+                    }}
+                />
+            </div>
+
             {/* HEADER DA PÁGINA */}
-            <div className="flex items-center justify-between w-full shrink-0">
+            <div className="flex items-center justify-between w-full shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
                             Módulo de Cadeias Produtivas & IGs
                         </h1>
-                        <span className="bg-success-500/10 text-success-700 text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border border-success-500/20 flex items-center gap-1 justify-center leading-none">
-                            <Award size={16} className="text-success-700" />
+                        <span className={`text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
+                            filtroSemiarido
+                                ? 'bg-amber-500/15 text-amber-800 border-amber-500/30'
+                                : 'bg-success-500/10 text-success-700 border-success-500/20'
+                        }`}>
+                            <Award size={16} className={filtroSemiarido ? 'text-amber-700' : 'text-success-700'} />
                             Arranjos & Indicações Geográficas
                         </span>
                     </div>
                     <p className="text-xs lg:text-sm text-text-secondary mt-0.5 font-medium">
                         Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
                     </p>
-                    <div className="divider-territorial w-48 mt-3"></div>
+                    <div 
+                        className="divider-territorial w-48 mt-3"
+                        style={filtroSemiarido ? { background: 'linear-gradient(90deg, #F59E0B 0%, #D97706 50%, transparent 100%)' } : undefined}
+                    />
                 </div>
             </div>
 
@@ -857,19 +1044,25 @@ export default function CadeiaPage() {
                         return (
                             <div
                                 key={index}
+                                title={kpi.tooltip || kpi.label}
                                 className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
                                     isHero
-                                        ? 'bg-primary-900 text-white shadow-card-elevated'
-                                        : 'bg-surface border border-neutral-100 shadow-card'
+                                        ? (filtroSemiarido
+                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
+                                            : 'bg-primary-900 text-white shadow-card-elevated')
+                                        : (filtroSemiarido
+                                            ? 'bg-white/95 border border-amber-200/40 shadow-card'
+                                            : 'bg-surface border border-neutral-100 shadow-card')
                                 }`}
                             >
                                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
                                 <div className="flex items-center gap-2 w-full min-w-0">
-                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? accentColors[0] : accentColors[index]} />
+                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
                                     <span
                                         className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
-                                            isHero ? 'text-white/60' : 'text-text-muted'
+                                            isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
                                         }`}
+                                        title={kpi.label}
                                     >
                                         {kpi.label}
                                     </span>
@@ -877,13 +1070,25 @@ export default function CadeiaPage() {
 
                                 {/* LINHA INFERIOR: NÚMERO */}
                                 <div className="flex items-baseline w-full justify-between">
-                                    <span
-                                        className={`text-[28px] font-bold tracking-tight leading-none ${
-                                            isHero ? 'text-white' : 'text-text-primary'
-                                        }`}
-                                    >
-                                        {kpi.value}
-                                    </span>
+                                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                        <span
+                                            className={`text-[28px] font-bold tracking-tight leading-none ${
+                                                isHero ? 'text-white' : 'text-text-primary'
+                                            }`}
+                                        >
+                                            {kpi.value}
+                                        </span>
+                                        {filtroSemiarido && kpi.percent && (
+                                            <span
+                                                title={`(${kpi.percent})`}
+                                                className={`text-[11px] font-semibold truncate ${
+                                                    isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
+                                                }`}
+                                            >
+                                                ({kpi.percent})
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -908,6 +1113,8 @@ export default function CadeiaPage() {
                         onSelectTerritory={handleSelectTerritory}
                         selectedSegmento={selectedSegmento}
                         onSelectSegmento={setSelectedSegmento}
+                        selectedTipo={selectedTipo}
+                        onSelectTipo={setSelectedTipo}
                         onAssetClick={handleSelectFromMap}
                         isExpanded={isMapExpanded}
                         onToggleExpand={() => setIsMapExpanded(prev => !prev)}
@@ -923,7 +1130,7 @@ export default function CadeiaPage() {
                                 <span className="text-[12px] font-semibold text-text-primary truncate">
                                     Arranjos & IGs
                                 </span>
-                                <span className="bg-primary-600/10 text-primary-600 text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
+                                <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-700' : 'bg-primary-600/10 text-primary-600'} text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none`}>
                                     {compactCadeiasList.length}
                                 </span>
                             </div>
@@ -950,7 +1157,7 @@ export default function CadeiaPage() {
                                 value={sidebarSearch}
                                 onChange={(e) => setSidebarSearch(e.target.value)}
                                 placeholder="Filtrar arranjo ou cidade..."
-                                className="w-full pl-7 pr-3 py-1.5 text-[11px] bg-surface-soft border border-border rounded-xl focus:bg-surface focus:border-primary-600 focus:outline-none transition-colors placeholder-text-muted"
+                                className={`w-full pl-7 pr-3 py-1.5 text-[11px] bg-surface-soft border border-border rounded-xl focus:bg-surface ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'} focus:outline-none transition-colors placeholder-text-muted`}
                             />
                             {sidebarSearch && (
                                 <button
@@ -969,6 +1176,7 @@ export default function CadeiaPage() {
                                 compactCadeiasList.map((c, idx) => {
                                     const IconComp = c.icone;
                                     const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
+                                    const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo) : c.corHex;
 
                                     return (
                                         <div
@@ -984,20 +1192,23 @@ export default function CadeiaPage() {
                                                 }
                                             }}
                                             className={`p-2 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${isSelected
-                                                    ? 'bg-[#EFF6FF] border-primary-600 ring-2 ring-primary-600/25 shadow-xs'
-                                                    : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-2xs'
+                                                    ? (filtroSemiarido ? 'bg-amber-50 border-amber-500 ring-2 ring-amber-500/25 shadow-xs' : 'bg-[#EFF6FF] border-primary-600 ring-2 ring-primary-600/25 shadow-xs')
+                                                    : (filtroSemiarido ? 'bg-surface-soft border-transparent hover:bg-surface hover:border-amber-300 hover:shadow-2xs' : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-2xs')
                                                 }`}
                                         >
                                             <div className="flex items-center gap-2 min-w-0 flex-1">
                                                 <div
                                                     className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${isSelected ? 'scale-105 shadow-2xs' : 'group-'
                                                         }`}
-                                                    style={{ backgroundColor: `${c.corHex}18`, color: c.corHex }}
+                                                    style={{ 
+                                                        backgroundColor: `${itemColor}20`, 
+                                                        color: itemColor 
+                                                    }}
                                                 >
                                                     <IconComp size={12} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? 'text-primary-800' : 'text-text-primary group-hover:text-primary-600'
+                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800' : 'text-primary-800') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
                                                         }`}>
                                                         {c.entidade}
                                                     </h5>
@@ -1009,7 +1220,10 @@ export default function CadeiaPage() {
 
                                             <span
                                                 className="text-[8px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
-                                                style={{ backgroundColor: `${c.corHex}15`, color: c.corHex }}
+                                                style={{ 
+                                                    backgroundColor: `${itemColor}20`, 
+                                                    color: itemColor 
+                                                }}
                                             >
                                                 {c.tipo}
                                             </span>
@@ -1029,14 +1243,18 @@ export default function CadeiaPage() {
 
                         {/* BARRA DE SELEÇÃO ATIVA (ESTILO EXATO DA PÁGINA DE ATIVOS) */}
                         {activeSelectionName && (
-                            <div className="w-full bg-[#E0F2FE]/60 border border-[#BAE6FD]/80 rounded-[22px] py-2 px-4 flex items-center justify-between gap-3 shrink-0 shadow-2xs backdrop-blur-xs animate-in fade-in duration-200">
+                            <div className={`w-full border rounded-[22px] py-2 px-4 flex items-center justify-between gap-3 shrink-0 shadow-2xs backdrop-blur-xs animate-in fade-in duration-200 ${
+                                filtroSemiarido ? 'bg-amber-50/70 border-amber-200' : 'bg-[#E0F2FE]/60 border-[#BAE6FD]/80'
+                            }`}>
                                 <div className="flex items-center gap-2.5 min-w-0">
-                                    <span className="w-2 h-2 rounded-full bg-primary-600 shrink-0" />
+                                    <span className={`w-2 h-2 rounded-full shrink-0 ${filtroSemiarido ? 'bg-amber-500' : 'bg-primary-600'}`} />
                                     <span className="text-[12px] font-medium text-text-primary truncate">
                                         {selectedCadeia ? 'Arranjo Selecionado:' : 'Região Selecionada:'}{' '}
-                                        <strong className="font-medium text-primary-600">{activeSelectionName}</strong>
+                                        <strong className={`font-medium ${filtroSemiarido ? 'text-amber-700' : 'text-primary-600'}`}>{activeSelectionName}</strong>
                                     </span>
-                                    <span className="bg-surface/80 text-primary-600 border border-[#BAE6FD]/80 text-[11px] font-medium px-2.5 py-0.5 rounded-full shadow-2xs shrink-0 inline-flex items-center justify-center leading-none">
+                                    <span className={`bg-surface/80 text-[11px] font-medium px-2.5 py-0.5 rounded-full shadow-2xs shrink-0 inline-flex items-center justify-center leading-none ${
+                                        filtroSemiarido ? 'text-amber-700 border border-amber-200' : 'text-primary-600 border border-[#BAE6FD]/80'
+                                    }`}>
                                         {activeSelectionCount} {activeSelectionCount === 1 ? (selectedCadeia ? 'arranjo' : 'cadeia') : 'cadeias'}
                                     </span>
                                 </div>
@@ -1051,7 +1269,9 @@ export default function CadeiaPage() {
                                         }
                                         setFocusedAsset(null);
                                     }}
-                                    className="text-[11px] font-medium text-text-primary hover:text-red-600 bg-surface hover:bg-danger-50/80 px-3 py-1 rounded-full border border-[#BAE6FD]/80 hover:border-red-200 flex items-center gap-1.5 shadow-2xs transition-all duration-200 cursor-pointer shrink-0 justify-center leading-none"
+                                    className={`text-[11px] font-medium text-text-primary hover:text-red-600 bg-surface hover:bg-danger-50/80 px-3 py-1 rounded-full border flex items-center gap-1.5 shadow-2xs transition-all duration-200 cursor-pointer shrink-0 justify-center leading-none ${
+                                        filtroSemiarido ? 'border-amber-200 hover:border-red-200' : 'border-[#BAE6FD]/80 hover:border-red-200'
+                                    }`}
                                 >
                                     <X size={16} className="text-text-secondary group-hover:text-danger-600" />
                                     <span>{selectedCadeia ? 'Limpar seleção de arranjo' : 'Limpar filtro da região'}</span>

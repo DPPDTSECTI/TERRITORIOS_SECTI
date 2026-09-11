@@ -96,10 +96,10 @@ export default function DashboardPainel() {
     selectedTerritory,
     setSelectedTerritory,
     firjanData,
-    municipiosTerritorios
+    municipiosTerritorios,
+    filtroSemiarido = false,
+    setFiltroSemiarido
   } = useContext(DataContext);
-
-  const [filtroSemiarido, setFiltroSemiarido] = useState(false);
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
   // 1. Ativos Filtrados pelo Território Selecionado
@@ -706,7 +706,7 @@ export default function DashboardPainel() {
             <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
           </div>
           <p className="text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
-          <div className="divider-territorial w-48 mt-3"></div>
+          <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
         </div>
       </div>
 
