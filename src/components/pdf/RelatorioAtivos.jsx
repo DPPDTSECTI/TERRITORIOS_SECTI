@@ -930,11 +930,13 @@ export default function RelatorioAtivosPage() {
         {/* COLUNA DIREITA: SIDEMAP INTEGRADO NO MODO ATIVOS */}
         <div style={{ width: 'calc(30% - 12px)' }} className="shrink-0 h-full bg-white rounded-[24px] border border-transparent hover:border-[#D6EAF8]/50 shadow-[0_4px_20px_rgba(29,53,87,0.04)] transition-all duration-300 relative overflow-hidden flex flex-col min-h-0">
           <SideMap
+            key={`map-ativos-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
             mode="ativos"
             processedAtivos={filteredAtivos}
             selectedTerritory={selectedTerritory}
             onSelectTerritory={setSelectedTerritory}
             focusedAsset={focusedAsset}
+            filtroSemiarido={isSemiarido}
           />
         </div>
 

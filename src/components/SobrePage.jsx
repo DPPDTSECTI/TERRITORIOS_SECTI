@@ -218,7 +218,7 @@ export default function SobrePage() {
               return (
                 <div
                   key={sec.id}
-                  className={`bg-white rounded-xl border border-neutral-200/80 p-5 sm:p-6 flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-2xs ${colSpan}`}
+                  className={`bg-surface rounded-xl border border-border p-5 sm:p-6 flex flex-col justify-between hover:border-border-strong transition-colors shadow-2xs ${colSpan}`}
                 >
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-primary-700 block mb-1">
@@ -304,7 +304,7 @@ export default function SobrePage() {
             ].map((kpi, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-xl border border-neutral-200/80 p-5 flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-2xs"
+                className="bg-surface rounded-xl border border-border p-5 flex flex-col justify-between hover:border-border-strong transition-colors shadow-2xs"
               >
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-primary-700 block mb-1">
@@ -351,7 +351,7 @@ export default function SobrePage() {
             ].map((step, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-xl border border-neutral-200/80 p-5 flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-2xs"
+                className="bg-surface rounded-xl border border-border p-5 flex flex-col justify-between hover:border-border-strong transition-colors shadow-2xs"
               >
                 <div>
                   <span className="text-xs font-mono font-bold text-neutral-500 block mb-2">
@@ -404,7 +404,7 @@ export default function SobrePage() {
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="p-5 bg-white rounded-xl border border-neutral-200/80 hover:border-neutral-300 transition-colors flex flex-col justify-center shadow-2xs"
+                className="p-5 bg-surface rounded-xl border border-border hover:border-border-strong transition-colors flex flex-col justify-center shadow-2xs"
               >
                 <h3 className="text-sm sm:text-base font-semibold text-neutral-900 mb-1">
                   {item.t}

@@ -148,6 +148,7 @@ export default function RelatorioPage() {
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedCadeia, setSelectedCadeia] = useState(null);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingPng, setIsExportingPng] = useState(false);
 
 
   // Território selecionado (objeto) ou null se for Toda a Bahia
@@ -860,7 +861,10 @@ export default function RelatorioPage() {
     return 'Síntese Executiva';
   }, [reportType]);
 
-  const handleExportPDF = (overrideType = null) => {
+  const handleExportPDF = async (overrideType = null) => {
+    if (isExportingPdf) return;
+    setIsExportingPdf(true);
+
     const type = overrideType || reportType;
     let fileBase = 'relatorio_sintese';
     if (type === 'ativos') {
@@ -1022,8 +1026,12 @@ export default function RelatorioPage() {
     setIsExportingPng(false);
   };
 
+  const handleOpenFullscreenReport = () => {
+    const route = getReportRoute(reportType, selectedTerritoryId, reportMode);
+    window.open(route, '_blank');
+  };
 
- const ativosPorTipo = useMemo(() => {
+  const ativosPorTipo = useMemo(() => {
  if (reportType !== 'ativos') return [];
  const counts = {};
  scopedAtivos.forEach(a => {
@@ -1142,30 +1150,57 @@ export default function RelatorioPage() {
  else setSelectedTerritoryId('bahia');
  };
 
- if (reportType === 'ativos') return <SideMap key={`map-ativos-${reportMode}`} mode="ativos" processedAtivos={scopedAtivos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
- if (reportType === 'cursos') return <SideMap key={`map-cursos-${reportMode}`} mode="cursos" cursosData={scopedCursos} selectedTerritory={selectedTerritory} onSelectTerritory={handleMapSelect} />;
- if (reportType === 'cadeias') return (
-    <SideMap
-      key={`map-cadeias-${reportMode}`}
-      mode="cadeias"
-      cadeiasData={scopedCadeias}
-      processedAtivos={scopedCadeias.map(c => ({...c, coords: c.coords || [0,0]}))}
-      selectedTerritory={selectedTerritory}
-      selectedCadeia={selectedCadeia}
-      onAssetClick={(cad) => setSelectedCadeia((prev) => (prev?.id === cad?.id ? null : cad))}
-      onSelectTerritory={handleMapSelect}
-    />
-  );
+ if (reportType === 'ativos') {
+    return (
+      <SideMap
+        key={`map-ativos-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+        mode="ativos"
+        processedAtivos={scopedAtivos}
+        selectedTerritory={selectedTerritory}
+        onSelectTerritory={handleMapSelect}
+        filtroSemiarido={reportMode === 'semiarido'}
+      />
+    );
+  }
+  if (reportType === 'cursos') {
+    return (
+      <SideMap
+        key={`map-cursos-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+        mode="cursos"
+        cursosData={scopedCursos}
+        selectedTerritory={selectedTerritory}
+        onSelectTerritory={handleMapSelect}
+        filtroSemiarido={reportMode === 'semiarido'}
+      />
+    );
+  }
+  if (reportType === 'cadeias') {
+    return (
+      <SideMap
+        key={`map-cadeias-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+        mode="cadeias"
+        cadeiasData={scopedCadeias}
+        processedAtivos={scopedCadeias.map(c => ({...c, coords: c.coords || [0,0]}))}
+        selectedTerritory={selectedTerritory}
+        selectedCadeia={selectedCadeia}
+        onAssetClick={(cad) => setSelectedCadeia((prev) => (prev?.id === cad?.id ? null : cad))}
+        onSelectTerritory={handleMapSelect}
+        filtroSemiarido={reportMode === 'semiarido'}
+      />
+    );
+  }
 
   return (
-  <PtiMap
-  selectedTerritory={selectedTerritory}
-  onSelectTerritory={handleMapSelect}
-  territoriosData={territoriosData}
-  territoriesDynamicStats={territoriesDynamicStats}
-  semiaridoMunicipios={reportMode === 'semiarido' ? SEMIARIDO_MUNICIPIOS : []}
-  filtroSemiarido={reportMode === 'semiarido'}
-  />
+    <PtiMap
+      key={`map-sintese-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+      selectedTerritory={selectedTerritory}
+      onSelectTerritory={handleMapSelect}
+      territoriosData={territoriosData}
+      territoriesDynamicStats={territoriesDynamicStats}
+      semiaridoMunicipios={reportMode === 'semiarido' ? SEMIARIDO_MUNICIPIOS : []}
+      filtroSemiarido={reportMode === 'semiarido'}
+      onToggleSemiarido={() => setReportMode(m => m === 'semiarido' ? 'normal' : 'semiarido')}
+    />
   );
   })()}
  </div>
@@ -1177,7 +1212,7 @@ export default function RelatorioPage() {
   <div
     className={`flex-1 rounded-2xl border p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden transition-all duration-700 print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0 relative z-10 ${
       reportMode === 'semiarido'
-        ? 'bg-white/95 border-amber-200/50 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.05)]'
+        ? 'bg-surface/95 dark:bg-surface border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.05)]'
         : 'bg-surface border-neutral-100 shadow-card'
     }`}
   >
@@ -1206,7 +1241,7 @@ export default function RelatorioPage() {
     <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
       reportMode === 'semiarido'
         ? 'bg-amber-400 text-white'
-        : 'bg-white border border-slate-200 text-slate-400'
+        : 'bg-surface-soft border border-border text-text-muted'
     }`}>
       {reportMode === 'semiarido' ? (
         /* sol SVG inline — sem dependência de lucide */
@@ -1352,7 +1387,7 @@ export default function RelatorioPage() {
     {/* CARD 2: Cursos */}
     <div className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
       reportMode === 'semiarido'
-        ? 'bg-white/95 border border-amber-200/40 shadow-card'
+        ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
         : 'bg-surface border border-neutral-100 shadow-card'
     }`}>
       <div className="flex items-center gap-2 w-full min-w-0">
@@ -1371,7 +1406,7 @@ export default function RelatorioPage() {
     {/* CARD 3: Cadeias */}
     <div className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
       reportMode === 'semiarido'
-        ? 'bg-white/95 border border-amber-200/40 shadow-card'
+        ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
         : 'bg-surface border border-neutral-100 shadow-card'
     }`}>
       <div className="flex items-center gap-2 w-full min-w-0">
@@ -1395,7 +1430,7 @@ export default function RelatorioPage() {
       title="Municípios que possuem pelo menos 1 Ativo ou Curso de CT&I mapeado"
       className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
         reportMode === 'semiarido'
-          ? 'bg-white/95 border border-amber-200/40 shadow-card'
+          ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
           : 'bg-surface border border-neutral-100 shadow-card'
       }`}
     >
@@ -1483,18 +1518,13 @@ export default function RelatorioPage() {
 
   {/* BLOCO 1: INFRAESTRUTURA DE ATIVOS E CONECTIVIDADE */}
   <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col gap-3.5 transition-colors ${
-    reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
+    reportMode === 'semiarido' ? 'bg-surface border-amber-500/30 shadow-card' : 'bg-surface border-border shadow-card'
   }`}>
-  <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
+  <div className="flex items-center justify-between border-b border-border pb-2">
   <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
   <Database size={16} className={reportMode === 'semiarido' ? 'text-amber-600' : 'text-primary-600'} />
   Infraestrutura de CT&I & RNP
   </h4>
-  <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center justify-center leading-none shrink-0 ${
-    reportMode === 'semiarido' ? 'text-amber-700 bg-amber-50 border border-amber-200/80' : 'text-primary-600 bg-primary-600/10'
-  }`}>
-  {scopedAtivos.length} Registros
-  </span>
   </div>
 
   <p className="text-[11px] text-text-secondary">
@@ -1533,18 +1563,13 @@ export default function RelatorioPage() {
 
   {/* BLOCO 2: FORMAÇÃO SUPERIOR E MODALIDADES */}
   <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col gap-3.5 transition-colors ${
-    reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
+    reportMode === 'semiarido' ? 'bg-surface border-amber-500/30 shadow-card' : 'bg-surface border-border shadow-card'
   }`}>
-  <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
+  <div className="flex items-center justify-between border-b border-border pb-2">
   <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
   <GraduationCap size={16} className={reportMode === 'semiarido' ? 'text-amber-600' : 'text-[#8B5CF6]'} />
   Oferta Educacional CT&I
   </h4>
-  <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center justify-center leading-none shrink-0 ${
-    reportMode === 'semiarido' ? 'text-amber-700 bg-amber-50 border border-amber-200/80' : 'text-indigo-600 bg-indigo-50 border border-indigo-200/60'
-  }`}>
-  {scopedCursos.length} Cursos
-  </span>
   </div>
 
   <p className="text-[11px] text-text-secondary">
@@ -1588,7 +1613,7 @@ export default function RelatorioPage() {
 
   {/* VOCAÇÕES PRODUTIVAS MAPEADAS */}
   <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col gap-3 transition-colors ${
-    reportMode === 'semiarido' ? 'bg-white border-amber-200/50 shadow-card' : 'bg-surface border-neutral-100 shadow-card'
+    reportMode === 'semiarido' ? 'bg-surface border-amber-500/30 shadow-card' : 'bg-surface border-border shadow-card'
   }`}>
   <div className="flex items-center justify-between mb-2">
   <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
@@ -1605,8 +1630,8 @@ export default function RelatorioPage() {
   key={idx}
   className={`text-[11px] font-medium px-2.5 py-1 rounded-full shadow-2xs inline-flex items-center justify-center leading-none transition-colors ${
     reportMode === 'semiarido'
-      ? 'bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100/70'
-      : 'bg-primary-50/50 border border-primary-100 text-primary-900'
+      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
+      : 'bg-surface-soft border border-border text-text-secondary hover:text-text-primary'
   }`}
   >
   {cad}

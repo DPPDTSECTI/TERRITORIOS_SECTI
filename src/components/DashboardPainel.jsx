@@ -733,7 +733,7 @@ export default function DashboardPainel() {
                         ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
                         : 'bg-primary-900 text-white shadow-card-elevated')
                     : (filtroSemiarido
-                        ? 'bg-white/95 border border-amber-200/40 shadow-card'
+                        ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
                         : 'bg-surface border border-neutral-100 shadow-card')
                 }`}
               >

@@ -502,7 +502,7 @@ export default function AtivosPage() {
                                             ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
                                             : 'bg-primary-900 text-white shadow-card-elevated')
                                         : (filtroSemiarido
-                                            ? 'bg-white/95 border border-amber-200/40 shadow-card'
+                                            ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
                                             : 'bg-surface border border-neutral-100 shadow-card')
                                 }`}
                             >
@@ -1156,13 +1156,13 @@ export default function AtivosPage() {
                                                     const isFirst = index === 0;
                                                     const rankStr = String(m.rank || index + 1).padStart(2, '0');
                                                     const rankStyle = isFirst
-                                                        ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white shadow-2xs')
-                                                        : (filtroSemiarido ? 'bg-amber-100 text-amber-800 border border-amber-200/60' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
-                                                    const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300' : 'bg-primary-200');
-                                                    const textStyle = isFirst ? 'font-medium text-white' : (filtroSemiarido ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
+                                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
+                                                        : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50');
+                                                    const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-600' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-500/60' : 'bg-primary-400');
+                                                    const textStyle = isFirst ? 'font-semibold text-white' : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-text-primary');
                                                     const valueStyle = isFirst
-                                                        ? (filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border border-amber-300/70' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
-                                                        : (filtroSemiarido ? 'bg-amber-50 text-amber-800 border border-amber-200/60' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
+                                                        ? (filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/50')
+                                                        : (filtroSemiarido ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-800/50');
 
                                                     return (
                                                         <div
@@ -1189,7 +1189,7 @@ export default function AtivosPage() {
 
                                                             {/* BARRA: TRACK + FILL + NOME */}
                                                             <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                                                filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                                                filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'
                                                             }`}>
                                                                 <div 
                                                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
@@ -1203,7 +1203,7 @@ export default function AtivosPage() {
                                                             {/* RNP PILL */}
                                                             {m.rnpCount > 0 && (
                                                                 <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none border ${
-                                                                    filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border-amber-300/70' : 'bg-primary-100/80 text-primary-800 border border-primary-200/60'
+                                                                    filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
                                                                 }`} title={`${m.rnpCount} com RNP`}>
                                                                     {m.rnpCount} RNP
                                                                 </div>
@@ -1252,7 +1252,7 @@ export default function AtivosPage() {
 
                                                         {/* BARRA: TRACK + FILL + NOME */}
                                                         <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                                            filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'
+                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'
                                                         }`}>
                                                             <div 
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
@@ -1266,7 +1266,7 @@ export default function AtivosPage() {
                                                         {/* RNP PILL */}
                                                         {t.rnpCount > 0 && (
                                                             <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none border ${
-                                                                filtroSemiarido ? 'bg-amber-100/90 text-amber-900 border-amber-300/70' : 'bg-primary-100/80 text-primary-800 border border-primary-200/60'
+                                                                filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
                                                             }`} title={`${t.rnpCount} com RNP`}>
                                                                 {t.rnpCount} RNP
                                                             </div>

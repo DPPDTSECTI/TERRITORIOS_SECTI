@@ -532,6 +532,7 @@ export default function RelatorioSintese() {
         {/* COLUNA DIREITA: MAPA TERRITORIAL INTEGRADO (30%) */}
         <div style={{ width: 'calc(30% - 8px)' }} className="h-full bg-white rounded-[24px] border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] relative overflow-hidden flex flex-col shrink-0 min-h-0">
           <PtiMap
+            key={`map-sintese-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
             selectedTerritory={selectedTerritory}
             onSelectTerritory={(t) => setSelectedTerritory(t)}
             territoriosData={territoriosData}

@@ -8,6 +8,7 @@ import * as topojson from 'topojson-client';
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
+import { useTheme } from '../../context/ThemeContext';
 
 // Paleta Soft Blue & Teal com Alto Contraste Geográfico entre Territórios Vizinhos (Modo Normal)
 const TERRITORY_COLORS = [
@@ -168,6 +169,7 @@ export default function PtiMap({
 	semiaridoMunicipios = [],
 	onToggleSemiarido = null
 }) {
+  const { isDark } = useTheme();
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [mergedNormalData, setMergedNormalData] = useState(null);
   const [mergedSemiData, setMergedSemiData] = useState(null);
@@ -318,6 +320,10 @@ export default function PtiMap({
     const idTer = Number(feature.properties.id_territorio);
     if (!idTer) return { fillOpacity: 0.1, stroke: false, fillColor: '#fee2e2' };
 
+    const neutralFill = isDark ? '#192438' : '#E2E8F0';
+    const strokeColor = isDark ? '#2e415d' : '#FFFFFF';
+    const faintStroke = isDark ? '#223048' : '#CBD5E1';
+
     const isSelectedMap = selectedTerritory && Number(selectedTerritory.id_territorio) === idTer;
 
     // 1. QUANDO HÁ UM TERRITÓRIO SELECIONADO / FILTRADO:
@@ -331,7 +337,7 @@ export default function PtiMap({
           if (isMunSemi) {
             fillColor = semiaridoTerritoryColorMap[idTer] || '#F59E0B';
           } else {
-            fillColor = '#E2E8F0';
+            fillColor = neutralFill;
             opacity = 0.40;
           }
         }
@@ -340,7 +346,7 @@ export default function PtiMap({
           fillColor,
           stroke: true,
           weight: 1.2,
-          color: '#FFFFFF',
+          color: strokeColor,
           fillOpacity: opacity,
           className: 'outline-none'
         };
@@ -348,7 +354,7 @@ export default function PtiMap({
 
       // Demais territórios esmaecidos sem linhas
       return {
-        fillColor: '#E2E8F0',
+        fillColor: neutralFill,
         stroke: false,
         weight: 0,
         color: 'transparent',
@@ -367,16 +373,16 @@ export default function PtiMap({
             fillColor: semiaridoTerritoryColorMap[idTer] || '#F59E0B',
             stroke: true,
             weight: 1.0,
-            color: '#FFFFFF',
+            color: strokeColor,
             fillOpacity: 0.92,
             className: 'outline-none'
           };
         } else {
           return {
-            fillColor: '#E2E8F0',
+            fillColor: neutralFill,
             stroke: true,
             weight: 0.6,
-            color: '#CBD5E1',
+            color: faintStroke,
             fillOpacity: 0.35,
             className: 'outline-none'
           };
@@ -386,10 +392,10 @@ export default function PtiMap({
       const dStats = territoriesDynamicStats[idTer];
       const matchesFilters = dStats ? dStats.matchesFilters : true;
       return {
-        fillColor: matchesFilters ? (territoryColorMap[idTer] || '#D6EAF8') : '#E2E8F0',
+        fillColor: matchesFilters ? (territoryColorMap[idTer] || '#D6EAF8') : neutralFill,
         stroke: true,
         weight: 1.0,
-        color: '#FFFFFF',
+        color: strokeColor,
         fillOpacity: matchesFilters ? 0.90 : 0.40,
         className: 'outline-none'
       };
@@ -400,10 +406,10 @@ export default function PtiMap({
     if (filtroSemiarido) {
       const isSemi = feature.properties.is_semiarido;
       return {
-        fillColor: isSemi ? (semiaridoTerritoryColorMap[idTer] || '#F59E0B') : '#E2E8F0',
+        fillColor: isSemi ? (semiaridoTerritoryColorMap[idTer] || '#F59E0B') : neutralFill,
         stroke: true,
         weight: 1.2,
-        color: '#FFFFFF',
+        color: strokeColor,
         fillOpacity: isSemi ? 0.95 : 0.35,
         lineCap: 'round',
         lineJoin: 'round',
@@ -414,10 +420,10 @@ export default function PtiMap({
     const dStats = territoriesDynamicStats[idTer];
     const matchesFilters = dStats ? dStats.matchesFilters : true;
     return {
-      fillColor: matchesFilters ? (territoryColorMap[idTer] || '#D6EAF8') : '#E2E8F0',
+      fillColor: matchesFilters ? (territoryColorMap[idTer] || '#D6EAF8') : neutralFill,
       stroke: true,
       weight: 1.4,
-      color: '#FFFFFF',
+      color: strokeColor,
       opacity: 1,
       lineCap: 'round',
       lineJoin: 'round',
@@ -674,14 +680,19 @@ export default function PtiMap({
           <ZoomTracker onZoomChange={setCurrentZoom} />
 
           <TileLayer
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-            opacity={0.7}
+            key={isDark ? 'dark-canvas-tiles' : 'light-canvas-tiles'}
+            url={
+              isDark
+                ? "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+                : "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+            }
+            opacity={isDark ? 0.85 : 0.7}
             maxZoom={16}
             crossOrigin="anonymous"
           />
 
           <GeoJSON
-            key={`${selectedTerritory ? `sel-${selectedTerritory.id_territorio}` : (isZoomedIn ? `zoom-${filtroSemiarido ? '1' : '0'}` : `overview-${filtroSemiarido ? '1' : '0'}`)}`}
+            key={`${selectedTerritory ? `sel-${selectedTerritory.id_territorio}-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}` : (isZoomedIn ? `zoom-${filtroSemiarido ? '1' : '0'}-${isDark ? 'dark' : 'light'}` : `overview-${filtroSemiarido ? '1' : '0'}-${isDark ? 'dark' : 'light'}`)}`}
             ref={geoJsonLayerRef}
             data={currentData}
             style={styleFeature}
@@ -691,12 +702,12 @@ export default function PtiMap({
           {/* Contornos nítidos de TODOS os territórios de identidade na visão geral */}
           {!selectedTerritory && allTerritoryMesh && (
             <GeoJSON
-              key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'normal'}`}
+              key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'normal'}-${isDark ? 'dark' : 'light'}`}
               data={allTerritoryMesh}
               style={{
-                color: filtroSemiarido ? '#78350F' : '#FFFFFF',
+                color: filtroSemiarido ? (isDark ? '#F59E0B' : '#78350F') : (isDark ? '#334666' : '#FFFFFF'),
                 weight: filtroSemiarido ? 1.6 : 1.8,
-                opacity: filtroSemiarido ? 0.70 : 0.95,
+                opacity: filtroSemiarido ? 0.70 : (isDark ? 0.85 : 0.95),
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'
@@ -708,10 +719,10 @@ export default function PtiMap({
           {/* Contorno perimetral externo da Bahia para acabamento refinado */}
           {!selectedTerritory && stateBoundaryMesh && (
             <GeoJSON
-              key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'normal'}`}
+              key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'normal'}-${isDark ? 'dark' : 'light'}`}
               data={stateBoundaryMesh}
               style={{
-                color: filtroSemiarido ? '#92400E' : '#FFFFFF',
+                color: filtroSemiarido ? '#92400E' : (isDark ? '#4a6288' : '#FFFFFF'),
                 weight: 2.2,
                 opacity: 1,
                 fill: false,
@@ -759,7 +770,7 @@ export default function PtiMap({
       )}
 
       {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
-      <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-white/90 backdrop-blur-xl rounded-xl border border-white shadow-[0_8px_32px_rgba(29,53,87,0.1)] overflow-hidden">
+      <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-surface/90 backdrop-blur-xl rounded-xl border border-border shadow-[0_8px_32px_rgba(0,0,0,0.2)] overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
           className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
@@ -810,14 +821,14 @@ export default function PtiMap({
        title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
        className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
          filtroSemiarido
-           ? 'bg-amber-50/95 border-amber-300 text-amber-800 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
-           : 'bg-white/95 border-white/80 text-text-secondary hover:border-slate-300 hover:text-text-primary shadow-sm'
+           ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
+           : 'bg-surface/90 border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-sm'
        }`}
      >
        <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
          filtroSemiarido
-           ? 'bg-amber-400 text-white'
-           : 'bg-white border border-slate-200 text-slate-400'
+           ? 'bg-amber-500 text-white'
+           : 'bg-surface-soft border border-border text-text-muted'
        }`}>
          {filtroSemiarido ? (
            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -842,9 +853,9 @@ export default function PtiMap({
 
  {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
  {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
- <div className={`absolute ${isTerritoryOnRight ? 'top-4 left-4' : 'top-[58px] right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-xl border bg-white/95 backdrop-blur-xl border-white shadow-card-soft transition-all duration-300 animate-soft-fade pointer-events-auto`}>
+ <div className={`absolute ${isTerritoryOnRight ? 'top-4 left-4' : 'top-[58px] right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-xl border bg-surface/95 backdrop-blur-xl border-border shadow-card-soft transition-all duration-300 animate-soft-fade pointer-events-auto`}>
  <div className="flex justify-between items-center mb-3 border-b border-border pb-3">
- <h4 className="text-[11px] font-medium text-primary-950 uppercase leading-tight">
+ <h4 className="text-[11px] font-medium text-text-primary uppercase leading-tight">
  {selectedTerritory.nome_territorio || selectedTerritory.territorio}
  </h4>
  <button
@@ -879,7 +890,7 @@ export default function PtiMap({
  {/* ================= TOOLTIP ================= */}
  {tooltip.visible && hoveredTerritoryId && !selectedTerritory && (
  <div
- className="absolute z-[1000] overflow-hidden rounded-xl border bg-white/95 backdrop-blur-md border-white shadow-card-soft pointer-events-none transition-opacity duration-150"
+ className="absolute z-[1000] overflow-hidden rounded-xl border bg-surface/95 backdrop-blur-md border-border shadow-card-soft pointer-events-none transition-opacity duration-150"
  style={{ top: tooltip.y, left: tooltip.x, width: 240 }}
  >
           <div

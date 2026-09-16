@@ -6,6 +6,7 @@ import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
 import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2, BookOpen, SunMedium } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
+import { useTheme } from '../../context/ThemeContext';
 
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
@@ -870,9 +871,12 @@ export default function SideMap({
   onSelectCategory = () => { },
   onAssetClick = () => { },
   isExpanded = false,
-  onToggleExpand = null
+  onToggleExpand = null,
+  filtroSemiarido: propFiltroSemiarido
 }) {
-  const { filtroSemiarido, setFiltroSemiarido } = useContext(DataContext) || {};
+  const { filtroSemiarido: contextFiltroSemiarido, setFiltroSemiarido } = useContext(DataContext) || {};
+  const filtroSemiarido = propFiltroSemiarido !== undefined ? Boolean(propFiltroSemiarido) : Boolean(contextFiltroSemiarido);
+  const { isDark } = useTheme();
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
   const [municipiosGeoJson, setMunicipiosGeoJson] = useState(null);
@@ -1320,9 +1324,9 @@ export default function SideMap({
 
       if (filtroSemiarido && !isTerrSemiarido) {
         return {
-          fillColor: '#E2E8F0',
+          fillColor: isDark ? '#111827' : '#E2E8F0',
           fillOpacity: 0.35,
-          color: '#CBD5E1',
+          color: isDark ? '#1f293d' : '#CBD5E1',
           weight: 0.8,
           opacity: 0.8,
           lineCap: 'round',
@@ -1336,7 +1340,7 @@ export default function SideMap({
           return {
             fillColor: 'transparent',
             fillOpacity: 0,
-            color: filtroSemiarido ? '#78350F' : '#1E293B',
+            color: filtroSemiarido ? (isDark ? '#F59E0B' : '#78350F') : (isDark ? '#38BDF8' : '#1E293B'),
             weight: 2.2,
             opacity: 0.95,
             lineCap: 'round',
@@ -1345,9 +1349,9 @@ export default function SideMap({
           };
         }
         return {
-          fillColor: '#CBD5E1',
-          fillOpacity: 0.55,
-          color: '#FFFFFF',
+          fillColor: isDark ? '#141c2c' : '#CBD5E1',
+          fillOpacity: isDark ? 0.40 : 0.55,
+          color: isDark ? '#1f2a3e' : '#FFFFFF',
           weight: 0.8,
           opacity: 0.9,
           lineCap: 'round',
@@ -1359,7 +1363,7 @@ export default function SideMap({
       return {
         fillColor: heatColor,
         fillOpacity: isHovered ? 1.0 : 0.92,
-        color: filtroSemiarido && isHovered ? '#D97706' : '#FFFFFF',
+        color: filtroSemiarido && isHovered ? '#D97706' : (isDark ? '#26364d' : '#FFFFFF'),
         weight: isHovered ? 1.8 : 1.1,
         opacity: 1,
         lineCap: 'round',
@@ -1371,9 +1375,9 @@ export default function SideMap({
     // mode !== 'cursos' (Ativos ou Cadeias)
     if (filtroSemiarido && !isTerrSemiarido) {
       return {
-        fillColor: '#E2E8F0',
+        fillColor: isDark ? '#111827' : '#E2E8F0',
         fillOpacity: 0.35,
-        color: '#CBD5E1',
+        color: isDark ? '#1f293d' : '#CBD5E1',
         weight: 0.8,
         opacity: 0.8,
         lineCap: 'round',
@@ -1385,9 +1389,9 @@ export default function SideMap({
     if (selectedTerritory) {
       if (isSelected) {
         return {
-          fillColor: filtroSemiarido ? '#FEF3C7' : '#EFF6FF',
+          fillColor: filtroSemiarido ? (isDark ? '#78350F40' : '#FEF3C7') : (isDark ? 'rgba(30, 58, 138, 0.3)' : '#EFF6FF'),
           fillOpacity: 1,
-          color: filtroSemiarido ? '#D97706' : '#1D4ED8',
+          color: filtroSemiarido ? '#D97706' : (isDark ? '#60A5FA' : '#1D4ED8'),
           weight: 2.2,
           opacity: 1,
           lineCap: 'round',
@@ -1396,9 +1400,9 @@ export default function SideMap({
         };
       }
       return {
-        fillColor: '#F8FAFC',
-        fillOpacity: 0.85,
-        color: '#E2E8F0',
+        fillColor: isDark ? '#101726' : '#F8FAFC',
+        fillOpacity: isDark ? 0.70 : 0.85,
+        color: isDark ? '#1e283c' : '#E2E8F0',
         weight: 0.8,
         opacity: 0.9,
         lineCap: 'round',
@@ -1408,9 +1412,13 @@ export default function SideMap({
     }
 
     return {
-      fillColor: isHovered ? (filtroSemiarido ? '#FEF3C7' : '#EFF6FF') : (filtroSemiarido ? '#FFFBEB' : '#FFFFFF'),
+      fillColor: isHovered
+        ? (filtroSemiarido ? (isDark ? '#78350F35' : '#FEF3C7') : (isDark ? '#1e293b' : '#EFF6FF'))
+        : (filtroSemiarido ? (isDark ? '#1c1917' : '#FFFBEB') : (isDark ? '#141d2e' : '#FFFFFF')),
       fillOpacity: 1,
-      color: isHovered ? (filtroSemiarido ? '#D97706' : '#2563EB') : (filtroSemiarido ? '#F59E0B' : '#CBD5E1'),
+      color: isHovered
+        ? (filtroSemiarido ? '#D97706' : (isDark ? '#60A5FA' : '#2563EB'))
+        : (filtroSemiarido ? (isDark ? '#92400E' : '#F59E0B') : (isDark ? '#26364d' : '#CBD5E1')),
       weight: isHovered ? 1.8 : 0.9,
       opacity: 1,
       lineCap: 'round',
@@ -1671,7 +1679,7 @@ export default function SideMap({
                 <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
                   p.isSelected
                     ? (filtroSemiarido ? 'text-white bg-[#B45309] border-[#B45309] font-bold' : 'text-white bg-[#1E40AF] border-[#1E40AF] font-bold')
-                    : (filtroSemiarido ? 'text-[#92400E] bg-white/95 backdrop-blur-xs border-amber-200' : 'text-[#1E40AF] bg-white/95 backdrop-blur-xs border-[#E2E8F0]')
+                    : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface/95 backdrop-blur-xs border-amber-500/30' : 'text-primary-700 dark:text-primary-300 bg-surface/95 backdrop-blur-xs border-border')
                 }`}>
                   {p.municipio}
                 </span>
@@ -1701,7 +1709,7 @@ export default function SideMap({
           (mode === 'cursos' && selectedCategory && selectedCategory !== 'todas') ||
           (mode === 'cadeias' && (selectedSegmento || (selectedTipo && selectedTipo !== 'todos')))
         ) && (
-          <div className="pointer-events-auto flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="pointer-events-auto flex items-center gap-2 bg-surface/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-border shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
             <span
               className="w-2 h-2 rounded-full animate-pulse shrink-0"
               style={{ backgroundColor: filtroSemiarido ? '#D97706' : '#2563EB' }}
@@ -1732,9 +1740,9 @@ export default function SideMap({
 
         {/* INFO AO PASSAR O MOUSE (HOVER) */}
         {hoveredInfo && (
-          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-white shadow-sm">
+          <div className="flex items-center gap-1.5 bg-surface/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-border shadow-sm">
             {mode === 'cursos' && <Flame size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />}
-            <span className="text-[#1D3557] font-extrabold text-[12px] tracking-tight">
+            <span className="text-text-primary font-extrabold text-[12px] tracking-tight">
               {hoveredInfo.label}
             </span>
             <span className={`font-black text-[11px] px-2 py-0.5 rounded-full ${filtroSemiarido ? 'text-amber-800 bg-amber-500/15' : 'text-[#2563EB] bg-[#2563EB]/10'}`}>
@@ -1745,11 +1753,11 @@ export default function SideMap({
       </div>
 
       {mode === 'cursos' && (
-        <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-md rounded-2xl p-2.5 border border-white shadow-[0_8px_24px_rgba(29,53,87,0.08)] pointer-events-auto">
+        <div className="absolute bottom-3 left-3 z-[400] bg-surface/95 backdrop-blur-md rounded-2xl p-2.5 border border-border shadow-card pointer-events-auto">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1">
               <Flame size={12} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
-              <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${filtroSemiarido ? 'text-amber-900' : 'text-[#1D3557]'}`}>
+              <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
                 {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
               </span>
             </div>
@@ -1773,7 +1781,7 @@ export default function SideMap({
                     style={{ backgroundColor: lvl.color }}
                     title={lvl.label}
                   />
-                  <span className={`text-[7.5px] font-bold whitespace-nowrap ${filtroSemiarido ? 'text-amber-800' : 'text-[#64748B]'}`}>
+                  <span className={`text-[7.5px] font-bold whitespace-nowrap ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'}`}>
                     {labelText}
                   </span>
                 </div>
@@ -1795,8 +1803,8 @@ export default function SideMap({
                     ? 'bg-amber-600 text-white border-amber-600 shadow-[0_3px_12px_rgba(217,119,6,0.3)]'
                     : 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]')
                 : (filtroSemiarido
-                    ? 'bg-white/95 backdrop-blur-md text-amber-900 border-amber-200 hover:bg-white hover:border-amber-400'
-                    : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]')
+                    ? 'bg-surface/95 backdrop-blur-md text-amber-800 dark:text-amber-300 border-amber-500/30 hover:bg-surface hover:border-amber-400'
+                    : 'bg-surface/95 backdrop-blur-md text-text-primary border-border hover:bg-surface hover:border-primary-500')
             }`}
           >
             <Network size={13} className={showAllConnections ? (filtroSemiarido ? 'text-amber-200' : 'text-[#00B4D8]') : (filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]')} />
@@ -1813,7 +1821,7 @@ export default function SideMap({
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm backdrop-blur-md ${
               filtroSemiarido
                 ? 'bg-amber-500 text-white border-amber-600 shadow-[0_3px_12px_rgba(245,158,11,0.35)]'
-                : 'bg-white/95 text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-amber-400'
+                : 'bg-surface/95 text-text-primary border-border hover:bg-surface hover:border-amber-400'
             }`}
           >
             <SunMedium size={13} className={filtroSemiarido ? 'text-amber-100' : 'text-amber-500'} />
@@ -1831,8 +1839,8 @@ export default function SideMap({
                     ? 'bg-amber-600 text-white border-amber-600 shadow-[0_3px_12px_rgba(217,119,6,0.3)]'
                     : 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]')
                 : (filtroSemiarido
-                    ? 'bg-white/95 backdrop-blur-md text-amber-900 border-amber-200 hover:bg-white hover:border-amber-400'
-                    : 'bg-white/95 backdrop-blur-md text-[#1D3557] border-[#CBD5E1] hover:bg-white hover:border-[#2563EB]')
+                    ? 'bg-surface/95 backdrop-blur-md text-amber-800 dark:text-amber-300 border-amber-500/30 hover:bg-surface hover:border-amber-400'
+                    : 'bg-surface/95 backdrop-blur-md text-text-primary border-border hover:bg-surface hover:border-primary-500')
             }`}
           >
             {isExpanded ? (
@@ -1845,11 +1853,11 @@ export default function SideMap({
         )}
       </div>
 
-      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-white/95 backdrop-blur-md rounded-[18px] border border-[#CBD5E1] shadow-sm overflow-hidden">
+      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-surface/95 backdrop-blur-md rounded-[18px] border border-border shadow-sm overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-[#E2E8F0] cursor-pointer ${
-            filtroSemiarido ? 'text-amber-800 hover:text-amber-950 hover:bg-amber-100/50' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-border/70 cursor-pointer ${
+            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
           }`}
           title="Aproximar"
         >
@@ -1857,8 +1865,8 @@ export default function SideMap({
         </button>
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-[#E2E8F0] cursor-pointer ${
-            filtroSemiarido ? 'text-amber-800 hover:text-amber-950 hover:bg-amber-100/50' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50'
+          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-border/70 cursor-pointer ${
+            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
           }`}
           title="Afastar"
         >
@@ -1878,8 +1886,8 @@ export default function SideMap({
           }}
           className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
             hasActiveFilter
-              ? 'text-red-500 bg-red-50 hover:bg-red-100'
-              : (filtroSemiarido ? 'text-amber-800 hover:text-amber-950 hover:bg-amber-100/50' : 'text-[#457B9D] hover:text-[#1D3557] hover:bg-[#D6EAF8]/50')
+              ? 'text-red-500 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/50'
+              : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft')
           }`}
           title="Limpar filtros"
         >

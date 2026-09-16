@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Home, LayoutDashboard, FileText, Info, Database, GraduationCap, GitPullRequest, Map } from 'lucide-react';
+import { Home, LayoutDashboard, FileText, Info, Database, GraduationCap, GitPullRequest, Map, Sun, Moon } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Sidebar({ username, navOnly = false }) {
    const location = useLocation();
    const [isCollapsed, setIsCollapsed] = useState(true);
+   const { isDark, toggleTheme } = useTheme();
 
    const navItemsGroup1 = [
       { path: '/', label: 'Início', icon: Home },
@@ -64,7 +66,7 @@ export default function Sidebar({ username, navOnly = false }) {
                      <Link
                         to={item.path}
                         className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.path === '/sobre' ? 'tour-nav-sobre ' : ''}${isActive
-                           ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
+                           ? `bg-primary-50 dark:bg-primary-900/50 border-primary-600 dark:border-primary-500 text-primary-900 dark:text-primary-200 shadow-xs font-semibold`
                            : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                            }`}
                         title={isCollapsed ? item.label : undefined}
@@ -100,7 +102,7 @@ export default function Sidebar({ username, navOnly = false }) {
                            <Link
                               to={item.path}
                               className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.tourClass ? item.tourClass + ' ' : ''}${isActive
-                                 ? `bg-primary-50 border-primary-600 text-primary-900 shadow-xs font-semibold`
+                                 ? `bg-primary-50 dark:bg-primary-900/50 border-primary-600 dark:border-primary-500 text-primary-900 dark:text-primary-200 shadow-xs font-semibold`
                                  : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                                  }`}
                               title={isCollapsed ? item.label : undefined}
@@ -120,6 +122,27 @@ export default function Sidebar({ username, navOnly = false }) {
                </div>
             )}
          </nav>
+
+         {/* ================= RODAPÉ: CONTROLE DE TEMA ================= */}
+         <div className="pt-2 border-t border-border/70 shrink-0 w-full">
+            <button
+               type="button"
+               onClick={toggleTheme}
+               title={isDark ? "Ativar Modo Claro" : "Ativar Modo Escuro"}
+               className="w-full h-[38px] flex items-center rounded-lg transition-colors duration-200 border border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary"
+            >
+               <div className="w-[37px] h-[38px] flex items-center justify-center shrink-0">
+                  {isDark ? (
+                     <Sun size={17} className="text-amber-400" />
+                  ) : (
+                     <Moon size={17} className="text-text-muted" />
+                  )}
+               </div>
+               <span className={`text-[12px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'w-0 opacity-0 -translate-x-2 pointer-events-none' : 'w-auto opacity-100 translate-x-0 pr-2 font-medium'}`}>
+                  {isDark ? "Modo Claro" : "Modo Escuro"}
+               </span>
+            </button>
+         </div>
 
       </aside>
    );

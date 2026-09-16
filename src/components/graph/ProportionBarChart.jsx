@@ -100,14 +100,14 @@ export default function ProportionBarChart({
         const isSemi = isSemiarido || cardClassName.includes('semiarido') || !!badge;
         const posPillColor = isSemi ? 'bg-amber-600' : (positiveColor || 'bg-primary-500');
         const negPillStyle = isSemi
-            ? 'bg-amber-500/15 text-amber-900 border border-amber-500/20'
-            : 'bg-primary-100 text-primary-700 border border-primary-200/60';
+            ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+            : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50';
         const totalPillStyle = isSemi
-            ? 'bg-amber-100 text-amber-800 border border-amber-300/70'
-            : 'bg-primary-100 text-primary-700 border border-primary-200/80';
+            ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+            : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/80 dark:border-primary-700/50';
 
         return (
-            <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
+            <div className={`flex-1 bg-surface rounded-2xl border border-border shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
                 {/* CABEÇALHO */}
                 <div className="flex justify-between items-start mb-1.5 relative z-10 w-full pr-9 shrink-0">
                     <div className="flex flex-col min-w-0">
@@ -124,7 +124,7 @@ export default function ProportionBarChart({
                     </div>
                 </div>
 
-                <div className="w-full h-px bg-neutral-100 mb-1.5 shrink-0"></div>
+                <div className="w-full h-px bg-border mb-1.5 shrink-0"></div>
 
                 {data.length === 0 ? (
                     <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
@@ -215,18 +215,18 @@ export default function ProportionBarChart({
                         </div>
 
                         {/* LEGENDA NO RODAPÉ */}
-                        <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-neutral-100 shrink-0 text-[10px] font-medium mt-auto">
+                        <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-border shrink-0 text-[10px] font-medium mt-auto">
                             <div className="flex items-center gap-1.5">
                                 <span className={`w-2 h-2 rounded-full ${posPillColor} shadow-2xs`}></span>
-                                <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{positiveLabel}</span>
+                                <span className={isSemi ? "text-amber-800 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}>{positiveLabel}</span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-500/40' : 'bg-primary-200'} shadow-2xs`}></span>
-                                <span className={isSemi ? "text-amber-800" : "text-primary-700"}>{negativeLabel}</span>
+                                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-500/40' : 'bg-primary-300'} shadow-2xs`}></span>
+                                <span className={isSemi ? "text-amber-800 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}>{negativeLabel}</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-text-muted">
-                                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-400' : 'bg-primary-300'} shadow-2xs`}></span>
-                                <span className={isSemi ? "text-amber-800" : ""}>Total</span>
+                                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-400' : 'bg-primary-400'} shadow-2xs`}></span>
+                                <span className={isSemi ? "text-amber-800 dark:text-amber-300" : ""}>Total</span>
                             </div>
                         </div>
                     </>
@@ -237,7 +237,7 @@ export default function ProportionBarChart({
 
     // MODO DASHBOARD INTERATIVO PADRÃO (Mantido intacto para qualquer outro chamador genérico)
     return (
-        <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 lg:p-5 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
+        <div className={`flex-1 bg-surface rounded-2xl border border-border shadow-card transition-all duration-500 hover:shadow-card-elevated p-4 lg:p-5 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
             {/* CABEÇALHO COM PADDING À DIREITA PARA NÃO COLIDIR COM O DRAG HANDLE */}
             <div className="flex justify-between items-start mb-2 relative z-10 w-full pr-9 shrink-0">
                 <div className="flex flex-col min-w-0">
@@ -254,7 +254,7 @@ export default function ProportionBarChart({
                 </div>
             </div>
             
-            <div className="w-full h-px bg-neutral-100 mb-2 shrink-0"></div>
+            <div className="w-full h-px bg-border mb-2 shrink-0"></div>
 
             {data.length === 0 ? (
                 <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
@@ -273,14 +273,14 @@ export default function ProportionBarChart({
                     const percentNeg = ((neg / total) * 100).toFixed(1);
 
                     return (
-                        <div key={idx} className="flex flex-col justify-center gap-1 py-1 px-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]/50 flex-1 min-h-[32px] max-h-[44px]">
-                            <div className="flex justify-between items-center text-[11.5px] font-bold text-[#1D3557] leading-tight">
+                        <div key={idx} className="flex flex-col justify-center gap-1 py-1 px-2.5 rounded-xl bg-surface-soft border border-border flex-1 min-h-[32px] max-h-[44px]">
+                            <div className="flex justify-between items-center text-[11.5px] font-bold text-text-primary leading-tight">
                                 <span className="truncate flex-1 min-w-0 pr-2" title={item.label}>{item.label}</span>
                                 <div className="flex items-center gap-1 text-[11px] shrink-0">
                                     <span className={`font-black ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
                                         {pos} <span className="text-[10px] font-bold opacity-90">({percentPos}%)</span>
                                     </span>
-                                    <span className="text-[#CBD5E1] font-bold">/</span>
+                                    <span className="text-text-muted font-bold">/</span>
                                     <span className={`font-black ${negativeTextColor}`} title={`${negativeLabel}: ${neg} (${percentNeg}%)`}>
                                         {neg} <span className="text-[10px] font-bold opacity-90">({percentNeg}%)</span>
                                     </span>

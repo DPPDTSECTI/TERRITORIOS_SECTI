@@ -87,6 +87,80 @@
     --color-map-neutral: 232 236 239;
   }
 
+  .dark {
+    /* PRIMARY */
+    --color-primary-950: 10 24 44;
+    --color-primary-900: 16 38 68;
+    --color-primary-800: 24 55 96;
+    --color-primary-700: 32 75 128;
+    --color-primary-600: 47 117 181;
+    --color-primary-500: 63 134 199;
+    --color-primary-400: 96 160 216;
+    --color-primary-300: 140 190 230;
+    --color-primary-200: 185 215 240;
+    --color-primary-100: 220 235 248;
+    --color-primary-50: 240 248 253;
+
+    /* NEUTRALS */
+    --color-neutral-950: 248 250 252;
+    --color-neutral-900: 241 245 249;
+    --color-neutral-800: 226 232 240;
+    --color-neutral-700: 203 213 225;
+    --color-neutral-600: 148 163 184;
+    --color-neutral-500: 100 116 139;
+    --color-neutral-400: 71 85 105;
+    --color-neutral-300: 51 65 85;
+    --color-neutral-200: 33 45 66;
+    --color-neutral-100: 24 33 48;
+    --color-neutral-50: 15 22 34;
+    --color-white: 19 28 46;
+
+    /* SURFACES */
+    --color-background: 11 15 25;
+    --color-surface: 19 28 46;
+    --color-surface-soft: 27 38 60;
+
+    /* SEMANTIC: SUCCESS */
+    --color-success-700: 74 222 128;
+    --color-success-600: 34 197 94;
+    --color-success-100: 20 83 45;
+    --color-success-50: 12 40 24;
+
+    /* SEMANTIC: WARNING */
+    --color-warning-700: 251 191 36;
+    --color-warning-600: 245 158 11;
+    --color-warning-100: 120 53 15;
+    --color-warning-50: 45 20 7;
+
+    /* SEMANTIC: DANGER */
+    --color-danger-700: 248 113 113;
+    --color-danger-600: 239 68 68;
+    --color-danger-100: 127 29 29;
+    --color-danger-50: 45 12 12;
+
+    /* ACCENT */
+    --color-accent-700: 251 191 36;
+    --color-accent-600: 245 158 11;
+    --color-accent-500: 217 119 6;
+    --color-accent-100: 120 53 15;
+    --color-accent-50: 45 20 7;
+
+    /* TEXT & BORDERS MAP (Semantic aliases) */
+    --color-text-primary: 248 250 252;
+    --color-text-secondary: 170 185 205;
+    --color-text-muted: 115 135 158;
+    --color-border: 33 45 66;
+    --color-border-strong: 48 64 90;
+
+    /* MAPS */
+    --color-map-1: 56 139 210;
+    --color-map-2: 63 134 199;
+    --color-map-3: 92 155 200;
+    --color-map-4: 37 101 143;
+    --color-map-5: 29 78 115;
+    --color-map-neutral: 24 33 48;
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -263,6 +337,68 @@
   background: linear-gradient(225deg, rgba(251, 191, 36, 0.05) 0%, rgba(255, 255, 255, 0.98) 40%, #ffffff 100%) !important;
   border-color: rgba(245, 158, 11, 0.24) !important;
   box-shadow: 0 4px 20px -2px rgba(217, 119, 6, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* ================= DARK MODE OVERRIDES ================= */
+.dark * {
+  scrollbar-color: rgba(var(--color-neutral-400), 0.5) transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-neutral-400), 0.4);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--color-neutral-400), 0.7);
+}
+
+.dark .semiarido-card-warmth-1 {
+  background: linear-gradient(225deg, rgba(245, 158, 11, 0.10) 0%, rgba(27, 38, 60, 0.95) 40%, #131c2e 100%) !important;
+  border-color: rgba(245, 158, 11, 0.28) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .semiarido-card-warmth-2 {
+  background: linear-gradient(225deg, rgba(245, 158, 11, 0.14) 0%, rgba(27, 38, 60, 0.95) 45%, #131c2e 100%) !important;
+  border-color: rgba(245, 158, 11, 0.34) !important;
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .semiarido-card-warmth-3 {
+  background: linear-gradient(225deg, rgba(245, 158, 11, 0.07) 0%, rgba(27, 38, 60, 0.95) 35%, #131c2e 100%) !important;
+  border-color: rgba(245, 158, 11, 0.22) !important;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .semiarido-card-warmth-4 {
+  background: linear-gradient(225deg, rgba(245, 158, 11, 0.10) 0%, rgba(27, 38, 60, 0.95) 40%, #131c2e 100%) !important;
+  border-color: rgba(245, 158, 11, 0.28) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .leaflet-container {
+  background-color: #0b0f19 !important;
+}
+
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: #131c2e !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+  border: 1px solid #24334c !important;
+}
+
+.dark .leaflet-popup-content {
+  color: #f1f5f9 !important;
+}
+
+.dark .bg-carto-grid {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+.dark .bg-carto-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
 }
 
 /* ================= PRINT RULES (16:9 1920x1080 EXECUTIVE REPORTS) ================= */
