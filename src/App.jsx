@@ -252,13 +252,23 @@ function DevShadowBadge() {
   const source = localStorage.getItem('@Secti_DataSource') || import.meta.env.VITE_DATA_SOURCE || 'production';
   if (source === 'production') return null;
 
+  const isComposed = source === 'production-composed' || source === 'composed';
   const isCanonical = source === 'canonical';
-  const label = isCanonical ? 'CANÔNICO / HOMOLOGAÇÃO' : 'SHADOW / HOMOLOGAÇÃO';
-  const colorBg = isCanonical ? 'bg-emerald-500 text-black border-emerald-300' : 'bg-amber-500 text-black border-amber-300';
+
+  let label = 'SHADOW / HOMOLOGAÇÃO';
+  let colorBg = 'bg-amber-500 text-black border-amber-300';
+
+  if (isComposed) {
+    label = 'PRODUÇÃO COMPOSTA (224)';
+    colorBg = 'bg-indigo-600 text-white border-indigo-400';
+  } else if (isCanonical) {
+    label = 'CANÔNICO / HOMOLOGAÇÃO';
+    colorBg = 'bg-emerald-500 text-black border-emerald-300';
+  }
 
   return (
     <div className={`fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full ${colorBg} text-xs font-bold shadow-2xl backdrop-blur border flex items-center gap-2 select-none pointer-events-auto`}>
-      <span className="w-2 h-2 rounded-full bg-black animate-pulse"></span>
+      <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
       <span>{label}</span>
       <a href="/dev/data-comparison" className="ml-1 underline text-[11px] opacity-80 hover:opacity-100">
         Inspecionar

@@ -1,8 +1,8 @@
 {
   "metadados": {
-    "etapa": "3.2 — Segregação de Novos Registros INEP",
+    "etapa": "3.2/3.3 — Segregação de Novos Registros INEP",
     "total_pendentes": 50,
-    "gerado_em": "2026-09-16T14:35:26.367Z"
+    "gerado_em": "2026-09-16T16:16:55.674Z"
   },
   "registros": [
     {
@@ -17,8 +17,7 @@
       "latitude": -12.134864,
       "longitude": -38.421279,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "21280_2900702",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -34,8 +33,7 @@
       "latitude": -13.029725,
       "longitude": -39.603771,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "25439_2901007",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -51,15 +49,14 @@
       "latitude": -12.1482,
       "longitude": -45.001373,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "unidade_presencial",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "3588_2903201",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
     {
       "codigo_ies": 22125,
       "nome_ies": "Faculdade de Ciências Jurídicas de Bom Jesus da Lapa",
-      "sigla": "FACULDADE ",
+      "sigla": "FACULDADE",
       "nome_unidade": "Faculdade de Ciências Jurídicas de Bom Jesus da Lapa - Campus Bom Jesus da Lapa",
       "municipio": "Bom Jesus da Lapa",
       "codigo_ibge": 2903904,
@@ -68,8 +65,7 @@
       "latitude": -13.251626,
       "longitude": -43.409519,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22125_2903904",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -85,15 +81,14 @@
       "latitude": -14.205733,
       "longitude": -41.669697,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "unidade_presencial",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "2023_2904605",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
     {
       "codigo_ies": 22124,
       "nome_ies": "Faculdade Pitágoras Unopar de Brumado",
-      "sigla": "FACULDADE ",
+      "sigla": "FACULDADE",
       "nome_unidade": "Faculdade Pitágoras Unopar de Brumado - Campus Brumado",
       "municipio": "Brumado",
       "codigo_ibge": 2904605,
@@ -102,8 +97,7 @@
       "latitude": -14.205733,
       "longitude": -41.669697,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22124_2904605",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -119,8 +113,7 @@
       "latitude": -12.69913,
       "longitude": -38.327335,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22787_2905701",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -136,8 +129,7 @@
       "latitude": -9.177345,
       "longitude": -40.974993,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22443_2907202",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -153,8 +145,7 @@
       "latitude": -10.505286,
       "longitude": -39.013754,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "17758_2910701",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -170,8 +161,7 @@
       "latitude": -16.370959,
       "longitude": -39.580303,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "19298_2910727",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -187,8 +177,7 @@
       "latitude": -16.370959,
       "longitude": -39.580303,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "17876_2910727",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -204,8 +193,7 @@
       "latitude": -14.217592,
       "longitude": -42.7858,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "19780_2911709",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -221,8 +209,7 @@
       "latitude": -14.217592,
       "longitude": -42.7858,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22104_2911709",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -238,8 +225,7 @@
       "latitude": -12.155277,
       "longitude": -39.740655,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "2163_2914000",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -255,8 +241,7 @@
       "latitude": -12.044019,
       "longitude": -38.766347,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22521_2914505",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -272,8 +257,7 @@
       "latitude": -11.304002,
       "longitude": -41.857373,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "20587_2914604",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -289,8 +273,7 @@
       "latitude": -12.528837,
       "longitude": -40.306002,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "13782_2914703",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -306,8 +289,7 @@
       "latitude": -14.796243,
       "longitude": -39.280332,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22088_2914802",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -323,8 +305,7 @@
       "latitude": -14.796243,
       "longitude": -39.280332,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22139_2914802",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -340,8 +321,7 @@
       "latitude": -13.862801,
       "longitude": -40.081787,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "unidade_presencial",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "3588_2918001",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -357,8 +337,7 @@
       "latitude": -9.427268,
       "longitude": -40.505742,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22202_2918407",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -374,8 +353,7 @@
       "latitude": -12.087454,
       "longitude": -45.796046,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "unidade_presencial",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "3588_2919553",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -391,8 +369,7 @@
       "latitude": -12.087454,
       "longitude": -45.796046,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "3230_2919553",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -408,8 +385,7 @@
       "latitude": -10.438158,
       "longitude": -39.3313,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "11951_2921500",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -425,8 +401,7 @@
       "latitude": -16.450241,
       "longitude": -39.06428,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "2140_2925303",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -442,15 +417,14 @@
       "latitude": -16.450241,
       "longitude": -39.06428,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "23155_2925303",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
     {
       "codigo_ies": 25222,
       "nome_ies": "FACULDADE ATENAS PORTO SEGURO",
-      "sigla": "FACULDADE ",
+      "sigla": "FACULDADE",
       "nome_unidade": "FACULDADE ATENAS PORTO SEGURO - Campus Porto Seguro",
       "municipio": "Porto Seguro",
       "codigo_ibge": 2925303,
@@ -459,15 +433,14 @@
       "latitude": -16.450241,
       "longitude": -39.06428,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "25222_2925303",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
     {
       "codigo_ies": 11862,
       "nome_ies": "FACULDADE ALFREDO NASSER DE REMANSO",
-      "sigla": "FACULDADE ",
+      "sigla": "FACULDADE",
       "nome_unidade": "FACULDADE ALFREDO NASSER DE REMANSO - Campus Remanso",
       "municipio": "Remanso",
       "codigo_ibge": 2926004,
@@ -476,8 +449,7 @@
       "latitude": -9.619346,
       "longitude": -42.081467,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "11862_2926004",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -493,8 +465,7 @@
       "latitude": -11.809017,
       "longitude": -39.383254,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "4747_2926301",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -510,8 +481,7 @@
       "latitude": -10.839554,
       "longitude": -38.539694,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "3669_2926608",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -527,8 +497,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "1461_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -544,8 +513,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "1641_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -561,8 +529,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "1524_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -578,8 +545,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "1937_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -595,8 +561,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "2427_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -612,8 +577,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "4460_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -629,8 +593,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "21103_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -646,8 +609,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "21616_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -663,8 +625,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "21871_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -680,8 +641,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "152_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -697,8 +657,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "1302_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -714,8 +673,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "3270_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -731,8 +689,7 @@
       "latitude": -13.003795,
       "longitude": -38.516259,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22763_2927408",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -748,8 +705,7 @@
       "latitude": -13.388083,
       "longitude": -44.197419,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "5473_2928109",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -765,8 +721,7 @@
       "latitude": -10.459352,
       "longitude": -40.188543,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "20537_2930105",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -782,8 +737,7 @@
       "latitude": -10.96503,
       "longitude": -38.784788,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "18296_2931905",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -799,8 +753,7 @@
       "latitude": -13.370609,
       "longitude": -39.071783,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "22086_2932903",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -816,8 +769,7 @@
       "latitude": -14.860141,
       "longitude": -40.847274,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "17433_2933307",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -833,8 +785,7 @@
       "latitude": -14.860141,
       "longitude": -40.847274,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "17498_2933307",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     },
@@ -850,8 +801,7 @@
       "latitude": -14.860141,
       "longitude": -40.847274,
       "modalidade": "Presencial",
-      "tipo_unidade_inep": "sede_da_ies",
-      "categoria_administrativa": "Privada",
+      "categoria_administrativa": "Privada/Pública",
       "idempotency_key": "21226_2933307",
       "justificativa": "Unidade presencial ativa credenciada pelo MEC no Censo Superior 2023 aguardando decisão de ingestão no Supabase."
     }

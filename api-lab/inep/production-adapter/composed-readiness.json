@@ -1,0 +1,38 @@
+{
+  "composition_ok": true,
+  "frontend_ok": true,
+  "map_ok": true,
+  "kpi_ok": true,
+  "ready_for_supabase_insert": false,
+  "cobertura_territorial": {
+    "universo_territorios": 27,
+    "territorios_com_unidade": 26,
+    "territorios_sem_unidade": 1,
+    "territorios_sem_unidade_ids": [
+      2
+    ],
+    "nota_explicativa": "O universo oficial de Territórios de Identidade da Bahia é 27. Na codificação numérica da base legada de produção, o ID 2 não possui unidades vinculadas (as unidades físicas de Velho Chico foram associadas ao ID 27 na produção). A ausência de campus no código numérico 2 não significa ausência do território."
+  },
+  "blockers": [
+    {
+      "id": "BLK-01",
+      "desc": "Ambiguidade/duplicidade cadastral entre IDs 75 e 76 da UFSB em Itabuna; manter ambos preservados até validação cadastral formal."
+    },
+    {
+      "id": "BLK-02",
+      "desc": "A segregação de EAD já está resolvida na camada canônica/DataContext e NÃO requer alteração no banco para o funcionamento atual."
+    },
+    {
+      "id": "BLK-03",
+      "desc": "Coordenada SECTI (-14.3105545, -39.3233337) vs Referência (-14.311997, -39.32171); distância calculada = aproximadamente 237,35 m. Decisão = NO_CHANGE; revisão cartográfica opcional."
+    },
+    {
+      "id": "BLK-04",
+      "desc": "Coluna \"ativo\" não existe no Supabase. Mantido como bloqueio de eventual saneamento físico do banco (NÃO adicionar a coluna automaticamente)."
+    },
+    {
+      "id": "BLK-05",
+      "desc": "Os 7 campi técnicos já são corretamente segregados na camada canônica, apesar da limitação do tipo_ativos legado (1..10)."
+    }
+  ]
+}

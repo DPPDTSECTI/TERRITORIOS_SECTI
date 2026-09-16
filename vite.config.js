@@ -95,7 +95,9 @@ export default defineConfig({
             const fs = await import('fs/promises');
             const path = await import('path');
             let filename = 'campi_shadow_secti.json';
-            if (req.url.includes('canonical')) {
+            if (req.url.includes('composed')) {
+              filename = '../production-adapter/composed-production-canonical.json';
+            } else if (req.url.includes('canonical')) {
               filename = 'semantic/canonical-units.json';
             } else if (req.url.includes('cursos')) {
               filename = 'cursos_shadow_secti.json';

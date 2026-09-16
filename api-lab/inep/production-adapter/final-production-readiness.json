@@ -1,0 +1,84 @@
+{
+  "composition_valid": true,
+  "frontend_valid": true,
+  "map_valid": true,
+  "filters_valid": true,
+  "reports_valid": true,
+  "territories_valid": true,
+  "municipalities_valid": true,
+  "performance_valid": true,
+  "production_composed_ready": true,
+  "supabase_schema_migration_required": false,
+  "infraestrutura_frontend": {
+    "status": "TOTALMENTE_OPERACIONAL",
+    "bloqueadores": []
+  },
+  "governanca_banco": {
+    "status": "DECISAO_PENDENTE_SEM_IMPACTO_FRONTEND",
+    "bloqueadores": [
+      {
+        "id": "BLK-01",
+        "titulo": "UFSB Itabuna (IDs 75 e 76)",
+        "desc": "Ambiguidade/duplicidade cadastral entre IDs 75 e 76 da UFSB em Itabuna; manter ambos preservados até validação cadastral formal.",
+        "status": "PRESERVADO_EM_MEMORIA"
+      },
+      {
+        "id": "BLK-02",
+        "titulo": "Polos EAD",
+        "desc": "A segregação de EAD já está resolvida na camada canônica/DataContext e NÃO requer alteração no banco para o funcionamento atual.",
+        "status": "RESOLVIDO_CANONICAMENTE"
+      },
+      {
+        "id": "BLK-03",
+        "titulo": "Ubaitaba (ID 174)",
+        "desc": "Coordenada SECTI (-14.3105545, -39.3233337) vs Referência (-14.311997, -39.32171); distância calculada = aproximadamente 237,35 m. Decisão = NO_CHANGE; revisão cartográfica opcional.",
+        "status": "NO_CHANGE_CONFIRMADO"
+      },
+      {
+        "id": "BLK-04",
+        "titulo": "UNIRB Serrinha (ID 164)",
+        "desc": "Coluna \"ativo\" não existe no Supabase. Mantido como bloqueio de eventual saneamento físico do banco (NÃO adicionar a coluna automaticamente).",
+        "status": "BLOQUEIO_GOVERNANCA_DB"
+      },
+      {
+        "id": "BLK-05",
+        "titulo": "Campi Técnicos dos IFs",
+        "desc": "Os 7 campi técnicos já são corretamente segregados na camada canônica, apesar da limitação do tipo_ativos legado (1..10).",
+        "status": "RESOLVIDO_CANONICAMENTE"
+      }
+    ]
+  },
+  "blockers": [
+    {
+      "id": "BLK-01",
+      "titulo": "UFSB Itabuna (IDs 75 e 76)",
+      "desc": "Ambiguidade/duplicidade cadastral entre IDs 75 e 76 da UFSB em Itabuna; manter ambos preservados até validação cadastral formal.",
+      "status": "PRESERVADO_EM_MEMORIA"
+    },
+    {
+      "id": "BLK-02",
+      "titulo": "Polos EAD",
+      "desc": "A segregação de EAD já está resolvida na camada canônica/DataContext e NÃO requer alteração no banco para o funcionamento atual.",
+      "status": "RESOLVIDO_CANONICAMENTE"
+    },
+    {
+      "id": "BLK-03",
+      "titulo": "Ubaitaba (ID 174)",
+      "desc": "Coordenada SECTI (-14.3105545, -39.3233337) vs Referência (-14.311997, -39.32171); distância calculada = aproximadamente 237,35 m. Decisão = NO_CHANGE; revisão cartográfica opcional.",
+      "status": "NO_CHANGE_CONFIRMADO"
+    },
+    {
+      "id": "BLK-04",
+      "titulo": "UNIRB Serrinha (ID 164)",
+      "desc": "Coluna \"ativo\" não existe no Supabase. Mantido como bloqueio de eventual saneamento físico do banco (NÃO adicionar a coluna automaticamente).",
+      "status": "BLOQUEIO_GOVERNANCA_DB"
+    },
+    {
+      "id": "BLK-05",
+      "titulo": "Campi Técnicos dos IFs",
+      "desc": "Os 7 campi técnicos já são corretamente segregados na camada canônica, apesar da limitação do tipo_ativos legado (1..10).",
+      "status": "RESOLVIDO_CANONICAMENTE"
+    }
+  ],
+  "ready_for_production": false
+}

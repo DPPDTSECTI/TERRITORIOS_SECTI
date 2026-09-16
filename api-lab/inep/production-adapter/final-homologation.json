@@ -1,0 +1,217 @@
+{
+  "data_homologacao": "2026-09-16T16:16:55.942Z",
+  "etapa": "3.4.1 — Consolidação Final da Matriz de Prontidão",
+  "ambiente": "VITE_DATA_SOURCE=production-composed",
+  "resumo_numerico": {
+    "total": 224,
+    "fisicas": 217,
+    "superior_presencial": 204,
+    "superior_com_ambiguas": 207,
+    "tecnico": 7,
+    "pesquisa": 2,
+    "administrativo": 1,
+    "ead": 6,
+    "inativa": 1,
+    "status_fechamento_matematico": true
+  },
+  "auditoria_territorios": {
+    "universo_territorios": 27,
+    "territorios_com_unidade": 26,
+    "territorios_sem_unidade": 1,
+    "territorio_sem_unidade_identificado": {
+      "id": 2,
+      "nome": "Velho Chico",
+      "motivo": "Na codificação legada do Supabase, os campi de Velho Chico foram cadastrados com id_territorio = 27, deixando o índice numérico 2 vazio.",
+      "campi_ativos_velho_chico": 5,
+      "municipios_vinculados": 16
+    }
+  },
+  "auditoria_municipios": {
+    "total_municipios_bahia": 417,
+    "municipios_com_territorio": 417,
+    "municipios_sem_ibge": 0,
+    "todos_com_ibge_valido": true
+  },
+  "auditoria_mapa": {
+    "modo_padrao_fisico": 217,
+    "pontos_excluidos": 7,
+    "ead_excluidos": 6,
+    "inativa_excluida": 1,
+    "densidade_polos": [
+      {
+        "polo": "Salvador",
+        "legado": 26,
+        "composto_fisico": 39,
+        "novos_inep": 13,
+        "status_clusters": "OK - agrupamento dinâmico no Leaflet sem sobreposição de cliques"
+      },
+      {
+        "polo": "Feira de Santana",
+        "legado": 12,
+        "composto_fisico": 12,
+        "novos_inep": 0,
+        "status_clusters": "OK - agrupamento dinâmico no Leaflet sem sobreposição de cliques"
+      },
+      {
+        "polo": "Itabuna",
+        "legado": 4,
+        "composto_fisico": 6,
+        "novos_inep": 2,
+        "status_clusters": "OK - agrupamento dinâmico no Leaflet sem sobreposição de cliques"
+      },
+      {
+        "polo": "Ilhéus",
+        "legado": 4,
+        "composto_fisico": 3,
+        "novos_inep": 0,
+        "status_clusters": "OK - agrupamento dinâmico no Leaflet sem sobreposição de cliques"
+      },
+      {
+        "polo": "Vitória da Conquista",
+        "legado": 7,
+        "composto_fisico": 10,
+        "novos_inep": 3,
+        "status_clusters": "OK - agrupamento dinâmico no Leaflet sem sobreposição de cliques"
+      },
+      {
+        "polo": "Lauro de Freitas",
+        "legado": 4,
+        "composto_fisico": 4,
+        "novos_inep": 0,
+        "status_clusters": "OK - agrupamento dinâmico no Leaflet sem sobreposição de cliques"
+      },
+      {
+        "polo": "Camaçari",
+        "legado": 5,
+        "composto_fisico": 5,
+        "novos_inep": 1,
+        "status_clusters": "OK - agrupamento dinâmico no Leaflet sem sobreposição de cliques"
+      }
+    ],
+    "status": "APROVADO"
+  },
+  "filtros": {
+    "ensino_superior": 207,
+    "tecnico": 7,
+    "pesquisa_extensao": 2,
+    "administrativo": 1,
+    "ead": 6,
+    "inativo": 1
+  },
+  "relatorios_pdf": {
+    "ead_em_graduacao_presencial": true,
+    "tecnico_em_superior": true,
+    "pesquisa_em_ensino": true,
+    "administrativo_em_ensino": true,
+    "inativa_em_listas_ativas": true
+  },
+  "diferencas_classificadas": [
+    {
+      "tipo": "EXPECTED",
+      "area": "Volume Geral de Unidades",
+      "descricao": "Acréscimo de 50 novos campi credenciados pelo MEC no Censo da Educação Superior 2023, elevando o total de 174 para 224.",
+      "impacto": "Expansão da cobertura e precisão analítica no planejamento educacional da SECTI."
+    },
+    {
+      "tipo": "EXPECTED",
+      "area": "Presença Física Cartográfica",
+      "descricao": "Elevação de 167 para 217 unidades físicas no mapa (+50 novos pontos com coordenadas oficiais).",
+      "impacto": "Aumento real de densidade nos centros urbanos sem interferir nas coordenadas legadas."
+    },
+    {
+      "tipo": "EXPECTED",
+      "area": "Expansão Municipal",
+      "descricao": "6 novos municípios que não possuíam campus físico registrado na base legada agora contam com unidade física mapeada.",
+      "impacto": "Ampliação do alcance territorial da SECTI para municípios do interior."
+    },
+    {
+      "tipo": "EXPECTED",
+      "area": "Isolamento de Polos EAD",
+      "descricao": "6 polos remotos foram desvinculados do mapa de prédios físicos, passando a ser filtrados estritamente sob modalidade EAD.",
+      "impacto": "Eliminação da distorção visual onde salas virtuais figuravam como prédios universitários."
+    },
+    {
+      "tipo": "EXPECTED",
+      "area": "Preservação de Campi Técnicos dos Institutos Federais",
+      "descricao": "7 campi dos IFs (IFBA e IF Baiano) dedicados exclusivamente a cursos técnicos foram isolados com etiqueta própria.",
+      "impacto": "Transparência acadêmica sem inflar indevidamente a oferta de vagas de nível superior."
+    },
+    {
+      "tipo": "EXPECTED",
+      "area": "Codificação Numérica Territorial",
+      "descricao": "A base legada utiliza 26 identificadores numéricos (1, 3..27), com Velho Chico operando sob a chave 27 em vez de 2.",
+      "impacto": "Ausência de campus no código numérico 2 decorre estritamente da chave primária legada, não havendo prejuízo de cobertura aos 16 municípios de Velho Chico."
+    }
+  ],
+  "infraestrutura_frontend": {
+    "status": "TOTALMENTE_OPERACIONAL",
+    "bloqueadores": []
+  },
+  "governanca_banco": {
+    "status": "DECISAO_PENDENTE_SEM_IMPACTO_FRONTEND",
+    "bloqueadores": [
+      {
+        "id": "BLK-01",
+        "titulo": "UFSB Itabuna (IDs 75 e 76)",
+        "desc": "Ambiguidade/duplicidade cadastral entre IDs 75 e 76 da UFSB em Itabuna; manter ambos preservados até validação cadastral formal.",
+        "status": "PRESERVADO_EM_MEMORIA"
+      },
+      {
+        "id": "BLK-02",
+        "titulo": "Polos EAD",
+        "desc": "A segregação de EAD já está resolvida na camada canônica/DataContext e NÃO requer alteração no banco para o funcionamento atual.",
+        "status": "RESOLVIDO_CANONICAMENTE"
+      },
+      {
+        "id": "BLK-03",
+        "titulo": "Ubaitaba (ID 174)",
+        "desc": "Coordenada SECTI (-14.3105545, -39.3233337) vs Referência (-14.311997, -39.32171); distância calculada = aproximadamente 237,35 m. Decisão = NO_CHANGE; revisão cartográfica opcional.",
+        "status": "NO_CHANGE_CONFIRMADO"
+      },
+      {
+        "id": "BLK-04",
+        "titulo": "UNIRB Serrinha (ID 164)",
+        "desc": "Coluna \"ativo\" não existe no Supabase. Mantido como bloqueio de eventual saneamento físico do banco (NÃO adicionar a coluna automaticamente).",
+        "status": "BLOQUEIO_GOVERNANCA_DB"
+      },
+      {
+        "id": "BLK-05",
+        "titulo": "Campi Técnicos dos IFs",
+        "desc": "Os 7 campi técnicos já são corretamente segregados na camada canônica, apesar da limitação do tipo_ativos legado (1..10).",
+        "status": "RESOLVIDO_CANONICAMENTE"
+      }
+    ]
+  },
+  "bloqueadores": [
+    {
+      "id": "BLK-01",
+      "titulo": "UFSB Itabuna (IDs 75 e 76)",
+      "desc": "Ambiguidade/duplicidade cadastral entre IDs 75 e 76 da UFSB em Itabuna; manter ambos preservados até validação cadastral formal.",
+      "status": "PRESERVADO_EM_MEMORIA"
+    },
+    {
+      "id": "BLK-02",
+      "titulo": "Polos EAD",
+      "desc": "A segregação de EAD já está resolvida na camada canônica/DataContext e NÃO requer alteração no banco para o funcionamento atual.",
+      "status": "RESOLVIDO_CANONICAMENTE"
+    },
+    {
+      "id": "BLK-03",
+      "titulo": "Ubaitaba (ID 174)",
+      "desc": "Coordenada SECTI (-14.3105545, -39.3233337) vs Referência (-14.311997, -39.32171); distância calculada = aproximadamente 237,35 m. Decisão = NO_CHANGE; revisão cartográfica opcional.",
+      "status": "NO_CHANGE_CONFIRMADO"
+    },
+    {
+      "id": "BLK-04",
+      "titulo": "UNIRB Serrinha (ID 164)",
+      "desc": "Coluna \"ativo\" não existe no Supabase. Mantido como bloqueio de eventual saneamento físico do banco (NÃO adicionar a coluna automaticamente).",
+      "status": "BLOQUEIO_GOVERNANCA_DB"
+    },
+    {
+      "id": "BLK-05",
+      "titulo": "Campi Técnicos dos IFs",
+      "desc": "Os 7 campi técnicos já são corretamente segregados na camada canônica, apesar da limitação do tipo_ativos legado (1..10).",
+      "status": "RESOLVIDO_CANONICAMENTE"
+    }
+  ]
+}
