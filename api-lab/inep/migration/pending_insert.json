@@ -1,0 +1,802 @@
+[
+  {
+    "idempotency_key": "21280_2900702",
+    "nome": "FACULDADE ANHANGUERA DE ALAGOINHAS (FPA) - Campus Alagoinhas",
+    "municipio": "Alagoinhas",
+    "codigo_ibge": 2900702,
+    "codigo_ies": 21280,
+    "nome_ies": "FACULDADE ANHANGUERA DE ALAGOINHAS (FPA)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.134864,
+      -38.421279
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "25439_2901007",
+    "nome": "FACULDADE REGIONAL DO VALLE (FARVALLE) - Campus Amargosa",
+    "municipio": "Amargosa",
+    "codigo_ibge": 2901007,
+    "codigo_ies": 25439,
+    "nome_ies": "FACULDADE REGIONAL DO VALLE (FARVALLE)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.029725,
+      -39.603771
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "3588_2903201",
+    "nome": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO) - Campus Barreiras",
+    "municipio": "Barreiras",
+    "codigo_ibge": 2903201,
+    "codigo_ies": 3588,
+    "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.1482,
+      -45.001373
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22125_2903904",
+    "nome": "Faculdade de Ciências Jurídicas de Bom Jesus da Lapa - Campus Bom Jesus da Lapa",
+    "municipio": "Bom Jesus da Lapa",
+    "codigo_ibge": 2903904,
+    "codigo_ies": 22125,
+    "nome_ies": "Faculdade de Ciências Jurídicas de Bom Jesus da Lapa",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.251626,
+      -43.409519
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "2023_2904605",
+    "nome": "Centro Universitário FG (UNIFG) - Campus Brumado",
+    "municipio": "Brumado",
+    "codigo_ibge": 2904605,
+    "codigo_ies": 2023,
+    "nome_ies": "Centro Universitário FG (UNIFG)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.205733,
+      -41.669697
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22124_2904605",
+    "nome": "Faculdade Pitágoras Unopar de Brumado - Campus Brumado",
+    "municipio": "Brumado",
+    "codigo_ibge": 2904605,
+    "codigo_ies": 22124,
+    "nome_ies": "Faculdade Pitágoras Unopar de Brumado",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.205733,
+      -41.669697
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22787_2905701",
+    "nome": "FACULDADE DE TECNOLOGIA E CIÊNCIAS - FTC CAMAÇARI (FTC CAMAÇARI) - Campus Camaçari",
+    "municipio": "Camaçari",
+    "codigo_ibge": 2905701,
+    "codigo_ies": 22787,
+    "nome_ies": "FACULDADE DE TECNOLOGIA E CIÊNCIAS - FTC CAMAÇARI (FTC CAMAÇARI)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.69913,
+      -38.327335
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22443_2907202",
+    "nome": "Faculdade Alfredo Nasser de Casa Nova (FAN) - Campus Casa Nova",
+    "municipio": "Casa Nova",
+    "codigo_ibge": 2907202,
+    "codigo_ies": 22443,
+    "nome_ies": "Faculdade Alfredo Nasser de Casa Nova (FAN)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -9.177345,
+      -40.974993
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "17758_2910701",
+    "nome": "Faculdades FAMEP Unidade Euclides da Cunha - BA (FAMEP) - Campus Euclides da Cunha",
+    "municipio": "Euclides da Cunha",
+    "codigo_ibge": 2910701,
+    "codigo_ies": 17758,
+    "nome_ies": "Faculdades FAMEP Unidade Euclides da Cunha - BA (FAMEP)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -10.505286,
+      -39.013754
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "19298_2910727",
+    "nome": "Faculdade Pitagoras de Eunapolis (FPE) - Campus Eunápolis",
+    "municipio": "Eunápolis",
+    "codigo_ibge": 2910727,
+    "codigo_ies": 19298,
+    "nome_ies": "Faculdade Pitagoras de Eunapolis (FPE)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -16.370959,
+      -39.580303
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "17876_2910727",
+    "nome": "FACULDADE ESPÍRITO SANTO (FAES) - Campus Eunápolis",
+    "municipio": "Eunápolis",
+    "codigo_ibge": 2910727,
+    "codigo_ies": 17876,
+    "nome_ies": "FACULDADE ESPÍRITO SANTO (FAES)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -16.370959,
+      -39.580303
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "19780_2911709",
+    "nome": "Faculdade Pitágoras Unopar de Guanambi (FPG) - Campus Guanambi",
+    "municipio": "Guanambi",
+    "codigo_ibge": 2911709,
+    "codigo_ies": 19780,
+    "nome_ies": "Faculdade Pitágoras Unopar de Guanambi (FPG)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.217592,
+      -42.7858
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22104_2911709",
+    "nome": "Faculdades Integradas Padrão (FIP GUANAMBI) - Campus Guanambi",
+    "municipio": "Guanambi",
+    "codigo_ibge": 2911709,
+    "codigo_ies": 22104,
+    "nome_ies": "Faculdades Integradas Padrão (FIP GUANAMBI)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.217592,
+      -42.7858
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "2163_2914000",
+    "nome": "FACULDADE EUGÊNIO GOMES (FEG) - Campus Ipirá",
+    "municipio": "Ipirá",
+    "codigo_ibge": 2914000,
+    "codigo_ies": 2163,
+    "nome_ies": "FACULDADE EUGÊNIO GOMES (FEG)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.155277,
+      -39.740655
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22521_2914505",
+    "nome": "FACULDADES FAMEP Unidade Irará - BA (FAMEP) - Campus Irará",
+    "municipio": "Irará",
+    "codigo_ibge": 2914505,
+    "codigo_ies": 22521,
+    "nome_ies": "FACULDADES FAMEP Unidade Irará - BA (FAMEP)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.044019,
+      -38.766347
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "20587_2914604",
+    "nome": "Faculdade Pitágoras de Irecê (FPI) - Campus Irecê",
+    "municipio": "Irecê",
+    "codigo_ibge": 2914604,
+    "codigo_ies": 20587,
+    "nome_ies": "Faculdade Pitágoras de Irecê (FPI)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -11.304002,
+      -41.857373
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "13782_2914703",
+    "nome": "FACULDADE DE SANTA CRUZ DA BAHIA (FSC) - Campus Itaberaba",
+    "municipio": "Itaberaba",
+    "codigo_ibge": 2914703,
+    "codigo_ies": 13782,
+    "nome_ies": "FACULDADE DE SANTA CRUZ DA BAHIA (FSC)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.528837,
+      -40.306002
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22088_2914802",
+    "nome": "Afya Faculdade de Ciências Médicas de Itabuna (AFYA ITABUNA) - Campus Itabuna",
+    "municipio": "Itabuna",
+    "codigo_ibge": 2914802,
+    "codigo_ies": 22088,
+    "nome_ies": "Afya Faculdade de Ciências Médicas de Itabuna (AFYA ITABUNA)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.796243,
+      -39.280332
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22139_2914802",
+    "nome": "FACULDADE SANTO ANTONIO DE ITABUNA (FSAI) - Campus Itabuna",
+    "municipio": "Itabuna",
+    "codigo_ibge": 2914802,
+    "codigo_ies": 22139,
+    "nome_ies": "FACULDADE SANTO ANTONIO DE ITABUNA (FSAI)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.796243,
+      -39.280332
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "3588_2918001",
+    "nome": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO) - Campus Jequié",
+    "municipio": "Jequié",
+    "codigo_ibge": 2918001,
+    "codigo_ies": 3588,
+    "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.862801,
+      -40.081787
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22202_2918407",
+    "nome": "Faculdade Estácio de Juazeiro (EstácioJuazeiro) - Campus Juazeiro",
+    "municipio": "Juazeiro",
+    "codigo_ibge": 2918407,
+    "codigo_ies": 22202,
+    "nome_ies": "Faculdade Estácio de Juazeiro (EstácioJuazeiro)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -9.427268,
+      -40.505742
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "3588_2919553",
+    "nome": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO) - Campus Luís Eduardo Magalhães",
+    "municipio": "Luís Eduardo Magalhães",
+    "codigo_ibge": 2919553,
+    "codigo_ies": 3588,
+    "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.087454,
+      -45.796046
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "3230_2919553",
+    "nome": "FACULDADE LUIZ EDUARDO MAGALHÃES (FILEM) - Campus Luís Eduardo Magalhães",
+    "municipio": "Luís Eduardo Magalhães",
+    "codigo_ibge": 2919553,
+    "codigo_ies": 3230,
+    "nome_ies": "FACULDADE LUIZ EDUARDO MAGALHÃES (FILEM)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -12.087454,
+      -45.796046
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "11951_2921500",
+    "nome": "FACULDADE DO SERTÃO BAIANO (FASBE) - Campus Monte Santo",
+    "municipio": "Monte Santo",
+    "codigo_ibge": 2921500,
+    "codigo_ies": 11951,
+    "nome_ies": "FACULDADE DO SERTÃO BAIANO (FASBE)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -10.438158,
+      -39.3313
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "2140_2925303",
+    "nome": "FACULDADE NOSSA SENHORA DE LOURDES (FNSL) - Campus Porto Seguro",
+    "municipio": "Porto Seguro",
+    "codigo_ibge": 2925303,
+    "codigo_ies": 2140,
+    "nome_ies": "FACULDADE NOSSA SENHORA DE LOURDES (FNSL)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -16.450241,
+      -39.06428
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "23155_2925303",
+    "nome": "FACULDADE UNEX (UNEX) - Campus Porto Seguro",
+    "municipio": "Porto Seguro",
+    "codigo_ibge": 2925303,
+    "codigo_ies": 23155,
+    "nome_ies": "FACULDADE UNEX (UNEX)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -16.450241,
+      -39.06428
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "25222_2925303",
+    "nome": "FACULDADE ATENAS PORTO SEGURO - Campus Porto Seguro",
+    "municipio": "Porto Seguro",
+    "codigo_ibge": 2925303,
+    "codigo_ies": 25222,
+    "nome_ies": "FACULDADE ATENAS PORTO SEGURO",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -16.450241,
+      -39.06428
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "11862_2926004",
+    "nome": "FACULDADE ALFREDO NASSER DE REMANSO - Campus Remanso",
+    "municipio": "Remanso",
+    "codigo_ibge": 2926004,
+    "codigo_ies": 11862,
+    "nome_ies": "FACULDADE ALFREDO NASSER DE REMANSO",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -9.619346,
+      -42.081467
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "4747_2926301",
+    "nome": "FACULDADE REGIONAL DE RIACHÃO DO JACUÍPE (FARJ) - Campus Riachão do Jacuípe",
+    "municipio": "Riachão do Jacuípe",
+    "codigo_ibge": 2926301,
+    "codigo_ies": 4747,
+    "nome_ies": "FACULDADE REGIONAL DE RIACHÃO DO JACUÍPE (FARJ)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -11.809017,
+      -39.383254
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "3669_2926608",
+    "nome": "FACULDADE DOM LUIS DE ORLEANS E BRAGANÇA (FDL) - Campus Ribeira do Pombal",
+    "municipio": "Ribeira do Pombal",
+    "codigo_ibge": 2926608,
+    "codigo_ies": 3669,
+    "nome_ies": "FACULDADE DOM LUIS DE ORLEANS E BRAGANÇA (FDL)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -10.839554,
+      -38.539694
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "1461_2927408",
+    "nome": "Centro Universitário Zarns - Salvador (ZARNS SALVADOR) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 1461,
+    "nome_ies": "Centro Universitário Zarns - Salvador (ZARNS SALVADOR)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "1641_2927408",
+    "nome": "CENTRO UNIVERSITÁRIO SOCIAL DA BAHIA (UNISBA) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 1641,
+    "nome_ies": "CENTRO UNIVERSITÁRIO SOCIAL DA BAHIA (UNISBA)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "1524_2927408",
+    "nome": "FACULDADE OLGA METTIG (FAMETTIG) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 1524,
+    "nome_ies": "FACULDADE OLGA METTIG (FAMETTIG)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "1937_2927408",
+    "nome": "FACULDADE EVANGÉLICA DE SALVADOR (FACESA) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 1937,
+    "nome_ies": "FACULDADE EVANGÉLICA DE SALVADOR (FACESA)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "2427_2927408",
+    "nome": "FACULDADE LUSÓFONA DA BAHIA (FL-BA) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 2427,
+    "nome_ies": "FACULDADE LUSÓFONA DA BAHIA (FL-BA)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "4460_2927408",
+    "nome": "FACULDADE DOM PEDRO II DE TECNOLOGIA (FDP II Tec) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 4460,
+    "nome_ies": "FACULDADE DOM PEDRO II DE TECNOLOGIA (FDP II Tec)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "21103_2927408",
+    "nome": "FIEP - FACULDADE INTERNACIONAL DE EVOLUÇÃO PROFISSIONAL (FIEP) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 21103,
+    "nome_ies": "FIEP - FACULDADE INTERNACIONAL DE EVOLUÇÃO PROFISSIONAL (FIEP)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "21616_2927408",
+    "nome": "FACULDADE ATUALIZA (ATUALIZA) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 21616,
+    "nome_ies": "FACULDADE ATUALIZA (ATUALIZA)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "21871_2927408",
+    "nome": "FACULDADE BAHIANA DE ENGENHARIA E CIÊNCIAS SOCIAIS APLICADAS (FBE) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 21871,
+    "nome_ies": "FACULDADE BAHIANA DE ENGENHARIA E CIÊNCIAS SOCIAIS APLICADAS (FBE)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "152_2927408",
+    "nome": "FACULDADE DE CIÊNCIAS CONTÁBEIS (FACIC) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 152,
+    "nome_ies": "FACULDADE DE CIÊNCIAS CONTÁBEIS (FACIC)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "1302_2927408",
+    "nome": "FACULDADE BATISTA BRASILEIRA (FBB) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 1302,
+    "nome_ies": "FACULDADE BATISTA BRASILEIRA (FBB)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "3270_2927408",
+    "nome": "FACULDADE SÃO BENTO DA BAHIA (FSBB) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 3270,
+    "nome_ies": "FACULDADE SÃO BENTO DA BAHIA (FSBB)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22763_2927408",
+    "nome": "FACULDADE SANTA CASA (FSC) - Campus Salvador",
+    "municipio": "Salvador",
+    "codigo_ibge": 2927408,
+    "codigo_ies": 22763,
+    "nome_ies": "FACULDADE SANTA CASA (FSC)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.003795,
+      -38.516259
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "5473_2928109",
+    "nome": "FACULDADE DE CIÊNCIAS E TECNOLOGIA DA BAHIA (FACITE) - Campus Santa Maria da Vitória",
+    "municipio": "Santa Maria da Vitória",
+    "codigo_ibge": 2928109,
+    "codigo_ies": 5473,
+    "nome_ies": "FACULDADE DE CIÊNCIAS E TECNOLOGIA DA BAHIA (FACITE)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.388083,
+      -44.197419
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "20537_2930105",
+    "nome": "FACULDADE BAIANA DO SENHOR DO BONFIM (FABASB) - Campus Senhor do Bonfim",
+    "municipio": "Senhor do Bonfim",
+    "codigo_ibge": 2930105,
+    "codigo_ies": 20537,
+    "nome_ies": "FACULDADE BAIANA DO SENHOR DO BONFIM (FABASB)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -10.459352,
+      -40.188543
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "18296_2931905",
+    "nome": "Faculdade AGES de Tucano (Faculdade AGES) - Campus Tucano",
+    "municipio": "Tucano",
+    "codigo_ibge": 2931905,
+    "codigo_ies": 18296,
+    "nome_ies": "Faculdade AGES de Tucano (Faculdade AGES)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -10.96503,
+      -38.784788
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "22086_2932903",
+    "nome": "Faculdade de Educação Social da Bahia (FAESB) - Campus Valença",
+    "municipio": "Valença",
+    "codigo_ibge": 2932903,
+    "codigo_ies": 22086,
+    "nome_ies": "Faculdade de Educação Social da Bahia (FAESB)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -13.370609,
+      -39.071783
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "17433_2933307",
+    "nome": "FACULDADE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASAVIC) - Campus Vitória da Conquista",
+    "municipio": "Vitória da Conquista",
+    "codigo_ibge": 2933307,
+    "codigo_ies": 17433,
+    "nome_ies": "FACULDADE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASAVIC)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.860141,
+      -40.847274
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "17498_2933307",
+    "nome": "FACULDADE DE SAÚDE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASA) - Campus Vitória da Conquista",
+    "municipio": "Vitória da Conquista",
+    "codigo_ibge": 2933307,
+    "codigo_ies": 17498,
+    "nome_ies": "FACULDADE DE SAÚDE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASA)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.860141,
+      -40.847274
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  },
+  {
+    "idempotency_key": "21226_2933307",
+    "nome": "FACULDADE SUDOESTE (FASU) - Campus Vitória da Conquista",
+    "municipio": "Vitória da Conquista",
+    "codigo_ibge": 2933307,
+    "codigo_ies": 21226,
+    "nome_ies": "FACULDADE SUDOESTE (FASU)",
+    "modalidade": "Presencial",
+    "categoria_administrativa": "Ensino Superior Presencial",
+    "coordenada": [
+      -14.860141,
+      -40.847274
+    ],
+    "origem": "inep",
+    "justificativa": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada."
+  }
+]

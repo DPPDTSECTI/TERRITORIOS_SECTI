@@ -1,0 +1,4572 @@
+{
+  "metadados": {
+    "etapa": "3.0 — Dry-Run de Saneamento e Migração",
+    "versao": "1.0.0",
+    "gerado_em": "2026-09-16T14:22:56.734Z",
+    "tabelas_alvo": [
+      "lista_ativos_cti",
+      "tipo_ativos"
+    ],
+    "resumo_operacoes": {
+      "UPDATE": 17,
+      "DEACTIVATE": 1,
+      "NO_CHANGE": 156,
+      "INSERT": 50,
+      "total": 224
+    }
+  },
+  "resolucao_bloqueadores": {
+    "BLK-01": "ID 75 reclassificado como Administrativo (Reitoria UFSB); ID 76 preservado como Campus Jorge Amado.",
+    "BLK-02": "6 registros EAD reclassificados com tipo Polo EAD (id_tipo_ativo 105), sem exclusão física.",
+    "BLK-03": "Coordenada de Ubaitaba mantida no cadastro e registrada para checagem de campo.",
+    "BLK-04": "UNIRB Serrinha (ID 164) preservada historicamente com ativo = false.",
+    "BLK-05": "7 campi de IFs reclassificados como Ensino Técnico (id_tipo_ativo 102)."
+  },
+  "operacoes": [
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 176,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 176,
+        "nome_ativo": "Faculdade da Fraternidade de Valença",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 176,
+        "nome_ativo": "Faculdade da Fraternidade de Valença",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 144,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 144,
+        "nome_ativo": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 144,
+        "nome_ativo": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 157,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 157,
+        "nome_ativo": "Centro Universitário de Ciências e Empreendedorismo",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 157,
+        "nome_ativo": "Centro Universitário de Ciências e Empreendedorismo",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 19,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 19,
+        "nome_ativo": "Centro Universitário Adventista de Ensino do Nordeste",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 19,
+        "nome_ativo": "Centro Universitário Adventista de Ensino do Nordeste",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 1,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 1,
+        "nome_ativo": "Centro Universitário UNIRB - Alagoinhas",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 1,
+        "nome_ativo": "Centro Universitário UNIRB - Alagoinhas",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 2,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 2,
+        "nome_ativo": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 2,
+        "nome_ativo": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 3,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 3,
+        "nome_ativo": "FACULDADE SANTO ANTONIO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 3,
+        "nome_ativo": "FACULDADE SANTO ANTONIO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 4,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 4,
+        "nome_ativo": "FACULDADE SANTÍSSIMO SACRAMENTO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 4,
+        "nome_ativo": "FACULDADE SANTÍSSIMO SACRAMENTO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 5,
+      "blocker_id": "BLK-05",
+      "reason": "Reclassificação canônica para ensino técnico profissionalizante (unidade de IF sem graduação superior no Censo 2023).",
+      "source": "INEP Censo Superior 2023 / Rede Federal EPCT",
+      "before": {
+        "id_ativo": 5,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Alagoinhas",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 5,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Alagoinhas",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 6,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 6,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Alagoinhas",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 6,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Alagoinhas",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 7,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 7,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Amargosa",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 7,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Amargosa",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 8,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 8,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Barra",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 8,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Barra",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 9,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 9,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 9,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 10,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 10,
+        "nome_ativo": "Faculdade Unirb - Barreiras",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 10,
+        "nome_ativo": "Faculdade Unirb - Barreiras",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 11,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 11,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Barreiras",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 11,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Barreiras",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 12,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 12,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 12,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 13,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 13,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Barreiras",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 13,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Barreiras",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 14,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 14,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Bom Jesus da Lapa",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 14,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Bom Jesus da Lapa",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 15,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 15,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Bom Jesus da Lapa",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 15,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Bom Jesus da Lapa",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 16,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 16,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Bom Jesus da Lapa",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 16,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Bom Jesus da Lapa",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 17,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 17,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Brumado",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 17,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Brumado",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 18,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 18,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Brumado",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 18,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Brumado",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 20,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 20,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Cachoeira",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 20,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Cachoeira",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 21,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 21,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Caetité",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 21,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Caetité",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 22,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 22,
+        "nome_ativo": "Centro Universitário FAMEC",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 22,
+        "nome_ativo": "Centro Universitário FAMEC",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 23,
+      "blocker_id": "BLK-02",
+      "reason": "Segregação semântica de Polo EAD para impedir cômputo na camada e KPI de infraestrutura predial física.",
+      "source": "INEP Censo Superior 2023 (Local de Oferta EAD)",
+      "before": {
+        "id_ativo": 23,
+        "nome_ativo": "FACULDADE UNIRB - CAMAÇARI",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 23,
+        "nome_ativo": "FACULDADE UNIRB - CAMAÇARI",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 24,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 24,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Camaçari",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 24,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Camaçari",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 25,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 25,
+        "nome_ativo": "Universidade Federal da Bahia - Campus Carlos Marighella",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 25,
+        "nome_ativo": "Universidade Federal da Bahia - Campus Carlos Marighella",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 26,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 26,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Camaçari",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 26,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Camaçari",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 27,
+      "blocker_id": "BLK-05",
+      "reason": "Reclassificação canônica para ensino técnico profissionalizante (unidade de IF sem graduação superior no Censo 2023).",
+      "source": "INEP Censo Superior 2023 / Rede Federal EPCT",
+      "before": {
+        "id_ativo": 27,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Campo Formoso",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 27,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Campo Formoso",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 28,
+      "reason": "Reclassificação canônica para centro de pesquisa e extensão sem turmas regulares de graduação.",
+      "source": "UNEB / Censo 2023",
+      "before": {
+        "id_ativo": 28,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Canudos",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 28,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Canudos",
+        "tipo": "Pesquisa e Extensão",
+        "id_tipo_ativo": 103
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 29,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 29,
+        "nome_ativo": "Faculdade Regional do Jacuípe",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 29,
+        "nome_ativo": "Faculdade Regional do Jacuípe",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 30,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 30,
+        "nome_ativo": "Faculdade de Ciências Educacionais de Capim Grosso",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 30,
+        "nome_ativo": "Faculdade de Ciências Educacionais de Capim Grosso",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 31,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 31,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Catu",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 31,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Catu",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 32,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 32,
+        "nome_ativo": "Faculdade da Região Sisaleira",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 32,
+        "nome_ativo": "Faculdade da Região Sisaleira",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 33,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 33,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Conceição do Coité",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 33,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Conceição do Coité",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 34,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 34,
+        "nome_ativo": "FACULDADE DO NORDESTE DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 34,
+        "nome_ativo": "FACULDADE DO NORDESTE DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 35,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 35,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 35,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 36,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 36,
+        "nome_ativo": "FACULDADE BRASILEIRA DO RECÔNCAVO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 36,
+        "nome_ativo": "FACULDADE BRASILEIRA DO RECÔNCAVO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 37,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 37,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 37,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 38,
+      "blocker_id": "BLK-02",
+      "reason": "Segregação semântica de Polo EAD para impedir cômputo na camada e KPI de infraestrutura predial física.",
+      "source": "INEP Censo Superior 2023 (Local de Oferta EAD)",
+      "before": {
+        "id_ativo": 38,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Euclides da Cunha",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 38,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Euclides da Cunha",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 39,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 39,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Euclides da Cunha",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 39,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Euclides da Cunha",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 41,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 41,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Eunápolis",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 41,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Eunápolis",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 42,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 42,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Eunápolis",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 42,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Eunápolis",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 55,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 55,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 55,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 56,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 56,
+        "nome_ativo": "Centro Universitário de Excelência",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 56,
+        "nome_ativo": "Centro Universitário de Excelência",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 45,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 45,
+        "nome_ativo": "FACULDADE ANHANGUERA DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 45,
+        "nome_ativo": "FACULDADE ANHANGUERA DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 46,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 46,
+        "nome_ativo": "FACULDADE ANÍSIO TEIXEIRA DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 46,
+        "nome_ativo": "FACULDADE ANÍSIO TEIXEIRA DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 47,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 47,
+        "nome_ativo": "FACULDADE BRASILEIRA DE TECNOLOGIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 47,
+        "nome_ativo": "FACULDADE BRASILEIRA DE TECNOLOGIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 57,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 57,
+        "nome_ativo": "FACULDADE DE ENSINO SUPERIOR DA CIDADE DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 57,
+        "nome_ativo": "FACULDADE DE ENSINO SUPERIOR DA CIDADE DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 49,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 49,
+        "nome_ativo": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 49,
+        "nome_ativo": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 50,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 50,
+        "nome_ativo": "Faculdade Unirb - Feira de Santana",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 50,
+        "nome_ativo": "Faculdade Unirb - Feira de Santana",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 51,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 51,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Feira de Santana",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 51,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Feira de Santana",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 88,
+      "reason": "Reclassificação canônica para centro de pesquisa e extensão sem turmas regulares de graduação.",
+      "source": "UNEB / Censo 2023",
+      "before": {
+        "id_ativo": 88,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Jeremoabo",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 88,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Jeremoabo",
+        "tipo": "Pesquisa e Extensão",
+        "id_tipo_ativo": 103
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 90,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 90,
+        "nome_ativo": "Faculdade UniBRAS Juazeiro",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 90,
+        "nome_ativo": "Faculdade UniBRAS Juazeiro",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 53,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 53,
+        "nome_ativo": "Universidade Estadual de Feira de Santana",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 53,
+        "nome_ativo": "Universidade Estadual de Feira de Santana",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 54,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 54,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Feira de Santana",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 54,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Feira de Santana",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 58,
+      "blocker_id": "BLK-05",
+      "reason": "Reclassificação canônica para ensino técnico profissionalizante (unidade de IF sem graduação superior no Censo 2023).",
+      "source": "INEP Censo Superior 2023 / Rede Federal EPCT",
+      "before": {
+        "id_ativo": 58,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Governador Mangabeira",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 58,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Governador Mangabeira",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 59,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 59,
+        "nome_ativo": "Centro Universitário FG",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 59,
+        "nome_ativo": "Centro Universitário FG",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 60,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 60,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Guanambi",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 60,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Guanambi",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 61,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 61,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Guanambi",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 61,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Guanambi",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 62,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 62,
+        "nome_ativo": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 62,
+        "nome_ativo": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 63,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 63,
+        "nome_ativo": "FACULDADE MADRE THAIS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 63,
+        "nome_ativo": "FACULDADE MADRE THAIS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 64,
+      "blocker_id": "BLK-02",
+      "reason": "Segregação semântica de Polo EAD para impedir cômputo na camada e KPI de infraestrutura predial física.",
+      "source": "INEP Censo Superior 2023 (Local de Oferta EAD)",
+      "before": {
+        "id_ativo": 64,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Ilhéus",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 64,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Ilhéus",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 65,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 65,
+        "nome_ativo": "Universidade Estadual de Santa Cruz",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 65,
+        "nome_ativo": "Universidade Estadual de Santa Cruz",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 66,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 66,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Ipiaú",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 66,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Ipiaú",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 67,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 67,
+        "nome_ativo": "FACULDADE IRECÊ",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 67,
+        "nome_ativo": "FACULDADE IRECÊ",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 68,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 68,
+        "nome_ativo": "Faculdade AGES de Medicina de Irecê",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 68,
+        "nome_ativo": "Faculdade AGES de Medicina de Irecê",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 69,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 69,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Irecê",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 69,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Irecê",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 70,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 70,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Irecê",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 70,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Irecê",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 71,
+      "blocker_id": "BLK-05",
+      "reason": "Reclassificação canônica para ensino técnico profissionalizante (unidade de IF sem graduação superior no Censo 2023).",
+      "source": "INEP Censo Superior 2023 / Rede Federal EPCT",
+      "before": {
+        "id_ativo": 71,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itaberaba",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 71,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itaberaba",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 72,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 72,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Itaberaba",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 72,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Itaberaba",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 73,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 73,
+        "nome_ativo": "FACULDADE ANHANGUERA DE ITABUNA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 73,
+        "nome_ativo": "FACULDADE ANHANGUERA DE ITABUNA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 74,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 74,
+        "nome_ativo": "Faculdade de Excelência UNEX de Itabuna",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 74,
+        "nome_ativo": "Faculdade de Excelência UNEX de Itabuna",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 75,
+      "blocker_id": "BLK-01",
+      "reason": "Diferenciação semântica da Reitoria/Gabinete da UFSB em Itabuna para eliminar duplicidade com o Campus Jorge Amado (ID 76).",
+      "source": "Auditoria Cadastral SECTI / Censo INEP",
+      "before": {
+        "id_ativo": 75,
+        "nome_ativo": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 75,
+        "nome_ativo": "Universidade Federal do Sul da Bahia - Reitoria e Sede Administrativa",
+        "tipo": "Administrativo",
+        "id_tipo_ativo": 104
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 76,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 76,
+        "nome_ativo": "Universidade Federal do Sul do Bahia - Campus Jorge Amado",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 76,
+        "nome_ativo": "Universidade Federal do Sul do Bahia - Campus Jorge Amado",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 77,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 77,
+        "nome_ativo": "FACULDADE DE CIÊNCIAS SOCIAIS APLICADAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 77,
+        "nome_ativo": "FACULDADE DE CIÊNCIAS SOCIAIS APLICADAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 78,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 78,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itapetinga",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 78,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itapetinga",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 79,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 79,
+        "nome_ativo": "Universidade Estadual do Sudoeste da Bahia - Campus Itapetinga",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 79,
+        "nome_ativo": "Universidade Estadual do Sudoeste da Bahia - Campus Itapetinga",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 80,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 80,
+        "nome_ativo": "Faculdade AGES de Jacobina",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 80,
+        "nome_ativo": "Faculdade AGES de Jacobina",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 81,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 81,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jacobina",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 81,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jacobina",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 82,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 82,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Jacobina",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 82,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Jacobina",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 83,
+      "blocker_id": "BLK-05",
+      "reason": "Reclassificação canônica para ensino técnico profissionalizante (unidade de IF sem graduação superior no Censo 2023).",
+      "source": "INEP Censo Superior 2023 / Rede Federal EPCT",
+      "before": {
+        "id_ativo": 83,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jaguaquara",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 83,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jaguaquara",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 84,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 84,
+        "nome_ativo": "FACULDADE ANHANGUERA DE JEQUIÉ",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 84,
+        "nome_ativo": "FACULDADE ANHANGUERA DE JEQUIÉ",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 85,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 85,
+        "nome_ativo": "Faculdade de Excelência UNEX de Jequié",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 85,
+        "nome_ativo": "Faculdade de Excelência UNEX de Jequié",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 86,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 86,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jequié",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 86,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jequié",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 87,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 87,
+        "nome_ativo": "Universidade Estadual do Sudoeste da Bahia - Campus Jequié",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 87,
+        "nome_ativo": "Universidade Estadual do Sudoeste da Bahia - Campus Jequié",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 89,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 89,
+        "nome_ativo": "FACULDADE UNIRB - JUAZEIRO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 89,
+        "nome_ativo": "FACULDADE UNIRB - JUAZEIRO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 91,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 91,
+        "nome_ativo": "Faculdade de Tecnologia e Ciências",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 91,
+        "nome_ativo": "Faculdade de Tecnologia e Ciências",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 92,
+      "blocker_id": "BLK-02",
+      "reason": "Segregação semântica de Polo EAD para impedir cômputo na camada e KPI de infraestrutura predial física.",
+      "source": "INEP Censo Superior 2023 (Local de Oferta EAD)",
+      "before": {
+        "id_ativo": 92,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Juazeiro",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 92,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Juazeiro",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 93,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 93,
+        "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Juazeiro",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 93,
+        "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Juazeiro",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 94,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 94,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Juazeiro",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 94,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Juazeiro",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 95,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 95,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO UNIME",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 95,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO UNIME",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 96,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 96,
+        "nome_ativo": "FACULDADES INTEGRADAS IPITANGA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 96,
+        "nome_ativo": "FACULDADES INTEGRADAS IPITANGA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 97,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 97,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Lauro de Freitas",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 97,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Lauro de Freitas",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 98,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 98,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Lauro de Freitas",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 98,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Lauro de Freitas",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 99,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 99,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 99,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 100,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 100,
+        "nome_ativo": "Faculdades Sulamérica Bahia",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 100,
+        "nome_ativo": "Faculdades Sulamérica Bahia",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 101,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 101,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Luís Eduardo Magalhães",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 101,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Luís Eduardo Magalhães",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 40,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 40,
+        "nome_ativo": "FACULDADES INTEGRADAS DO EXTREMO SUL DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 40,
+        "nome_ativo": "FACULDADES INTEGRADAS DO EXTREMO SUL DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 264,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 264,
+        "nome_ativo": "Universidade Salvador FSA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 264,
+        "nome_ativo": "Universidade Salvador FSA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 103,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 103,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO AGES",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 103,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO AGES",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 108,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 108,
+        "nome_ativo": "Centro Universitário do Rio São Francisco Unirios",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 108,
+        "nome_ativo": "Centro Universitário do Rio São Francisco Unirios",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 105,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 105,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Paulo Afonso",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 105,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Paulo Afonso",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 106,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 106,
+        "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Paulo Afonso",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 106,
+        "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Paulo Afonso",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 107,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 107,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Paulo Afonso",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 107,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Paulo Afonso",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 109,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 109,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Porto Seguro",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 109,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Porto Seguro",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 110,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 110,
+        "nome_ativo": "Universidade Federal do Sul da Bahia - Campus Sosígenes Costa",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 110,
+        "nome_ativo": "Universidade Federal do Sul da Bahia - Campus Sosígenes Costa",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 111,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 111,
+        "nome_ativo": "FACULDADE SANTO ANTONIO DE QUEIMADAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 111,
+        "nome_ativo": "FACULDADE SANTO ANTONIO DE QUEIMADAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 112,
+      "blocker_id": "BLK-02",
+      "reason": "Segregação semântica de Polo EAD para impedir cômputo na camada e KPI de infraestrutura predial física.",
+      "source": "INEP Censo Superior 2023 (Local de Oferta EAD)",
+      "before": {
+        "id_ativo": 112,
+        "nome_ativo": "Faculdade Dom Pedro II AFYA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 112,
+        "nome_ativo": "Faculdade Dom Pedro II AFYA",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 113,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 113,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO DE SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 113,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO DE SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 139,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 139,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 139,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 140,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 140,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO JORGE AMADO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 140,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO JORGE AMADO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 141,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 141,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO UNIRB",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 141,
+        "nome_ativo": "CENTRO UNIVERSITÁRIO UNIRB",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 117,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 117,
+        "nome_ativo": "Centro Universitário Estácio da Bahia",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 117,
+        "nome_ativo": "Centro Universitário Estácio da Bahia",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 118,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 118,
+        "nome_ativo": "Centro Universitário Maurício de Nassau de Salvador",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 118,
+        "nome_ativo": "Centro Universitário Maurício de Nassau de Salvador",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 119,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 119,
+        "nome_ativo": "Centro Universitário Ruy Barbosa Wyden",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 119,
+        "nome_ativo": "Centro Universitário Ruy Barbosa Wyden",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 120,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 120,
+        "nome_ativo": "Centro Universitário UNIFTC",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 120,
+        "nome_ativo": "Centro Universitário UNIFTC",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 142,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 142,
+        "nome_ativo": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 142,
+        "nome_ativo": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 122,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 122,
+        "nome_ativo": "FACULDADE CASTRO ALVES",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 122,
+        "nome_ativo": "FACULDADE CASTRO ALVES",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 123,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 123,
+        "nome_ativo": "FACULDADE DIPLOMATA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 123,
+        "nome_ativo": "FACULDADE DIPLOMATA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 124,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 124,
+        "nome_ativo": "FACULDADE DOIS DE JULHO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 124,
+        "nome_ativo": "FACULDADE DOIS DE JULHO",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 125,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 125,
+        "nome_ativo": "FACULDADE HÉLIO ROCHA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 125,
+        "nome_ativo": "FACULDADE HÉLIO ROCHA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 126,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 126,
+        "nome_ativo": "FACULDADE SÃO SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 126,
+        "nome_ativo": "FACULDADE SÃO SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 127,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 127,
+        "nome_ativo": "FACULDADE UNIRB - SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 127,
+        "nome_ativo": "FACULDADE UNIRB - SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 129,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 129,
+        "nome_ativo": "Faculdade Anhanguera Unime de Salvador",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 129,
+        "nome_ativo": "Faculdade Anhanguera Unime de Salvador",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 130,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 130,
+        "nome_ativo": "Faculdade Edufor de Salvador",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 130,
+        "nome_ativo": "Faculdade Edufor de Salvador",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 131,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 131,
+        "nome_ativo": "INSTITUTO SALVADOR DE ENSINO E CULTURA",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 131,
+        "nome_ativo": "INSTITUTO SALVADOR DE ENSINO E CULTURA",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 132,
+      "reason": "Reclassificação canônica para sede administrativa central (Reitoria do IF Baiano em Salvador).",
+      "source": "IF Baiano / Censo 2023",
+      "before": {
+        "id_ativo": 132,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 132,
+        "nome_ativo": "Instituto Federal Baiano - Reitoria",
+        "tipo": "Administrativo",
+        "id_tipo_ativo": 104
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 145,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 145,
+        "nome_ativo": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 145,
+        "nome_ativo": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 146,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 146,
+        "nome_ativo": "UNIVERSIDADE SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 146,
+        "nome_ativo": "UNIVERSIDADE SALVADOR",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 147,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 147,
+        "nome_ativo": "UNIVERSIDADE SENAI CIMATEC",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 147,
+        "nome_ativo": "UNIVERSIDADE SENAI CIMATEC",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 137,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 137,
+        "nome_ativo": "Universidade Federal da Bahia",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 137,
+        "nome_ativo": "Universidade Federal da Bahia",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 138,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 138,
+        "nome_ativo": "Universidade do Estado da Bahia",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 138,
+        "nome_ativo": "Universidade do Estado da Bahia",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 148,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 148,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Santa Inês",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 148,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Santa Inês",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 149,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 149,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Santa Maria da Vitória",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 149,
+        "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Santa Maria da Vitória",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 150,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 150,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Amaro",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 150,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Amaro",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 151,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 151,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Santo Amaro",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 151,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Santo Amaro",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 153,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 153,
+        "nome_ativo": "FACULDADE ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 153,
+        "nome_ativo": "FACULDADE ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 154,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 154,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Antônio de Jesus",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 154,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Antônio de Jesus",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 155,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 155,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Santo Antônio de Jesus",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 155,
+        "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Santo Antônio de Jesus",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 156,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 156,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Santo Antônio de Jesus",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 156,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Santo Antônio de Jesus",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 158,
+      "blocker_id": "BLK-02",
+      "reason": "Segregação semântica de Polo EAD para impedir cômputo na camada e KPI de infraestrutura predial física.",
+      "source": "INEP Censo Superior 2023 (Local de Oferta EAD)",
+      "before": {
+        "id_ativo": 158,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Seabra",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 158,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Seabra",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 159,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 159,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Seabra",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 159,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Seabra",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 160,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 160,
+        "nome_ativo": "Faculdade AGES de Senhor do Bonfim",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 160,
+        "nome_ativo": "Faculdade AGES de Senhor do Bonfim",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 161,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 161,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Senhor do Bonfim",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 161,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Senhor do Bonfim",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 162,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 162,
+        "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Senhor do Bonfim",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 162,
+        "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Senhor do Bonfim",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 163,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 163,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Senhor do Bonfim",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 163,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Senhor do Bonfim",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "DEACTIVATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 164,
+      "blocker_id": "BLK-04",
+      "reason": "Unidade inativa no Censo Superior 2023. Preservação cadastral histórica com desativação lógica (ativo = false).",
+      "source": "INEP Censo Superior 2023",
+      "before": {
+        "id_ativo": 164,
+        "nome_ativo": "FACULDADE UNIRB - SERRINHA",
+        "tipo": "Campi Universidade Privada",
+        "ativo": true
+      },
+      "after": {
+        "id_ativo": 164,
+        "nome_ativo": "FACULDADE UNIRB - SERRINHA",
+        "tipo": "Campi Universidade Privada",
+        "ativo": false
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 165,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 165,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Serrinha",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 165,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Serrinha",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 166,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 166,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Serrinha",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 166,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Serrinha",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 167,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 167,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Simões Filho",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 167,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Simões Filho",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 168,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 168,
+        "nome_ativo": "Universidade da Integração Internacional da Lusofonia Afro-Brasileira - Campus dos Malês",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 168,
+        "nome_ativo": "Universidade da Integração Internacional da Lusofonia Afro-Brasileira - Campus dos Malês",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 169,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 169,
+        "nome_ativo": "FACULDADE ANHANGUERA DE TEIXEIRA DE FREITAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 169,
+        "nome_ativo": "FACULDADE ANHANGUERA DE TEIXEIRA DE FREITAS",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 170,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 170,
+        "nome_ativo": "FACULDADE DO SUL DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 170,
+        "nome_ativo": "FACULDADE DO SUL DA BAHIA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 143,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 143,
+        "nome_ativo": "FACULDADE VISCONDE DE CAIRÚ",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 143,
+        "nome_ativo": "FACULDADE VISCONDE DE CAIRÚ",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 171,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 171,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Teixeira de Freitas",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 171,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Teixeira de Freitas",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 172,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 172,
+        "nome_ativo": "Universidade Federal do Sul da Bahia - Campus Paulo Freire",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 172,
+        "nome_ativo": "Universidade Federal do Sul da Bahia - Campus Paulo Freire",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 173,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 173,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Teixeira de Freitas",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 173,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Teixeira de Freitas",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 174,
+      "blocker_id": "BLK-03 / BLK-05",
+      "reason": "Reclassificação canônica para ensino técnico profissionalizante e manutenção da coordenada de Ubaitaba marcada para revisão de campo.",
+      "source": "INEP Censo Superior 2023 / Rede Federal EPCT",
+      "before": {
+        "id_ativo": 174,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Avançado Ubaitaba",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 174,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Avançado Ubaitaba",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 175,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 175,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Uruçuca",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 175,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Uruçuca",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 177,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 177,
+        "nome_ativo": "FACULDADE ZACARIAS DE GÓES",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 177,
+        "nome_ativo": "FACULDADE ZACARIAS DE GÓES",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 178,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 178,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Valença",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 178,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Valença",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 179,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 179,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Valença",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 179,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Valença",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 180,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 180,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Valença",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 180,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Valença",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 181,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 181,
+        "nome_ativo": "Centro Universitário de Excelência de Vitória da Conquista",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 181,
+        "nome_ativo": "Centro Universitário de Excelência de Vitória da Conquista",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 182,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 182,
+        "nome_ativo": "FACULDADE INDEPENDENTE DO NORDESTE",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 182,
+        "nome_ativo": "FACULDADE INDEPENDENTE DO NORDESTE",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 183,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 183,
+        "nome_ativo": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 183,
+        "nome_ativo": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 184,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 184,
+        "nome_ativo": "Faculdade Anhanguera De Vitória Da Conquista",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "after": {
+        "id_ativo": 184,
+        "nome_ativo": "Faculdade Anhanguera De Vitória Da Conquista",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 185,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 185,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Vitória da Conquista",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 185,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Vitória da Conquista",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 186,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 186,
+        "nome_ativo": "Universidade Estadual do Sudoeste da Bahia",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 186,
+        "nome_ativo": "Universidade Estadual do Sudoeste da Bahia",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 187,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 187,
+        "nome_ativo": "Universidade Federal da Bahia - Campus Anísio Teixeiras",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "after": {
+        "id_ativo": 187,
+        "nome_ativo": "Universidade Federal da Bahia - Campus Anísio Teixeiras",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      }
+    },
+    {
+      "operation": "UPDATE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 188,
+      "blocker_id": "BLK-05",
+      "reason": "Reclassificação canônica para ensino técnico profissionalizante (unidade de IF sem graduação superior no Censo 2023).",
+      "source": "INEP Censo Superior 2023 / Rede Federal EPCT",
+      "before": {
+        "id_ativo": 188,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Xique-Xique",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "after": {
+        "id_ativo": 188,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Xique-Xique",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      }
+    },
+    {
+      "operation": "NO_CHANGE",
+      "table": "lista_ativos_cti",
+      "primary_key": "id_ativo",
+      "primary_key_value": 189,
+      "reason": "Registro confirmado no Censo INEP 2023 ou mantido em conformidade integral com a infraestrutura presencial.",
+      "source": "Reconciliação Canônica INEP x SECTI",
+      "before": {
+        "id_ativo": 189,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Xique-Xique",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "after": {
+        "id_ativo": 189,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Xique-Xique",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "21280_2900702",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE ANHANGUERA DE ALAGOINHAS (FPA) - Campus Alagoinhas",
+        "municipio": "Alagoinhas",
+        "codigo_ibge": 2900702,
+        "codigo_ies": 21280,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.134864,
+        "longitude": -38.421279,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "25439_2901007",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE REGIONAL DO VALLE (FARVALLE) - Campus Amargosa",
+        "municipio": "Amargosa",
+        "codigo_ibge": 2901007,
+        "codigo_ies": 25439,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.029725,
+        "longitude": -39.603771,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "3588_2903201",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO) - Campus Barreiras",
+        "municipio": "Barreiras",
+        "codigo_ibge": 2903201,
+        "codigo_ies": 3588,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.1482,
+        "longitude": -45.001373,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22125_2903904",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade de Ciências Jurídicas de Bom Jesus da Lapa - Campus Bom Jesus da Lapa",
+        "municipio": "Bom Jesus da Lapa",
+        "codigo_ibge": 2903904,
+        "codigo_ies": 22125,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.251626,
+        "longitude": -43.409519,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "2023_2904605",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Centro Universitário FG (UNIFG) - Campus Brumado",
+        "municipio": "Brumado",
+        "codigo_ibge": 2904605,
+        "codigo_ies": 2023,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.205733,
+        "longitude": -41.669697,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22124_2904605",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade Pitágoras Unopar de Brumado - Campus Brumado",
+        "municipio": "Brumado",
+        "codigo_ibge": 2904605,
+        "codigo_ies": 22124,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.205733,
+        "longitude": -41.669697,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22787_2905701",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DE TECNOLOGIA E CIÊNCIAS - FTC CAMAÇARI (FTC CAMAÇARI) - Campus Camaçari",
+        "municipio": "Camaçari",
+        "codigo_ibge": 2905701,
+        "codigo_ies": 22787,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.69913,
+        "longitude": -38.327335,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22443_2907202",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade Alfredo Nasser de Casa Nova (FAN) - Campus Casa Nova",
+        "municipio": "Casa Nova",
+        "codigo_ibge": 2907202,
+        "codigo_ies": 22443,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -9.177345,
+        "longitude": -40.974993,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "17758_2910701",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdades FAMEP Unidade Euclides da Cunha - BA (FAMEP) - Campus Euclides da Cunha",
+        "municipio": "Euclides da Cunha",
+        "codigo_ibge": 2910701,
+        "codigo_ies": 17758,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -10.505286,
+        "longitude": -39.013754,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "19298_2910727",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade Pitagoras de Eunapolis (FPE) - Campus Eunápolis",
+        "municipio": "Eunápolis",
+        "codigo_ibge": 2910727,
+        "codigo_ies": 19298,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -16.370959,
+        "longitude": -39.580303,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "17876_2910727",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE ESPÍRITO SANTO (FAES) - Campus Eunápolis",
+        "municipio": "Eunápolis",
+        "codigo_ibge": 2910727,
+        "codigo_ies": 17876,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -16.370959,
+        "longitude": -39.580303,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "19780_2911709",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade Pitágoras Unopar de Guanambi (FPG) - Campus Guanambi",
+        "municipio": "Guanambi",
+        "codigo_ibge": 2911709,
+        "codigo_ies": 19780,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.217592,
+        "longitude": -42.7858,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22104_2911709",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdades Integradas Padrão (FIP GUANAMBI) - Campus Guanambi",
+        "municipio": "Guanambi",
+        "codigo_ibge": 2911709,
+        "codigo_ies": 22104,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.217592,
+        "longitude": -42.7858,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "2163_2914000",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE EUGÊNIO GOMES (FEG) - Campus Ipirá",
+        "municipio": "Ipirá",
+        "codigo_ibge": 2914000,
+        "codigo_ies": 2163,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.155277,
+        "longitude": -39.740655,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22521_2914505",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADES FAMEP Unidade Irará - BA (FAMEP) - Campus Irará",
+        "municipio": "Irará",
+        "codigo_ibge": 2914505,
+        "codigo_ies": 22521,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.044019,
+        "longitude": -38.766347,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "20587_2914604",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade Pitágoras de Irecê (FPI) - Campus Irecê",
+        "municipio": "Irecê",
+        "codigo_ibge": 2914604,
+        "codigo_ies": 20587,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -11.304002,
+        "longitude": -41.857373,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "13782_2914703",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DE SANTA CRUZ DA BAHIA (FSC) - Campus Itaberaba",
+        "municipio": "Itaberaba",
+        "codigo_ibge": 2914703,
+        "codigo_ies": 13782,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.528837,
+        "longitude": -40.306002,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22088_2914802",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Afya Faculdade de Ciências Médicas de Itabuna (AFYA ITABUNA) - Campus Itabuna",
+        "municipio": "Itabuna",
+        "codigo_ibge": 2914802,
+        "codigo_ies": 22088,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.796243,
+        "longitude": -39.280332,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22139_2914802",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE SANTO ANTONIO DE ITABUNA (FSAI) - Campus Itabuna",
+        "municipio": "Itabuna",
+        "codigo_ibge": 2914802,
+        "codigo_ies": 22139,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.796243,
+        "longitude": -39.280332,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "3588_2918001",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO) - Campus Jequié",
+        "municipio": "Jequié",
+        "codigo_ibge": 2918001,
+        "codigo_ies": 3588,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.862801,
+        "longitude": -40.081787,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22202_2918407",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade Estácio de Juazeiro (EstácioJuazeiro) - Campus Juazeiro",
+        "municipio": "Juazeiro",
+        "codigo_ibge": 2918407,
+        "codigo_ies": 22202,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -9.427268,
+        "longitude": -40.505742,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "3588_2919553",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO) - Campus Luís Eduardo Magalhães",
+        "municipio": "Luís Eduardo Magalhães",
+        "codigo_ibge": 2919553,
+        "codigo_ies": 3588,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.087454,
+        "longitude": -45.796046,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "3230_2919553",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE LUIZ EDUARDO MAGALHÃES (FILEM) - Campus Luís Eduardo Magalhães",
+        "municipio": "Luís Eduardo Magalhães",
+        "codigo_ibge": 2919553,
+        "codigo_ies": 3230,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -12.087454,
+        "longitude": -45.796046,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "11951_2921500",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DO SERTÃO BAIANO (FASBE) - Campus Monte Santo",
+        "municipio": "Monte Santo",
+        "codigo_ibge": 2921500,
+        "codigo_ies": 11951,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -10.438158,
+        "longitude": -39.3313,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "2140_2925303",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE NOSSA SENHORA DE LOURDES (FNSL) - Campus Porto Seguro",
+        "municipio": "Porto Seguro",
+        "codigo_ibge": 2925303,
+        "codigo_ies": 2140,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -16.450241,
+        "longitude": -39.06428,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "23155_2925303",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE UNEX (UNEX) - Campus Porto Seguro",
+        "municipio": "Porto Seguro",
+        "codigo_ibge": 2925303,
+        "codigo_ies": 23155,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -16.450241,
+        "longitude": -39.06428,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "25222_2925303",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE ATENAS PORTO SEGURO - Campus Porto Seguro",
+        "municipio": "Porto Seguro",
+        "codigo_ibge": 2925303,
+        "codigo_ies": 25222,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -16.450241,
+        "longitude": -39.06428,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "11862_2926004",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE ALFREDO NASSER DE REMANSO - Campus Remanso",
+        "municipio": "Remanso",
+        "codigo_ibge": 2926004,
+        "codigo_ies": 11862,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -9.619346,
+        "longitude": -42.081467,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "4747_2926301",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE REGIONAL DE RIACHÃO DO JACUÍPE (FARJ) - Campus Riachão do Jacuípe",
+        "municipio": "Riachão do Jacuípe",
+        "codigo_ibge": 2926301,
+        "codigo_ies": 4747,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -11.809017,
+        "longitude": -39.383254,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "3669_2926608",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DOM LUIS DE ORLEANS E BRAGANÇA (FDL) - Campus Ribeira do Pombal",
+        "municipio": "Ribeira do Pombal",
+        "codigo_ibge": 2926608,
+        "codigo_ies": 3669,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -10.839554,
+        "longitude": -38.539694,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "1461_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Centro Universitário Zarns - Salvador (ZARNS SALVADOR) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 1461,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "1641_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "CENTRO UNIVERSITÁRIO SOCIAL DA BAHIA (UNISBA) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 1641,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "1524_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE OLGA METTIG (FAMETTIG) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 1524,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "1937_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE EVANGÉLICA DE SALVADOR (FACESA) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 1937,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "2427_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE LUSÓFONA DA BAHIA (FL-BA) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 2427,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "4460_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DOM PEDRO II DE TECNOLOGIA (FDP II Tec) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 4460,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "21103_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FIEP - FACULDADE INTERNACIONAL DE EVOLUÇÃO PROFISSIONAL (FIEP) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 21103,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "21616_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE ATUALIZA (ATUALIZA) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 21616,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "21871_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE BAHIANA DE ENGENHARIA E CIÊNCIAS SOCIAIS APLICADAS (FBE) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 21871,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "152_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DE CIÊNCIAS CONTÁBEIS (FACIC) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 152,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "1302_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE BATISTA BRASILEIRA (FBB) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 1302,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "3270_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE SÃO BENTO DA BAHIA (FSBB) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 3270,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22763_2927408",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE SANTA CASA (FSC) - Campus Salvador",
+        "municipio": "Salvador",
+        "codigo_ibge": 2927408,
+        "codigo_ies": 22763,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.003795,
+        "longitude": -38.516259,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "5473_2928109",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DE CIÊNCIAS E TECNOLOGIA DA BAHIA (FACITE) - Campus Santa Maria da Vitória",
+        "municipio": "Santa Maria da Vitória",
+        "codigo_ibge": 2928109,
+        "codigo_ies": 5473,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.388083,
+        "longitude": -44.197419,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "20537_2930105",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE BAIANA DO SENHOR DO BONFIM (FABASB) - Campus Senhor do Bonfim",
+        "municipio": "Senhor do Bonfim",
+        "codigo_ibge": 2930105,
+        "codigo_ies": 20537,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -10.459352,
+        "longitude": -40.188543,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "18296_2931905",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade AGES de Tucano (Faculdade AGES) - Campus Tucano",
+        "municipio": "Tucano",
+        "codigo_ibge": 2931905,
+        "codigo_ies": 18296,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -10.96503,
+        "longitude": -38.784788,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "22086_2932903",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "Faculdade de Educação Social da Bahia (FAESB) - Campus Valença",
+        "municipio": "Valença",
+        "codigo_ibge": 2932903,
+        "codigo_ies": 22086,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -13.370609,
+        "longitude": -39.071783,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "17433_2933307",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASAVIC) - Campus Vitória da Conquista",
+        "municipio": "Vitória da Conquista",
+        "codigo_ibge": 2933307,
+        "codigo_ies": 17433,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.860141,
+        "longitude": -40.847274,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "17498_2933307",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE DE SAÚDE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASA) - Campus Vitória da Conquista",
+        "municipio": "Vitória da Conquista",
+        "codigo_ibge": 2933307,
+        "codigo_ies": 17498,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.860141,
+        "longitude": -40.847274,
+        "ativo": true
+      }
+    },
+    {
+      "operation": "INSERT",
+      "table": "lista_ativos_cti",
+      "primary_key": "idempotency_key",
+      "primary_key_value": "21226_2933307",
+      "status": "PENDENTE_APROVACAO",
+      "reason": "Unidade presencial de ensino superior ativa e credenciada no Censo da Educação Superior 2023 (INEP/MEC), sem registro na base SECTI legada.",
+      "source": "INEP Censo Superior 2023",
+      "before": null,
+      "after": {
+        "nome_ativo": "FACULDADE SUDOESTE (FASU) - Campus Vitória da Conquista",
+        "municipio": "Vitória da Conquista",
+        "codigo_ibge": 2933307,
+        "codigo_ies": 21226,
+        "tipo": "Ensino Superior Presencial",
+        "id_tipo_ativo": 101,
+        "latitude": -14.860141,
+        "longitude": -40.847274,
+        "ativo": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,1502 @@
+{
+  "metadados": {
+    "fonte": "INEP - Censo da Educação Superior",
+    "ano_censo": 2023,
+    "arquivo_fonte": "MICRODADOS_ED_SUP_IES_2023.CSV",
+    "data_extracao": "2026-09-16T13:21:45.998Z",
+    "filtro": "SG_UF_IES = BA OU CO_UF_IES = 29",
+    "total_registros": 149
+  },
+  "dados": [
+    {
+      "codigo_ies": 24,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ",
+      "sigla_ies": "UESC",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 2,
+      "codigo_municipio": 2913606,
+      "municipio": "Ilhéus",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA",
+      "sigla_ies": "UNEB",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 2,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 152,
+      "nome_ies": "FACULDADE DE CIÊNCIAS CONTÁBEIS",
+      "sigla_ies": "FACIC",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 385,
+      "nome_ies": "UNIVERSIDADE SALVADOR",
+      "sigla_ies": "UNIFACS",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 396,
+      "nome_ies": "Centro Universitário Ruy Barbosa Wyden",
+      "sigla_ies": "UniRuy Wyden",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 519,
+      "nome_ies": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+      "sigla_ies": "UCSAL",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 534,
+      "nome_ies": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
+      "sigla_ies": "EBMSP",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 578,
+      "nome_ies": "UNIVERSIDADE FEDERAL DA BAHIA",
+      "sigla_ies": "UFBA",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 1,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+      "sigla_ies": "IFBA",
+      "tipo_organizacao_academica": 4,
+      "categoria_administrativa": 1,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 666,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+      "sigla_ies": "UEFS",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 2,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 688,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA",
+      "sigla_ies": "UESB",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 2,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1053,
+      "nome_ies": "Centro Universitário de Excelência",
+      "sigla_ies": "UNEX",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1055,
+      "nome_ies": "Centro Universitário Maurício de Nassau de Salvador",
+      "sigla_ies": "Uninassau Salvador",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1058,
+      "nome_ies": "Centro Universitário Estácio da Bahia",
+      "sigla_ies": "Estácio Bahia",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1170,
+      "nome_ies": "Centro Universitário FAMEC",
+      "sigla_ies": "UNIFAMEC",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2905701,
+      "municipio": "Camaçari",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1185,
+      "nome_ies": "CENTRO UNIVERSITÁRIO JORGE AMADO",
+      "sigla_ies": "UNIJORGE",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1227,
+      "nome_ies": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+      "sigla_ies": "UNINASSAU",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2903201,
+      "municipio": "Barreiras",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1302,
+      "nome_ies": "FACULDADE BATISTA BRASILEIRA",
+      "sigla_ies": "FBB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1318,
+      "nome_ies": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1363,
+      "nome_ies": "FACULDADE VISCONDE DE CAIRÚ",
+      "sigla_ies": "FAVIC",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1364,
+      "nome_ies": "Centro Universitário de Excelência de Vitória da Conquista",
+      "sigla_ies": "UNEX Conquista",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1394,
+      "nome_ies": "FACULDADE CASTRO ALVES",
+      "sigla_ies": "FCA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1411,
+      "nome_ies": "FACULDADE DOIS DE JULHO",
+      "sigla_ies": "F2J",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1455,
+      "nome_ies": "FACULDADE SANTÍSSIMO SACRAMENTO",
+      "sigla_ies": "FSSS",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2900702,
+      "municipio": "Alagoinhas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1461,
+      "nome_ies": "Centro Universitário Zarns - Salvador",
+      "sigla_ies": "ZARNS SALVADOR",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1524,
+      "nome_ies": "FACULDADE OLGA METTIG",
+      "sigla_ies": "FAMETTIG",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1572,
+      "nome_ies": "FACULDADE DE CIÊNCIAS SOCIAIS APLICADAS",
+      "sigla_ies": "FACISA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2915601,
+      "municipio": "Itamaraju",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1639,
+      "nome_ies": "FACULDADE HÉLIO ROCHA",
+      "sigla_ies": "FHR",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1640,
+      "nome_ies": "CENTRO UNIVERSITÁRIO AGES",
+      "sigla_ies": "UniAGES",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2923803,
+      "municipio": "Paripiranga",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1641,
+      "nome_ies": "CENTRO UNIVERSITÁRIO SOCIAL DA BAHIA",
+      "sigla_ies": "UNISBA",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1642,
+      "nome_ies": "Faculdade de Excelência UNEX de Itabuna",
+      "sigla_ies": "UNEX de Itabuna",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914802,
+      "municipio": "Itabuna",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1643,
+      "nome_ies": "FACULDADE ANÍSIO TEIXEIRA DE FEIRA DE SANTANA",
+      "sigla_ies": "FAT",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1645,
+      "nome_ies": "Faculdade de Excelência UNEX de Jequié",
+      "sigla_ies": "UNEX de Jequié",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2918001,
+      "municipio": "Jequié",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1718,
+      "nome_ies": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1758,
+      "nome_ies": "FACULDADE INDEPENDENTE DO NORDESTE",
+      "sigla_ies": "FAINOR",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1790,
+      "nome_ies": "FACULDADE DO SUL DA BAHIA",
+      "sigla_ies": "FASB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2931350,
+      "municipio": "Teixeira de Freitas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1883,
+      "nome_ies": "CENTRO UNIVERSITÁRIO UNIME",
+      "sigla_ies": "UNIME",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2919207,
+      "municipio": "Lauro de Freitas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1893,
+      "nome_ies": "Faculdade Unirb - Feira de Santana",
+      "sigla_ies": "F. UNIRB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1910,
+      "nome_ies": "FACULDADE UNINASSAU LAURO DE FREITAS",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2919207,
+      "municipio": "Lauro de Freitas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 1937,
+      "nome_ies": "FACULDADE EVANGÉLICA DE SALVADOR",
+      "sigla_ies": "FACESA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2023,
+      "nome_ies": "Centro Universitário FG",
+      "sigla_ies": "UNIFG",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2911709,
+      "municipio": "Guanambi",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2067,
+      "nome_ies": "Centro Universitário de Ciências e Empreendedorismo",
+      "sigla_ies": "UNIFACEMP",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2928703,
+      "municipio": "Santo Antônio de Jesus",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2076,
+      "nome_ies": "CENTRO UNIVERSITÁRIO UNIRB",
+      "sigla_ies": "UNIRB",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2085,
+      "nome_ies": "CENTRO UNIVERSITÁRIO DE SALVADOR",
+      "sigla_ies": "UNICEUSA",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2140,
+      "nome_ies": "FACULDADE NOSSA SENHORA DE LOURDES",
+      "sigla_ies": "FNSL",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2925303,
+      "municipio": "Porto Seguro",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2163,
+      "nome_ies": "FACULDADE EUGÊNIO GOMES",
+      "sigla_ies": "FEG",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914000,
+      "municipio": "Ipirá",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2222,
+      "nome_ies": "Centro Universitário do Rio São Francisco Unirios",
+      "sigla_ies": "UNIRIOS",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2924009,
+      "municipio": "Paulo Afonso",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2402,
+      "nome_ies": "Centro Universitário UNIFTC",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2427,
+      "nome_ies": "FACULDADE LUSÓFONA DA BAHIA",
+      "sigla_ies": "FL-BA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2437,
+      "nome_ies": "FACULDADE ANHANGUERA DE TEIXEIRA DE FREITAS",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2931350,
+      "municipio": "Teixeira de Freitas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2444,
+      "nome_ies": "Faculdade Unirb - Barreiras",
+      "sigla_ies": "F. UNIRB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2903201,
+      "municipio": "Barreiras",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2470,
+      "nome_ies": "INSTITUTO SALVADOR DE ENSINO E CULTURA",
+      "sigla_ies": "ISEC",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2474,
+      "nome_ies": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "sigla_ies": "UNIMAM",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2909802,
+      "municipio": "Cruz das Almas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2500,
+      "nome_ies": "FACULDADE EINSTEIN",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2560,
+      "nome_ies": "FACULDADE DE ENSINO SUPERIOR DA CIDADE DE FEIRA DE SANTANA",
+      "sigla_ies": "FAESF/UNEF",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2568,
+      "nome_ies": "FACULDADE ZACARIAS DE GÓES",
+      "sigla_ies": "FAZAG",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2932903,
+      "municipio": "Valença",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2581,
+      "nome_ies": "FACULDADE SÃO SALVADOR",
+      "sigla_ies": "FSS",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2632,
+      "nome_ies": "FACULDADES INTEGRADAS DO EXTREMO SUL DA BAHIA",
+      "sigla_ies": "UNESULBAHIA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2910727,
+      "municipio": "Eunápolis",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2753,
+      "nome_ies": "Faculdade de Ciências Educacionais de Capim Grosso",
+      "sigla_ies": "FCG",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2906873,
+      "municipio": "Capim Grosso",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2771,
+      "nome_ies": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
+      "sigla_ies": "CESUPI",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2913606,
+      "municipio": "Ilhéus",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 2944,
+      "nome_ies": "FACULDADE ANHANGUERA DE ITABUNA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914802,
+      "municipio": "Itabuna",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3034,
+      "nome_ies": "Faculdade Anhanguera Unime de Salvador",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3230,
+      "nome_ies": "FACULDADE LUIZ EDUARDO MAGALHÃES",
+      "sigla_ies": "FILEM",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2919553,
+      "municipio": "Luís Eduardo Magalhães",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3268,
+      "nome_ies": "FACULDADE MADRE THAIS",
+      "sigla_ies": "FMT",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2913606,
+      "municipio": "Ilhéus",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3270,
+      "nome_ies": "FACULDADE SÃO BENTO DA BAHIA",
+      "sigla_ies": "FSBB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3285,
+      "nome_ies": "FACULDADE SANTO ANTONIO",
+      "sigla_ies": "FSA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2900702,
+      "municipio": "Alagoinhas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3365,
+      "nome_ies": "Faculdade UniBRAS Juazeiro",
+      "sigla_ies": "FACBRAS",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2918407,
+      "municipio": "Juazeiro",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3588,
+      "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
+      "sigla_ies": "UNIDOMPEDRO",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3609,
+      "nome_ies": "FACULDADES INTEGRADAS IPITANGA",
+      "sigla_ies": "FACIIP",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2919207,
+      "municipio": "Lauro de Freitas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3669,
+      "nome_ies": "FACULDADE DOM LUIS DE ORLEANS E BRAGANÇA",
+      "sigla_ies": "FDL",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2926608,
+      "municipio": "Ribeira do Pombal",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3847,
+      "nome_ies": "FACULDADE BAIANA DE DIREITO E GESTÃO",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3864,
+      "nome_ies": "Centro Universitário UNIRB - Alagoinhas",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2900702,
+      "municipio": "Alagoinhas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3921,
+      "nome_ies": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2919553,
+      "municipio": "Luís Eduardo Magalhães",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 3962,
+      "nome_ies": "CENTRO UNIVERSITÁRIO SENAI CIMATEC",
+      "sigla_ies": "SENAI CIMATEC",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 4460,
+      "nome_ies": "FACULDADE DOM PEDRO II DE TECNOLOGIA",
+      "sigla_ies": "FDP II Tec",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 4503,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA",
+      "sigla_ies": "UFRB",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 1,
+      "codigo_municipio": 2909802,
+      "municipio": "Cruz das Almas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 4531,
+      "nome_ies": "FACULDADE ADVENTISTA DA BAHIA",
+      "sigla_ies": "FADBA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2904902,
+      "municipio": "Cachoeira",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 4747,
+      "nome_ies": "FACULDADE REGIONAL DE RIACHÃO DO JACUÍPE",
+      "sigla_ies": "FARJ",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2926301,
+      "municipio": "Riachão do Jacuípe",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 4959,
+      "nome_ies": "FACULDADE ANHANGUERA DE FEIRA DE SANTANA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 5473,
+      "nome_ies": "FACULDADE DE CIÊNCIAS E TECNOLOGIA DA BAHIA",
+      "sigla_ies": "FACITE",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2928109,
+      "municipio": "Santa Maria da Vitória",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 10058,
+      "nome_ies": "FACULDADE DA FRATERNIDADE DE VALENÇA",
+      "sigla_ies": "FFV",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2932903,
+      "municipio": "Valença",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 11862,
+      "nome_ies": "FACULDADE ALFREDO NASSER DE REMANSO",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2926004,
+      "municipio": "Remanso",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 11951,
+      "nome_ies": "FACULDADE DO SERTÃO BAIANO",
+      "sigla_ies": "FASBE",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2921500,
+      "municipio": "Monte Santo",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 12922,
+      "nome_ies": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+      "sigla_ies": "FATEC/BA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2900702,
+      "municipio": "Alagoinhas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 13782,
+      "nome_ies": "FACULDADE DE SANTA CRUZ DA BAHIA",
+      "sigla_ies": "FSC",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914703,
+      "municipio": "Itaberaba",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 13783,
+      "nome_ies": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA",
+      "sigla_ies": "ESTÁCIO FEIRA DE SAN",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO",
+      "sigla_ies": "IFBAIANO",
+      "tipo_organizacao_academica": 4,
+      "categoria_administrativa": 1,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 14975,
+      "nome_ies": "FACULDADE DO NORDESTE DA BAHIA",
+      "sigla_ies": "FANEB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2909208,
+      "municipio": "Coronel João Sá",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 14996,
+      "nome_ies": "FACULDADE DIPLOMATA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 15056,
+      "nome_ies": "CENTRO UNIVERSITÁRIO UNIVERSO SALVADOR",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 2,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 15504,
+      "nome_ies": "FACULDADE IRECÊ",
+      "sigla_ies": "FAI",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914604,
+      "municipio": "Irecê",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 15667,
+      "nome_ies": "FACULDADE UNIRB - JUAZEIRO",
+      "sigla_ies": "FACULDADE UNIRB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2918407,
+      "municipio": "Juazeiro",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 16225,
+      "nome_ies": "Faculdade Regional do Jacuípe",
+      "sigla_ies": "FARJ",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2906873,
+      "municipio": "Capim Grosso",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 16459,
+      "nome_ies": "FACULDADE UNIRB - SALVADOR",
+      "sigla_ies": "FACULDADE UNIRB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 16918,
+      "nome_ies": "FACULDADE CATÓLICA DE FEIRA DE SANTANA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 17433,
+      "nome_ies": "FACULDADE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA",
+      "sigla_ies": "FASAVIC",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 17498,
+      "nome_ies": "FACULDADE DE SAÚDE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA",
+      "sigla_ies": "FASA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 17758,
+      "nome_ies": "Faculdades FAMEP Unidade Euclides da Cunha - BA",
+      "sigla_ies": "FAMEP",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910701,
+      "municipio": "Euclides da Cunha",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 17876,
+      "nome_ies": "FACULDADE ESPÍRITO SANTO",
+      "sigla_ies": "FAES",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2910727,
+      "municipio": "Eunápolis",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 17896,
+      "nome_ies": "FACULDADE BRASILEIRA DE TECNOLOGIA",
+      "sigla_ies": "FBT",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910800,
+      "municipio": "Feira de Santana",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18059,
+      "nome_ies": "FACULDADE SANTO ANTONIO DE QUEIMADAS",
+      "sigla_ies": "FSAQ",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2925808,
+      "municipio": "Queimadas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18296,
+      "nome_ies": "Faculdade AGES de Tucano",
+      "sigla_ies": "Faculdade AGES",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2931905,
+      "municipio": "Tucano",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18506,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA",
+      "sigla_ies": "UFOB",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 1,
+      "codigo_municipio": 2903201,
+      "municipio": "Barreiras",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18625,
+      "nome_ies": "Faculdade Anhanguera De Vitória Da Conquista",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18628,
+      "nome_ies": "Faculdade Pitágoras de Luis Eduardo Magalhães",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2919553,
+      "municipio": "Luís Eduardo Magalhães",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18636,
+      "nome_ies": "Faculdade da Região Sisaleira",
+      "sigla_ies": "FARESI",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2908408,
+      "municipio": "Conceição do Coité",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18708,
+      "nome_ies": "Faculdade AGES de Senhor do Bonfim",
+      "sigla_ies": "Faculdade AGES",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2930105,
+      "municipio": "Senhor do Bonfim",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 18812,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+      "sigla_ies": "UFSB",
+      "tipo_organizacao_academica": 1,
+      "categoria_administrativa": 1,
+      "codigo_municipio": 2914802,
+      "municipio": "Itabuna",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 19260,
+      "nome_ies": "FACULDADE ANHANGUERA DE JEQUIÉ",
+      "sigla_ies": "FPJ",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2918001,
+      "municipio": "Jequié",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 19284,
+      "nome_ies": "FACULDADE BRASILEIRA DO RECÔNCAVO",
+      "sigla_ies": "FBBR",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2909802,
+      "municipio": "Cruz das Almas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 19298,
+      "nome_ies": "Faculdade Pitagoras de Eunapolis",
+      "sigla_ies": "FPE",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910727,
+      "municipio": "Eunápolis",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 19408,
+      "nome_ies": "Faculdade AGES de Jacobina",
+      "sigla_ies": "Faculdade AGES",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2917508,
+      "municipio": "Jacobina",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 19780,
+      "nome_ies": "Faculdade Pitágoras Unopar de Guanambi",
+      "sigla_ies": "FPG",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2911709,
+      "municipio": "Guanambi",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 20537,
+      "nome_ies": "FACULDADE BAIANA DO SENHOR DO BONFIM",
+      "sigla_ies": "FABASB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2930105,
+      "municipio": "Senhor do Bonfim",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 20587,
+      "nome_ies": "Faculdade Pitágoras de Irecê",
+      "sigla_ies": "FPI",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914604,
+      "municipio": "Irecê",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 20605,
+      "nome_ies": "Faculdades Sulamérica Bahia",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2919553,
+      "municipio": "Luís Eduardo Magalhães",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 20606,
+      "nome_ies": "Faculdade de Tecnologia e Ciências",
+      "sigla_ies": "FTC Juazeiro",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2918407,
+      "municipio": "Juazeiro",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 21103,
+      "nome_ies": "FIEP - FACULDADE INTERNACIONAL DE EVOLUÇÃO PROFISSIONAL",
+      "sigla_ies": "FIEP",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 21226,
+      "nome_ies": "FACULDADE SUDOESTE",
+      "sigla_ies": "FASU",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2933307,
+      "municipio": "Vitória da Conquista",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 21280,
+      "nome_ies": "FACULDADE ANHANGUERA DE ALAGOINHAS",
+      "sigla_ies": "FPA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2900702,
+      "municipio": "Alagoinhas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 21553,
+      "nome_ies": "FACULDADE ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2928703,
+      "municipio": "Santo Antônio de Jesus",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 21616,
+      "nome_ies": "FACULDADE ATUALIZA",
+      "sigla_ies": "ATUALIZA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 21871,
+      "nome_ies": "FACULDADE BAHIANA DE ENGENHARIA E CIÊNCIAS SOCIAIS APLICADAS",
+      "sigla_ies": "FBE",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 21978,
+      "nome_ies": "Faculdade Edufor de Salvador",
+      "sigla_ies": "EDUFOR",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22059,
+      "nome_ies": "Faculdade Pitágoras de Medicina de Eunápolis",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2910727,
+      "municipio": "Eunápolis",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22076,
+      "nome_ies": "Faculdade Estácio de Alagoinhas",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2900702,
+      "municipio": "Alagoinhas",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22086,
+      "nome_ies": "Faculdade de Educação Social da Bahia",
+      "sigla_ies": "FAESB",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2932903,
+      "municipio": "Valença",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22088,
+      "nome_ies": "Afya Faculdade de Ciências Médicas de Itabuna",
+      "sigla_ies": "AFYA ITABUNA",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914802,
+      "municipio": "Itabuna",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22093,
+      "nome_ies": "Faculdade AGES de Medicina",
+      "sigla_ies": "Faculdade AGES",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2917508,
+      "municipio": "Jacobina",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22104,
+      "nome_ies": "Faculdades Integradas Padrão",
+      "sigla_ies": "FIP GUANAMBI",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2911709,
+      "municipio": "Guanambi",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22124,
+      "nome_ies": "Faculdade Pitágoras Unopar de Brumado",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2904605,
+      "municipio": "Brumado",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22125,
+      "nome_ies": "Faculdade de Ciências Jurídicas de Bom Jesus da Lapa",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2903904,
+      "municipio": "Bom Jesus da Lapa",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22139,
+      "nome_ies": "FACULDADE SANTO ANTONIO DE ITABUNA",
+      "sigla_ies": "FSAI",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914802,
+      "municipio": "Itabuna",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22154,
+      "nome_ies": "Faculdade de Ciências Jurídicas de Jacobina",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2917508,
+      "municipio": "Jacobina",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22202,
+      "nome_ies": "Faculdade Estácio de Juazeiro",
+      "sigla_ies": "EstácioJuazeiro",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2918407,
+      "municipio": "Juazeiro",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22443,
+      "nome_ies": "Faculdade Alfredo Nasser de Casa Nova",
+      "sigla_ies": "FAN",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2907202,
+      "municipio": "Casa Nova",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22521,
+      "nome_ies": "FACULDADES FAMEP Unidade Irará - BA",
+      "sigla_ies": "FAMEP",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914505,
+      "municipio": "Irará",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22763,
+      "nome_ies": "FACULDADE SANTA CASA",
+      "sigla_ies": "FSC",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 5,
+      "codigo_municipio": 2927408,
+      "municipio": "Salvador",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 22787,
+      "nome_ies": "FACULDADE DE TECNOLOGIA E CIÊNCIAS - FTC CAMAÇARI",
+      "sigla_ies": "FTC CAMAÇARI",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2905701,
+      "municipio": "Camaçari",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 23146,
+      "nome_ies": "Faculdade Dominius",
+      "sigla_ies": "FAD",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2911709,
+      "municipio": "Guanambi",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 23155,
+      "nome_ies": "FACULDADE UNEX",
+      "sigla_ies": "UNEX",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2925303,
+      "municipio": "Porto Seguro",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 23159,
+      "nome_ies": "FACULDADE BARÃO DE JEQUIRIÇA",
+      "sigla_ies": "FBJ DIGITAL",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2932903,
+      "municipio": "Valença",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 23896,
+      "nome_ies": "Faculdade Anhanguera de Camaçari",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2905701,
+      "municipio": "Camaçari",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 24443,
+      "nome_ies": "Faculdade AGES de Medicina de Irecê",
+      "sigla_ies": "Faculdade AGES",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2914604,
+      "municipio": "Irecê",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 24471,
+      "nome_ies": "FACULDADE ATENAS VALENÇA",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2932903,
+      "municipio": "Valença",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 24861,
+      "nome_ies": "FACULDADE ATENAS DO SUL BAIANO",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2932903,
+      "municipio": "Valença",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 25167,
+      "nome_ies": "FACULDADE UNITBRASIL",
+      "sigla_ies": "SIGMA EAD",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2912103,
+      "municipio": "Ibicaraí",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 25222,
+      "nome_ies": "FACULDADE ATENAS PORTO SEGURO",
+      "sigla_ies": "",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2925303,
+      "municipio": "Porto Seguro",
+      "uf": "BA"
+    },
+    {
+      "codigo_ies": 25439,
+      "nome_ies": "FACULDADE REGIONAL DO VALLE",
+      "sigla_ies": "FARVALLE",
+      "tipo_organizacao_academica": 3,
+      "categoria_administrativa": 4,
+      "codigo_municipio": 2901007,
+      "municipio": "Amargosa",
+      "uf": "BA"
+    }
+  ]
+}

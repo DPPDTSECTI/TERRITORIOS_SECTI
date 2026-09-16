@@ -1,0 +1,140 @@
+{
+  "metadados": {
+    "gerado_em": "2026-09-16T14:08:38.422Z",
+    "etapa": "2.5 — Homologação do Shadow no Frontend",
+    "status": "PRONTO_PARA_HOMOLOGACAO_VISUAL"
+  },
+  "metricas": {
+    "campi_total": {
+      "producao": 174,
+      "shadow_total": 224,
+      "shadow_presencial": 207
+    },
+    "instituicoes_total": {
+      "producao": 67,
+      "shadow": 278
+    },
+    "cursos_cti_presencial": {
+      "producao": 742,
+      "shadow_cti_presencial": 992,
+      "shadow_total_presencial": 1998,
+      "shadow_ead_segregado": 36358
+    },
+    "municipios_cobertos_campi": {
+      "producao": 56,
+      "shadow": 57,
+      "novos_municipios_atendidos": [
+        "casa nova",
+        "ipira",
+        "irara",
+        "monte santo",
+        "remanso",
+        "riachao do jacuipe",
+        "tucano"
+      ]
+    },
+    "categorias_campi_presenciais": {
+      "producao": {
+        "federal": 22,
+        "estadual": 32,
+        "institutoFederal": 40,
+        "privada": 80
+      },
+      "shadow": {
+        "federal": 22,
+        "estadual": 30,
+        "institutoFederal": 28,
+        "privada": 127
+      }
+    },
+    "mapa_pontos": {
+      "pontos_producao": 174,
+      "pontos_shadow_presencial": 207,
+      "pontos_shadow_total": 224,
+      "pontos_ead_segregados": 6,
+      "pontos_tecnicos_segregados": 7,
+      "pontos_pesquisa_segregados": 3,
+      "pontos_novos_inep": 50
+    }
+  },
+  "diferencas": [
+    {
+      "dimensao": "Total de Campi Físicos de Ensino Superior",
+      "producao": "174 registros cadastrados",
+      "shadow": "207 campi presenciais auditados",
+      "impacto": "Acréscimo líquido de +33 presenças físicas de ensino superior (50 faculdades novas - 17 registros técnicos/pesquisa/EAD segregados)."
+    },
+    {
+      "dimensao": "Institutos Federais no Mapa de Ensino Superior",
+      "producao": "40 campi",
+      "shadow": "24 campi presenciais de graduação + 7 campi técnicos de nível médio",
+      "impacto": "7 campi sem oferta superior foram segregados com a tag campus_tecnico, preservando a transparência acadêmica."
+    },
+    {
+      "dimensao": "Polos EAD no Mapa Físico",
+      "producao": "6 polos misturados como campi presenciais",
+      "shadow": "6 polos marcados como polo_ead e 36.358 cursos EAD isolados",
+      "impacto": "Elimina poluição cartográfica de pontos remotos sem instalações físicas de ensino presencial."
+    },
+    {
+      "dimensao": "Cobertura Municipal",
+      "producao": "56 municípios",
+      "shadow": "57 municípios",
+      "impacto": "Expansão da cobertura em +7 municípios com presença de faculdades privadas ativas."
+    }
+  ],
+  "componentes_afetados": [
+    {
+      "componente": "AtivosPage.jsx",
+      "caminho": "src/components/AtivosPage.jsx",
+      "impacto": "Compatibilidade total de schema; novos campos adicionados sem breaking changes."
+    },
+    {
+      "componente": "CursosPage.jsx",
+      "caminho": "src/components/CursosPage.jsx",
+      "impacto": "Compatibilidade total de schema; novos campos adicionados sem breaking changes."
+    },
+    {
+      "componente": "DashboardPainel.jsx",
+      "caminho": "src/components/DashboardPainel.jsx",
+      "impacto": "Compatibilidade total de schema; novos campos adicionados sem breaking changes."
+    },
+    {
+      "componente": "SideMap.jsx / PtiMap.jsx",
+      "caminho": "src/components/maps/SideMap.jsx",
+      "impacto": "Compatibilidade total de schema; novos campos adicionados sem breaking changes."
+    },
+    {
+      "componente": "RelatorioPage.jsx / RelatorioAtivos.jsx",
+      "caminho": "src/components/RelatorioPage.jsx",
+      "impacto": "Compatibilidade total de schema; novos campos adicionados sem breaking changes."
+    }
+  ],
+  "campos_faltantes": [],
+  "registros_problematicos": [
+    {
+      "id_ativo": 76,
+      "nome": "UFSB - Campus Jorge Amado (Itabuna)",
+      "problema": "Duplicidade aparente de ponto cartográfico com o ID 75 (UNIVERSIDADE FEDERAL DO SUL DA BAHIA em Itabuna).",
+      "recomendacao": "Unificar os marcadores ou manter ID 75 como sede e ID 76 como campus acadêmico."
+    },
+    {
+      "id_ativo": 19,
+      "nome": "UNIAENE (Cachoeira)",
+      "problema": "Denominação histórica na SECTI diverge do registro MEC/INEP (FADBA - Código 4531).",
+      "recomendacao": "Adotar denominação combinada: \"FADBA / UNIAENE\"."
+    },
+    {
+      "id_ativo": 164,
+      "nome": "FACULDADE UNIRB - SERRINHA (Serrinha)",
+      "problema": "Unidade inativa sem cursos ou turmas no Censo da Educação Superior 2023.",
+      "recomendacao": "Manter com etiqueta de \"Unidade Descontinuada\" ou ocultar na visualização ativa."
+    },
+    {
+      "id_ativo": 174,
+      "nome": "IFBA - Campus Avançado Ubaitaba",
+      "problema": "Coordenada SECTI original distante 15 km do centróide municipal.",
+      "recomendacao": "Revisar coordenadas geográficas exatas antes da publicação cartográfica."
+    }
+  ]
+}

@@ -1,0 +1,1333 @@
+{
+  "metadados": {
+    "gerado_em": "2026-09-16T14:17:26.885Z",
+    "etapa": "2.9 — Homologação Final do Modelo Canônico no Dashboard",
+    "total_unidades": 224
+  },
+  "kpis": {
+    "infraestrutura_fisica_total": 217,
+    "infraestrutura_fisica_ativa": 217,
+    "ensino_superior_presencial_confirmado": 204,
+    "ensino_superior_presencial_com_ambiguos": 207,
+    "ensino_tecnico": 7,
+    "pesquisa_extensao": 2,
+    "administrativo": 1,
+    "ead": 6,
+    "unidades_inativas": 1,
+    "unidades_totais": 224
+  },
+  "filtro_audit": {
+    "status": "SUCESSO",
+    "filtros": {
+      "ensino_superior": 207,
+      "tecnico": 7,
+      "pesquisa": 2,
+      "administrativo": 1,
+      "ead": 6,
+      "inativo": 1
+    }
+  },
+  "mapa_audit": {
+    "pontos_plotados_esperados": 217,
+    "pontos_plotados_obtidos": 217,
+    "pontos_excluidos": 7,
+    "ead_excluidos": 6,
+    "inativas_excluidas": 1,
+    "detalhamento_fisico": {
+      "superior_confirmado": 204,
+      "ambiguos": 3,
+      "tecnicos": 7,
+      "pesquisa": 2,
+      "administrativo": 1
+    },
+    "status": "VALIDADO"
+  },
+  "relatorios_pdf_audit": {
+    "ead_fora_campi_presenciais": true,
+    "tecnico_rotulado_corretamente": true,
+    "pesquisa_isolada_sem_graduacao": true,
+    "admin_nao_conta_como_instituicao_ensino": true,
+    "inativa_oculta_das_listas_ativas": true,
+    "status": "CONFORME"
+  },
+  "auditoria_territorios": [
+    {
+      "id_territorio": 1,
+      "territorio": "Bacia do Jacuípe",
+      "infraestrutura_fisica": 4,
+      "ensino_superior": 4,
+      "ensino_superior_confirmado": 4,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 2,
+      "territorio": "Território 2",
+      "infraestrutura_fisica": 0,
+      "ensino_superior": 0,
+      "ensino_superior_confirmado": 0,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 3,
+      "territorio": "Bacia do Rio Corrente",
+      "infraestrutura_fisica": 2,
+      "ensino_superior": 2,
+      "ensino_superior_confirmado": 2,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 4,
+      "territorio": "Bacia do Rio Grande",
+      "infraestrutura_fisica": 11,
+      "ensino_superior": 11,
+      "ensino_superior_confirmado": 11,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 5,
+      "territorio": "Baixo Sul",
+      "infraestrutura_fisica": 6,
+      "ensino_superior": 6,
+      "ensino_superior_confirmado": 6,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 6,
+      "territorio": "Chapada Diamantina",
+      "infraestrutura_fisica": 1,
+      "ensino_superior": 1,
+      "ensino_superior_confirmado": 1,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 1
+    },
+    {
+      "id_territorio": 7,
+      "territorio": "Costa do Descobrimento",
+      "infraestrutura_fisica": 10,
+      "ensino_superior": 10,
+      "ensino_superior_confirmado": 10,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 8,
+      "territorio": "Extremo Sul",
+      "infraestrutura_fisica": 6,
+      "ensino_superior": 6,
+      "ensino_superior_confirmado": 6,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 9,
+      "territorio": "Irecê",
+      "infraestrutura_fisica": 7,
+      "ensino_superior": 6,
+      "ensino_superior_confirmado": 6,
+      "ambigua": 0,
+      "tecnico": 1,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 10,
+      "territorio": "Itaparica",
+      "infraestrutura_fisica": 4,
+      "ensino_superior": 4,
+      "ensino_superior_confirmado": 4,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 11,
+      "territorio": "Litoral Norte e Agreste Baiano",
+      "infraestrutura_fisica": 8,
+      "ensino_superior": 7,
+      "ensino_superior_confirmado": 6,
+      "ambigua": 1,
+      "tecnico": 1,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 12,
+      "territorio": "Litoral Sul",
+      "infraestrutura_fisica": 11,
+      "ensino_superior": 10,
+      "ensino_superior_confirmado": 9,
+      "ambigua": 1,
+      "tecnico": 1,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 1
+    },
+    {
+      "id_territorio": 13,
+      "territorio": "Médio Rio de Contas",
+      "infraestrutura_fisica": 6,
+      "ensino_superior": 6,
+      "ensino_superior_confirmado": 6,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 14,
+      "territorio": "Médio Sudoeste da Bahia",
+      "infraestrutura_fisica": 2,
+      "ensino_superior": 2,
+      "ensino_superior_confirmado": 2,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 15,
+      "territorio": "Metropolitano de Salvador",
+      "infraestrutura_fisica": 50,
+      "ensino_superior": 49,
+      "ensino_superior_confirmado": 49,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 1,
+      "ead": 1
+    },
+    {
+      "id_territorio": 16,
+      "territorio": "Piemonte da Diamantina",
+      "infraestrutura_fisica": 3,
+      "ensino_superior": 3,
+      "ensino_superior_confirmado": 3,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 17,
+      "territorio": "Piemonte do Paraguaçu",
+      "infraestrutura_fisica": 3,
+      "ensino_superior": 2,
+      "ensino_superior_confirmado": 2,
+      "ambigua": 0,
+      "tecnico": 1,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 18,
+      "territorio": "Piemonte Norte do Itapicuru",
+      "infraestrutura_fisica": 6,
+      "ensino_superior": 5,
+      "ensino_superior_confirmado": 5,
+      "ambigua": 0,
+      "tecnico": 1,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 19,
+      "territorio": "Portal do Sertão",
+      "infraestrutura_fisica": 13,
+      "ensino_superior": 13,
+      "ensino_superior_confirmado": 13,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 20,
+      "territorio": "Recôncavo",
+      "infraestrutura_fisica": 13,
+      "ensino_superior": 12,
+      "ensino_superior_confirmado": 11,
+      "ambigua": 1,
+      "tecnico": 1,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 21,
+      "territorio": "Semiárido Nordeste II",
+      "infraestrutura_fisica": 6,
+      "ensino_superior": 5,
+      "ensino_superior_confirmado": 5,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 1,
+      "administrativo": 0,
+      "ead": 2
+    },
+    {
+      "id_territorio": 22,
+      "territorio": "Sertão do São Francisco",
+      "infraestrutura_fisica": 9,
+      "ensino_superior": 8,
+      "ensino_superior_confirmado": 8,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 1,
+      "administrativo": 0,
+      "ead": 1
+    },
+    {
+      "id_territorio": 23,
+      "territorio": "Sertão Produtivo",
+      "infraestrutura_fisica": 10,
+      "ensino_superior": 10,
+      "ensino_superior_confirmado": 10,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 24,
+      "territorio": "Sisal",
+      "infraestrutura_fisica": 7,
+      "ensino_superior": 7,
+      "ensino_superior_confirmado": 7,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 25,
+      "territorio": "Sudoeste Baiano",
+      "infraestrutura_fisica": 10,
+      "ensino_superior": 10,
+      "ensino_superior_confirmado": 10,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 26,
+      "territorio": "Vale do Jiquiriçá",
+      "infraestrutura_fisica": 4,
+      "ensino_superior": 3,
+      "ensino_superior_confirmado": 3,
+      "ambigua": 0,
+      "tecnico": 1,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    },
+    {
+      "id_territorio": 27,
+      "territorio": "Velho Chico",
+      "infraestrutura_fisica": 5,
+      "ensino_superior": 5,
+      "ensino_superior_confirmado": 5,
+      "ambigua": 0,
+      "tecnico": 0,
+      "pesquisa": 0,
+      "administrativo": 0,
+      "ead": 0
+    }
+  ],
+  "auditoria_municipios_divergentes": [
+    {
+      "codigo_ibge": 2927408,
+      "municipio": "Salvador",
+      "producao": 0,
+      "canonical": 39,
+      "diferenca": 39,
+      "diferenca_absoluta": 39
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Salvador",
+      "producao": 26,
+      "canonical": 0,
+      "diferenca": -26,
+      "diferenca_absoluta": 26
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Feira de Santana",
+      "producao": 12,
+      "canonical": 0,
+      "diferenca": -12,
+      "diferenca_absoluta": 12
+    },
+    {
+      "codigo_ibge": 2910800,
+      "municipio": "Feira de Santana",
+      "producao": 0,
+      "canonical": 12,
+      "diferenca": 12,
+      "diferenca_absoluta": 12
+    },
+    {
+      "codigo_ibge": 2933307,
+      "municipio": "Vitória da Conquista",
+      "producao": 0,
+      "canonical": 10,
+      "diferenca": 10,
+      "diferenca_absoluta": 10
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Vitória da Conquista",
+      "producao": 7,
+      "canonical": 0,
+      "diferenca": -7,
+      "diferenca_absoluta": 7
+    },
+    {
+      "codigo_ibge": 2900702,
+      "municipio": "Alagoinhas",
+      "producao": 0,
+      "canonical": 7,
+      "diferenca": 7,
+      "diferenca_absoluta": 7
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Alagoinhas",
+      "producao": 6,
+      "canonical": 0,
+      "diferenca": -6,
+      "diferenca_absoluta": 6
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Juazeiro",
+      "producao": 6,
+      "canonical": 0,
+      "diferenca": -6,
+      "diferenca_absoluta": 6
+    },
+    {
+      "codigo_ibge": 2903201,
+      "municipio": "Barreiras",
+      "producao": 0,
+      "canonical": 6,
+      "diferenca": 6,
+      "diferenca_absoluta": 6
+    },
+    {
+      "codigo_ibge": 2914802,
+      "municipio": "Itabuna",
+      "producao": 0,
+      "canonical": 6,
+      "diferenca": 6,
+      "diferenca_absoluta": 6
+    },
+    {
+      "codigo_ibge": 2918407,
+      "municipio": "Juazeiro",
+      "producao": 0,
+      "canonical": 6,
+      "diferenca": 6,
+      "diferenca_absoluta": 6
+    },
+    {
+      "codigo_ibge": 2932903,
+      "municipio": "Valença",
+      "producao": 0,
+      "canonical": 6,
+      "diferenca": 6,
+      "diferenca_absoluta": 6
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Valença",
+      "producao": 5,
+      "canonical": 0,
+      "diferenca": -5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Santo Antônio de Jesus",
+      "producao": 5,
+      "canonical": 0,
+      "diferenca": -5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Barreiras",
+      "producao": 5,
+      "canonical": 0,
+      "diferenca": -5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Camaçari",
+      "producao": 5,
+      "canonical": 0,
+      "diferenca": -5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Teixeira de Freitas",
+      "producao": 5,
+      "canonical": 0,
+      "diferenca": -5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2905701,
+      "municipio": "Camaçari",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2910727,
+      "municipio": "Eunápolis",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2911709,
+      "municipio": "Guanambi",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2914604,
+      "municipio": "Irecê",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2918001,
+      "municipio": "Jequié",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2919553,
+      "municipio": "Luís Eduardo Magalhães",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2925303,
+      "municipio": "Porto Seguro",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2928703,
+      "municipio": "Santo Antônio de Jesus",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2930105,
+      "municipio": "Senhor do Bonfim",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": 2931350,
+      "municipio": "Teixeira de Freitas",
+      "producao": 0,
+      "canonical": 5,
+      "diferenca": 5,
+      "diferenca_absoluta": 5
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Ilhéus",
+      "producao": 4,
+      "canonical": 0,
+      "diferenca": -4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Irecê",
+      "producao": 4,
+      "canonical": 0,
+      "diferenca": -4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Itabuna",
+      "producao": 4,
+      "canonical": 0,
+      "diferenca": -4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Jequié",
+      "producao": 4,
+      "canonical": 0,
+      "diferenca": -4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Lauro de Freitas",
+      "producao": 4,
+      "canonical": 0,
+      "diferenca": -4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Paulo Afonso",
+      "producao": 4,
+      "canonical": 0,
+      "diferenca": -4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Senhor do Bonfim",
+      "producao": 4,
+      "canonical": 0,
+      "diferenca": -4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": 2903904,
+      "municipio": "Bom Jesus da Lapa",
+      "producao": 0,
+      "canonical": 4,
+      "diferenca": 4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": 2904605,
+      "municipio": "Brumado",
+      "producao": 0,
+      "canonical": 4,
+      "diferenca": 4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": 2919207,
+      "municipio": "Lauro de Freitas",
+      "producao": 0,
+      "canonical": 4,
+      "diferenca": 4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": 2924009,
+      "municipio": "Paulo Afonso",
+      "producao": 0,
+      "canonical": 4,
+      "diferenca": 4,
+      "diferenca_absoluta": 4
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Bom Jesus da Lapa",
+      "producao": 3,
+      "canonical": 0,
+      "diferenca": -3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Cruz das Almas",
+      "producao": 3,
+      "canonical": 0,
+      "diferenca": -3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Eunápolis",
+      "producao": 3,
+      "canonical": 0,
+      "diferenca": -3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Guanambi",
+      "producao": 3,
+      "canonical": 0,
+      "diferenca": -3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Jacobina",
+      "producao": 3,
+      "canonical": 0,
+      "diferenca": -3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Luís Eduardo Magalhães",
+      "producao": 3,
+      "canonical": 0,
+      "diferenca": -3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Serrinha",
+      "producao": 3,
+      "canonical": 0,
+      "diferenca": -3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": 2909802,
+      "municipio": "Cruz das Almas",
+      "producao": 0,
+      "canonical": 3,
+      "diferenca": 3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": 2913606,
+      "municipio": "Ilhéus",
+      "producao": 0,
+      "canonical": 3,
+      "diferenca": 3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": 2914703,
+      "municipio": "Itaberaba",
+      "producao": 0,
+      "canonical": 3,
+      "diferenca": 3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": 2917508,
+      "municipio": "Jacobina",
+      "producao": 0,
+      "canonical": 3,
+      "diferenca": 3,
+      "diferenca_absoluta": 3
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Cachoeira",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Brumado",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Capim Grosso",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Conceição do Coité",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Euclides da Cunha",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Itaberaba",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Itapetinga",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Porto Seguro",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Santo Amaro",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Seabra",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Xique-Xique",
+      "producao": 2,
+      "canonical": 0,
+      "diferenca": -2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2901007,
+      "municipio": "Amargosa",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2904902,
+      "municipio": "Cachoeira",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2906873,
+      "municipio": "Capim Grosso",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2908408,
+      "municipio": "Conceição do Coité",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2910701,
+      "municipio": "Euclides da Cunha",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2916401,
+      "municipio": "Itapetinga",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2928109,
+      "municipio": "Santa Maria da Vitória",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2928604,
+      "municipio": "Santo Amaro",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2930501,
+      "municipio": "Serrinha",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": 2933604,
+      "municipio": "Xique-Xique",
+      "producao": 0,
+      "canonical": 2,
+      "diferenca": 2,
+      "diferenca_absoluta": 2
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Amargosa",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Barra",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Caetité",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Campo Formoso",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Canudos",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Catu",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Coronel João Sá",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Jeremoabo",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Governador Mangabeira",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Ipiaú",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Itamaraju",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Jaguaquara",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Paripiranga",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Queimadas",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Ribeira do Pombal",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Santa Inês",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Santa Maria da Vitória",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Simões Filho",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "São Francisco do Conde",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Ubaitaba",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": null,
+      "municipio": "Uruçuca",
+      "producao": 1,
+      "canonical": 0,
+      "diferenca": -1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2902708,
+      "municipio": "Barra",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2905206,
+      "municipio": "Caetité",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2906006,
+      "municipio": "Campo Formoso",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2906824,
+      "municipio": "Canudos",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2907202,
+      "municipio": "Casa Nova",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2907509,
+      "municipio": "Catu",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2909208,
+      "municipio": "Coronel João Sá",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2911600,
+      "municipio": "Governador Mangabeira",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2913903,
+      "municipio": "Ipiaú",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2914000,
+      "municipio": "Ipirá",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2914505,
+      "municipio": "Irará",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2915601,
+      "municipio": "Itamaraju",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2917607,
+      "municipio": "Jaguaquara",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2918100,
+      "municipio": "Jeremoabo",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2921500,
+      "municipio": "Monte Santo",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2923803,
+      "municipio": "Paripiranga",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2925808,
+      "municipio": "Queimadas",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2926004,
+      "municipio": "Remanso",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2926301,
+      "municipio": "Riachão do Jacuípe",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2926608,
+      "municipio": "Ribeira do Pombal",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2927903,
+      "municipio": "Santa Inês",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2929206,
+      "municipio": "São Francisco do Conde",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2929909,
+      "municipio": "Seabra",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2930709,
+      "municipio": "Simões Filho",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2931905,
+      "municipio": "Tucano",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2932200,
+      "municipio": "Ubaitaba",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    },
+    {
+      "codigo_ibge": 2932705,
+      "municipio": "Uruçuca",
+      "producao": 0,
+      "canonical": 1,
+      "diferenca": 1,
+      "diferenca_absoluta": 1
+    }
+  ]
+}

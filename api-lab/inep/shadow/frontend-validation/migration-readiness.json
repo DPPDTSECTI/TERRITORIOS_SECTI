@@ -1,0 +1,52 @@
+{
+  "metadados": {
+    "gerado_em": "2026-09-16T14:00:00.000Z",
+    "etapa": "2.6 — Homologação Visual Real do Shadow",
+    "censo_ano": 2023
+  },
+  "schema_ok": true,
+  "frontend_ok": true,
+  "map_ok": false,
+  "filters_ok": true,
+  "reports_ok": true,
+  "data_integrity_ok": true,
+  "blockers": [
+    {
+      "id": "BLK-01",
+      "titulo": "Duplicidade Cartográfica em Itabuna",
+      "descricao": "A Universidade Federal do Sul da Bahia (UFSB) possui dois registros (ID 75 e ID 76) no mesmo município de Itabuna com coordenadas coincidentes, gerando ponto sobreposto no mapa.",
+      "severidade": "alta",
+      "acao_requerida": "Deliberar com a coordenação SECTI se os pontos devem ser fundidos em um único marcador ou se o ID 75 deve ser classificado como Sede Administrativa / Reitoria."
+    },
+    {
+      "id": "BLK-02",
+      "titulo": "Segregação de Polos EAD na Camada Física de Campi",
+      "descricao": "6 campi cadastrados na base original da SECTI (UNIRB Camaçari, IFBA Euclides da Cunha, Ilhéus, Juazeiro, Seabra e UNIDOMPEDRO Ribeira do Pombal) operam exclusivamente com turmas a distância no Censo Superior 2023.",
+      "severidade": "alta",
+      "acao_requerida": "Garantir que a camada física padrão do mapa filtre estritamente modalidade = 'Presencial' para evitar a renderização de salas de suporte remoto como campi universitários físicos."
+    },
+    {
+      "id": "BLK-03",
+      "titulo": "Distorção de Coordenada no IFBA Ubaitaba (ID 174)",
+      "descricao": "A coordenada cadastral histórica da SECTI aponta a 15 km de distância da mancha urbana do município de Ubaitaba.",
+      "severidade": "media",
+      "acao_requerida": "Efetuar retificação topográfica das coordenadas do campus antes de eventual migração definitiva."
+    },
+    {
+      "id": "BLK-04",
+      "titulo": "Campus Privado Inativo em Serrinha (ID 164)",
+      "descricao": "A Faculdade UNIRB em Serrinha não registrou turmas, cursos ou alunos no Censo da Educação Superior 2023.",
+      "severidade": "media",
+      "acao_requerida": "Definir se a unidade deve receber a etiqueta 'Campus Descontinuado' ou ser ocultada das visualizações ativas de CT&I."
+    },
+    {
+      "id": "BLK-05",
+      "titulo": "Rotulagem Obrigatória de 7 Campi Técnicos de Institutos Federais",
+      "descricao": "7 campi de IFBA e IF Baiano (Alagoinhas, Campo Formoso, Gov. Mangabeira, Itaberaba, Jaguaquara, Ubaitaba e Xique-Xique) atuam com excelência em educação técnica de nível médio, sem oferta de graduação superior cadastrada.",
+      "severidade": "alta",
+      "acao_requerida": "Criar badge visual explícito de 'Educação Profissional e Técnica de Nível Médio' para evitar que o cidadão espere encontrar graduações nessas unidades."
+    }
+  ],
+  "ready_for_production_migration": false,
+  "justificativa_bloqueio": "Embora o dataset shadow possua paridade estrutural perfeita de 100% de compatibilidade de schema com os componentes React, a migração para produção não pode ocorrer de forma cega sem a resolução prévia dos 5 apontamentos críticos acima, que demandam decisão de gestão por parte da equipe SECTI."
+}

@@ -1,0 +1,16 @@
+{
+  "infraestrutura_total": 217,
+  "ensino_superior_presencial": 204,
+  "ensino_tecnico": 7,
+  "pesquisa_extensao": 2,
+  "administrativo": 1,
+  "ead": 6,
+  "detalhamento": {
+    "total_unidades": 224,
+    "total_ativas": 223,
+    "total_inativas": 1,
+    "ambigua": 3,
+    "ensino_superior_total_com_ambiguas": 207,
+    "ensino_superior_com_ead": 213
+  }
+}

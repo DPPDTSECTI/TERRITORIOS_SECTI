@@ -1,0 +1,501 @@
+{
+  "metadados": {
+    "etapa": "3.1 — Auditoria Pré-Transação do Plano de Migração",
+    "gerado_em": "2026-09-16T14:31:29.610Z",
+    "politica": "Zero Assumpções / Integridade Referencial Estrita"
+  },
+  "schema_producao_auditado": {
+    "tabelas": {
+      "lista_ativos_cti": {
+        "colunas_existentes": [
+          "id_ativo",
+          "nome_ativo",
+          "sigla",
+          "rnp",
+          "id_tipo_ativo",
+          "tipo",
+          "id_municipio",
+          "municipio",
+          "semiarido",
+          "latitude",
+          "longitude",
+          "id_territorio",
+          "territorio_identidade",
+          "titulo_referencia",
+          "texto_referencia",
+          "url_referencia"
+        ],
+        "coluna_ativo_existe": false,
+        "foreign_keys": {
+          "id_tipo_ativo": "tipo_ativos.id_tipo_ativo"
+        }
+      },
+      "tipo_ativos": {
+        "ids_validos_em_producao": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "dominios": {
+          "1": "Entidade de Pesquisa",
+          "2": "Espaço Dinamizador",
+          "3": "ICT",
+          "4": "Incubadora",
+          "5": "Campi Instituto Federal",
+          "6": "Parque Tecnológico",
+          "7": "Campi Universidade Pública - Estadual",
+          "8": "Campi Universidade Pública - Federal",
+          "9": "Campi Universidade Privada",
+          "10": "Aceleradora"
+        }
+      }
+    }
+  },
+  "auditoria_geodesica_blk03": {
+    "municipio": "Ubaitaba",
+    "id_ativo": 174,
+    "latitude_original": -14.3105545,
+    "longitude_original": -39.3233337,
+    "latitude_referencia": -14.311997,
+    "longitude_referencia": -39.32171,
+    "distancia_metros": 237.35,
+    "origem_coordenada_referencia": "src/data/municipiosCoords.js (Sede Urbana Municipal)",
+    "conclusao": "Distância real de 237.35m refuta o mito de desvio de 15 km. Coordenada compatível com o perímetro urbano.",
+    "review_required": true,
+    "recomendacao_final": "NO_CHANGE"
+  },
+  "resumo_seguranca": {
+    "safe_updates": 0,
+    "safe_deactivations": 0,
+    "review_required": 4,
+    "blocked": 14,
+    "blocked_inserts": 50,
+    "ready_for_transaction": false
+  },
+  "itens_auditados": [
+    {
+      "id_ativo": 5,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 5,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Alagoinhas",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 5,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Alagoinhas",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      },
+      "evidencia": "Campus da Rede Federal EPCT (IFBA/IF Baiano) que oferta exclusivamente ensino médio e técnico, sem registros no Censo da Educação Superior 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Rede Federal EPCT / Auditoria Geodésica",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (102) não existe na tabela de domínio \"tipo_ativos\". O valor atual válido é 5 (Campi Instituto Federal).",
+      "recomendacao": "Manter id_tipo_ativo = 5 e tratar classificação funcional na camada semântica sem violar FK do Supabase."
+    },
+    {
+      "id_ativo": 23,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 23,
+        "nome_ativo": "FACULDADE UNIRB - CAMAÇARI",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "valor_proposto": {
+        "id_ativo": 23,
+        "nome_ativo": "FACULDADE UNIRB - CAMAÇARI",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      },
+      "evidencia": "Unidades com cursos de graduação ofertados estritamente na modalidade a distância (EAD) no Censo 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 (Tabela de Cursos / TP_MODALIDADE_ENSINO = 2)",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (105) não existe na tabela \"tipo_ativos\" de produção (domínio restrito a 1..10).",
+      "recomendacao": "Não inventar id_tipo_ativo em produção. Tratar exclusão da infraestrutura física através do filtro modalidade EAD no DataContext."
+    },
+    {
+      "id_ativo": 27,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 27,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Campo Formoso",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 27,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Campo Formoso",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      },
+      "evidencia": "Campus da Rede Federal EPCT (IFBA/IF Baiano) que oferta exclusivamente ensino médio e técnico, sem registros no Censo da Educação Superior 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Rede Federal EPCT / Auditoria Geodésica",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (102) não existe na tabela de domínio \"tipo_ativos\". O valor atual válido é 5 (Campi Instituto Federal).",
+      "recomendacao": "Manter id_tipo_ativo = 5 e tratar classificação funcional na camada semântica sem violar FK do Supabase."
+    },
+    {
+      "id_ativo": 28,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 28,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Canudos",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "valor_proposto": {
+        "id_ativo": 28,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Canudos",
+        "tipo": "Pesquisa e Extensão",
+        "id_tipo_ativo": 103
+      },
+      "evidencia": "Campi avançados da UNEB voltados à conservação, memorial e pesquisa histórica/ambiental, sem turmas de graduação no Censo 2023.",
+      "fonte_evidencia": "Cadastro Institucional UNEB / Censo Superior 2023",
+      "confianca": "media",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "REVIEW_REQUIRED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (103) não existe no banco (valores válidos: 1 a 10). Reclassificação formal de campus estadual demanda deliberação do CONSU/UNEB.",
+      "recomendacao": "NO_CHANGE na tabela de produção. Manter categoria canônica isolada no DataContext."
+    },
+    {
+      "id_ativo": 38,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 38,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Euclides da Cunha",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 38,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Euclides da Cunha",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      },
+      "evidencia": "Unidades com cursos de graduação ofertados estritamente na modalidade a distância (EAD) no Censo 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 (Tabela de Cursos / TP_MODALIDADE_ENSINO = 2)",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (105) não existe na tabela \"tipo_ativos\" de produção (domínio restrito a 1..10).",
+      "recomendacao": "Não inventar id_tipo_ativo em produção. Tratar exclusão da infraestrutura física através do filtro modalidade EAD no DataContext."
+    },
+    {
+      "id_ativo": 88,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 88,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Jeremoabo",
+        "tipo": "Campi Universidade Pública - Estadual",
+        "id_tipo_ativo": 7
+      },
+      "valor_proposto": {
+        "id_ativo": 88,
+        "nome_ativo": "Universidade do Estado da Bahia - Campus Jeremoabo",
+        "tipo": "Pesquisa e Extensão",
+        "id_tipo_ativo": 103
+      },
+      "evidencia": "Campi avançados da UNEB voltados à conservação, memorial e pesquisa histórica/ambiental, sem turmas de graduação no Censo 2023.",
+      "fonte_evidencia": "Cadastro Institucional UNEB / Censo Superior 2023",
+      "confianca": "media",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "REVIEW_REQUIRED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (103) não existe no banco (valores válidos: 1 a 10). Reclassificação formal de campus estadual demanda deliberação do CONSU/UNEB.",
+      "recomendacao": "NO_CHANGE na tabela de produção. Manter categoria canônica isolada no DataContext."
+    },
+    {
+      "id_ativo": 58,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 58,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Governador Mangabeira",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 58,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Governador Mangabeira",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      },
+      "evidencia": "Campus da Rede Federal EPCT (IFBA/IF Baiano) que oferta exclusivamente ensino médio e técnico, sem registros no Censo da Educação Superior 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Rede Federal EPCT / Auditoria Geodésica",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (102) não existe na tabela de domínio \"tipo_ativos\". O valor atual válido é 5 (Campi Instituto Federal).",
+      "recomendacao": "Manter id_tipo_ativo = 5 e tratar classificação funcional na camada semântica sem violar FK do Supabase."
+    },
+    {
+      "id_ativo": 64,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 64,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Ilhéus",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 64,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Ilhéus",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      },
+      "evidencia": "Unidades com cursos de graduação ofertados estritamente na modalidade a distância (EAD) no Censo 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 (Tabela de Cursos / TP_MODALIDADE_ENSINO = 2)",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (105) não existe na tabela \"tipo_ativos\" de produção (domínio restrito a 1..10).",
+      "recomendacao": "Não inventar id_tipo_ativo em produção. Tratar exclusão da infraestrutura física através do filtro modalidade EAD no DataContext."
+    },
+    {
+      "id_ativo": 71,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 71,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itaberaba",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 71,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itaberaba",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      },
+      "evidencia": "Campus da Rede Federal EPCT (IFBA/IF Baiano) que oferta exclusivamente ensino médio e técnico, sem registros no Censo da Educação Superior 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Rede Federal EPCT / Auditoria Geodésica",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (102) não existe na tabela de domínio \"tipo_ativos\". O valor atual válido é 5 (Campi Instituto Federal).",
+      "recomendacao": "Manter id_tipo_ativo = 5 e tratar classificação funcional na camada semântica sem violar FK do Supabase."
+    },
+    {
+      "id_ativo": 75,
+      "campo": "tipo / nome_ativo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 75,
+        "nome_ativo": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+        "tipo": "Campi Universidade Pública - Federal",
+        "id_tipo_ativo": 8
+      },
+      "valor_proposto": {
+        "id_ativo": 75,
+        "nome_ativo": "Universidade Federal do Sul da Bahia - Reitoria e Sede Administrativa",
+        "tipo": "Administrativo",
+        "id_tipo_ativo": 104
+      },
+      "evidencia": "O Censo INEP 2023 associa 20 cursos presenciais ativos em Itabuna à entidade mantenedora UFSB (ID 75), enquanto o Campus Jorge Amado (ID 76) é o local de oferta com duplicidade cartográfica. Não há ato normativo no dataset oficial comprovando que ID 75 é estritamente administrativo sem cursos.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / reconciliacao_campi.json",
+      "confianca": "baixa",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "REVIEW_REQUIRED",
+      "motivo_bloqueio": "FALTA_DE_EVIDENCIA_DOCUMENTAL: Não é seguro assumir ID 75 como administrativo apenas por heurística. Exige validação institucional UFSB/SECTI.",
+      "recomendacao": "NO_CHANGE na produção. Tratar duplicidade no nível de camada visual/agrupamento do frontend até definição formal."
+    },
+    {
+      "id_ativo": 83,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 83,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jaguaquara",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 83,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jaguaquara",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      },
+      "evidencia": "Campus da Rede Federal EPCT (IFBA/IF Baiano) que oferta exclusivamente ensino médio e técnico, sem registros no Censo da Educação Superior 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Rede Federal EPCT / Auditoria Geodésica",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (102) não existe na tabela de domínio \"tipo_ativos\". O valor atual válido é 5 (Campi Instituto Federal).",
+      "recomendacao": "Manter id_tipo_ativo = 5 e tratar classificação funcional na camada semântica sem violar FK do Supabase."
+    },
+    {
+      "id_ativo": 92,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 92,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Juazeiro",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 92,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Juazeiro",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      },
+      "evidencia": "Unidades com cursos de graduação ofertados estritamente na modalidade a distância (EAD) no Censo 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 (Tabela de Cursos / TP_MODALIDADE_ENSINO = 2)",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (105) não existe na tabela \"tipo_ativos\" de produção (domínio restrito a 1..10).",
+      "recomendacao": "Não inventar id_tipo_ativo em produção. Tratar exclusão da infraestrutura física através do filtro modalidade EAD no DataContext."
+    },
+    {
+      "id_ativo": 112,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 112,
+        "nome_ativo": "Faculdade Dom Pedro II AFYA",
+        "tipo": "Campi Universidade Privada",
+        "id_tipo_ativo": 9
+      },
+      "valor_proposto": {
+        "id_ativo": 112,
+        "nome_ativo": "Faculdade Dom Pedro II AFYA",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      },
+      "evidencia": "Unidades com cursos de graduação ofertados estritamente na modalidade a distância (EAD) no Censo 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 (Tabela de Cursos / TP_MODALIDADE_ENSINO = 2)",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (105) não existe na tabela \"tipo_ativos\" de produção (domínio restrito a 1..10).",
+      "recomendacao": "Não inventar id_tipo_ativo em produção. Tratar exclusão da infraestrutura física através do filtro modalidade EAD no DataContext."
+    },
+    {
+      "id_ativo": 132,
+      "campo": "tipo / id_tipo_ativo / nome_ativo",
+      "valor_atual": {
+        "id_ativo": 132,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 132,
+        "nome_ativo": "Instituto Federal Baiano - Reitoria",
+        "tipo": "Administrativo",
+        "id_tipo_ativo": 104
+      },
+      "evidencia": "Sede administrativa e reitoria do Instituto Federal Baiano em Salvador (Rua do Rouxinol, Imbuí), sem oferta direta de cursos regulares.",
+      "fonte_evidencia": "Portal Oficial IF Baiano / Censo da Educação Superior 2023",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (104) não existe em \"tipo_ativos\".",
+      "recomendacao": "NO_CHANGE na base física. Mapear papel administrativo no modelo canônico sem quebrar constraints."
+    },
+    {
+      "id_ativo": 158,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 158,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Seabra",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 158,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Seabra",
+        "tipo": "Polo EAD",
+        "id_tipo_ativo": 105
+      },
+      "evidencia": "Unidades com cursos de graduação ofertados estritamente na modalidade a distância (EAD) no Censo 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 (Tabela de Cursos / TP_MODALIDADE_ENSINO = 2)",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (105) não existe na tabela \"tipo_ativos\" de produção (domínio restrito a 1..10).",
+      "recomendacao": "Não inventar id_tipo_ativo em produção. Tratar exclusão da infraestrutura física através do filtro modalidade EAD no DataContext."
+    },
+    {
+      "id_ativo": 164,
+      "campo": "ativo",
+      "valor_atual": null,
+      "valor_proposto": false,
+      "evidencia": "Ausência de turmas, matrículas ou cursos ativos no Censo da Educação Superior 2023 (INEP). Faticamente inativa.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Microdados BA",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "MIGRATION_SCHEMA_CHANGE: A coluna \"ativo\" não existe na tabela \"lista_ativos_cti\" no banco de produção. Não é permitido executar DML sem DDL prévio aprovado.",
+      "recomendacao": "Suspender UPDATE/DEACTIVATE até aprovação de migração estrutural DDL (ALTER TABLE) pela administração do banco."
+    },
+    {
+      "id_ativo": 174,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 174,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Avançado Ubaitaba",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 174,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Avançado Ubaitaba",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      },
+      "evidencia": "Unidade de ensino técnico profissionalizante de IF sem graduação superior ativa no Censo 2023. Distância geodésica SECTI x Referência calculada em 237.35m (compatível com perímetro urbano).",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Rede Federal EPCT / Auditoria Geodésica",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "REVIEW_REQUIRED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (102) não existe na tabela de domínio \"tipo_ativos\". O valor atual válido é 5 (Campi Instituto Federal).",
+      "recomendacao": "NO_CHANGE na coordenada e no id_tipo_ativo. Manter classificação técnica em camada canônica."
+    },
+    {
+      "id_ativo": 188,
+      "campo": "tipo / id_tipo_ativo",
+      "valor_atual": {
+        "id_ativo": 188,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Xique-Xique",
+        "tipo": "Campi Instituto Federal",
+        "id_tipo_ativo": 5
+      },
+      "valor_proposto": {
+        "id_ativo": 188,
+        "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Xique-Xique",
+        "tipo": "Ensino Técnico",
+        "id_tipo_ativo": 102
+      },
+      "evidencia": "Campus da Rede Federal EPCT (IFBA/IF Baiano) que oferta exclusivamente ensino médio e técnico, sem registros no Censo da Educação Superior 2023.",
+      "fonte_evidencia": "INEP Censo Superior 2023 / Rede Federal EPCT / Auditoria Geodésica",
+      "confianca": "alta",
+      "aprovado_tecnicamente": false,
+      "classificacao_seguranca": "BLOCKED",
+      "motivo_bloqueio": "VIOLACAO_FK: O id_tipo_ativo proposto (102) não existe na tabela de domínio \"tipo_ativos\". O valor atual válido é 5 (Campi Instituto Federal).",
+      "recomendacao": "Manter id_tipo_ativo = 5 e tratar classificação funcional na camada semântica sem violar FK do Supabase."
+    }
+  ],
+  "auditoria_inserts_50": {
+    "total_propostos": 50,
+    "campos_obrigatorios_ausentes_no_payload": [
+      "id_ativo (ausência de sequence ou ID primário definido)",
+      "id_municipio (chave estrangeira obrigatória para municípios da SECTI)",
+      "id_tipo_ativo (restrição de foreign key para tipo_ativos 1..10)",
+      "rnp (booleano obrigatório)",
+      "semiarido (booleano territorial obrigatório)",
+      "id_territorio (chave do território)"
+    ],
+    "status": "BLOCKED_INSERTS",
+    "motivo": "Incompletude de campos mandatórios da tabela \"lista_ativos_cti\". Qualquer execução direta geraria erro de constraint NOT NULL ou Foreign Key."
+  }
+}

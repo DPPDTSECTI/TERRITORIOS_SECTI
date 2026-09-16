@@ -1,0 +1,299 @@
+{
+  "metadados": {
+    "gerado_em": "2026-09-16T14:08:38.425Z",
+    "descricao": "Mapeamento detalhado do schema de dados consumido por cada componente React do dashboard TERRITÓRIOS SECTI"
+  },
+  "componentes": [
+    {
+      "componente": "AtivosPage.jsx",
+      "caminho": "src/components/AtivosPage.jsx",
+      "tipo_consumo": "Visualização e filtragem interativa de campi e ativos de CT&I",
+      "entidades_consumidas": [
+        "lista_ativos_cti (ativosData)",
+        "tipo_ativos (tiposAtivos)",
+        "stats_ti (selectedTerritory)"
+      ],
+      "campos_utilizados": {
+        "id_ativo": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Chave única de identificação do ativo"
+        },
+        "nome_ativo": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Título principal exibido no card e cabeçalho"
+        },
+        "sigla": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Sigla institucional para badge e busca rápida"
+        },
+        "tipo": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Filtro de categoria, ícone e cor temática"
+        },
+        "id_tipo_ativo": {
+          "tipo": "number",
+          "obrigatorio": false,
+          "uso": "Mapeamento para paleta visual e ícone"
+        },
+        "municipio": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Exibição de cidade e filtro geográfico"
+        },
+        "id_municipio": {
+          "tipo": "number",
+          "obrigatorio": false,
+          "uso": "Associação com tabela de municípios"
+        },
+        "id_territorio": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Filtro por Território de Identidade"
+        },
+        "territorio_identidade": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Nome do território para cabeçalho e agupamento"
+        },
+        "latitude": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Plotagem cartográfica (lat)"
+        },
+        "longitude": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Plotagem cartográfica (lng)"
+        },
+        "semiarido": {
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "uso": "Filtro de recorte semiárido"
+        },
+        "rnp": {
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "uso": "Badge de presença do Ponto de Presença RNP"
+        },
+        "titulo_referencia": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Rodapé de fonte de dados"
+        },
+        "url_referencia": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Link para fonte oficial no modal de detalhes"
+        }
+      }
+    },
+    {
+      "componente": "CursosPage.jsx",
+      "caminho": "src/components/CursosPage.jsx",
+      "tipo_consumo": "Visualização, busca e filtro de cursos superiores em CT&I",
+      "entidades_consumidas": [
+        "lista_cursos_cti (cursosData)",
+        "tipo_cursos (tiposCursos)",
+        "lista_ativos_cti (ativosData)"
+      ],
+      "campos_utilizados": {
+        "id": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Identificador do curso"
+        },
+        "curso": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Nome da graduação/curso"
+        },
+        "entidade": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Nome por extenso da IES ofertante"
+        },
+        "sigla": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Sigla da IES"
+        },
+        "categoria": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Área do conhecimento de CT&I"
+        },
+        "id_tipo_curso": {
+          "tipo": "number",
+          "obrigatorio": false,
+          "uso": "Mapeamento visual da área"
+        },
+        "id_ativo": {
+          "tipo": "number",
+          "obrigatorio": false,
+          "uso": "Enlace com campus físico da IES no município"
+        },
+        "municipio": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Município de oferta"
+        },
+        "id_territorio": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Filtro por território"
+        },
+        "territorio_identidade": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Exibição do território"
+        },
+        "ead": {
+          "tipo": "boolean",
+          "obrigatorio": true,
+          "uso": "Filtro estrito: apenas cursos com ead === false são exibidos"
+        }
+      }
+    },
+    {
+      "componente": "DashboardPainel.jsx",
+      "caminho": "src/components/DashboardPainel.jsx",
+      "tipo_consumo": "Painel executivo de indicadores, gráficos e síntese territorial",
+      "entidades_consumidas": [
+        "ativosData",
+        "cursosData",
+        "territoriosData",
+        "kpisGlobais"
+      ],
+      "campos_utilizados": {
+        "tipo": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Gráfico de barras de distribuição por categoria institucional"
+        },
+        "categoria": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Gráfico de cursos por área estratégica"
+        },
+        "instituicao": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Fallback institucional (instituicao || nome_ativo || entidade || sigla)"
+        },
+        "id_territorio": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Agrupamento territorial"
+        },
+        "territorio_identidade": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Rótulo dos gráficos"
+        }
+      }
+    },
+    {
+      "componente": "SideMap.jsx / PtiMap.jsx",
+      "caminho": "src/components/maps/SideMap.jsx",
+      "tipo_consumo": "Visualização geoespacial interativa com Leaflet e camadas temáticas",
+      "entidades_consumidas": [
+        "ativos (campi)",
+        "municipios",
+        "territorios"
+      ],
+      "campos_utilizados": {
+        "id_ativo": {
+          "tipo": "number",
+          "obrigatorio": false,
+          "uso": "ID para seleção de ponto"
+        },
+        "latitude": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Coordenada Y no mapa"
+        },
+        "longitude": {
+          "tipo": "number",
+          "obrigatorio": true,
+          "uso": "Coordenada X no mapa"
+        },
+        "nome_ativo": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Popup e tooltip do marcador"
+        },
+        "sigla": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Texto curto sobreposto no ícone"
+        },
+        "tipo": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Cor do marcador e filtragem de camadas"
+        },
+        "municipio": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Localização do ativo no popup"
+        },
+        "territorio_identidade": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Associação com polígono do território"
+        }
+      }
+    },
+    {
+      "componente": "RelatorioPage.jsx / RelatorioAtivos.jsx",
+      "caminho": "src/components/RelatorioPage.jsx",
+      "tipo_consumo": "Tabelas analíticas, impressão e exportação em PDF dos ativos e cursos",
+      "entidades_consumidas": [
+        "ativosData",
+        "cursosData",
+        "territoriosData"
+      ],
+      "campos_utilizados": {
+        "nome_ativo": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Coluna \"Nome do Ativo\""
+        },
+        "sigla": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Coluna \"Sigla\""
+        },
+        "tipo": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Coluna \"Tipo de Ativo\""
+        },
+        "municipio": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Coluna \"Município\""
+        },
+        "territorio_identidade": {
+          "tipo": "string",
+          "obrigatorio": true,
+          "uso": "Coluna \"Território\""
+        },
+        "curso": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Relatório de cursos"
+        },
+        "categoria": {
+          "tipo": "string",
+          "obrigatorio": false,
+          "uso": "Área do conhecimento"
+        }
+      }
+    }
+  ]
+}

@@ -83,6 +83,37 @@ export default defineConfig({
           }
         });
       }
+    },
+    {
+      name: 'shadow-data-dev-endpoint',
+      configureServer(server) {
+        server.middlewares.use(async (req, res, next) => {
+          if (!req.url.startsWith('/api/shadow-data/')) {
+            return next();
+          }
+          try {
+            const fs = await import('fs/promises');
+            const path = await import('path');
+            let filename = 'campi_shadow_secti.json';
+            if (req.url.includes('canonical')) {
+              filename = 'semantic/canonical-units.json';
+            } else if (req.url.includes('cursos')) {
+              filename = 'cursos_shadow_secti.json';
+            } else if (req.url.includes('instituicoes')) {
+              filename = 'instituicoes_shadow_secti.json';
+            } else if (req.url.includes('secti_campi_atual')) {
+              filename = '../raw/secti_campi_atual.json';
+            }
+            const filePath = path.resolve(process.cwd(), 'api-lab/inep/shadow', filename);
+            const data = await fs.readFile(filePath);
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(data);
+          } catch (err) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: err.message }));
+          }
+        });
+      }
     }
   ],
   build: {

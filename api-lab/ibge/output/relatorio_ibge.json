@@ -1,0 +1,3829 @@
+{
+  "metadados": {
+    "gerado_em": "2026-09-16T13:07:00.205Z",
+    "fonte_projeto": "utils/territorioMunicipios.json (SEPLAN-BA)",
+    "fonte_ibge": "API de Localidades IBGE (UF 29 - Bahia)",
+    "endpoint_ibge": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/29/municipios"
+  },
+  "resumo": {
+    "total_atual": 417,
+    "total_ibge": 417,
+    "total_territorios_atual": 27,
+    "coincidentes_exatos": 413,
+    "coincidentes_normalizados_com_acento": 2,
+    "total_municipios_coincidentes": 415,
+    "total_divergencias_identificadas": 4,
+    "total_municipios_somente_projeto_atual": 2,
+    "total_municipios_somente_ibge": 2,
+    "total_codigos_ibge_encontrados": 417,
+    "total_municipios_sem_codigo": 0
+  },
+  "total_atual": 417,
+  "total_ibge": 417,
+  "municipios_coincidentes": [
+    {
+      "municipio_projeto": "América Dourada",
+      "municipio_ibge": "América Dourada",
+      "codigo_ibge": 2901155,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barra do Mendes",
+      "municipio_ibge": "Barra do Mendes",
+      "codigo_ibge": 2903003,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barro Alto",
+      "municipio_ibge": "Barro Alto",
+      "codigo_ibge": 2903235,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cafarnaum",
+      "municipio_ibge": "Cafarnaum",
+      "codigo_ibge": 2905305,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Canarana",
+      "municipio_ibge": "Canarana",
+      "codigo_ibge": 2906204,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Central",
+      "municipio_ibge": "Central",
+      "codigo_ibge": 2907608,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Gentio do Ouro",
+      "municipio_ibge": "Gentio do Ouro",
+      "codigo_ibge": 2911303,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibipeba",
+      "municipio_ibge": "Ibipeba",
+      "codigo_ibge": 2912400,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibititá",
+      "municipio_ibge": "Ibititá",
+      "codigo_ibge": 2913101,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ipupiara",
+      "municipio_ibge": "Ipupiara",
+      "codigo_ibge": 2914109,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Irecê",
+      "municipio_ibge": "Irecê",
+      "codigo_ibge": 2914604,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itaguaçu da Bahia",
+      "municipio_ibge": "Itaguaçu da Bahia",
+      "codigo_ibge": 2915353,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "João Dourado",
+      "municipio_ibge": "João Dourado",
+      "codigo_ibge": 2918357,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jussara",
+      "municipio_ibge": "Jussara",
+      "codigo_ibge": 2918506,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lapão",
+      "municipio_ibge": "Lapão",
+      "codigo_ibge": 2919157,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mulungu do Morro",
+      "municipio_ibge": "Mulungu do Morro",
+      "codigo_ibge": 2922052,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Presidente Dutra",
+      "municipio_ibge": "Presidente Dutra",
+      "codigo_ibge": 2925600,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Gabriel",
+      "municipio_ibge": "São Gabriel",
+      "codigo_ibge": 2929255,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Uibaí",
+      "municipio_ibge": "Uibaí",
+      "codigo_ibge": 2932408,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Xique-Xique",
+      "municipio_ibge": "Xique-Xique",
+      "codigo_ibge": 2933604,
+      "territorio_id": 1,
+      "territorio_nome": "Irecê",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barra",
+      "municipio_ibge": "Barra",
+      "codigo_ibge": 2902708,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Bom Jesus da Lapa",
+      "municipio_ibge": "Bom Jesus da Lapa",
+      "codigo_ibge": 2903904,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Brotas de Macaúbas",
+      "municipio_ibge": "Brotas de Macaúbas",
+      "codigo_ibge": 2904506,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Carinhanha",
+      "municipio_ibge": "Carinhanha",
+      "codigo_ibge": 2907103,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Feira da Mata",
+      "municipio_ibge": "Feira da Mata",
+      "codigo_ibge": 2910776,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibotirama",
+      "municipio_ibge": "Ibotirama",
+      "codigo_ibge": 2913200,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Igaporã",
+      "municipio_ibge": "Igaporã",
+      "codigo_ibge": 2913408,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Malhada",
+      "municipio_ibge": "Malhada",
+      "codigo_ibge": 2920205,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Matina",
+      "municipio_ibge": "Matina",
+      "codigo_ibge": 2921054,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Morpará",
+      "municipio_ibge": "Morpará",
+      "codigo_ibge": 2921609,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Oliveira dos Brejinhos",
+      "municipio_ibge": "Oliveira dos Brejinhos",
+      "codigo_ibge": 2923209,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Paratinga",
+      "municipio_ibge": "Paratinga",
+      "codigo_ibge": 2923704,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Riacho de Santana",
+      "municipio_ibge": "Riacho de Santana",
+      "codigo_ibge": 2926400,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Serra do Ramalho",
+      "municipio_ibge": "Serra do Ramalho",
+      "codigo_ibge": 2930154,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Sítio do Mato",
+      "municipio_ibge": "Sítio do Mato",
+      "codigo_ibge": 2930758,
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Abaíra",
+      "municipio_ibge": "Abaíra",
+      "codigo_ibge": 2900108,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Andaraí",
+      "municipio_ibge": "Andaraí",
+      "codigo_ibge": 2901304,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barra da Estiva",
+      "municipio_ibge": "Barra da Estiva",
+      "codigo_ibge": 2902807,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Boninal",
+      "municipio_ibge": "Boninal",
+      "codigo_ibge": 2904001,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Bonito",
+      "municipio_ibge": "Bonito",
+      "codigo_ibge": 2904050,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibicoara",
+      "municipio_ibge": "Ibicoara",
+      "codigo_ibge": 2912202,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibitiara",
+      "municipio_ibge": "Ibitiara",
+      "codigo_ibge": 2913002,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Iramaia",
+      "municipio_ibge": "Iramaia",
+      "codigo_ibge": 2914307,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Iraquara",
+      "municipio_ibge": "Iraquara",
+      "codigo_ibge": 2914406,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itaetê",
+      "municipio_ibge": "Itaeté",
+      "codigo_ibge": 2915007,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "normalizada_com_variacao_acento"
+    },
+    {
+      "municipio_projeto": "Jussiape",
+      "municipio_ibge": "Jussiape",
+      "codigo_ibge": 2918605,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lençóis",
+      "municipio_ibge": "Lençóis",
+      "codigo_ibge": 2919306,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Marcionílio Souza",
+      "municipio_ibge": "Marcionílio Souza",
+      "codigo_ibge": 2920809,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Morro do Chapéu",
+      "municipio_ibge": "Morro do Chapéu",
+      "codigo_ibge": 2921708,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mucugê",
+      "municipio_ibge": "Mucugê",
+      "codigo_ibge": 2921906,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nova Redenção",
+      "municipio_ibge": "Nova Redenção",
+      "codigo_ibge": 2922854,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Novo Horizonte",
+      "municipio_ibge": "Novo Horizonte",
+      "codigo_ibge": 2923035,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Palmeiras",
+      "municipio_ibge": "Palmeiras",
+      "codigo_ibge": 2923506,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Piatã",
+      "municipio_ibge": "Piatã",
+      "codigo_ibge": 2924306,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Rio de Contas",
+      "municipio_ibge": "Rio de Contas",
+      "codigo_ibge": 2926707,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Seabra",
+      "municipio_ibge": "Seabra",
+      "codigo_ibge": 2929909,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Souto Soares",
+      "municipio_ibge": "Souto Soares",
+      "codigo_ibge": 2930808,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Utinga",
+      "municipio_ibge": "Utinga",
+      "codigo_ibge": 2932804,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Wagner",
+      "municipio_ibge": "Wagner",
+      "codigo_ibge": 2933406,
+      "territorio_id": 3,
+      "territorio_nome": "Chapada Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Araci",
+      "municipio_ibge": "Araci",
+      "codigo_ibge": 2902104,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barrocas",
+      "municipio_ibge": "Barrocas",
+      "codigo_ibge": 2903276,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Biritinga",
+      "municipio_ibge": "Biritinga",
+      "codigo_ibge": 2903607,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Candeal",
+      "municipio_ibge": "Candeal",
+      "codigo_ibge": 2906402,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cansanção",
+      "municipio_ibge": "Cansanção",
+      "codigo_ibge": 2906808,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Conceição do Coité",
+      "municipio_ibge": "Conceição do Coité",
+      "codigo_ibge": 2908408,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ichu",
+      "municipio_ibge": "Ichu",
+      "codigo_ibge": 2913309,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itiúba",
+      "municipio_ibge": "Itiúba",
+      "codigo_ibge": 2917003,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lamarão",
+      "municipio_ibge": "Lamarão",
+      "codigo_ibge": 2919108,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Monte Santo",
+      "municipio_ibge": "Monte Santo",
+      "codigo_ibge": 2921500,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nordestina",
+      "municipio_ibge": "Nordestina",
+      "codigo_ibge": 2922656,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Queimadas",
+      "municipio_ibge": "Queimadas",
+      "codigo_ibge": 2925808,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Quijingue",
+      "municipio_ibge": "Quijingue",
+      "codigo_ibge": 2925907,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Retirolândia",
+      "municipio_ibge": "Retirolândia",
+      "codigo_ibge": 2926103,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santaluz",
+      "municipio_ibge": "Santaluz",
+      "codigo_ibge": 2928000,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Domingos",
+      "municipio_ibge": "São Domingos",
+      "codigo_ibge": 2928950,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Serrinha",
+      "municipio_ibge": "Serrinha",
+      "codigo_ibge": 2930501,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Teofilândia",
+      "municipio_ibge": "Teofilândia",
+      "codigo_ibge": 2931509,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Tucano",
+      "municipio_ibge": "Tucano",
+      "codigo_ibge": 2931905,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Valente",
+      "municipio_ibge": "Valente",
+      "codigo_ibge": 2933000,
+      "territorio_id": 4,
+      "territorio_nome": "Sisal",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Almadina",
+      "municipio_ibge": "Almadina",
+      "codigo_ibge": 2900900,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Arataca",
+      "municipio_ibge": "Arataca",
+      "codigo_ibge": 2902252,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Aurelino Leal",
+      "municipio_ibge": "Aurelino Leal",
+      "codigo_ibge": 2902401,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barro Preto",
+      "municipio_ibge": "Barro Preto",
+      "codigo_ibge": 2903300,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Buerarema",
+      "municipio_ibge": "Buerarema",
+      "codigo_ibge": 2904704,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Camacan",
+      "municipio_ibge": "Camacan",
+      "codigo_ibge": 2905602,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Canavieiras",
+      "municipio_ibge": "Canavieiras",
+      "codigo_ibge": 2906303,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Coaraci",
+      "municipio_ibge": "Coaraci",
+      "codigo_ibge": 2908002,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Floresta Azul",
+      "municipio_ibge": "Floresta Azul",
+      "codigo_ibge": 2911006,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibicaraí",
+      "municipio_ibge": "Ibicaraí",
+      "codigo_ibge": 2912103,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ilhéus",
+      "municipio_ibge": "Ilhéus",
+      "codigo_ibge": 2913606,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itabuna",
+      "municipio_ibge": "Itabuna",
+      "codigo_ibge": 2914802,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itacaré",
+      "municipio_ibge": "Itacaré",
+      "codigo_ibge": 2914901,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itaju do Colônia",
+      "municipio_ibge": "Itaju do Colônia",
+      "codigo_ibge": 2915403,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itajuípe",
+      "municipio_ibge": "Itajuípe",
+      "codigo_ibge": 2915502,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itapé",
+      "municipio_ibge": "Itapé",
+      "codigo_ibge": 2916203,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itapitanga",
+      "municipio_ibge": "Itapitanga",
+      "codigo_ibge": 2916609,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jussari",
+      "municipio_ibge": "Jussari",
+      "codigo_ibge": 2918555,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Maraú",
+      "municipio_ibge": "Maraú",
+      "codigo_ibge": 2920700,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mascote",
+      "municipio_ibge": "Mascote",
+      "codigo_ibge": 2920908,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pau Brasil",
+      "municipio_ibge": "Pau Brasil",
+      "codigo_ibge": 2923902,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Luzia",
+      "municipio_ibge": "Santa Luzia",
+      "codigo_ibge": 2928059,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São José da Vitória",
+      "municipio_ibge": "São José da Vitória",
+      "codigo_ibge": 2929354,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ubaitaba",
+      "municipio_ibge": "Ubaitaba",
+      "codigo_ibge": 2932200,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Una",
+      "municipio_ibge": "Una",
+      "codigo_ibge": 2932507,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Uruçuca",
+      "municipio_ibge": "Uruçuca",
+      "codigo_ibge": 2932705,
+      "territorio_id": 5,
+      "territorio_nome": "Litoral Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Aratuípe",
+      "municipio_ibge": "Aratuípe",
+      "codigo_ibge": 2902302,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cairu",
+      "municipio_ibge": "Cairu",
+      "codigo_ibge": 2905404,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Camamu",
+      "municipio_ibge": "Camamu",
+      "codigo_ibge": 2905800,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Gandu",
+      "municipio_ibge": "Gandu",
+      "codigo_ibge": 2911204,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibirapitanga",
+      "municipio_ibge": "Ibirapitanga",
+      "codigo_ibge": 2912707,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Igrapiúna",
+      "municipio_ibge": "Igrapiúna",
+      "codigo_ibge": 2913457,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ituberá",
+      "municipio_ibge": "Ituberá",
+      "codigo_ibge": 2917300,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jaguaripe",
+      "municipio_ibge": "Jaguaripe",
+      "codigo_ibge": 2917805,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nilo Peçanha",
+      "municipio_ibge": "Nilo Peçanha",
+      "codigo_ibge": 2922607,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Piraí do Norte",
+      "municipio_ibge": "Piraí do Norte",
+      "codigo_ibge": 2924678,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Presidente Tancredo Neves",
+      "municipio_ibge": "Presidente Tancredo Neves",
+      "codigo_ibge": 2925758,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Taperoá",
+      "municipio_ibge": "Taperoá",
+      "codigo_ibge": 2931202,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Teolândia",
+      "municipio_ibge": "Teolândia",
+      "codigo_ibge": 2931608,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Valença",
+      "municipio_ibge": "Valença",
+      "codigo_ibge": 2932903,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Wenceslau Guimarães",
+      "municipio_ibge": "Wenceslau Guimarães",
+      "codigo_ibge": 2933505,
+      "territorio_id": 6,
+      "territorio_nome": "Baixo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Alcobaça",
+      "municipio_ibge": "Alcobaça",
+      "codigo_ibge": 2900801,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caravelas",
+      "municipio_ibge": "Caravelas",
+      "codigo_ibge": 2906907,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibirapuã",
+      "municipio_ibge": "Ibirapuã",
+      "codigo_ibge": 2912806,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itamaraju",
+      "municipio_ibge": "Itamaraju",
+      "codigo_ibge": 2915601,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itanhém",
+      "municipio_ibge": "Itanhém",
+      "codigo_ibge": 2916005,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jucuruçu",
+      "municipio_ibge": "Jucuruçu",
+      "codigo_ibge": 2918456,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lajedão",
+      "municipio_ibge": "Lajedão",
+      "codigo_ibge": 2918902,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Medeiros Neto",
+      "municipio_ibge": "Medeiros Neto",
+      "codigo_ibge": 2921104,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mucuri",
+      "municipio_ibge": "Mucuri",
+      "codigo_ibge": 2922003,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nova Viçosa",
+      "municipio_ibge": "Nova Viçosa",
+      "codigo_ibge": 2923001,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Prado",
+      "municipio_ibge": "Prado",
+      "codigo_ibge": 2925501,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Teixeira de Freitas",
+      "municipio_ibge": "Teixeira de Freitas",
+      "codigo_ibge": 2931350,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Vereda",
+      "municipio_ibge": "Vereda",
+      "codigo_ibge": 2933257,
+      "territorio_id": 7,
+      "territorio_nome": "Extremo Sul",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caatiba",
+      "municipio_ibge": "Caatiba",
+      "codigo_ibge": 2904803,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Firmino Alves",
+      "municipio_ibge": "Firmino Alves",
+      "codigo_ibge": 2910909,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibicuí",
+      "municipio_ibge": "Ibicuí",
+      "codigo_ibge": 2912301,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Iguaí",
+      "municipio_ibge": "Iguaí",
+      "codigo_ibge": 2913507,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itambé",
+      "municipio_ibge": "Itambé",
+      "codigo_ibge": 2915809,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itapetinga",
+      "municipio_ibge": "Itapetinga",
+      "codigo_ibge": 2916401,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itarantim",
+      "municipio_ibge": "Itarantim",
+      "codigo_ibge": 2916807,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itororó",
+      "municipio_ibge": "Itororó",
+      "codigo_ibge": 2917102,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Macarani",
+      "municipio_ibge": "Macarani",
+      "codigo_ibge": 2919702,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Maiquinique",
+      "municipio_ibge": "Maiquinique",
+      "codigo_ibge": 2920007,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nova Canaã",
+      "municipio_ibge": "Nova Canaã",
+      "codigo_ibge": 2922706,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Potiraguá",
+      "municipio_ibge": "Potiraguá",
+      "codigo_ibge": 2925402,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Cruz da Vitória",
+      "municipio_ibge": "Santa Cruz da Vitória",
+      "codigo_ibge": 2927804,
+      "territorio_id": 8,
+      "territorio_nome": "Médio Sudoeste da Bahia",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Amargosa",
+      "municipio_ibge": "Amargosa",
+      "codigo_ibge": 2901007,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Brejões",
+      "municipio_ibge": "Brejões",
+      "codigo_ibge": 2904308,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cravolândia",
+      "municipio_ibge": "Cravolândia",
+      "codigo_ibge": 2909505,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Elísio Medrado",
+      "municipio_ibge": "Elísio Medrado",
+      "codigo_ibge": 2910305,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Irajuba",
+      "municipio_ibge": "Irajuba",
+      "codigo_ibge": 2914208,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itaquara",
+      "municipio_ibge": "Itaquara",
+      "codigo_ibge": 2916708,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itiruçu",
+      "municipio_ibge": "Itiruçu",
+      "codigo_ibge": 2916906,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jaguaquara",
+      "municipio_ibge": "Jaguaquara",
+      "codigo_ibge": 2917607,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jiquiriçá",
+      "municipio_ibge": "Jiquiriçá",
+      "codigo_ibge": 2918209,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lafaiete Coutinho",
+      "municipio_ibge": "Lafaiete Coutinho",
+      "codigo_ibge": 2918704,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Laje",
+      "municipio_ibge": "Laje",
+      "codigo_ibge": 2918803,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lajedo do Tabocal",
+      "municipio_ibge": "Lajedo do Tabocal",
+      "codigo_ibge": 2919058,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Maracás",
+      "municipio_ibge": "Maracás",
+      "codigo_ibge": 2920502,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Milagres",
+      "municipio_ibge": "Milagres",
+      "codigo_ibge": 2921302,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mutuípe",
+      "municipio_ibge": "Mutuípe",
+      "codigo_ibge": 2922409,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nova Itarana",
+      "municipio_ibge": "Nova Itarana",
+      "codigo_ibge": 2922805,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Planaltino",
+      "municipio_ibge": "Planaltino",
+      "codigo_ibge": 2924900,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Inês",
+      "municipio_ibge": "Santa Inês",
+      "codigo_ibge": 2927903,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Miguel das Matas",
+      "municipio_ibge": "São Miguel das Matas",
+      "codigo_ibge": 2929404,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ubaíra",
+      "municipio_ibge": "Ubaíra",
+      "codigo_ibge": 2932101,
+      "territorio_id": 9,
+      "territorio_nome": "Vale do Jiquiriçá",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Campo Alegre de Lourdes",
+      "municipio_ibge": "Campo Alegre de Lourdes",
+      "codigo_ibge": 2905909,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Canudos",
+      "municipio_ibge": "Canudos",
+      "codigo_ibge": 2906824,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Casa Nova",
+      "municipio_ibge": "Casa Nova",
+      "codigo_ibge": 2907202,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Curaçá",
+      "municipio_ibge": "Curaçá",
+      "codigo_ibge": 2909901,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Juazeiro",
+      "municipio_ibge": "Juazeiro",
+      "codigo_ibge": 2918407,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pilão Arcado",
+      "municipio_ibge": "Pilão Arcado",
+      "codigo_ibge": 2924405,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Remanso",
+      "municipio_ibge": "Remanso",
+      "codigo_ibge": 2926004,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Sento Sé",
+      "municipio_ibge": "Sento Sé",
+      "codigo_ibge": 2930204,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Sobradinho",
+      "municipio_ibge": "Sobradinho",
+      "codigo_ibge": 2930774,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Uauá",
+      "municipio_ibge": "Uauá",
+      "codigo_ibge": 2932002,
+      "territorio_id": 10,
+      "territorio_nome": "Sertão do São Francisco",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Angical",
+      "municipio_ibge": "Angical",
+      "codigo_ibge": 2901403,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Baianópolis",
+      "municipio_ibge": "Baianópolis",
+      "codigo_ibge": 2902500,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barreiras",
+      "municipio_ibge": "Barreiras",
+      "codigo_ibge": 2903201,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Buritirama",
+      "municipio_ibge": "Buritirama",
+      "codigo_ibge": 2904753,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Catolândia",
+      "municipio_ibge": "Catolândia",
+      "codigo_ibge": 2907400,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cotegipe",
+      "municipio_ibge": "Cotegipe",
+      "codigo_ibge": 2909406,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cristópolis",
+      "municipio_ibge": "Cristópolis",
+      "codigo_ibge": 2909703,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Formosa do Rio Preto",
+      "municipio_ibge": "Formosa do Rio Preto",
+      "codigo_ibge": 2911105,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Luís Eduardo Magalhães",
+      "municipio_ibge": "Luís Eduardo Magalhães",
+      "codigo_ibge": 2919553,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mansidão",
+      "municipio_ibge": "Mansidão",
+      "codigo_ibge": 2920452,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Riachão das Neves",
+      "municipio_ibge": "Riachão das Neves",
+      "codigo_ibge": 2926202,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Rita de Cássia",
+      "municipio_ibge": "Santa Rita de Cássia",
+      "codigo_ibge": 2928406,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Desidério",
+      "municipio_ibge": "São Desidério",
+      "codigo_ibge": 2928901,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Wanderley",
+      "municipio_ibge": "Wanderley",
+      "codigo_ibge": 2933455,
+      "territorio_id": 11,
+      "territorio_nome": "Bacia do Rio Grande",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Boquira",
+      "municipio_ibge": "Boquira",
+      "codigo_ibge": 2904100,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Botuporã",
+      "municipio_ibge": "Botuporã",
+      "codigo_ibge": 2904209,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caturama",
+      "municipio_ibge": "Caturama",
+      "codigo_ibge": 2907558,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Érico Cardoso",
+      "municipio_ibge": "Érico Cardoso",
+      "codigo_ibge": 2900504,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibipitanga",
+      "municipio_ibge": "Ibipitanga",
+      "codigo_ibge": 2912509,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Macaúbas",
+      "municipio_ibge": "Macaúbas",
+      "codigo_ibge": 2919801,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Paramirim",
+      "municipio_ibge": "Paramirim",
+      "codigo_ibge": 2923605,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Rio do Pires",
+      "municipio_ibge": "Rio do Pires",
+      "codigo_ibge": 2926905,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Tanque Novo",
+      "municipio_ibge": "Tanque Novo",
+      "codigo_ibge": 2931053,
+      "territorio_id": 12,
+      "territorio_nome": "Bacia do Paramirim",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Brumado",
+      "municipio_ibge": "Brumado",
+      "codigo_ibge": 2904605,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caculé",
+      "municipio_ibge": "Caculé",
+      "codigo_ibge": 2905008,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caetité",
+      "municipio_ibge": "Caetité",
+      "codigo_ibge": 2905206,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Candiba",
+      "municipio_ibge": "Candiba",
+      "codigo_ibge": 2906600,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Contendas do Sincorá",
+      "municipio_ibge": "Contendas do Sincorá",
+      "codigo_ibge": 2908804,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Dom Basílio",
+      "municipio_ibge": "Dom Basílio",
+      "codigo_ibge": 2910107,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Guanambi",
+      "municipio_ibge": "Guanambi",
+      "codigo_ibge": 2911709,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibiassucê",
+      "municipio_ibge": "Ibiassucê",
+      "codigo_ibge": 2912004,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ituaçu",
+      "municipio_ibge": "Ituaçu",
+      "codigo_ibge": 2917201,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Iuiú",
+      "municipio_ibge": "Iuiu",
+      "codigo_ibge": 2917334,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "normalizada_com_variacao_acento"
+    },
+    {
+      "municipio_projeto": "Lagoa Real",
+      "municipio_ibge": "Lagoa Real",
+      "codigo_ibge": 2918753,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Livramento de Nossa Senhora",
+      "municipio_ibge": "Livramento de Nossa Senhora",
+      "codigo_ibge": 2919504,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Malhada de Pedras",
+      "municipio_ibge": "Malhada de Pedras",
+      "codigo_ibge": 2920304,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Palmas de Monte Alto",
+      "municipio_ibge": "Palmas de Monte Alto",
+      "codigo_ibge": 2923407,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pindaí",
+      "municipio_ibge": "Pindaí",
+      "codigo_ibge": 2924504,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Rio do Antônio",
+      "municipio_ibge": "Rio do Antônio",
+      "codigo_ibge": 2926806,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Sebastião Laranjeiras",
+      "municipio_ibge": "Sebastião Laranjeiras",
+      "codigo_ibge": 2930006,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Tanhaçu",
+      "municipio_ibge": "Tanhaçu",
+      "codigo_ibge": 2931004,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Urandi",
+      "municipio_ibge": "Urandi",
+      "codigo_ibge": 2932606,
+      "territorio_id": 13,
+      "territorio_nome": "Sertão Produtivo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Boa Vista do Tupim",
+      "municipio_ibge": "Boa Vista do Tupim",
+      "codigo_ibge": 2903805,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Iaçu",
+      "municipio_ibge": "Iaçu",
+      "codigo_ibge": 2911907,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibiquera",
+      "municipio_ibge": "Ibiquera",
+      "codigo_ibge": 2912608,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itaberaba",
+      "municipio_ibge": "Itaberaba",
+      "codigo_ibge": 2914703,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itatim",
+      "municipio_ibge": "Itatim",
+      "codigo_ibge": 2916856,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lajedinho",
+      "municipio_ibge": "Lajedinho",
+      "codigo_ibge": 2919009,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Macajuba",
+      "municipio_ibge": "Macajuba",
+      "codigo_ibge": 2919603,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mundo Novo",
+      "municipio_ibge": "Mundo Novo",
+      "codigo_ibge": 2922102,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Piritiba",
+      "municipio_ibge": "Piritiba",
+      "codigo_ibge": 2924801,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Rafael Jambeiro",
+      "municipio_ibge": "Rafael Jambeiro",
+      "codigo_ibge": 2925956,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ruy Barbosa",
+      "municipio_ibge": "Ruy Barbosa",
+      "codigo_ibge": 2927200,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Tapiramutá",
+      "municipio_ibge": "Tapiramutá",
+      "codigo_ibge": 2931301,
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Baixa Grande",
+      "municipio_ibge": "Baixa Grande",
+      "codigo_ibge": 2902609,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Capela do Alto Alegre",
+      "municipio_ibge": "Capela do Alto Alegre",
+      "codigo_ibge": 2906857,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Capim Grosso",
+      "municipio_ibge": "Capim Grosso",
+      "codigo_ibge": 2906873,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Gavião",
+      "municipio_ibge": "Gavião",
+      "codigo_ibge": 2911253,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ipirá",
+      "municipio_ibge": "Ipirá",
+      "codigo_ibge": 2914000,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mairi",
+      "municipio_ibge": "Mairi",
+      "codigo_ibge": 2920106,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nova Fátima",
+      "municipio_ibge": "Nova Fátima",
+      "codigo_ibge": 2922730,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pé de Serra",
+      "municipio_ibge": "Pé de Serra",
+      "codigo_ibge": 2924058,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pintadas",
+      "municipio_ibge": "Pintadas",
+      "codigo_ibge": 2924652,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Quixabeira",
+      "municipio_ibge": "Quixabeira",
+      "codigo_ibge": 2925931,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Riachão do Jacuípe",
+      "municipio_ibge": "Riachão do Jacuípe",
+      "codigo_ibge": 2926301,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São José do Jacuípe",
+      "municipio_ibge": "São José do Jacuípe",
+      "codigo_ibge": 2929370,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Serra Preta",
+      "municipio_ibge": "Serra Preta",
+      "codigo_ibge": 2930402,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Várzea da Roça",
+      "municipio_ibge": "Várzea da Roça",
+      "codigo_ibge": 2933059,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Várzea do Poço",
+      "municipio_ibge": "Várzea do Poço",
+      "codigo_ibge": 2933109,
+      "territorio_id": 15,
+      "territorio_nome": "Bacia do Jacuípe",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caém",
+      "municipio_ibge": "Caém",
+      "codigo_ibge": 2905107,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jacobina",
+      "municipio_ibge": "Jacobina",
+      "codigo_ibge": 2917508,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Miguel Calmon",
+      "municipio_ibge": "Miguel Calmon",
+      "codigo_ibge": 2921203,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mirangaba",
+      "municipio_ibge": "Mirangaba",
+      "codigo_ibge": 2921401,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ourolândia",
+      "municipio_ibge": "Ourolândia",
+      "codigo_ibge": 2923357,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Saúde",
+      "municipio_ibge": "Saúde",
+      "codigo_ibge": 2929800,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Serrolândia",
+      "municipio_ibge": "Serrolândia",
+      "codigo_ibge": 2930600,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Umburanas",
+      "municipio_ibge": "Umburanas",
+      "codigo_ibge": 2932457,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Várzea Nova",
+      "municipio_ibge": "Várzea Nova",
+      "codigo_ibge": 2933158,
+      "territorio_id": 16,
+      "territorio_nome": "Piemonte da Diamantina",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Adustina",
+      "municipio_ibge": "Adustina",
+      "codigo_ibge": 2900355,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Antas",
+      "municipio_ibge": "Antas",
+      "codigo_ibge": 2901601,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Banzaê",
+      "municipio_ibge": "Banzaê",
+      "codigo_ibge": 2902658,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cícero Dantas",
+      "municipio_ibge": "Cícero Dantas",
+      "codigo_ibge": 2907806,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cipó",
+      "municipio_ibge": "Cipó",
+      "codigo_ibge": 2907905,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Coronel João Sá",
+      "municipio_ibge": "Coronel João Sá",
+      "codigo_ibge": 2909208,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Euclides da Cunha",
+      "municipio_ibge": "Euclides da Cunha",
+      "codigo_ibge": 2910701,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Fátima",
+      "municipio_ibge": "Fátima",
+      "codigo_ibge": 2910750,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Heliópolis",
+      "municipio_ibge": "Heliópolis",
+      "codigo_ibge": 2911857,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jeremoabo",
+      "municipio_ibge": "Jeremoabo",
+      "codigo_ibge": 2918100,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nova Soure",
+      "municipio_ibge": "Nova Soure",
+      "codigo_ibge": 2922904,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Novo Triunfo",
+      "municipio_ibge": "Novo Triunfo",
+      "codigo_ibge": 2923050,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Paripiranga",
+      "municipio_ibge": "Paripiranga",
+      "codigo_ibge": 2923803,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pedro Alexandre",
+      "municipio_ibge": "Pedro Alexandre",
+      "codigo_ibge": 2924207,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ribeira do Amparo",
+      "municipio_ibge": "Ribeira do Amparo",
+      "codigo_ibge": 2926509,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ribeira do Pombal",
+      "municipio_ibge": "Ribeira do Pombal",
+      "codigo_ibge": 2926608,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Brígida",
+      "municipio_ibge": "Santa Brígida",
+      "codigo_ibge": 2927606,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Sítio do Quinto",
+      "municipio_ibge": "Sítio do Quinto",
+      "codigo_ibge": 2930766,
+      "territorio_id": 17,
+      "territorio_nome": "Semiárido Nordeste II",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Acajutiba",
+      "municipio_ibge": "Acajutiba",
+      "codigo_ibge": 2900306,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Alagoinhas",
+      "municipio_ibge": "Alagoinhas",
+      "codigo_ibge": 2900702,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Aporá",
+      "municipio_ibge": "Aporá",
+      "codigo_ibge": 2901908,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Araçás",
+      "municipio_ibge": "Araçás",
+      "codigo_ibge": 2902054,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Aramari",
+      "municipio_ibge": "Aramari",
+      "codigo_ibge": 2902203,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cardeal da Silva",
+      "municipio_ibge": "Cardeal da Silva",
+      "codigo_ibge": 2907004,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Catu",
+      "municipio_ibge": "Catu",
+      "codigo_ibge": 2907509,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Conde",
+      "municipio_ibge": "Conde",
+      "codigo_ibge": 2908606,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Crisópolis",
+      "municipio_ibge": "Crisópolis",
+      "codigo_ibge": 2909604,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Entre Rios",
+      "municipio_ibge": "Entre Rios",
+      "codigo_ibge": 2910503,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Esplanada",
+      "municipio_ibge": "Esplanada",
+      "codigo_ibge": 2910602,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Inhambupe",
+      "municipio_ibge": "Inhambupe",
+      "codigo_ibge": 2913705,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itanagra",
+      "municipio_ibge": "Itanagra",
+      "codigo_ibge": 2915908,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itapicuru",
+      "municipio_ibge": "Itapicuru",
+      "codigo_ibge": 2916500,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jandaíra",
+      "municipio_ibge": "Jandaíra",
+      "codigo_ibge": 2917904,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Olindina",
+      "municipio_ibge": "Olindina",
+      "codigo_ibge": 2923100,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ouriçangas",
+      "municipio_ibge": "Ouriçangas",
+      "codigo_ibge": 2923308,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pedrão",
+      "municipio_ibge": "Pedrão",
+      "codigo_ibge": 2924108,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Rio Real",
+      "municipio_ibge": "Rio Real",
+      "codigo_ibge": 2927002,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Sátiro Dias",
+      "municipio_ibge": "Sátiro Dias",
+      "codigo_ibge": 2929701,
+      "territorio_id": 18,
+      "territorio_nome": "Litoral Norte e Agreste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Amélia Rodrigues",
+      "municipio_ibge": "Amélia Rodrigues",
+      "codigo_ibge": 2901106,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Anguera",
+      "municipio_ibge": "Anguera",
+      "codigo_ibge": 2901502,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Antônio Cardoso",
+      "municipio_ibge": "Antônio Cardoso",
+      "codigo_ibge": 2901700,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Conceição da Feira",
+      "municipio_ibge": "Conceição da Feira",
+      "codigo_ibge": 2908200,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Conceição do Jacuípe",
+      "municipio_ibge": "Conceição do Jacuípe",
+      "codigo_ibge": 2908507,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Coração de Maria",
+      "municipio_ibge": "Coração de Maria",
+      "codigo_ibge": 2908903,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Feira de Santana",
+      "municipio_ibge": "Feira de Santana",
+      "codigo_ibge": 2910800,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ipecaetá",
+      "municipio_ibge": "Ipecaetá",
+      "codigo_ibge": 2913804,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Irará",
+      "municipio_ibge": "Irará",
+      "codigo_ibge": 2914505,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Bárbara",
+      "municipio_ibge": "Santa Bárbara",
+      "codigo_ibge": 2927507,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santanópolis",
+      "municipio_ibge": "Santanópolis",
+      "codigo_ibge": 2928307,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santo Estêvão",
+      "municipio_ibge": "Santo Estêvão",
+      "codigo_ibge": 2928802,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Gonçalo dos Campos",
+      "municipio_ibge": "São Gonçalo dos Campos",
+      "codigo_ibge": 2929305,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Tanquinho",
+      "municipio_ibge": "Tanquinho",
+      "codigo_ibge": 2931103,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Teodoro Sampaio",
+      "municipio_ibge": "Teodoro Sampaio",
+      "codigo_ibge": 2931400,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Terra Nova",
+      "municipio_ibge": "Terra Nova",
+      "codigo_ibge": 2931707,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Água Fria",
+      "municipio_ibge": "Água Fria",
+      "codigo_ibge": 2900405,
+      "territorio_id": 19,
+      "territorio_nome": "Portal do Sertão",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Anagé",
+      "municipio_ibge": "Anagé",
+      "codigo_ibge": 2901205,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Aracatu",
+      "municipio_ibge": "Aracatu",
+      "codigo_ibge": 2902005,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barra do Choça",
+      "municipio_ibge": "Barra do Choça",
+      "codigo_ibge": 2902906,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Belo Campo",
+      "municipio_ibge": "Belo Campo",
+      "codigo_ibge": 2903508,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Bom Jesus da Serra",
+      "municipio_ibge": "Bom Jesus da Serra",
+      "codigo_ibge": 2903953,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caetanos",
+      "municipio_ibge": "Caetanos",
+      "codigo_ibge": 2905156,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cândido Sales",
+      "municipio_ibge": "Cândido Sales",
+      "codigo_ibge": 2906709,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caraíbas",
+      "municipio_ibge": "Caraíbas",
+      "codigo_ibge": 2906899,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Condeúba",
+      "municipio_ibge": "Condeúba",
+      "codigo_ibge": 2908705,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cordeiros",
+      "municipio_ibge": "Cordeiros",
+      "codigo_ibge": 2909000,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Encruzilhada",
+      "municipio_ibge": "Encruzilhada",
+      "codigo_ibge": 2910404,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Guajeru",
+      "municipio_ibge": "Guajeru",
+      "codigo_ibge": 2911659,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jacaraci",
+      "municipio_ibge": "Jacaraci",
+      "codigo_ibge": 2917409,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Licínio de Almeida",
+      "municipio_ibge": "Licínio de Almeida",
+      "codigo_ibge": 2919405,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Maetinga",
+      "municipio_ibge": "Maetinga",
+      "codigo_ibge": 2919959,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mirante",
+      "municipio_ibge": "Mirante",
+      "codigo_ibge": 2921450,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mortugaba",
+      "municipio_ibge": "Mortugaba",
+      "codigo_ibge": 2921807,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Piripá",
+      "municipio_ibge": "Piripá",
+      "codigo_ibge": 2924702,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Planalto",
+      "municipio_ibge": "Planalto",
+      "codigo_ibge": 2925006,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Poções",
+      "municipio_ibge": "Poções",
+      "codigo_ibge": 2925105,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Presidente Jânio Quadros",
+      "municipio_ibge": "Presidente Jânio Quadros",
+      "codigo_ibge": 2925709,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ribeirão do Largo",
+      "municipio_ibge": "Ribeirão do Largo",
+      "codigo_ibge": 2926657,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Tremedal",
+      "municipio_ibge": "Tremedal",
+      "codigo_ibge": 2931806,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Vitória da Conquista",
+      "municipio_ibge": "Vitória da Conquista",
+      "codigo_ibge": 2933307,
+      "territorio_id": 20,
+      "territorio_nome": "Sudoeste Baiano",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cabaceiras do Paraguaçu",
+      "municipio_ibge": "Cabaceiras do Paraguaçu",
+      "codigo_ibge": 2904852,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cachoeira",
+      "municipio_ibge": "Cachoeira",
+      "codigo_ibge": 2904902,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Castro Alves",
+      "municipio_ibge": "Castro Alves",
+      "codigo_ibge": 2907301,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Conceição do Almeida",
+      "municipio_ibge": "Conceição do Almeida",
+      "codigo_ibge": 2908309,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cruz das Almas",
+      "municipio_ibge": "Cruz das Almas",
+      "codigo_ibge": 2909802,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Dom Macedo Costa",
+      "municipio_ibge": "Dom Macedo Costa",
+      "codigo_ibge": 2910206,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Governador Mangabeira",
+      "municipio_ibge": "Governador Mangabeira",
+      "codigo_ibge": 2911600,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Maragogipe",
+      "municipio_ibge": "Maragogipe",
+      "codigo_ibge": 2920601,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Muniz Ferreira",
+      "municipio_ibge": "Muniz Ferreira",
+      "codigo_ibge": 2922201,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Muritiba",
+      "municipio_ibge": "Muritiba",
+      "codigo_ibge": 2922300,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nazaré",
+      "municipio_ibge": "Nazaré",
+      "codigo_ibge": 2922508,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Salinas da Margarida",
+      "municipio_ibge": "Salinas da Margarida",
+      "codigo_ibge": 2927309,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santo Amaro",
+      "municipio_ibge": "Santo Amaro",
+      "codigo_ibge": 2928604,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santo Antônio de Jesus",
+      "municipio_ibge": "Santo Antônio de Jesus",
+      "codigo_ibge": 2928703,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Felipe",
+      "municipio_ibge": "São Felipe",
+      "codigo_ibge": 2929107,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Félix",
+      "municipio_ibge": "São Félix",
+      "codigo_ibge": 2929008,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Sapeaçu",
+      "municipio_ibge": "Sapeaçu",
+      "codigo_ibge": 2929602,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Saubara",
+      "municipio_ibge": "Saubara",
+      "codigo_ibge": 2929750,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Varzedo",
+      "municipio_ibge": "Varzedo",
+      "codigo_ibge": 2933174,
+      "territorio_id": 21,
+      "territorio_nome": "Recôncavo",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Aiquara",
+      "municipio_ibge": "Aiquara",
+      "codigo_ibge": 2900603,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Apuarema",
+      "municipio_ibge": "Apuarema",
+      "codigo_ibge": 2901957,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Barra do Rocha",
+      "municipio_ibge": "Barra do Rocha",
+      "codigo_ibge": 2903102,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Boa Nova",
+      "municipio_ibge": "Boa Nova",
+      "codigo_ibge": 2903706,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Dário Meira",
+      "municipio_ibge": "Dário Meira",
+      "codigo_ibge": 2910008,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Gongogi",
+      "municipio_ibge": "Gongogi",
+      "codigo_ibge": 2911501,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ibirataia",
+      "municipio_ibge": "Ibirataia",
+      "codigo_ibge": 2912905,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ipiaú",
+      "municipio_ibge": "Ipiaú",
+      "codigo_ibge": 2913903,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itagi",
+      "municipio_ibge": "Itagi",
+      "codigo_ibge": 2915106,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itagibá",
+      "municipio_ibge": "Itagibá",
+      "codigo_ibge": 2915205,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itamari",
+      "municipio_ibge": "Itamari",
+      "codigo_ibge": 2915700,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jequié",
+      "municipio_ibge": "Jequié",
+      "codigo_ibge": 2918001,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jitaúna",
+      "municipio_ibge": "Jitaúna",
+      "codigo_ibge": 2918308,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Manoel Vitorino",
+      "municipio_ibge": "Manoel Vitorino",
+      "codigo_ibge": 2920403,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Nova Ibiá",
+      "municipio_ibge": "Nova Ibiá",
+      "codigo_ibge": 2922755,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ubatã",
+      "municipio_ibge": "Ubatã",
+      "codigo_ibge": 2932309,
+      "territorio_id": 22,
+      "territorio_nome": "Médio Rio de Contas",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Brejolândia",
+      "municipio_ibge": "Brejolândia",
+      "codigo_ibge": 2904407,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Canápolis",
+      "municipio_ibge": "Canápolis",
+      "codigo_ibge": 2906105,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Cocos",
+      "municipio_ibge": "Cocos",
+      "codigo_ibge": 2908101,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Coribe",
+      "municipio_ibge": "Coribe",
+      "codigo_ibge": 2909109,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Correntina",
+      "municipio_ibge": "Correntina",
+      "codigo_ibge": 2909307,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jaborandi",
+      "municipio_ibge": "Jaborandi",
+      "codigo_ibge": 2917359,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Maria da Vitória",
+      "municipio_ibge": "Santa Maria da Vitória",
+      "codigo_ibge": 2928109,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santana",
+      "municipio_ibge": "Santana",
+      "codigo_ibge": 2928208,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Félix do Coribe",
+      "municipio_ibge": "São Félix do Coribe",
+      "codigo_ibge": 2929057,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Serra Dourada",
+      "municipio_ibge": "Serra Dourada",
+      "codigo_ibge": 2930303,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Tabocas do Brejo Velho",
+      "municipio_ibge": "Tabocas do Brejo Velho",
+      "codigo_ibge": 2930907,
+      "territorio_id": 23,
+      "territorio_nome": "Bacia do Rio Corrente",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Abaré",
+      "municipio_ibge": "Abaré",
+      "codigo_ibge": 2900207,
+      "territorio_id": 24,
+      "territorio_nome": "Itaparica",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Chorrochó",
+      "municipio_ibge": "Chorrochó",
+      "codigo_ibge": 2907707,
+      "territorio_id": 24,
+      "territorio_nome": "Itaparica",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Glória",
+      "municipio_ibge": "Glória",
+      "codigo_ibge": 2911402,
+      "territorio_id": 24,
+      "territorio_nome": "Itaparica",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Macururé",
+      "municipio_ibge": "Macururé",
+      "codigo_ibge": 2919900,
+      "territorio_id": 24,
+      "territorio_nome": "Itaparica",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Paulo Afonso",
+      "municipio_ibge": "Paulo Afonso",
+      "codigo_ibge": 2924009,
+      "territorio_id": 24,
+      "territorio_nome": "Itaparica",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Rodelas",
+      "municipio_ibge": "Rodelas",
+      "codigo_ibge": 2927101,
+      "territorio_id": 24,
+      "territorio_nome": "Itaparica",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Andorinha",
+      "municipio_ibge": "Andorinha",
+      "codigo_ibge": 2901353,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Antônio Gonçalves",
+      "municipio_ibge": "Antônio Gonçalves",
+      "codigo_ibge": 2901809,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Caldeirão Grande",
+      "municipio_ibge": "Caldeirão Grande",
+      "codigo_ibge": 2905503,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Campo Formoso",
+      "municipio_ibge": "Campo Formoso",
+      "codigo_ibge": 2906006,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Filadélfia",
+      "municipio_ibge": "Filadélfia",
+      "codigo_ibge": 2910859,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Jaguarari",
+      "municipio_ibge": "Jaguarari",
+      "codigo_ibge": 2917706,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pindobaçu",
+      "municipio_ibge": "Pindobaçu",
+      "codigo_ibge": 2924603,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Ponto Novo",
+      "municipio_ibge": "Ponto Novo",
+      "codigo_ibge": 2925253,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Senhor do Bonfim",
+      "municipio_ibge": "Senhor do Bonfim",
+      "codigo_ibge": 2930105,
+      "territorio_id": 25,
+      "territorio_nome": "Piemonte Norte do Itapicuru",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Camaçari",
+      "municipio_ibge": "Camaçari",
+      "codigo_ibge": 2905701,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Candeias",
+      "municipio_ibge": "Candeias",
+      "codigo_ibge": 2906501,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Dias d'Ávila",
+      "municipio_ibge": "Dias d'Ávila",
+      "codigo_ibge": 2910057,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itaparica",
+      "municipio_ibge": "Itaparica",
+      "codigo_ibge": 2916104,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Lauro de Freitas",
+      "municipio_ibge": "Lauro de Freitas",
+      "codigo_ibge": 2919207,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Madre de Deus",
+      "municipio_ibge": "Madre de Deus",
+      "codigo_ibge": 2919926,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Mata de São João",
+      "municipio_ibge": "Mata de São João",
+      "codigo_ibge": 2921005,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Pojuca",
+      "municipio_ibge": "Pojuca",
+      "codigo_ibge": 2925204,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Salvador",
+      "municipio_ibge": "Salvador",
+      "codigo_ibge": 2927408,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Francisco do Conde",
+      "municipio_ibge": "São Francisco do Conde",
+      "codigo_ibge": 2929206,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "São Sebastião do Passé",
+      "municipio_ibge": "São Sebastião do Passé",
+      "codigo_ibge": 2929503,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Simões Filho",
+      "municipio_ibge": "Simões Filho",
+      "codigo_ibge": 2930709,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Vera Cruz",
+      "municipio_ibge": "Vera Cruz",
+      "codigo_ibge": 2933208,
+      "territorio_id": 26,
+      "territorio_nome": "Metropolitano de Salvador",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Belmonte",
+      "municipio_ibge": "Belmonte",
+      "codigo_ibge": 2903409,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Eunápolis",
+      "municipio_ibge": "Eunápolis",
+      "codigo_ibge": 2910727,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Guaratinga",
+      "municipio_ibge": "Guaratinga",
+      "codigo_ibge": 2911808,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itabela",
+      "municipio_ibge": "Itabela",
+      "codigo_ibge": 2914653,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itagimirim",
+      "municipio_ibge": "Itagimirim",
+      "codigo_ibge": 2915304,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Itapebi",
+      "municipio_ibge": "Itapebi",
+      "codigo_ibge": 2916302,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Porto Seguro",
+      "municipio_ibge": "Porto Seguro",
+      "codigo_ibge": 2925303,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    },
+    {
+      "municipio_projeto": "Santa Cruz Cabrália",
+      "municipio_ibge": "Santa Cruz Cabrália",
+      "codigo_ibge": 2927705,
+      "territorio_id": 27,
+      "territorio_nome": "Costa do Descobrimento",
+      "tipo_coincidencia": "exata"
+    }
+  ],
+  "municipios_somente_projeto_atual": [
+    {
+      "municipio": "Muquém de São Francisco",
+      "territorio_id": 2,
+      "territorio_nome": "Velho Chico",
+      "sugestao_ibge": "Muquém do São Francisco",
+      "codigo_ibge_sugerido": 2922250
+    },
+    {
+      "municipio": "Santa Teresinha",
+      "territorio_id": 14,
+      "territorio_nome": "Piemonte do Paraguaçu",
+      "sugestao_ibge": "Santa Terezinha",
+      "codigo_ibge_sugerido": 2928505
+    }
+  ],
+  "municipios_somente_ibge": [
+    {
+      "codigo_ibge": 2922250,
+      "municipio": "Muquém do São Francisco",
+      "uf": "BA",
+      "divergencia_correspondente": "Muquém de São Francisco"
+    },
+    {
+      "codigo_ibge": 2928505,
+      "municipio": "Santa Terezinha",
+      "uf": "BA",
+      "divergencia_correspondente": "Santa Teresinha"
+    }
+  ],
+  "divergencias_nome": [
+    {
+      "municipio_projeto": "Muquém de São Francisco",
+      "municipio_ibge": "Muquém do São Francisco",
+      "codigo_ibge": 2922250,
+      "territorio": "Velho Chico",
+      "tipo": "preposicao",
+      "detalhe": "Projeto usa preposição 'de', enquanto o IBGE adota 'do'."
+    },
+    {
+      "municipio_projeto": "Itaetê",
+      "municipio_ibge": "Itaeté",
+      "codigo_ibge": 2915007,
+      "territorio": "Chapada Diamantina",
+      "tipo": "acento",
+      "detalhe": "Diferença de acentuação gráfica ('Itaetê' vs 'Itaeté')"
+    },
+    {
+      "municipio_projeto": "Iuiú",
+      "municipio_ibge": "Iuiu",
+      "codigo_ibge": 2917334,
+      "territorio": "Sertão Produtivo",
+      "tipo": "acento",
+      "detalhe": "Diferença de acentuação gráfica ('Iuiú' vs 'Iuiu')"
+    },
+    {
+      "municipio_projeto": "Santa Teresinha",
+      "municipio_ibge": "Santa Terezinha",
+      "codigo_ibge": 2928505,
+      "territorio": "Piemonte do Paraguaçu",
+      "tipo": "ortografia",
+      "detalhe": "Projeto grafa com 's' (Teresinha), enquanto o IBGE adota 'z' (Terezinha)."
+    }
+  ],
+  "codigos_ibge_encontrados": [
+    2900108,
+    2900207,
+    2900306,
+    2900355,
+    2900405,
+    2900504,
+    2900603,
+    2900702,
+    2900801,
+    2900900,
+    2901007,
+    2901106,
+    2901155,
+    2901205,
+    2901304,
+    2901353,
+    2901403,
+    2901502,
+    2901601,
+    2901700,
+    2901809,
+    2901908,
+    2901957,
+    2902005,
+    2902054,
+    2902104,
+    2902203,
+    2902252,
+    2902302,
+    2902401,
+    2902500,
+    2902609,
+    2902658,
+    2902708,
+    2902807,
+    2902906,
+    2903003,
+    2903102,
+    2903201,
+    2903235,
+    2903276,
+    2903300,
+    2903409,
+    2903508,
+    2903607,
+    2903706,
+    2903805,
+    2903904,
+    2903953,
+    2904001,
+    2904050,
+    2904100,
+    2904209,
+    2904308,
+    2904407,
+    2904506,
+    2904605,
+    2904704,
+    2904753,
+    2904803,
+    2904852,
+    2904902,
+    2905008,
+    2905107,
+    2905156,
+    2905206,
+    2905305,
+    2905404,
+    2905503,
+    2905602,
+    2905701,
+    2905800,
+    2905909,
+    2906006,
+    2906105,
+    2906204,
+    2906303,
+    2906402,
+    2906501,
+    2906600,
+    2906709,
+    2906808,
+    2906824,
+    2906857,
+    2906873,
+    2906899,
+    2906907,
+    2907004,
+    2907103,
+    2907202,
+    2907301,
+    2907400,
+    2907509,
+    2907558,
+    2907608,
+    2907707,
+    2907806,
+    2907905,
+    2908002,
+    2908101,
+    2908200,
+    2908309,
+    2908408,
+    2908507,
+    2908606,
+    2908705,
+    2908804,
+    2908903,
+    2909000,
+    2909109,
+    2909208,
+    2909307,
+    2909406,
+    2909505,
+    2909604,
+    2909703,
+    2909802,
+    2909901,
+    2910008,
+    2910057,
+    2910107,
+    2910206,
+    2910305,
+    2910404,
+    2910503,
+    2910602,
+    2910701,
+    2910727,
+    2910750,
+    2910776,
+    2910800,
+    2910859,
+    2910909,
+    2911006,
+    2911105,
+    2911204,
+    2911253,
+    2911303,
+    2911402,
+    2911501,
+    2911600,
+    2911659,
+    2911709,
+    2911808,
+    2911857,
+    2911907,
+    2912004,
+    2912103,
+    2912202,
+    2912301,
+    2912400,
+    2912509,
+    2912608,
+    2912707,
+    2912806,
+    2912905,
+    2913002,
+    2913101,
+    2913200,
+    2913309,
+    2913408,
+    2913457,
+    2913507,
+    2913606,
+    2913705,
+    2913804,
+    2913903,
+    2914000,
+    2914109,
+    2914208,
+    2914307,
+    2914406,
+    2914505,
+    2914604,
+    2914653,
+    2914703,
+    2914802,
+    2914901,
+    2915007,
+    2915106,
+    2915205,
+    2915304,
+    2915353,
+    2915403,
+    2915502,
+    2915601,
+    2915700,
+    2915809,
+    2915908,
+    2916005,
+    2916104,
+    2916203,
+    2916302,
+    2916401,
+    2916500,
+    2916609,
+    2916708,
+    2916807,
+    2916856,
+    2916906,
+    2917003,
+    2917102,
+    2917201,
+    2917300,
+    2917334,
+    2917359,
+    2917409,
+    2917508,
+    2917607,
+    2917706,
+    2917805,
+    2917904,
+    2918001,
+    2918100,
+    2918209,
+    2918308,
+    2918357,
+    2918407,
+    2918456,
+    2918506,
+    2918555,
+    2918605,
+    2918704,
+    2918753,
+    2918803,
+    2918902,
+    2919009,
+    2919058,
+    2919108,
+    2919157,
+    2919207,
+    2919306,
+    2919405,
+    2919504,
+    2919553,
+    2919603,
+    2919702,
+    2919801,
+    2919900,
+    2919926,
+    2919959,
+    2920007,
+    2920106,
+    2920205,
+    2920304,
+    2920403,
+    2920452,
+    2920502,
+    2920601,
+    2920700,
+    2920809,
+    2920908,
+    2921005,
+    2921054,
+    2921104,
+    2921203,
+    2921302,
+    2921401,
+    2921450,
+    2921500,
+    2921609,
+    2921708,
+    2921807,
+    2921906,
+    2922003,
+    2922052,
+    2922102,
+    2922201,
+    2922250,
+    2922300,
+    2922409,
+    2922508,
+    2922607,
+    2922656,
+    2922706,
+    2922730,
+    2922755,
+    2922805,
+    2922854,
+    2922904,
+    2923001,
+    2923035,
+    2923050,
+    2923100,
+    2923209,
+    2923308,
+    2923357,
+    2923407,
+    2923506,
+    2923605,
+    2923704,
+    2923803,
+    2923902,
+    2924009,
+    2924058,
+    2924108,
+    2924207,
+    2924306,
+    2924405,
+    2924504,
+    2924603,
+    2924652,
+    2924678,
+    2924702,
+    2924801,
+    2924900,
+    2925006,
+    2925105,
+    2925204,
+    2925253,
+    2925303,
+    2925402,
+    2925501,
+    2925600,
+    2925709,
+    2925758,
+    2925808,
+    2925907,
+    2925931,
+    2925956,
+    2926004,
+    2926103,
+    2926202,
+    2926301,
+    2926400,
+    2926509,
+    2926608,
+    2926657,
+    2926707,
+    2926806,
+    2926905,
+    2927002,
+    2927101,
+    2927200,
+    2927309,
+    2927408,
+    2927507,
+    2927606,
+    2927705,
+    2927804,
+    2927903,
+    2928000,
+    2928059,
+    2928109,
+    2928208,
+    2928307,
+    2928406,
+    2928505,
+    2928604,
+    2928703,
+    2928802,
+    2928901,
+    2928950,
+    2929008,
+    2929057,
+    2929107,
+    2929206,
+    2929255,
+    2929305,
+    2929354,
+    2929370,
+    2929404,
+    2929503,
+    2929602,
+    2929701,
+    2929750,
+    2929800,
+    2929909,
+    2930006,
+    2930105,
+    2930154,
+    2930204,
+    2930303,
+    2930402,
+    2930501,
+    2930600,
+    2930709,
+    2930758,
+    2930766,
+    2930774,
+    2930808,
+    2930907,
+    2931004,
+    2931053,
+    2931103,
+    2931202,
+    2931301,
+    2931350,
+    2931400,
+    2931509,
+    2931608,
+    2931707,
+    2931806,
+    2931905,
+    2932002,
+    2932101,
+    2932200,
+    2932309,
+    2932408,
+    2932457,
+    2932507,
+    2932606,
+    2932705,
+    2932804,
+    2932903,
+    2933000,
+    2933059,
+    2933109,
+    2933158,
+    2933174,
+    2933208,
+    2933257,
+    2933307,
+    2933406,
+    2933455,
+    2933505,
+    2933604
+  ],
+  "municipios_sem_codigo": []
+}

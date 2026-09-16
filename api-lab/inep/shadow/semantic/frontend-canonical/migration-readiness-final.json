@@ -1,0 +1,42 @@
+{
+  "data_model_ok": true,
+  "kpi_ok": true,
+  "filters_ok": true,
+  "map_ok": true,
+  "reports_ok": true,
+  "pdf_ok": true,
+  "canonical_ok": true,
+  "blockers": [
+    {
+      "id": "BLK-01",
+      "descricao": "Duplicidade cadastral UFSB em Itabuna (IDs 75 e 76 com mesma coordenada geográfica).",
+      "severidade": "ALTA",
+      "status": "PENDENTE_SANEAMENTO_DB"
+    },
+    {
+      "id": "BLK-02",
+      "descricao": "Necessidade de migração formal dos 6 Polos EAD legados para tabela segregada no Supabase.",
+      "severidade": "ALTA",
+      "status": "PENDENTE_MIGRACAO_DB"
+    },
+    {
+      "id": "BLK-03",
+      "descricao": "Coordenada geográfica de Ubaitaba (ID 174) deslocada a 15 km do perímetro urbano.",
+      "severidade": "MEDIA",
+      "status": "PENDENTE_AJUSTE_COORD"
+    },
+    {
+      "id": "BLK-04",
+      "descricao": "Inconsistência cadastral da UNIRB Serrinha (ID 164) inativa no Censo 2023 aguardando decisão de desativação permanente.",
+      "severidade": "MEDIA",
+      "status": "PENDENTE_VALIDACAO_CADASTRO"
+    },
+    {
+      "id": "BLK-05",
+      "descricao": "Classificação formal dos 7 campi técnicos de IFBA/IF Baiano na base de dados de produção.",
+      "severidade": "MEDIA",
+      "status": "PENDENTE_TAG_PRODUCAO"
+    }
+  ],
+  "ready_for_production": false
+}

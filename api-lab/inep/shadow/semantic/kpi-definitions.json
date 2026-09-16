@@ -1,0 +1,254 @@
+{
+  "metadados": {
+    "etapa": "2.8 — Auditoria Final dos KPIs Canônicos",
+    "versao": "1.0.0",
+    "gerado_em": "2026-09-16T14:10:00.000Z",
+    "universo_total_unidades": 224,
+    "descricao": "Definições formais, regras de inclusão e equações matemáticas de fechamento dos KPIs territoriais canônicos"
+  },
+  "kpis": {
+    "infraestrutura_fisica_total": {
+      "nome": "Infraestrutura Física Total",
+      "definicao_formal": "Total de unidades prediais com presença física real instalada no território baiano",
+      "filtro_logico": "presenca_fisica === true",
+      "valor": 217,
+      "categorias_incluidas": [
+        "ensino_superior_presencial",
+        "ambigua",
+        "ensino_tecnico",
+        "pesquisa_extensao",
+        "administrativo"
+      ],
+      "unidades_desconsideradas": [
+        "ead",
+        "inativa"
+      ]
+    },
+    "infraestrutura_fisica_ativa": {
+      "nome": "Infraestrutura Física Ativa",
+      "definicao_formal": "Total de unidades físicas operacionais em atividade regular",
+      "filtro_logico": "presenca_fisica === true && ativo === true",
+      "valor": 217,
+      "categorias_incluidas": [
+        "ensino_superior_presencial",
+        "ambigua",
+        "ensino_tecnico",
+        "pesquisa_extensao",
+        "administrativo"
+      ],
+      "unidades_desconsideradas": [
+        "ead",
+        "inativa"
+      ]
+    },
+    "ensino_superior_presencial_confirmado": {
+      "nome": "Ensino Superior Presencial Confirmado",
+      "definicao_formal": "Unidades de ensino superior com presença física e oferta de cursos presenciais atestada pelo Censo 2023",
+      "filtro_logico": "tipo_unidade === 'ensino_superior_presencial'",
+      "valor": 204,
+      "categorias_incluidas": [
+        "ensino_superior_presencial"
+      ],
+      "detalhe": "154 campi confirmados da SECTI + 50 novos registros mapeados no INEP"
+    },
+    "ensino_superior_presencial_com_ambiguos": {
+      "nome": "Ensino Superior Presencial com Ambíguos",
+      "definicao_formal": "Unidades presenciais de graduação superior, incluindo unidades ativas sob averiguação cadastral/sobreposição",
+      "filtro_logico": "tipo_unidade === 'ensino_superior_presencial' || tipo_unidade === 'ambigua'",
+      "valor": 207,
+      "categorias_incluidas": [
+        "ensino_superior_presencial",
+        "ambigua"
+      ],
+      "detalhe": "204 confirmados + 3 unidades ambíguas (UFSB Itabuna ID 76, UNIRB Alagoinhas ID 1, UNIAENE Cachoeira ID 19)"
+    },
+    "ensino_tecnico": {
+      "nome": "Ensino Técnico e Profissionalizante",
+      "definicao_formal": "Unidades federais de ensino voltadas exclusivamente à educação técnica e média integrada",
+      "filtro_logico": "tipo_unidade === 'ensino_tecnico'",
+      "valor": 7,
+      "categorias_incluidas": [
+        "ensino_tecnico"
+      ],
+      "detalhe": "Campi de IFBA e IF Baiano sem graduação superior ativa no Censo 2023"
+    },
+    "pesquisa_extensao": {
+      "nome": "Pesquisa e Extensão",
+      "definicao_formal": "Centros avançados de pesquisa científica, extensão comunitária e conservação",
+      "filtro_logico": "tipo_unidade === 'pesquisa_extensao'",
+      "valor": 2,
+      "categorias_incluidas": [
+        "pesquisa_extensao"
+      ],
+      "detalhe": "UNEB Canudos (ID 28) e UNEB Jeremoabo (ID 88)"
+    },
+    "administrativo": {
+      "nome": "Administrativo",
+      "definicao_formal": "Prédios administrativos centrais e reitorias sem oferta regular de aulas",
+      "filtro_logico": "tipo_unidade === 'administrativo'",
+      "valor": 1,
+      "categorias_incluidas": [
+        "administrativo"
+      ],
+      "detalhe": "Reitoria do IF Baiano em Salvador (ID 132)"
+    },
+    "ead": {
+      "nome": "Polos EAD",
+      "definicao_formal": "Polos de apoio presencial para cursos ofertados exclusivamente a distância",
+      "filtro_logico": "tipo_unidade === 'ead'",
+      "valor": 6,
+      "categorias_incluidas": [
+        "ead"
+      ],
+      "detalhe": "Polos herdados da SECTI (UNINTER, UNIP, UNIFACS) desvinculados da infraestrutura de campi físicos"
+    },
+    "unidades_inativas": {
+      "nome": "Unidades Inativas",
+      "definicao_formal": "Unidades cadastradas no histórico da SECTI mas sem operação ativa no Censo da Educação Superior 2023",
+      "filtro_logico": "ativo === false",
+      "valor": 1,
+      "categorias_incluidas": [
+        "inativa"
+      ],
+      "detalhe": "FACULDADE UNIRB - SERRINHA (ID 164)"
+    },
+    "unidades_totais": {
+      "nome": "Unidades Totais",
+      "definicao_formal": "Censo exaustivo de todas as unidades mapeadas e reconciliadas no modelo canônico",
+      "filtro_logico": "true (todos os registros)",
+      "valor": 224,
+      "categorias_incluidas": [
+        "ensino_superior_presencial",
+        "ambigua",
+        "ensino_tecnico",
+        "pesquisa_extensao",
+        "administrativo",
+        "ead",
+        "inativa"
+      ]
+    }
+  },
+  "matriz_classificacao_x_kpis": [
+    {
+      "categoria": "ensino_superior_presencial",
+      "quantidade": 204,
+      "presenca_fisica": true,
+      "ativo": true,
+      "kpi_infraestrutura_total": true,
+      "kpi_superior_confirmado": true,
+      "kpi_superior_com_ambiguos": true,
+      "kpi_tecnico": false,
+      "kpi_pesquisa": false,
+      "kpi_admin": false,
+      "kpi_ead": false,
+      "kpi_inativa": false
+    },
+    {
+      "categoria": "ambigua",
+      "quantidade": 3,
+      "presenca_fisica": true,
+      "ativo": true,
+      "kpi_infraestrutura_total": true,
+      "kpi_superior_confirmado": false,
+      "kpi_superior_com_ambiguos": true,
+      "kpi_tecnico": false,
+      "kpi_pesquisa": false,
+      "kpi_admin": false,
+      "kpi_ead": false,
+      "kpi_inativa": false
+    },
+    {
+      "categoria": "ensino_tecnico",
+      "quantidade": 7,
+      "presenca_fisica": true,
+      "ativo": true,
+      "kpi_infraestrutura_total": true,
+      "kpi_superior_confirmado": false,
+      "kpi_superior_com_ambiguos": false,
+      "kpi_tecnico": true,
+      "kpi_pesquisa": false,
+      "kpi_admin": false,
+      "kpi_ead": false,
+      "kpi_inativa": false
+    },
+    {
+      "categoria": "pesquisa_extensao",
+      "quantidade": 2,
+      "presenca_fisica": true,
+      "ativo": true,
+      "kpi_infraestrutura_total": true,
+      "kpi_superior_confirmado": false,
+      "kpi_superior_com_ambiguos": false,
+      "kpi_tecnico": false,
+      "kpi_pesquisa": true,
+      "kpi_admin": false,
+      "kpi_ead": false,
+      "kpi_inativa": false
+    },
+    {
+      "categoria": "administrativo",
+      "quantidade": 1,
+      "presenca_fisica": true,
+      "ativo": true,
+      "kpi_infraestrutura_total": true,
+      "kpi_superior_confirmado": false,
+      "kpi_superior_com_ambiguos": false,
+      "kpi_tecnico": false,
+      "kpi_pesquisa": false,
+      "kpi_admin": true,
+      "kpi_ead": false,
+      "kpi_inativa": false
+    },
+    {
+      "categoria": "ead",
+      "quantidade": 6,
+      "presenca_fisica": false,
+      "ativo": true,
+      "kpi_infraestrutura_total": false,
+      "kpi_superior_confirmado": false,
+      "kpi_superior_com_ambiguos": false,
+      "kpi_tecnico": false,
+      "kpi_pesquisa": false,
+      "kpi_admin": false,
+      "kpi_ead": true,
+      "kpi_inativa": false
+    },
+    {
+      "categoria": "inativa",
+      "quantidade": 1,
+      "presenca_fisica": false,
+      "ativo": false,
+      "kpi_infraestrutura_total": false,
+      "kpi_superior_confirmado": false,
+      "kpi_superior_com_ambiguos": false,
+      "kpi_tecnico": false,
+      "kpi_pesquisa": false,
+      "kpi_admin": false,
+      "kpi_ead": false,
+      "kpi_inativa": true
+    }
+  ],
+  "equacoes_de_fechamento": [
+    {
+      "nome": "Equação de Infraestrutura Física",
+      "formula": "ensino_superior_presencial_confirmado (204) + ambigua (3) + ensino_tecnico (7) + pesquisa_extensao (2) + administrativo (1)",
+      "resultado_esperado": 217,
+      "resultado_obtido": 217,
+      "status": "VALIDADO"
+    },
+    {
+      "nome": "Equação de Unidades Totais",
+      "formula": "infraestrutura_fisica_total (217) + ead (6) + unidades_inativas (1)",
+      "resultado_esperado": 224,
+      "resultado_obtido": 224,
+      "status": "VALIDADO"
+    },
+    {
+      "nome": "Equação de Decomposição Completa",
+      "formula": "204 + 3 + 7 + 2 + 1 + 6 + 1",
+      "resultado_esperado": 224,
+      "resultado_obtido": 224,
+      "status": "VALIDADO"
+    }
+  ]
+}

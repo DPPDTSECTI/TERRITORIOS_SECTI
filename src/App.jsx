@@ -49,6 +49,7 @@ const RelatorioCursosPage = lazy(() => import('./components/pdf/RelatorioEnsino'
 const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioAtivos'));
 const RelatorioCadeias = lazy(() => import('./components/pdf/RelatorioCadeias'));
 const RelatorioSintesePage = lazy(() => import('./components/pdf/RelatorioSintese'));
+const DevDataComparisonPage = import.meta.env.DEV ? lazy(() => import('./components/dev/DevDataComparisonPage')) : null;
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -234,9 +235,34 @@ username="PTI Bahia"
             <Route path="/relatorio/cursos" element={<PageWrapper><RelatorioCursosPage /></PageWrapper>} />
             <Route path="/relatorio/ativos" element={<PageWrapper><RelatorioAtivosPage /></PageWrapper>} />
             <Route path="/relatorio/cadeias" element={<PageWrapper><RelatorioCadeias /></PageWrapper>} />
+
+            {/* ROTA DEV DE HOMOLOGAÇÃO SHADOW (APENAS EM DESENVOLVIMENTO) */}
+            {import.meta.env.DEV && DevDataComparisonPage && (
+              <Route path="/dev/data-comparison" element={<PageWrapper><DevDataComparisonPage /></PageWrapper>} />
+            )}
           </Routes>
         </AnimatePresence>
       </div>
+    </div>
+  );
+}
+
+function DevShadowBadge() {
+  if (!import.meta.env.DEV) return null;
+  const source = localStorage.getItem('@Secti_DataSource') || import.meta.env.VITE_DATA_SOURCE || 'production';
+  if (source === 'production') return null;
+
+  const isCanonical = source === 'canonical';
+  const label = isCanonical ? 'CANÔNICO / HOMOLOGAÇÃO' : 'SHADOW / HOMOLOGAÇÃO';
+  const colorBg = isCanonical ? 'bg-emerald-500 text-black border-emerald-300' : 'bg-amber-500 text-black border-amber-300';
+
+  return (
+    <div className={`fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full ${colorBg} text-xs font-bold shadow-2xl backdrop-blur border flex items-center gap-2 select-none pointer-events-auto`}>
+      <span className="w-2 h-2 rounded-full bg-black animate-pulse"></span>
+      <span>{label}</span>
+      <a href="/dev/data-comparison" className="ml-1 underline text-[11px] opacity-80 hover:opacity-100">
+        Inspecionar
+      </a>
     </div>
   );
 }
@@ -252,6 +278,7 @@ function MainApp() {
  <GlobalScroll />
  <PageScrollNavigator />
  <Analytics />
+ <DevShadowBadge />
 
  <AnimatedRoutes />
  </>

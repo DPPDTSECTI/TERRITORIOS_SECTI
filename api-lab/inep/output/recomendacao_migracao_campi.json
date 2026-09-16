@@ -1,0 +1,2125 @@
+{
+  "pode_migrar_automatically": false,
+  "resumo": {
+    "total_para_migracao": 154,
+    "total_para_revisao_manual": 60,
+    "total_preservados_secti": 10
+  },
+  "registros_para_migracao": [
+    {
+      "id_ativo": 176,
+      "nome_ativo": "Faculdade da Fraternidade de Valença",
+      "sigla": "FFV",
+      "municipio": "Valença",
+      "codigo_ies": 10058,
+      "nome_ies": "FACULDADE DA FRATERNIDADE DE VALENÇA (FFV)",
+      "codigo_ibge": 2932903,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 144,
+      "nome_ativo": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA",
+      "sigla": "IFBA",
+      "municipio": "Salvador",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 157,
+      "nome_ativo": "Centro Universitário de Ciências e Empreendedorismo",
+      "sigla": "UNIFACEMP",
+      "municipio": "Santo Antônio de Jesus",
+      "codigo_ies": 2067,
+      "nome_ies": "Centro Universitário de Ciências e Empreendedorismo (UNIFACEMP)",
+      "codigo_ibge": 2928703,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 2,
+      "nome_ativo": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA",
+      "sigla": "FATEC/BA",
+      "municipio": "Alagoinhas",
+      "codigo_ies": 12922,
+      "nome_ies": "FACULDADE DE TECNOLOGIA E CIÊNCIAS DA BAHIA (FATEC/BA)",
+      "codigo_ibge": 2900702,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 3,
+      "nome_ativo": "FACULDADE SANTO ANTONIO",
+      "sigla": "FSAA",
+      "municipio": "Alagoinhas",
+      "codigo_ies": 3285,
+      "nome_ies": "FACULDADE SANTO ANTONIO (FSA)",
+      "codigo_ibge": 2900702,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 4,
+      "nome_ativo": "FACULDADE SANTÍSSIMO SACRAMENTO",
+      "sigla": "FSSS",
+      "municipio": "Alagoinhas",
+      "codigo_ies": 1455,
+      "nome_ies": "FACULDADE SANTÍSSIMO SACRAMENTO (FSSS)",
+      "codigo_ibge": 2900702,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 6,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Alagoinhas",
+      "sigla": "UNEB",
+      "municipio": "Alagoinhas",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2900702,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 7,
+      "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Amargosa",
+      "sigla": "UFRB",
+      "municipio": "Amargosa",
+      "codigo_ies": 4503,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA (UFRB)",
+      "codigo_ibge": 2901007,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 8,
+      "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Barra",
+      "sigla": "UFOB",
+      "municipio": "Barra",
+      "codigo_ies": 18506,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA (UFOB)",
+      "codigo_ibge": 2902708,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 9,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS",
+      "sigla": "UNINASSAU",
+      "municipio": "Barreiras",
+      "codigo_ies": 1227,
+      "nome_ies": "CENTRO UNIVERSITÁRIO MAURÍCIO DE NASSAU DE BARREIRAS (UNINASSAU)",
+      "codigo_ibge": 2903201,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 10,
+      "nome_ativo": "Faculdade Unirb - Barreiras",
+      "sigla": "UNIRB",
+      "municipio": "Barreiras",
+      "codigo_ies": 2444,
+      "nome_ies": "Faculdade Unirb - Barreiras (F. UNIRB)",
+      "codigo_ibge": 2903201,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 11,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Barreiras",
+      "sigla": "IFBA",
+      "municipio": "Barreiras",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2903201,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 12,
+      "nome_ativo": "Universidade Federal do Oeste da Bahia",
+      "sigla": "UFOB",
+      "municipio": "Barreiras",
+      "codigo_ies": 18506,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA (UFOB)",
+      "codigo_ibge": 2903201,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 13,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Barreiras",
+      "sigla": "UNEB",
+      "municipio": "Barreiras",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2903201,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 14,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Bom Jesus da Lapa",
+      "sigla": "IF BAIANO",
+      "municipio": "Bom Jesus da Lapa",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2903904,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 15,
+      "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Bom Jesus da Lapa",
+      "sigla": "UFOB",
+      "municipio": "Bom Jesus da Lapa",
+      "codigo_ies": 18506,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA (UFOB)",
+      "codigo_ibge": 2903904,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 16,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Bom Jesus da Lapa",
+      "sigla": "UNEB",
+      "municipio": "Bom Jesus da Lapa",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2903904,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 17,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Brumado",
+      "sigla": "IFBA",
+      "municipio": "Brumado",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2904605,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 18,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Brumado",
+      "sigla": "UNEB",
+      "municipio": "Brumado",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2904605,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 20,
+      "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Cachoeira",
+      "sigla": "UFRB",
+      "municipio": "Cachoeira",
+      "codigo_ies": 4503,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA (UFRB)",
+      "codigo_ibge": 2904902,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 21,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Caetité",
+      "sigla": "UNEB",
+      "municipio": "Caetité",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2905206,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 22,
+      "nome_ativo": "Centro Universitário FAMEC",
+      "sigla": "UNIFAMEC",
+      "municipio": "Camaçari",
+      "codigo_ies": 1170,
+      "nome_ies": "Centro Universitário FAMEC (UNIFAMEC)",
+      "codigo_ibge": 2905701,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 24,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Camaçari",
+      "sigla": "IFBA",
+      "municipio": "Camaçari",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2905701,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 25,
+      "nome_ativo": "Universidade Federal da Bahia - Campus Carlos Marighella",
+      "sigla": "UFBA",
+      "municipio": "Camaçari",
+      "codigo_ies": 578,
+      "nome_ies": "UNIVERSIDADE FEDERAL DA BAHIA (UFBA)",
+      "codigo_ibge": 2905701,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 26,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Camaçari",
+      "sigla": "UNEB",
+      "municipio": "Camaçari",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2905701,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 29,
+      "nome_ativo": "Faculdade Regional do Jacuípe",
+      "sigla": "FARJ",
+      "municipio": "Capim Grosso",
+      "codigo_ies": 16225,
+      "nome_ies": "Faculdade Regional do Jacuípe (FARJ)",
+      "codigo_ibge": 2906873,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 30,
+      "nome_ativo": "Faculdade de Ciências Educacionais de Capim Grosso",
+      "sigla": "FCG",
+      "municipio": "Capim Grosso",
+      "codigo_ies": 2753,
+      "nome_ies": "Faculdade de Ciências Educacionais de Capim Grosso (FCG)",
+      "codigo_ibge": 2906873,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 31,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Catu",
+      "sigla": "IF BAIANO",
+      "municipio": "Catu",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2907509,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 32,
+      "nome_ativo": "Faculdade da Região Sisaleira",
+      "sigla": "FARESI",
+      "municipio": "Conceição do Coité",
+      "codigo_ies": 18636,
+      "nome_ies": "Faculdade da Região Sisaleira (FARESI)",
+      "codigo_ibge": 2908408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 33,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Conceição do Coité",
+      "sigla": "UNEB",
+      "municipio": "Conceição do Coité",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2908408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 34,
+      "nome_ativo": "FACULDADE DO NORDESTE DA BAHIA",
+      "sigla": "FANEB",
+      "municipio": "Coronel João Sá",
+      "codigo_ies": 14975,
+      "nome_ies": "FACULDADE DO NORDESTE DA BAHIA (FANEB)",
+      "codigo_ibge": 2909208,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 35,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO MARIA MILZA",
+      "sigla": "UNIMAM",
+      "municipio": "Cruz das Almas",
+      "codigo_ies": 2474,
+      "nome_ies": "CENTRO UNIVERSITÁRIO MARIA MILZA (UNIMAM)",
+      "codigo_ibge": 2909802,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 36,
+      "nome_ativo": "FACULDADE BRASILEIRA DO RECÔNCAVO",
+      "sigla": "FBBR",
+      "municipio": "Cruz das Almas",
+      "codigo_ies": 19284,
+      "nome_ies": "FACULDADE BRASILEIRA DO RECÔNCAVO (FBBR)",
+      "codigo_ibge": 2909802,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 37,
+      "nome_ativo": "Universidade Federal do Recôncavo da Bahia",
+      "sigla": "UFRB",
+      "municipio": "Cruz das Almas",
+      "codigo_ies": 4503,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA (UFRB)",
+      "codigo_ibge": 2909802,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 39,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Euclides da Cunha",
+      "sigla": "UNEB",
+      "municipio": "Euclides da Cunha",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2910701,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 41,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Eunápolis",
+      "sigla": "IFBA",
+      "municipio": "Eunápolis",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2910727,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 42,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Eunápolis",
+      "sigla": "UNEB",
+      "municipio": "Eunápolis",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2910727,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 55,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
+      "sigla": "UNIFAN",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 1718,
+      "nome_ies": "CENTRO UNIVERSITÁRIO NOBRE DE FEIRA DE SANTANA",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 56,
+      "nome_ativo": "Centro Universitário de Excelência",
+      "sigla": "UNEX",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 1053,
+      "nome_ies": "Centro Universitário de Excelência (UNEX)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 45,
+      "nome_ativo": "FACULDADE ANHANGUERA DE FEIRA DE SANTANA",
+      "sigla": "ANHANGUERA",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 4959,
+      "nome_ies": "FACULDADE ANHANGUERA DE FEIRA DE SANTANA",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 46,
+      "nome_ativo": "FACULDADE ANÍSIO TEIXEIRA DE FEIRA DE SANTANA",
+      "sigla": "FAT",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 1643,
+      "nome_ies": "FACULDADE ANÍSIO TEIXEIRA DE FEIRA DE SANTANA (FAT)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 47,
+      "nome_ativo": "FACULDADE BRASILEIRA DE TECNOLOGIA",
+      "sigla": "FBT",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 17896,
+      "nome_ies": "FACULDADE BRASILEIRA DE TECNOLOGIA (FBT)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 57,
+      "nome_ativo": "FACULDADE DE ENSINO SUPERIOR DA CIDADE DE FEIRA DE SANTANA",
+      "sigla": "UNEF",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 2560,
+      "nome_ies": "FACULDADE DE ENSINO SUPERIOR DA CIDADE DE FEIRA DE SANTANA (FAESF/UNEF)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 49,
+      "nome_ativo": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA",
+      "sigla": "ESTÁCIO",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 13783,
+      "nome_ies": "FACULDADE ESTÁCIO DE FEIRA DE SANTANA (ESTÁCIO FEIRA DE SAN)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 50,
+      "nome_ativo": "Faculdade Unirb - Feira de Santana",
+      "sigla": "UNIRB",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 1893,
+      "nome_ies": "Faculdade Unirb - Feira de Santana (F. UNIRB)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 51,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Feira de Santana",
+      "sigla": "IFBA",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 90,
+      "nome_ativo": "Faculdade UniBRAS Juazeiro",
+      "sigla": "FACBRAS",
+      "municipio": "Juazeiro",
+      "codigo_ies": 3365,
+      "nome_ies": "Faculdade UniBRAS Juazeiro (FACBRAS)",
+      "codigo_ibge": 2918407,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 53,
+      "nome_ativo": "Universidade Estadual de Feira de Santana",
+      "sigla": "UEFS",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 666,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA (UEFS)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 54,
+      "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Feira de Santana",
+      "sigla": "UFRB",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 4503,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA (UFRB)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 59,
+      "nome_ativo": "Centro Universitário FG",
+      "sigla": "UNIFG",
+      "municipio": "Guanambi",
+      "codigo_ies": 2023,
+      "nome_ies": "Centro Universitário FG (UNIFG)",
+      "codigo_ibge": 2911709,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 60,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Guanambi",
+      "sigla": "IF BAIANO",
+      "municipio": "Guanambi",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2911709,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 61,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Guanambi",
+      "sigla": "UNEB",
+      "municipio": "Guanambi",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2911709,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 62,
+      "nome_ativo": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS",
+      "sigla": "CESUPI",
+      "municipio": "Ilhéus",
+      "codigo_ies": 2771,
+      "nome_ies": "CENTRO DE ENSINO SUPERIOR DE ILHÉUS (CESUPI)",
+      "codigo_ibge": 2913606,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 63,
+      "nome_ativo": "FACULDADE MADRE THAIS",
+      "sigla": "FMT",
+      "municipio": "Ilhéus",
+      "codigo_ies": 3268,
+      "nome_ies": "FACULDADE MADRE THAIS (FMT)",
+      "codigo_ibge": 2913606,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 65,
+      "nome_ativo": "Universidade Estadual de Santa Cruz",
+      "sigla": "UESC",
+      "municipio": "Ilhéus",
+      "codigo_ies": 24,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DE SANTA CRUZ (UESC)",
+      "codigo_ibge": 2913606,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 66,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Ipiaú",
+      "sigla": "UNEB",
+      "municipio": "Ipiaú",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2913903,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 67,
+      "nome_ativo": "FACULDADE IRECÊ",
+      "sigla": "FAI",
+      "municipio": "Irecê",
+      "codigo_ies": 15504,
+      "nome_ies": "FACULDADE IRECÊ (FAI)",
+      "codigo_ibge": 2914604,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 68,
+      "nome_ativo": "Faculdade AGES de Medicina de Irecê",
+      "sigla": "AGES",
+      "municipio": "Irecê",
+      "codigo_ies": 24443,
+      "nome_ies": "Faculdade AGES de Medicina de Irecê (Faculdade AGES)",
+      "codigo_ibge": 2914604,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 69,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Irecê",
+      "sigla": "IFBA",
+      "municipio": "Irecê",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2914604,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 70,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Irecê",
+      "sigla": "UNEB",
+      "municipio": "Irecê",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2914604,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 72,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Itaberaba",
+      "sigla": "UNEB",
+      "municipio": "Itaberaba",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2914703,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 73,
+      "nome_ativo": "FACULDADE ANHANGUERA DE ITABUNA",
+      "sigla": "ANHANGUERA",
+      "municipio": "Itabuna",
+      "codigo_ies": 2944,
+      "nome_ies": "FACULDADE ANHANGUERA DE ITABUNA",
+      "codigo_ibge": 2914802,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 74,
+      "nome_ativo": "Faculdade de Excelência UNEX de Itabuna",
+      "sigla": "UNEX",
+      "municipio": "Itabuna",
+      "codigo_ies": 1642,
+      "nome_ies": "Faculdade de Excelência UNEX de Itabuna (UNEX de Itabuna)",
+      "codigo_ibge": 2914802,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 75,
+      "nome_ativo": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA",
+      "sigla": "UFSB",
+      "municipio": "Itabuna",
+      "codigo_ies": 18812,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA (UFSB)",
+      "codigo_ibge": 2914802,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 77,
+      "nome_ativo": "FACULDADE DE CIÊNCIAS SOCIAIS APLICADAS",
+      "sigla": "FACISA",
+      "municipio": "Itamaraju",
+      "codigo_ies": 1572,
+      "nome_ies": "FACULDADE DE CIÊNCIAS SOCIAIS APLICADAS (FACISA)",
+      "codigo_ibge": 2915601,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 78,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itapetinga",
+      "sigla": "IF BAIANO",
+      "municipio": "Itapetinga",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2916401,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 79,
+      "nome_ativo": "Universidade Estadual do Sudoeste da Bahia - Campus Itapetinga",
+      "sigla": "UESB",
+      "municipio": "Itapetinga",
+      "codigo_ies": 688,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA (UESB)",
+      "codigo_ibge": 2916401,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 80,
+      "nome_ativo": "Faculdade AGES de Jacobina",
+      "sigla": "AGES",
+      "municipio": "Jacobina",
+      "codigo_ies": 19408,
+      "nome_ies": "Faculdade AGES de Jacobina (Faculdade AGES)",
+      "codigo_ibge": 2917508,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 81,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jacobina",
+      "sigla": "IFBA",
+      "municipio": "Jacobina",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2917508,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 82,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Jacobina",
+      "sigla": "UNEB",
+      "municipio": "Jacobina",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2917508,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 84,
+      "nome_ativo": "FACULDADE ANHANGUERA DE JEQUIÉ",
+      "sigla": "ANHANGUERA",
+      "municipio": "Jequié",
+      "codigo_ies": 19260,
+      "nome_ies": "FACULDADE ANHANGUERA DE JEQUIÉ (FPJ)",
+      "codigo_ibge": 2918001,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 85,
+      "nome_ativo": "Faculdade de Excelência UNEX de Jequié",
+      "sigla": "UNEX",
+      "municipio": "Jequié",
+      "codigo_ies": 1645,
+      "nome_ies": "Faculdade de Excelência UNEX de Jequié (UNEX de Jequié)",
+      "codigo_ibge": 2918001,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 86,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jequié",
+      "sigla": "IFBA",
+      "municipio": "Jequié",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2918001,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 87,
+      "nome_ativo": "Universidade Estadual do Sudoeste da Bahia - Campus Jequié",
+      "sigla": "UESB",
+      "municipio": "Jequié",
+      "codigo_ies": 688,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA (UESB)",
+      "codigo_ibge": 2918001,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 89,
+      "nome_ativo": "FACULDADE UNIRB - JUAZEIRO",
+      "sigla": "UNIRB",
+      "municipio": "Juazeiro",
+      "codigo_ies": 15667,
+      "nome_ies": "FACULDADE UNIRB - JUAZEIRO (FACULDADE UNIRB)",
+      "codigo_ibge": 2918407,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 91,
+      "nome_ativo": "Faculdade de Tecnologia e Ciências",
+      "sigla": "UniFTC",
+      "municipio": "Juazeiro",
+      "codigo_ies": 20606,
+      "nome_ies": "Faculdade de Tecnologia e Ciências (FTC Juazeiro)",
+      "codigo_ibge": 2918407,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 93,
+      "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Juazeiro",
+      "sigla": "UNIVASF",
+      "municipio": "Juazeiro",
+      "codigo_ies": 3984,
+      "nome_ies": "FUNDAÇÃO UNIVERSIDADE FEDERAL DO VALE DO SÃO FRANCISCO (UNIVASF)",
+      "codigo_ibge": 2918407,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 94,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Juazeiro",
+      "sigla": "UNEB",
+      "municipio": "Juazeiro",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2918407,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 95,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO UNIME",
+      "sigla": "UNIME",
+      "municipio": "Lauro de Freitas",
+      "codigo_ies": 1883,
+      "nome_ies": "CENTRO UNIVERSITÁRIO UNIME (UNIME)",
+      "codigo_ibge": 2919207,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 96,
+      "nome_ativo": "FACULDADES INTEGRADAS IPITANGA",
+      "sigla": "FACIIP",
+      "municipio": "Lauro de Freitas",
+      "codigo_ies": 3609,
+      "nome_ies": "FACULDADES INTEGRADAS IPITANGA (FACIIP)",
+      "codigo_ibge": 2919207,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 97,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Lauro de Freitas",
+      "sigla": "IFBA",
+      "municipio": "Lauro de Freitas",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2919207,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 98,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Lauro de Freitas",
+      "sigla": "UNEB",
+      "municipio": "Lauro de Freitas",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2919207,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 99,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+      "sigla": "FAAHF",
+      "municipio": "Luís Eduardo Magalhães",
+      "codigo_ies": 3921,
+      "nome_ies": "CENTRO UNIVERSITÁRIO ARNALDO HORÁCIO FERREIRA",
+      "codigo_ibge": 2919553,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 100,
+      "nome_ativo": "Faculdades Sulamérica Bahia",
+      "sigla": "SULAMÉRICA",
+      "municipio": "Luís Eduardo Magalhães",
+      "codigo_ies": 20605,
+      "nome_ies": "Faculdades Sulamérica Bahia",
+      "codigo_ibge": 2919553,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 101,
+      "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Luís Eduardo Magalhães",
+      "sigla": "UFOB",
+      "municipio": "Luís Eduardo Magalhães",
+      "codigo_ies": 18506,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA (UFOB)",
+      "codigo_ibge": 2919553,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 40,
+      "nome_ativo": "FACULDADES INTEGRADAS DO EXTREMO SUL DA BAHIA",
+      "sigla": "UNESULBAHIA",
+      "municipio": "Eunápolis",
+      "codigo_ies": 2632,
+      "nome_ies": "FACULDADES INTEGRADAS DO EXTREMO SUL DA BAHIA (UNESULBAHIA)",
+      "codigo_ibge": 2910727,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 264,
+      "nome_ativo": "Universidade Salvador FSA",
+      "sigla": "UNIFACS",
+      "municipio": "Feira de Santana",
+      "codigo_ies": 385,
+      "nome_ies": "UNIVERSIDADE SALVADOR (UNIFACS)",
+      "codigo_ibge": 2910800,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 103,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO AGES",
+      "sigla": "AGES",
+      "municipio": "Paripiranga",
+      "codigo_ies": 1640,
+      "nome_ies": "CENTRO UNIVERSITÁRIO AGES (UniAGES)",
+      "codigo_ibge": 2923803,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 108,
+      "nome_ativo": "Centro Universitário do Rio São Francisco Unirios",
+      "sigla": "UNIRIOS",
+      "municipio": "Paulo Afonso",
+      "codigo_ies": 2222,
+      "nome_ies": "Centro Universitário do Rio São Francisco Unirios (UNIRIOS)",
+      "codigo_ibge": 2924009,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 105,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Paulo Afonso",
+      "sigla": "IFBA",
+      "municipio": "Paulo Afonso",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2924009,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 106,
+      "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Paulo Afonso",
+      "sigla": "UNIVASF",
+      "municipio": "Paulo Afonso",
+      "codigo_ies": 3984,
+      "nome_ies": "FUNDAÇÃO UNIVERSIDADE FEDERAL DO VALE DO SÃO FRANCISCO (UNIVASF)",
+      "codigo_ibge": 2924009,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 107,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Paulo Afonso",
+      "sigla": "UNEB",
+      "municipio": "Paulo Afonso",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2924009,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 109,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Porto Seguro",
+      "sigla": "IFBA",
+      "municipio": "Porto Seguro",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2925303,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 110,
+      "nome_ativo": "Universidade Federal do Sul da Bahia - Campus Sosígenes Costa",
+      "sigla": "UFSB",
+      "municipio": "Porto Seguro",
+      "codigo_ies": 18812,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA (UFSB)",
+      "codigo_ibge": 2925303,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 111,
+      "nome_ativo": "FACULDADE SANTO ANTONIO DE QUEIMADAS",
+      "sigla": "FSAQ",
+      "municipio": "Queimadas",
+      "codigo_ies": 18059,
+      "nome_ies": "FACULDADE SANTO ANTONIO DE QUEIMADAS (FSAQ)",
+      "codigo_ibge": 2925808,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 113,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO DE SALVADOR",
+      "sigla": "UNICEUSA",
+      "municipio": "Salvador",
+      "codigo_ies": 2085,
+      "nome_ies": "CENTRO UNIVERSITÁRIO DE SALVADOR (UNICEUSA)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 139,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO DOM PEDRO II",
+      "sigla": "UNIDOMPEDRO",
+      "municipio": "Salvador",
+      "codigo_ies": 3588,
+      "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 140,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO JORGE AMADO",
+      "sigla": "UNIJORGE",
+      "municipio": "Salvador",
+      "codigo_ies": 1185,
+      "nome_ies": "CENTRO UNIVERSITÁRIO JORGE AMADO (UNIJORGE)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 141,
+      "nome_ativo": "CENTRO UNIVERSITÁRIO UNIRB",
+      "sigla": "UNIRB",
+      "municipio": "Salvador",
+      "codigo_ies": 2076,
+      "nome_ies": "CENTRO UNIVERSITÁRIO UNIRB (UNIRB)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 117,
+      "nome_ativo": "Centro Universitário Estácio da Bahia",
+      "sigla": "ESTÁCIO",
+      "municipio": "Salvador",
+      "codigo_ies": 1058,
+      "nome_ies": "Centro Universitário Estácio da Bahia (Estácio Bahia)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 118,
+      "nome_ativo": "Centro Universitário Maurício de Nassau de Salvador",
+      "sigla": "UNINASSAU",
+      "municipio": "Salvador",
+      "codigo_ies": 1055,
+      "nome_ies": "Centro Universitário Maurício de Nassau de Salvador (Uninassau Salvador)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 119,
+      "nome_ativo": "Centro Universitário Ruy Barbosa Wyden",
+      "sigla": "UniRuy",
+      "municipio": "Salvador",
+      "codigo_ies": 396,
+      "nome_ies": "Centro Universitário Ruy Barbosa Wyden (UniRuy Wyden)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 120,
+      "nome_ativo": "Centro Universitário UNIFTC",
+      "sigla": "UniFTC",
+      "municipio": "Salvador",
+      "codigo_ies": 2402,
+      "nome_ies": "Centro Universitário UNIFTC",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 142,
+      "nome_ativo": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA",
+      "sigla": "EBMSP",
+      "municipio": "Salvador",
+      "codigo_ies": 534,
+      "nome_ies": "ESCOLA BAHIANA DE MEDICINA E SAÚDE PÚBLICA (EBMSP)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 122,
+      "nome_ativo": "FACULDADE CASTRO ALVES",
+      "sigla": "FCA",
+      "municipio": "Salvador",
+      "codigo_ies": 1394,
+      "nome_ies": "FACULDADE CASTRO ALVES (FCA)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 123,
+      "nome_ativo": "FACULDADE DIPLOMATA",
+      "sigla": "UNIJORGE",
+      "municipio": "Salvador",
+      "codigo_ies": 1185,
+      "nome_ies": "CENTRO UNIVERSITÁRIO JORGE AMADO (UNIJORGE)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 124,
+      "nome_ativo": "FACULDADE DOIS DE JULHO",
+      "sigla": "F2J",
+      "municipio": "Salvador",
+      "codigo_ies": 1411,
+      "nome_ies": "FACULDADE DOIS DE JULHO (F2J)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 125,
+      "nome_ativo": "FACULDADE HÉLIO ROCHA",
+      "sigla": "FHR",
+      "municipio": "Salvador",
+      "codigo_ies": 1639,
+      "nome_ies": "FACULDADE HÉLIO ROCHA (FHR)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 126,
+      "nome_ativo": "FACULDADE SÃO SALVADOR",
+      "sigla": "FSS",
+      "municipio": "Salvador",
+      "codigo_ies": 2581,
+      "nome_ies": "FACULDADE SÃO SALVADOR (FSS)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 127,
+      "nome_ativo": "FACULDADE UNIRB - SALVADOR",
+      "sigla": "UNIRB",
+      "municipio": "Salvador",
+      "codigo_ies": 2076,
+      "nome_ies": "CENTRO UNIVERSITÁRIO UNIRB (UNIRB)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 129,
+      "nome_ativo": "Faculdade Anhanguera Unime de Salvador",
+      "sigla": "ANHANGUERA",
+      "municipio": "Salvador",
+      "codigo_ies": 3034,
+      "nome_ies": "Faculdade Anhanguera Unime de Salvador",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 130,
+      "nome_ativo": "Faculdade Edufor de Salvador",
+      "sigla": "EDUFOR",
+      "municipio": "Salvador",
+      "codigo_ies": 21978,
+      "nome_ies": "Faculdade Edufor de Salvador (EDUFOR)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 131,
+      "nome_ativo": "INSTITUTO SALVADOR DE ENSINO E CULTURA",
+      "sigla": "ISEC",
+      "municipio": "Salvador",
+      "codigo_ies": 2470,
+      "nome_ies": "INSTITUTO SALVADOR DE ENSINO E CULTURA (ISEC)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 145,
+      "nome_ativo": "UNIVERSIDADE CATÓLICA DO SALVADOR",
+      "sigla": "UCSAL",
+      "municipio": "Salvador",
+      "codigo_ies": 519,
+      "nome_ies": "UNIVERSIDADE CATÓLICA DO SALVADOR (UCSAL)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 146,
+      "nome_ativo": "UNIVERSIDADE SALVADOR",
+      "sigla": "UNIFACS",
+      "municipio": "Salvador",
+      "codigo_ies": 385,
+      "nome_ies": "UNIVERSIDADE SALVADOR (UNIFACS)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 147,
+      "nome_ativo": "UNIVERSIDADE SENAI CIMATEC",
+      "sigla": "SENAI CIMATEC",
+      "municipio": "Salvador",
+      "codigo_ies": 3962,
+      "nome_ies": "CENTRO UNIVERSITÁRIO SENAI CIMATEC (SENAI CIMATEC)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 137,
+      "nome_ativo": "Universidade Federal da Bahia",
+      "sigla": "UFBA",
+      "municipio": "Salvador",
+      "codigo_ies": 578,
+      "nome_ies": "UNIVERSIDADE FEDERAL DA BAHIA (UFBA)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 138,
+      "nome_ativo": "Universidade do Estado da Bahia",
+      "sigla": "UNEB",
+      "municipio": "Salvador",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 148,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Santa Inês",
+      "sigla": "IF BAIANO",
+      "municipio": "Santa Inês",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2927903,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 149,
+      "nome_ativo": "Universidade Federal do Oeste da Bahia - Campus Santa Maria da Vitória",
+      "sigla": "UFOB",
+      "municipio": "Santa Maria da Vitória",
+      "codigo_ies": 18506,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO OESTE DA BAHIA (UFOB)",
+      "codigo_ibge": 2928109,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 150,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Amaro",
+      "sigla": "IFBA",
+      "municipio": "Santo Amaro",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2928604,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 151,
+      "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Santo Amaro",
+      "sigla": "UFRB",
+      "municipio": "Santo Amaro",
+      "codigo_ies": 4503,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA (UFRB)",
+      "codigo_ibge": 2928604,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 153,
+      "nome_ativo": "FACULDADE ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
+      "sigla": "ANHANGUERA",
+      "municipio": "Santo Antônio de Jesus",
+      "codigo_ies": 21553,
+      "nome_ies": "FACULDADE ANHANGUERA DE SANTO ANTÔNIO DE JESUS",
+      "codigo_ibge": 2928703,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 154,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Santo Antônio de Jesus",
+      "sigla": "IFBA",
+      "municipio": "Santo Antônio de Jesus",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2928703,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 155,
+      "nome_ativo": "Universidade Federal do Recôncavo da Bahia - Campus Santo Antônio de Jesus",
+      "sigla": "UFRB",
+      "municipio": "Santo Antônio de Jesus",
+      "codigo_ies": 4503,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA (UFRB)",
+      "codigo_ibge": 2928703,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 156,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Santo Antônio de Jesus",
+      "sigla": "UNEB",
+      "municipio": "Santo Antônio de Jesus",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2928703,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 159,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Seabra",
+      "sigla": "UNEB",
+      "municipio": "Seabra",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2929909,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 160,
+      "nome_ativo": "Faculdade AGES de Senhor do Bonfim",
+      "sigla": "AGES",
+      "municipio": "Senhor do Bonfim",
+      "codigo_ies": 18708,
+      "nome_ies": "Faculdade AGES de Senhor do Bonfim (Faculdade AGES)",
+      "codigo_ibge": 2930105,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 161,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Senhor do Bonfim",
+      "sigla": "IF BAIANO",
+      "municipio": "Senhor do Bonfim",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2930105,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 162,
+      "nome_ativo": "Universidade Federal do Vale do São Francisco - Campus Senhor do Bonfim",
+      "sigla": "UNIVASF",
+      "municipio": "Senhor do Bonfim",
+      "codigo_ies": 3984,
+      "nome_ies": "FUNDAÇÃO UNIVERSIDADE FEDERAL DO VALE DO SÃO FRANCISCO (UNIVASF)",
+      "codigo_ibge": 2930105,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 163,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Senhor do Bonfim",
+      "sigla": "UNEB",
+      "municipio": "Senhor do Bonfim",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2930105,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 165,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Serrinha",
+      "sigla": "IF BAIANO",
+      "municipio": "Serrinha",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2930501,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 166,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Serrinha",
+      "sigla": "UNEB",
+      "municipio": "Serrinha",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2930501,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 167,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Simões Filho",
+      "sigla": "IFBA",
+      "municipio": "Simões Filho",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2930709,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 168,
+      "nome_ativo": "Universidade da Integração Internacional da Lusofonia Afro-Brasileira - Campus dos Malês",
+      "sigla": "UNILAB",
+      "municipio": "São Francisco do Conde",
+      "codigo_ies": 15497,
+      "nome_ies": "UNIVERSIDADE DA INTEGRAÇÃO INTERNACIONAL DA LUSOFONIA AFRO-BRASILEIRA (UNILAB)",
+      "codigo_ibge": 2929206,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 169,
+      "nome_ativo": "FACULDADE ANHANGUERA DE TEIXEIRA DE FREITAS",
+      "sigla": "ANHANGUERA",
+      "municipio": "Teixeira de Freitas",
+      "codigo_ies": 2437,
+      "nome_ies": "FACULDADE ANHANGUERA DE TEIXEIRA DE FREITAS",
+      "codigo_ibge": 2931350,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 170,
+      "nome_ativo": "FACULDADE DO SUL DA BAHIA",
+      "sigla": "FASB",
+      "municipio": "Teixeira de Freitas",
+      "codigo_ies": 1790,
+      "nome_ies": "FACULDADE DO SUL DA BAHIA (FASB)",
+      "codigo_ibge": 2931350,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 143,
+      "nome_ativo": "FACULDADE VISCONDE DE CAIRÚ",
+      "sigla": "FAVIC",
+      "municipio": "Salvador",
+      "codigo_ies": 1363,
+      "nome_ies": "FACULDADE VISCONDE DE CAIRÚ (FAVIC)",
+      "codigo_ibge": 2927408,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 171,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Teixeira de Freitas",
+      "sigla": "IF BAIANO",
+      "municipio": "Teixeira de Freitas",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2931350,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 172,
+      "nome_ativo": "Universidade Federal do Sul da Bahia - Campus Paulo Freire",
+      "sigla": "UFSB",
+      "municipio": "Teixeira de Freitas",
+      "codigo_ies": 18812,
+      "nome_ies": "UNIVERSIDADE FEDERAL DO SUL DA BAHIA (UFSB)",
+      "codigo_ibge": 2931350,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 173,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Teixeira de Freitas",
+      "sigla": "UNEB",
+      "municipio": "Teixeira de Freitas",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2931350,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 175,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Uruçuca",
+      "sigla": "IF BAIANO",
+      "municipio": "Uruçuca",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2932705,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 177,
+      "nome_ativo": "FACULDADE ZACARIAS DE GÓES",
+      "sigla": "FAZAG",
+      "municipio": "Valença",
+      "codigo_ies": 2568,
+      "nome_ies": "FACULDADE ZACARIAS DE GÓES (FAZAG)",
+      "codigo_ibge": 2932903,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 178,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Valença",
+      "sigla": "IF BAIANO",
+      "municipio": "Valença",
+      "codigo_ies": 14509,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA BAIANO (IFBAIANO)",
+      "codigo_ibge": 2932903,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 179,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Valença",
+      "sigla": "IFBA",
+      "municipio": "Valença",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2932903,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 180,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Valença",
+      "sigla": "UNEB",
+      "municipio": "Valença",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2932903,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 181,
+      "nome_ativo": "Centro Universitário de Excelência de Vitória da Conquista",
+      "sigla": "UNEX",
+      "municipio": "Vitória da Conquista",
+      "codigo_ies": 1364,
+      "nome_ies": "Centro Universitário de Excelência de Vitória da Conquista (UNEX Conquista)",
+      "codigo_ibge": 2933307,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 182,
+      "nome_ativo": "FACULDADE INDEPENDENTE DO NORDESTE",
+      "sigla": "FAINOR",
+      "municipio": "Vitória da Conquista",
+      "codigo_ies": 1758,
+      "nome_ies": "FACULDADE INDEPENDENTE DO NORDESTE (FAINOR)",
+      "codigo_ibge": 2933307,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 183,
+      "nome_ativo": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+      "sigla": "UNINASSAU",
+      "municipio": "Vitória da Conquista",
+      "codigo_ies": 1318,
+      "nome_ies": "FACULDADE UNINASSAU VITÓRIA DA CONQUISTA",
+      "codigo_ibge": 2933307,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 184,
+      "nome_ativo": "Faculdade Anhanguera De Vitória Da Conquista",
+      "sigla": "ANHANGUERA",
+      "municipio": "Vitória da Conquista",
+      "codigo_ies": 18625,
+      "nome_ies": "Faculdade Anhanguera De Vitória Da Conquista",
+      "codigo_ibge": 2933307,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 185,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Vitória da Conquista",
+      "sigla": "IFBA",
+      "municipio": "Vitória da Conquista",
+      "codigo_ies": 599,
+      "nome_ies": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA (IFBA)",
+      "codigo_ibge": 2933307,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 186,
+      "nome_ativo": "Universidade Estadual do Sudoeste da Bahia",
+      "sigla": "UESB",
+      "municipio": "Vitória da Conquista",
+      "codigo_ies": 688,
+      "nome_ies": "UNIVERSIDADE ESTADUAL DO SUDOESTE DA BAHIA (UESB)",
+      "codigo_ibge": 2933307,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 187,
+      "nome_ativo": "Universidade Federal da Bahia - Campus Anísio Teixeiras",
+      "sigla": "UFBA",
+      "municipio": "Vitória da Conquista",
+      "codigo_ies": 578,
+      "nome_ies": "UNIVERSIDADE FEDERAL DA BAHIA (UFBA)",
+      "codigo_ibge": 2933307,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    },
+    {
+      "id_ativo": 189,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Xique-Xique",
+      "sigla": "UNEB",
+      "municipio": "Xique-Xique",
+      "codigo_ies": 40,
+      "nome_ies": "UNIVERSIDADE DO ESTADO DA BAHIA (UNEB)",
+      "codigo_ibge": 2933604,
+      "status": "Apto para enriquecimento com atributos INEP (IBGE, Código IES, Cursos)"
+    }
+  ],
+  "registros_para_revisao_manual": [
+    {
+      "id_ativo": 19,
+      "nome_ativo": "Centro Universitário Adventista de Ensino do Nordeste",
+      "sigla": "UNIAENE",
+      "municipio": "Cachoeira",
+      "classificacao": "ambigua",
+      "motivo": "Divergência histórica de denominação institucional: SECTI adota denominação acadêmica UNIAENE, enquanto MEC/INEP registra como FADBA (IES 4531)."
+    },
+    {
+      "id_ativo": 1,
+      "nome_ativo": "Centro Universitário UNIRB - Alagoinhas",
+      "sigla": "UNIRB",
+      "municipio": "Alagoinhas",
+      "classificacao": "ambigua",
+      "motivo": "Divergência de sigla no cadastro MEC/INEP (\"CENTRO UNI\" vs \"UNIRB\"). Unidade presencial ativa correspondente à IES 3864."
+    },
+    {
+      "id_ativo": 23,
+      "nome_ativo": "FACULDADE UNIRB - CAMAÇARI",
+      "sigla": "UNIRB",
+      "municipio": "Camaçari",
+      "classificacao": "ead",
+      "motivo": "A UNIRB em Camaçari encerrou atividades presenciais e opera no município estritamente como polo de apoio a distância (10 cursos EAD ativos no Censo 2023)."
+    },
+    {
+      "id_ativo": 38,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Euclides da Cunha",
+      "sigla": "IFBA",
+      "municipio": "Euclides da Cunha",
+      "classificacao": "ead",
+      "motivo": "Campus Euclides da Cunha do IFBA figura no Censo Superior 2023 exclusivamente como polo de ensino a distância."
+    },
+    {
+      "id_ativo": 64,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Ilhéus",
+      "sigla": "IFBA",
+      "municipio": "Ilhéus",
+      "classificacao": "ead",
+      "motivo": "Campus Ilhéus do IFBA atua com cursos técnicos locais e oferta superior formalizada no Censo 2023 apenas na modalidade a distância."
+    },
+    {
+      "id_ativo": 76,
+      "nome_ativo": "Universidade Federal do Sul do Bahia - Campus Jorge Amado",
+      "sigla": "UFSB",
+      "municipio": "Itabuna",
+      "classificacao": "ambigua",
+      "motivo": "Duplicidade de registro na base SECTI com o ID 75 (Reitoria e Campus Jorge Amado em Itabuna). Mesma sede física com desdobramento institucional."
+    },
+    {
+      "id_ativo": 92,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Juazeiro",
+      "sigla": "IFBA",
+      "municipio": "Juazeiro",
+      "classificacao": "ead",
+      "motivo": "Campus Juazeiro do IFBA figura no Censo Superior 2023 estritamente com oferta a distância."
+    },
+    {
+      "id_ativo": 112,
+      "nome_ativo": "Faculdade Dom Pedro II AFYA",
+      "sigla": "UNIDOMPEDRO",
+      "municipio": "Ribeira do Pombal",
+      "classificacao": "ead",
+      "motivo": "Faculdade Dom Pedro II AFYA em Ribeira do Pombal atua estritamente como polo de ensino a distância (sem instalações permanentes de graduação presencial)."
+    },
+    {
+      "id_ativo": 158,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Seabra",
+      "sigla": "IFBA",
+      "municipio": "Seabra",
+      "classificacao": "ead",
+      "motivo": "Campus Seabra do IFBA figura no Censo Superior 2023 exclusivamente com oferta a distância."
+    },
+    {
+      "id_ativo": 164,
+      "nome_ativo": "FACULDADE UNIRB - SERRINHA",
+      "sigla": "UNIRB",
+      "municipio": "Serrinha",
+      "classificacao": "nao_localizada",
+      "motivo": "Faculdade UNIRB em Serrinha sem registro de turmas ou cursos ativos no Censo da Educação Superior 2023 (unidade descontinuada ou desativada)."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 21280,
+      "nome_ies": "FACULDADE ANHANGUERA DE ALAGOINHAS (FPA)",
+      "municipio": "Alagoinhas",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 25439,
+      "nome_ies": "FACULDADE REGIONAL DO VALLE (FARVALLE)",
+      "municipio": "Amargosa",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 3588,
+      "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO)",
+      "municipio": "Barreiras",
+      "classificacao": "unidade_presencial",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22125,
+      "nome_ies": "Faculdade de Ciências Jurídicas de Bom Jesus da Lapa",
+      "municipio": "Bom Jesus da Lapa",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 2023,
+      "nome_ies": "Centro Universitário FG (UNIFG)",
+      "municipio": "Brumado",
+      "classificacao": "unidade_presencial",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22124,
+      "nome_ies": "Faculdade Pitágoras Unopar de Brumado",
+      "municipio": "Brumado",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22787,
+      "nome_ies": "FACULDADE DE TECNOLOGIA E CIÊNCIAS - FTC CAMAÇARI (FTC CAMAÇARI)",
+      "municipio": "Camaçari",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22443,
+      "nome_ies": "Faculdade Alfredo Nasser de Casa Nova (FAN)",
+      "municipio": "Casa Nova",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 17758,
+      "nome_ies": "Faculdades FAMEP Unidade Euclides da Cunha - BA (FAMEP)",
+      "municipio": "Euclides da Cunha",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 19298,
+      "nome_ies": "Faculdade Pitagoras de Eunapolis (FPE)",
+      "municipio": "Eunápolis",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 17876,
+      "nome_ies": "FACULDADE ESPÍRITO SANTO (FAES)",
+      "municipio": "Eunápolis",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 19780,
+      "nome_ies": "Faculdade Pitágoras Unopar de Guanambi (FPG)",
+      "municipio": "Guanambi",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22104,
+      "nome_ies": "Faculdades Integradas Padrão (FIP GUANAMBI)",
+      "municipio": "Guanambi",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 2163,
+      "nome_ies": "FACULDADE EUGÊNIO GOMES (FEG)",
+      "municipio": "Ipirá",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22521,
+      "nome_ies": "FACULDADES FAMEP Unidade Irará - BA (FAMEP)",
+      "municipio": "Irará",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 20587,
+      "nome_ies": "Faculdade Pitágoras de Irecê (FPI)",
+      "municipio": "Irecê",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 13782,
+      "nome_ies": "FACULDADE DE SANTA CRUZ DA BAHIA (FSC)",
+      "municipio": "Itaberaba",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22088,
+      "nome_ies": "Afya Faculdade de Ciências Médicas de Itabuna (AFYA ITABUNA)",
+      "municipio": "Itabuna",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22139,
+      "nome_ies": "FACULDADE SANTO ANTONIO DE ITABUNA (FSAI)",
+      "municipio": "Itabuna",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 3588,
+      "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO)",
+      "municipio": "Jequié",
+      "classificacao": "unidade_presencial",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22202,
+      "nome_ies": "Faculdade Estácio de Juazeiro (EstácioJuazeiro)",
+      "municipio": "Juazeiro",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 3588,
+      "nome_ies": "CENTRO UNIVERSITÁRIO DOM PEDRO II (UNIDOMPEDRO)",
+      "municipio": "Luís Eduardo Magalhães",
+      "classificacao": "unidade_presencial",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 3230,
+      "nome_ies": "FACULDADE LUIZ EDUARDO MAGALHÃES (FILEM)",
+      "municipio": "Luís Eduardo Magalhães",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 11951,
+      "nome_ies": "FACULDADE DO SERTÃO BAIANO (FASBE)",
+      "municipio": "Monte Santo",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 2140,
+      "nome_ies": "FACULDADE NOSSA SENHORA DE LOURDES (FNSL)",
+      "municipio": "Porto Seguro",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 23155,
+      "nome_ies": "FACULDADE UNEX (UNEX)",
+      "municipio": "Porto Seguro",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 25222,
+      "nome_ies": "FACULDADE ATENAS PORTO SEGURO",
+      "municipio": "Porto Seguro",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 11862,
+      "nome_ies": "FACULDADE ALFREDO NASSER DE REMANSO",
+      "municipio": "Remanso",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 4747,
+      "nome_ies": "FACULDADE REGIONAL DE RIACHÃO DO JACUÍPE (FARJ)",
+      "municipio": "Riachão do Jacuípe",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 3669,
+      "nome_ies": "FACULDADE DOM LUIS DE ORLEANS E BRAGANÇA (FDL)",
+      "municipio": "Ribeira do Pombal",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 1461,
+      "nome_ies": "Centro Universitário Zarns - Salvador (ZARNS SALVADOR)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 1641,
+      "nome_ies": "CENTRO UNIVERSITÁRIO SOCIAL DA BAHIA (UNISBA)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 1524,
+      "nome_ies": "FACULDADE OLGA METTIG (FAMETTIG)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 1937,
+      "nome_ies": "FACULDADE EVANGÉLICA DE SALVADOR (FACESA)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 2427,
+      "nome_ies": "FACULDADE LUSÓFONA DA BAHIA (FL-BA)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 4460,
+      "nome_ies": "FACULDADE DOM PEDRO II DE TECNOLOGIA (FDP II Tec)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 21103,
+      "nome_ies": "FIEP - FACULDADE INTERNACIONAL DE EVOLUÇÃO PROFISSIONAL (FIEP)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 21616,
+      "nome_ies": "FACULDADE ATUALIZA (ATUALIZA)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 21871,
+      "nome_ies": "FACULDADE BAHIANA DE ENGENHARIA E CIÊNCIAS SOCIAIS APLICADAS (FBE)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 152,
+      "nome_ies": "FACULDADE DE CIÊNCIAS CONTÁBEIS (FACIC)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 1302,
+      "nome_ies": "FACULDADE BATISTA BRASILEIRA (FBB)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 3270,
+      "nome_ies": "FACULDADE SÃO BENTO DA BAHIA (FSBB)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22763,
+      "nome_ies": "FACULDADE SANTA CASA (FSC)",
+      "municipio": "Salvador",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 5473,
+      "nome_ies": "FACULDADE DE CIÊNCIAS E TECNOLOGIA DA BAHIA (FACITE)",
+      "municipio": "Santa Maria da Vitória",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 20537,
+      "nome_ies": "FACULDADE BAIANA DO SENHOR DO BONFIM (FABASB)",
+      "municipio": "Senhor do Bonfim",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 18296,
+      "nome_ies": "Faculdade AGES de Tucano (Faculdade AGES)",
+      "municipio": "Tucano",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 22086,
+      "nome_ies": "Faculdade de Educação Social da Bahia (FAESB)",
+      "municipio": "Valença",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 17433,
+      "nome_ies": "FACULDADE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASAVIC)",
+      "municipio": "Vitória da Conquista",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 17498,
+      "nome_ies": "FACULDADE DE SAÚDE SANTO AGOSTINHO DE VITÓRIA DA CONQUISTA (FASA)",
+      "municipio": "Vitória da Conquista",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    },
+    {
+      "origem": "INEP 2023 (Nova unidade)",
+      "codigo_ies": 21226,
+      "nome_ies": "FACULDADE SUDOESTE (FASU)",
+      "municipio": "Vitória da Conquista",
+      "classificacao": "sede_da_ies",
+      "motivo": "Nova unidade presencial identificada no Censo 2023 que requer validação pela equipe SECTI antes de inclusão no mapa."
+    }
+  ],
+  "registros_que_devem_ser_preservados_secti": [
+    {
+      "id_ativo": 5,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Alagoinhas",
+      "sigla": "IF BAIANO",
+      "municipio": "Alagoinhas",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "ensino_tecnico_profissionalizante",
+      "justificativa": "Campus Alagoinhas do IF Baiano atua com ensino médio técnico integrado e subsequente (Agropecuária, Agroindústria). Ausente do Censo da Educação Superior por não ofertar graduação."
+    },
+    {
+      "id_ativo": 27,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Campo Formoso",
+      "sigla": "IFBA",
+      "municipio": "Campo Formoso",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "ensino_tecnico_profissionalizante",
+      "justificativa": "Campus Campo Formoso do IFBA atua exclusivamente com cursos técnicos (Manutenção em Informática, etc.). Sem graduação ativa em 2023."
+    },
+    {
+      "id_ativo": 28,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Canudos",
+      "sigla": "UNEB",
+      "municipio": "Canudos",
+      "tipo_original": "Campi Universidade Pública - Estadual",
+      "classificacao_semantica": "pesquisa_extensao",
+      "justificativa": "Campus Avançado de Canudos abriga o Centro de Estudos Euclides da Cunha (CEEC) e o Parque Estadual de Canudos, atuando em pesquisa histórica/ambiental e extensão, com oferta acadêmica formal limitada a EAD."
+    },
+    {
+      "id_ativo": 88,
+      "nome_ativo": "Universidade do Estado da Bahia - Campus Jeremoabo",
+      "sigla": "UNEB",
+      "municipio": "Jeremoabo",
+      "tipo_original": "Campi Universidade Pública - Estadual",
+      "classificacao_semantica": "pesquisa_extensao",
+      "justificativa": "Unidade temática da UNEB em Jeremoabo que abriga o Museu de Arqueologia e Paleontologia (MAP) e centro de pesquisa ecológica. Não opera como campus de graduação regular."
+    },
+    {
+      "id_ativo": 58,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Governador Mangabeira",
+      "sigla": "IF BAIANO",
+      "municipio": "Governador Mangabeira",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "ensino_tecnico_profissionalizante",
+      "justificativa": "Campus Governador Mangabeira do IF Baiano atua exclusivamente com cursos técnicos de nível médio (Agropecuária, Informática)."
+    },
+    {
+      "id_ativo": 71,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Itaberaba",
+      "sigla": "IF BAIANO",
+      "municipio": "Itaberaba",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "ensino_tecnico_profissionalizante",
+      "justificativa": "Campus Itaberaba do IF Baiano atua com formação profissionalizante e técnica de nível médio. Sem graduação no Censo 2023."
+    },
+    {
+      "id_ativo": 83,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Jaguaquara",
+      "sigla": "IFBA",
+      "municipio": "Jaguaquara",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "ensino_tecnico_profissionalizante",
+      "justificativa": "Campus Jaguaquara do IFBA vocacionado à educação profissional e técnica de nível médio. Sem cursos de graduação registrados no Censo 2023."
+    },
+    {
+      "id_ativo": 132,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano",
+      "sigla": "IF BAIANO",
+      "municipio": "Salvador",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "centro_estacao_unidade_especial",
+      "justificativa": "Sede Administrativa e Reitoria Geral do IF Baiano (Rua do Rouxinol, Imbuí, Salvador). Estrutura executiva central, sem atividades diretas de ensino/graduação no local."
+    },
+    {
+      "id_ativo": 174,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Avançado Ubaitaba",
+      "sigla": "IFBA",
+      "municipio": "Ubaitaba",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "ensino_tecnico_profissionalizante",
+      "justificativa": "Campus Avançado Ubaitaba do IFBA é uma unidade de formação técnica sem turmas de ensino superior cadastradas no Censo 2023."
+    },
+    {
+      "id_ativo": 188,
+      "nome_ativo": "Instituto Federal de Educação, Ciência e Tecnologia Baiano - Campus Xique-Xique",
+      "sigla": "IF BAIANO",
+      "municipio": "Xique-Xique",
+      "tipo_original": "Campi Instituto Federal",
+      "classificacao_semantica": "ensino_tecnico_profissionalizante",
+      "justificativa": "Campus Xique-Xique do IF Baiano focado em formação técnica agropecuária e meio ambiente. Não possui turmas de graduação no Censo 2023."
+    }
+  ],
+  "justificativa": "A migração NÃO pode ser realizada automaticamente porque o Censo da Educação Superior do INEP possui escopo restrito a cursos de graduação e sequenciais. Unidades de excelência técnica e profissional dos Institutos Federais (IFBA e IF Baiano), estações científicas e memoriais de pesquisa da UNEB (como Canudos e Jeremoabo), e sedes administrativas executivas desempenham papel fundamental no ecossistema de CTI da Bahia. Sua remoção ou exclusão causaria perda de inteligência territorial."
+}
