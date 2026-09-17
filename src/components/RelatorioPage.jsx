@@ -1141,9 +1141,9 @@ export default function RelatorioPage() {
  <div className={`flex-1 flex flex-col lg:flex-row gap-5 min-h-0 `}>
 
  {/* NOVO CARD DO MAPA (MEIO) */}
- <div className={`w-full lg:w-[420px] xl:w-[480px] shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card p-4 sm:p-5 flex flex-col print:hidden min-h-0`}>
+ <div className={`w-full lg:w-[420px] xl:w-[480px] shrink-0 bg-surface rounded-2xl border border-border shadow-card p-4 sm:p-5 flex flex-col print:hidden min-h-0`}>
  <h3 className="text-sm font-semibold text-text-primary tracking-tight mb-3">Visão Espacial</h3>
- <div className="flex-1 w-full rounded-2xl overflow-hidden border border-neutral-100 shadow-card relative z-0 bg-surface-soft">
+ <div className="flex-1 w-full rounded-2xl overflow-hidden border border-border shadow-card relative z-0 bg-surface-soft">
  {(() => {
  const handleMapSelect = (t) => {
  if (t && t.id_territorio) setSelectedTerritoryId(String(t.id_territorio));
@@ -1213,7 +1213,7 @@ export default function RelatorioPage() {
     className={`flex-1 rounded-2xl border p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden transition-all duration-700 print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0 relative z-10 ${
       reportMode === 'semiarido'
         ? 'bg-surface/95 dark:bg-surface border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.05)]'
-        : 'bg-surface border-neutral-100 shadow-card'
+        : 'bg-surface border-border shadow-card'
     }`}
   >
 
@@ -1388,7 +1388,7 @@ export default function RelatorioPage() {
     <div className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
       reportMode === 'semiarido'
         ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-        : 'bg-surface border border-neutral-100 shadow-card'
+        : 'bg-surface border border-border shadow-card'
     }`}>
       <div className="flex items-center gap-2 w-full min-w-0">
         <GraduationCap size={16} strokeWidth={2} className="text-[#0D9488]" />
@@ -1407,7 +1407,7 @@ export default function RelatorioPage() {
     <div className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
       reportMode === 'semiarido'
         ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-        : 'bg-surface border border-neutral-100 shadow-card'
+        : 'bg-surface border border-border shadow-card'
     }`}>
       <div className="flex items-center gap-2 w-full min-w-0">
         <GitPullRequest size={16} strokeWidth={2} className="text-accent-600" />
@@ -1431,7 +1431,7 @@ export default function RelatorioPage() {
       className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
         reportMode === 'semiarido'
           ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-          : 'bg-surface border border-neutral-100 shadow-card'
+          : 'bg-surface border border-border shadow-card'
       }`}
     >
       <div className="flex items-center gap-2 w-full min-w-0">
@@ -1542,19 +1542,19 @@ export default function RelatorioPage() {
   </div>
   <div className="flex justify-between items-center text-[11px] text-text-primary">
   <div className="flex items-center gap-1.5 font-medium">
-  <span className="w-2 h-2 rounded-full bg-neutral-200"></span>
+  <span className="w-2 h-2 rounded-full bg-border-strong"></span>
   Demais Ativos Institucionais / Lab
   </div>
   <span className="font-medium">{statsSintese.totalAtivos - statsSintese.rnpAtivos} <span className="text-text-secondary font-medium">({(100 - Number(statsSintese.rnpTaxa)).toFixed(1)}%)</span></span>
   </div>
   </div>
-  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div className="w-full h-[18px] rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
   <div
   className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`}
   style={{ width: `${statsSintese.rnpTaxa}%` }}
   />
   <div
-  className="h-full bg-neutral-200 transition-all rounded-full"
+  className="h-full bg-border/80 transition-all rounded-full"
   style={{ width: `${100 - Number(statsSintese.rnpTaxa)}%` }}
   />
   </div>
@@ -1582,7 +1582,7 @@ export default function RelatorioPage() {
   <span>Rede Pública Estadual</span>
   <span>{statsSintese.estadualCursos} ({statsSintese.estadualTaxa}%)</span>
   </div>
-  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div className="w-full h-[18px] rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
   <div className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`} style={{ width: `${statsSintese.estadualTaxa}%` }} />
   </div>
   </div>
@@ -1592,7 +1592,7 @@ export default function RelatorioPage() {
   <span>Rede Pública Federal</span>
   <span>{statsSintese.federalCursos} ({statsSintese.federalTaxa}%)</span>
   </div>
-  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div className="w-full h-[18px] rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
   <div className="h-full bg-emerald-600 transition-all rounded-full" style={{ width: `${statsSintese.federalTaxa}%` }} />
   </div>
   </div>
@@ -1602,7 +1602,7 @@ export default function RelatorioPage() {
   <span>Rede Privada / Outros</span>
   <span>{statsSintese.privadaCursos} ({statsSintese.privadaTaxa}%)</span>
   </div>
-  <div className="w-full h-[18px] rounded-full bg-neutral-100 overflow-hidden flex">
+  <div className="w-full h-[18px] rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
   <div className="h-full bg-indigo-500 transition-all rounded-full" style={{ width: `${statsSintese.privadaTaxa}%` }} />
   </div>
   </div>
@@ -1681,7 +1681,7 @@ export default function RelatorioPage() {
 
  {/* TABELA - CABEÇALHO (Estático, fora do scroll) */}
  <div className={`border border-b-0 rounded-t-2xl transition-colors print:hidden ${
-    reportMode === 'semiarido' ? 'border-amber-200/80 bg-amber-50/50' : 'border-border bg-surface-soft'
+    reportMode === 'semiarido' ? 'border-amber-500/30 bg-amber-500/10' : 'border-border bg-surface-soft'
   }`}>
  <table className="w-full text-left border-collapse text-xs table-fixed">
  <colgroup>
@@ -1693,7 +1693,7 @@ export default function RelatorioPage() {
  {reportType !== 'cadeias' && <col className="w-[10%]" />}
  </colgroup>
  <thead className={`font-semibold text-[11px] uppercase ${
-    reportMode === 'semiarido' ? 'text-amber-900/80' : 'text-text-muted'
+    reportMode === 'semiarido' ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'
   }`}>
  <tr>
  <th className="py-2.5 px-3">
@@ -1741,7 +1741,7 @@ export default function RelatorioPage() {
 
  {/* TABELA DE DADOS COM SCROLL INTERNO */}
  <div className={`flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] border rounded-b-2xl shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0 transition-colors ${
-    reportMode === 'semiarido' ? 'border-amber-200/80' : 'border-border'
+    reportMode === 'semiarido' ? 'border-amber-500/30' : 'border-border'
   }`}>
  <table className="w-full text-left border-collapse text-xs table-fixed">
  <colgroup>
@@ -1767,8 +1767,8 @@ export default function RelatorioPage() {
   }}
   className={`transition-colors group cursor-pointer ${
     isRowSelected 
-      ? (reportMode === 'semiarido' ? 'bg-amber-50/90 font-semibold border-l-4 border-amber-600' : 'bg-primary-50/80 font-semibold border-l-4 border-primary-600') 
-      : (reportMode === 'semiarido' ? 'hover:bg-amber-50/40' : 'hover:bg-surface-soft')
+      ? (reportMode === 'semiarido' ? 'bg-amber-500/20 font-semibold border-l-4 border-amber-600' : 'bg-primary-500/15 font-semibold border-l-4 border-primary-600') 
+      : (reportMode === 'semiarido' ? 'hover:bg-amber-500/10' : 'hover:bg-surface-soft')
   }`}
  >
  <td className="py-2 px-3 font-medium text-text-primary truncate" title={row.col1}>
@@ -1781,7 +1781,7 @@ export default function RelatorioPage() {
  )}
  {reportType !== 'municipios' && (
  <td className="py-2 px-3 max-w-[180px] truncate" title={row.col3}>
- <span className="bg-surface-soft text-text-primary px-2 py-0.5 rounded-md text-[11px] font-medium inline-flex items-center justify-center leading-none">
+ <span className="bg-surface-soft text-text-primary px-2 py-0.5 rounded-md text-[11px] font-medium inline-flex items-center justify-center leading-none border border-border/60">
  {row.col3}
  </span>
  </td>
@@ -1797,12 +1797,12 @@ export default function RelatorioPage() {
  {reportType !== 'cadeias' && (
  <td className="py-2 px-3 text-right font-medium whitespace-nowrap">
  {row.col6 === 'EaD' || row.col6 === 'Sim (RNP Conectado)' ? (
- <span className="text-[11px] font-medium text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1 justify-center leading-none">
+ <span className="text-[11px] font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 px-2 py-0.5 rounded-full inline-flex items-center gap-1 justify-center leading-none">
  <Wifi size={16} />
  {row.col6}
  </span>
  ) : row.col6 === 'Presencial' ? (
- <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
+ <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft border border-border/60 px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none">
  Presencial
  </span>
  ) : (

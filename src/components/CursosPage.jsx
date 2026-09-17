@@ -1236,16 +1236,16 @@ export default function CursosPage() {
                                                 const rankStr = String(idx + 1).padStart(2, '0');
                                                 const rankStyle = isFirst
                                                     ? (filtroSemiarido ? 'bg-amber-500 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
-                                                    : (filtroSemiarido ? 'bg-amber-100 text-amber-800 border border-amber-200/60' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
+                                                    : (filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/50' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
                                                 const fillColor = isSelected
                                                     ? (filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600')
                                                     : (isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300/80' : 'bg-primary-200'));
                                                 const textStyle = isFirst || isSelected
                                                     ? 'font-medium text-white'
-                                                    : (filtroSemiarido ? 'font-medium text-amber-950' : 'font-medium text-primary-950');
+                                                    : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-primary-950 dark:text-primary-100');
                                                 const valueStyle = isFirst
-                                                    ? (filtroSemiarido ? 'bg-amber-50 text-amber-900 border border-amber-300' : 'bg-primary-50 text-primary-800 border border-primary-200/70')
-                                                    : (filtroSemiarido ? 'bg-amber-50/70 text-amber-800 border border-amber-200/60' : 'bg-primary-50 text-primary-700 border border-primary-200/50');
+                                                    ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/50 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/60')
+                                                    : (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/50' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
 
                                                 return (
                                                     <div
@@ -1253,7 +1253,7 @@ export default function CursosPage() {
                                                         onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
                                                         title={`${ies.fullName}: ${ies.count} cursos em ${ies.municipios.size} cidades`}
                                                         className={`flex items-center gap-2 w-full min-w-0 transition-all duration-200 hover:opacity-95 cursor-pointer p-1 rounded-xl ${
-                                                            isSelected ? (filtroSemiarido ? 'bg-amber-50 ring-1 ring-amber-500/30' : 'bg-primary-50/80 ring-1 ring-primary-500/30') : ''
+                                                            isSelected ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/30 ring-1 ring-amber-500/30' : 'bg-primary-50/80 dark:bg-primary-950/30 ring-1 ring-primary-500/30') : ''
                                                         }`}
                                                     >
                                                         {/* RANK */}
@@ -1262,7 +1262,7 @@ export default function CursosPage() {
                                                         </div>
 
                                                         {/* BARRA: TRACK + FILL + NOME */}
-                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'}`}>
+                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-50/60 dark:bg-amber-950/20' : 'bg-primary-50/50 dark:bg-primary-950/20'}`}>
                                                             <div 
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, pct)}%` }}
@@ -1273,7 +1273,7 @@ export default function CursosPage() {
                                                         </div>
 
                                                         {/* BADGE CIDADES */}
-                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${filtroSemiarido ? 'bg-amber-100 text-amber-900 border border-amber-200' : 'bg-primary-100/80 text-primary-800 border border-primary-200/60'}`}>
+                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-200 border border-primary-200/60 dark:border-primary-700/60'}`}>
                                                             {ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}
                                                         </div>
 

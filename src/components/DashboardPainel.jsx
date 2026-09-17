@@ -750,7 +750,9 @@ export default function DashboardPainel() {
                   </span>
                   {!filtroSemiarido && kpi.isIndex && (
                     <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md shrink-0 leading-none inline-flex items-center justify-center ${
-                      isHero ? 'bg-white/15 text-white/80' : 'bg-primary-100 text-primary-700'
+                      isHero
+                        ? 'bg-white/15 text-white/80'
+                        : 'bg-primary-100 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
                     }`}>
                       Índice
                     </span>

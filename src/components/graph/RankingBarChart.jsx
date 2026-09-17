@@ -209,7 +209,7 @@ export default function RankingBarChart({
                         ? (isSemi ? 'bg-amber-600 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
                         : isSelected
                             ? (isSemi ? 'bg-amber-700 text-white shadow-2xs' : 'bg-primary-700 text-white shadow-2xs')
-                            : (isSemi ? 'bg-amber-500/15 text-amber-800 border border-amber-500/25' : 'bg-primary-100 text-primary-700 border border-primary-200/50');
+                            : (isSemi ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
 
                     // Bar fill color
                     const fillColor = isFirst
