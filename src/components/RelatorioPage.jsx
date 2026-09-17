@@ -1061,7 +1061,7 @@ export default function RelatorioPage() {
 
  return (
     <>
-      <div className={`flex-1 w-full h-full flex flex-col p-4 sm:p-6 lg:p-7 min-h-0 overflow-hidden font-sans select-none bg-surface-soft relative print:hidden`}>
+      <div className={`flex-1 w-full h-full flex flex-col p-4 sm:p-6 lg:p-7 min-h-0 overflow-hidden font-sans select-none bg-transparent relative print:hidden`}>
 
         {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
         <div
