@@ -731,14 +731,14 @@ export default function CadeiaPage() {
                                             </div>
                                         </div>
 
-                                        <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors ${isSelected
-                                                ? (filtroSemiarido ? 'bg-surface/90 border border-amber-200 text-amber-900' : 'bg-surface/90 border border-[#BFDBFE] text-primary-800')
-                                                : 'bg-surface/60 border border-border/60 text-[#475569]'
+                                        <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors border ${isSelected
+                                                ? (filtroSemiarido ? 'bg-amber-100/50 border-amber-300 text-amber-900' : 'bg-primary-50/70 border-primary-200 text-primary-900')
+                                                : 'bg-surface-soft border-border text-text-secondary'
                                             }`}>
-                                            <span className="font-medium text-text-primary">
+                                            <span className="font-semibold text-text-primary">
                                                 {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios: ` : 'Atua em 1 município: '}
                                             </span>
-                                            <span className="font-medium">
+                                            <span className="font-medium text-text-secondary">
                                                 {listaNomes}
                                             </span>
                                         </div>
