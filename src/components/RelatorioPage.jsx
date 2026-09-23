@@ -15,7 +15,6 @@ import {
  Layers,
  Globe,
  Wifi,
- ExternalLink,
  ShieldCheck,
  ChevronRight,
  Filter,
@@ -40,7 +39,6 @@ import { normalize } from '../utils/normalization';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
-import { exportReportAsPdf, getReportRoute } from '../utils/exportReportClient';
 
 const MUN_LOOKUP = (() => {
   const byId = {};
@@ -1026,10 +1024,6 @@ export default function RelatorioPage() {
     setIsExportingPng(false);
   };
 
-  const handleOpenFullscreenReport = () => {
-    const route = getReportRoute(reportType, selectedTerritoryId, reportMode);
-    window.open(route, '_blank');
-  };
 
   const ativosPorTipo = useMemo(() => {
  if (reportType !== 'ativos') return [];
@@ -1287,15 +1281,6 @@ export default function RelatorioPage() {
      )}
    </button>
 
-   <button
-     type="button"
-     onClick={handleOpenFullscreenReport}
-     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-surface border border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Abrir versão oficial do relatório em tela cheia para apresentação ou impressão nativa (${currentReportLabel})`}
-   >
-     <ExternalLink size={14} className="text-neutral-500" />
-     <span className="hidden xl:inline">Tela Cheia</span>
-   </button>
 
    <button
      type="button"
@@ -1308,23 +1293,6 @@ export default function RelatorioPage() {
      <span className="inline xl:hidden">Excel</span>
    </button>
 
-   <button
-     type="button"
-     onClick={() => {
-       const type = reportType;
-       const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
-         ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
-         : 'territorio=bahia';
-       const modoParam = `&modo=${reportMode}`;
-       window.open(`/relatorio/${type}?${terrParam}${modoParam}&autoPrint=1`, '_blank');
-     }}
-     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-surface border border-neutral-200 text-text-secondary hover:text-text-primary hover:bg-surface-soft hover:border-neutral-300 shadow-2xs transition-all cursor-pointer justify-center leading-none"
-     title={`Visualizar Relatório Executivo 16:9 em tela cheia e imprimir (${currentReportLabel})`}
-   >
-     <ExternalLink size={14} className="text-primary-600" />
-     <span className="hidden 2xl:inline">Tela Cheia / Imprimir</span>
-     <span className="inline 2xl:hidden">16:9</span>
-   </button>
  </div>
  </div>
 
