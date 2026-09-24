@@ -6,11 +6,9 @@ export default async function handler(req, res) {
     return res.status(401).json({ ok: false, error: 'unauthorized' });
   }
 
-  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const key = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-  if (!url || !key) {
-    return res.status(500).json({ ok: false, error: 'missing supabase env vars' });
-  }
+  // Mesmos defaults de src/services/supabase.js (chave publishable, já pública no bundle)
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://vicaqpcluxkwbbbwdpkg.supabase.co';
+  const key = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_jpW0W_VeeQXuHJ0XoKJwMg_FNiwdmzE';
 
   try {
     const response = await fetch(`${url}/rest/v1/tipo_ativos?select=*&limit=1`, {
