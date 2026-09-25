@@ -156,7 +156,15 @@ export default function CadeiaPage() {
     const [sidebarSearch, setSidebarSearch] = useState('');
 
     const itemRefs = useRef({});
+    const catalogListRef = useRef(null);
     const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+    // Resetar scroll do catálogo ao alterar filtros
+    useEffect(() => {
+        if (catalogListRef.current) {
+            catalogListRef.current.scrollTop = 0;
+        }
+    }, [selectedTipo, selectedSegmento, selectedTerritory, searchQuery]);
 
     // Sincronização e reset de estados mutuamente exclusivos
     const handleSelectTerritory = (terr) => {
@@ -181,7 +189,7 @@ export default function CadeiaPage() {
             if (cadeia?.id_cadeia && itemRefs.current[cadeia.id_cadeia]) {
                 itemRefs.current[cadeia.id_cadeia].scrollIntoView({
                     behavior: 'smooth',
-                    block: 'nearest'
+                    block: 'start'
                 });
             }
         }, 150);
@@ -643,7 +651,7 @@ export default function CadeiaPage() {
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                    <div ref={catalogListRef} className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
                         {filteredCadeias.length > 0 ? (
                             filteredCadeias.map((c, idx) => {
                                 const IconComp = c.icone;
@@ -668,9 +676,9 @@ export default function CadeiaPage() {
                                                 if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
                                             }
                                         }}
-                                        className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 transition-all duration-300 group cursor-pointer border w-full ${isSelected
+                                        className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 transition-all duration-300 group cursor-pointer border w-full scroll-mt-2 ${isSelected
                                                 ? (filtroSemiarido ? 'bg-amber-50/70 border-amber-500 ring-2 ring-amber-500/20 shadow-card-elevated' : 'bg-primary-50/50 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated')
-                                                : (filtroSemiarido ? 'bg-surface border-neutral-100 hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated')
+                                                : (filtroSemiarido ? 'bg-surface border-border/80 dark:border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-border/80 dark:border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
                                             }`}
                                     >
                                         <div className="flex items-start justify-between gap-3 w-full">
@@ -746,14 +754,14 @@ export default function CadeiaPage() {
                                         {/* CITAÇÃO / ARTIGO CIENTÍFICO PARA IG POTENCIAL */}
                                         {c.texto_referencia && (
                                             <div className={`mt-1.5 text-[11px] leading-relaxed break-words rounded-xl p-2.5 transition-colors border ${isSelected
-                                                    ? 'bg-amber-100/70 border-amber-300 text-amber-950 shadow-2xs'
-                                                    : 'bg-amber-50/80 border-amber-200/90 text-amber-950'
+                                                    ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
+                                                    : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
                                                 }`}>
-                                                <div className="flex items-center gap-1.5 font-bold text-[9px] uppercase tracking-wider text-amber-800 mb-1">
-                                                    <BookOpen size={12} className="text-amber-700 shrink-0" />
+                                                <div className="flex items-center gap-1.5 font-bold text-[9px] uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">
+                                                    <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
                                                     <span>Referência / Citação do Artigo:</span>
                                                 </div>
-                                                <p className="text-[10.5px] leading-relaxed italic text-neutral-800">
+                                                <p className="text-[10.5px] leading-relaxed italic text-neutral-800 dark:text-neutral-800">
                                                     "{c.texto_referencia}"
                                                 </p>
                                             </div>
@@ -1241,43 +1249,6 @@ export default function CadeiaPage() {
                     /* LADO DIREITO: BARRA DE SELEÇÃO + CARDLISTA */
                     <div className="flex-1 h-[480px] lg:h-full min-h-0 min-w-0 flex flex-col gap-3 animate-in fade-in duration-200">
 
-                        {/* BARRA DE SELEÇÃO ATIVA (ESTILO EXATO DA PÁGINA DE ATIVOS) */}
-                        {activeSelectionName && (
-                            <div className={`w-full border rounded-[22px] py-2 px-4 flex items-center justify-between gap-3 shrink-0 shadow-2xs backdrop-blur-xs animate-in fade-in duration-200 ${
-                                filtroSemiarido ? 'bg-amber-50/70 border-amber-200' : 'bg-[#E0F2FE]/60 border-[#BAE6FD]/80'
-                            }`}>
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                    <span className={`w-2 h-2 rounded-full shrink-0 ${filtroSemiarido ? 'bg-amber-500' : 'bg-primary-600'}`} />
-                                    <span className="text-[12px] font-medium text-text-primary truncate">
-                                        {selectedCadeia ? 'Arranjo Selecionado:' : 'Região Selecionada:'}{' '}
-                                        <strong className={`font-medium ${filtroSemiarido ? 'text-amber-700' : 'text-primary-600'}`}>{activeSelectionName}</strong>
-                                    </span>
-                                    <span className={`bg-surface/80 text-[11px] font-medium px-2.5 py-0.5 rounded-full shadow-2xs shrink-0 inline-flex items-center justify-center leading-none ${
-                                        filtroSemiarido ? 'text-amber-700 border border-amber-200' : 'text-primary-600 border border-[#BAE6FD]/80'
-                                    }`}>
-                                        {activeSelectionCount} {activeSelectionCount === 1 ? (selectedCadeia ? 'arranjo' : 'cadeia') : 'cadeias'}
-                                    </span>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (selectedCadeia) {
-                                            setSelectedCadeia(null);
-                                        } else {
-                                            handleSelectTerritory(null);
-                                        }
-                                        setFocusedAsset(null);
-                                    }}
-                                    className={`text-[11px] font-medium text-text-primary hover:text-red-600 bg-surface hover:bg-danger-50/80 px-3 py-1 rounded-full border flex items-center gap-1.5 shadow-2xs transition-all duration-200 cursor-pointer shrink-0 justify-center leading-none ${
-                                        filtroSemiarido ? 'border-amber-200 hover:border-red-200' : 'border-[#BAE6FD]/80 hover:border-red-200'
-                                    }`}
-                                >
-                                    <X size={16} className="text-text-secondary group-hover:text-danger-600" />
-                                    <span>{selectedCadeia ? 'Limpar seleção de arranjo' : 'Limpar filtro da região'}</span>
-                                </button>
-                            </div>
-                        )}
 
                         {/* CARDLISTA DINÂMICO */}
                         <div className="flex-1 min-h-0 min-w-0 overflow-hidden">

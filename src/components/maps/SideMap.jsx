@@ -867,6 +867,8 @@ export default function SideMap({
   onSelectSegmento = () => { },
   selectedTipo = null,
   onSelectTipo = () => { },
+  selectedTipos = [],
+  onSelectTipos = () => { },
   selectedCategory = null,
   onSelectCategory = () => { },
   onAssetClick = () => { },
@@ -990,7 +992,9 @@ export default function SideMap({
     if (mode !== 'ativos') return [];
     let list = processedAtivos.filter((a) => activeCategoryKeys.has(a.tipo || 'Outros'));
 
-    if (selectedTipo && selectedTipo !== 'todos') {
+    if (selectedTipos && selectedTipos.length > 0 && !selectedTipos.includes('todos')) {
+      list = list.filter((a) => selectedTipos.includes(a.tipo) || selectedTipos.includes(a.shortTipo));
+    } else if (selectedTipo && selectedTipo !== 'todos') {
       list = list.filter((a) => a.tipo === selectedTipo || a.shortTipo === selectedTipo);
     }
 
@@ -1005,7 +1009,7 @@ export default function SideMap({
     }
 
     return list;
-  }, [processedAtivos, activeCategoryKeys, selectedTerritory, selectedTipo, mode]);
+  }, [processedAtivos, activeCategoryKeys, selectedTerritory, selectedTipo, selectedTipos, mode]);
 
   const visibleCursos = useMemo(() => {
     if (mode !== 'cursos') return [];
@@ -1705,7 +1709,7 @@ export default function SideMap({
       <div className="absolute top-3 left-3.5 z-[400] flex flex-col gap-1.5 pointer-events-none select-none max-w-[280px]">
         {/* BADGE DE FILTRO ATIVO DA ABA (CATEGORIA, ÁREA OU SEGMENTO) */}
         {(
-          (mode === 'ativos' && selectedTipo && selectedTipo !== 'todos') ||
+          (mode === 'ativos' && ((selectedTipos && selectedTipos.length > 0 && !selectedTipos.includes('todos')) || (selectedTipo && selectedTipo !== 'todos'))) ||
           (mode === 'cursos' && selectedCategory && selectedCategory !== 'todas') ||
           (mode === 'cadeias' && (selectedSegmento || (selectedTipo && selectedTipo !== 'todos')))
         ) && (
@@ -1715,7 +1719,7 @@ export default function SideMap({
               style={{ backgroundColor: filtroSemiarido ? '#D97706' : '#2563EB' }}
             />
             <span className="text-[11px] font-semibold text-text-primary truncate">
-              {mode === 'ativos' && `Categoria: ${selectedTipo}`}
+              {mode === 'ativos' && (selectedTipos && selectedTipos.length > 1 ? `${selectedTipos.length} Tipos Selecionados` : `Categoria: ${selectedTipo || selectedTipos[0]}`)}
               {mode === 'cursos' && `Área: ${selectedCategory}`}
               {mode === 'cadeias' && (selectedSegmento ? `Segmento: ${selectedSegmento}` : `Tipo: ${selectedTipo}`)}
             </span>
@@ -1723,7 +1727,10 @@ export default function SideMap({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                if (mode === 'ativos') onSelectTipo?.('todos');
+                if (mode === 'ativos') {
+                  onSelectTipo?.('todos');
+                  onSelectTipos?.([]);
+                }
                 if (mode === 'cursos') onSelectCategory?.('todas');
                 if (mode === 'cadeias') {
                   if (selectedSegmento) onSelectSegmento?.(null);
