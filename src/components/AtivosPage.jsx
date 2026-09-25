@@ -705,13 +705,13 @@ export default function AtivosPage() {
                     </div>
                 ) : (
                     /* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS */
-                    <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
+                    <div className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
                         {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
-                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0">
 
                             {/* ABAS */}
-                            <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
+                            <div className="flex flex-wrap items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full 2xl:w-auto min-w-0">
                                 <button
                                     type="button"
                                     onClick={() => setActiveTab('catalogo')}
@@ -750,7 +750,7 @@ export default function AtivosPage() {
                             </div>
 
                             {/* INPUT DE BUSCA */}
-                            <div className="relative w-full sm:w-64">
+                            <div className="relative w-full 2xl:w-64 shrink-0">
                                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
                                 <input
                                     type="text"
@@ -1161,7 +1161,7 @@ export default function AtivosPage() {
                                                     const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-600' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-500/60' : 'bg-primary-400');
                                                     const textStyle = isFirst ? 'font-semibold text-white' : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-text-primary');
                                                     const valueStyle = isFirst
-                                                        ? (filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/50')
+                                                        ? (filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/50')
                                                         : (filtroSemiarido ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-800/50');
 
                                                     return (
@@ -1230,9 +1230,9 @@ export default function AtivosPage() {
                                                     ? (filtroSemiarido ? 'bg-amber-500 text-white ring-2 ring-amber-200' : 'bg-primary-500 text-white shadow-2xs')
                                                     : (filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/50' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
                                                 const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300' : 'bg-primary-200');
-                                                const textStyle = isFirst ? 'font-medium text-white' : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-primary-950 dark:text-primary-100');
+                                                const textStyle = isFirst ? 'font-medium text-white' : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-primary-950 dark:text-neutral-900');
                                                 const valueStyle = isFirst
-                                                    ? (filtroSemiarido ? 'bg-amber-100/90 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/50 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/60')
+                                                    ? (filtroSemiarido ? 'bg-amber-100/90 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/50 text-primary-800 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/60')
                                                     : (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/50' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
 
                                                 return (

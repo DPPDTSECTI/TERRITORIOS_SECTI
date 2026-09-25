@@ -80,6 +80,16 @@ module.exports = {
           soft: 'rgb(var(--color-surface-soft) / <alpha-value>)',
         },
         background: 'rgb(var(--color-background) / <alpha-value>)',
+        // Aliases semânticos: geram text-text-*, bg-text-*, border-border, bg-border-strong etc.
+        text: {
+          primary: 'rgb(var(--color-text-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--color-text-secondary) / <alpha-value>)',
+          muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
+        },
+        border: {
+          DEFAULT: 'rgb(var(--color-border) / <alpha-value>)',
+          strong: 'rgb(var(--color-border-strong) / <alpha-value>)',
+        },
         chart: {
           1: 'rgb(var(--color-chart-1) / <alpha-value>)',
           2: 'rgb(var(--color-chart-2) / <alpha-value>)',
@@ -98,11 +108,6 @@ module.exports = {
           5: 'rgb(var(--color-map-5) / <alpha-value>)',
           neutral: 'rgb(var(--color-map-neutral) / <alpha-value>)',
         },
-      },
-      textColor: {
-        primary: 'rgb(var(--color-text-primary) / <alpha-value>)',
-        secondary: 'rgb(var(--color-text-secondary) / <alpha-value>)',
-        muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
       },
       borderColor: {
         DEFAULT: 'rgb(var(--color-border) / <alpha-value>)',
@@ -128,7 +133,8 @@ module.exports = {
         },
       },
       boxShadow: {
-        'glass': '0 4px 20px 0 rgba(15, 23, 42, 0.03)',
+        'xs': '0 1px 2px rgba(15, 23, 42, 0.05)',
+        'glass':'0 4px 20px 0 rgba(15, 23, 42, 0.03)',
         'glass-hover': '0 8px 30px 0 rgba(15, 23, 42, 0.06)',
         'card-soft': '0 2px 10px rgba(15, 23, 42, 0.02), 0 1px 3px rgba(15, 23, 42, 0.02)',
         'card-hover': '0 10px 30px rgba(15, 23, 42, 0.06), 0 4px 10px rgba(15, 23, 42, 0.03)',
