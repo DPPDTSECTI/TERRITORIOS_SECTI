@@ -805,7 +805,7 @@ export default function DashboardPainel() {
 
         {/* LADO DIREITO: DASHBOARD DE CARDS (DND) COM TRANSIÇÃO DOURADA SUAVE */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-          <div className={`tour-charts flex-1 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
+          <div className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
             filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-2xl' : ''
           }`}>
             <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>

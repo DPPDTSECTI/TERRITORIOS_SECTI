@@ -64,7 +64,7 @@
     /* TEXT & BORDERS MAP (Semantic aliases) */
     --color-text-primary: var(--color-neutral-900);
     --color-text-secondary: var(--color-neutral-700);
-    --color-text-muted: var(--color-neutral-500);
+    --color-text-muted: var(--color-neutral-600);
     --color-border: var(--color-neutral-200);
     --color-border-strong: var(--color-neutral-300);
 
@@ -250,6 +250,63 @@
   border-color: rgba(var(--color-accent-600), 0.3);
 }
 
+/* Scroll interno sem barra visível (sidebar, listas e popovers) */
+.hide-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ANIMAÇÕES DE ENTRADA (equivalentes ao tailwindcss-animate, que não está instalado) */
+@keyframes enterFade {
+  from { opacity: 0; }
+}
+
+@keyframes enterFadeZoom {
+  from { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes enterFadeSlideRight {
+  from { opacity: 0; transform: translate3d(16px, 0, 0); }
+}
+
+@keyframes enterFadeSlideTop {
+  from { opacity: 0; transform: translate3d(0, -8px, 0); }
+}
+
+.animate-in {
+  animation: enterFade 200ms ease-out both;
+}
+
+.animate-in.zoom-in-95 {
+  animation-name: enterFadeZoom;
+}
+
+.animate-in.slide-in-from-right-4 {
+  animation-name: enterFadeSlideRight;
+  animation-duration: 300ms;
+}
+
+.animate-in.slide-in-from-top-2 {
+  animation-name: enterFadeSlideTop;
+}
+
+.animate-soft-fade {
+  animation: enterFade 250ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .animate-soft-fade,
+  .animate-sun-breath,
+  .animate-sun-arc {
+    animation: none !important;
+  }
+}
+
 /* CUSTOM SCROLLBAR FOR INSTITUTIONAL LOOK */
 ::-webkit-scrollbar {
   width: 6px;
@@ -374,6 +431,12 @@
   background: linear-gradient(225deg, rgba(245, 158, 11, 0.10) 0%, rgba(27, 38, 60, 0.95) 40%, #131c2e 100%) !important;
   border-color: rgba(245, 158, 11, 0.28) !important;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Tons escuros da marca usados como texto no tema claro ficam ilegíveis no escuro.
+   :where() zera a especificidade: variantes explícitas (dark:text-primary-*) continuam vencendo. */
+.dark :where(.text-primary-700, .text-primary-800, .text-primary-900, .text-primary-950) {
+  color: rgb(var(--color-primary-300));
 }
 
 .dark .leaflet-container {

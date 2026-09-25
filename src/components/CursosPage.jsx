@@ -684,12 +684,12 @@ export default function CursosPage() {
                     </div>
                 ) : (
                     /* LADO DIREITO: CATÁLOGO COM A NOVA ABA DE CURSOS EAD */
-                    <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
+                    <div className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
                         {/* BARRA SUPERIOR DE ABAS */}
-                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0">
 
-                            <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
+                            <div className="flex flex-wrap items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full 2xl:w-auto min-w-0">
                                 <button
                                     type="button"
                                     onClick={() => setActiveTab('catalogo')}
@@ -753,7 +753,7 @@ export default function CursosPage() {
                             </div>
 
                             {/* INPUT DE BUSCA */}
-                            <div className="relative w-full sm:w-64">
+                            <div className="relative w-full 2xl:w-64 shrink-0">
                                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
                                 <input
                                     type="text"
@@ -829,12 +829,12 @@ export default function CursosPage() {
                                                             const key = c.id || `${c.curso || c.nome}-${idx}`;
                                                             setSelectedCursoId(prev => prev === key ? null : key);
                                                         }}
-                                                        className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 ${isSelected
+                                                        className={`p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 ${isSelected
                                                                 ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50')
                                                                 : 'bg-transparent hover:bg-surface-soft'
                                                             }`}
                                                     >
-                                                        <div className="flex items-start gap-3 min-w-0">
+                                                        <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
                                                             <div
                                                                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform"
                                                                 style={{ backgroundColor: `${catColor}20` }}
@@ -855,7 +855,7 @@ export default function CursosPage() {
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                                        <div className="flex items-center flex-wrap gap-2 ml-auto max-w-full">
                                                             <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface-soft text-text-secondary border border-border/60 inline-flex items-center justify-center leading-none">
                                                                 Presencial
                                                             </span>
@@ -923,9 +923,9 @@ export default function CursosPage() {
                                                 return (
                                                     <div
                                                         key={c.id || idx}
-                                                        className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors duration-200 bg-transparent hover:bg-surface-soft border-b border-neutral-200/50 group cursor-pointer"
+                                                        className="p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 bg-transparent hover:bg-surface-soft border-b border-neutral-200/50 group cursor-pointer"
                                                     >
-                                                        <div className="flex items-start gap-3 min-w-0">
+                                                        <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
                                                             <div 
                                                                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform"
                                                                 style={{ backgroundColor: `${catColor}20`, color: catColor }}
@@ -948,7 +948,7 @@ export default function CursosPage() {
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                                        <div className="flex items-center flex-wrap gap-2 ml-auto max-w-full">
                                                             <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs justify-center leading-none border ${filtroSemiarido ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-primary-100 text-primary-800 border-primary-200'}`}>
                                                                 <Wifi size={16} strokeWidth={2} />
                                                                  EaD
@@ -1107,7 +1107,7 @@ export default function CursosPage() {
                                                     const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-600' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-500/60' : 'bg-primary-400');
                                                     const textStyle = isFirst ? 'font-semibold text-white' : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-text-primary');
                                                     const valueStyle = isFirst
-                                                        ? (filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/50')
+                                                        ? (filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/50')
                                                         : (filtroSemiarido ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-800/50');
 
                                                     return (
@@ -1155,7 +1155,7 @@ export default function CursosPage() {
                                                 const fillColor = isFirst ? (filtroSemiarido ? 'bg-amber-600' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-500/60' : 'bg-primary-400');
                                                 const textStyle = isFirst ? 'font-semibold text-white' : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-text-primary');
                                                 const valueStyle = isFirst
-                                                    ? (filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/50')
+                                                    ? (filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/50')
                                                     : (filtroSemiarido ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-800/50');
 
                                                 return (
@@ -1242,9 +1242,9 @@ export default function CursosPage() {
                                                     : (isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300/80' : 'bg-primary-200'));
                                                 const textStyle = isFirst || isSelected
                                                     ? 'font-medium text-white'
-                                                    : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-primary-950 dark:text-primary-100');
+                                                    : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-primary-950 dark:text-neutral-900');
                                                 const valueStyle = isFirst
-                                                    ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/50 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/60')
+                                                    ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/50 text-primary-800 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/60')
                                                     : (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/50' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
 
                                                 return (
@@ -1273,7 +1273,7 @@ export default function CursosPage() {
                                                         </div>
 
                                                         {/* BADGE CIDADES */}
-                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-200 border border-primary-200/60 dark:border-primary-700/60'}`}>
+                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/60'}`}>
                                                             {ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}
                                                         </div>
 

@@ -221,13 +221,13 @@ export default function RankingBarChart({
                     // Label text style inside the bar
                     const textStyle = (isFirst || isSelected)
                         ? 'font-medium text-white'
-                        : (isSemi ? 'font-medium text-amber-950 dark:text-amber-200' : 'font-medium text-primary-950 dark:text-primary-100');
+                        : (isSemi ? 'font-medium text-amber-950 dark:text-amber-200' : 'font-medium text-primary-950 dark:text-neutral-900');
 
                     // Value pill style
                     const valueStyle = isFirst
-                        ? (isSemi ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border border-primary-200/70 dark:border-primary-700/50')
+                        ? (isSemi ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-50 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/50')
                         : isSelected
-                            ? (isSemi ? 'bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/40 font-semibold' : 'bg-primary-100 dark:bg-primary-800/50 text-primary-800 dark:text-primary-200 border border-primary-300 dark:border-primary-600 font-semibold')
+                            ? (isSemi ? 'bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/40 font-semibold' : 'bg-primary-100 dark:bg-primary-800/50 text-primary-800 dark:text-primary-300 border border-primary-300 dark:border-primary-600 font-semibold')
                             : (isSemi ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-800/50');
 
                     const formattedVal = val < 1 && val > 0 ? val.toFixed(3).replace('.', ',') : String(val);

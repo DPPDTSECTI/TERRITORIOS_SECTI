@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, LayoutDashboard, FileText, Info, Database, GraduationCap, GitPullRequest, Map, Sun, Moon } from 'lucide-react';
+import { Home, LayoutDashboard, LayoutGrid, FileText, Info, Database, GraduationCap, GitPullRequest, Sun, Moon } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
@@ -16,7 +16,7 @@ export default function Sidebar({ username, navOnly = false }) {
    ];
 
    const modulesItems = [
-      { path: '/territorios', label: 'Visão Geral', icon: LayoutDashboard, tourClass: 'tour-nav-visao' },
+      { path: '/territorios', label: 'Visão Geral', icon: LayoutGrid, tourClass: 'tour-nav-visao' },
       { path: '/ativos', label: 'Ativos', icon: Database, tourClass: 'tour-nav-ativos' },
       { path: '/cadeia', label: 'Cadeia', icon: GitPullRequest, tourClass: 'tour-nav-cadeias' },
       { path: '/cursos', label: 'Cursos CT&I', icon: GraduationCap, tourClass: 'tour-nav-cursos' },
@@ -66,7 +66,7 @@ export default function Sidebar({ username, navOnly = false }) {
                      <Link
                         to={item.path}
                         className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.path === '/sobre' ? 'tour-nav-sobre ' : ''}${isActive
-                           ? `bg-primary-50 dark:bg-primary-900/50 border-primary-600 dark:border-primary-500 text-primary-900 dark:text-primary-200 shadow-xs font-semibold`
+                           ? `bg-primary-50 dark:bg-primary-900/50 border-primary-600 dark:border-primary-500 text-primary-900 dark:text-primary-300 shadow-xs font-semibold`
                            : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                            }`}
                         title={isCollapsed ? item.label : undefined}
@@ -102,7 +102,7 @@ export default function Sidebar({ username, navOnly = false }) {
                            <Link
                               to={item.path}
                               className={`w-full h-[40px] flex items-center rounded-lg transition-colors duration-200 border-l-[3px] ${item.tourClass ? item.tourClass + ' ' : ''}${isActive
-                                 ? `bg-primary-50 dark:bg-primary-900/50 border-primary-600 dark:border-primary-500 text-primary-900 dark:text-primary-200 shadow-xs font-semibold`
+                                 ? `bg-primary-50 dark:bg-primary-900/50 border-primary-600 dark:border-primary-500 text-primary-900 dark:text-primary-300 shadow-xs font-semibold`
                                  : `border-transparent text-text-secondary hover:bg-surface-soft hover:text-text-primary`
                                  }`}
                               title={isCollapsed ? item.label : undefined}
