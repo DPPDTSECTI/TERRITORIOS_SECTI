@@ -2,6 +2,16 @@
   "crons": [
     { "path": "/api/keep-alive", "schedule": "0 12 * * *" }
   ],
+  "functions": {
+    "api/export-pdf.js": {
+      "memory": 1024,
+      "maxDuration": 60
+    },
+    "api/export-png.js": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",

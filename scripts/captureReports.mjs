@@ -1,4 +1,5 @@
-import { chromium } from 'playwright';
+import { chromium } from 'playwright-core';
+import sparticuzChromium from '@sparticuz/chromium';
 import { jsPDF } from 'jspdf';
 import fs from 'fs';
 import path from 'path';
@@ -9,16 +10,47 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
 /**
+ * Inicializa a instância do Chromium:
+ * - Em ambiente Vercel / Linux Serverless: utiliza @sparticuz/chromium + playwright-core.
+ * - Em ambiente local (Windows/macOS): utiliza o Chromium do Playwright local.
+ */
+export async function launchChromium() {
+  const isServerless = Boolean(
+    process.env.VERCEL ||
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||
+    process.platform === 'linux'
+  );
+
+  if (isServerless) {
+    console.log('[Playwright] Inicializando @sparticuz/chromium (Serverless Vercel)...');
+    return await chromium.launch({
+      args: sparticuzChromium.args,
+      executablePath: await sparticuzChromium.executablePath(),
+      headless: true
+    });
+  }
+
+  // Ambiente de desenvolvimento local
+  console.log('[Playwright] Inicializando Chromium local...');
+  try {
+    const pw = await import('playwright');
+    return await pw.chromium.launch({ headless: true });
+  } catch {
+    return await chromium.launch({ headless: true });
+  }
+}
+
+/**
  * Captura um relatório específico utilizando Playwright (Chromium real) a 1920x1080 @3x,
  * salva o screenshot PNG de alta fidelidade e converte para PDF na proporção exata 16:9 (300 x 168.75 mm).
  *
  * @param {Object} options
  * @param {string} options.route - Rota relativa (ex: '/relatorio/ativos')
- * @param {string} options.pngPath - Caminho absoluto ou relativo para salvar o PNG
- * @param {string} options.pdfPath - Caminho absoluto ou relativo para salvar o PDF
- * @param {string} [options.baseUrl='http://localhost:5173'] - URL base do servidor Vite
- * @param {import('playwright').Browser} [options.browserInstance] - Instância de navegador opcional para reuso
- * @returns {Promise<{ pngPath: string, pdfPath: string, width: number, height: number, pdfBuffer: Buffer }>}
+ * @param {string} [options.pngPath] - Caminho opcional para salvar o PNG em disco (ignorado em serverless)
+ * @param {string} [options.pdfPath] - Caminho opcional para salvar o PDF em disco (ignorado em serverless)
+ * @param {string} [options.baseUrl='http://localhost:5173'] - URL base do servidor
+ * @param {import('playwright-core').Browser} [options.browserInstance] - Instância de navegador opcional para reuso
+ * @returns {Promise<{ pngPath: string, pdfPath: string, width: number, height: number, pdfBuffer: Buffer, pngBuffer: Buffer }>}
  */
 export async function captureReportWithPlaywright({
   route,
@@ -28,9 +60,7 @@ export async function captureReportWithPlaywright({
   browserInstance = null
 }) {
   const shouldCloseBrowser = !browserInstance;
-  const browser = browserInstance || await chromium.launch({
-    headless: true
-  });
+  const browser = browserInstance || await launchChromium();
 
   try {
     // 1. Configura viewport oficial de 1920x1080 com deviceScaleFactor: 3 (5760x3240 px)
@@ -117,12 +147,16 @@ export async function captureReportWithPlaywright({
       animations: 'disabled'
     });
 
-    // 8. Salva o PNG primeiro (fonte da verdade visual)
+    // 8. Salva o PNG (ignora em ambientes serverless com disco somente-leitura)
     if (pngPath) {
-      const resolvedPngPath = path.isAbsolute(pngPath) ? pngPath : path.resolve(ROOT_DIR, pngPath);
-      fs.mkdirSync(path.dirname(resolvedPngPath), { recursive: true });
-      fs.writeFileSync(resolvedPngPath, pngBuffer);
-      console.log(`[Playwright] PNG salvo em: ${resolvedPngPath} (${pngBuffer.length} bytes)`);
+      try {
+        const resolvedPngPath = path.isAbsolute(pngPath) ? pngPath : path.resolve(ROOT_DIR, pngPath);
+        fs.mkdirSync(path.dirname(resolvedPngPath), { recursive: true });
+        fs.writeFileSync(resolvedPngPath, pngBuffer);
+        console.log(`[Playwright] PNG salvo em: ${resolvedPngPath} (${pngBuffer.length} bytes)`);
+      } catch (e) {
+        console.warn('[Playwright] Não foi possível salvar PNG em disco (esperado em ambiente serverless):', e.message);
+      }
     }
 
     // 9. Gera o PDF proporcional 16:9 via jsPDF com a imagem do screenshot
@@ -140,13 +174,17 @@ export async function captureReportWithPlaywright({
     const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
 
     if (pdfPath) {
-      const resolvedPdfPath = path.isAbsolute(pdfPath) ? pdfPath : path.resolve(ROOT_DIR, pdfPath);
-      fs.mkdirSync(path.dirname(resolvedPdfPath), { recursive: true });
-      fs.writeFileSync(resolvedPdfPath, pdfBuffer);
-      console.log(`[Playwright] PDF salvo em: ${resolvedPdfPath} (${pdfBuffer.length} bytes)`);
+      try {
+        const resolvedPdfPath = path.isAbsolute(pdfPath) ? pdfPath : path.resolve(ROOT_DIR, pdfPath);
+        fs.mkdirSync(path.dirname(resolvedPdfPath), { recursive: true });
+        fs.writeFileSync(resolvedPdfPath, pdfBuffer);
+        console.log(`[Playwright] PDF salvo em: ${resolvedPdfPath} (${pdfBuffer.length} bytes)`);
+      } catch (e) {
+        console.warn('[Playwright] Não foi possível salvar PDF em disco (esperado em ambiente serverless):', e.message);
+      }
     }
 
-    await context.close();
+    await context.close().catch(() => {});
 
     return {
       pngPath,
@@ -158,7 +196,7 @@ export async function captureReportWithPlaywright({
     };
   } finally {
     if (shouldCloseBrowser && browser) {
-      await browser.close();
+      await browser.close().catch(() => {});
     }
   }
 }
@@ -171,7 +209,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log('Viewport: 1920x1080 CSS | deviceScaleFactor: 3 (@3x)');
     console.log('====================================================');
 
-    const browser = await chromium.launch({ headless: true });
+    const browser = await launchChromium();
 
     const reports = [
       {
