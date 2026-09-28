@@ -27,7 +27,6 @@ import {
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { DataContext } from '../context/DataContext';
-import { captureReportViaIframe, captureDomElement, downloadCanvasAsPdf, downloadCanvasAsPng } from '../utils/clientExport';
 import {
  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
  PieChart, Pie, Cell, Legend
@@ -881,69 +880,39 @@ export default function RelatorioPage() {
 
     const modoParam = `&modo=${reportMode}`;
     const filename = `${fileBase}_${reportMode}.pdf`;
-    const fullRoute = `/relatorio/${type}?${terrParam}${modoParam}`;
+    const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
 
-    const isLocalDev = Boolean(
-      typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    );
-
-    let downloaded = false;
-
-    // 1. TENTA API DO PLAYWRIGHT SE ESTIVER EXECUTANDO LOCALMENTE NO DEV SERVER
-    if (isLocalDev) {
-      try {
-        const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
-        const res = await fetch(apiUrl);
-        const contentType = res.headers.get('content-type') || '';
-        if (res.ok && !contentType.includes('text/html')) {
-          const blob = await res.blob();
-          if (blob && blob.size > 2000) {
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
-            downloaded = true;
-          }
-        }
-      } catch (err) {
-        console.warn('[Exportação PDF] Servidor Playwright local indisponível, usando cliente:', err);
-      }
-    }
-
-    // 2. EXPORTAÇÃO CLIENT-SIDE (VERCEL / PRODUÇÃO / FALLBACK NATIVO)
-    if (!downloaded) {
-      try {
-        await captureReportViaIframe(fullRoute, 'pdf', filename);
-        downloaded = true;
-      } catch (iframeErr) {
-        console.warn('[Exportação PDF] Iframe falhou, tentando captura do container visível:', iframeErr);
+    try {
+      const res = await fetch(apiUrl);
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok || contentType.includes('text/html') || contentType.includes('application/json')) {
+        let errorMsg = 'Falha ao gerar o PDF com Playwright.';
         try {
-          const container = document.getElementById('relatorio-export-container');
-          if (container) {
-            const canvas = await captureDomElement(container, {
-              scale: 2,
-              useCORS: true,
-              allowTaint: false,
-              backgroundColor: '#f8fafc'
-            });
-            downloadCanvasAsPdf(canvas, filename);
-            downloaded = true;
-          } else {
-            throw iframeErr;
-          }
-        } catch (domErr) {
-          console.warn('[Exportação PDF] Abrindo relatório para impressão nativa do navegador:', domErr);
-          window.open(`${fullRoute}&autoPrint=1`, '_blank');
-        }
+          const errData = await res.json();
+          if (errData?.error) errorMsg = errData.error;
+        } catch (_) {}
+        throw new Error(errorMsg);
       }
-    }
 
-    setIsExportingPdf(false);
+      const blob = await res.blob();
+      if (!blob || blob.size < 500) {
+        throw new Error('Arquivo PDF gerado está vazio ou inválido.');
+      }
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
+    } catch (err) {
+      console.error('[Exportação PDF Playwright] Erro:', err);
+      alert(`Erro ao exportar PDF via Playwright: ${err.message || err}`);
+    } finally {
+      setIsExportingPdf(false);
+    }
   };
 
   const handleExportPNG = async (overrideType = null) => {
@@ -959,69 +928,39 @@ export default function RelatorioPage() {
       : 'territorio=bahia';
 
     const modoParam = `&modo=${reportMode}`;
-    const fullRoute = `/relatorio/${type}?${terrParam}${modoParam}`;
+    const apiUrl = `/api/export-png?type=${type}&${terrParam}${modoParam}`;
 
-    const isLocalDev = Boolean(
-      typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    );
-
-    let downloaded = false;
-
-    // 1. TENTA API DO PLAYWRIGHT SE ESTIVER EXECUTANDO LOCALMENTE NO DEV SERVER
-    if (isLocalDev) {
-      try {
-        const apiUrl = `/api/export-png?type=${type}&${terrParam}${modoParam}`;
-        const res = await fetch(apiUrl);
-        const contentType = res.headers.get('content-type') || '';
-        if (res.ok && !contentType.includes('text/html')) {
-          const blob = await res.blob();
-          if (blob && blob.size > 2000) {
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = pngName;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
-            downloaded = true;
-          }
-        }
-      } catch (err) {
-        console.warn('[Exportação PNG] Servidor Playwright local indisponível, usando cliente:', err);
-      }
-    }
-
-    // 2. EXPORTAÇÃO CLIENT-SIDE (VERCEL / PRODUÇÃO / FALLBACK NATIVO)
-    if (!downloaded) {
-      try {
-        await captureReportViaIframe(fullRoute, 'png', pngName);
-        downloaded = true;
-      } catch (iframeErr) {
-        console.warn('[Exportação PNG] Iframe falhou, tentando captura do container visível:', iframeErr);
+    try {
+      const res = await fetch(apiUrl);
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok || contentType.includes('text/html') || contentType.includes('application/json')) {
+        let errorMsg = 'Falha ao gerar a imagem PNG com Playwright.';
         try {
-          const container = document.getElementById('relatorio-export-container');
-          if (container) {
-            const canvas = await captureDomElement(container, {
-              scale: 2,
-              useCORS: true,
-              allowTaint: false,
-              backgroundColor: '#f8fafc'
-            });
-            await downloadCanvasAsPng(canvas, pngName);
-            downloaded = true;
-          } else {
-            throw iframeErr;
-          }
-        } catch (domErr) {
-          console.error('[Exportação PNG] Erro:', domErr);
-          alert('Não foi possível gerar a imagem PNG. Recomendamos utilizar a exportação em PDF.');
-        }
+          const errData = await res.json();
+          if (errData?.error) errorMsg = errData.error;
+        } catch (_) {}
+        throw new Error(errorMsg);
       }
-    }
 
-    setIsExportingPng(false);
+      const blob = await res.blob();
+      if (!blob || blob.size < 500) {
+        throw new Error('Arquivo PNG gerado está vazio ou inválido.');
+      }
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = pngName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
+    } catch (err) {
+      console.error('[Exportação PNG Playwright] Erro:', err);
+      alert(`Erro ao exportar PNG via Playwright: ${err.message || err}`);
+    } finally {
+      setIsExportingPng(false);
+    }
   };
 
 

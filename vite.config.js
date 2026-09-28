@@ -21,7 +21,10 @@ export default defineConfig({
           }
 
           try {
-            const url = new URL(req.url, 'http://localhost:5173');
+            const host = req.headers.host || 'localhost:5173';
+            const protocol = req.headers['x-forwarded-proto'] || 'http';
+            const baseUrl = `${protocol}://${host}`;
+            const url = new URL(req.url, baseUrl);
             const isPngEndpoint = req.url.startsWith('/api/export-png');
             const format = url.searchParams.get('format') || (isPngEndpoint ? 'png' : 'pdf');
             const type = url.searchParams.get('type') || 'sintese';
@@ -61,7 +64,7 @@ export default defineConfig({
               route: fullRoute,
               pngPath: debugPngName,
               pdfPath: finalPdfName,
-              baseUrl: 'http://localhost:5173'
+              baseUrl
             });
 
             if (format === 'png') {
