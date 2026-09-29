@@ -908,8 +908,16 @@ export default function RelatorioPage() {
       a.remove();
       setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
     } catch (err) {
-      console.error('[Exportação PDF Playwright] Erro:', err);
-      alert(`Erro ao exportar PDF via Playwright: ${err.message || err}`);
+      console.warn('[Exportação PDF Playwright] Falha no serviço Playwright, acionando fallback nativo com auto-impressão:', err);
+      const routeMap = {
+        ativos: '/relatorio/ativos',
+        cursos: '/relatorio/cursos',
+        cadeias: '/relatorio/cadeias',
+        sintese: '/relatorio/sintese'
+      };
+      const reportRoute = routeMap[type] || '/relatorio/sintese';
+      const fallbackUrl = `${reportRoute}?${terrParam}&modo=${reportMode}&autoPrint=1`;
+      window.open(fallbackUrl, '_blank');
     } finally {
       setIsExportingPdf(false);
     }
@@ -956,8 +964,19 @@ export default function RelatorioPage() {
       a.remove();
       setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
     } catch (err) {
-      console.error('[Exportação PNG Playwright] Erro:', err);
-      alert(`Erro ao exportar PNG via Playwright: ${err.message || err}`);
+      console.warn('[Exportação PNG Playwright] Falha no endpoint Playwright, gerando via motor local:', err);
+      try {
+        const { exportReportAsPng } = await import('../utils/exportReportClient');
+        await exportReportAsPng({
+          type,
+          territorioId: selectedTerritoryId,
+          modo: reportMode,
+          filename: pngName
+        });
+      } catch (fallbackErr) {
+        console.error('[Exportação PNG Fallback] Erro:', fallbackErr);
+        alert(`Erro ao exportar PNG: ${fallbackErr.message || fallbackErr}`);
+      }
     } finally {
       setIsExportingPng(false);
     }

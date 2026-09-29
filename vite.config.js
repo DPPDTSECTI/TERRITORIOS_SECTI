@@ -21,7 +21,10 @@ export default defineConfig({
           }
 
           try {
-            const host = req.headers.host || 'localhost:5173';
+            let host = req.headers.host || 'localhost:5173';
+            if (host.startsWith('127.0.0.1:')) {
+              host = host.replace('127.0.0.1:', 'localhost:');
+            }
             const protocol = req.headers['x-forwarded-proto'] || 'http';
             const baseUrl = `${protocol}://${host}`;
             const url = new URL(req.url, baseUrl);
@@ -101,5 +104,5 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 1000,
   },
-  server: { hmr: { overlay: true } },
+  server: { host: true, hmr: { overlay: true } },
 });

@@ -66,24 +66,39 @@ export async function captureReportWithPlaywright({
     // 1. Configura viewport oficial de 1920x1080 com deviceScaleFactor: 3 (5760x3240 px)
     const context = await browser.newContext({
       viewport: { width: 1920, height: 1080 },
-      deviceScaleFactor: 3
+      deviceScaleFactor: 3,
+      colorScheme: 'light'
     });
 
     const page = await context.newPage();
+    const pageErrors = [];
+    page.on('pageerror', err => {
+      console.error('[Playwright Page Error]:', err.message);
+      pageErrors.push(err.message);
+    });
+
     const targetUrl = route.startsWith('http') ? route : `${baseUrl}${route}`;
 
     console.log(`[Playwright] Navegando para: ${targetUrl}`);
-    await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 60000 });
+    // Utiliza domcontentloaded para não ficar retido por WebSockets contínuos (HMR / Supabase) ou streaming de tiles
+    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-    // 2. Aguarda o elemento raiz oficial do relatório estar presente e visível
-    await page.waitForSelector('#pdf-report', { state: 'visible', timeout: 30000 });
+    // 2. Aguarda o elemento raiz oficial do relatório estar montado no DOM e visível
+    try {
+      await page.waitForSelector('#pdf-report', { state: 'attached', timeout: 60000 });
+      await page.waitForSelector('#pdf-report', { state: 'visible', timeout: 30000 });
+    } catch (selectorErr) {
+      const currentUrl = page.url();
+      const pageTextSnippet = await page.evaluate(() => document.body ? document.body.innerText.slice(0, 300) : '').catch(() => '');
+      throw new Error(`Timeout aguardando #pdf-report na rota ${route} (URL atual: ${currentUrl}). Erros na página: ${pageErrors.join(' | ') || pageTextSnippet || selectorErr.message}`);
+    }
 
     // 3. Aguarda ausência de loaders ou estado de carregamento de dados
     await page.waitForFunction(() => {
       const hasSpinner = document.querySelector('.animate-spin') !== null;
-      const hasLoadingText = document.body.innerText.includes('Carregando dados...');
+      const hasLoadingText = document.body && document.body.innerText.includes('Carregando dados...');
       return !hasSpinner && !hasLoadingText;
-    }, { timeout: 30000 }).catch(() => {
+    }, { timeout: 45000 }).catch(() => {
       console.warn('[Playwright] Timeout aguardando desaparecimento de loaders, prosseguindo com captura.');
     });
 

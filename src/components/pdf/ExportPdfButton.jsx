@@ -77,8 +77,16 @@ export default function ExportPdfButton({
       a.remove();
       setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
     } catch (err) {
-      console.error('[ExportPdfButton Playwright] Erro:', err);
-      alert(`Erro ao exportar PDF via Playwright: ${err.message || err}`);
+      console.warn('[ExportPdfButton Playwright] Falha no endpoint Playwright, acionando fallback nativo com auto-impressão:', err);
+      const routeMap = {
+        ativos: '/relatorio/ativos',
+        cursos: '/relatorio/cursos',
+        cadeias: '/relatorio/cadeias',
+        sintese: '/relatorio/sintese'
+      };
+      const reportRoute = routeMap[type] || '/relatorio/sintese';
+      const fallbackUrl = `${reportRoute}?${terrParam}${modoParam}&autoPrint=1`;
+      window.open(fallbackUrl, '_blank');
     } finally {
       setInternalLoading(false);
     }

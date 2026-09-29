@@ -33,7 +33,10 @@ export default async function handler(req, res) {
     const finalPdfName = `${fileBase}_${modo}.pdf`;
 
     // Determina a URL base pública onde a aplicação está rodando na Vercel
-    const host = req.headers['x-forwarded-host'] || req.headers.host || process.env.VERCEL_URL || 'localhost:5173';
+    let host = req.headers['x-forwarded-host'] || req.headers.host || process.env.VERCEL_URL || 'localhost:5173';
+    if (host.startsWith('127.0.0.1:')) {
+      host = host.replace('127.0.0.1:', 'localhost:');
+    }
     const proto = req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https');
     const baseUrl = `${proto}://${host}`;
 
