@@ -222,7 +222,7 @@ function CardLista({
  }}
  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors text-left cursor-pointer ${
  selectedFilter === 'todos' 
- ? (filtroSemiarido ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-surface-soft text-text-primary font-semibold')
+ ? (filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 font-bold' : 'bg-surface-soft text-text-primary font-semibold')
  : 'text-text-secondary hover:bg-surface-soft'
  }`}
  >
@@ -240,7 +240,7 @@ function CardLista({
  }}
  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition-colors text-left cursor-pointer ${
  selectedFilter === option 
- ? (filtroSemiarido ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-surface-soft text-text-primary font-bold')
+ ? (filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 font-bold' : 'bg-surface-soft text-text-primary font-bold')
  : 'text-text-secondary hover:bg-surface-soft'
  }`}
  >

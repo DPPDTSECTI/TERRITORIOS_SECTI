@@ -71,15 +71,15 @@ function StackedBarChart({
   }, [visibleData, maxScale]);
 
   return (
-    <div className="bg-white rounded-[24px] border border-transparent shadow-[0_4px_20px_rgba(29,53,87,0.04)] p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden">
+    <div className="bg-surface rounded-2xl border border-border shadow-card p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden">
 
       {/* CABEÇALHO DO CARD */}
       <div className="flex items-center justify-between gap-2 mb-1 shrink-0">
         <div className="flex flex-col">
-          <h3 className="text-[17px] lg:text-[18px] font-bold text-[#1D3557] tracking-tight flex items-center gap-2">
+          <h3 className="text-[17px] lg:text-[18px] font-bold text-text-primary tracking-tight flex items-center gap-2">
             {title}
           </h3>
-          <span className="text-[12px] text-[#457B9D]">
+          <span className="text-[12px] text-text-muted">
             {subtitle}
           </span>
         </div>
@@ -119,11 +119,11 @@ function StackedBarChart({
       </div>
 
       {/* LEGENDA HORIZONTAL DAS CATEGORIAS */}
-      <div className="flex items-center flex-wrap gap-x-3 gap-y-0.5 my-1 text-[11.5px] font-semibold text-[#1D3557] shrink-0 border-b border-[#F1F5F9] pb-1.5">
+      <div className="flex items-center flex-wrap gap-x-3 gap-y-0.5 my-1 text-[11.5px] font-semibold text-text-primary shrink-0 border-b border-border pb-1.5">
         {categories.map((cat) => (
           <div key={cat.key} className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.colorHex }}></span>
-            <span className="truncate max-w-[140px] text-[#1D3557] font-semibold">{cat.shortLabel || cat.label}</span>
+            <span className="truncate max-w-[140px] text-text-secondary font-semibold">{cat.shortLabel || cat.label}</span>
           </div>
         ))}
       </div>
@@ -235,7 +235,7 @@ function StackedBarChart({
                         segments: item.segments
                       });
                     }}
-                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-md bg-surface-soft border border-border text-[10.5px] font-bold text-[#1D3557] group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs leading-none shrink-0"
+                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-md bg-surface-soft border border-border text-[10.5px] font-bold text-text-primary group-hover/bar:bg-primary-900 group-hover/bar:text-white group-hover/bar:scale-110 transition-all mb-1 select-none cursor-pointer shadow-2xs leading-none shrink-0"
                     title="Ver todos os ativos da região"
                   >
                     {totalVal}
@@ -283,7 +283,7 @@ function StackedBarChart({
         </div>
 
         {/* LINHA DE BASE HORIZONTAL COMPARTILHADA (ÂNCORA VISUAL) */}
-        <div className="w-full h-[1.5px] bg-[#CBD5E1] shrink-0 my-0.5" />
+        <div className="w-full h-[1.5px] bg-border shrink-0 my-0.5" />
 
         {/* ÁREA DOS RÓTULOS DOS TERRITÓRIOS (TOTALMENTE INDEPENDENTE DAS BARRAS) */}
         <div className="w-full flex items-start justify-between gap-1.5 sm:gap-2 shrink-0 h-[30px] overflow-visible">
@@ -295,7 +295,7 @@ function StackedBarChart({
                 className="flex-1 flex items-start justify-center px-0.5 text-center leading-[11px] select-none min-w-0"
                 title={item.label}
               >
-                <span className="text-[9.5px] font-bold text-[#334155] group-hover/bar:text-[#1D3557] transition-colors whitespace-pre-line break-words">
+                <span className="text-[9.5px] font-bold text-text-secondary group-hover/bar:text-text-primary transition-colors whitespace-pre-line break-words">
                   {formattedName}
                 </span>
               </div>

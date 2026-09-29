@@ -482,7 +482,7 @@ export default function CursosPage() {
                         <h1 className="text-3xl font-bold text-text-primary tracking-tight">
                             Módulo de Ensino Superior em CT&I
                         </h1>
-                        <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 border-amber-500/30' : 'bg-primary-600/10 text-primary-600 border-primary-600/20'} text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none`}>
+                        <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-600/10 text-primary-600 dark:text-primary-300 border-primary-600/20'} text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none`}>
                             <Flame size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
                             Somente Oferta de CT&I
                         </span>
@@ -654,7 +654,7 @@ export default function CursosPage() {
                                                     <GraduationCap size={16} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800' : 'text-primary-800') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
+                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
                                                         }`}>
                                                         {c.curso || c.nome}
                                                     </h5>
@@ -902,13 +902,13 @@ export default function CursosPage() {
                                             <h3 className="text-[13px] font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Oferta de Cursos à Distância (EaD) e Semipresenciais'}
                                             </h3>
-                                            <span className={`${filtroSemiarido ? 'bg-amber-50 text-amber-800 border-amber-300' : 'bg-primary-50 text-primary-700 border-primary-200/60'} text-[11px] font-medium px-2 py-0.5 rounded-full border inline-flex items-center justify-center leading-none`}>
+                                            <span className={`${filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border-primary-200/60 dark:border-primary-700/60'} text-[11px] font-medium px-2 py-0.5 rounded-full border inline-flex items-center justify-center leading-none`}>
                                                 {filteredEadCursos.length} cursos
                                             </span>
                                         </div>
 
                                         {selectedTerritory && (
-                                            <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 border justify-center leading-none ${filtroSemiarido ? 'text-amber-800 bg-amber-50 border-amber-300' : 'text-primary-700 bg-primary-50 border-primary-200/60'}`}>
+                                            <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 border justify-center leading-none ${filtroSemiarido ? 'text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60' : 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border-primary-200/60 dark:border-primary-700/60'}`}>
                                                 <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
                                                 {territoryName}
                                             </span>
@@ -949,7 +949,7 @@ export default function CursosPage() {
                                                         </div>
 
                                                         <div className="flex items-center flex-wrap gap-2 ml-auto max-w-full">
-                                                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs justify-center leading-none border ${filtroSemiarido ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-primary-100 text-primary-800 border-primary-200'}`}>
+                                                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs justify-center leading-none border ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700/60' : 'bg-primary-100 dark:bg-primary-950/40 text-primary-800 dark:text-primary-200 border-primary-200 dark:border-primary-700/60'}`}>
                                                                 <Wifi size={16} strokeWidth={2} />
                                                                  EaD
                                                             </span>
@@ -1052,7 +1052,7 @@ export default function CursosPage() {
                                                             </div>
                                                         </div>
 
-                                                        <div className={`w-full h-[18px] rounded-full overflow-hidden relative flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'}`}>
+                                                        <div className={`w-full h-[18px] rounded-full overflow-hidden relative flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'}`}>
                                                             <div
                                                                 className="h-full rounded-full transition-all duration-500"
                                                                 style={{ width: `${cat.percent}%`, backgroundColor: cat.color }}
@@ -1122,7 +1122,7 @@ export default function CursosPage() {
                                                             </div>
 
                                                             {/* BARRA: TRACK + FILL + NOME */}
-                                                            <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'}`}>
+                                                            <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'}`}>
                                                                 <div 
                                                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                     style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
@@ -1174,7 +1174,7 @@ export default function CursosPage() {
                                                         </div>
 
                                                         {/* BARRA: TRACK + FILL + NOME */}
-                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-50/60' : 'bg-primary-50/50'}`}>
+                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'}`}>
                                                             <div 
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}

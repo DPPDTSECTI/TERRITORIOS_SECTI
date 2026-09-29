@@ -592,7 +592,7 @@ export default function CadeiaPage() {
                             <h3 className="text-[13px] font-semibold text-text-primary">
                                 {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
                             </h3>
-                            <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-600'} text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none`}>
+                            <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-600/10 text-primary-600 dark:text-primary-300'} text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none`}>
                                 {filteredCadeias.length}
                             </span>
                         </div>
@@ -696,7 +696,7 @@ export default function CadeiaPage() {
                                                 <div className="flex flex-col min-w-0 flex-1">
                                                     <h4 className={`text-[13px] font-semibold leading-tight break-words transition-colors ${
                                                         isSelected 
-                                                            ? (filtroSemiarido ? 'text-amber-800' : 'text-primary-600') 
+                                                            ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300') 
                                                             : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
                                                         }`}>
                                                         {c.entidade}
@@ -740,7 +740,7 @@ export default function CadeiaPage() {
                                         </div>
 
                                         <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors border ${isSelected
-                                                ? (filtroSemiarido ? 'bg-amber-100/50 border-amber-300 text-amber-900' : 'bg-primary-50/70 border-primary-200 text-primary-900')
+                                                ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
                                                 : 'bg-surface-soft border-border text-text-secondary'
                                             }`}>
                                             <span className="font-semibold text-text-primary">
@@ -761,7 +761,7 @@ export default function CadeiaPage() {
                                                     <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
                                                     <span>Referência / Citação do Artigo:</span>
                                                 </div>
-                                                <p className="text-[10.5px] leading-relaxed italic text-neutral-800 dark:text-neutral-800">
+                                                <p className="text-[10.5px] leading-relaxed italic text-text-secondary dark:text-amber-200/90">
                                                     "{c.texto_referencia}"
                                                 </p>
                                             </div>
@@ -833,7 +833,7 @@ export default function CadeiaPage() {
                                         </div>
                                     </div>
                                     <div className={`w-full h-[18px] rounded-full overflow-hidden relative flex items-center ${
-                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'
+                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
                                     }`}>
                                         <div
                                             className="h-full rounded-full transition-all duration-500"
@@ -887,7 +887,7 @@ export default function CadeiaPage() {
                                     </span>
 
                                     <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'
+                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
                                     }`}>
                                         <div
                                             className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
@@ -928,7 +928,7 @@ export default function CadeiaPage() {
                                     </span>
 
                                     <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'
+                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
                                     }`}>
                                         <div
                                             className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
@@ -1019,8 +1019,8 @@ export default function CadeiaPage() {
                         </h1>
                         <span className={`text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
                             filtroSemiarido
-                                ? 'bg-amber-500/15 text-amber-800 border-amber-500/30'
-                                : 'bg-success-500/10 text-success-700 border-success-500/20'
+                                ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30'
+                                : 'bg-success-500/10 text-success-700 dark:text-success-400 border-success-500/20'
                         }`}>
                             <Award size={16} className={filtroSemiarido ? 'text-amber-700' : 'text-success-700'} />
                             Arranjos & Indicações Geográficas
@@ -1216,7 +1216,7 @@ export default function CadeiaPage() {
                                                     <IconComp size={12} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800' : 'text-primary-800') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
+                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
                                                         }`}>
                                                         {c.entidade}
                                                     </h5>

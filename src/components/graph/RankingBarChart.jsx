@@ -245,7 +245,7 @@ export default function RankingBarChart({
                             </div>
 
                             {/* BARRA: TRACK + FILL + NOME */}
-                            <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-neutral-800/50'} overflow-hidden min-w-0 flex items-center`}>
+                            <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'} overflow-hidden min-w-0 flex items-center`}>
                                 {/* Fill proporcional */}
                                 <div
                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}

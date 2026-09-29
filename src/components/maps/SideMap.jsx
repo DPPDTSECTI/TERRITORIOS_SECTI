@@ -530,8 +530,8 @@ function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
         {ativo.rnp && (
           <div className={`flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-lg border justify-center leading-none ${
             filtroSemiarido
-              ? 'text-amber-800 bg-amber-500/15 border-amber-500/30'
-              : 'text-info-600 bg-info-500/15 border-info-500/20'
+              ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15 border-amber-500/30'
+              : 'text-info-600 dark:text-info-400 bg-info-500/15 border-info-500/20'
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-info-500'}`}></span>
             <span>Ponto de Presença / Conexão RNP</span>
@@ -594,12 +594,12 @@ function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false }) {
         )}
 
         {cadeia.texto_referencia && (
-          <div className="mt-2 p-2 rounded-lg bg-amber-50/90 border border-amber-200 text-[10px] text-amber-950 leading-snug">
-            <div className="flex items-center gap-1 font-bold text-[9px] uppercase tracking-wider text-amber-800 mb-0.5">
-              <BookOpen size={11} className="text-amber-700 shrink-0" />
+          <div className="mt-2 p-2 rounded-lg bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/60 text-[10px] text-amber-950 dark:text-amber-100 leading-snug">
+            <div className="flex items-center gap-1 font-bold text-[9px] uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-0.5">
+              <BookOpen size={11} className="text-amber-700 dark:text-amber-400 shrink-0" />
               <span>Artigo / Referência Acadêmica:</span>
             </div>
-            <span className="italic line-clamp-3 text-neutral-800">"{cadeia.texto_referencia}"</span>
+            <span className="italic line-clamp-3 text-text-secondary dark:text-amber-200/90">"{cadeia.texto_referencia}"</span>
           </div>
         )}
       </div>
@@ -1595,7 +1595,7 @@ export default function SideMap({
   const currentHeatLevels = filtroSemiarido ? SEMIARIDO_HEAT_LEVELS : HEAT_LEVELS;
 
   return (
-    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-[#FFFDF7]' : 'bg-[#EBF1F6]'} bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1`}>
+    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-[#FFFDF7] dark:bg-[#120e06]' : 'bg-[#EBF1F6] dark:bg-[#0b0f19]'} bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1`}>
       <MapContainer
         ref={mapRef}
         center={[-13.1, -41.7]}
@@ -1752,7 +1752,7 @@ export default function SideMap({
             <span className="text-text-primary font-extrabold text-[12px] tracking-tight">
               {hoveredInfo.label}
             </span>
-            <span className={`font-black text-[11px] px-2 py-0.5 rounded-full ${filtroSemiarido ? 'text-amber-800 bg-amber-500/15' : 'text-[#2563EB] bg-[#2563EB]/10'}`}>
+            <span className={`font-black text-[11px] px-2 py-0.5 rounded-full ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15' : 'text-primary-600 dark:text-primary-300 bg-primary-500/10'}`}>
               {hoveredInfo.count} {hoveredInfo.count === 1 ? 'curso' : 'cursos'}
             </span>
           </div>
@@ -1769,7 +1769,7 @@ export default function SideMap({
               </span>
             </div>
             {selectedTerritory && (
-              <span className={`text-[8.5px] font-black px-1.5 py-0.2 rounded-md ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-[#2563EB]/10 text-[#2563EB]'}`}>
+              <span className={`text-[8.5px] font-black px-1.5 py-0.2 rounded-md ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
                 Máx: {maxCursosNoTerritorioSelecionado}
               </span>
             )}

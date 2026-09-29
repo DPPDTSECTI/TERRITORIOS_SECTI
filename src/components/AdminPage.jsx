@@ -85,8 +85,8 @@ export default function AdminPage() {
  </div>
  </div>
 
- {/* Card 2 - Branco */}
- <div className="bg-white rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-transparent hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
+ {/* Card 2 */}
+ <div className="bg-surface rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-border hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
  <div className="flex justify-between items-start">
  <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-3">
  <MapPin size={20} strokeWidth={2} />
@@ -104,8 +104,8 @@ export default function AdminPage() {
  </div>
  </div>
 
- {/* Card 3 - Branco */}
- <div className="bg-white rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-transparent hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
+ {/* Card 3 */}
+ <div className="bg-surface rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-border hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
  <div className="flex justify-between items-start">
  <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-[-3deg]">
  <Layers size={20} strokeWidth={2} />
@@ -122,8 +122,8 @@ export default function AdminPage() {
  </div>
  </div>
 
- {/* Card 4 - Branco */}
- <div className="bg-white rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-transparent hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
+ {/* Card 4 */}
+ <div className="bg-surface rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-border hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
  <div className="flex justify-between items-start">
  <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-3">
  <CheckCircle size={20} strokeWidth={2} />
@@ -142,7 +142,7 @@ export default function AdminPage() {
  </div>
 
  {/* LISTAGEM PRINCIPAL COMO UM DASHBOARD CARD */}
- <div className="w-full bg-white rounded-xl shadow-card-soft hover:shadow-card-hover transition-shadow duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-7 md:p-8 flex flex-col flex-1 min-h-0">
+ <div className="w-full bg-surface rounded-xl shadow-card-soft border border-border hover:shadow-card-hover transition-shadow duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-7 md:p-8 flex flex-col flex-1 min-h-0">
  
  {/* HEADER DA TABELA */}
  <div className="flex flex-col md:flex-row md:items-center justify-between w-full mb-8 gap-4">
@@ -171,7 +171,7 @@ export default function AdminPage() {
 
  {/* DROPDOWN MENU */}
  {isAddDropdownOpen && (
- <div className="absolute right-[calc(100%+12px)] top-0 w-96 bg-white border border-primary-200 shadow-card-soft rounded-xl p-6 z-50 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+ <div className="absolute right-[calc(100%+12px)] top-0 w-96 bg-surface border border-border shadow-card-soft rounded-xl p-6 z-50 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
  <div className="flex items-center gap-2 mb-2">
  <div className="w-8 h-8 rounded-xl bg-primary-200 text-text-primary flex items-center justify-center">
  <Plus size={16} strokeWidth={2} />
@@ -226,19 +226,19 @@ export default function AdminPage() {
  </div>
 
  {/* TABLE HEADER */}
- <div className="w-full pb-4 border-b border-primary-200/50 grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4">
- <span className="text-[12px] font-medium text-primary-300 ">ATIVO</span>
- <span className="text-[12px] font-medium text-primary-300 ">CATEGORIA</span>
- <span className="text-[12px] font-medium text-primary-300 ">LOCALIDADE</span>
- <span className="text-[12px] font-medium text-primary-300 ">FONTE/REF</span>
- <span className="text-[12px] font-medium text-primary-300 ">ABREV.</span>
- <span className="text-[12px] font-medium text-primary-300 text-center">AÇÕES</span>
+ <div className="w-full pb-4 border-b border-border grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4">
+ <span className="text-[12px] font-medium text-text-muted">ATIVO</span>
+ <span className="text-[12px] font-medium text-text-muted">CATEGORIA</span>
+ <span className="text-[12px] font-medium text-text-muted">LOCALIDADE</span>
+ <span className="text-[12px] font-medium text-text-muted">FONTE/REF</span>
+ <span className="text-[12px] font-medium text-text-muted">ABREV.</span>
+ <span className="text-[12px] font-medium text-text-muted text-center">AÇÕES</span>
  </div>
 
  {/* DATA ROWS */}
  <div className="flex flex-col w-full mt-3 overflow-y-auto flex-1 pr-2 custom-scrollbar">
  {ativos.map((ativo) => (
- <div key={ativo.id} className="w-full py-4 border-b border-surface-soft last:border-b-0 grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4 hover:bg-surface-soft/50 transition-colors group rounded-xl cursor-default">
+ <div key={ativo.id} className="w-full py-4 border-b border-border/50 last:border-b-0 grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4 hover:bg-surface-soft/50 transition-colors group rounded-xl cursor-default">
 
  <div className="w-full h-full flex items-center pr-2 gap-3.5">
  <div className="w-9 h-9 rounded-full bg-primary-200 flex items-center justify-center text-text-primary shrink-0">

@@ -884,8 +884,8 @@ export default function DashboardPainel() {
                         negativeLabel="Sem RNP"
                         positiveColor={filtroSemiarido ? "bg-amber-600" : "bg-primary-500"}
                         negativeColor={filtroSemiarido ? "bg-amber-500/15" : "bg-primary-100"}
-                        positiveTextColor={filtroSemiarido ? "text-amber-700" : "text-primary-700"}
-                        negativeTextColor={filtroSemiarido ? "text-amber-800" : "text-primary-700"}
+                        positiveTextColor={filtroSemiarido ? "text-amber-700 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}
+                        negativeTextColor={filtroSemiarido ? "text-amber-800 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}
                         badge={null}
                         cardClassName={filtroSemiarido ? 'semiarido-card-warmth-4' : ''}
                       />
