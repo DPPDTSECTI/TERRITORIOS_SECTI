@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Printer } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
  * Componente unificado para exportação de relatório em PDF na proporção nativa da tela.
@@ -20,6 +21,7 @@ export default function ExportPdfButton({
   size = 'md', // 'sm' | 'md'
   variant = 'primary' // 'primary' | 'navy' | 'emerald'
 }) {
+  const { isDark } = useTheme();
   const [internalLoading, setInternalLoading] = useState(false);
   const effectiveLoading = isLoading || internalLoading;
 
@@ -46,8 +48,9 @@ export default function ExportPdfButton({
       : 'territorio=bahia';
 
     const modoParam = `&modo=${reportMode}`;
-    const filename = `${fileBase}_${reportMode}.pdf`;
-    const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
+    const themeParam = `&theme=${isDark ? 'dark' : 'light'}`;
+    const filename = `${fileBase}_${reportMode}_${isDark ? 'dark' : 'light'}.pdf`;
+    const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}${themeParam}`;
 
     setInternalLoading(true);
 
@@ -85,7 +88,7 @@ export default function ExportPdfButton({
         sintese: '/relatorio/sintese'
       };
       const reportRoute = routeMap[type] || '/relatorio/sintese';
-      const fallbackUrl = `${reportRoute}?${terrParam}${modoParam}&autoPrint=1`;
+      const fallbackUrl = `${reportRoute}?${terrParam}${modoParam}${themeParam}&autoPrint=1`;
       window.open(fallbackUrl, '_blank');
     } finally {
       setInternalLoading(false);

@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { type = 'sintese', territorio = 'bahia', modo = 'normal' } = req.query || {};
+    const { type = 'sintese', territorio = 'bahia', modo = 'normal', theme = 'light' } = req.query || {};
 
     let route = '/relatorio/sintese';
 
@@ -25,8 +25,8 @@ export default async function handler(req, res) {
       ? `territorio=${encodeURIComponent(territorio)}`
       : 'territorio=bahia';
 
-    const fullRoute = `${route}?${terrParam}&modo=${modo === 'semiarido' ? 'semiarido' : 'normal'}`;
-    const finalPngName = `relatorio_${type}_${modo}.png`;
+    const fullRoute = `${route}?${terrParam}&modo=${modo === 'semiarido' ? 'semiarido' : 'normal'}&theme=${theme === 'dark' ? 'dark' : 'light'}`;
+    const finalPngName = `relatorio_${type}_${modo}_${theme}.png`;
 
     // Determina a URL base pública onde a aplicação está rodando na Vercel
     let host = req.headers['x-forwarded-host'] || req.headers.host || process.env.VERCEL_URL || 'localhost:5173';
@@ -38,7 +38,8 @@ export default async function handler(req, res) {
 
     const result = await captureReportWithPlaywright({
       route: fullRoute,
-      baseUrl
+      baseUrl,
+      theme
     });
 
     res.setHeader('Content-Type', 'image/png');

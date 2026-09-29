@@ -33,6 +33,7 @@ export default defineConfig({
             const type = url.searchParams.get('type') || 'sintese';
             const territorio = url.searchParams.get('territorio') || 'bahia';
             const modo = url.searchParams.get('modo') === 'semiarido' ? 'semiarido' : 'normal';
+            const theme = url.searchParams.get('theme') || 'light';
 
             let route = '/relatorio/sintese';
             let fileBase = 'relatorio_sintese';
@@ -56,18 +57,19 @@ export default defineConfig({
               ? `territorio=${encodeURIComponent(territorio)}`
               : 'territorio=bahia';
 
-            const fullRoute = `${route}?${terrParam}&modo=${modo}`;
+            const fullRoute = `${route}?${terrParam}&modo=${modo}&theme=${theme}`;
 
-            const finalPdfName = `${fileBase}_${modo}.pdf`;
-            const finalPngName = `relatorio_${pngType}_${modo}.png`;
-            const debugPngName = `relatorio_${pngType}_${modo}_debug.png`;
+            const finalPdfName = `${fileBase}_${modo}_${theme}.pdf`;
+            const finalPngName = `relatorio_${pngType}_${modo}_${theme}.png`;
+            const debugPngName = `relatorio_${pngType}_${modo}_${theme}_debug.png`;
 
             const { captureReportWithPlaywright } = await import('./scripts/captureReports.mjs');
             const result = await captureReportWithPlaywright({
               route: fullRoute,
               pngPath: debugPngName,
               pdfPath: finalPdfName,
-              baseUrl
+              baseUrl,
+              theme
             });
 
             if (format === 'png') {

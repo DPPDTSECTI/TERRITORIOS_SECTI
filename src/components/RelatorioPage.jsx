@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { DataContext } from '../context/DataContext';
+import { useTheme } from '../context/ThemeContext';
 import {
  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
  PieChart, Pie, Cell, Legend
@@ -121,6 +122,7 @@ function cleanIes(name) {
 console.log('RelatorioPage montado!');
 
 export default function RelatorioPage() {
+  const { isDark } = useTheme();
   const {
     territoriosData = [],
     ativosData = [],
@@ -130,7 +132,9 @@ export default function RelatorioPage() {
     municipiosTerritorios = [],
     kpisGlobais = {},
     territoriesDynamicStats = {},
-    loadingStats = false
+    loadingStats = false,
+    filtroSemiarido = false,
+    setFiltroSemiarido
   } = useContext(DataContext);
 
   // CAIXA 1: Território selecionado. 'bahia' = Toda a Bahia (Padrão)
@@ -139,7 +143,20 @@ export default function RelatorioPage() {
   // CAIXA 2: Tipo de Relatório selecionado
   // 'sintese' | 'ativos' | 'cursos' | 'cadeias' | 'municipios'
   const [reportType, setReportType] = useState('sintese');
-  const [reportMode, setReportMode] = useState('normal'); // 'normal' | 'semiarido'
+  const [reportMode, setReportMode] = useState(() => (filtroSemiarido ? 'semiarido' : 'normal'));
+
+  useEffect(() => {
+    setReportMode(filtroSemiarido ? 'semiarido' : 'normal');
+  }, [filtroSemiarido]);
+
+  const handleToggleReportMode = () => {
+    const next = reportMode === 'normal' ? 'semiarido' : 'normal';
+    setReportMode(next);
+    if (setFiltroSemiarido) {
+      setFiltroSemiarido(next === 'semiarido');
+    }
+  };
+
   const [tableSearch, setTableSearch] = useState('');
   const [sortField, setSortField] = useState(null);
   const [sortAsc, setSortAsc] = useState(true);
@@ -879,8 +896,9 @@ export default function RelatorioPage() {
       : 'territorio=bahia';
 
     const modoParam = `&modo=${reportMode}`;
-    const filename = `${fileBase}_${reportMode}.pdf`;
-    const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}`;
+    const themeParam = `&theme=${isDark ? 'dark' : 'light'}`;
+    const filename = `${fileBase}_${reportMode}_${isDark ? 'dark' : 'light'}.pdf`;
+    const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}${themeParam}`;
 
     try {
       const res = await fetch(apiUrl);
@@ -916,7 +934,7 @@ export default function RelatorioPage() {
         sintese: '/relatorio/sintese'
       };
       const reportRoute = routeMap[type] || '/relatorio/sintese';
-      const fallbackUrl = `${reportRoute}?${terrParam}&modo=${reportMode}&autoPrint=1`;
+      const fallbackUrl = `${reportRoute}?${terrParam}&modo=${reportMode}${themeParam}&autoPrint=1`;
       window.open(fallbackUrl, '_blank');
     } finally {
       setIsExportingPdf(false);
@@ -929,14 +947,15 @@ export default function RelatorioPage() {
 
     const type = overrideType || reportType;
     const fileType = type === 'cursos' ? 'cursos' : type;
-    const pngName = `relatorio_${fileType}_${reportMode}.png`;
+    const pngName = `relatorio_${fileType}_${reportMode}_${isDark ? 'dark' : 'light'}.png`;
 
     const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
       ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
       : 'territorio=bahia';
 
     const modoParam = `&modo=${reportMode}`;
-    const apiUrl = `/api/export-png?type=${type}&${terrParam}${modoParam}`;
+    const themeParam = `&theme=${isDark ? 'dark' : 'light'}`;
+    const apiUrl = `/api/export-png?type=${type}&${terrParam}${modoParam}${themeParam}`;
 
     try {
       const res = await fetch(apiUrl);
@@ -1181,7 +1200,7 @@ export default function RelatorioPage() {
   {/* SELETOR DE MODO: NORMAL VS SEMIÁRIDO — toggle compacto */}
   <button
     type="button"
-    onClick={() => setReportMode(prev => prev === 'normal' ? 'semiarido' : 'normal')}
+    onClick={handleToggleReportMode}
     title={reportMode === 'normal' ? 'Ativar Modo Semiárido' : 'Voltar ao Modo Normal'}
     className={`relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border shrink-0 select-none ${
       reportMode === 'semiarido'

@@ -23,7 +23,22 @@ export const DataProvider = ({ children }) => {
 
   const [loadingStats, setLoadingStats] = useState(true);
   const [selectedTerritory, setSelectedTerritory] = useState(null);
-  const [filtroSemiarido, setFiltroSemiarido] = useState(false);
+  const [filtroSemiarido, setFiltroSemiarido] = useState(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('modo') === 'semiarido') return true;
+        return localStorage.getItem('secti-semiarido') === 'true';
+      }
+    } catch {}
+    return false;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('secti-semiarido', String(filtroSemiarido));
+    } catch {}
+  }, [filtroSemiarido]);
 
   useEffect(() => {
     const carregarEstatisticas = async () => {

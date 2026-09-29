@@ -57,17 +57,20 @@ export async function captureReportWithPlaywright({
   pngPath,
   pdfPath,
   baseUrl = 'http://localhost:5173',
-  browserInstance = null
+  browserInstance = null,
+  theme = null
 }) {
   const shouldCloseBrowser = !browserInstance;
   const browser = browserInstance || await launchChromium();
+
+  const isDark = theme === 'dark' || route.includes('theme=dark');
 
   try {
     // 1. Configura viewport oficial de 1920x1080 com deviceScaleFactor: 3 (5760x3240 px)
     const context = await browser.newContext({
       viewport: { width: 1920, height: 1080 },
       deviceScaleFactor: 3,
-      colorScheme: 'light'
+      colorScheme: isDark ? 'dark' : 'light'
     });
 
     const page = await context.newPage();
@@ -79,9 +82,28 @@ export async function captureReportWithPlaywright({
 
     const targetUrl = route.startsWith('http') ? route : `${baseUrl}${route}`;
 
-    console.log(`[Playwright] Navegando para: ${targetUrl}`);
+    console.log(`[Playwright] Navegando para: ${targetUrl} (Tema: ${isDark ? 'escuro' : 'claro'})`);
     // Utiliza domcontentloaded para não ficar retido por WebSockets contínuos (HMR / Supabase) ou streaming de tiles
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+    // Sincroniza tema dark/light no documento imediatamente
+    await page.evaluate((dark) => {
+      try {
+        if (dark) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = 'dark';
+          document.body.classList.add('dark');
+          document.body.style.backgroundColor = '#0B0F19';
+          localStorage.setItem('secti-theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.style.colorScheme = 'light';
+          document.body.classList.remove('dark');
+          document.body.style.backgroundColor = '#F8FAFC';
+          localStorage.setItem('secti-theme', 'light');
+        }
+      } catch (_) {}
+    }, isDark);
 
     // 2. Aguarda o elemento raiz oficial do relatório estar montado no DOM e visível
     try {

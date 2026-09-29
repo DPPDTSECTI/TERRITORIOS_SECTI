@@ -9,6 +9,12 @@ const ThemeContext = createContext({
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
+    // 0. Verifica se veio na URL (?theme=dark ou ?theme=light)
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlTheme = urlParams.get('theme');
+      if (urlTheme === 'dark' || urlTheme === 'light') return urlTheme;
+    }
     // 1. Verifica localStorage
     const saved = localStorage.getItem('secti-theme');
     if (saved === 'dark' || saved === 'light') return saved;

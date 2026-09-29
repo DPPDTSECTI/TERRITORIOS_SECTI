@@ -107,13 +107,17 @@ export default function RelatorioEnsinoPage() {
     ativosData = [],
     cursosData = [],
     territoriosData = [],
-    loadingStats = false
+    loadingStats = false,
+    filtroSemiarido,
+    setFiltroSemiarido
   } = useContext(DataContext);
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const reportMode = searchParams.get('modo') || 'normal';
+  const reportMode = searchParams.has('modo')
+    ? searchParams.get('modo')
+    : (filtroSemiarido ? 'semiarido' : 'normal');
   const isSemiarido = reportMode === 'semiarido';
 
   const [selectedTerritory, setSelectedTerritory] = useState(null);
@@ -508,11 +512,11 @@ export default function RelatorioEnsinoPage() {
   }, [filteredAtivos]);
 
   return (
-    <main id="pdf-report" ref={contentRef} className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-white select-none">
+    <main id="pdf-report" ref={contentRef} className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-transparent select-none">
       {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none print:hidden ${
+        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
           isSemiarido ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -573,7 +577,7 @@ export default function RelatorioEnsinoPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedTerritory(null)}
-                  className="text-[#0369A1] dark:text-primary-400 hover:text-red-500 transition-colors ml-0.5 cursor-pointer"
+                  className="text-[#0369A1] dark:text-primary-400 hover:text-red-500 transition-colors ml-0.5 cursor-pointer print:hidden"
                   title="Limpar seleção territorial"
                 >
                   <X size={12} />
@@ -595,7 +599,32 @@ export default function RelatorioEnsinoPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
+          {/* BOTÃO TOGGLE SEMIÁRIDO (print:hidden) */}
+          <button
+            type="button"
+            onClick={() => {
+              const next = !isSemiarido;
+              setFiltroSemiarido?.(next);
+              const newParams = new URLSearchParams(searchParams);
+              if (next) {
+                newParams.set('modo', 'semiarido');
+              } else {
+                newParams.delete('modo');
+              }
+              navigate(`?${newParams.toString()}`, { replace: true });
+            }}
+            title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-bold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
+              isSemiarido
+                ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
+                : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
+            }`}
+          >
+            <span className={`w-2 h-2 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-slate-400'}`} />
+            <span>Semiárido</span>
+          </button>
+
           <span className="text-[12px] font-bold text-[#1D3557] dark:text-primary-300 bg-[#D6EAF8]/50 dark:bg-primary-950/40 border border-[#BAE6FD] dark:border-primary-800/40 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
             <Award size={14} className="text-[#2563EB] dark:text-primary-400" />
             Dados Oficiais SECTI/BA

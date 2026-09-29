@@ -26,9 +26,18 @@ export const REPORT_PRINT_PAGE_STYLE = `
     max-width: 1920px !important;
     max-height: 1080px !important;
     overflow: hidden !important;
-    background: #f8fafc !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  html.dark, html.dark body {
+    background: #0B0F19 !important;
+    color: #F8FAFC !important;
+  }
+
+  html:not(.dark), html:not(.dark) body {
+    background: #F8FAFC !important;
+    color: #1D3557 !important;
   }
 
   #pdf-report {
@@ -41,11 +50,20 @@ export const REPORT_PRINT_PAGE_STYLE = `
     box-sizing: border-box !important;
     overflow: hidden !important;
     padding: 24px 32px !important;
-    background: #f8fafc !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-before: avoid !important;
     page-break-after: avoid !important;
+  }
+
+  html.dark #pdf-report {
+    background: #0B0F19 !important;
+    color: #F8FAFC !important;
+  }
+
+  html:not(.dark) #pdf-report {
+    background: #F8FAFC !important;
+    color: #1D3557 !important;
   }
 
   .print\\:hidden,
@@ -94,6 +112,31 @@ export async function prepareReportForPrint() {
 export async function printWithCanvasSync(iframe, contentRef) {
   try {
     if (contentRef?.current && iframe?.contentDocument) {
+      // 1. Sincroniza a classe 'dark' e color-scheme no documento do iframe
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        iframe.contentDocument.documentElement.classList.add('dark');
+        iframe.contentDocument.documentElement.style.colorScheme = 'dark';
+        if (iframe.contentDocument.body) {
+          iframe.contentDocument.body.classList.add('dark');
+        }
+      } else {
+        iframe.contentDocument.documentElement.classList.remove('dark');
+        iframe.contentDocument.documentElement.style.colorScheme = 'light';
+        if (iframe.contentDocument.body) {
+          iframe.contentDocument.body.classList.remove('dark');
+        }
+      }
+
+      // 2. Garante que as folhas de estilos do Tailwind e index.css estejam no head do iframe
+      const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+      styles.forEach(style => {
+        try {
+          iframe.contentDocument.head.appendChild(style.cloneNode(true));
+        } catch (_) {}
+      });
+
+      // 3. Sincroniza os buffers de canvas
       const srcCanvases = contentRef.current.querySelectorAll('canvas');
       const destCanvases = iframe.contentDocument.querySelectorAll('canvas');
       srcCanvases.forEach((src, idx) => {
@@ -112,6 +155,8 @@ export async function printWithCanvasSync(iframe, contentRef) {
     console.warn('[Print] Aviso ao sincronizar canvas:', e);
   }
 
-  iframe.contentWindow.focus();
-  iframe.contentWindow.print();
+  setTimeout(() => {
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+  }, 100);
 }
