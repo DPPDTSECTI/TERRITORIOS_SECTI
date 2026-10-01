@@ -49,6 +49,7 @@ const RelatorioCursosPage = lazy(() => import('./components/pdf/RelatorioEnsino'
 const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioAtivos'));
 const RelatorioCadeias = lazy(() => import('./components/pdf/RelatorioCadeias'));
 const RelatorioSintesePage = lazy(() => import('./components/pdf/RelatorioSintese'));
+const RelatorioAnalisePage = lazy(() => import('./components/pdf/RelatorioAnalise'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -234,6 +235,7 @@ username="PTI Bahia"
             <Route path="/relatorio/cursos" element={<PageWrapper><RelatorioCursosPage /></PageWrapper>} />
             <Route path="/relatorio/ativos" element={<PageWrapper><RelatorioAtivosPage /></PageWrapper>} />
             <Route path="/relatorio/cadeias" element={<PageWrapper><RelatorioCadeias /></PageWrapper>} />
+            <Route path="/relatorio/analise" element={<PageWrapper><RelatorioAnalisePage /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>

@@ -23,7 +23,8 @@ import {
  Award,
  BarChart3,
  Compass,
- FileSpreadsheet
+ FileSpreadsheet,
+ ChevronDown
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { DataContext } from '../context/DataContext';
@@ -163,6 +164,33 @@ export default function RelatorioPage() {
   const [selectedCadeia, setSelectedCadeia] = useState(null);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [isExportingPng, setIsExportingPng] = useState(false);
+  const [isAnaliseDropdownOpen, setIsAnaliseDropdownOpen] = useState(false);
+  const [isExportingAnalise, setIsExportingAnalise] = useState(false);
+  const analiseDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (analiseDropdownRef.current && !analiseDropdownRef.current.contains(e.target)) {
+        setIsAnaliseDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleMessage = (e) => {
+      if (e.data === 'analise-print-done') {
+        setIsExportingAnalise(false);
+        const iframe = document.getElementById('hidden-analise-print-iframe');
+        if (iframe) {
+          setTimeout(() => iframe.remove(), 1000);
+        }
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
 
   // Território selecionado (objeto) ou null se for Toda a Bahia
@@ -941,6 +969,46 @@ export default function RelatorioPage() {
     }
   };
 
+  const handleExportAnalisePDF = (overrideType = null) => {
+    if (isExportingAnalise) return;
+    const targetType = overrideType || (reportType === 'sintese' ? 'sintese' : reportType);
+    const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
+      ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
+      : 'territorio=bahia';
+
+    const modoParam = `&modo=${reportMode}`;
+    const themeParam = `&theme=light`;
+    const analiseUrl = `/relatorio/analise?tipo=${targetType}&${terrParam}${modoParam}${themeParam}&autoPrint=1`;
+
+    setIsExportingAnalise(true);
+    setIsAnaliseDropdownOpen(false);
+
+    // Carrega a página em um iframe oculto em segundo plano para imprimir todas as páginas sem direcionar o usuário
+    let iframe = document.getElementById('hidden-analise-print-iframe');
+    if (iframe) {
+      iframe.remove();
+    }
+    iframe = document.createElement('iframe');
+    iframe.id = 'hidden-analise-print-iframe';
+    iframe.title = '';
+    iframe.style.position = 'fixed';
+    iframe.style.top = '0';
+    iframe.style.left = '-99999px';
+    iframe.style.width = '1024px';
+    iframe.style.height = '768px';
+    iframe.style.opacity = '1';
+    iframe.style.zIndex = '-99999';
+    iframe.style.pointerEvents = 'none';
+    iframe.style.border = '0';
+    iframe.src = analiseUrl;
+    document.body.appendChild(iframe);
+
+    // Timeout de segurança para redefinir o botão caso a caixa de diálogo seja fechada
+    setTimeout(() => {
+      setIsExportingAnalise(false);
+    }, 4500);
+  };
+
   const handleExportPNG = async (overrideType = null) => {
     if (isExportingPng) return;
     setIsExportingPng(true);
@@ -1258,6 +1326,111 @@ export default function RelatorioPage() {
      )}
    </button>
 
+    {/* BOTÃO EXPORTAR PDF MODO ANÁLISE (DADOS COMPLETOS / TABELAS) */}
+    <div className="relative" ref={analiseDropdownRef}>
+      <button
+        type="button"
+        onClick={() => {
+          if (reportType === 'sintese') {
+            setIsAnaliseDropdownOpen((prev) => !prev);
+          } else {
+            handleExportAnalisePDF(reportType);
+          }
+        }}
+        disabled={isExportingAnalise}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer justify-center leading-none shadow-2xs border ${
+          reportMode === 'semiarido'
+            ? 'bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200 hover:bg-amber-500/20'
+            : 'bg-primary-500/10 border-primary-500/30 text-primary-800 dark:text-primary-200 hover:bg-primary-500/20'
+        } disabled:opacity-60`}
+        title={`Exportar Relatório no Modo Análise (PDF A4 com lista completa de dados) - ${currentReportLabel}`}
+      >
+        {isExportingAnalise ? (
+          <>
+            <div className="w-3.5 h-3.5 border-2 border-primary-600/30 border-t-primary-600 rounded-full animate-spin" />
+            <span>Gerando PDF...</span>
+          </>
+        ) : (
+          <>
+            <FileText size={14} className={reportMode === 'semiarido' ? 'text-amber-600' : 'text-primary-600 dark:text-primary-400'} />
+            <span>PDF Modo Análise</span>
+            {reportType === 'sintese' && (
+              <ChevronDown size={13} className={`transition-transform duration-200 ${isAnaliseDropdownOpen ? 'rotate-180' : ''}`} />
+            )}
+          </>
+        )}
+      </button>
+
+      {/* DROPDOWN PARA SÍNTESE: ESCOLHA DE DOSSIÊ COMPLETO OU MÓDULO INDIVIDUAL */}
+      {reportType === 'sintese' && isAnaliseDropdownOpen && (
+        <div className="absolute right-0 top-full mt-1.5 w-64 bg-surface rounded-xl border border-border shadow-xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+          <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-text-muted border-b border-border/60">
+            Exportar PDF Analítico (A4)
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setIsAnaliseDropdownOpen(false);
+              handleExportAnalisePDF('sintese');
+            }}
+            className="w-full text-left px-3 py-2 text-xs font-semibold text-text-primary hover:bg-primary-50 dark:hover:bg-primary-950/40 flex items-center justify-between transition-colors cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <FileText size={14} className="text-primary-600 dark:text-primary-400" />
+              <span>Dossiê Geral Completo</span>
+            </span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-bold">
+              Todos
+            </span>
+          </button>
+          <div className="my-1 border-t border-border/40" />
+          <button
+            type="button"
+            onClick={() => {
+              setIsAnaliseDropdownOpen(false);
+              handleExportAnalisePDF('ativos');
+            }}
+            className="w-full text-left px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-surface-soft flex items-center gap-2 transition-colors cursor-pointer"
+          >
+            <Database size={13} className="text-primary-600" />
+            <span>Apenas Ativos de CT&I ({scopedAtivos.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsAnaliseDropdownOpen(false);
+              handleExportAnalisePDF('cursos');
+            }}
+            className="w-full text-left px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-surface-soft flex items-center gap-2 transition-colors cursor-pointer"
+          >
+            <GraduationCap size={13} className="text-[#0D9488]" />
+            <span>Apenas Cursos Superiores ({scopedCursos.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsAnaliseDropdownOpen(false);
+              handleExportAnalisePDF('cadeias');
+            }}
+            className="w-full text-left px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-surface-soft flex items-center gap-2 transition-colors cursor-pointer"
+          >
+            <GitPullRequest size={13} className="text-accent-600" />
+            <span>Apenas Cadeias Produtivas ({statsSintese.totalCadeias})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsAnaliseDropdownOpen(false);
+              handleExportAnalisePDF('municipios');
+            }}
+            className="w-full text-left px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-surface-soft flex items-center gap-2 transition-colors cursor-pointer"
+          >
+            <MapPin size={13} className="text-warning-600" />
+            <span>Apenas Municípios ({statsSintese.totalMunEscopo})</span>
+          </button>
+        </div>
+      )}
+    </div>
 
    <button
      type="button"
