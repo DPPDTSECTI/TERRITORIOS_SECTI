@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
-import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Maximize2, Minimize2, BookOpen, SunMedium } from 'lucide-react';
+import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Expand, Shrink, Maximize2, Minimize2, BookOpen, SunMedium } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -884,6 +884,7 @@ export default function SideMap({
   const [municipiosGeoJson, setMunicipiosGeoJson] = useState(null);
   const [pinnedAssetId, setPinnedAssetId] = useState(null);
   const [hoveredFeatureName, setHoveredFeatureName] = useState(null);
+  const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
   const [isLayerControlOpen, setIsLayerControlOpen] = useState(false);
   const [showAllConnections, setShowAllConnections] = useState(false);
   const [currentZoom, setCurrentZoom] = useState(6);
@@ -1231,19 +1232,119 @@ export default function SideMap({
     return Math.max(...Object.values(mCounts), 1);
   }, [mode, selectedTerritory, visibleCursos]);
 
-  const territoryStats = useMemo(() => {
-    if (mode === 'cursos') return {};
+  const baseAtivosForStats = useMemo(() => {
+    if (mode !== 'ativos') return [];
+    let list = processedAtivos.filter((a) => activeCategoryKeys.has(a.tipo || 'Outros'));
+    if (selectedTipos && selectedTipos.length > 0 && !selectedTipos.includes('todos')) {
+      list = list.filter((a) => selectedTipos.includes(a.tipo) || selectedTipos.includes(a.shortTipo));
+    } else if (selectedTipo && selectedTipo !== 'todos') {
+      list = list.filter((a) => a.tipo === selectedTipo || a.shortTipo === selectedTipo);
+    }
+    return list;
+  }, [processedAtivos, activeCategoryKeys, selectedTipo, selectedTipos, mode]);
+
+  const ativosStatsByTerritory = useMemo(() => {
+    if (mode !== 'ativos') return {};
     const stats = {};
-    const sourceList = mode === 'cadeias' ? visibleCadeias : visibleAtivos;
-    sourceList.forEach((a) => {
+    baseAtivosForStats.forEach((a) => {
       const rawTerr = (a.territorio || a.territorio_identidade || '').replace(/^Território de Identidade\s+/i, '').trim();
-      if (rawTerr) {
-        if (!stats[rawTerr]) stats[rawTerr] = { count: 0 };
-        stats[rawTerr].count += 1;
+      const tid = a.id_territorio ? String(a.id_territorio) : null;
+
+      const keysToRegister = [];
+      if (rawTerr) keysToRegister.push(normalizeName(rawTerr));
+      if (tid) keysToRegister.push(`id_${tid}`);
+
+      keysToRegister.forEach(k => {
+        if (!stats[k]) {
+          stats[k] = { count: 0, nome: rawTerr };
+        }
+        stats[k].count += 1;
+      });
+    });
+    return stats;
+  }, [baseAtivosForStats, mode]);
+
+  const ativosStatsByMunicipio = useMemo(() => {
+    if (mode !== 'ativos') return {};
+    const stats = {};
+    baseAtivosForStats.forEach((a) => {
+      const munNorm = normalizeName(a.municipio || '');
+      if (munNorm) {
+        if (!stats[munNorm]) {
+          stats[munNorm] = { count: 0, nome: a.municipio };
+        }
+        stats[munNorm].count += 1;
       }
     });
     return stats;
-  }, [visibleAtivos, visibleCadeias, mode]);
+  }, [baseAtivosForStats, mode]);
+
+  const baseCadeiasForStats = useMemo(() => {
+    if (mode !== 'cadeias') return [];
+    let list = (cadeiasData && cadeiasData.length > 0 ? cadeiasData : processedAtivos)
+      .filter((c) => activeCategoryKeys.has(c.tipo || 'APL'));
+
+    if (selectedSegmento) {
+      list = list.filter((c) => c.segmento === selectedSegmento);
+    }
+    if (selectedTipo && selectedTipo !== 'todos') {
+      list = list.filter((c) => c.tipo === selectedTipo || c.shortTipo === selectedTipo);
+    }
+    return list;
+  }, [cadeiasData, processedAtivos, activeCategoryKeys, selectedSegmento, selectedTipo, mode]);
+
+  const cadeiasStatsByTerritory = useMemo(() => {
+    if (mode !== 'cadeias') return {};
+    const stats = {};
+
+    baseCadeiasForStats.forEach((c) => {
+      const rawTerr = (c.territorio_identidade || c.territorio_sede || c.territorio || '').replace(/^Território de Identidade\s+/i, '').trim();
+      const tid = c.id_territorio ? String(c.id_territorio) : null;
+
+      const terrKeys = new Set();
+      if (rawTerr) terrKeys.add(normalizeName(rawTerr));
+      if (tid) terrKeys.add(`id_${tid}`);
+
+      if (Array.isArray(c.municipios_cobertos)) {
+        c.municipios_cobertos.forEach(m => {
+          if (m.nome_territorio) terrKeys.add(normalizeName(m.nome_territorio.replace(/^Território de Identidade\s+/i, '').trim()));
+          if (m.id_territorio) terrKeys.add(`id_${m.id_territorio}`);
+        });
+      }
+
+      terrKeys.forEach(k => {
+        if (!stats[k]) {
+          stats[k] = { count: 0, nome: rawTerr };
+        }
+        stats[k].count += 1;
+      });
+    });
+    return stats;
+  }, [baseCadeiasForStats, mode]);
+
+  const cadeiasStatsByMunicipio = useMemo(() => {
+    if (mode !== 'cadeias') return {};
+    const stats = {};
+
+    baseCadeiasForStats.forEach((c) => {
+      const munKeys = new Set();
+      const munSede = normalizeName(c.municipio_sede || c.municipio || '');
+      if (munSede) munKeys.add(munSede);
+
+      if (Array.isArray(c.municipios_cobertos)) {
+        c.municipios_cobertos.forEach(m => {
+          const mNorm = normalizeName(m.nome_municipio || m.municipio || '');
+          if (mNorm) munKeys.add(mNorm);
+        });
+      }
+
+      munKeys.forEach(m => {
+        if (!stats[m]) stats[m] = { count: 0 };
+        stats[m].count += 1;
+      });
+    });
+    return stats;
+  }, [baseCadeiasForStats, mode]);
 
   // Carrega a topologia base
   useEffect(() => {
@@ -1468,6 +1569,25 @@ export default function SideMap({
       };
     }
 
+    if (mode !== 'cursos') {
+      const munStat = mode === 'ativos' ? ativosStatsByMunicipio[munNorm] : cadeiasStatsByMunicipio[munNorm];
+      const count = munStat ? munStat.count : 0;
+      return {
+        fillColor: isHovered
+          ? (filtroSemiarido ? '#FEF3C7' : '#EFF6FF')
+          : (count > 0 ? (filtroSemiarido ? '#FFFBEB' : '#F0F9FF') : 'transparent'),
+        fillOpacity: isHovered ? 0.75 : (count > 0 ? 0.4 : 0),
+        color: isHovered
+          ? (filtroSemiarido ? '#D97706' : '#2563EB')
+          : (count > 0 ? (filtroSemiarido ? '#D9770680' : '#38BDF8') : (isDark ? '#334155' : '#CBD5E1')),
+        weight: isHovered ? 2.0 : 0.8,
+        opacity: 0.9,
+        lineCap: 'round',
+        lineJoin: 'round',
+        className: 'transition-all duration-150 cursor-pointer outline-none'
+      };
+    }
+
     const munStat = cursosStatsByMunicipio[munNorm];
     const count = munStat ? munStat.count : 0;
     const isHovered = hoveredFeatureName === munNome;
@@ -1501,6 +1621,7 @@ export default function SideMap({
     layer.on({
       mouseover: (e) => {
         setHoveredFeatureName(nome);
+        setHoveredFeatureId(idTerr ? String(idTerr) : null);
         if (mode !== 'cursos' && !selectedTerritory) {
           e.target.setStyle({
             fillColor: filtroSemiarido ? '#FEF3C7' : '#EFF6FF',
@@ -1512,6 +1633,7 @@ export default function SideMap({
       },
       mouseout: (e) => {
         setHoveredFeatureName(null);
+        setHoveredFeatureId(null);
         if (mode !== 'cursos' && !selectedTerritory) {
           e.target.setStyle(territoryBorderStyle(feature));
         }
@@ -1540,13 +1662,15 @@ export default function SideMap({
     layer.on({
       mouseover: (e) => {
         setHoveredFeatureName(munNome);
+        setHoveredFeatureId(idTerr ? String(idTerr) : null);
         e.target.setStyle({
           weight: 2.0,
-          color: '#1D3557'
+          color: filtroSemiarido ? '#D97706' : '#1D3557'
         });
       },
       mouseout: (e) => {
         setHoveredFeatureName(null);
+        setHoveredFeatureId(null);
         e.target.setStyle(municipioBorderStyle(feature));
       },
       click: (e) => {
@@ -1559,25 +1683,114 @@ export default function SideMap({
   };
 
   const hoveredInfo = useMemo(() => {
-    if (mode !== 'cursos' || !hoveredFeatureName) return null;
+    if (!hoveredFeatureName) return null;
     const norm = normalizeName(hoveredFeatureName);
 
-    if (selectedTerritory) {
-      const stat = cursosStatsByMunicipio[norm];
-      return {
-        label: hoveredFeatureName,
-        count: stat ? stat.count : 0,
-        sub: 'no município'
-      };
+    let count = 0;
+    let unitSingular = 'item';
+    let unitPlural = 'itens';
+    let IconComponent = Layers;
+
+    if (mode === 'cursos') {
+      unitSingular = 'curso';
+      unitPlural = 'cursos';
+      IconComponent = Flame;
+      if (selectedTerritory) {
+        const stat = cursosStatsByMunicipio[norm];
+        count = stat ? stat.count : 0;
+      } else {
+        const stat = (hoveredFeatureId ? cursosStatsByTerritory[`id_${hoveredFeatureId}`] : null) || cursosStatsByTerritory[norm];
+        count = stat ? stat.count : 0;
+      }
+    } else if (mode === 'ativos') {
+      unitSingular = 'ativo';
+      unitPlural = 'ativos';
+      IconComponent = Layers;
+      if (selectedTerritory) {
+        const stat = ativosStatsByMunicipio[norm];
+        count = stat ? stat.count : 0;
+      } else {
+        const stat = (hoveredFeatureId ? ativosStatsByTerritory[`id_${hoveredFeatureId}`] : null) || ativosStatsByTerritory[norm];
+        count = stat ? stat.count : 0;
+      }
+    } else if (mode === 'cadeias') {
+      unitSingular = 'cadeia';
+      unitPlural = 'cadeias';
+      IconComponent = Network;
+      if (selectedTerritory) {
+        const stat = cadeiasStatsByMunicipio[norm];
+        count = stat ? stat.count : 0;
+      } else {
+        const stat = (hoveredFeatureId ? cadeiasStatsByTerritory[`id_${hoveredFeatureId}`] : null) || cadeiasStatsByTerritory[norm];
+        count = stat ? stat.count : 0;
+      }
     }
 
-    const stat = cursosStatsByTerritory[norm];
     return {
       label: hoveredFeatureName,
-      count: stat ? stat.count : 0,
-      sub: 'no território'
+      count,
+      unit: count === 1 ? unitSingular : unitPlural,
+      IconComponent,
+      sub: selectedTerritory ? 'no município' : 'no território'
     };
-  }, [mode, hoveredFeatureName, selectedTerritory, cursosStatsByMunicipio, cursosStatsByTerritory]);
+  }, [
+    mode,
+    hoveredFeatureName,
+    hoveredFeatureId,
+    selectedTerritory,
+    cursosStatsByMunicipio,
+    cursosStatsByTerritory,
+    ativosStatsByMunicipio,
+    ativosStatsByTerritory,
+    cadeiasStatsByMunicipio,
+    cadeiasStatsByTerritory
+  ]);
+
+  const selectedTerritoryInfo = useMemo(() => {
+    if (!selectedTerritory) return null;
+    const rawTerr = selectedTerritory.nome_territorio || selectedTerritory.territorio || '';
+    const cleanTerr = rawTerr.replace(/^Território de Identidade\s+/i, '').trim();
+    const norm = normalizeName(cleanTerr);
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+
+    let count = 0;
+    let unitSingular = 'item';
+    let unitPlural = 'itens';
+    let IconComponent = Layers;
+
+    if (mode === 'cursos') {
+      unitSingular = 'curso';
+      unitPlural = 'cursos';
+      IconComponent = Flame;
+      const stat = (tid ? cursosStatsByTerritory[`id_${tid}`] : null) || cursosStatsByTerritory[norm];
+      count = stat ? stat.count : 0;
+    } else if (mode === 'ativos') {
+      unitSingular = 'ativo';
+      unitPlural = 'ativos';
+      IconComponent = Layers;
+      const stat = (tid ? ativosStatsByTerritory[`id_${tid}`] : null) || ativosStatsByTerritory[norm];
+      count = stat ? stat.count : 0;
+    } else if (mode === 'cadeias') {
+      unitSingular = 'cadeia';
+      unitPlural = 'cadeias';
+      IconComponent = Network;
+      const stat = (tid ? cadeiasStatsByTerritory[`id_${tid}`] : null) || cadeiasStatsByTerritory[norm];
+      count = stat ? stat.count : 0;
+    }
+
+    return {
+      label: cleanTerr,
+      count,
+      unit: count === 1 ? unitSingular : unitPlural,
+      IconComponent
+    };
+  }, [
+    selectedTerritory,
+    mode,
+    cursosStatsByTerritory,
+    ativosStatsByTerritory,
+    cadeiasStatsByTerritory
+  ]);
 
   const hasActiveFilter = Boolean(
     pinnedAssetId ||
@@ -1640,9 +1853,9 @@ export default function SideMap({
           />
         )}
 
-        {mode === 'cursos' && selectedTerritory && municipiosGeoJson && (
+        {selectedTerritory && municipiosGeoJson && (
           <GeoJSON
-            key={`municipios-heat-layer-${filtroSemiarido ? 'semi' : 'norm'}-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${selectedCategory || 'all'}-${activeCategoryKeys.size}-${visibleCursos.length}`}
+            key={`municipios-layer-${mode}-${filtroSemiarido ? 'semi' : 'norm'}-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${activeCategoryKeys.size}-${mode === 'cursos' ? visibleCursos.length : mode === 'cadeias' ? visibleCadeias.length : visibleAtivos.length}`}
             data={municipiosGeoJson}
             style={municipioBorderStyle}
             onEachFeature={onEachMunicipioFeature}
@@ -1745,18 +1958,37 @@ export default function SideMap({
           </div>
         )}
 
-        {/* INFO AO PASSAR O MOUSE (HOVER) */}
-        {hoveredInfo && (
-          <div className="flex items-center gap-1.5 bg-surface/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-border shadow-sm">
-            {mode === 'cursos' && <Flame size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />}
-            <span className="text-text-primary font-extrabold text-[12px] tracking-tight">
-              {hoveredInfo.label}
-            </span>
-            <span className={`font-black text-[11px] px-2 py-0.5 rounded-full ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15' : 'text-primary-600 dark:text-primary-300 bg-primary-500/10'}`}>
-              {hoveredInfo.count} {hoveredInfo.count === 1 ? 'curso' : 'cursos'}
-            </span>
-          </div>
-        )}
+        {/* INFO DO TERRITÓRIO NO TOPO (HOVER OU TERRITÓRIO SELECIONADO) */}
+        {(hoveredInfo || selectedTerritoryInfo) && (() => {
+          const display = hoveredInfo || selectedTerritoryInfo;
+          const Icon = display.IconComponent;
+          const isSelectedBadge = !hoveredInfo && Boolean(selectedTerritoryInfo);
+
+          return (
+            <div className="pointer-events-auto flex items-center gap-1.5 bg-surface/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-border shadow-sm animate-in fade-in slide-in-from-top-1 duration-150">
+              <Icon size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
+              <span className="text-text-primary font-extrabold text-[12px] tracking-tight truncate max-w-[160px]">
+                {display.label}
+              </span>
+              <span className={`font-black text-[11px] px-2 py-0.5 rounded-full whitespace-nowrap ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15' : 'text-primary-600 dark:text-primary-300 bg-primary-500/10'}`}>
+                {display.count} {display.unit}
+              </span>
+              {isSelectedBadge && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectTerritory?.(null);
+                  }}
+                  className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-neutral-100 dark:hover:bg-slate-800 transition-colors ml-0.5 cursor-pointer leading-none text-xs font-bold"
+                  title="Remover filtro de território"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          );
+        })()}
       </div>
 
       {mode === 'cursos' && (
@@ -1819,19 +2051,39 @@ export default function SideMap({
           </button>
         )}
 
-        {/* BOTÃO MODO SEMIÁRIDO AO LADO DO EXPANDIR */}
+        {/* BOTÃO MODO SEMIÁRIDO AO LADO DO EXPANDIR (PADRÃO VISÃO GERAL) */}
         {Boolean(setFiltroSemiarido) && (
           <button
             type="button"
             onClick={() => setFiltroSemiarido(prev => !prev)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm backdrop-blur-md ${
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
               filtroSemiarido
-                ? 'bg-amber-500 text-white border-amber-600 shadow-[0_3px_12px_rgba(245,158,11,0.35)]'
-                : 'bg-surface/95 text-text-primary border-border hover:bg-surface hover:border-amber-400'
+                ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
+                : 'bg-surface/90 border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-sm'
             }`}
           >
-            <SunMedium size={13} className={filtroSemiarido ? 'text-amber-100' : 'text-amber-500'} />
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
+              filtroSemiarido
+                ? 'bg-amber-500 text-white'
+                : 'bg-surface-soft border border-border text-text-muted'
+            }`}>
+              {filtroSemiarido ? (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <line x1="12" y1="2" x2="12" y2="5"/>
+                  <line x1="12" y1="19" x2="12" y2="22"/>
+                  <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+                  <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+                  <line x1="2" y1="12" x2="5" y2="12"/>
+                  <line x1="19" y1="12" x2="22" y2="12"/>
+                  <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+                  <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+                </svg>
+              ) : (
+                <span className="w-2 h-2 rounded-full bg-slate-300 block" />
+              )}
+            </span>
             <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
           </button>
         )}
@@ -1840,7 +2092,9 @@ export default function SideMap({
           <button
             type="button"
             onClick={onToggleExpand}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
+            title={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
+            aria-label={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
+            className={`flex items-center justify-center w-[32px] h-[32px] rounded-full transition-all border cursor-pointer select-none shadow-sm ${
               isExpanded
                 ? (filtroSemiarido
                     ? 'bg-amber-600 text-white border-amber-600 shadow-[0_3px_12px_rgba(217,119,6,0.3)]'
@@ -1851,11 +2105,10 @@ export default function SideMap({
             }`}
           >
             {isExpanded ? (
-              <Minimize2 size={13} className={filtroSemiarido ? 'text-amber-200' : 'text-[#00B4D8]'} />
+              <Shrink size={15} className={filtroSemiarido ? 'text-amber-200' : 'text-[#00B4D8]'} />
             ) : (
-              <Maximize2 size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
+              <Expand size={15} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
             )}
-            <span>{isExpanded ? 'Modo Normal' : 'Expandir'}</span>
           </button>
         )}
       </div>
