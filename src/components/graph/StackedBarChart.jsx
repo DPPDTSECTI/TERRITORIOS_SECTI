@@ -73,7 +73,7 @@ function StackedBarChart({
   }, [visibleData, maxScale]);
 
   return (
-    <div className={`bg-surface rounded-[24px] border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-border shadow-card'} p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
+    <div className={`bg-surface rounded-2xl border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-border shadow-card'} p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
 
       {/* CABEÇALHO DO CARD */}
       <div className="flex items-center justify-between gap-2 mb-1 shrink-0">

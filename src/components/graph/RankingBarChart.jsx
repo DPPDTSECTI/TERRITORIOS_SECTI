@@ -218,10 +218,9 @@ export default function RankingBarChart({
                             ? (isSemi ? 'bg-amber-500' : 'bg-primary-400')
                             : (isSemi ? 'bg-amber-500/15' : 'bg-primary-200');
 
-                    // Label text style inside the bar
                     const textStyle = (isFirst || isSelected)
                         ? 'font-medium text-white'
-                        : (isSemi ? 'font-medium text-amber-950 dark:text-amber-200' : 'font-medium text-primary-950 dark:text-neutral-900');
+                        : (isSemi ? 'font-medium text-amber-950 dark:text-amber-200' : 'font-medium text-text-primary');
 
                     // Value pill style
                     const valueStyle = isFirst

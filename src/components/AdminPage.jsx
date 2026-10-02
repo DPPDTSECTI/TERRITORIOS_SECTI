@@ -36,25 +36,32 @@ export default function AdminPage() {
  }
  };
 
+ const todayFormatted = new Date().toLocaleDateString('pt-BR', {
+   weekday: 'long',
+   day: 'numeric',
+   month: 'long',
+   year: 'numeric'
+ });
+ const capitalizedDate = todayFormatted.charAt(0).toUpperCase() + todayFormatted.slice(1);
+
  const getBadgeStyle = (tipo) => {
- const t = tipo?.toLowerCase() || '';
- if (t.includes('hub')) return 'bg-primary-200 text-text-primary';
- if (t.includes('parque')) return 'bg-primary-300 text-text-primary';
- if (t.includes('polo')) return 'bg-primary-600 text-surface-soft';
- if (t.includes('incubadora')) return 'bg-primary-900 text-surface-soft';
- if (t === '') return 'bg-surface-soft text-text-secondary';
- return 'bg-primary-200 text-text-secondary';
+   const t = tipo?.toLowerCase() || '';
+   if (t.includes('hub')) return 'bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 border border-primary-200/80 dark:border-primary-700/60';
+   if (t.includes('parque')) return 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60';
+   if (t.includes('polo')) return 'bg-cyan-50 dark:bg-cyan-950/50 text-cyan-800 dark:text-cyan-300 border border-cyan-200/80 dark:border-cyan-800/60';
+   if (t.includes('incubadora')) return 'bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60';
+   return 'bg-surface-soft text-text-secondary border border-border';
  };
 
  return (
- <div className="w-full h-screen py-6 pr-6 pl-5 bg-surface-soft font-sans flex flex-col overflow-hidden">
+ <div className="w-full h-screen py-6 pr-6 pl-5 bg-background font-sans flex flex-col overflow-hidden">
  <div className="max-w-[1300px] w-full h-full mx-auto flex flex-col gap-6">
  
  {/* HEADER DA PÁGINA */}
  <div className="flex items-center justify-between w-full">
  <div>
- <h1 className="text-3xl font-bold text-text-primary tracking-tight">Ativos de CTI</h1>
- <p className="text-sm text-text-secondary mt-1.5 font-medium">Sexta-feira, 14 de Agosto de 2026</p>
+ <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">Ativos de CT&I</h1>
+ <p className="text-xs lg:text-sm text-text-secondary mt-1 font-medium">{capitalizedDate}</p>
  </div>
 
  {/* AÇÕES E PERFIL DO USUÁRIO */}
@@ -133,7 +140,7 @@ export default function AdminPage() {
  </div>
  </div>
  <div className="mt-2">
- <p className="text-text-secondary text-[14px] font-medium mb-1">Marcados REP</p>
+ <p className="text-text-secondary text-[14px] font-medium mb-1">Conectados RNP</p>
  <div className="flex items-baseline gap-2">
  <h2 className="text-[40px] leading-none font-medium text-text-primary tracking-tight">0</h2>
  </div>
@@ -148,7 +155,7 @@ export default function AdminPage() {
  <div className="flex flex-col md:flex-row md:items-center justify-between w-full mb-8 gap-4">
  <div>
  <h2 className="text-[22px] font-medium text-text-primary tracking-tight">Lista de Ativos</h2>
- <p className="text-sm text-text-secondary mt-1 font-medium">Track your active locations</p>
+ <p className="text-sm text-text-secondary mt-1 font-medium">Gestão e cadastro de ativos de CT&I no estado</p>
  </div>
  
  <div className="flex items-center gap-3">
@@ -238,17 +245,17 @@ export default function AdminPage() {
  {/* DATA ROWS */}
  <div className="flex flex-col w-full mt-3 overflow-y-auto flex-1 pr-2 custom-scrollbar">
  {ativos.map((ativo) => (
- <div key={ativo.id} className="w-full py-4 border-b border-border/50 last:border-b-0 grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4 hover:bg-surface-soft/50 transition-colors group rounded-xl cursor-default">
+ <div key={ativo.id} className="w-full py-3.5 border-b border-border/50 last:border-b-0 grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4 hover:bg-surface-soft/60 transition-colors group rounded-xl cursor-default">
 
  <div className="w-full h-full flex items-center pr-2 gap-3.5">
- <div className="w-9 h-9 rounded-full bg-primary-200 flex items-center justify-center text-text-primary shrink-0">
- <span className="text-[13px] font-medium">{ativo.nome.charAt(0)}</span>
+ <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 flex items-center justify-center font-bold shrink-0">
+ <span className="text-[13px]">{ativo.nome.charAt(0)}</span>
  </div>
- <span className="text-text-primary font-medium text-[14px] truncate">{ativo.nome}</span>
+ <span className="text-text-primary font-semibold text-[13.5px] truncate">{ativo.nome}</span>
  </div>
 
  <div className="w-full h-full flex items-center">
- <div className={`px-3 py-1.5 rounded-full text-[11px] font-bold ${getBadgeStyle(ativo.tipo)}`}>
+ <div className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${getBadgeStyle(ativo.tipo)}`}>
  {ativo.tipo}
  </div>
  </div>
@@ -262,15 +269,15 @@ export default function AdminPage() {
  </div>
 
  <div className="w-full h-full flex items-center pr-2">
- <span className="text-text-primary font-medium text-[12px] bg-surface-soft px-2.5 py-1 rounded-lg truncate border border-transparent inline-flex items-center justify-center leading-none">{ativo.sigla || '-'}</span>
+ <span className="text-text-primary font-medium text-[12px] bg-surface-soft px-2.5 py-1 rounded-lg truncate border border-border inline-flex items-center justify-center leading-none">{ativo.sigla || '-'}</span>
  </div>
 
  <div className="w-full h-full flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
- <button className="text-text-secondary hover:text-text-primary p-2 rounded-lg hover:bg-primary-200 transition-colors">
- <Pencil size={16} strokeWidth={2} />
+ <button title="Editar" className="text-text-muted hover:text-primary-600 p-2 rounded-lg hover:bg-surface transition-colors cursor-pointer">
+ <Pencil size={15} strokeWidth={2} />
  </button>
- <button onClick={() => handleDeleteRow(ativo.id)} className="text-text-secondary hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-colors">
- <Trash2 size={16} strokeWidth={2} />
+ <button title="Excluir" onClick={() => handleDeleteRow(ativo.id)} className="text-text-muted hover:text-danger-600 p-2 rounded-lg hover:bg-danger-50 dark:hover:bg-danger-950/40 transition-colors cursor-pointer">
+ <Trash2 size={15} strokeWidth={2} />
  </button>
  </div>
 

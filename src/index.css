@@ -489,7 +489,7 @@
     box-sizing: border-box !important;
   }
 
-  .print\\:hidden,
+  .print\:hidden,
   .print-hidden,
   [data-html2canvas-ignore="true"],
   .leaflet-control-zoom,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, LayoutDashboard, LayoutGrid, FileText, Info, Database, GraduationCap, GitPullRequest, Sun, Moon } from 'lucide-react';
+import { Home, LayoutGrid, FileText, Info, Database, GraduationCap, GitPullRequest, Sun, Moon } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
@@ -10,7 +10,6 @@ export default function Sidebar({ username, navOnly = false }) {
 
    const navItemsGroup1 = [
       { path: '/', label: 'Início', icon: Home },
-      { path: '/territorios', label: 'Dashboard', icon: LayoutDashboard },
       { path: '/relatorio', label: 'Relatório', icon: FileText },
       { path: '/sobre', label: 'Sobre', icon: Info },
    ];
@@ -58,9 +57,7 @@ export default function Sidebar({ username, navOnly = false }) {
             </div>
 
             {navItemsGroup1.map((item) => {
-               const isDashboardItem = item.label === 'Dashboard';
-               const isModuleActive = modulesItems.some(mod => mod.path === location.pathname);
-               const isActive = location.pathname === item.path || (isDashboardItem && isModuleActive);
+               const isActive = location.pathname === item.path;
                return (
                   <div key={item.path} className="w-full flex items-center shrink-0">
                      <Link

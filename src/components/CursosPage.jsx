@@ -476,10 +476,10 @@ export default function CursosPage() {
             </div>
 
             {/* HEADER DA PÁGINA */}
-            <div className="flex items-center justify-between w-full pr-[320px] shrink-0 relative z-10">
+            <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                        <h1 className="text-3xl font-bold text-text-primary tracking-tight">
+                        <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
                             Módulo de Ensino Superior em CT&I
                         </h1>
                         <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-600/10 text-primary-600 dark:text-primary-300 border-primary-600/20'} text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none`}>
@@ -487,7 +487,7 @@ export default function CursosPage() {
                             Somente Oferta de CT&I
                         </span>
                     </div>
-                    <p className="text-sm text-text-secondary mt-0.5 font-medium">
+                    <p className="text-xs lg:text-sm text-text-secondary mt-0.5 font-medium">
                         Mapeamento territorial da oferta presencial de ensino superior voltada exclusivamente a Ciência, Tecnologia e Inovação (CT&I)
                     </p>
                     <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
@@ -496,7 +496,7 @@ export default function CursosPage() {
 
             {/* GRID DE KPIS */}
             <div className="tour-kpis w-full relative z-10 shrink-0">
-                <div className="grid grid-cols-5 gap-4 items-stretch w-full">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
                     {kpis.map((kpi, index) => {
                         const isHero = index === 0;
                         const accentColors = [
@@ -518,7 +518,7 @@ export default function CursosPage() {
                                             : 'bg-primary-900 text-white shadow-card-elevated')
                                         : (filtroSemiarido
                                             ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-                                            : 'bg-surface border border-neutral-100 shadow-card')
+                                            : 'bg-surface border border-border shadow-card')
                                 }`}
                             >
                                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
@@ -566,7 +566,7 @@ export default function CursosPage() {
                 {/* LADO ESQUERDO: MAPA */}
                 <div
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
+                    className="shrink-0 bg-surface rounded-2xl border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cursos"

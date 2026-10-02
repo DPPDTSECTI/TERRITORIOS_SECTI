@@ -814,7 +814,7 @@ export default function CadeiaPage() {
                                     className={`rounded-2xl p-3 border transition-all cursor-pointer ${
                                         isSelected
                                             ? (filtroSemiarido ? 'bg-amber-50/50 border-amber-500 shadow-sm ring-2 ring-amber-500/20' : 'bg-primary-50/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20')
-                                            : (filtroSemiarido ? 'bg-surface border-neutral-100 hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-neutral-100 hover:border-primary-200 shadow-card hover:shadow-card-elevated')
+                                            : (filtroSemiarido ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
                                     }`}
                                 >
                                     <div className="flex items-center justify-between mb-2">
@@ -1011,7 +1011,7 @@ export default function CadeiaPage() {
             </div>
 
             {/* HEADER DA PÁGINA */}
-            <div className="flex items-center justify-between w-full shrink-0 relative z-10">
+            <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
@@ -1060,7 +1060,7 @@ export default function CadeiaPage() {
                                             : 'bg-primary-900 text-white shadow-card-elevated')
                                         : (filtroSemiarido
                                             ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-                                            : 'bg-surface border border-neutral-100 shadow-card')
+                                            : 'bg-surface border border-border shadow-card')
                                 }`}
                             >
                                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
@@ -1110,7 +1110,7 @@ export default function CadeiaPage() {
                 {/* MAPA DE CADEIAS */}
                 <div
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 h-[480px] lg:h-full bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-0 transition-[width] duration-300"
+                    className="shrink-0 h-[480px] lg:h-full bg-surface rounded-2xl border border-border shadow-card relative overflow-hidden flex flex-col min-h-0 transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cadeias"

@@ -60,7 +60,7 @@ export default function CustomPieChart({
  const chartData = !isEmpty ? normalizedData : [{ [valueKey]: 1, fill: 'rgb(var(--color-border))', [labelKey]: 'Sem dados' }];
 
   return (
-  <div className={`flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card transition-all duration-500 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
+  <div className={`flex-1 bg-surface rounded-2xl border border-border shadow-card transition-all duration-500 hover:shadow-card-elevated p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
   
   {/* CABEÇALHO */}
   <div className="flex justify-between items-start mb-4 relative z-10 w-full pr-8 shrink-0">
@@ -77,7 +77,7 @@ export default function CustomPieChart({
   <p className="text-neutral-500 text-[11px] font-medium mt-0.5">{subtitle}</p>
   </div>
   </div>
-  <div className="w-full h-px bg-neutral-100 mb-4 shrink-0"></div>
+  <div className="w-full h-px bg-border mb-4 shrink-0"></div>
 
   {isEmpty ? (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">

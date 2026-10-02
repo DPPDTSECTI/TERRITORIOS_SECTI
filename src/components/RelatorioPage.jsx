@@ -1156,7 +1156,7 @@ export default function RelatorioPage() {
  <span className="bg-primary-600/10 text-primary-600 p-1.5 rounded-xl flex items-center justify-center">
  <FileText size={18} strokeWidth={2} />
  </span>
- <h1 className="text-xl sm:text-lg font-semibold text-text-primary tracking-tight">
+ <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
  Relatórios Executivos de CT&I
  </h1>
  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-success-500/15 text-success-700 border border-success-500/25 inline-flex items-center justify-center leading-none">

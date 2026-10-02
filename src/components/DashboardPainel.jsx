@@ -700,19 +700,19 @@ export default function DashboardPainel() {
       </div>
 
       {/* HEADER DA PÁGINA */}
-      <div className="flex items-center justify-between w-full pr-[320px] shrink-0 relative z-10">
+      <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
         <div>
           <div className="flex items-center gap-3 relative z-10">
-            <h1 className="text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
           </div>
-          <p className="text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
+          <p className="text-xs lg:text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
           <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
         </div>
       </div>
 
       {/* GRID DE KPIs */}
       <div className="tour-kpis w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-5 gap-4 items-stretch w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
           {kpis.map((kpi, index) => {
             const isHero = index === 0;
             const accentColors = [
@@ -734,7 +734,7 @@ export default function DashboardPainel() {
                         : 'bg-primary-900 text-white shadow-card-elevated')
                     : (filtroSemiarido
                         ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-                        : 'bg-surface border border-neutral-100 shadow-card')
+                        : 'bg-surface border border-border shadow-card')
                 }`}
               >
                 {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
@@ -789,7 +789,7 @@ export default function DashboardPainel() {
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-2xl border border-neutral-100 shadow-card relative overflow-hidden flex flex-col min-h-[400px]">
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-2xl border border-border shadow-card relative overflow-hidden flex flex-col min-h-[400px]">
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}

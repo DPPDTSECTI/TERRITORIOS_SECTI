@@ -312,6 +312,11 @@ function MapPaneManager() {
       pane.style.zIndex = '450';
       pane.style.pointerEvents = 'none';
     }
+    if (!map.getPane('territoryOutlinePane')) {
+      const outlinePane = map.createPane('territoryOutlinePane');
+      outlinePane.style.zIndex = '460';
+      outlinePane.style.pointerEvents = 'none';
+    }
   }, [map]);
   return null;
 }
@@ -528,7 +533,7 @@ function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
           </div>
         )}
         {ativo.rnp && (
-          <div className={`flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-lg border justify-center leading-none ${
+          <div className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg border ${
             filtroSemiarido
               ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15 border-amber-500/30'
               : 'text-info-600 dark:text-info-400 bg-info-500/15 border-info-500/20'
@@ -882,6 +887,9 @@ export default function SideMap({
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
   const [municipiosGeoJson, setMunicipiosGeoJson] = useState(null);
+  const [territoryMeshes, setTerritoryMeshes] = useState({});
+  const [allTerritoryMesh, setAllTerritoryMesh] = useState(null);
+  const [stateBoundaryMesh, setStateBoundaryMesh] = useState(null);
   const [pinnedAssetId, setPinnedAssetId] = useState(null);
   const [hoveredFeatureName, setHoveredFeatureName] = useState(null);
   const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
@@ -1357,12 +1365,19 @@ export default function SideMap({
         geometries.forEach((geom) => {
           const nome = geom.properties?.NOME || geom.properties?.nome || '';
           const dbInfo = municipioTerritoryMap[normalizeName(nome)];
-          const idTerr = dbInfo ? dbInfo.id_territorio : 'outros';
+          const idTerr = dbInfo ? String(dbInfo.id_territorio) : 'outros';
+          const nomeTerr = dbInfo ? dbInfo.nome_territorio : 'Outros';
+
+          geom.id_territorio = idTerr;
+          geom.nome_territorio = nomeTerr;
+          if (!geom.properties) geom.properties = {};
+          geom.properties.id_territorio = idTerr;
+          geom.properties.nome_territorio = nomeTerr;
 
           if (!groups[idTerr]) {
             groups[idTerr] = {
               id_territorio: idTerr,
-              nome_territorio: dbInfo ? dbInfo.nome_territorio : 'Outros',
+              nome_territorio: nomeTerr,
               geoms: []
             };
           }
@@ -1404,6 +1419,41 @@ export default function SideMap({
           type: 'FeatureCollection',
           features: munFeatures
         });
+
+        // Contornos perimetrais individuais nítidos de cada território (sem cortes)
+        const tMeshes = {};
+        Object.entries(groups).forEach(([idTerr, group]) => {
+          const idStr = String(idTerr);
+          const cleanNome = group.nome_territorio.replace(/^Território de Identidade\s+/i, '').trim();
+          const normNome = normalizeName(cleanNome);
+
+          const mesh = topojson.mesh(
+            topology,
+            topology.objects.BA,
+            (a, b) => a === b ? String(a.id_territorio) === idStr : (String(a.id_territorio) === idStr) !== (String(b.id_territorio) === idStr)
+          );
+
+          tMeshes[idStr] = mesh;
+          if (normNome) tMeshes[normNome] = mesh;
+        });
+
+        // Contornos unificados de todas as divisas entre territórios
+        const combinedMesh = topojson.mesh(
+          topology,
+          topology.objects.BA,
+          (a, b) => a !== b && String(a.id_territorio) !== String(b.id_territorio)
+        );
+
+        // Contorno perimetral externo do Estado da Bahia
+        const stateMesh = topojson.mesh(
+          topology,
+          topology.objects.BA,
+          (a, b) => a === b
+        );
+
+        setTerritoryMeshes(tMeshes);
+        setAllTerritoryMesh(combinedMesh);
+        setStateBoundaryMesh(stateMesh);
       })
       .catch((err) => console.error('Erro ao carregar topologia:', err));
   }, [municipioTerritoryMap]);
@@ -1629,6 +1679,9 @@ export default function SideMap({
             color: filtroSemiarido ? '#D97706' : '#2563EB',
             weight: 1.8
           });
+          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            e.target.bringToFront();
+          }
         }
       },
       mouseout: (e) => {
@@ -1792,6 +1845,31 @@ export default function SideMap({
     cadeiasStatsByTerritory
   ]);
 
+  const selectedTerritoryMesh = useMemo(() => {
+    if (!selectedTerritory) return null;
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    if (tid && territoryMeshes[tid]) return territoryMeshes[tid];
+
+    const rawNome = selectedTerritory.nome_territorio || selectedTerritory.territorio || '';
+    const cleanNome = rawNome.replace(/^Território de Identidade\s+/i, '').trim();
+    const norm = normalizeName(cleanNome);
+    if (norm && territoryMeshes[norm]) return territoryMeshes[norm];
+
+    return null;
+  }, [selectedTerritory, territoryMeshes]);
+
+  const hoveredTerritoryMesh = useMemo(() => {
+    if (selectedTerritory) return null;
+    if (hoveredFeatureId && territoryMeshes[String(hoveredFeatureId)]) {
+      return territoryMeshes[String(hoveredFeatureId)];
+    }
+    if (hoveredFeatureName) {
+      const norm = normalizeName(hoveredFeatureName.replace(/^Território de Identidade\s+/i, '').trim());
+      if (norm && territoryMeshes[norm]) return territoryMeshes[norm];
+    }
+    return null;
+  }, [hoveredFeatureId, hoveredFeatureName, selectedTerritory, territoryMeshes]);
+
   const hasActiveFilter = Boolean(
     pinnedAssetId ||
     selectedTerritory ||
@@ -1859,6 +1937,80 @@ export default function SideMap({
             data={municipiosGeoJson}
             style={municipioBorderStyle}
             onEachFeature={onEachMunicipioFeature}
+          />
+        )}
+
+        {/* MALHA DE CONTORNOS UNIFICADOS DE TODOS OS TERRITÓRIOS (SEM LINHAS DUPLAS) */}
+        {!selectedTerritory && allTerritoryMesh && (
+          <GeoJSON
+            key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}`}
+            pane="territoryOutlinePane"
+            data={allTerritoryMesh}
+            style={{
+              color: filtroSemiarido ? (isDark ? '#F59E0B' : '#B45309') : (isDark ? '#334666' : '#CBD5E1'),
+              weight: filtroSemiarido ? 1.5 : 1.2,
+              opacity: filtroSemiarido ? 0.85 : 0.95,
+              fill: false,
+              lineCap: 'round',
+              lineJoin: 'round'
+            }}
+            interactive={false}
+          />
+        )}
+
+        {/* CONTORNO PERIMETRAL EXTERNO DO ESTADO DA BAHIA */}
+        {!selectedTerritory && stateBoundaryMesh && (
+          <GeoJSON
+            key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}`}
+            pane="territoryOutlinePane"
+            data={stateBoundaryMesh}
+            style={{
+              color: filtroSemiarido ? '#92400E' : (isDark ? '#475569' : '#94A3B8'),
+              weight: 1.8,
+              opacity: 1,
+              fill: false,
+              lineCap: 'round',
+              lineJoin: 'round'
+            }}
+            interactive={false}
+          />
+        )}
+
+        {/* CONTORNO EM DESTAQUE NO HOVER (QUANDO NÃO HÁ SELEÇÃO) */}
+        {hoveredTerritoryMesh && !selectedTerritory && (
+          <GeoJSON
+            key={`hover-territory-mesh-${hoveredFeatureId || hoveredFeatureName}-${filtroSemiarido ? '1' : '0'}`}
+            pane="territoryOutlinePane"
+            data={hoveredTerritoryMesh}
+            style={{
+              color: filtroSemiarido ? '#D97706' : (isDark ? '#60A5FA' : '#2563EB'),
+              weight: 2.2,
+              opacity: 1,
+              fill: false,
+              lineCap: 'round',
+              lineJoin: 'round'
+            }}
+            interactive={false}
+          />
+        )}
+
+        {/* CONTORNO COMPLETO, NÍTIDO E SEM CORTES DO TERRITÓRIO SELECIONADO */}
+        {selectedTerritory && selectedTerritoryMesh && (
+          <GeoJSON
+            key={`selected-territory-mesh-${selectedTerritory.id_territorio || selectedTerritory.nome_territorio || 'sel'}-${filtroSemiarido ? '1' : '0'}-${isDark ? 'dark' : 'light'}`}
+            pane="territoryOutlinePane"
+            data={selectedTerritoryMesh}
+            style={{
+              color: filtroSemiarido 
+                ? (isDark ? '#F59E0B' : '#D97706') 
+                : (isDark ? '#60A5FA' : '#1D4ED8'),
+              weight: 2.8,
+              opacity: 1,
+              fill: false,
+              lineCap: 'round',
+              lineJoin: 'round'
+            }}
+            interactive={false}
           />
         )}
 
