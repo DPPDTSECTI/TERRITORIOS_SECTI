@@ -19,6 +19,9 @@ import CustomPieChart from './graph/CustomPieChart.jsx';
 import RankingBarChart from './graph/RankingBarChart.jsx';
 import ProportionBarChart from './graph/ProportionBarChart.jsx';
 
+// COMPONENTES DE UI DESIGN SYSTEM
+import { Card, Badge, IconButton, KpiSkeleton, ChartSkeleton } from './ui';
+
 function normalizeName(value) {
   if (!value) return '';
   return String(value)
@@ -69,17 +72,22 @@ function SortableCard({ id, className = '', children }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative h-full flex flex-col min-h-0 backface-hidden ${className} ${isDragging ? 'opacity-40 scale-[1.02] shadow-card-hover' : ''
-        }`}
+      className={`relative h-full flex flex-col min-h-0 backface-hidden ${className} ${
+        isDragging ? 'opacity-40 scale-[1.02] shadow-card-hover' : ''
+      }`}
     >
-      <button
-        {...attributes}
-        {...listeners}
-        className="absolute top-4 right-4 z-40 p-1.5 cursor-grab active:cursor-grabbing text-text-muted hover:text-text-primary rounded-md hover:bg-surface-soft transition-colors duration-200"
-        title="Arrastar card"
-      >
-        <GripHorizontal size={18} />
-      </button>
+      <div className="absolute top-4 right-4 z-40">
+        <IconButton
+          {...attributes}
+          {...listeners}
+          variant="ghost"
+          size="sm"
+          icon={<GripHorizontal size={18} />}
+          title="Arrastar card"
+          aria-label="Arrastar card"
+          className="cursor-grab active:cursor-grabbing text-text-muted hover:text-text-primary hover:bg-surface-soft"
+        />
+      </div>
       {children}
     </div>
   );
@@ -700,88 +708,137 @@ export default function DashboardPainel() {
       </div>
 
       {/* HEADER DA PÁGINA */}
-      <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
         <div>
           <div className="flex items-center gap-3 relative z-10">
-            <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">Visão Geral</h1>
+            <h1 className="text-headline font-bold text-text-primary tracking-tight">Visão Geral</h1>
+            {selectedTerritory && (
+              <Badge variant="brand" className="font-medium">
+                {territoryName}
+              </Badge>
+            )}
           </div>
-          <p className="text-xs lg:text-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
+          <p className="text-body-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
           <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
+        </div>
+
+        {/* CONTROLE DE ALTERNÂNCIA NORMAL vs. SEMIÁRIDO */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setFiltroSemiarido?.(!filtroSemiarido)}
+            title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-9 pl-1.5 pr-3.5 rounded-full text-caption font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
+              filtroSemiarido
+                ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
+                : 'bg-surface/90 border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-xs'
+            }`}
+          >
+            <span
+              className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
+                filtroSemiarido
+                  ? 'bg-amber-500 text-white'
+                  : 'bg-surface-soft border border-border text-text-muted'
+              }`}
+            >
+              {filtroSemiarido ? (
+                <SunMedium size={14} />
+              ) : (
+                <span className="w-2 h-2 rounded-full bg-border-strong block" />
+              )}
+            </span>
+            <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
+          </button>
         </div>
       </div>
 
       {/* GRID DE KPIs */}
       <div className="tour-kpis w-full relative z-10 shrink-0">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
-          {kpis.map((kpi, index) => {
-            const isHero = index === 0;
-            const accentColors = [
-              'text-white/70',
-              'text-[#0D9488]',
-              'text-accent-600',
-              'text-warning-600',
-              'text-success-600'
-            ];
+          {loadingStats ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <KpiSkeleton key={i} />
+            ))
+          ) : (
+            kpis.map((kpi, index) => {
+              const isHero = index === 0;
+              const accentColors = [
+                'text-white/80',
+                'text-[#0D9488]',
+                'text-accent-600',
+                'text-warning-600',
+                'text-success-600'
+              ];
 
-            return (
-              <div
-                key={index}
-                title={kpi.tooltip || kpi.label}
-                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
-                  isHero
-                    ? (filtroSemiarido
-                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
-                        : 'bg-primary-900 text-white shadow-card-elevated')
-                    : (filtroSemiarido
-                        ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-                        : 'bg-surface border border-border shadow-card')
-                }`}
-              >
-                {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                <div className="flex items-center gap-2 w-full min-w-0">
-                  <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
-                  <span
-                    className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
-                      isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
-                    }`}
-                    title={kpi.label}
-                  >
-                    {kpi.label}
-                  </span>
-                  {!filtroSemiarido && kpi.isIndex && (
-                    <span className={`text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md shrink-0 leading-none inline-flex items-center justify-center ${
-                      isHero
-                        ? 'bg-white/15 text-white/80'
-                        : 'bg-primary-100 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                    }`}>
-                      Índice
+              return (
+                <Card
+                  key={index}
+                  title={kpi.tooltip || kpi.label}
+                  variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
+                  className={`p-4 flex flex-col justify-between h-[96px] cursor-default overflow-hidden transition-all duration-300 hover:shadow-card-hover ${
+                    isHero && filtroSemiarido
+                      ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border-amber-400/40 shadow-card shadow-amber-500/20'
+                      : ''
+                  } ${
+                    !isHero && filtroSemiarido
+                      ? 'border-amber-200/50 dark:border-amber-500/30'
+                      : ''
+                  }`}
+                >
+                  {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                  <div className="flex items-center gap-2 w-full min-w-0">
+                    <kpi.icon
+                      size={16}
+                      strokeWidth={2}
+                      className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]}
+                    />
+                    <span
+                      className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
+                        isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                      }`}
+                      title={kpi.label}
+                    >
+                      {kpi.label}
                     </span>
-                  )}
-                </div>
-
-                {/* LINHA INFERIOR: NÚMERO */}
-                <div className="flex items-baseline w-full justify-between min-w-0">
-                  <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                    <span className={`text-[28px] font-bold tracking-tight leading-none shrink-0 ${
-                      isHero ? 'text-white' : 'text-text-primary'
-                    }`}>
-                      {kpi.value}
-                    </span>
-                    {filtroSemiarido && kpi.percent && (
+                    {!filtroSemiarido && kpi.isIndex && (
                       <span
-                        title={`(${kpi.percent})`}
-                        className={`text-[11px] font-semibold truncate ${
-                          isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
+                        className={`text-micro font-semibold uppercase px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${
+                          isHero
+                            ? 'bg-white/15 text-white/90 border border-white/20'
+                            : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60'
                         }`}
                       >
-                        ({kpi.percent})
+                        Índice
                       </span>
                     )}
                   </div>
-                </div>
-              </div>
-            );
-          })}
+
+                  {/* LINHA INFERIOR: NÚMERO */}
+                  <div className="flex items-baseline w-full justify-between min-w-0">
+                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                      <span
+                        className={`text-kpi font-bold tracking-tight leading-none shrink-0 tnum ${
+                          isHero ? 'text-white' : 'text-text-primary'
+                        }`}
+                      >
+                        {kpi.value}
+                      </span>
+                      {filtroSemiarido && kpi.percent && (
+                        <span
+                          title={`(${kpi.percent})`}
+                          className={`text-caption font-semibold truncate ${
+                            isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                          }`}
+                        >
+                          ({kpi.percent})
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -789,7 +846,7 @@ export default function DashboardPainel() {
       <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-2xl border border-border shadow-card relative overflow-hidden flex flex-col min-h-[400px]">
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-[400px]">
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}
@@ -806,9 +863,14 @@ export default function DashboardPainel() {
         {/* LADO DIREITO: DASHBOARD DE CARDS (DND) COM TRANSIÇÃO DOURADA SUAVE */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
-            filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-2xl' : ''
+            filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-card' : ''
           }`}>
-            <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
+            {loadingStats ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <ChartSkeleton key={i} height="h-44" className="h-full" />
+              ))
+            ) : (
+              <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
                 <React.Fragment key={cardId}>
 
@@ -895,6 +957,7 @@ export default function DashboardPainel() {
                 </React.Fragment>
               ))}
             </SortableContext>
+            )}
           </div>
         </DndContext>
       </div>

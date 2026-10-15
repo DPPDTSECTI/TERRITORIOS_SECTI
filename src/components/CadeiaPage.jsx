@@ -23,7 +23,19 @@ import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getTextoReferencia } from '../data/referenciasDB';
 import SideMap from './maps/SideMap';
-import CardLista from './graph/CardLista';
+import {
+    Card,
+    Button,
+    IconButton,
+    Badge,
+    Chip,
+    SearchInput,
+    Tabs,
+    Drawer,
+    EmptyState,
+    KpiSkeleton,
+    ListRowSkeleton
+} from './ui';
 
 const SEGMENT_PALETTE = [
     '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#06B6D4',
@@ -111,7 +123,7 @@ const getTipoCadeiaConfig = (nomeTipo) => {
     if (str.includes('potencial')) {
         return {
             corHex: '#F59E0B',
-            bgBadge: 'bg-warning-600/15 text-[#D97706]',
+            bgBadge: 'bg-warning-600/15 text-warning-700',
             icone: Compass,
             label: 'IG Potencial',
             iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`
@@ -135,6 +147,13 @@ const getTipoCadeiaConfig = (nomeTipo) => {
     };
 };
 
+export const getTipoBadgeVariant = (nomeTipo) => {
+    const str = String(nomeTipo || '').toLowerCase();
+    if (str.includes('potencial')) return 'warning';
+    if (str.includes('ig') || str.includes('indica')) return 'success';
+    return 'primary';
+};
+
 export default function CadeiaPage() {
     const {
         listaCadeias = [],
@@ -152,8 +171,25 @@ export default function CadeiaPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('catalogo');
     const [selectedCadeia, setSelectedCadeia] = useState(null);
+    const [selectedCadeiaDrawer, setSelectedCadeiaDrawer] = useState(null);
     const [isMapExpanded, setIsMapExpanded] = useState(false);
     const [sidebarSearch, setSidebarSearch] = useState('');
+
+    const activeFiltersCount = useMemo(() => {
+        let count = 0;
+        if (selectedTipo !== 'todos') count++;
+        if (selectedSegmento) count++;
+        if (searchQuery.trim()) count++;
+        return count;
+    }, [selectedTipo, selectedSegmento, searchQuery]);
+
+    const handleClearAllFilters = () => {
+        setSelectedTipo('todos');
+        setSelectedSegmento(null);
+        setSearchQuery('');
+        setSelectedCadeia(null);
+        setFocusedAsset(null);
+    };
 
     const itemRefs = useRef({});
     const catalogListRef = useRef(null);
@@ -391,6 +427,15 @@ export default function CadeiaPage() {
         });
     }, [activeScopedCadeias, selectedTerritory]);
 
+    const tipoStats = useMemo(() => {
+        const counts = { todos: territoryCadeias.length };
+        territoryCadeias.forEach(c => {
+            const t = c.tipo || 'APL';
+            counts[t] = (counts[t] || 0) + 1;
+        });
+        return counts;
+    }, [territoryCadeias]);
+
     const filteredCadeias = useMemo(() => {
         let list = territoryCadeias;
         if (selectedTipo !== 'todos') list = list.filter(c => c.tipo === selectedTipo);
@@ -579,389 +624,8 @@ export default function CadeiaPage() {
         }
     ];
 
-    const dynamicTabs = useMemo(() => [
-        {
-            id: 'catalogo',
-            label: 'Catálogo',
-            icon: GitPullRequest,
-            count: filteredCadeias.length,
-            content: (
-                <div className="flex-1 flex flex-col min-h-0 w-full">
-                    <div className="flex items-center justify-between mb-3 shrink-0 flex-wrap gap-2">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-[13px] font-semibold text-text-primary">
-                                {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
-                            </h3>
-                            <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-600/10 text-primary-600 dark:text-primary-300'} text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none`}>
-                                {filteredCadeias.length}
-                            </span>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                            <button
-                                type="button"
-                                onClick={() => setSelectedTipo('todos')}
-                                className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                                    selectedTipo === 'todos'
-                                        ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-900 text-white')
-                                        : (filtroSemiarido ? 'bg-surface-soft text-text-secondary hover:bg-amber-100/50' : 'bg-surface-soft text-text-secondary hover:bg-border')
-                                }`}
-                            >
-                                Todos
-                            </button>
-
-                            {availableTipos.map((tipo) => {
-                                const conf = getTipoCadeiaConfig(tipo);
-                                const isSelected = selectedTipo === tipo;
-                                const semiaridoColor = getSemiaridoArrangementColor(tipo);
-                                return (
-                                    <button
-                                        key={tipo}
-                                        type="button"
-                                        onClick={() => setSelectedTipo(tipo)}
-                                        className={`text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                                            isSelected 
-                                                ? 'text-white' 
-                                                : (filtroSemiarido ? 'hover:opacity-80' : `${conf.bgBadge} hover:opacity-80`)
-                                        }`}
-                                        style={{ 
-                                            backgroundColor: isSelected 
-                                                ? (filtroSemiarido ? semiaridoColor : conf.corHex) 
-                                                : (filtroSemiarido ? `${semiaridoColor}20` : undefined),
-                                            color: isSelected ? '#ffffff' : (filtroSemiarido ? semiaridoColor : undefined)
-                                        }}
-                                    >
-                                        {tipo}
-                                    </button>
-                                );
-                            })}
-
-                            {selectedTerritory && (
-                                <button
-                                    type="button"
-                                    onClick={() => handleSelectTerritory(null)}
-                                    className={`text-[11px] font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 cursor-pointer transition-colors justify-center leading-none ${
-                                        filtroSemiarido ? 'bg-amber-200/60 hover:bg-amber-200' : 'bg-primary-200/40 hover:bg-primary-200'
-                                    }`}
-                                >
-                                    <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
-                                    <span>{territoryName}</span>
-                                </button>
-                            )}
-                        </div>
-                    </div>
-
-                    <div ref={catalogListRef} className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
-                        {filteredCadeias.length > 0 ? (
-                            filteredCadeias.map((c, idx) => {
-                                const IconComp = c.icone;
-                                const totalAbrangencia = (c.municipios_cobertos && c.municipios_cobertos.length > 0) ? c.municipios_cobertos.length : 1;
-                                const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
-                                const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo) : c.corHex;
-
-                                const listaNomes = (c.municipios_cobertos && c.municipios_cobertos.length > 0)
-                                    ? c.municipios_cobertos.map(m => m.nome_municipio).join(', ')
-                                    : c.municipio_sede;
-
-                                return (
-                                    <div
-                                        key={c.id_cadeia || idx}
-                                        ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
-                                        onClick={() => {
-                                            if (isSelected) {
-                                                setSelectedCadeia(null);
-                                                setFocusedAsset(null);
-                                            } else {
-                                                setSelectedCadeia(c);
-                                                if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
-                                            }
-                                        }}
-                                        className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2 transition-all duration-300 group cursor-pointer border w-full scroll-mt-2 ${isSelected
-                                                ? (filtroSemiarido ? 'bg-amber-50/70 border-amber-500 ring-2 ring-amber-500/20 shadow-card-elevated' : 'bg-primary-50/50 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated')
-                                                : (filtroSemiarido ? 'bg-surface border-border/80 dark:border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-border/80 dark:border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
-                                            }`}
-                                    >
-                                        <div className="flex items-start justify-between gap-3 w-full">
-                                            <div className="flex items-start gap-3 min-w-0 flex-1">
-                                                <div
-                                                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform ${isSelected ? 'scale-110 shadow-sm' : 'group-hover:scale-105'
-                                                        }`}
-                                                    style={{ 
-                                                        backgroundColor: `${itemColor}20`, 
-                                                        color: itemColor 
-                                                    }}
-                                                >
-                                                    <IconComp size={16} />
-                                                </div>
-                                                <div className="flex flex-col min-w-0 flex-1">
-                                                    <h4 className={`text-[13px] font-semibold leading-tight break-words transition-colors ${
-                                                        isSelected 
-                                                            ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300') 
-                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
-                                                        }`}>
-                                                        {c.entidade}
-                                                    </h4>
-
-                                                    <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-1 font-medium">
-                                                        <span className="font-medium text-text-primary bg-border/70 px-1.5 py-0.2 rounded-md">{c.segmento}</span>
-                                                        <span>•</span>
-                                                        <span className="font-semibold text-text-primary">Sede: {c.municipio_sede}</span>
-                                                        <span>•</span>
-                                                        <span className="text-text-secondary">{c.territorio_identidade}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
-                                                <span
-                                                    className="text-[9px] font-medium px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none"
-                                                    style={{ 
-                                                        backgroundColor: `${itemColor}20`, 
-                                                        color: itemColor 
-                                                    }}
-                                                >
-                                                    {c.tipo}
-                                                </span>
-                                                {c.fonte && (
-                                                    <a
-                                                        href={c.fonte}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className={`p-1 rounded-lg text-text-muted transition-colors ${
-                                                            filtroSemiarido ? 'hover:text-amber-700 hover:bg-amber-100' : 'hover:text-primary-600 hover:bg-primary-200/50'
-                                                        }`}
-                                                        title="Acessar Fonte Oficial"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        <ExternalLink size={16} />
-                                                    </a>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className={`mt-1 text-[10px] leading-relaxed break-words rounded-xl p-2 transition-colors border ${isSelected
-                                                ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
-                                                : 'bg-surface-soft border-border text-text-secondary'
-                                            }`}>
-                                            <span className="font-semibold text-text-primary">
-                                                {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios: ` : 'Atua em 1 município: '}
-                                            </span>
-                                            <span className="font-medium text-text-secondary">
-                                                {listaNomes}
-                                            </span>
-                                        </div>
-
-                                        {/* CITAÇÃO / ARTIGO CIENTÍFICO PARA IG POTENCIAL */}
-                                        {c.texto_referencia && (
-                                            <div className={`mt-1.5 text-[11px] leading-relaxed break-words rounded-xl p-2.5 transition-colors border ${isSelected
-                                                    ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
-                                                    : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
-                                                }`}>
-                                                <div className="flex items-center gap-1.5 font-bold text-[9px] uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">
-                                                    <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
-                                                    <span>Referência / Citação do Artigo:</span>
-                                                </div>
-                                                <p className="text-[10.5px] leading-relaxed italic text-text-secondary dark:text-amber-200/90">
-                                                    "{c.texto_referencia}"
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                <GitPullRequest size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                <p className="text-[12px] font-medium text-text-primary">Nenhum arranjo produtivo sediado neste território</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'segmentos',
-            label: 'Segmentos',
-            icon: Filter,
-            count: segmentStats.length,
-            content: (
-                <div className="flex-1 flex flex-col min-h-0 w-full">
-                    <div className="mb-3 shrink-0 flex items-center justify-between">
-                        <div>
-                            <h3 className="text-[13px] font-semibold text-text-primary">
-                                {selectedTerritory ? `Segmentos em ${territoryName}` : 'Segmentos Econômicos da Bahia'}
-                            </h3>
-                            <p className="text-[11px] text-text-secondary font-medium">Distribuição por vocação produtiva</p>
-                        </div>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full">
-                        {segmentStats.map((seg) => {
-                            const isSelected = selectedSegmento === seg.name;
-                            const dotColor = seg.color;
-
-                            return (
-                                <div
-                                    key={seg.name}
-                                    onClick={() => {
-                                        const nextSeg = isSelected ? null : seg.name;
-                                        setSelectedSegmento(nextSeg);
-                                        if (selectedCadeia && nextSeg && selectedCadeia.segmento !== nextSeg) {
-                                            setSelectedCadeia(null);
-                                            setFocusedAsset(null);
-                                        }
-                                    }}
-                                    className={`rounded-2xl p-3 border transition-all cursor-pointer ${
-                                        isSelected
-                                            ? (filtroSemiarido ? 'bg-amber-50/50 border-amber-500 shadow-sm ring-2 ring-amber-500/20' : 'bg-primary-50/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20')
-                                            : (filtroSemiarido ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
-                                    }`}
-                                >
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2 min-w-0">
-                                            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: dotColor }} />
-                                            <span className="text-[12px] font-semibold text-text-primary truncate">{seg.name}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-[11.5px] font-medium text-text-secondary">{seg.count} arranjos</span>
-                                            <span
-                                                className="text-[11px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
-                                                style={{ backgroundColor: `${seg.color}20`, color: seg.color }}
-                                            >
-                                                {seg.percent}%
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className={`w-full h-[18px] rounded-full overflow-hidden relative flex items-center ${
-                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
-                                    }`}>
-                                        <div
-                                            className="h-full rounded-full transition-all duration-500"
-                                            style={{ width: `${seg.percent}%`, backgroundColor: seg.color }}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'ranking',
-            label: selectedTerritory ? 'Ranking Sede Municípios' : 'Ranking Sede Territórios',
-            icon: TrendingUp,
-            count: selectedTerritory ? municipalityRanking.length : territoryRanking.length,
-            content: (
-                <div className="flex-1 flex flex-col min-h-0 w-full">
-                    <div className="mb-3 shrink-0 flex items-center justify-between">
-                        <div>
-                            <h3 className="text-[13px] font-semibold text-text-primary">
-                                {selectedTerritory ? `Ranking Sede Municípios · ${territoryName}` : 'Ranking Sede Territórios'}
-                            </h3>
-                            <p className="text-[11px] text-text-secondary font-medium">Densidade de arranjos produtivos por sede oficial</p>
-                        </div>
-                        <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none">
-                            {selectedTerritory ? `${municipalityRanking.length} sedes` : `${territoryRanking.length} territórios`}
-                        </span>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0 w-full">
-                        {selectedTerritory ? (
-                            municipalityRanking.map((m, index) => (
-                                <div
-                                    key={m.name}
-                                    onClick={() => {
-                                        const munKey = String(m.name || '').trim();
-                                        const coords = findMunicipioCoords(munKey);
-                                        if (coords) setFocusedAsset(coords);
-                                    }}
-                                    className="flex items-center gap-2 p-1 rounded-xl hover:bg-surface-soft transition-colors cursor-pointer group"
-                                >
-                                    <span className={`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10.5px] font-bold shrink-0 shadow-xs ${
-                                        index === 0
-                                            ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
-                                            : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
-                                    }`}>
-                                        {m.rank}
-                                    </span>
-
-                                    <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
-                                    }`}>
-                                        <div
-                                            className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
-                                                filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
-                                            }`}
-                                            style={{ width: `${m.percentBar}%` }}
-                                        />
-                                        <span className={`relative z-10 px-2.5 text-[11.5px] font-medium truncate flex-1 ${
-                                            filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
-                                        }`}>
-                                            {m.name}
-                                        </span>
-                                    </div>
-
-                                    <span className={`h-[24px] min-w-[34px] px-2 rounded-full text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0 ${
-                                        filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                    }`}>
-                                        {m.count}
-                                    </span>
-                                </div>
-                            ))
-                        ) : (
-                            territoryRanking.map((t, index) => (
-                                <div
-                                    key={t.id}
-                                    onClick={() => {
-                                        const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
-                                        handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
-                                    }}
-                                    className="flex items-center gap-2 p-1 rounded-xl hover:bg-surface-soft transition-colors cursor-pointer group"
-                                >
-                                    <span className={`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10.5px] font-bold shrink-0 shadow-xs ${
-                                        index === 0
-                                            ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
-                                            : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
-                                    }`}>
-                                        {t.rank}
-                                    </span>
-
-                                    <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                        filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
-                                    }`}>
-                                        <div
-                                            className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
-                                                filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
-                                            }`}
-                                            style={{ width: `${t.percentBar}%` }}
-                                        />
-                                        <span className={`relative z-10 px-2.5 text-[11.5px] font-medium truncate flex-1 ${
-                                            filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
-                                        }`}>
-                                            {t.name}
-                                        </span>
-                                    </div>
-
-                                    <span className={`h-[24px] min-w-[34px] px-2 rounded-full text-[11px] font-semibold flex items-center justify-center tabular-nums shrink-0 ${
-                                        filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                    }`}>
-                                        {t.count}
-                                    </span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-            )
-        }
-    ], [filteredCadeias, segmentStats, territoryRanking, municipalityRanking, selectedTerritory, territoryName, selectedTipo, selectedSegmento, availableTipos, selectedCadeia, territoriosData, filtroSemiarido]);
-
-    const activeSelectionName = selectedCadeia ? selectedCadeia.entidade : (selectedTerritory ? territoryName : null);
-    const activeSelectionCount = selectedCadeia ? 1 : (selectedTerritory ? filteredCadeias.length : 0);
-
     return (
-        <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full">
+        <main className="flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full">
 
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
@@ -1014,103 +678,89 @@ export default function CadeiaPage() {
             <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                        <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
+                        <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Cadeias Produtivas & IGs
                         </h1>
-                        <span className={`text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
-                            filtroSemiarido
-                                ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30'
-                                : 'bg-success-500/10 text-success-700 dark:text-success-400 border-success-500/20'
-                        }`}>
-                            <Award size={16} className={filtroSemiarido ? 'text-amber-700' : 'text-success-700'} />
+                        <Badge
+                            variant={filtroSemiarido ? 'warning' : 'success'}
+                            icon={<Award size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-success-600'} />}
+                            className="text-micro font-medium uppercase px-2.5 py-1"
+                        >
                             Arranjos & Indicações Geográficas
-                        </span>
+                        </Badge>
                     </div>
-                    <p className="text-xs lg:text-sm text-text-secondary mt-0.5 font-medium">
+                    <p className="text-body-sm text-text-secondary mt-1 font-normal">
                         Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
                     </p>
                     <div 
-                        className="divider-territorial w-48 mt-3"
-                        style={filtroSemiarido ? { background: 'linear-gradient(90deg, #F59E0B 0%, #D97706 50%, transparent 100%)' } : undefined}
+                        className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}
                     />
                 </div>
             </div>
 
             {/* GRID DE KPIS */}
-            <div className="w-full relative z-10 shrink-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
-                    {kpis.map((kpi, index) => {
-                        const isHero = index === 0;
-                        const accentColors = [
-                            'text-white/70',
-                            'text-[#0D9488]',
-                            'text-accent-600',
-                            'text-warning-600',
-                            'text-success-600'
-                        ];
+            <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0">
+                    {loadingStats ? (
+                        <KpiSkeleton count={5} />
+                    ) : (
+                        kpis.map((kpi, index) => {
+                            const isHero = index === 0;
 
-                        return (
-                            <div
-                                key={index}
-                                title={kpi.tooltip || kpi.label}
-                                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
-                                    isHero
-                                        ? (filtroSemiarido
-                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
-                                            : 'bg-primary-900 text-white shadow-card-elevated')
-                                        : (filtroSemiarido
-                                            ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-                                            : 'bg-surface border border-border shadow-card')
-                                }`}
-                            >
-                                {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                <div className="flex items-center gap-2 w-full min-w-0">
-                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
-                                    <span
-                                        className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
-                                            isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
-                                        }`}
-                                        title={kpi.label}
-                                    >
-                                        {kpi.label}
-                                    </span>
-                                </div>
-
-                                {/* LINHA INFERIOR: NÚMERO */}
-                                <div className="flex items-baseline w-full justify-between">
-                                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                            return (
+                                <Card
+                                    key={index}
+                                    variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
+                                    title={kpi.tooltip || kpi.label}
+                                    className="p-4 flex flex-col justify-between h-[88px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
+                                >
+                                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                                    <div className="flex items-center gap-2 w-full min-w-0">
+                                        <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
                                         <span
-                                            className={`text-[28px] font-bold tracking-tight leading-none ${
-                                                isHero ? 'text-white' : 'text-text-primary'
+                                            className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
+                                                isHero ? 'text-white/80' : 'text-text-muted'
                                             }`}
+                                            title={kpi.label}
                                         >
-                                            {kpi.value}
+                                            {kpi.label}
                                         </span>
-                                        {filtroSemiarido && kpi.percent && (
-                                            <span
-                                                title={`(${kpi.percent})`}
-                                                className={`text-[11px] font-semibold truncate ${
-                                                    isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
-                                                }`}
-                                            >
-                                                ({kpi.percent})
-                                            </span>
-                                        )}
                                     </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+
+                                    {/* LINHA INFERIOR: NÚMERO */}
+                                    <div className="flex items-baseline w-full justify-between">
+                                        <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                            <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
+                                                isHero ? 'text-white' : 'text-text-primary'
+                                            }`}>
+                                                {kpi.value}
+                                            </span>
+                                            {filtroSemiarido && kpi.percent && (
+                                                <span
+                                                    title={`(${kpi.percent})`}
+                                                    className={`text-caption font-semibold truncate ${
+                                                        isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                    }`}
+                                                >
+                                                    ({kpi.percent})
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Card>
+                            );
+                        })
+                    )}
                 </div>
             </div>
 
             {/* GRID PRINCIPAL: MAPA (40% ou Expandido) + CARDLISTA ou KPIS VERTICAIS */}
-            <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4">
+            <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4">
 
                 {/* MAPA DE CADEIAS */}
                 <div
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 h-[480px] lg:h-full bg-surface rounded-2xl border border-border shadow-card relative overflow-hidden flex flex-col min-h-0 transition-[width] duration-300"
+                    className="shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-0 min-w-0 transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cadeias"
@@ -1131,65 +781,60 @@ export default function CadeiaPage() {
 
                 {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
                 {isMapExpanded ? (
-                    <div className="w-[305px] shrink-0 h-[480px] lg:h-full bg-surface rounded-xl border border-border shadow-sm p-4 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div className="w-[320px] shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card p-4 flex flex-col min-h-0 min-w-0 overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
                         {/* CABEÇALHO DA LISTA COMPACTA */}
                         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
                             <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-[12px] font-semibold text-text-primary truncate">
+                                <span className="text-body-sm font-semibold text-text-primary truncate">
                                     Arranjos & IGs
                                 </span>
-                                <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-700' : 'bg-primary-600/10 text-primary-600'} text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none`}>
+                                <Badge
+                                    variant={filtroSemiarido ? 'warning' : 'primary'}
+                                    className="text-micro font-medium tnum"
+                                >
                                     {compactCadeiasList.length}
-                                </span>
+                                </Badge>
                             </div>
                             {selectedCadeia && (
-                                <button
-                                    type="button"
+                                <Button
+                                    variant="ghost"
+                                    size="xs"
                                     onClick={() => {
                                         setSelectedCadeia(null);
                                         setFocusedAsset(null);
                                     }}
-                                    className="text-[10px] font-medium text-text-secondary hover:text-red-600 bg-surface-soft hover:bg-danger-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0 justify-center leading-none"
+                                    className="text-caption text-text-secondary hover:text-danger-600"
                                 >
-                                    <span>Limpar</span>
-                                    <X size={16} />
-                                </button>
+                                    Limpar
+                                </Button>
                             )}
                         </div>
 
                         {/* BUSCA COMPACTA */}
-                        <div className="relative my-2 shrink-0">
-                            <Search size={16} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-                            <input
-                                type="text"
+                        <div className="my-2 shrink-0">
+                            <SearchInput
                                 value={sidebarSearch}
                                 onChange={(e) => setSidebarSearch(e.target.value)}
+                                onClear={() => setSidebarSearch('')}
                                 placeholder="Filtrar arranjo ou cidade..."
-                                className={`w-full pl-7 pr-3 py-1.5 text-[11px] bg-surface-soft border border-border rounded-xl focus:bg-surface ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'} focus:outline-none transition-colors placeholder-text-muted`}
+                                size="sm"
                             />
-                            {sidebarSearch && (
-                                <button
-                                    type="button"
-                                    onClick={() => setSidebarSearch('')}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[11px] font-medium"
-                                >
-                                    ×
-                                </button>
-                            )}
                         </div>
 
                         {/* LISTA SCROLLÁVEL COMPACTA */}
                         <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0">
                             {compactCadeiasList.length > 0 ? (
                                 compactCadeiasList.map((c, idx) => {
-                                    const IconComp = c.icone;
+                                    const IconComp = c.icone || Wheat;
                                     const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
                                     const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo) : c.corHex;
+                                    const tipoVariant = getTipoBadgeVariant(c.tipo);
 
                                     return (
                                         <div
                                             key={c.id_cadeia || idx}
                                             ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
+                                            style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
                                             onClick={() => {
                                                 if (isSelected) {
                                                     setSelectedCadeia(null);
@@ -1198,79 +843,669 @@ export default function CadeiaPage() {
                                                     setSelectedCadeia(c);
                                                     if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
                                                 }
+                                                setSelectedCadeiaDrawer(c);
                                             }}
-                                            className={`p-2 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${isSelected
-                                                    ? (filtroSemiarido ? 'bg-amber-50 border-amber-500 ring-2 ring-amber-500/25 shadow-xs' : 'bg-[#EFF6FF] border-primary-600 ring-2 ring-primary-600/25 shadow-xs')
-                                                    : (filtroSemiarido ? 'bg-surface-soft border-transparent hover:bg-surface hover:border-amber-300 hover:shadow-2xs' : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200 hover:shadow-2xs')
-                                                }`}
+                                            className={`p-2 rounded-control flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${
+                                                isSelected
+                                                    ? (filtroSemiarido
+                                                        ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 ring-2 ring-amber-500/25 shadow-xs'
+                                                        : 'bg-primary-50 dark:bg-primary-950/40 border-primary-600 ring-2 ring-primary-600/25 shadow-xs')
+                                                    : (filtroSemiarido
+                                                        ? 'bg-surface-soft border-transparent hover:bg-surface hover:border-amber-300'
+                                                        : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200')
+                                            }`}
                                         >
                                             <div className="flex items-center gap-2 min-w-0 flex-1">
                                                 <div
-                                                    className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${isSelected ? 'scale-105 shadow-2xs' : 'group-'
-                                                        }`}
-                                                    style={{ 
-                                                        backgroundColor: `${itemColor}20`, 
-                                                        color: itemColor 
+                                                    className="w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-transform group-hover:scale-105"
+                                                    style={{
+                                                        backgroundColor: `${itemColor}20`,
+                                                        color: itemColor
                                                     }}
                                                 >
                                                     <IconComp size={12} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
-                                                        }`}>
+                                                    <h5 className={`text-caption font-bold leading-tight truncate transition-colors ${
+                                                        isSelected
+                                                            ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200')
+                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
+                                                    }`}>
                                                         {c.entidade}
                                                     </h5>
-                                                    <span className="text-[10px] text-text-secondary truncate leading-tight">
+                                                    <span className="text-micro text-text-secondary truncate leading-tight">
                                                         {c.segmento} • <strong className="font-semibold text-text-secondary">{c.municipio_sede}</strong>
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <span
-                                                className="text-[8px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
-                                                style={{ 
-                                                    backgroundColor: `${itemColor}20`, 
-                                                    color: itemColor 
-                                                }}
+                                            <Badge
+                                                variant={tipoVariant}
+                                                className="text-micro font-semibold"
                                             >
                                                 {c.tipo}
-                                            </span>
+                                            </Badge>
                                         </div>
                                     );
                                 })
                             ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-text-muted">
-                                    <p className="text-[11px] font-medium">Nenhum arranjo encontrado</p>
-                                </div>
+                                <EmptyState
+                                    icon={GitPullRequest}
+                                    title="Nenhum arranjo encontrado"
+                                    description="Tente ajustar os termos da busca."
+                                />
                             )}
                         </div>
                     </div>
                 ) : (
-                    /* LADO DIREITO: BARRA DE SELEÇÃO + CARDLISTA */
-                    <div className="flex-1 h-[480px] lg:h-full min-h-0 min-w-0 flex flex-col gap-3 animate-in fade-in duration-200">
-
-
-                        {/* CARDLISTA DINÂMICO */}
-                        <div className="flex-1 min-h-0 min-w-0 overflow-hidden">
-                            <CardLista
-                                tabs={dynamicTabs}
-                                activeTab={activeTab}
-                                onTabChange={setActiveTab}
-                                searchValue={searchQuery}
-                                onSearchChange={(val) => {
-                                    setSearchQuery(val);
-                                    if (val.trim() && activeTab !== 'catalogo') {
-                                        setActiveTab('catalogo');
+                    /* LADO DIREITO: TABS, FILTROS E CONTEÚDO */
+                    <div className="flex-1 min-w-0 h-[520px] lg:h-full flex flex-col gap-3 min-h-0 overflow-hidden">
+                        {/* BARRA SUPERIOR: TABS + BUSCA */}
+                        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 shrink-0">
+                            <Tabs
+                                items={[
+                                    {
+                                        id: 'catalogo',
+                                        label: 'Catálogo',
+                                        icon: <GitPullRequest size={15} />,
+                                        count: filteredCadeias.length
+                                    },
+                                    {
+                                        id: 'segmentos',
+                                        label: 'Segmentos',
+                                        icon: <Filter size={15} />,
+                                        count: segmentStats.length
+                                    },
+                                    {
+                                        id: 'ranking',
+                                        label: selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios',
+                                        icon: <TrendingUp size={15} />
                                     }
-                                }}
-                                showSearch={true}
-                                searchPlaceholder="Buscar cadeia, segmento ou cidade..."
+                                ]}
+                                value={activeTab}
+                                onChange={setActiveTab}
+                                variant="pill"
+                                className="w-full xl:w-auto"
                             />
+
+                            {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
+                            <div className="w-full xl:w-72 min-w-0">
+                                <SearchInput
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value.trim() && activeTab !== 'catalogo') {
+                                            setActiveTab('catalogo');
+                                        }
+                                    }}
+                                    onClear={() => setSearchQuery('')}
+                                    placeholder="Buscar cadeia, segmento ou cidade... (/)"
+                                    size="sm"
+                                />
+                            </div>
+                        </div>
+
+                        {/* BARRA DE FILTROS POR TIPO (CHIPS COM .tnum) + FILTROS ATIVOS */}
+                        <div className="flex items-center justify-between gap-2 flex-wrap shrink-0">
+                            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                                <Chip
+                                    selected={selectedTipo === 'todos'}
+                                    onClick={() => setSelectedTipo('todos')}
+                                    count={tipoStats.todos}
+                                    variant={selectedTipo === 'todos' ? (filtroSemiarido ? 'warning' : 'primary') : 'neutral'}
+                                    size="sm"
+                                >
+                                    Todos
+                                </Chip>
+                                {availableTipos.map((tipo) => (
+                                    <Chip
+                                        key={tipo}
+                                        selected={selectedTipo === tipo}
+                                        onClick={() => setSelectedTipo(selectedTipo === tipo ? 'todos' : tipo)}
+                                        count={tipoStats[tipo] || 0}
+                                        variant={selectedTipo === tipo ? (filtroSemiarido ? 'warning' : getTipoBadgeVariant(tipo)) : 'neutral'}
+                                        size="sm"
+                                    >
+                                        {tipo}
+                                    </Chip>
+                                ))}
+                            </div>
+
+                            {/* CHIPS DE FILTROS ATIVOS & BOTÃO LIMPAR */}
+                            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                                {selectedSegmento && (
+                                    <Chip
+                                        selected
+                                        onClick={() => setSelectedSegmento(null)}
+                                        icon={<Filter size={12} />}
+                                        variant="primary"
+                                        size="sm"
+                                    >
+                                        Segmento: {selectedSegmento} ×
+                                    </Chip>
+                                )}
+                                {selectedTerritory && (
+                                    <Chip
+                                        selected
+                                        onClick={() => handleSelectTerritory(null)}
+                                        icon={<MapPin size={12} />}
+                                        variant="neutral"
+                                        size="sm"
+                                    >
+                                        {territoryName} ×
+                                    </Chip>
+                                )}
+                                {activeFiltersCount > 0 && (
+                                    <Button
+                                        variant="ghost"
+                                        size="xs"
+                                        onClick={handleClearAllFilters}
+                                        className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-caption font-semibold"
+                                    >
+                                        Limpar filtros ({activeFiltersCount})
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* CONTEÚDO DAS ABAS */}
+                        <div className="flex-1 min-w-0 bg-surface rounded-card border border-border shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
+                            {/* ABA 1: CATÁLOGO */}
+                            {activeTab === 'catalogo' && (
+                                <div className="flex-1 flex flex-col min-h-0 w-full overflow-hidden">
+                                    <div className="flex items-center justify-between mb-3 shrink-0">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
+                                                {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
+                                            </h3>
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                className="tnum"
+                                            >
+                                                {filteredCadeias.length} {filteredCadeias.length === 1 ? 'resultado' : 'resultados'}
+                                            </Badge>
+                                        </div>
+                                        {selectedTerritory && (
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                icon={<MapPin size={13} />}
+                                            >
+                                                {territoryName}
+                                            </Badge>
+                                        )}
+                                    </div>
+
+                                    <div ref={catalogListRef} className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                        {filteredCadeias.length > 0 ? (
+                                            filteredCadeias.map((c, idx) => {
+                                                const IconComp = c.icone || Wheat;
+                                                const totalAbrangencia = (c.municipios_cobertos && c.municipios_cobertos.length > 0) ? c.municipios_cobertos.length : 1;
+                                                const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
+                                                const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo) : c.corHex;
+                                                const tipoVariant = getTipoBadgeVariant(c.tipo);
+
+                                                const listaNomes = (c.municipios_cobertos && c.municipios_cobertos.length > 0)
+                                                    ? c.municipios_cobertos.map(m => m.nome_municipio).join(', ')
+                                                    : c.municipio_sede;
+
+                                                return (
+                                                    <div
+                                                        key={c.id_cadeia || idx}
+                                                        ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 88px' }}
+                                                        onClick={() => {
+                                                            if (isSelected) {
+                                                                setSelectedCadeia(null);
+                                                                setFocusedAsset(null);
+                                                            } else {
+                                                                setSelectedCadeia(c);
+                                                                if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
+                                                            }
+                                                            setSelectedCadeiaDrawer(c);
+                                                        }}
+                                                        className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-all duration-200 group cursor-pointer border w-full scroll-mt-2 ${
+                                                            isSelected
+                                                                ? (filtroSemiarido
+                                                                    ? 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-500 ring-2 ring-amber-500/20 shadow-card-elevated'
+                                                                    : 'bg-primary-50/50 dark:bg-primary-950/30 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated')
+                                                                : (filtroSemiarido
+                                                                    ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated'
+                                                                    : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3 w-full">
+                                                            <div className="flex items-start gap-3 min-w-0 flex-1">
+                                                                <div
+                                                                    className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform group-hover:scale-105"
+                                                                    style={{
+                                                                        backgroundColor: `${itemColor}20`,
+                                                                        color: itemColor
+                                                                    }}
+                                                                >
+                                                                    <IconComp size={16} />
+                                                                </div>
+                                                                <div className="flex flex-col min-w-0 flex-1">
+                                                                    <h4 className={`text-body-sm font-semibold leading-tight break-words transition-colors ${
+                                                                        isSelected
+                                                                            ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300')
+                                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
+                                                                    }`}>
+                                                                        {c.entidade}
+                                                                    </h4>
+
+                                                                    <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-caption text-text-secondary mt-1 font-medium">
+                                                                        <Badge variant="neutral" className="text-micro font-medium">
+                                                                            {c.segmento}
+                                                                        </Badge>
+                                                                        <span>•</span>
+                                                                        <span className="font-semibold text-text-primary">Sede: {c.municipio_sede}</span>
+                                                                        <span>•</span>
+                                                                        <span className="text-text-muted">{c.territorio_identidade}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
+                                                                <Badge
+                                                                    variant={tipoVariant}
+                                                                    className="text-micro font-semibold"
+                                                                >
+                                                                    {c.tipo}
+                                                                </Badge>
+                                                                {c.fonte && (
+                                                                    <a
+                                                                        href={c.fonte}
+                                                                        target="_blank"
+                                                                        rel="noreferrer"
+                                                                        className="p-1 rounded-control text-text-muted hover:text-primary-600 hover:bg-surface-soft transition-colors"
+                                                                        title="Acessar Fonte Oficial"
+                                                                        onClick={(e) => e.stopPropagation()}
+                                                                    >
+                                                                        <ExternalLink size={14} />
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className={`text-caption leading-relaxed break-words rounded-control p-2 transition-colors border ${
+                                                            isSelected
+                                                                ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
+                                                                : 'bg-surface-soft border-border text-text-secondary'
+                                                        }`}>
+                                                            <span className="font-semibold text-text-primary">
+                                                                {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios: ` : 'Atua em 1 município: '}
+                                                            </span>
+                                                            <span className="font-medium text-text-secondary">
+                                                                {listaNomes}
+                                                            </span>
+                                                        </div>
+
+                                                        {c.texto_referencia && (
+                                                            <div className={`text-caption leading-relaxed break-words rounded-control p-2.5 transition-colors border ${
+                                                                isSelected
+                                                                    ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
+                                                                    : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
+                                                            }`}>
+                                                                <div className="flex items-center gap-1.5 font-bold text-micro uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">
+                                                                    <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
+                                                                    <span>Referência / Citação do Artigo:</span>
+                                                                </div>
+                                                                <p className="text-caption leading-relaxed italic text-text-secondary dark:text-amber-200/90">
+                                                                    "{c.texto_referencia}"
+                                                                </p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <EmptyState
+                                                icon={GitPullRequest}
+                                                title={selectedTerritory ? `Nenhum arranjo produtivo sediado em ${territoryName}` : 'Nenhum arranjo encontrado'}
+                                                description="Tente ajustar os filtros por tipo, segmento ou busca para visualizar resultados."
+                                                action={
+                                                    activeFiltersCount > 0 ? (
+                                                        <Button variant="outline" size="sm" onClick={handleClearAllFilters}>
+                                                            Limpar Filtros
+                                                        </Button>
+                                                    ) : null
+                                                }
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ABA 2: SEGMENTOS */}
+                            {activeTab === 'segmentos' && (
+                                <div className="flex-1 flex flex-col min-h-0 w-full overflow-hidden">
+                                    <div className="mb-3 shrink-0 flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
+                                                {selectedTerritory ? `Segmentos em ${territoryName}` : 'Segmentos Econômicos da Bahia'}
+                                            </h3>
+                                            <p className="text-caption text-text-secondary font-medium">Distribuição por vocação produtiva</p>
+                                        </div>
+                                        <Badge variant="neutral" className="tnum">
+                                            {segmentStats.length} segmentos
+                                        </Badge>
+                                    </div>
+
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full">
+                                        {segmentStats.length > 0 ? (
+                                            segmentStats.map((seg) => {
+                                                const isSelected = selectedSegmento === seg.name;
+                                                const dotColor = seg.color;
+
+                                                return (
+                                                    <div
+                                                        key={seg.name}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 56px' }}
+                                                        onClick={() => {
+                                                            const nextSeg = isSelected ? null : seg.name;
+                                                            setSelectedSegmento(nextSeg);
+                                                            if (selectedCadeia && nextSeg && selectedCadeia.segmento !== nextSeg) {
+                                                                setSelectedCadeia(null);
+                                                                setFocusedAsset(null);
+                                                            }
+                                                        }}
+                                                        className={`rounded-card p-3 border transition-all cursor-pointer ${
+                                                            isSelected
+                                                                ? (filtroSemiarido ? 'bg-amber-50/50 dark:bg-amber-950/40 border-amber-500 shadow-sm ring-2 ring-amber-500/20' : 'bg-primary-50/40 dark:bg-primary-950/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20')
+                                                                : (filtroSemiarido ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-center justify-between mb-1.5">
+                                                            <div className="flex items-center gap-2 min-w-0">
+                                                                <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: dotColor }} />
+                                                                <span className="text-body-sm font-semibold text-text-primary truncate">{seg.name}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-caption font-medium text-text-secondary tnum">{seg.count} {seg.count === 1 ? 'arranjo' : 'arranjos'}</span>
+                                                                <span
+                                                                    className="text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none tnum"
+                                                                    style={{ backgroundColor: `${seg.color}20`, color: seg.color }}
+                                                                >
+                                                                    {seg.percent}%
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`w-full h-2 rounded-full overflow-hidden relative flex items-center ${
+                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
+                                                        }`}>
+                                                            <div
+                                                                className="h-full rounded-full transition-all duration-500"
+                                                                style={{ width: `${seg.percent}%`, backgroundColor: seg.color }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <EmptyState
+                                                icon={Filter}
+                                                title="Nenhum segmento encontrado"
+                                                description="Não há dados de segmentos para o filtro atual."
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ABA 3: RANKING */}
+                            {activeTab === 'ranking' && (
+                                <div className="flex-1 flex flex-col min-h-0 w-full overflow-hidden">
+                                    <div className="mb-3 shrink-0 flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
+                                                {selectedTerritory ? `Ranking Sede Municípios · ${territoryName}` : 'Ranking Sede Territórios'}
+                                            </h3>
+                                            <p className="text-caption text-text-secondary font-medium">Densidade de arranjos produtivos por sede oficial</p>
+                                        </div>
+                                        <Badge variant="neutral" className="tnum">
+                                            {selectedTerritory ? `${municipalityRanking.length} sedes` : `${territoryRanking.length} territórios`}
+                                        </Badge>
+                                    </div>
+
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0 w-full">
+                                        {selectedTerritory ? (
+                                            municipalityRanking.length > 0 ? (
+                                                municipalityRanking.map((m, index) => (
+                                                    <div
+                                                        key={m.name}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 40px' }}
+                                                        onClick={() => {
+                                                            const munKey = String(m.name || '').trim();
+                                                            const coords = findMunicipioCoords(munKey);
+                                                            if (coords) setFocusedAsset(coords);
+                                                        }}
+                                                        className="flex items-center gap-2 p-1.5 rounded-control hover:bg-surface-soft transition-colors cursor-pointer group"
+                                                    >
+                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${
+                                                            index === 0
+                                                                ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-600 text-white')
+                                                                : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
+                                                        }`}>
+                                                            {m.rank}
+                                                        </span>
+
+                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${
+                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
+                                                        }`}>
+                                                            <div
+                                                                className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
+                                                                    filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
+                                                                }`}
+                                                                style={{ width: `${m.percentBar}%` }}
+                                                            />
+                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${
+                                                                filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
+                                                            }`}>
+                                                                {m.name}
+                                                            </span>
+                                                        </div>
+
+                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${
+                                                            filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                        }`}>
+                                                            {m.count}
+                                                        </span>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <EmptyState
+                                                    icon={TrendingUp}
+                                                    title="Nenhum município com sede registrada"
+                                                    description="Não há sedes de arranjos produtivos registradas para este território."
+                                                />
+                                            )
+                                        ) : (
+                                            territoryRanking.length > 0 ? (
+                                                territoryRanking.map((t, index) => (
+                                                    <div
+                                                        key={t.id}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 40px' }}
+                                                        onClick={() => {
+                                                            const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
+                                                            handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                                                        }}
+                                                        className="flex items-center gap-2 p-1.5 rounded-control hover:bg-surface-soft transition-colors cursor-pointer group"
+                                                    >
+                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${
+                                                            index === 0
+                                                                ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-600 text-white')
+                                                                : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
+                                                        }`}>
+                                                            {t.rank}
+                                                        </span>
+
+                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${
+                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
+                                                        }`}>
+                                                            <div
+                                                                className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
+                                                                    filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
+                                                                }`}
+                                                                style={{ width: `${t.percentBar}%` }}
+                                                            />
+                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${
+                                                                filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
+                                                            }`}>
+                                                                {t.name}
+                                                            </span>
+                                                        </div>
+
+                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${
+                                                            filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                        }`}>
+                                                            {t.count}
+                                                        </span>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <EmptyState
+                                                    icon={TrendingUp}
+                                                    title="Nenhum território encontrado"
+                                                    description="Não há registros de arranjos produtivos."
+                                                />
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
 
             </div>
+
+            {/* DRAWER LATERAL DE DETALHES DA CADEIA */}
+            <Drawer
+                open={Boolean(selectedCadeiaDrawer)}
+                onClose={() => setSelectedCadeiaDrawer(null)}
+                title={selectedCadeiaDrawer?.entidade || 'Detalhes da Cadeia Produtiva'}
+                subtitle={selectedCadeiaDrawer ? `${selectedCadeiaDrawer.tipo} • ${selectedCadeiaDrawer.segmento}` : ''}
+                footer={
+                    <div className="flex items-center justify-between w-full">
+                        {selectedCadeiaDrawer?.fonte ? (
+                            <a
+                                href={selectedCadeiaDrawer.fonte}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-control font-medium inline-flex items-center justify-center gap-2 h-8 px-3 text-caption bg-primary-600 hover:bg-primary-700 text-white shadow-xs transition-colors"
+                            >
+                                <span>Acessar Fonte Oficial</span>
+                                <ExternalLink size={14} />
+                            </a>
+                        ) : <div />}
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => setSelectedCadeiaDrawer(null)}
+                        >
+                            Fechar
+                        </Button>
+                    </div>
+                }
+            >
+                {selectedCadeiaDrawer && (() => {
+                    const tipoVariant = getTipoBadgeVariant(selectedCadeiaDrawer.tipo);
+                    const totalAbrangencia = (selectedCadeiaDrawer.municipios_cobertos && selectedCadeiaDrawer.municipios_cobertos.length > 0)
+                        ? selectedCadeiaDrawer.municipios_cobertos.length
+                        : 1;
+
+                    return (
+                        <div className="flex flex-col gap-4 text-body-sm">
+                            {/* BADGES PRINCIPAIS */}
+                            <div className="flex items-center gap-2 flex-wrap pb-3 border-b border-border/70">
+                                <Badge
+                                    variant={tipoVariant}
+                                    className="text-caption font-semibold"
+                                >
+                                    {selectedCadeiaDrawer.tipo}
+                                </Badge>
+                                <Badge variant="neutral" className="text-caption">
+                                    {selectedCadeiaDrawer.segmento}
+                                </Badge>
+                                {isMunicipioSemiarido(selectedCadeiaDrawer.municipio_sede) && (
+                                    <Badge variant="warning" icon={<SunMedium size={12} />} className="text-caption">
+                                        Semiárido
+                                    </Badge>
+                                )}
+                            </div>
+
+                            {/* GRID DE METADADOS */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Tipo / Classificação</span>
+                                    <p className="font-bold text-text-primary">{selectedCadeiaDrawer.tipo || '—'}</p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Segmento Produtivo</span>
+                                    <p className="font-bold text-text-primary">{selectedCadeiaDrawer.segmento || '—'}</p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Município Sede</span>
+                                    <p className="font-bold text-text-primary flex items-center gap-1.5">
+                                        <MapPin size={14} className="text-primary-600" />
+                                        {selectedCadeiaDrawer.municipio_sede || '—'}
+                                    </p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Território de Identidade</span>
+                                    <p className="font-bold text-text-primary">
+                                        {selectedCadeiaDrawer.territorio_identidade || '—'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* MUNICÍPIOS COBERTOS / ABRANGÊNCIA */}
+                            <div className="p-3 bg-surface-soft rounded-control border border-border/70 flex flex-col gap-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-micro font-semibold uppercase text-text-muted">
+                                        Municípios Cobertos / Parceiros
+                                    </span>
+                                    <Badge variant="neutral" className="text-micro tnum font-semibold">
+                                        {totalAbrangencia} {totalAbrangencia === 1 ? 'município' : 'municípios'}
+                                    </Badge>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1">
+                                    {selectedCadeiaDrawer.municipios_cobertos && selectedCadeiaDrawer.municipios_cobertos.length > 0 ? (
+                                        selectedCadeiaDrawer.municipios_cobertos.map(m => (
+                                            <span
+                                                key={m.id_municipio || m.nome_municipio}
+                                                className="text-caption bg-surface border border-border/60 px-2 py-0.5 rounded-control text-text-primary font-medium"
+                                            >
+                                                {m.nome_municipio}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-caption bg-surface border border-border/60 px-2 py-0.5 rounded-control text-text-primary font-medium">
+                                            {selectedCadeiaDrawer.municipio_sede}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* CITAÇÃO / REFERÊNCIA */}
+                            {selectedCadeiaDrawer.texto_referencia && (
+                                <div className="p-3 bg-amber-50/80 dark:bg-amber-950/30 rounded-control border border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200">
+                                    <div className="flex items-center gap-1.5 font-bold text-micro uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">
+                                        <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
+                                        <span>Referência / Citação do Artigo</span>
+                                    </div>
+                                    <p className="text-caption leading-relaxed italic text-text-secondary dark:text-amber-200/90">
+                                        "{selectedCadeiaDrawer.texto_referencia}"
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })()}
+            </Drawer>
 
         </main>
     );

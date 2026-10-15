@@ -21,7 +21,20 @@ import { DataContext } from '../context/DataContext';
 import { isMunicipioSemiarido } from '../constants/semiarido';
 import SideMap, { getHeatColor } from './maps/SideMap';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
-import { normalize } from '../utils/normalization';
+import { normalize, classificarInstituicao } from '../utils/normalization';
+import {
+    Card,
+    Button,
+    IconButton,
+    Badge,
+    Chip,
+    SearchInput,
+    Tabs,
+    Drawer,
+    EmptyState,
+    KpiSkeleton,
+    ListRowSkeleton
+} from './ui';
 
 const PALETTE_CORES = ['#2563EB', '#10B981', '#06B6D4', '#F59E0B', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1'];
 
@@ -89,8 +102,10 @@ export default function CursosPage() {
 
     const [selectedTerritory, setSelectedTerritory] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('todas');
+    const [selectedRede, setSelectedRede] = useState('todas'); // 'todas' | 'publica' | 'privada'
     const [selectedIES, setSelectedIES] = useState(null);
     const [selectedCursoId, setSelectedCursoId] = useState(null);
+    const [selectedCursoDrawer, setSelectedCursoDrawer] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'ead' | 'areas' | 'ranking' | 'ies'
     const [isMapExpanded, setIsMapExpanded] = useState(false);
@@ -113,6 +128,36 @@ export default function CursosPage() {
         return territoryCursos.filter(c => isMunicipioSemiarido(c.municipio));
     }, [territoryCursos, filtroSemiarido]);
 
+    // Estatísticas da Rede (Pública vs Privada)
+    const redeStats = useMemo(() => {
+        let publica = 0;
+        let privada = 0;
+        const base = activeScopedCursos || [];
+        base.forEach(c => {
+            const info = classificarInstituicao(c);
+            if (info.isPublica) publica++;
+            else if (info.isPrivada) privada++;
+        });
+        return { publica, privada, total: base.length };
+    }, [activeScopedCursos]);
+
+    const activeFiltersCount = useMemo(() => {
+        let count = 0;
+        if (selectedCategory !== 'todas') count++;
+        if (selectedRede !== 'todas') count++;
+        if (selectedIES) count++;
+        if (searchQuery.trim()) count++;
+        return count;
+    }, [selectedCategory, selectedRede, selectedIES, searchQuery]);
+
+    const handleClearAllFilters = () => {
+        setSelectedCategory('todas');
+        setSelectedRede('todas');
+        setSelectedIES(null);
+        setSearchQuery('');
+        setSelectedCursoId(null);
+    };
+
     // 1. Filtragem Geral dos Cursos Presenciais
     const filteredCursos = useMemo(() => {
         if (!cursosData || cursosData.length === 0) return [];
@@ -124,6 +169,15 @@ export default function CursosPage() {
 
         if (selectedCategory !== 'todas') {
             list = list.filter(c => (c.categoria || c.tipo) === selectedCategory);
+        }
+
+        if (selectedRede !== 'todas') {
+            list = list.filter(c => {
+                const info = classificarInstituicao(c);
+                if (selectedRede === 'publica') return info.isPublica;
+                if (selectedRede === 'privada') return info.isPrivada;
+                return true;
+            });
         }
 
         if (selectedIES) {
@@ -157,7 +211,7 @@ export default function CursosPage() {
         }
 
         return list;
-    }, [cursosData, selectedCategory, selectedIES, selectedTerritory, searchQuery, filtroSemiarido]);
+    }, [cursosData, selectedCategory, selectedRede, selectedIES, selectedTerritory, searchQuery, filtroSemiarido]);
 
     // 1.1 Filtragem Exclusiva dos Cursos EaD
     const filteredEadCursos = useMemo(() => {
@@ -172,6 +226,15 @@ export default function CursosPage() {
             list = list.filter(c => (c.categoria || c.tipo) === selectedCategory);
         }
 
+        if (selectedRede !== 'todas') {
+            list = list.filter(c => {
+                const info = classificarInstituicao(c);
+                if (selectedRede === 'publica') return info.isPublica;
+                if (selectedRede === 'privada') return info.isPrivada;
+                return true;
+            });
+        }
+
         if (selectedIES) {
             list = list.filter(c => {
                 const sigla = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
@@ -203,7 +266,7 @@ export default function CursosPage() {
         }
 
         return list;
-    }, [cursosEadData, selectedCategory, selectedIES, selectedTerritory, searchQuery]);
+    }, [cursosEadData, selectedCategory, selectedRede, selectedIES, selectedTerritory, searchQuery, filtroSemiarido]);
 
     const compactCursosList = useMemo(() => {
         if (!sidebarSearch.trim()) return filteredCursos;
@@ -226,6 +289,14 @@ export default function CursosPage() {
         if (selectedCategory && selectedCategory !== 'todas') {
             list = list.filter(c => (c.categoria || c.tipo) === selectedCategory);
         }
+        if (selectedRede !== 'todas') {
+            list = list.filter(c => {
+                const info = classificarInstituicao(c);
+                if (selectedRede === 'publica') return info.isPublica;
+                if (selectedRede === 'privada') return info.isPrivada;
+                return true;
+            });
+        }
         if (!selectedIES) return list;
         return list.filter(c => {
             const sigla = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
@@ -237,7 +308,7 @@ export default function CursosPage() {
                 cleanEnt === selectedIES
             );
         });
-    }, [cursosData, selectedCategory, selectedIES, filtroSemiarido]);
+    }, [cursosData, selectedCategory, selectedRede, selectedIES, filtroSemiarido]);
 
     // 2. Mapeamento e Estatísticas de Categorias (Áreas)
     const categoryStats = useMemo(() => {
@@ -426,7 +497,7 @@ export default function CursosPage() {
     ];
 
     return (
-        <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
+        <main className="flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
@@ -476,97 +547,90 @@ export default function CursosPage() {
             </div>
 
             {/* HEADER DA PÁGINA */}
-            <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                        <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
+                        <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Ensino Superior em CT&I
                         </h1>
-                        <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-600/10 text-primary-600 dark:text-primary-300 border-primary-600/20'} text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none`}>
-                            <Flame size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+                        <Badge
+                            variant={filtroSemiarido ? 'warning' : 'primary'}
+                            icon={<Flame size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />}
+                            className="text-micro font-medium uppercase px-2.5 py-1"
+                        >
                             Somente Oferta de CT&I
-                        </span>
+                        </Badge>
                     </div>
-                    <p className="text-xs lg:text-sm text-text-secondary mt-0.5 font-medium">
-                        Mapeamento territorial da oferta presencial de ensino superior voltada exclusivamente a Ciência, Tecnologia e Inovação (CT&I)
+                    <p className="text-body-sm text-text-secondary mt-1 font-normal">
+                        Mapeamento territorial da oferta presencial e EaD de ensino superior voltada exclusivamente a Ciência, Tecnologia e Inovação (CT&I)
                     </p>
                     <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
                 </div>
             </div>
 
             {/* GRID DE KPIS */}
-            <div className="tour-kpis w-full relative z-10 shrink-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
-                    {kpis.map((kpi, index) => {
-                        const isHero = index === 0;
-                        const accentColors = [
-                            'text-white/70',
-                            'text-[#0D9488]',
-                            'text-accent-600',
-                            'text-warning-600',
-                            'text-success-600'
-                        ];
+            <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0">
+                    {loadingStats ? (
+                        <KpiSkeleton count={5} />
+                    ) : (
+                        kpis.map((kpi, index) => {
+                            const isHero = index === 0;
 
-                        return (
-                            <div
-                                key={index}
-                                title={kpi.tooltip || kpi.label}
-                                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] cursor-default overflow-hidden transition-all duration-500 hover:shadow-card-elevated ${
-                                    isHero
-                                        ? (filtroSemiarido
-                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
-                                            : 'bg-primary-900 text-white shadow-card-elevated')
-                                        : (filtroSemiarido
-                                            ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-                                            : 'bg-surface border border-border shadow-card')
-                                }`}
-                            >
-                                {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                <div className="flex items-center gap-2 w-full min-w-0">
-                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
-                                    <span
-                                        className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
-                                            isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
-                                        }`}
-                                        title={kpi.label}
-                                    >
-                                        {kpi.label}
-                                    </span>
-                                </div>
-
-                                {/* LINHA INFERIOR: NÚMERO */}
-                                <div className="flex items-baseline w-full justify-between">
-                                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                        <span className={`text-[28px] font-bold tracking-tight leading-none ${
-                                            isHero ? 'text-white' : 'text-text-primary'
-                                        }`}>
-                                            {kpi.value}
+                            return (
+                                <Card
+                                    key={index}
+                                    variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
+                                    title={kpi.tooltip || kpi.label}
+                                    className="p-4 flex flex-col justify-between h-[88px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
+                                >
+                                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                                    <div className="flex items-center gap-2 w-full min-w-0">
+                                        <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
+                                        <span
+                                            className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
+                                                isHero ? 'text-white/80' : 'text-text-muted'
+                                            }`}
+                                            title={kpi.label}
+                                        >
+                                            {kpi.label}
                                         </span>
-                                        {filtroSemiarido && kpi.percent && (
-                                            <span
-                                                title={`(${kpi.percent})`}
-                                                className={`text-[11px] font-semibold truncate ${
-                                                    isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
-                                                }`}
-                                            >
-                                                ({kpi.percent})
-                                            </span>
-                                        )}
                                     </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+
+                                    {/* LINHA INFERIOR: NÚMERO */}
+                                    <div className="flex items-baseline w-full justify-between">
+                                        <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                            <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
+                                                isHero ? 'text-white' : 'text-text-primary'
+                                            }`}>
+                                                {kpi.value}
+                                            </span>
+                                            {filtroSemiarido && kpi.percent && (
+                                                <span
+                                                    title={`(${kpi.percent})`}
+                                                    className={`text-caption font-semibold truncate ${
+                                                        isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                    }`}
+                                                >
+                                                    ({kpi.percent})
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Card>
+                            );
+                        })
+                    )}
                 </div>
             </div>
 
             {/* GRID PRINCIPAL: MAPA + DASHBOARD */}
-            <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+            <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
                 {/* LADO ESQUERDO: MAPA */}
                 <div
-                    style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 bg-surface rounded-2xl border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
+                    style={{ width: isMapExpanded ? 'calc(100% - 330px)' : 'calc(40% - 12px)' }}
+                    className="shrink-0 min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cursos"
@@ -584,89 +648,88 @@ export default function CursosPage() {
 
                 {/* MODO EXPANDIDO */}
                 {isMapExpanded ? (
-                    <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-xl border border-border shadow-sm p-4 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div className="w-[320px] shrink-0 h-[460px] lg:h-full bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300 overflow-hidden">
                         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
                             <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-[12px] font-semibold text-text-primary truncate">
+                                <span className="text-body-sm font-semibold text-text-primary truncate">
                                     Cursos de CT&I
                                 </span>
-                                <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-700' : 'bg-primary-600/10 text-primary-600'} text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none`}>
+                                <Badge variant={filtroSemiarido ? 'warning' : 'primary'} className="tnum">
                                     {compactCursosList.length}
-                                </span>
+                                </Badge>
                             </div>
                             {selectedCursoId && (
                                 <button
                                     type="button"
                                     onClick={() => setSelectedCursoId(null)}
-                                    className="text-[10px] font-medium text-text-secondary hover:text-red-600 bg-surface-soft hover:bg-danger-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0 justify-center leading-none"
+                                    className="text-micro font-medium text-text-secondary hover:text-danger-600 bg-surface-soft hover:bg-danger-50 dark:hover:bg-danger-950/40 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0 leading-none"
                                 >
                                     <span>Limpar</span>
-                                    <X size={16} />
+                                    <X size={12} />
                                 </button>
                             )}
                         </div>
 
-                        <div className="relative my-2 shrink-0">
-                            <Search size={16} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-                            <input
-                                type="text"
+                        <div className="my-2.5 shrink-0">
+                            <SearchInput
                                 value={sidebarSearch}
                                 onChange={(e) => setSidebarSearch(e.target.value)}
-                                placeholder="Filtrar curso, IES ou cidade..."
-                                className={`w-full pl-7 pr-3 py-1.5 text-[11px] bg-surface-soft border border-border rounded-xl focus:bg-surface ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'} focus:outline-none transition-colors placeholder-text-muted`}
+                                onClear={() => setSidebarSearch('')}
+                                placeholder="Filtrar cursos..."
+                                size="sm"
                             />
-                            {sidebarSearch && (
-                                <button
-                                    type="button"
-                                    onClick={() => setSidebarSearch('')}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[11px] font-medium"
-                                >
-                                    ×
-                                </button>
-                            )}
                         </div>
 
-                        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
+                        <div className="flex-1 overflow-y-auto pr-1 flex flex-col min-h-0 divide-y divide-border/40">
                             {compactCursosList.length > 0 ? (
                                 compactCursosList.map((c, idx) => {
                                     const catColor = categoryColorMap[c.categoria || c.tipo] || '#64748B';
                                     const cursoKey = c.id_curso || c.id || `${c.curso || c.nome}-${c.municipio}-${idx}`;
                                     const isSelected = selectedCursoId === cursoKey;
+                                    const redeInfo = classificarInstituicao(c);
 
                                     return (
                                         <div
                                             key={cursoKey}
-                                            onClick={() => setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey)}
-                                            className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 w-full ${isSelected
-                                                    ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50')
+                                            style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
+                                            onClick={() => {
+                                                setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
+                                                setSelectedCursoDrawer(c);
+                                            }}
+                                            className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer w-full ${isSelected
+                                                    ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50 dark:bg-primary-950/40')
                                                     : 'bg-transparent hover:bg-surface-soft'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-2 min-w-0 flex-1">
                                                 <div
-                                                    className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${isSelected ? 'scale-105 shadow-2xs' : ''
-                                                        }`}
+                                                    className={`w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-transform ${isSelected ? 'scale-105 shadow-2xs' : ''}`}
                                                     style={{
                                                         backgroundColor: `${catColor}20`,
                                                         color: catColor
                                                     }}
                                                 >
-                                                    <GraduationCap size={16} />
+                                                    <GraduationCap size={14} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-[11px] font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
-                                                        }`}>
+                                                    <h5 className={`text-caption font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')}`}>
                                                         {c.curso || c.nome}
                                                     </h5>
-                                                    <span className="text-[10px] text-text-secondary truncate leading-tight">
+                                                    <span className="text-micro text-text-secondary truncate leading-tight">
                                                         {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)} • <strong className="font-semibold text-text-secondary">{c.municipio}</strong>
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-1 shrink-0">
+                                            <div className="flex items-center gap-1.5 shrink-0">
+                                                <Badge
+                                                    variant={redeInfo.isPublica ? 'success' : 'accent'}
+                                                    className="text-micro font-semibold px-1.5 py-0.2"
+                                                >
+                                                    {redeInfo.isPublica ? 'Pública' : 'Privada'}
+                                                </Badge>
                                                 <span
-                                                    className="text-[8px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
+                                                    className="text-micro font-semibold px-1.5 py-0.5 rounded-control shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
                                                     style={{ backgroundColor: `${catColor}18`, color: catColor }}
                                                 >
                                                     {c.categoria || c.tipo || 'Geral'}
@@ -676,9 +739,12 @@ export default function CursosPage() {
                                     );
                                 })
                             ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-text-muted">
-                                    <p className="text-[11px] font-medium">Nenhum curso encontrado</p>
-                                </div>
+                                <EmptyState
+                                    icon={GraduationCap}
+                                    title="Nenhum curso encontrado"
+                                    description="Tente ajustar a busca."
+                                    compact
+                                />
                             )}
                         </div>
                     </div>
@@ -686,181 +752,249 @@ export default function CursosPage() {
                     /* LADO DIREITO: CATÁLOGO COM A NOVA ABA DE CURSOS EAD */
                     <div className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
-                        {/* BARRA SUPERIOR DE ABAS */}
-                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0">
-
-                            <div className="flex flex-wrap items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full 2xl:w-auto min-w-0">
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('catalogo')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'catalogo'
-                                            ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                            : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <BookOpen size={16} />
-                                    Catálogo ({filteredCursos.length})
-                                </button>
-
-                                {/* NOVA ABA ISOLADA: CURSOS EAD */}
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('ead')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ead'
-                                            ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                            : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <Laptop size={16} />
-                                    Cursos EaD e Semipresenciais ({filteredEadCursos.length})
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('areas')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'areas'
-                                            ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                            : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <Filter size={16} />
-                                    Áreas ({categoryStats.length})
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('ranking')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ranking'
-                                            ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                            : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <TrendingUp size={16} />
-                                    {selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios'}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('ies')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ies'
-                                            ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                            : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <Building2 size={16} />
-                                    Top Instituições {selectedIES && <span className={`w-2 h-2 rounded-full ${filtroSemiarido ? 'bg-amber-500' : 'bg-primary-600'}`}></span>}
-                                </button>
-                            </div>
+                        {/* BARRA SUPERIOR DE ABAS E BUSCA */}
+                        <div className="bg-surface rounded-card p-2.5 border border-border shadow-card flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0 min-w-0 overflow-hidden">
+                            <Tabs
+                                items={[
+                                    {
+                                        id: 'catalogo',
+                                        label: 'Catálogo',
+                                        icon: <BookOpen size={15} />,
+                                        count: filteredCursos.length
+                                    },
+                                    {
+                                        id: 'ead',
+                                        label: 'Cursos EaD',
+                                        icon: <Laptop size={15} />,
+                                        count: filteredEadCursos.length
+                                    },
+                                    {
+                                        id: 'areas',
+                                        label: 'Áreas',
+                                        icon: <Filter size={15} />,
+                                        count: categoryStats.length
+                                    },
+                                    {
+                                        id: 'ranking',
+                                        label: selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios',
+                                        icon: <TrendingUp size={15} />
+                                    },
+                                    {
+                                        id: 'ies',
+                                        label: 'Top Instituições',
+                                        icon: <Building2 size={15} />
+                                    }
+                                ]}
+                                value={activeTab}
+                                onChange={(tab) => setActiveTab(tab)}
+                                variant="pill"
+                                className="w-full 2xl:w-auto"
+                            />
 
                             {/* INPUT DE BUSCA */}
-                            <div className="relative w-full 2xl:w-64 shrink-0">
-                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value);
-                                        if (e.target.value.trim() && activeTab !== 'catalogo' && activeTab !== 'ead') {
-                                            setActiveTab('catalogo');
-                                        }
-                                    }}
-                                    placeholder="Buscar curso, instituição ou cidade..."
-                                    className={`w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'} focus:outline-none transition-colors`}
-                                />
-                                {searchQuery && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setSearchQuery('')}
-                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[12px] font-medium"
-                                    >
-                                        ×
-                                    </button>
-                                )}
+                            <div className="flex items-center gap-2 w-full 2xl:w-auto min-w-0 justify-end">
+                                <div className="w-full 2xl:w-64 min-w-0">
+                                    <SearchInput
+                                        value={searchQuery}
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value);
+                                            if (e.target.value.trim() && activeTab !== 'catalogo' && activeTab !== 'ead') {
+                                                setActiveTab('catalogo');
+                                            }
+                                        }}
+                                        onClear={() => setSearchQuery('')}
+                                        placeholder="Buscar curso, instituição ou cidade... (/)"
+                                        size="sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* BARRA DE FILTROS: REDE (PÚBLICA VS PRIVADA) E FILTROS ATIVOS */}
+                        <div className="flex items-center justify-between gap-2 flex-wrap px-3 py-2 bg-surface rounded-card border border-border shadow-card shrink-0 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                                <span className="text-micro font-bold text-text-muted uppercase tracking-wider pl-0.5">Rede:</span>
+                                <Chip
+                                    selected={selectedRede === 'todas'}
+                                    onClick={() => setSelectedRede('todas')}
+                                    count={redeStats.total}
+                                    variant="neutral"
+                                    size="sm"
+                                >
+                                    Todas
+                                </Chip>
+                                <Chip
+                                    selected={selectedRede === 'publica'}
+                                    onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
+                                    count={redeStats.publica}
+                                    variant="success"
+                                    size="sm"
+                                >
+                                    Pública
+                                </Chip>
+                                <Chip
+                                    selected={selectedRede === 'privada'}
+                                    onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
+                                    count={redeStats.privada}
+                                    variant="accent"
+                                    size="sm"
+                                >
+                                    Privada
+                                </Chip>
                             </div>
 
+                            {/* CHIPS DE FILTROS ATIVOS & BOTÃO LIMPAR */}
+                            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                                {selectedCategory !== 'todas' && (
+                                    <Chip
+                                        selected
+                                        onClick={() => setSelectedCategory('todas')}
+                                        variant="primary"
+                                        size="sm"
+                                    >
+                                        Área: {selectedCategory} ×
+                                    </Chip>
+                                )}
+                                {selectedIES && (
+                                    <Chip
+                                        selected
+                                        onClick={() => setSelectedIES(null)}
+                                        icon={<Building2 size={12} />}
+                                        variant="primary"
+                                        size="sm"
+                                    >
+                                        IES: {selectedIES} ×
+                                    </Chip>
+                                )}
+                                {selectedTerritory && (
+                                    <Chip
+                                        selected
+                                        onClick={() => setSelectedTerritory(null)}
+                                        icon={<MapPin size={12} />}
+                                        variant="neutral"
+                                        size="sm"
+                                    >
+                                        {territoryName} ×
+                                    </Chip>
+                                )}
+                                {activeFiltersCount > 0 && (
+                                    <Button
+                                        variant="ghost"
+                                        size="xs"
+                                        onClick={handleClearAllFilters}
+                                        className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-caption font-semibold"
+                                    >
+                                        Limpar filtros ({activeFiltersCount})
+                                    </Button>
+                                )}
+                            </div>
                         </div>
 
                         {/* CONTEÚDO DAS ABAS */}
-                        <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
+                        <div className="flex-1 min-w-0 bg-surface rounded-card border border-border shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
 
                             {/* ABA 1: CATÁLOGO COMPLETO DE CURSOS PRESENCIAIS */}
                             {activeTab === 'catalogo' && (
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="flex items-center justify-between mb-3 shrink-0">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos Presenciais em ${territoryName}` : 'Cursos Presenciais de CT&I'}
                                             </h3>
-                                            <span className={`${filtroSemiarido ? 'bg-amber-500/15 text-amber-700' : 'bg-primary-600/10 text-primary-600'} text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none`}>
-                                                {filteredCursos.length} resultados
-                                            </span>
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                className="tnum"
+                                            >
+                                                {filteredCursos.length} {filteredCursos.length === 1 ? 'resultado' : 'resultados'}
+                                            </Badge>
                                         </div>
 
                                         <div className="flex items-center gap-2">
                                             {selectedIES && (
-                                                <span className={`text-[11px] font-medium text-text-primary px-2.5 py-0.5 rounded-full flex items-center gap-1 justify-center leading-none border ${filtroSemiarido ? 'bg-amber-500/15 border-amber-500/30' : 'bg-primary-600/10 border-primary-600/20'}`}>
-                                                    <Building2 size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+                                                <Badge
+                                                    variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                    icon={<Building2 size={13} />}
+                                                >
                                                     {selectedIES}
-                                                </span>
+                                                </Badge>
                                             )}
                                             {selectedTerritory && (
-                                                <span className={`text-[11px] font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none ${filtroSemiarido ? 'bg-amber-200/60' : 'bg-primary-200/40'}`}>
-                                                    <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+                                                <Badge
+                                                    variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                    icon={<MapPin size={13} />}
+                                                >
                                                     {territoryName}
-                                                </span>
+                                                </Badge>
                                             )}
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
-                                        {filteredCursos.length > 0 ? (
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col min-h-0 divide-y divide-border/40">
+                                        {loadingStats ? (
+                                            <div className="p-3">
+                                                <ListRowSkeleton count={6} />
+                                            </div>
+                                        ) : filteredCursos.length > 0 ? (
                                             filteredCursos.map((c, idx) => {
                                                 const catColor = categoryColorMap[c.categoria || c.tipo] || '#2563EB';
-                                                const isSelected = selectedCursoId === (c.id || `${c.curso || c.nome}-${idx}`);
+                                                const cursoKey = c.id || `${c.curso || c.nome}-${idx}`;
+                                                const isSelected = selectedCursoId === cursoKey;
+                                                const redeInfo = classificarInstituicao(c);
 
                                                 return (
                                                     <div
-                                                        key={c.id || idx}
+                                                        key={cursoKey}
                                                         ref={(el) => {
-                                                            const key = c.id || `${c.curso || c.nome}-${idx}`;
-                                                            if (el && key) itemRefs.current[key] = el;
+                                                            if (el && cursoKey) itemRefs.current[cursoKey] = el;
                                                         }}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 68px' }}
                                                         onClick={() => {
-                                                            const key = c.id || `${c.curso || c.nome}-${idx}`;
-                                                            setSelectedCursoId(prev => prev === key ? null : key);
+                                                            setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
+                                                            setSelectedCursoDrawer(c);
                                                         }}
-                                                        className={`p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 ${isSelected
-                                                                ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50')
+                                                        className={`p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 group cursor-pointer border-b border-border/40 ${isSelected
+                                                                ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50 dark:bg-primary-950/40')
                                                                 : 'bg-transparent hover:bg-surface-soft'
                                                             }`}
                                                     >
                                                         <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
                                                             <div
-                                                                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform"
-                                                                style={{ backgroundColor: `${catColor}20` }}
+                                                                className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform"
+                                                                style={{ backgroundColor: `${catColor}20`, color: catColor }}
                                                             >
-                                                                <GraduationCap size={16} style={{ color: catColor }} />
+                                                                <GraduationCap size={16} />
                                                             </div>
-                                                            <div className="flex flex-col min-w-0">
-                                                                <h4 className={`text-[12px] font-semibold text-text-primary ${filtroSemiarido ? 'group-hover:text-amber-600' : 'group-hover:text-blue-600'} transition-colors leading-tight truncate`}>
+                                                            <div className="flex flex-col min-w-0 flex-1">
+                                                                <h4 className="text-body-sm font-semibold text-text-primary group-hover:text-primary-600 transition-colors leading-tight truncate">
                                                                     {c.curso || c.nome}
                                                                 </h4>
-                                                                <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
-                                                                    <span className="font-medium text-text-primary">{c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}</span>
+                                                                <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-caption text-text-secondary mt-0.5 font-medium">
+                                                                    <span className="font-semibold text-text-primary">
+                                                                        {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}
+                                                                    </span>
                                                                     <span>•</span>
                                                                     <span>{c.municipio}</span>
                                                                     <span>•</span>
-                                                                    <span className="text-text-secondary">{c.territorio_identidade}</span>
+                                                                    <span className="text-text-muted">{c.territorio_identidade}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
 
                                                         <div className="flex items-center flex-wrap gap-2 ml-auto max-w-full">
-                                                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface-soft text-text-secondary border border-border/60 inline-flex items-center justify-center leading-none">
+                                                            <Badge
+                                                                variant={redeInfo.isPublica ? 'success' : 'accent'}
+                                                                className="text-micro font-semibold"
+                                                            >
+                                                                {redeInfo.isPublica ? 'Pública' : 'Privada'}
+                                                            </Badge>
+                                                            <Badge
+                                                                variant="neutral"
+                                                                className="text-micro font-medium"
+                                                            >
                                                                 Presencial
-                                                            </span>
+                                                            </Badge>
                                                             <span
-                                                                className="text-[9px] font-medium px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none"
+                                                                className="text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
                                                                 style={{
                                                                     backgroundColor: `${catColor}20`,
                                                                     color: catColor
@@ -873,11 +1007,11 @@ export default function CursosPage() {
                                                                     href={c.url_referencia}
                                                                     target="_blank"
                                                                     rel="noreferrer"
-                                                                    className={`p-1 rounded-lg text-text-muted ${filtroSemiarido ? 'hover:text-amber-600 hover:bg-amber-100' : 'hover:text-primary-600 hover:bg-primary-200/50'} transition-colors`}
+                                                                    className="p-1.5 rounded-control text-text-muted hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/40 transition-colors"
                                                                     title="Fonte Oficial"
                                                                     onClick={(e) => e.stopPropagation()}
                                                                 >
-                                                                    <ExternalLink size={16} />
+                                                                    <ExternalLink size={14} />
                                                                 </a>
                                                             )}
                                                         </div>
@@ -885,10 +1019,18 @@ export default function CursosPage() {
                                                 );
                                             })
                                         ) : (
-                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                <GraduationCap size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                                <p className="text-[12px] font-medium text-text-primary">Nenhum curso presencial encontrado</p>
-                                            </div>
+                                            <EmptyState
+                                                icon={GraduationCap}
+                                                title="Nenhum curso presencial encontrado"
+                                                description="Tente ajustar os filtros ou a busca para visualizar resultados."
+                                                action={
+                                                    activeFiltersCount > 0 ? (
+                                                        <Button variant="outline" size="sm" onClick={handleClearAllFilters}>
+                                                            Limpar Filtros
+                                                        </Button>
+                                                    ) : null
+                                                }
+                                            />
                                         )}
                                     </div>
                                 </div>
@@ -899,62 +1041,83 @@ export default function CursosPage() {
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="flex items-center justify-between mb-3 shrink-0">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Oferta de Cursos à Distância (EaD) e Semipresenciais'}
                                             </h3>
-                                            <span className={`${filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border-primary-200/60 dark:border-primary-700/60'} text-[11px] font-medium px-2 py-0.5 rounded-full border inline-flex items-center justify-center leading-none`}>
-                                                {filteredEadCursos.length} cursos
-                                            </span>
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                className="tnum"
+                                            >
+                                                {filteredEadCursos.length} {filteredEadCursos.length === 1 ? 'curso' : 'cursos'}
+                                            </Badge>
                                         </div>
 
                                         {selectedTerritory && (
-                                            <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 border justify-center leading-none ${filtroSemiarido ? 'text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60' : 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border-primary-200/60 dark:border-primary-700/60'}`}>
-                                                <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                icon={<MapPin size={13} />}
+                                            >
                                                 {territoryName}
-                                            </span>
+                                            </Badge>
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
-                                        {filteredEadCursos.length > 0 ? (
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col min-h-0 divide-y divide-border/40">
+                                        {loadingStats ? (
+                                            <div className="p-3">
+                                                <ListRowSkeleton count={6} />
+                                            </div>
+                                        ) : filteredEadCursos.length > 0 ? (
                                             filteredEadCursos.map((c, idx) => {
                                                 const catColor = categoryColorMap[c.categoria || c.tipo] || '#2563EB';
+                                                const redeInfo = classificarInstituicao(c);
 
                                                 return (
                                                     <div
                                                         key={c.id || idx}
-                                                        className="p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 bg-transparent hover:bg-surface-soft border-b border-neutral-200/50 group cursor-pointer"
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 68px' }}
+                                                        onClick={() => setSelectedCursoDrawer(c)}
+                                                        className="p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 bg-transparent hover:bg-surface-soft border-b border-border/40 group cursor-pointer"
                                                     >
                                                         <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
                                                             <div 
-                                                                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform"
+                                                                className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform"
                                                                 style={{ backgroundColor: `${catColor}20`, color: catColor }}
                                                             >
                                                                 <Laptop size={16} />
                                                             </div>
-                                                            <div className="flex flex-col min-w-0">
-                                                                <h4 className={`text-[12px] font-semibold text-text-primary ${filtroSemiarido ? 'group-hover:text-amber-600' : 'group-hover:text-primary-600'} transition-colors leading-tight truncate`}>
+                                                            <div className="flex flex-col min-w-0 flex-1">
+                                                                <h4 className="text-body-sm font-semibold text-text-primary group-hover:text-primary-600 transition-colors leading-tight truncate">
                                                                     {c.curso || c.nome}
                                                                 </h4>
-                                                                <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
-                                                                    <span className="font-medium text-text-primary">
+                                                                <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-caption text-text-secondary mt-0.5 font-medium">
+                                                                    <span className="font-semibold text-text-primary">
                                                                         {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)}
                                                                     </span>
                                                                     <span>•</span>
                                                                     <span>{c.municipio}</span>
                                                                     <span>•</span>
-                                                                    <span className="text-text-secondary">{c.territorio_identidade}</span>
+                                                                    <span className="text-text-muted">{c.territorio_identidade}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
 
                                                         <div className="flex items-center flex-wrap gap-2 ml-auto max-w-full">
-                                                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs justify-center leading-none border ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700/60' : 'bg-primary-100 dark:bg-primary-950/40 text-primary-800 dark:text-primary-200 border-primary-200 dark:border-primary-700/60'}`}>
-                                                                <Wifi size={16} strokeWidth={2} />
-                                                                 EaD
-                                                            </span>
+                                                            <Badge
+                                                                variant={redeInfo.isPublica ? 'success' : 'accent'}
+                                                                className="text-micro font-semibold"
+                                                            >
+                                                                {redeInfo.isPublica ? 'Pública' : 'Privada'}
+                                                            </Badge>
+                                                            <Badge
+                                                                variant="primary"
+                                                                icon={<Wifi size={12} strokeWidth={2} />}
+                                                                className="text-micro font-medium"
+                                                            >
+                                                                EaD
+                                                            </Badge>
                                                             <span
-                                                                className="text-[9px] font-medium px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none"
+                                                                className="text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
                                                                 style={{ 
                                                                     backgroundColor: `${catColor}20`, 
                                                                     color: catColor 
@@ -967,11 +1130,11 @@ export default function CursosPage() {
                                                                     href={c.url_referencia}
                                                                     target="_blank"
                                                                     rel="noreferrer"
-                                                                    className={`p-1 rounded-lg text-text-muted ${filtroSemiarido ? 'hover:text-amber-600 hover:bg-amber-100' : 'hover:text-primary-600 hover:bg-primary-50'} transition-colors`}
+                                                                    className="p-1.5 rounded-control text-text-muted hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/40 transition-colors"
                                                                     title="Fonte Oficial"
                                                                     onClick={(e) => e.stopPropagation()}
                                                                 >
-                                                                    <ExternalLink size={16} />
+                                                                    <ExternalLink size={14} />
                                                                 </a>
                                                             )}
                                                         </div>
@@ -979,10 +1142,18 @@ export default function CursosPage() {
                                                 );
                                             })
                                         ) : (
-                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                <Laptop size={24} className={`mb-2 opacity-40 ${filtroSemiarido ? 'text-amber-600' : 'text-primary-600'}`} />
-                                                <p className="text-[12px] font-medium text-text-primary">Nenhum curso EaD registrado neste território</p>
-                                            </div>
+                                            <EmptyState
+                                                icon={Laptop}
+                                                title="Nenhum curso EaD registrado neste território"
+                                                description="Tente ajustar os filtros ou selecionar outro território."
+                                                action={
+                                                    activeFiltersCount > 0 ? (
+                                                        <Button variant="outline" size="sm" onClick={handleClearAllFilters}>
+                                                            Limpar Filtros
+                                                        </Button>
+                                                    ) : null
+                                                }
+                                            />
                                         )}
                                     </div>
                                 </div>
@@ -993,13 +1164,13 @@ export default function CursosPage() {
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="mb-3 shrink-0 flex items-center justify-between">
                                         <div>
-                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory
                                                     ? `Áreas de Conhecimento em ${territoryName}`
                                                     : 'Distribuição por Áreas de Conhecimento'
                                                 }
                                             </h3>
-                                            <p className="text-[11px] text-text-secondary font-medium">
+                                            <p className="text-caption text-text-secondary font-medium">
                                                 {selectedTerritory
                                                     ? `Exibindo proporção dos ${territoryCursos.length} cursos presenciais neste território`
                                                     : 'Clique em uma categoria para filtrar o catálogo'
@@ -1007,10 +1178,12 @@ export default function CursosPage() {
                                             </p>
                                         </div>
                                         {selectedTerritory && (
-                                            <span className={`text-[11px] font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none ${filtroSemiarido ? 'bg-amber-200/60' : 'bg-primary-200/40'}`}>
-                                                <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                icon={<MapPin size={13} />}
+                                            >
                                                 {territoryName}
-                                            </span>
+                                            </Badge>
                                         )}
                                     </div>
 
@@ -1024,9 +1197,9 @@ export default function CursosPage() {
                                                     <div
                                                         key={cat.name}
                                                         onClick={() => setSelectedCategory(isSelected ? 'todas' : cat.name)}
-                                                        className={`rounded-2xl p-3 border transition-all cursor-pointer ${isSelected
+                                                        className={`rounded-card p-3 border transition-all cursor-pointer ${isSelected
                                                                 ? (filtroSemiarido ? 'bg-surface border-amber-500 shadow-md ring-2 ring-amber-500/20' : 'bg-surface border-primary-600 shadow-md ring-2 ring-primary-600/20')
-                                                                : (filtroSemiarido ? 'bg-surface-soft/60 border-neutral-100 hover:bg-surface hover:border-amber-300 shadow-2xs' : 'bg-surface-soft/60 border-neutral-100 hover:bg-surface hover:border-primary-200 shadow-2xs')
+                                                                : (filtroSemiarido ? 'bg-surface-soft/60 border-border hover:bg-surface hover:border-amber-300 shadow-2xs' : 'bg-surface-soft/60 border-border hover:bg-surface hover:border-primary-200 dark:hover:border-primary-800 shadow-2xs')
                                                             }`}
                                                     >
                                                         <div className="flex items-center justify-between mb-2">
@@ -1035,16 +1208,16 @@ export default function CursosPage() {
                                                                     className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
                                                                     style={{ backgroundColor: dotColor }}
                                                                 />
-                                                                <span className="text-[12px] font-semibold text-text-primary truncate">
+                                                                <span className="text-body-sm font-semibold text-text-primary truncate">
                                                                     {cat.name}
                                                                 </span>
                                                             </div>
                                                             <div className="flex items-center gap-2 shrink-0">
-                                                                <span className="text-[12px] font-semibold text-text-primary">
+                                                                <span className="text-caption font-semibold text-text-primary tnum">
                                                                     {cat.count} {cat.count === 1 ? 'curso' : 'cursos'}
                                                                 </span>
                                                                 <span
-                                                                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
+                                                                    className="text-micro font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none tnum"
                                                                     style={{ backgroundColor: `${cat.color}20`, color: cat.color }}
                                                                 >
                                                                     {cat.percent}%
@@ -1062,10 +1235,11 @@ export default function CursosPage() {
                                                 );
                                             })
                                         ) : (
-                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                <Filter size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                                <p className="text-[12px] font-medium text-text-primary">Nenhuma área de ensino registrada</p>
-                                            </div>
+                                            <EmptyState
+                                                icon={Filter}
+                                                title="Nenhuma área de ensino registrada"
+                                                description="Nenhum dado encontrado para o filtro atual."
+                                            />
                                         )}
                                     </div>
                                 </div>
@@ -1076,22 +1250,22 @@ export default function CursosPage() {
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="mb-3 shrink-0 flex items-center justify-between">
                                         <div>
-                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory
                                                     ? `Ranking de Municípios · ${territoryName}`
                                                     : 'Ranking Territorial de Oferta de Cursos'
                                                 }
                                             </h3>
-                                            <p className="text-[11px] text-text-secondary font-medium">
+                                            <p className="text-caption text-text-secondary font-medium">
                                                 Densidade de cursos de CT&I por localidade
                                             </p>
                                         </div>
-                                        <span className="text-[10px] font-semibold text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none">
+                                        <Badge variant="neutral" className="tnum">
                                             {selectedTerritory
                                                 ? `${municipalityRanking.length} municípios com oferta`
                                                 : `${territoryRanking.length} territórios`
                                             }
-                                        </span>
+                                        </Badge>
                                     </div>
 
                                     {/* LISTA RANKING: RANK + BARRA PROPORCIONAL COM NOME + PILULA DE VALOR */}
@@ -1113,11 +1287,12 @@ export default function CursosPage() {
                                                     return (
                                                         <div
                                                             key={m.name}
+                                                            style={{ contentVisibility: 'auto', containIntrinsicSize: '0 28px' }}
                                                             title={`${m.name}: ${m.count} cursos`}
                                                             className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
                                                         >
                                                             {/* RANK */}
-                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
                                                                 {rankStr}
                                                             </div>
 
@@ -1127,23 +1302,23 @@ export default function CursosPage() {
                                                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                     style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
                                                                 />
-                                                                <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                                <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                     {m.name}
                                                                 </span>
                                                             </div>
 
                                                             {/* VALOR PILL */}
-                                                            <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                            <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tnum leading-none ${valueStyle}`}>
                                                                 {m.count}
                                                             </div>
                                                         </div>
                                                     );
                                                 })
                                             ) : (
-                                                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                    <MapPin size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                                    <p className="text-[12px] font-medium text-text-primary">Nenhum município com cursos cadastrados neste território</p>
-                                                </div>
+                                                <EmptyState
+                                                    icon={MapPin}
+                                                    title="Nenhum município com cursos cadastrados neste território"
+                                                />
                                             )
                                         ) : (
                                             territoryRanking.map((t, index) => {
@@ -1161,6 +1336,7 @@ export default function CursosPage() {
                                                 return (
                                                     <div
                                                         key={t.id}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 28px' }}
                                                         onClick={() => {
                                                             const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
                                                             setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
@@ -1169,7 +1345,7 @@ export default function CursosPage() {
                                                         className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
                                                     >
                                                         {/* RANK */}
-                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
                                                             {rankStr}
                                                         </div>
 
@@ -1179,13 +1355,13 @@ export default function CursosPage() {
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
                                                             />
-                                                            <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                            <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                 {t.name}
                                                             </span>
                                                         </div>
 
                                                         {/* VALOR PILL */}
-                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tnum leading-none ${valueStyle}`}>
                                                             {t.count}
                                                         </div>
                                                     </div>
@@ -1201,24 +1377,25 @@ export default function CursosPage() {
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="mb-3 shrink-0 flex items-center justify-between">
                                         <div>
-                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory
                                                     ? `Top Instituições em ${territoryName}`
                                                     : 'Top Instituições Ofertantes de Cursos de CT&I'
                                                 }
                                             </h3>
-                                            <p className="text-[11px] text-text-secondary font-medium">
+                                            <p className="text-caption text-text-secondary font-medium">
                                                 Clique em uma instituição para filtrar no mapa
                                             </p>
                                         </div>
                                         {selectedIES && (
-                                            <button
-                                                type="button"
+                                            <Button
+                                                variant="ghost"
+                                                size="xs"
                                                 onClick={() => setSelectedIES(null)}
-                                                className="text-[11px] font-medium text-danger-600 hover:text-red-700 bg-danger-50 px-2.5 py-1 rounded-full cursor-pointer transition-colors inline-flex items-center justify-center leading-none"
+                                                className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-caption font-semibold"
                                             >
                                                 Limpar Filtro
-                                            </button>
+                                            </Button>
                                         )}
                                     </div>
 
@@ -1250,6 +1427,7 @@ export default function CursosPage() {
                                                 return (
                                                     <div
                                                         key={ies.sigla}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 32px' }}
                                                         onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
                                                         title={`${ies.fullName}: ${ies.count} cursos em ${ies.municipios.size} cidades`}
                                                         className={`flex items-center gap-2 w-full min-w-0 transition-all duration-200 hover:opacity-95 cursor-pointer p-1 rounded-xl ${
@@ -1257,7 +1435,7 @@ export default function CursosPage() {
                                                         }`}
                                                     >
                                                         {/* RANK */}
-                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
                                                             {rankStr}
                                                         </div>
 
@@ -1267,28 +1445,28 @@ export default function CursosPage() {
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, pct)}%` }}
                                                             />
-                                                            <span className={`absolute left-2.5 right-2.5 text-[11.5px] truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
-                                                                {ies.sigla} <span className="opacity-75 text-[10px]">· {ies.fullName}</span>
+                                                            <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                                {ies.sigla} <span className="opacity-75 text-micro">· {ies.fullName}</span>
                                                             </span>
                                                         </div>
 
                                                         {/* BADGE CIDADES */}
-                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-[10px] font-semibold tabular-nums leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/60'}`}>
+                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/60'}`}>
                                                             {ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}
                                                         </div>
 
                                                         {/* VALOR PILL */}
-                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-[11px] font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tnum leading-none ${valueStyle}`}>
                                                             {ies.count}
                                                         </div>
                                                     </div>
                                                 );
                                             })
                                         ) : (
-                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                <Building2 size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                                <p className="text-[12px] font-medium text-text-primary">Nenhuma instituição cadastrada neste território</p>
-                                            </div>
+                                            <EmptyState
+                                                icon={Building2}
+                                                title="Nenhuma instituição cadastrada neste território"
+                                            />
                                         )}
                                     </div>
                                 </div>
@@ -1299,6 +1477,123 @@ export default function CursosPage() {
                 )}
 
             </div>
+
+            {/* DRAWER LATERAL DE DETALHES DO CURSO */}
+            <Drawer
+                open={Boolean(selectedCursoDrawer)}
+                onClose={() => setSelectedCursoDrawer(null)}
+                title={selectedCursoDrawer?.curso || selectedCursoDrawer?.nome || 'Detalhes do Curso'}
+                subtitle={
+                    selectedCursoDrawer
+                        ? `${selectedCursoDrawer.sigla || cleanIesName(selectedCursoDrawer.entidade || selectedCursoDrawer.instituicao, selectedCursoDrawer.municipio)} • ${selectedCursoDrawer.municipio || 'Bahia'}`
+                        : ''
+                }
+                footer={
+                    <div className="flex items-center justify-between w-full gap-2">
+                        {(selectedCursoDrawer?.url_referencia || selectedCursoDrawer?.url || selectedCursoDrawer?.link || selectedCursoDrawer?.site) ? (
+                            <Button
+                                variant="primary"
+                                size="sm"
+                                as="a"
+                                href={selectedCursoDrawer.url_referencia || selectedCursoDrawer.url || selectedCursoDrawer.link || selectedCursoDrawer.site}
+                                target="_blank"
+                                rel="noreferrer"
+                                icon={<ExternalLink size={14} />}
+                            >
+                                Acessar Fonte Oficial
+                            </Button>
+                        ) : <div />}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedCursoDrawer(null)}
+                        >
+                            Fechar
+                        </Button>
+                    </div>
+                }
+            >
+                {selectedCursoDrawer && (() => {
+                    const redeInfo = classificarInstituicao(selectedCursoDrawer);
+                    const catColor = categoryColorMap[selectedCursoDrawer.categoria || selectedCursoDrawer.tipo] || '#2563EB';
+                    const modalidade = selectedCursoDrawer.modalidade || (selectedCursoDrawer.tipo_oferta?.toLowerCase().includes('ead') ? 'EaD / A Distância' : activeTab === 'ead' ? 'EaD / A Distância' : 'Presencial');
+
+                    return (
+                        <div className="flex flex-col gap-4 text-body-sm">
+                            {/* STATUS BADGES */}
+                            <div className="flex items-center gap-2 flex-wrap pb-3 border-b border-border/70">
+                                <Badge
+                                    variant={redeInfo.isPublica ? 'success' : 'accent'}
+                                    className="text-caption font-semibold"
+                                >
+                                    Rede {redeInfo.isPublica ? 'Pública' : 'Privada'}
+                                </Badge>
+                                <Badge variant="neutral" className="text-caption">
+                                    {modalidade}
+                                </Badge>
+                                <span
+                                    className="text-caption font-medium px-2.5 py-0.5 rounded-full inline-flex items-center"
+                                    style={{ backgroundColor: `${catColor}20`, color: catColor }}
+                                >
+                                    {selectedCursoDrawer.categoria || selectedCursoDrawer.tipo || 'CT&I'}
+                                </span>
+                            </div>
+
+                            {/* METADADOS */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Instituição (IES)</span>
+                                    <p className="font-bold text-text-primary">{selectedCursoDrawer.sigla || '—'}</p>
+                                    <p className="text-caption text-text-secondary truncate">{selectedCursoDrawer.entidade || selectedCursoDrawer.instituicao || '—'}</p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Rede Administrativa</span>
+                                    <p className="font-bold text-text-primary">
+                                        {redeInfo.isPublica ? 'Pública (Estadual/Federal/Municipal)' : 'Privada / Comunitária'}
+                                    </p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Município</span>
+                                    <p className="font-bold text-text-primary flex items-center gap-1.5">
+                                        <MapPin size={14} className="text-primary-600" />
+                                        {selectedCursoDrawer.municipio || '—'}
+                                    </p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Território de Identidade</span>
+                                    <p className="font-bold text-text-primary">
+                                        {selectedCursoDrawer.territorio_identidade || selectedCursoDrawer.territorio || '—'}
+                                    </p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Modalidade de Ensino</span>
+                                    <p className="font-bold text-text-primary">{modalidade}</p>
+                                </div>
+
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Vagas / Matrículas</span>
+                                    <p className="font-bold text-text-primary tnum">
+                                        {selectedCursoDrawer.vagas || selectedCursoDrawer.matriculas
+                                            ? `${selectedCursoDrawer.vagas || '—'} vagas / ${selectedCursoDrawer.matriculas || '—'} matrículas`
+                                            : 'Sob consulta institucional'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {selectedCursoDrawer.grau && (
+                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
+                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Grau Acadêmico</span>
+                                    <p className="font-bold text-text-primary">{selectedCursoDrawer.grau}</p>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })()}
+            </Drawer>
 
         </main>
     );

@@ -25,6 +25,19 @@ import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
 import SideMap, { getSemiaridoPointColor } from './maps/SideMap';
+import {
+    Card,
+    Button,
+    IconButton,
+    Badge,
+    Chip,
+    SearchInput,
+    Tabs,
+    Drawer,
+    EmptyState,
+    KpiSkeleton,
+    ListRowSkeleton
+} from './ui';
 
 function normalizeName(name) {
     if (!name) return '';
@@ -61,6 +74,7 @@ export default function AtivosPage() {
     const [selectedTerritory, setSelectedTerritory] = useState(null);
     const [focusedAsset, setFocusedAsset] = useState(null);
     const [selectedAssetId, setSelectedAssetId] = useState(null);
+    const [selectedAtivoDrawer, setSelectedAtivoDrawer] = useState(null);
     const [selectedTipo, setSelectedTipo] = useState('todos');
     const [selectedTipos, setSelectedTipos] = useState([]);
     const [filterRnp, setFilterRnp] = useState('todos'); // 'todos' | 'com_rnp' | 'sem_rnp'
@@ -483,7 +497,7 @@ export default function AtivosPage() {
     ];
 
     return (
-        <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
+        <main className="flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
@@ -533,22 +547,22 @@ export default function AtivosPage() {
             </div>
 
             {/* HEADER DA PÁGINA */}
-            <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                        <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">
+                        <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Ativos de CT&I
                         </h1>
-                        <span className={`text-[11px] font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
+                        <span className={`text-micro font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
                             filtroSemiarido
                                 ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30'
                                 : 'bg-primary-600/10 text-primary-700 dark:text-primary-300 border-primary-600/20'
                         }`}>
-                            <Sparkles size={16} className={filtroSemiarido ? 'text-amber-700' : 'text-primary-700'} />
+                            <Sparkles size={14} className={filtroSemiarido ? 'text-amber-700' : 'text-primary-700'} />
                             Ecossistema de Inovação da Bahia
                         </span>
                     </div>
-                    <p className="text-xs lg:text-sm text-text-secondary mt-0.5 font-medium">
+                    <p className="text-body-sm text-text-secondary mt-0.5 font-medium">
                         Explore universidades, ICTs, parques tecnológicos, hubs e centros de pesquisa distribuídos pelo estado
                     </p>
                     <div 
@@ -559,93 +573,100 @@ export default function AtivosPage() {
             </div>
 
             {/* GRID DE KPIS */}
-            <div className="tour-kpis w-full relative z-10 shrink-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
-                    {kpis.map((kpi, index) => {
-                        const isHero = index === 0;
-                        const accentColors = [
-                            'text-white/70',
-                            'text-[#0D9488]',
-                            'text-accent-600',
-                            'text-warning-600',
-                            'text-success-600'
-                        ];
+            <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0">
+                    {loadingStats ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <KpiSkeleton key={i} />
+                        ))
+                    ) : (
+                        kpis.map((kpi, index) => {
+                            const isHero = index === 0;
+                            const accentColors = [
+                                'text-white/80',
+                                'text-[#0D9488]',
+                                'text-accent-600',
+                                'text-warning-600',
+                                'text-success-600'
+                            ];
 
-                        const isRnpKpi = index === 2;
-                        const isClickable = isRnpKpi;
+                            const isRnpKpi = index === 2;
+                            const isClickable = isRnpKpi;
 
-                        return (
-                            <div
-                                key={index}
-                                title={isRnpKpi ? (filterRnp === 'com_rnp' ? 'Clique para desativar filtro de RNP' : 'Clique para filtrar apenas ativos com RNP') : (kpi.tooltip || kpi.label)}
-                                onClick={() => {
-                                    if (isRnpKpi) {
-                                        setFilterRnp(prev => prev === 'com_rnp' ? 'todos' : 'com_rnp');
-                                        setActiveTab('catalogo');
-                                    }
-                                }}
-                                className={`relative rounded-2xl p-4 flex flex-col justify-between h-[88px] overflow-hidden transition-all duration-300 ${
-                                    isClickable ? 'cursor-pointer hover:scale-[1.02] hover:shadow-card-elevated' : 'cursor-default'
-                                } ${
-                                    isRnpKpi && filterRnp === 'com_rnp'
-                                        ? (filtroSemiarido ? 'ring-2 ring-amber-500 bg-amber-500/10' : 'ring-2 ring-emerald-500 bg-emerald-500/10')
-                                        : ''
-                                } ${
-                                    isHero
-                                        ? (filtroSemiarido
-                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card-elevated shadow-amber-500/20'
-                                            : 'bg-primary-900 text-white shadow-card-elevated')
-                                        : (filtroSemiarido
-                                            ? 'bg-surface/95 dark:bg-surface border border-amber-200/40 dark:border-amber-500/30 shadow-card'
-                                            : 'bg-surface border border-border shadow-card')
-                                }`}
-                            >
-                                {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                <div className="flex items-center gap-2 w-full min-w-0">
-                                    <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
-                                    <span
-                                        className={`text-[11px] font-medium uppercase tracking-wider truncate flex-1 ${
-                                            isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/60') : 'text-text-muted'
-                                        }`}
-                                        title={kpi.label}
-                                    >
-                                        {kpi.label}
-                                    </span>
-                                </div>
-
-                                {/* LINHA INFERIOR: NÚMERO */}
-                                <div className="flex items-baseline w-full justify-between">
-                                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                        <span className={`text-[28px] font-bold tracking-tight leading-none ${
-                                            isHero ? 'text-white' : 'text-text-primary'
-                                        }`}>
-                                            {kpi.value}
+                            return (
+                                <Card
+                                    key={index}
+                                    title={isRnpKpi ? (filterRnp === 'com_rnp' ? 'Clique para desativar filtro de RNP' : 'Clique para filtrar apenas ativos com RNP') : (kpi.tooltip || kpi.label)}
+                                    variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
+                                    onClick={() => {
+                                        if (isRnpKpi) {
+                                            setFilterRnp(prev => prev === 'com_rnp' ? 'todos' : 'com_rnp');
+                                            setActiveTab('catalogo');
+                                        }
+                                    }}
+                                    className={`p-4 flex flex-col justify-between h-[96px] overflow-hidden min-w-0 transition-all duration-300 ${
+                                        isClickable ? 'cursor-pointer hover:shadow-card-hover' : 'cursor-default'
+                                    } ${
+                                        isRnpKpi && filterRnp === 'com_rnp'
+                                            ? (filtroSemiarido ? 'ring-2 ring-amber-500 bg-amber-500/10' : 'ring-2 ring-emerald-500 bg-emerald-500/10')
+                                            : ''
+                                    } ${
+                                        isHero && filtroSemiarido
+                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card shadow-amber-500/20 border border-amber-400/40'
+                                            : ''
+                                    } ${
+                                        !isHero && filtroSemiarido
+                                            ? 'border-amber-200/50 dark:border-amber-500/30'
+                                            : ''
+                                    }`}
+                                >
+                                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                                    <div className="flex items-center gap-2 w-full min-w-0">
+                                        <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
+                                        <span
+                                            className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
+                                                isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                                            }`}
+                                            title={kpi.label}
+                                        >
+                                            {kpi.label}
                                         </span>
-                                        {filtroSemiarido && kpi.percent && (
-                                            <span
-                                                title={`(${kpi.percent})`}
-                                                className={`text-[11px] font-semibold truncate ${
-                                                    isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600'
-                                                }`}
-                                            >
-                                                ({kpi.percent})
-                                            </span>
-                                        )}
                                     </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+
+                                    {/* LINHA INFERIOR: NÚMERO */}
+                                    <div className="flex items-baseline w-full justify-between min-w-0">
+                                        <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                            <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
+                                                isHero ? 'text-white' : 'text-text-primary'
+                                            }`}>
+                                                {kpi.value}
+                                            </span>
+                                            {filtroSemiarido && kpi.percent && (
+                                                <span
+                                                    title={`(${kpi.percent})`}
+                                                    className={`text-caption font-semibold truncate ${
+                                                        isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                                                    }`}
+                                                >
+                                                    ({kpi.percent})
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Card>
+                            );
+                        })
+                    )}
                 </div>
             </div>
 
             {/* GRID PRINCIPAL: MAPA (calc(40% - 12px) ou Expandido) + DASHBOARD / KPIS VERTICAIS */}
-            <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+            <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
                 {/* LADO ESQUERDO: MAPA DE PONTOS DE ATIVOS */}
                 <div
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 bg-surface rounded-2xl border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
+                    className="shrink-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] min-w-0 transition-[width] duration-300"
                 >
                     <SideMap
                         mode="ativos"
@@ -665,69 +686,55 @@ export default function AtivosPage() {
 
                 {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
                 {isMapExpanded ? (
-                    <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-2xl border border-neutral-100 shadow-card p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col min-h-0 min-w-0 overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
                         {/* CABEÇALHO DA LISTA COMPACTA */}
                         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
                             <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-[12px] font-semibold text-text-primary truncate">
+                                <span className="text-body-sm font-semibold text-text-primary truncate">
                                     Ativos de CT&I
                                 </span>
-                                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none ${
-                                    filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-700'
-                                }`}>
+                                <Badge
+                                    variant={filtroSemiarido ? 'warning' : 'primary'}
+                                    className="tnum"
+                                >
                                     {compactAtivosList.length}
-                                </span>
+                                </Badge>
                             </div>
                             {selectedAssetId && (
-                                <button
-                                    type="button"
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
                                     onClick={() => {
                                         setSelectedAssetId(null);
                                         setFocusedAsset(null);
                                     }}
-                                    className="text-[10px] font-medium text-text-secondary hover:text-red-600 bg-surface-soft hover:bg-danger-50 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0 justify-center leading-none"
+                                    className="text-micro font-medium text-text-secondary hover:text-danger-600 h-6 px-2"
                                 >
-                                    <span>Limpar</span>
-                                    <X size={16} />
-                                </button>
+                                    Limpar
+                                </Button>
                             )}
                         </div>
 
                         {/* BUSCA COMPACTA + BOTÃO FILTRO */}
                         <div className="flex items-center gap-1.5 my-2 shrink-0">
-                            <div className="relative flex-1">
-                                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-                                <input
-                                    type="text"
+                            <div className="flex-1 min-w-0">
+                                <SearchInput
                                     value={sidebarSearch}
                                     onChange={(e) => setSidebarSearch(e.target.value)}
+                                    onClear={() => setSidebarSearch('')}
                                     placeholder="Filtrar por nome, cidade..."
-                                    className={`w-full pl-8 pr-2.5 py-1 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${
-                                        filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
-                                    } focus:outline-none transition-colors`}
+                                    size="sm"
                                 />
-                                {sidebarSearch && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setSidebarSearch('')}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[11px] font-medium"
-                                    >
-                                        ×
-                                    </button>
-                                )}
                             </div>
-                            <button
-                                type="button"
+                            <IconButton
+                                variant={activeFiltersCount > 0 ? (filtroSemiarido ? 'warning' : 'primary') : 'ghost'}
+                                size="sm"
+                                icon={<Filter size={14} />}
                                 onClick={() => setIsFilterDropdownOpen(prev => !prev)}
-                                className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-                                    activeFiltersCount > 0
-                                        ? (filtroSemiarido ? 'bg-amber-600 text-white border-amber-600 shadow-xs' : 'bg-primary-900 text-white border-primary-900 shadow-xs')
-                                        : 'bg-surface-soft border-border text-text-secondary hover:text-text-primary hover:border-neutral-300'
-                                }`}
                                 title="Abrir filtros de tipos e RNP"
-                            >
-                                <Filter size={13} />
-                            </button>
+                                aria-label="Abrir filtros de tipos e RNP"
+                                className="shrink-0"
+                            />
                         </div>
 
                         {/* LISTA DE CARDS COMPACTOS */}
@@ -815,56 +822,42 @@ export default function AtivosPage() {
                     </div>
                 ) : (
                     /* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS */
-                    <div className="flex-1 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
+                    <div className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
                         {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
-                        <div className="bg-surface rounded-2xl p-2.5 border border-neutral-100 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                        <div className="bg-surface rounded-card p-2.5 border border-border shadow-card flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 shrink-0 min-w-0 overflow-hidden">
 
                             {/* ABAS */}
-                            <div className="flex items-center bg-surface-soft p-1 rounded-xl border border-border gap-1 w-full sm:w-auto overflow-x-auto">
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('catalogo')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'catalogo'
-                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                        : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <Database size={16} />
-                                    Catálogo ({filteredAtivosList.length})
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('categorias')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'categorias'
-                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                        : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <Filter size={16} />
-                                    Categorias ({categoryStats.length})
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('ranking')}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'ranking'
-                                        ? (filtroSemiarido ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-900 text-white shadow-xs')
-                                        : 'text-text-secondary hover:text-text-primary'
-                                        }`}
-                                >
-                                    <TrendingUp size={16} />
-                                    {selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios'}
-                                </button>
-                            </div>
+                            <Tabs
+                                items={[
+                                    {
+                                        id: 'catalogo',
+                                        label: 'Catálogo',
+                                        icon: <Database size={15} />,
+                                        count: filteredAtivosList.length
+                                    },
+                                    {
+                                        id: 'categorias',
+                                        label: 'Categorias',
+                                        icon: <Filter size={15} />,
+                                        count: categoryStats.length
+                                    },
+                                    {
+                                        id: 'ranking',
+                                        label: selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios',
+                                        icon: <TrendingUp size={15} />
+                                    }
+                                ]}
+                                value={activeTab}
+                                onChange={(tab) => setActiveTab(tab)}
+                                variant="pill"
+                                className="w-full xl:w-auto"
+                            />
 
                             {/* INPUT DE BUSCA + BOTÃO DE FILTROS */}
-                            <div className="flex items-center gap-2 w-full sm:w-auto">
-                                <div className="relative flex-1 sm:w-64">
-                                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
-                                    <input
-                                        type="text"
+                            <div className="flex items-center gap-2 w-full xl:w-auto min-w-0 justify-end">
+                                <div className="flex-1 sm:w-64 min-w-0">
+                                    <SearchInput
                                         value={searchQuery}
                                         onChange={(e) => {
                                             setSearchQuery(e.target.value);
@@ -872,20 +865,10 @@ export default function AtivosPage() {
                                                 setActiveTab('catalogo');
                                             }
                                         }}
-                                        placeholder="Buscar ativo, tipo, cidade ou sigla..."
-                                        className={`w-full pl-9 pr-3 py-1.5 rounded-xl bg-surface-soft border border-border text-[11px] text-text-primary placeholder-text-muted focus:bg-surface ${
-                                            filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
-                                        } focus:outline-none transition-colors`}
+                                        onClear={() => setSearchQuery('')}
+                                        placeholder="Buscar ativo, tipo, cidade... (/)"
+                                        size="sm"
                                     />
-                                    {searchQuery && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setSearchQuery('')}
-                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-[12px] font-medium"
-                                        >
-                                            ×
-                                        </button>
-                                    )}
                                 </div>
 
                                 {/* BOTÃO E CAIXA COM DROPDOWN DE FILTROS */}
@@ -893,19 +876,19 @@ export default function AtivosPage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsFilterDropdownOpen(prev => !prev)}
-                                        className={`px-3 py-1.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+                                        className={`px-3 py-1.5 rounded-control border text-caption font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
                                             activeFiltersCount > 0
                                                 ? (filtroSemiarido
                                                     ? 'bg-amber-500/20 border-amber-400 text-amber-900 dark:text-amber-200 shadow-xs ring-1 ring-amber-400/40'
-                                                    : 'bg-primary-600/15 border-primary-500 text-primary-900 dark:text-primary-200 shadow-xs ring-1 ring-primary-500/40')
-                                                : 'bg-surface-soft border-border text-text-secondary hover:text-text-primary hover:border-neutral-300'
+                                                    : 'bg-primary-50 dark:bg-primary-950 border-primary-400 text-primary-900 dark:text-primary-100 shadow-xs ring-1 ring-primary-500/40')
+                                                : 'bg-surface-soft border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
                                         }`}
                                         title="Filtros por Tipo de Ativo e Conectividade RNP"
                                     >
                                         <Filter size={14} className={activeFiltersCount > 0 ? (filtroSemiarido ? 'text-amber-600' : 'text-primary-600') : ''} />
                                         <span>Filtros</span>
                                         {activeFiltersCount > 0 && (
-                                            <span className={`w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-white leading-none ${
+                                            <span className={`w-4 h-4 rounded-full text-micro font-bold flex items-center justify-center text-white leading-none ${
                                                 filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'
                                             }`}>
                                                 {activeFiltersCount}
@@ -1072,75 +1055,112 @@ export default function AtivosPage() {
                         </div>
 
                         {/* CONTEÚDO DA ABA SELECIONADA */}
-                        <div className="flex-1 bg-surface rounded-2xl border border-neutral-100 shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
+                        <div className="flex-1 min-w-0 bg-surface rounded-card border border-border shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
 
                             {/* ABA 1: CATÁLOGO DE ATIVOS */}
                             {activeTab === 'catalogo' && (
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="flex items-center justify-between mb-3 shrink-0">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="text-[13px] font-semibold text-text-primary">
+                                            <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Ativos de CT&I em ${territoryName}` : 'Catálogo de Ativos do Estado'}
                                             </h3>
-                                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none ${
-                                                filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'bg-primary-600/10 text-primary-700'
-                                            }`}>
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                className="tnum"
+                                            >
                                                 {filteredAtivosList.length} ativos
-                                            </span>
+                                            </Badge>
                                         </div>
 
                                         {selectedTerritory && (
-                                            <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 ml-1 whitespace-nowrap justify-center leading-none ${
-                                                filtroSemiarido ? 'bg-amber-500/15 text-amber-800' : 'text-text-primary bg-primary-200/40'
-                                            }`}>
-                                                <MapPin size={16} className={filtroSemiarido ? "text-amber-700" : "text-primary-700"} />
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                icon={<MapPin size={13} />}
+                                            >
                                                 {territoryName}
-                                            </span>
+                                            </Badge>
                                         )}
                                     </div>
 
                                     {/* BARRA DE TAGS DE FILTROS ATIVOS */}
-                                    {activeFiltersCount > 0 && (
-                                        <div className="flex items-center gap-1.5 flex-wrap px-2 py-1.5 mb-2.5 bg-surface-soft/80 rounded-xl border border-border/70 shrink-0">
-                                            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider pl-0.5">Filtros:</span>
+                                    {(activeFiltersCount > 0 || searchQuery.trim() !== '') && (
+                                        <div className="flex items-center gap-1.5 flex-wrap px-3 py-2 mb-3 bg-surface-sunken rounded-control border border-border/70 shrink-0">
+                                            <span className="text-micro font-bold text-text-muted uppercase tracking-wider pl-0.5">Filtros:</span>
+                                            {searchQuery.trim() !== '' && (
+                                                <Chip
+                                                    selected
+                                                    onClick={() => setSearchQuery('')}
+                                                    variant="neutral"
+                                                    className="cursor-pointer"
+                                                >
+                                                    Busca: "{searchQuery}" ×
+                                                </Chip>
+                                            )}
                                             {filterRnp !== 'todos' && (
-                                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-surface border border-border flex items-center gap-1 text-text-primary shadow-2xs">
-                                                    <Wifi size={10} className={filterRnp === 'com_rnp' ? 'text-emerald-500' : 'text-text-muted'} />
-                                                    <span>{filterRnp === 'com_rnp' ? 'Com RNP' : 'Sem RNP'}</span>
-                                                    <button type="button" onClick={() => setFilterRnp('todos')} className="hover:text-red-500 ml-0.5 cursor-pointer">×</button>
-                                                </span>
+                                                <Chip
+                                                    selected
+                                                    onClick={() => setFilterRnp('todos')}
+                                                    variant="success"
+                                                    icon={<Wifi size={12} />}
+                                                    className="cursor-pointer"
+                                                >
+                                                    {filterRnp === 'com_rnp' ? 'Com RNP' : 'Sem RNP'} ×
+                                                </Chip>
                                             )}
-                                            {selectedTipos.map((tipo) => (
-                                                <span key={tipo} className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-surface border border-border flex items-center gap-1 text-text-primary shadow-2xs">
-                                                    <span>{tipo}</span>
-                                                    <button type="button" onClick={() => handleToggleTipo(tipo)} className="hover:text-red-500 ml-0.5 cursor-pointer">×</button>
-                                                </span>
-                                            ))}
+                                            {selectedTipos.map((tipo) => {
+                                                const cat = categoryStats.find(c => c.name === tipo || c.shortName === tipo);
+                                                return (
+                                                    <Chip
+                                                        key={tipo}
+                                                        selected
+                                                        onClick={() => handleToggleTipo(tipo)}
+                                                        count={cat?.count}
+                                                        variant="primary"
+                                                        className="cursor-pointer"
+                                                    >
+                                                        {tipo} ×
+                                                    </Chip>
+                                                );
+                                            })}
                                             {selectedTipo !== 'todos' && selectedTipos.length === 0 && (
-                                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-surface border border-border flex items-center gap-1 text-text-primary shadow-2xs">
-                                                    <span>{selectedTipo}</span>
-                                                    <button type="button" onClick={() => setSelectedTipo('todos')} className="hover:text-red-500 ml-0.5 cursor-pointer">×</button>
-                                                </span>
+                                                <Chip
+                                                    selected
+                                                    onClick={() => setSelectedTipo('todos')}
+                                                    variant="primary"
+                                                    className="cursor-pointer"
+                                                >
+                                                    {selectedTipo} ×
+                                                </Chip>
                                             )}
-                                            <button
-                                                type="button"
-                                                onClick={handleClearAllFilters}
-                                                className="text-[10px] text-danger-600 hover:underline font-bold ml-auto pr-1 cursor-pointer"
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    handleClearAllFilters();
+                                                    setSearchQuery('');
+                                                }}
+                                                className="text-danger-600 hover:text-danger-700 font-semibold text-caption ml-auto h-7 px-2"
                                             >
-                                                Limpar tudo
-                                            </button>
+                                                Limpar filtros
+                                            </Button>
                                         </div>
                                     )}
 
                                     {/* LISTAGEM SCROLLÁVEL */}
                                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-0 min-h-0">
-                                        {filteredAtivosList.length > 0 ? (
+                                        {loadingStats ? (
+                                            <div className="p-3">
+                                                <ListRowSkeleton count={6} />
+                                            </div>
+                                        ) : filteredAtivosList.length > 0 ? (
                                             filteredAtivosList.map((ativo, idx) => {
                                                 const IconComponent = ativo.icone || Database;
                                                 const isSelected = selectedAssetId === ativo.id;
                                                 const itemColor = filtroSemiarido 
                                                     ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome) 
-                                                    : (ativo.corHex || '#3B82F6');
+                                                    : (ativo.corHex || '#2563EB');
+                                                const assetUrl = ativo.urlReferencia || ativo.url || ativo.link || ativo.site;
 
                                                 return (
                                                     <div
@@ -1148,6 +1168,7 @@ export default function AtivosPage() {
                                                         ref={(el) => {
                                                             if (el && ativo.id) itemRefs.current[ativo.id] = el;
                                                         }}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 72px' }}
                                                         onClick={() => {
                                                             if (isSelected) {
                                                                 setSelectedAssetId(null);
@@ -1165,94 +1186,117 @@ export default function AtivosPage() {
                                                                     });
                                                                 }
                                                             }
+                                                            setSelectedAtivoDrawer(ativo);
                                                         }}
-                                                        className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer border-b border-neutral-200/50 ${isSelected
-                                                                ? (filtroSemiarido ? 'bg-amber-50/80 border-amber-300' : 'bg-primary-50/50')
-                                                                : `bg-transparent hover:bg-surface-soft ${ativo.rnp ? (filtroSemiarido ? 'shadow-[inset_3px_0_0_#F59E0B]' : 'shadow-[inset_3px_0_0_var(--color-info-500)]') : ''
-                                                                }`
-                                                            }`}
+                                                        className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors duration-200 group cursor-pointer border-b border-border/60 ${
+                                                            isSelected
+                                                                ? (filtroSemiarido ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-300')
+                                                                : `bg-transparent hover:bg-surface-soft ${ativo.rnp ? (filtroSemiarido ? 'shadow-[inset_3px_0_0_#F59E0B]' : 'shadow-[inset_3px_0_0_rgb(var(--color-primary-500))]') : ''}`
+                                                        }`}
                                                     >
-                                                        <div className="flex items-start gap-3 min-w-0">
-                                                             <div
-                                                                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-transform"
-                                                                 style={{
-                                                                     backgroundColor: `${itemColor}20`,
-                                                                     color: itemColor
-                                                                 }}
-                                                             >
-                                                                 <IconComponent size={16} />
-                                                             </div>
-                                                             <div className="flex flex-col min-w-0">
-                                                                 <div className="flex items-center gap-2">
-                                                                     <h4 className={`text-[12px] font-semibold text-text-primary ${
-                                                                         filtroSemiarido ? 'group-hover:text-amber-700' : 'group-hover:text-blue-600'
-                                                                     } transition-colors leading-tight truncate`}>
-                                                                         {ativo.nome}
-                                                                     </h4>
-                                                                     {ativo.sigla && (
-                                                                         <span className="text-[9px] font-medium px-1.5 py-0.2 bg-border text-text-primary rounded-md shrink-0 inline-flex items-center justify-center leading-none">
-                                                                             {ativo.sigla}
-                                                                         </span>
-                                                                     )}
-                                                                     {ativo.rnp && (
-                                                                         <span
-                                                                             className={`inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 shadow-2xs justify-center leading-none border ${
-                                                                                 filtroSemiarido
-                                                                                     ? 'bg-amber-500/15 text-amber-900 dark:text-amber-200 border-amber-500/30'
-                                                                                     : 'bg-primary-700/15 text-primary-800 dark:text-primary-200 border-info-500/30'
-                                                                             }`}
-                                                                             title="Ponto de Presença / Conexão RNP"
-                                                                         >
-                                                                             <Network size={16} className={filtroSemiarido ? "text-amber-600 shrink-0" : "text-info-500 shrink-0"} />
-                                                                             <span>RNP</span>
-                                                                         </span>
-                                                                     )}
-                                                                 </div>
-                                                                 <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-text-secondary mt-0.5 font-medium">
-                                                                     <span
-                                                                         className="font-medium px-1.5 py-0.2 rounded-md"
-                                                                         style={{
-                                                                             backgroundColor: `${itemColor}20`,
-                                                                             color: itemColor
-                                                                         }}
-                                                                     >
-                                                                         {ativo.shortTipo || ativo.tipo}
-                                                                     </span>
-                                                                     <span>•</span>
-                                                                     <span>{ativo.municipio}</span>
-                                                                     <span>•</span>
-                                                                     <span className="text-text-secondary">{ativo.territorio}</span>
-                                                                 </div>
-                                                             </div>
-                                                         </div>
+                                                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                            <div
+                                                                className="w-9 h-9 rounded-control flex items-center justify-center shrink-0 transition-transform group-hover:scale-105"
+                                                                style={{
+                                                                    backgroundColor: `${itemColor}20`,
+                                                                    color: itemColor
+                                                                }}
+                                                            >
+                                                                <IconComponent size={18} />
+                                                            </div>
+                                                            <div className="flex flex-col min-w-0 flex-1">
+                                                                <div className="flex items-center gap-2">
+                                                                    <h4 className={`text-body-sm font-semibold text-text-primary ${
+                                                                        filtroSemiarido ? 'group-hover:text-amber-700' : 'group-hover:text-primary-600'
+                                                                    } transition-colors leading-tight truncate`}>
+                                                                        {ativo.nome}
+                                                                    </h4>
+                                                                    {ativo.sigla && (
+                                                                        <span className="text-micro font-medium px-1.5 py-0.5 bg-surface-sunken text-text-primary border border-border/60 rounded-control shrink-0 inline-flex items-center justify-center leading-none">
+                                                                            {ativo.sigla}
+                                                                        </span>
+                                                                    )}
+                                                                    {ativo.rnp && (
+                                                                        <span
+                                                                            className={`inline-flex items-center gap-1 text-micro font-semibold px-1.5 py-0.5 rounded-control shrink-0 justify-center leading-none border ${
+                                                                                filtroSemiarido
+                                                                                    ? 'bg-amber-500/15 text-amber-900 dark:text-amber-200 border-amber-500/30'
+                                                                                    : 'bg-primary-50 dark:bg-primary-950 text-primary-800 dark:text-primary-200 border-primary-200/60 dark:border-primary-800/60'
+                                                                            }`}
+                                                                            title="Ponto de Presença / Conexão RNP"
+                                                                        >
+                                                                            <Network size={14} className={filtroSemiarido ? "text-amber-600 shrink-0" : "text-primary-600 shrink-0"} />
+                                                                            <span>RNP</span>
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-caption text-text-muted mt-0.5 font-normal">
+                                                                    <span
+                                                                        className="font-medium px-1.5 py-0.5 rounded-control"
+                                                                        style={{
+                                                                            backgroundColor: `${itemColor}20`,
+                                                                            color: itemColor
+                                                                        }}
+                                                                    >
+                                                                        {ativo.shortTipo || ativo.tipo}
+                                                                    </span>
+                                                                    <span>•</span>
+                                                                    <span>{ativo.municipio}</span>
+                                                                    <span>•</span>
+                                                                    <span>{ativo.territorio}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                                                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                                                            {ativo.urlReferencia && (
-                                                                <a
-                                                                    href={ativo.urlReferencia}
-                                                                    target="_blank"
-                                                                    rel="noreferrer"
-                                                                    onClick={(e) => e.stopPropagation()}
-                                                                    className={`flex items-center gap-1 px-2.5 py-1 rounded-xl transition-all text-[11px] font-medium shrink-0 justify-center leading-none ${
-                                                                        filtroSemiarido
-                                                                            ? 'bg-amber-500/15 hover:bg-amber-600 text-amber-800 hover:text-white'
-                                                                            : 'bg-primary-600/10 hover:bg-primary-600 text-primary-700 hover:text-white'
-                                                                    }`}
-                                                                    title="Acessar Página / Informações"
-                                                                >
-                                                                    <span>Acessar</span>
-                                                                    <ExternalLink size={16} />
-                                                                </a>
+                                                        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                                                            <Button
+                                                                size="sm"
+                                                                variant="ghost"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setSelectedAtivoDrawer(ativo);
+                                                                }}
+                                                                className="text-caption font-medium"
+                                                            >
+                                                                Detalhes
+                                                            </Button>
+                                                            {assetUrl && (
+                                                                <IconButton
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    icon={<ExternalLink size={15} />}
+                                                                    label="Acessar link oficial"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        window.open(assetUrl, '_blank', 'noopener,noreferrer');
+                                                                    }}
+                                                                />
                                                             )}
                                                         </div>
                                                     </div>
                                                 );
                                             })
                                         ) : (
-                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                <Database size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                                <p className="text-[12px] font-medium text-text-primary">Nenhum ativo encontrado</p>
-                                                <p className="text-[10px] mt-1 text-text-secondary">Tente ajustar o termo de busca ou filtros de tipo.</p>
+                                            <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                <EmptyState
+                                                    icon={<Database size={32} />}
+                                                    title="Nenhum ativo encontrado"
+                                                    description="Tente ajustar os termos de busca ou remover os filtros aplicados."
+                                                    action={
+                                                        (activeFiltersCount > 0 || searchQuery) ? (
+                                                            <Button
+                                                                size="sm"
+                                                                variant="secondary"
+                                                                onClick={() => {
+                                                                    handleClearAllFilters();
+                                                                    setSearchQuery('');
+                                                                }}
+                                                            >
+                                                                Limpar filtros e busca
+                                                            </Button>
+                                                        ) : null
+                                                    }
+                                                />
                                             </div>
                                         )}
                                     </div>
@@ -1372,25 +1416,28 @@ export default function AtivosPage() {
                                                 );
                                             })
                                         ) : (
-                                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                <Filter size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                                <p className="text-[12px] font-medium text-text-primary">Nenhum ativo registrado neste território</p>
+                                            <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                <EmptyState
+                                                    icon={<Filter size={32} />}
+                                                    title="Nenhum ativo registrado"
+                                                    description={selectedTerritory ? `Não há registros de ativos para o território ${territoryName}.` : 'Nenhum ativo encontrado para esta classificação.'}
+                                                />
                                             </div>
                                         )}
                                     </div>
 
                                     {/* LEGENDA NO RODAPÉ (PADRÃO IDÊNTICO AO REFERENCIAL) */}
-                                    <div className="flex items-center justify-between gap-4 pt-3 border-t border-border shrink-0 text-[11px] font-medium mt-auto">
+                                    <div className="flex items-center justify-between gap-4 pt-3 border-t border-border shrink-0 text-caption font-medium mt-auto">
                                         <div className="flex items-center gap-1.5">
-                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-[#2563EB]'} shadow-2xs`}></span>
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'} shadow-2xs`}></span>
                                             <span className={filtroSemiarido ? 'text-amber-900 dark:text-amber-300 font-semibold' : 'text-text-primary font-semibold'}>Com RNP</span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
-                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-500/20' : 'bg-[#E2E8F0]'} shadow-2xs`}></span>
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-500/20' : 'bg-border'} shadow-2xs`}></span>
                                             <span className={filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-secondary'}>Sem RNP</span>
                                         </div>
                                         <div className="flex items-center gap-1.5 ml-auto">
-                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-300' : 'bg-[#CBD5E1]'} shadow-2xs`}></span>
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-300' : 'bg-border-strong'} shadow-2xs`}></span>
                                             <span className={filtroSemiarido ? 'text-amber-800 dark:text-amber-300 font-medium' : 'text-text-secondary font-medium'}>Total</span>
                                         </div>
                                     </div>
@@ -1506,9 +1553,12 @@ export default function AtivosPage() {
                                                     );
                                                 })
                                             ) : (
-                                                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-text-muted">
-                                                    <MapPin size={24} className="mb-2 opacity-40 text-text-secondary" />
-                                                    <p className="text-[12px] font-medium text-text-primary">Nenhum ativo registrado neste território</p>
+                                                <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                    <EmptyState
+                                                        icon={<MapPin size={32} />}
+                                                        title="Nenhum ativo registrado"
+                                                        description={`Não há registros de ativos para o território ${territoryName}.`}
+                                                    />
                                                 </div>
                                             )
                                         ) : (
@@ -1578,6 +1628,114 @@ export default function AtivosPage() {
                 )}
 
             </div>
+
+            {/* DRAWER DE DETALHES DO ATIVO */}
+            <Drawer
+                open={Boolean(selectedAtivoDrawer)}
+                onClose={() => setSelectedAtivoDrawer(null)}
+                title={selectedAtivoDrawer?.nome}
+                subtitle={selectedAtivoDrawer?.sigla ? `Sigla: ${selectedAtivoDrawer.sigla}` : undefined}
+                footer={
+                    (selectedAtivoDrawer?.urlReferencia || selectedAtivoDrawer?.link || selectedAtivoDrawer?.url || selectedAtivoDrawer?.site) ? (
+                        <div className="flex items-center justify-end gap-2 w-full">
+                            <Button
+                                variant="ghost"
+                                onClick={() => setSelectedAtivoDrawer(null)}
+                            >
+                                Fechar
+                            </Button>
+                            <Button
+                                variant="primary"
+                                iconRight={<ExternalLink size={16} />}
+                                onClick={() => {
+                                    const targetUrl = selectedAtivoDrawer.urlReferencia || selectedAtivoDrawer.link || selectedAtivoDrawer.url || selectedAtivoDrawer.site;
+                                    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+                                }}
+                            >
+                                Acessar Link Oficial
+                            </Button>
+                        </div>
+                    ) : (
+                        <div className="flex justify-end w-full">
+                            <Button variant="secondary" onClick={() => setSelectedAtivoDrawer(null)}>
+                                Fechar
+                            </Button>
+                        </div>
+                    )
+                }
+            >
+                {selectedAtivoDrawer && (
+                    <div className="flex flex-col gap-5 p-1">
+                        {/* Badges / Destaques */}
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <Badge
+                                variant="primary"
+                                className="text-caption py-1 px-3 font-semibold"
+                                style={{
+                                    backgroundColor: `${selectedAtivoDrawer.corHex}15`,
+                                    color: selectedAtivoDrawer.corHex,
+                                    borderColor: `${selectedAtivoDrawer.corHex}40`
+                                }}
+                            >
+                                {selectedAtivoDrawer.tipo}
+                            </Badge>
+                            {selectedAtivoDrawer.rnp && (
+                                <Badge variant="success" icon={<Wifi size={13} />} className="text-caption py-1 px-2.5">
+                                    Conectado à RNP
+                                </Badge>
+                            )}
+                            {isMunicipioSemiarido(selectedAtivoDrawer.municipio) && (
+                                <Badge variant="warning" icon={<SunMedium size={13} />} className="text-caption py-1 px-2.5">
+                                    Semiárido Baiano
+                                </Badge>
+                            )}
+                        </div>
+
+                        {/* Informações Estruturadas */}
+                        <div className="bg-surface-sunken rounded-card p-4 border border-border/70 space-y-3">
+                            <div className="flex justify-between items-start gap-2 border-b border-border/60 pb-2.5">
+                                <span className="text-caption text-text-muted font-medium">Município</span>
+                                <span className="text-body-sm font-semibold text-text-primary text-right">
+                                    {selectedAtivoDrawer.municipio}
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-start gap-2 border-b border-border/60 pb-2.5">
+                                <span className="text-caption text-text-muted font-medium">Território de Identidade</span>
+                                <span className="text-body-sm font-semibold text-text-primary text-right">
+                                    {selectedAtivoDrawer.territorio}
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-start gap-2 border-b border-border/60 pb-2.5">
+                                <span className="text-caption text-text-muted font-medium">Tipologia</span>
+                                <span className="text-body-sm font-semibold text-text-primary text-right">
+                                    {selectedAtivoDrawer.tipo}
+                                </span>
+                            </div>
+                            {selectedAtivoDrawer.lat && selectedAtivoDrawer.lng && (
+                                <div className="flex justify-between items-start gap-2">
+                                    <span className="text-caption text-text-muted font-medium">Coordenadas Geográficas</span>
+                                    <span className="text-caption font-mono text-text-secondary text-right">
+                                        {Number(selectedAtivoDrawer.lat).toFixed(4)}, {Number(selectedAtivoDrawer.lng).toFixed(4)}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Ação no Mapa */}
+                        <Button
+                            variant="secondary"
+                            iconLeft={<MapPin size={16} />}
+                            onClick={() => {
+                                handleSelectFromMap(selectedAtivoDrawer);
+                                setSelectedAtivoDrawer(null);
+                            }}
+                            className="w-full justify-center"
+                        >
+                            Centralizar no Mapa
+                        </Button>
+                    </div>
+                )}
+            </Drawer>
 
         </main>
     );

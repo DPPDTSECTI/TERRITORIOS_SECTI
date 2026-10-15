@@ -1,40 +1,16 @@
-import React, { Suspense, lazy, useEffect, useState, useRef, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { DataProvider, DataContext } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Analytics } from '@vercel/analytics/react';
-import { supabase } from './services/supabase';
 
-export function useDadosSupabase() {
- const [dados, setDados] = useState([]);
- const [carregando, setCarregando] = useState(true);
 
- useEffect(() => {
- async function carregar() {
- const { data, error } = await supabase
- .from('stats_ti') 
- .select('*');
-
- if (error) {
- console.error("Erro ao buscar no Supabase:", error);
- } else {
- setDados(data);
- }
- setCarregando(false);
- }
- 
- carregar();
- }, []);
-
- return { dados, carregando };
-}
-
-// Importações Globais
 import Sidebar from './components/Sidebar';
 import UserHeaderProfile from './components/UserHeaderProfile';
 import TourGuide from './components/TourGuide';
+import { ToastProvider, Skeleton, KpiSkeleton } from './components/ui';
 
 // CARREGAMENTO PREGUIÇOSO (LAZY LOADING)
 const LandingHero = lazy(() => import('./components/hero'));
@@ -50,6 +26,7 @@ const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioAtivos'
 const RelatorioCadeias = lazy(() => import('./components/pdf/RelatorioCadeias'));
 const RelatorioSintesePage = lazy(() => import('./components/pdf/RelatorioSintese'));
 const RelatorioAnalisePage = lazy(() => import('./components/pdf/RelatorioAnalise'));
+const UiShowcasePage = lazy(() => import('./components/ui/UiShowcasePage'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -80,76 +57,7 @@ function GlobalScroll() {
  return null;
 }
 
-// ================= ROLAGEM GLOBAL ENTRE MÓDULOS (EXCETO SOBRE LISTAS/TABELAS/MAPA) =================
-const DEFAULT_MODULES_ORDER = ['/territorios', '/ativos', '/cadeia', '/cursos'];
 
-function getDynamicRoutesOrder() {
- return DEFAULT_MODULES_ORDER;
-}
-
-function PageScrollNavigator() {
- const location = useLocation();
- const navigate = useNavigate();
- const isTransitioningRef = useRef(false);
-
-  useEffect(() => {
-    const handleWheel = (e) => {
-      // 1. Ignora páginas fora do fluxo de módulos
-      if (
-        location.pathname === '/' || 
-        location.pathname === '/admin' || 
-        location.pathname === '/sobre' || 
-        location.pathname.startsWith('/relatorio')
-      ) return;
-
- // 2. REGRA ESTRITA: Se o cursor estiver sobre QUALQUER lista interna, tabela, catálogo ou mapa, NUNCA troca de página!
- const target = e.target;
- if (target) {
- // Se estiver dentro do mapa Leaflet
- if (target.closest('.leaflet-container, .leaflet-pane')) {
- return;
- }
-
- // Se estiver dentro de um container com scroll interno (excluindo o <main> da página)
- const scrollable = target.closest('.overflow-y-auto, .overflow-y-scroll, .overflow-auto, .overflow-scroll, table, tbody, [data-scrollable="true"]');
- if (scrollable && scrollable.tagName.toLowerCase() !== 'main') {
- return;
- }
- }
-
- // 3. Se estiver rolando no fundo da página / áreas gerais / KPIs / cabeçalho, permite transição entre módulos
- const currentOrder = getDynamicRoutesOrder();
- const currentIndex = currentOrder.indexOf(location.pathname);
- if (currentIndex === -1) return;
-
- // Limiar de força do scroll para evitar trocas acidentais
- if (Math.abs(e.deltaY) < 35) return;
-
- if (isTransitioningRef.current) return;
-
- if (e.deltaY > 0) {
- // Descer scroll no fundo: Próximo módulo
- if (currentIndex < currentOrder.length - 1) {
- isTransitioningRef.current = true;
- navigate(currentOrder[currentIndex + 1]);
- setTimeout(() => { isTransitioningRef.current = false; }, 750);
- }
- } else if (e.deltaY < 0) {
- // Subir scroll no fundo: Módulo anterior
- if (currentIndex > 0) {
- isTransitioningRef.current = true;
- navigate(currentOrder[currentIndex - 1]);
- setTimeout(() => { isTransitioningRef.current = false; }, 750);
- }
- }
- };
-
- window.addEventListener('wheel', handleWheel, { passive: true });
- return () => window.removeEventListener('wheel', handleWheel);
- }, [location.pathname, navigate]);
-
- return null;
-}
 
 // HEADER SUPERIOR FIXO (Badge e Perfil do Usuário)
 function TopFixedBar() {
@@ -157,34 +65,55 @@ function TopFixedBar() {
 
   if (location.pathname === '/' || location.pathname === '/admin' || location.pathname.startsWith('/relatorio/')) return null;
 
- return (
- <div className="fixed top-6 right-6 lg:top-8 lg:right-8 z-[100] flex items-center gap-3 pointer-events-auto select-none print:hidden">
- <UserHeaderProfile />
- </div>
- );
+  return (
+    <div className="fixed top-4 right-4 sm:top-5 sm:right-6 z-40 flex items-center gap-3 pointer-events-auto select-none print:hidden">
+      <UserHeaderProfile />
+    </div>
+  );
 }
 
-// COMPONENTE DE TRANSIÇÃO
+// COMPONENTE DE TRANSIÇÃO E SKELETON DE PÁGINA
+const PageLoadingFallback = () => (
+  <div className="w-full h-full p-6 sm:p-8 space-y-6">
+    <div className="space-y-2">
+      <Skeleton className="h-8 w-64 max-w-full" />
+      <Skeleton className="h-4 w-96 max-w-full" />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <KpiSkeleton />
+      <KpiSkeleton />
+      <KpiSkeleton />
+      <KpiSkeleton />
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
+      <div className="lg:col-span-2 h-72 bg-surface border border-border rounded-card p-5 space-y-4">
+        <Skeleton className="h-5 w-48" />
+        <Skeleton className="h-48 w-full rounded-control" />
+      </div>
+      <div className="h-72 bg-surface border border-border rounded-card p-5 space-y-3">
+        <Skeleton className="h-5 w-36" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </div>
+  </div>
+);
+
 const PageWrapper = ({ children }) => {
- return (
- <motion.div
- initial={{ opacity: 0, y: 12 }}
- animate={{ opacity: 1, y: 0 }}
- exit={{ opacity: 0, y: -12 }}
- transition={{ duration: 0.35, ease: "easeOut" }}
- className="w-full h-full flex flex-col relative"
- >
- <Suspense 
- fallback={
- <div className="flex flex-col items-center justify-center min-h-[60vh] w-full gap-4 bg-transparent">
- <div className="w-8 h-8 border-2 border-white/10 border-t-primary-600 rounded-full animate-spin"></div>
- </div>
- }
- >
- {children}
- </Suspense>
- </motion.div>
- );
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      className="w-full h-full flex flex-col relative"
+    >
+      <Suspense fallback={<PageLoadingFallback />}>
+        {children}
+      </Suspense>
+    </motion.div>
+  );
 };
 
 function AnimatedRoutes() {
@@ -216,7 +145,7 @@ username="PTI Bahia"
  </AnimatePresence>
 
  {/* ÁREA PRINCIPAL COM HEADER FIXO */}
- <div className={`flex-1 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
+ <div className={`flex-1 min-w-0 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
  {!hideNavigation && <TopFixedBar />}
 
         <AnimatePresence mode="wait">
@@ -236,6 +165,11 @@ username="PTI Bahia"
             <Route path="/relatorio/ativos" element={<PageWrapper><RelatorioAtivosPage /></PageWrapper>} />
             <Route path="/relatorio/cadeias" element={<PageWrapper><RelatorioCadeias /></PageWrapper>} />
             <Route path="/relatorio/analise" element={<PageWrapper><RelatorioAnalisePage /></PageWrapper>} />
+
+            {/* VITRINE DE COMPONENTES UI (DEV ONLY) */}
+            {import.meta.env.DEV && (
+              <Route path="/__ui" element={<PageWrapper><UiShowcasePage /></PageWrapper>} />
+            )}
           </Routes>
         </AnimatePresence>
       </div>
@@ -252,7 +186,6 @@ function MainApp() {
  
  <TourGuide />
  <GlobalScroll />
- <PageScrollNavigator />
  <Analytics />
 
  <AnimatedRoutes />
@@ -261,15 +194,19 @@ function MainApp() {
 }
 
 export default function AppWrapper() {
- return (
- <HelmetProvider>
- <ThemeProvider>
- <Router>
- <DataProvider>
- <MainApp />
- </DataProvider>
- </Router>
- </ThemeProvider>
- </HelmetProvider>
- );
+  return (
+    <MotionConfig reducedMotion="user">
+      <HelmetProvider>
+        <ThemeProvider>
+          <Router>
+            <DataProvider>
+              <ToastProvider>
+                <MainApp />
+              </ToastProvider>
+            </DataProvider>
+          </Router>
+        </ThemeProvider>
+      </HelmetProvider>
+    </MotionConfig>
+  );
 }

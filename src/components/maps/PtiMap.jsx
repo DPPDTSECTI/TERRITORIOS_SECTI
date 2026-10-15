@@ -9,6 +9,7 @@ import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
 import { useTheme } from '../../context/ThemeContext';
+import { useMapTheme } from './mapTheme';
 
 // Paleta Soft Blue & Teal com Alto Contraste Geográfico entre Territórios Vizinhos (Modo Normal)
 const TERRITORY_COLORS = [
@@ -170,6 +171,7 @@ export default function PtiMap({
 	onToggleSemiarido = null
 }) {
   const { isDark } = useTheme();
+  const mapPalette = useMapTheme(filtroSemiarido);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [mergedNormalData, setMergedNormalData] = useState(null);
   const [mergedSemiData, setMergedSemiData] = useState(null);
@@ -320,9 +322,9 @@ export default function PtiMap({
     const idTer = Number(feature.properties.id_territorio);
     if (!idTer) return { fillOpacity: 0.1, stroke: false, fillColor: '#fee2e2' };
 
-    const neutralFill = isDark ? '#192438' : '#E2E8F0';
-    const strokeColor = isDark ? '#2e415d' : '#FFFFFF';
-    const faintStroke = isDark ? '#223048' : '#CBD5E1';
+    const neutralFill = mapPalette.choropleth.zero;
+    const strokeColor = mapPalette.stroke.default;
+    const faintStroke = mapPalette.border;
 
     const isSelectedMap = selectedTerritory && Number(selectedTerritory.id_territorio) === idTer;
 
@@ -457,7 +459,7 @@ export default function PtiMap({
             l.setStyle({
               fillOpacity: 1.0,
               weight: 2.2,
-              color: filtroSemiarido ? '#92400E' : '#1D3557'
+              color: mapPalette.stroke.hover
             });
             l.bringToFront();
           });
@@ -466,7 +468,7 @@ export default function PtiMap({
           setHoveredMunicipalityId(feature.properties.id_municipio);
           e.target.setStyle({
             fillOpacity: 1,
-            color: filtroSemiarido ? '#78350F' : '#1D3557',
+            color: mapPalette.stroke.hover,
             weight: 2.2
           });
           e.target.bringToFront();
@@ -632,10 +634,10 @@ export default function PtiMap({
       if (geoJsonLayerRef.current) {
         const b = geoJsonLayerRef.current.getBounds();
         if (b.isValid()) {
-          mapRef.current?.fitBounds(b, { padding: [12, 12], duration: 0.8 });
+          mapRef.current?.fitBounds(b, { padding: [12, 12], duration: 0.6 });
         }
       } else {
-        mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.8 });
+        mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.6 });
       }
     }
   }, [selectedTerritory, geoJsonData]);
@@ -649,14 +651,14 @@ export default function PtiMap({
   return (
     <div
       ref={mapContainerRef}
-      className="relative isolate w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-md overflow-hidden select-none z-10"
+      className="tour-map relative isolate w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-card overflow-hidden select-none z-10"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
     >
       {loading || !currentData ? (
         <div className="flex flex-col items-center text-primary-600">
           <svg className="animate-spin h-6 w-6 mb-2 text-primary-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-          <span className="text-[11px] font-medium uppercase">Processando Malha...</span>
+          <span className="text-caption font-medium uppercase">Processando Malha...</span>
         </div>
       ) : (
         <MapContainer
@@ -681,6 +683,7 @@ export default function PtiMap({
 
           <TileLayer
             key={isDark ? 'dark-canvas-tiles' : 'light-canvas-tiles'}
+            className="map-tiles-clean"
             url={
               isDark
                 ? "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
@@ -770,17 +773,17 @@ export default function PtiMap({
       )}
 
       {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
-      <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-surface/90 backdrop-blur-xl rounded-xl border border-border shadow-[0_8px_32px_rgba(0,0,0,0.2)] overflow-hidden">
+      <div className="absolute bottom-6 right-6 z-[400] flex flex-col bg-surface rounded-control border border-border shadow-card overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-          className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
+          className="w-9 h-9 flex items-center justify-center text-primary-600 dark:text-primary-400 hover:text-text-primary hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
           title="Aproximar"
         >
           <span className="text-lg font-medium leading-none">+</span>
         </button>
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-          className="w-10 h-10 flex items-center justify-center text-primary-600 hover:text-primary-950 hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
+          className="w-9 h-9 flex items-center justify-center text-primary-600 dark:text-primary-400 hover:text-text-primary hover:bg-surface-soft transition-colors border-b border-border cursor-pointer"
           title="Afastar"
         >
           <span className="text-lg font-medium leading-none">−</span>
@@ -790,17 +793,17 @@ export default function PtiMap({
             if (geoJsonLayerRef.current) {
               const b = geoJsonLayerRef.current.getBounds();
               if (b.isValid()) {
-                mapRef.current?.fitBounds(b, { padding: [12, 12], duration: 0.8 });
+                mapRef.current?.fitBounds(b, { padding: [12, 12], duration: 0.6 });
               }
             } else {
-              mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.8, easeLinearity: 0.25 });
+              mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.6, easeLinearity: 0.25 });
             }
             onSelectTerritory(null);
           }}
-          className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
+          className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${
             selectedTerritory
-              ? 'text-danger-600 bg-danger-50 hover:bg-danger-100'
-              : 'text-primary-600 hover:text-primary-950 hover:bg-surface-soft'
+              ? 'text-danger-600 bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 dark:hover:bg-danger-900/50'
+              : 'text-primary-600 dark:text-primary-400 hover:text-text-primary hover:bg-surface-soft'
           }`}
           title="Limpar seleção e ver toda a Bahia"
         >
@@ -812,87 +815,87 @@ export default function PtiMap({
         </button>
       </div>
 
- {/* ================= TOGGLE SEMIÁRIDO (CANTO SUPERIOR DIREITO) ================= */}
- {Boolean(onToggleSemiarido) && (
-   <div className="absolute top-3 right-3 z-[400]">
-     <button
-       type="button"
-       onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
-       title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-       className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
-         filtroSemiarido
-           ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
-           : 'bg-surface/90 border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-sm'
-       }`}
-     >
-       <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
-         filtroSemiarido
-           ? 'bg-amber-500 text-white'
-           : 'bg-surface-soft border border-border text-text-muted'
-       }`}>
-         {filtroSemiarido ? (
-           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-             <circle cx="12" cy="12" r="4"/>
-             <line x1="12" y1="2" x2="12" y2="5"/>
-             <line x1="12" y1="19" x2="12" y2="22"/>
-             <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
-             <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
-             <line x1="2" y1="12" x2="5" y2="12"/>
-             <line x1="19" y1="12" x2="22" y2="12"/>
-             <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
-             <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
-           </svg>
-         ) : (
-           <span className="w-2 h-2 rounded-full bg-slate-300 block" />
-         )}
-       </span>
-       <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
-     </button>
-   </div>
- )}
+      {/* ================= TOGGLE SEMIÁRIDO (CANTO SUPERIOR DIREITO) ================= */}
+      {Boolean(onToggleSemiarido) && (
+        <div className="absolute top-3 right-3 z-[400]">
+          <button
+            type="button"
+            onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
+            title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${
+              filtroSemiarido
+                ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
+                : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
+            }`}
+          >
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
+              filtroSemiarido
+                ? 'bg-amber-500 text-white'
+                : 'bg-surface-soft border border-border text-text-muted'
+            }`}>
+              {filtroSemiarido ? (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <line x1="12" y1="2" x2="12" y2="5"/>
+                  <line x1="12" y1="19" x2="12" y2="22"/>
+                  <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+                  <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+                  <line x1="2" y1="12" x2="5" y2="12"/>
+                  <line x1="19" y1="12" x2="22" y2="12"/>
+                  <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+                  <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+                </svg>
+              ) : (
+                <span className="w-2 h-2 rounded-full bg-slate-300 block" />
+              )}
+            </span>
+            <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
+          </button>
+        </div>
+      )}
 
- {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
- {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
- <div className={`absolute ${isTerritoryOnRight ? 'top-4 left-4' : 'top-[58px] right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-xl border bg-surface/95 backdrop-blur-xl border-border shadow-card-soft transition-all duration-300 animate-soft-fade pointer-events-auto`}>
- <div className="flex justify-between items-center mb-3 border-b border-border pb-3">
- <h4 className="text-[11px] font-medium text-text-primary uppercase leading-tight">
- {selectedTerritory.nome_territorio || selectedTerritory.territorio}
- </h4>
- <button
- onClick={() => onSelectTerritory(null)}
- className="text-primary-600 hover:text-danger-600 transition-colors bg-surface-soft hover:bg-danger-50 rounded-lg p-1.5 ml-2"
- >
- <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
- </button>
- </div>
- <ul className="flex flex-col gap-1">
- {municipalitiesToShow.map((m, idx) => {
-  const isSemi = isMunicipioSemiarido(m);
- return (
- <li key={idx} className="text-[12px] font-medium flex items-center gap-2 text-text-secondary py-1.5 hover:bg-surface-soft rounded-lg px-2 cursor-default transition-colors">
- <span className={`shrink-0 w-1.5 h-1.5 rounded-full shadow-sm ${isSemi ? 'bg-warning-600' : 'bg-primary-300'}`}></span>
- <span className="truncate">{m}</span>
- </li>
- );
- })}
- </ul>
- {selectedTerritoryMunicipalities.length > 4 && (
- <button
- onClick={() => setIsMunListExpanded(!isMunListExpanded)}
- className="w-full mt-3 text-center text-[11px] font-medium text-primary-600 hover:text-primary-950 uppercase py-2.5 rounded-lg bg-surface-soft hover:bg-primary-100 transition-colors"
- >
- {isMunListExpanded ? 'Ver menos' : `Ver os ${selectedTerritoryMunicipalities.length} municípios`}
- </button>
- )}
- </div>
- )}
+      {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
+      {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
+        <div className={`absolute ${isTerritoryOnRight ? 'top-4 left-4' : 'top-[58px] right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-card border bg-surface border-border shadow-card transition-all duration-300 animate-soft-fade pointer-events-auto`}>
+          <div className="flex justify-between items-center mb-3 border-b border-border pb-3">
+            <h4 className="text-caption font-semibold text-text-primary uppercase leading-tight">
+              {selectedTerritory.nome_territorio || selectedTerritory.territorio}
+            </h4>
+            <button
+              onClick={() => onSelectTerritory(null)}
+              className="text-primary-600 hover:text-danger-600 transition-colors bg-surface-soft hover:bg-danger-50 dark:hover:bg-danger-950/40 rounded-control p-1.5 ml-2 cursor-pointer"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <ul className="flex flex-col gap-1">
+            {municipalitiesToShow.map((m, idx) => {
+              const isSemi = isMunicipioSemiarido(m);
+              return (
+                <li key={idx} className="text-caption font-medium flex items-center gap-2 text-text-secondary py-1.5 hover:bg-surface-soft rounded-control px-2 cursor-default transition-colors">
+                  <span className={`shrink-0 w-1.5 h-1.5 rounded-full shadow-xs ${isSemi ? 'bg-amber-500' : 'bg-primary-500'}`}></span>
+                  <span className="truncate">{m}</span>
+                </li>
+              );
+            })}
+          </ul>
+          {selectedTerritoryMunicipalities.length > 4 && (
+            <button
+              onClick={() => setIsMunListExpanded(!isMunListExpanded)}
+              className="w-full mt-3 text-center text-caption font-semibold text-primary-600 hover:text-primary-700 uppercase py-2 rounded-control bg-surface-soft hover:bg-primary-50 dark:hover:bg-primary-950/40 transition-colors cursor-pointer"
+            >
+              {isMunListExpanded ? 'Ver menos' : `Ver os ${selectedTerritoryMunicipalities.length} municípios`}
+            </button>
+          )}
+        </div>
+      )}
 
- {/* ================= TOOLTIP ================= */}
- {tooltip.visible && hoveredTerritoryId && !selectedTerritory && (
- <div
- className="absolute z-[1000] overflow-hidden rounded-xl border bg-surface/95 backdrop-blur-md border-border shadow-card-soft pointer-events-none transition-opacity duration-150"
- style={{ top: tooltip.y, left: tooltip.x, width: 240 }}
- >
+      {/* ================= TOOLTIP ================= */}
+      {tooltip.visible && hoveredTerritoryId && !selectedTerritory && (
+        <div
+          className="absolute z-[1000] overflow-hidden rounded-card border bg-surface border-border shadow-card pointer-events-none transition-opacity duration-150"
+          style={{ top: tooltip.y, left: tooltip.x, width: 240 }}
+        >
           <div
             className="h-1.5 w-full"
             style={{
@@ -901,36 +904,36 @@ export default function PtiMap({
                 : (territoryColorMap[hoveredTerritoryId] || 'rgb(var(--color-primary-600))')
             }}
           ></div>
-          <div className="p-4">
-            <div className="flex justify-between items-start mb-3">
+          <div className="p-3.5">
+            <div className="flex justify-between items-start mb-2.5">
               <div className="flex flex-col">
                 {hoveredMunName && (
-                  <span className="text-[11px] font-semibold text-primary-600 uppercase tracking-wide mb-0.5">
+                  <span className="text-micro font-semibold text-primary-600 uppercase tracking-wide mb-0.5">
                     {hoveredMunName}
                   </span>
                 )}
-                <h2 className="font-medium text-[13px] text-primary-950 leading-tight pr-2">
+                <h2 className="font-semibold text-body-sm text-text-primary leading-tight pr-2">
                   {hoveredData ? hoveredData.territorio : fallbackName}
                 </h2>
               </div>
             </div>
- <div className="grid grid-cols-2 gap-2 mb-2">
- <div className="rounded-xl p-2 border bg-surface-soft border-border flex flex-col">
- <span className="text-[10px] text-text-muted font-medium mb-0.5">Ativos</span>
- <span className="text-[14px] font-medium text-primary-950">{hoveredData?.ativos_cti || 0}</span>
- </div>
- <div className="rounded-xl p-2 border bg-surface-soft border-border flex flex-col">
- <span className="text-[10px] text-text-muted font-medium mb-0.5">Média IFDM</span>
- <span className="text-[14px] font-medium text-primary-950">
- {hoveredData?.media_ifdm
- ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3)
- : '0.000'}
- </span>
- </div>
- </div>
- </div>
- </div>
- )}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-control p-2 border bg-surface-soft border-border flex flex-col">
+                <span className="text-micro text-text-muted font-medium mb-0.5">Ativos</span>
+                <span className="text-body-sm font-semibold text-text-primary tnum">{hoveredData?.ativos_cti || 0}</span>
+              </div>
+              <div className="rounded-control p-2 border bg-surface-soft border-border flex flex-col">
+                <span className="text-micro text-text-muted font-medium mb-0.5">Média IFDM</span>
+                <span className="text-body-sm font-semibold text-text-primary tnum">
+                  {hoveredData?.media_ifdm
+                    ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3)
+                    : '0.000'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
  </div>
  );
 }

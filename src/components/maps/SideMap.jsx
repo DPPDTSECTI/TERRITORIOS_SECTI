@@ -2,860 +2,67 @@ import React, { useRef, useEffect, useState, useMemo, useCallback, useContext } 
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, Polyline, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import Supercluster from 'supercluster';
 import * as topojson from 'topojson-client';
 import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Expand, Shrink, Maximize2, Minimize2, BookOpen, SunMedium } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
 import { useTheme } from '../../context/ThemeContext';
-
-import { municipiosDB } from '../../data/municipiosDB';
-import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
 
-const SEMIARIDO_TERRITORY_IDS = new Set(
-  municipiosDB
-    .filter((m) => isMunicipioSemiarido(m.nome_municipio))
-    .map((m) => String(m.id_territorio))
-);
+import {
+  SEMIARIDO_TERRITORY_IDS,
+  normalizeName,
+  buildMunicipioTerritoryMap,
+  MUN_LOOKUP,
+  findMunicipioCoords,
+  isInsideBahia
+} from './side/mapGeoUtils';
 
-function normalizeName(value) {
- if (!value) return '';
- let norm = String(value || '')
- .normalize('NFD')
- .replace(/[\u0300-\u036f]/g, '')
- .toLowerCase()
- .replace(/[^a-z0-9]/g, ' ')
- .replace(/\s+/g, ' ')
- .trim();
+import { useMapTheme } from './mapTheme';
+import {
+  HEAT_LEVELS,
+  SEMIARIDO_HEAT_LEVELS,
+  getHeatColor,
+  getRelativeHeatColor,
+  getDynamicHeatLevels
+} from './side/mapHeatScale';
 
- const correcoes = {
- 'dias davila': 'dias d avila',
- 'santa teresinha': 'santa terezinha',
- 'camaca': 'camacan',
- 'xique xique': 'xiquexique',
- 'muquem de sao francisco': 'muquem do sao francisco'
- };
+import {
+  createClusterIcon,
+  getSemiaridoPointColor,
+  createSingleAssetIconWithSvg,
+  createPartnerPinIcon,
+  createSelectedPartnerPinIcon
+} from './side/mapIcons';
 
- return correcoes[norm] || norm;
-}
+import {
+  ZoomDependentTileLayer,
+  MapPaneManager,
+  MapClickHandler,
+  TerritoryFocusController,
+  CadeiaFocusController,
+  ConnectionsFocusController,
+  ChangeMapView,
+  MapResizeHandler,
+  MapZoomWatcher
+} from './side/MapControllers';
 
-const buildMunicipioTerritoryMap = () => {
- const m = {};
- municipiosDB.forEach((row) => {
- m[normalizeName(row.nome_municipio)] = {
- id_municipio: row.id_municipio,
- id_territorio: row.id_territorio,
- nome_territorio: row.nome_territorio,
- nome_municipio: row.nome_municipio
- };
- });
- return m;
+import {
+  SingleAssetPopupContent,
+  SingleCadeiaPopupContent,
+  SingleAssetMarkerItem,
+  SuperclusteredMarkers
+} from './side/MapMarkersAndPopups';
+
+export {
+  findMunicipioCoords,
+  isInsideBahia,
+  getSemiaridoPointColor,
+  HEAT_LEVELS,
+  SEMIARIDO_HEAT_LEVELS,
+  getHeatColor,
+  getRelativeHeatColor,
+  getDynamicHeatLevels
 };
-
-const MUN_LOOKUP = (() => {
-  const byId = {};
-  const byName = {};
-  municipiosDB.forEach((row) => {
-    byId[row.id_municipio] = row;
-    byName[normalizeName(row.nome_municipio)] = row;
-  });
-  return { byId, byName };
-})();
-
-export function findMunicipioCoords(nome) {
-  if (!nome) return null;
-  const raw = String(nome).trim();
-  const clean = normalizeName(raw);
-
-  if (MUNICIPIOS_COORDS[raw]) return MUNICIPIOS_COORDS[raw];
-  if (MUNICIPIOS_COORDS[clean]) return MUNICIPIOS_COORDS[clean];
-  if (MUNICIPIOS_COORDS[raw.toLowerCase()]) return MUNICIPIOS_COORDS[raw.toLowerCase()];
-
-  const aliases = {
-    petrolina: [-9.3989, -40.5008],
-    'sao francisco': [-9.427268, -40.505742],
-    lem: [-12.087454, -45.796046],
-    saj: [-12.968813, -39.257965]
-  };
-
-  if (aliases[clean]) return aliases[clean];
-
-  const lookup = MUN_LOOKUP.byName[clean];
-  if (lookup && MUNICIPIOS_COORDS[lookup.nome_municipio]) {
-    return MUNICIPIOS_COORDS[lookup.nome_municipio];
-  }
-
-  for (const key of Object.keys(MUNICIPIOS_COORDS)) {
-    if (normalizeName(key).includes(clean) || clean.includes(normalizeName(key))) {
-      return MUNICIPIOS_COORDS[key];
-    }
-  }
-
-  return null;
-}
-
-export function isInsideBahia(lat, lng) {
-  return (
-    typeof lat === 'number' &&
-    typeof lng === 'number' &&
-    !isNaN(lat) &&
-    !isNaN(lng) &&
-    lat >= -18.5 &&
-    lat <= -8.0 &&
-    lng >= -47.0 &&
-    lng <= -36.5
-  );
-}
-
-// Marcador do Cluster
-const createClusterIcon = (count, isSemiarido = false) => {
-  const size = 20;
-  const fontSize = 9.5;
-  const bg = isSemiarido ? '#D97706' : '#1E40AF';
-  const shadow = isSemiarido ? 'rgba(217, 119, 6, 0.45)' : 'rgba(30, 64, 175, 0.3)';
-
-  return L.divIcon({
-    html: `
-    <div style="
-      width: ${size}px;
-      height: ${size}px;
-      background: ${bg};
-      color: #FFFFFF;
-      border: 1.5px solid #FFFFFF;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: ${fontSize}px;
-      box-shadow: 0 1px 4px ${shadow};
-      cursor: pointer;
-      font-family: inherit;
-      transform: none !important;
-    ">
-      ${count}
-    </div>
-    `,
-    className: 'custom-cluster-marker',
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2]
-  });
-};
-
-export function getSemiaridoPointColor(corHex, nameOrTipo = '') {
-  const str = String(nameOrTipo || '').toLowerCase();
-  if (str.includes('privada')) return '#F59E0B'; // Âmbar dourado
-  if (str.includes('estadual')) return '#D97706'; // Âmbar profundo
-  if (str.includes('federal') && str.includes('universidade')) return '#B45309'; // Âmbar terracota
-  if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if')) return '#EAB308'; // Ouro girassol
-  if (str.includes('aceleradora')) return '#CA8A04'; // Ouro mostarda
-  if (str.includes('dinamizador')) return '#FBBF24'; // Calêndula
-  if (str.includes('incubadora')) return '#D48806'; // Mel ocre
-  if (str.includes('parque')) return '#78350F'; // Castanho âmbar
-  if (str.includes('ict')) return '#B8860B'; // Dark goldenrod
-  if (str.includes('hub') || str.includes('coworking') || str.includes('fablab') || str.includes('maker')) return '#ECC94B'; // Trigo dourado
-  if (str.includes('centro') || str.includes('p&d')) return '#F59E0B'; // Âmbar P&D
-  if (str.includes('investimento') || str.includes('fundo') || str.includes('fomento')) return '#CD7F32'; // Bronze dourado
-  if (str.includes('pesquisa')) return '#A16207'; // Ocre dourado
-  if (str.includes('apl') || str.includes('arranjo')) return '#B45309'; // Âmbar Terracota APL
-  if (str.includes('ig potencial') || str.includes('potencial')) return '#FBBF24'; // Amarelo IG Potencial
-  if (str.includes('ig') || str.includes('indica')) return '#CA8A04'; // Ouro Mostarda IG
-  return '#D97706';
-}
-
-// Marcador Individual
-const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false, isSemiarido = false, assetTipo = '') => {
-  const size = isSelected ? 24 : 18;
-  const safeColor = isSemiarido
-    ? getSemiaridoPointColor(corHex, assetTipo)
-    : (corHex || '#3B82F6');
-  const selectedBorderColor = isSemiarido ? '#78350F' : '#1E40AF';
-  const selectedShadow = isSemiarido ? '0 3px 10px rgba(217, 119, 6, 0.5)' : '0 3px 10px rgba(30, 64, 175, 0.45)';
-
-  const defaultSvg = `<svg width="${isSelected ? 13 : 10}" height="${isSelected ? 13 : 10}" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
-  let innerSvg = svgMarkup || defaultSvg;
-  if (isSemiarido && innerSvg) {
-    innerSvg = innerSvg.replace(/stroke="[^"]+"/g, 'stroke="#ffffff"');
-  }
-
-  return L.divIcon({
-    html: `
-    <div style="
-      width: ${size}px;
-      height: ${size}px;
-      background-color: ${safeColor};
-      color: #ffffff;
-      border: ${isSelected ? `2.5px solid ${selectedBorderColor}` : '1.5px solid #ffffff'};
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: ${isSelected ? selectedShadow : '0 1px 3px rgba(0, 0, 0, 0.15)'};
-      cursor: pointer;
-      transform: none !important;
-    ">
-      ${innerSvg}
-    </div>
-    `,
-    className: `custom-single-asset-marker ${isSelected ? 'z-50' : ''}`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2]
-  });
-};
-
-const createPartnerPinIcon = (isSemiarido = false) => L.divIcon({
-  html: `
-  <div style="
-    background-color: ${isSemiarido ? '#F59E0B' : '#3B82F6'};
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    border: 1px solid #FFFFFF;
-    box-shadow: 0 1px 2px ${isSemiarido ? 'rgba(245, 158, 11, 0.4)' : 'rgba(37, 99, 235, 0.3)'};
-  "></div>
-  `,
-  className: 'partner-map-pin',
-  iconSize: [6, 6],
-  iconAnchor: [3, 3]
-});
-
-const createSelectedPartnerPinIcon = (isSemiarido = false) => L.divIcon({
-  html: `
-  <div style="
-    background-color: ${isSemiarido ? '#B45309' : '#1E40AF'};
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    border: 1px solid #FFFFFF;
-    box-shadow: 0 1px 3px ${isSemiarido ? 'rgba(180, 83, 9, 0.45)' : 'rgba(30, 64, 175, 0.4)'};
-  "></div>
-  `,
-  className: 'partner-map-pin-selected',
-  iconSize: [7, 7],
-  iconAnchor: [3.5, 3.5]
-});
-
-export const HEAT_LEVELS = [
-  { min: 0, max: 0, label: '0 cursos', color: '#F1F5F9', text: '#64748B' },
-  { min: 1, max: 5, label: '1 a 5', color: '#BAE6FD', text: '#0369A1' },
-  { min: 6, max: 15, label: '6 a 15', color: '#38BDF8', text: '#0284C7' },
-  { min: 16, max: 35, label: '16 a 35', color: '#2563EB', text: '#FFFFFF' },
-  { min: 36, max: 70, label: '36 a 70', color: '#1D4ED8', text: '#FFFFFF' },
-  { min: 71, max: Infinity, label: '70+ cursos', color: '#0F1D30', text: '#38BDF8' },
-];
-
-export const SEMIARIDO_HEAT_LEVELS = [
-  { min: 0, max: 0, label: '0 cursos', color: '#FEF9C3', text: '#854D0E' },
-  { min: 1, max: 5, label: '1 a 5', color: '#FDE68A', text: '#92400E' },
-  { min: 6, max: 15, label: '6 a 15', color: '#FBBF24', text: '#78350F' },
-  { min: 16, max: 35, label: '16 a 35', color: '#F59E0B', text: '#FFFFFF' },
-  { min: 36, max: 70, label: '36 a 70', color: '#D97706', text: '#FFFFFF' },
-  { min: 71, max: Infinity, label: '70+ cursos', color: '#78350F', text: '#FEF3C7' },
-];
-
-export const getHeatColor = (count, isSemiarido = false) => {
-  if (isSemiarido) {
-    if (count === 0) return '#FEF9C3';
-    if (count <= 5) return '#FDE68A';
-    if (count <= 15) return '#FBBF24';
-    if (count <= 35) return '#F59E0B';
-    if (count <= 70) return '#D97706';
-    return '#78350F';
-  }
-  if (count === 0) return '#F1F5F9';
-  if (count <= 5) return '#BAE6FD';
-  if (count <= 15) return '#38BDF8';
-  if (count <= 35) return '#2563EB';
-  if (count <= 70) return '#1D4ED8';
-  return '#0F1D30';
-};
-
-// Escala Logarítmica para mitigar o impacto de grandes outliers e destacar valores intermediários
-export const getRelativeHeatColor = (count, maxCount, isSemiarido = false) => {
-  if (isSemiarido) {
-    if (!count || count === 0) return '#FEF9C3';
-    if (maxCount <= 0) return '#FEF9C3';
-    const logVal = Math.log(count + 1);
-    const logMax = Math.log(maxCount + 1);
-    const ratio = logMax > 0 ? logVal / logMax : 0;
-
-    if (ratio <= 0.15) return '#FDE68A';
-    if (ratio <= 0.35) return '#FBBF24';
-    if (ratio <= 0.60) return '#F59E0B';
-    if (ratio <= 0.85) return '#D97706';
-    return '#78350F';
-  }
-
-  if (!count || count === 0) return '#F1F5F9';
-  if (maxCount <= 0) return '#F1F5F9';
-
-  const logVal = Math.log(count + 1);
-  const logMax = Math.log(maxCount + 1);
-  const ratio = logMax > 0 ? logVal / logMax : 0;
-
-  if (ratio <= 0.15) return '#BAE6FD';
-  if (ratio <= 0.35) return '#38BDF8';
-  if (ratio <= 0.60) return '#2563EB';
-  if (ratio <= 0.85) return '#1D4ED8';
-  return '#0F1D30';
-};
-
-function ZoomDependentTileLayer() {
-  return null;
-}
-
-function MapPaneManager() {
-  const map = useMap();
-  useEffect(() => {
-    if (!map.getPane('connectionsPane')) {
-      const pane = map.createPane('connectionsPane');
-      pane.style.zIndex = '450';
-      pane.style.pointerEvents = 'none';
-    }
-    if (!map.getPane('territoryOutlinePane')) {
-      const outlinePane = map.createPane('territoryOutlinePane');
-      outlinePane.style.zIndex = '460';
-      outlinePane.style.pointerEvents = 'none';
-    }
-  }, [map]);
-  return null;
-}
-
-function MapClickHandler({ onClearPinned, onClearTerritory }) {
- const map = useMap();
- useMapEvents({
- click: (e) => {
- const target = e.originalEvent?.target;
- if (target && (target.closest('.custom-cluster-marker') || target.closest('.custom-single-asset-marker') || target.closest('.partner-map-pin') || target.closest('.leaflet-popup') || target.closest('.leaflet-interactive'))) {
- return;
- }
- onClearPinned?.();
-  if (onClearTerritory) {
-  onClearTerritory();
-  map.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
-  }
-  }
-  });
-  return null;
-}
-
-function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryRef }) {
-  const map = useMap();
-  const prevTerritoryRef = useRef(selectedTerritory);
-
-  useEffect(() => {
-    if (selectedTerritory) {
-      const idTerr = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
-      const numId = idTerr ? Number(idTerr) : null;
-      const rawNome = selectedTerritory.nome_territorio || selectedTerritory.territorio || '';
-      const nome = normalizeName(rawNome.replace(/^Território de Identidade\s+/i, '').trim());
-
-      const tryZoom = () => {
-        if (!map) return false;
-        const dict = geoJsonLayersByTerritoryRef?.current || {};
-        const layer = (idTerr && dict[idTerr]) ||
-          (numId && dict[numId]) ||
-          (nome && dict[nome]) ||
-          dict[rawNome];
-
-        if (layer && typeof layer.getBounds === 'function') {
-          const bounds = layer.getBounds();
-          if (bounds && bounds.isValid()) {
-            map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.8 });
-            return true;
-          }
-        }
-        return false;
-      };
-
-      if (!tryZoom()) {
-        const t1 = setTimeout(tryZoom, 120);
-        const t2 = setTimeout(tryZoom, 350);
-        const t3 = setTimeout(tryZoom, 800);
-        return () => {
-          clearTimeout(t1);
-          clearTimeout(t2);
-          clearTimeout(t3);
-        };
-      }
-    } else if (prevTerritoryRef.current && !selectedTerritory) {
-      map.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
-    }
-    prevTerritoryRef.current = selectedTerritory;
-  }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
-
-  return null;
-}
-function CadeiaFocusController({ selectedCadeia }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (selectedCadeia) {
-      let cLat = Number(selectedCadeia.lat);
-      let cLng = Number(selectedCadeia.lng);
-      if (!isInsideBahia(cLat, cLng)) {
-        const fallback = findMunicipioCoords(selectedCadeia.municipio || selectedCadeia.municipio_sede || selectedCadeia.sede);
-        if (fallback) {
-          cLat = fallback[0];
-          cLng = fallback[1];
-        }
-      }
-
-      if (!isInsideBahia(cLat, cLng)) return;
-
-      const bounds = [[cLat, cLng]];
-
-      (selectedCadeia.municipios_cobertos || []).forEach((mun) => {
-        let mLat = mun.lat ? Number(mun.lat) : null;
-        let mLng = mun.lng ? Number(mun.lng) : null;
-
-        if (!isInsideBahia(mLat, mLng)) {
-          const fallback = findMunicipioCoords(mun.nome_municipio);
-          if (fallback) {
-            mLat = fallback[0];
-            mLng = fallback[1];
-          }
-        }
-
-        if (isInsideBahia(mLat, mLng)) bounds.push([mLat, mLng]);
-      });
-
-      if (bounds.length > 1) {
-        map.fitBounds(bounds, {
-          padding: [50, 50],
-          maxZoom: 9,
-          animate: true,
-          duration: 1.0
-        });
-      } else {
-        map.flyTo([cLat, cLng], 9.0, { duration: 1.0 });
-      }
-    }
-  }, [selectedCadeia, map]);
-
-  return null;
-}
-
-function ConnectionsFocusController({ showAllConnections, mode, connectionLines, selectedTerritory }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (mode === 'cadeias' && showAllConnections && !selectedTerritory && connectionLines.length > 0) {
-      const points = [];
-      connectionLines.forEach((l) => {
-        if (l.positions && l.positions.length >= 2) {
-          if (isInsideBahia(l.positions[0][0], l.positions[0][1])) points.push(l.positions[0]);
-          if (isInsideBahia(l.positions[1][0], l.positions[1][1])) points.push(l.positions[1]);
-        }
-      });
-      if (points.length > 0) {
-        map.fitBounds(points, {
-          padding: [25, 25],
-          maxZoom: 7,
-          animate: true,
-          duration: 0.8
-        });
-      }
-    }
-  }, [showAllConnections, mode, selectedTerritory, connectionLines, map]);
-
-  return null;
-}
-
-function ChangeMapView({ coords }) {
-  const map = useMap();
-  useEffect(() => {
-    if (!coords) return;
-    let lat, lng;
-    let targetZoom = 15;
-    if (Array.isArray(coords) && coords.length >= 2) {
-      lat = Number(coords[0]);
-      lng = Number(coords[1]);
-      if (coords.length >= 3 && typeof coords[2] === 'number') {
-        targetZoom = coords[2];
-      }
-    } else if (typeof coords === 'object') {
-      lat = Number(coords.lat ?? coords.latitude);
-      lng = Number(coords.lng ?? coords.longitude);
-      if (coords.zoom) targetZoom = coords.zoom;
-    }
-    if (lat != null && lng != null && !isNaN(lat) && !isNaN(lng) && lat !== 0) {
-      const currentZoom = map.getZoom();
-      if (currentZoom >= 9.5) {
-        map.panTo([lat, lng], { animate: true, duration: 0.8 });
-      } else {
-        map.flyTo([lat, lng], targetZoom, { duration: 1.0 });
-      }
-    }
-  }, [coords, map]);
-  return null;
-}
-
-function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
-  if (!ativo) return null;
-
-  const IconComp = ativo.icone;
-  const iconColor = filtroSemiarido
-    ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome)
-    : (ativo.corHex || '#2563EB');
-
-  return (
-    <div className="p-2 min-w-[220px] max-w-[260px] flex flex-col gap-1.5 font-sans">
-      <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-1">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <div
-            className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-xs"
-            style={{ backgroundColor: iconColor }}
-          >
-            {IconComp && <IconComp size={11} className="text-white" />}
-          </div>
-          <span className="text-[11px] font-medium text-text-primary uppercase truncate">
-            {ativo.shortTipo || ativo.tipo}
-          </span>
-        </div>
-      </div>
-
-      <h4 className="font-medium text-text-primary text-[13px] leading-tight tracking-tight">
-        {ativo.nome || ativo.entidade}
-      </h4>
-
-      <div className="flex flex-col gap-1 bg-surface-soft p-2 rounded-xl border border-border/70 text-[11px]">
-        <div className="flex items-center gap-1.5 text-text-secondary">
-          <MapPin size={16} className={filtroSemiarido ? 'text-amber-600 shrink-0' : 'text-primary-600 shrink-0'} />
-          <span className="font-semibold text-text-primary truncate">{ativo.municipio}</span>
-        </div>
-        {ativo.territorio && (
-          <div className="flex items-center gap-1.5 text-text-secondary">
-            <Building size={16} className="text-text-secondary shrink-0" />
-            <span className="font-medium text-text-secondary truncate">
-              {ativo.territorio.replace(/^Território de Identidade\s+/i, '')}
-            </span>
-          </div>
-        )}
-        {ativo.rnp && (
-          <div className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg border ${
-            filtroSemiarido
-              ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15 border-amber-500/30'
-              : 'text-info-600 dark:text-info-400 bg-info-500/15 border-info-500/20'
-          }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-info-500'}`}></span>
-            <span>Ponto de Presença / Conexão RNP</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false }) {
-  if (!cadeia) return null;
-  const badgeColor = filtroSemiarido
-    ? getSemiaridoPointColor(cadeia.corHex, cadeia.tipo || cadeia.shortTipo || cadeia.nome)
-    : (cadeia.corHex || '#2563EB');
-
-  return (
-    <div className="p-3 max-w-[260px] text-left select-text font-sans">
-      <div className="flex items-center gap-2 mb-1.5">
-        <span
-          className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded"
-          style={{
-            backgroundColor: `${badgeColor}20`,
-            color: badgeColor
-          }}
-        >
-          {cadeia.shortTipo || cadeia.tipo || 'Cadeia Produtiva'}
-        </span>
-      </div>
-
-      <h4 className="text-[13px] font-bold text-text-primary leading-snug mb-1">
-        {cadeia.nome || cadeia.entidade || 'Cadeia Produtiva'}
-      </h4>
-
-      <div className="flex flex-col gap-1 text-[11px] text-text-muted mt-2 border-t border-border pt-1.5">
-        {(cadeia.municipio_sede || cadeia.municipio) && (
-          <div className="flex items-center gap-1.5 text-text-secondary">
-            <Building size={12} className="shrink-0 text-text-muted" />
-            <span className="truncate">Sede: {cadeia.municipio_sede || cadeia.municipio}</span>
-          </div>
-        )}
-
-        {(cadeia.territorio_identidade || cadeia.territorio) && (
-          <div className="flex items-center gap-1.5 text-text-secondary">
-            <Layers size={12} className="shrink-0 text-text-muted" />
-            <span className="font-medium text-text-secondary truncate">
-              {String(cadeia.territorio_identidade || cadeia.territorio).replace(/^Território de Identidade\s+/i, '')}
-            </span>
-          </div>
-        )}
-
-        {cadeia.municipios_cobertos && cadeia.municipios_cobertos.length > 0 && (
-          <div className="flex items-center gap-1.5 text-text-secondary mt-0.5">
-            <MapPin size={12} className="shrink-0 text-text-muted" />
-            <span className="font-semibold text-text-secondary">
-              {cadeia.municipios_cobertos.length}
-            </span>
-            <span>municípios atendidos</span>
-          </div>
-        )}
-
-        {cadeia.texto_referencia && (
-          <div className="mt-2 p-2 rounded-lg bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/60 text-[10px] text-amber-950 dark:text-amber-100 leading-snug">
-            <div className="flex items-center gap-1 font-bold text-[9px] uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-0.5">
-              <BookOpen size={11} className="text-amber-700 dark:text-amber-400 shrink-0" />
-              <span>Artigo / Referência Acadêmica:</span>
-            </div>
-            <span className="italic line-clamp-3 text-text-secondary dark:text-amber-200/90">"{cadeia.texto_referencia}"</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false }) {
-  return (
-    <Marker
-      key={elem.key}
-      position={[elem.lat, elem.lng]}
-      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected, filtroSemiarido, ativo.tipo || ativo.shortTipo || ativo.categoria || ativo.nome)}
-      eventHandlers={{
-        click: (e) => {
-          L.DomEvent.stopPropagation(e);
-          if (isSelected) {
-            setPinnedAssetId(null);
-            onAssetClick?.(null);
-          } else {
-            setPinnedAssetId(ativo.id);
-            onAssetClick?.(ativo);
-          }
-        }
-      }}
-    >
-      {mode !== 'cadeias' ? (
-        <Popup className="custom-premium-popup" autoPan={true}>
-          <SingleAssetPopupContent ativo={ativo} filtroSemiarido={filtroSemiarido} />
-        </Popup>
-      ) : (
-        <Popup className="custom-premium-popup" autoPan={true}>
-          <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} />
-        </Popup>
-      )}
-    </Marker>
-  );
-}
-
-function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode, filtroSemiarido = false }) {
-  const map = useMap();
-  const [bounds, setBounds] = useState(null);
-  const [zoom, setZoom] = useState(map.getZoom());
-
-  const deduplicatedAtivos = useMemo(() => {
-    const seen = new Map();
-
-    processedAtivos.forEach((a) => {
-      if (!a.lat || !a.lng || isNaN(a.lat) || isNaN(a.lng) || a.lat === 0) return;
-
-      const normNome = normalizeName(a.nome || a.entidade || a.nome_ativo || '');
-      const latKey = Number(a.lat).toFixed(5);
-      const lngKey = Number(a.lng).toFixed(5);
-      const key = `${normNome}_${latKey}_${lngKey}_${a.tipo || ''}`;
-
-      if (!seen.has(key)) {
-        seen.set(key, a);
-      }
-    });
-
-    const rawList = Array.from(seen.values());
-
-    const coordGroups = new Map();
-    rawList.forEach((a) => {
-      const cKey = `${Number(a.lat).toFixed(3)}_${Number(a.lng).toFixed(3)}`;
-      if (!coordGroups.has(cKey)) {
-        coordGroups.set(cKey, []);
-      }
-      coordGroups.get(cKey).push(a);
-    });
-
-    const fixedAtivos = [];
-    coordGroups.forEach((group) => {
-      const total = group.length;
-      group.forEach((a, idx) => {
-        let fixedLat = Number(a.lat);
-        let fixedLng = Number(a.lng);
-
-        if (total > 1) {
-          const SPREAD = 0.00065;
-          if (total === 2) {
-            fixedLng += (idx === 0 ? -1 : 1) * SPREAD;
-          } else {
-            const angle = (idx / total) * 2 * Math.PI - (Math.PI / 2);
-            fixedLat += SPREAD * Math.sin(angle);
-            fixedLng += SPREAD * Math.cos(angle);
-          }
-        }
-
-        fixedAtivos.push({
-          ...a,
-          lat: fixedLat,
-          lng: fixedLng
-        });
-      });
-    });
-
-    return fixedAtivos;
-  }, [processedAtivos]);
-
-  const superclusterIndex = useMemo(() => {
-    if (selectedCadeia) return null;
-
-    const points = deduplicatedAtivos.map((a) => ({
-      type: 'Feature',
-      properties: {
-        cluster: false,
-        ativoId: a.id,
-        ativoData: a
-      },
-      geometry: {
-        type: 'Point',
-        coordinates: [a.lng, a.lat]
-      }
-    }));
-
-    const sc = new Supercluster({
-      radius: 40,
-      maxZoom: 14,
-      minPoints: 2
-    });
-
-    sc.load(points);
-    return sc;
-  }, [deduplicatedAtivos, selectedCadeia]);
-
-  const updateBoundsAndZoom = useCallback(() => {
-    const b = map.getBounds();
-    setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
-    setZoom(map.getZoom());
-  }, [map]);
-
-  useMapEvents({
-    moveend: updateBoundsAndZoom,
-    zoomend: updateBoundsAndZoom
-  });
-
-  useEffect(() => {
-    updateBoundsAndZoom();
-  }, [updateBoundsAndZoom]);
-
-  const renderedElements = useMemo(() => {
-    if (selectedCadeia) {
-      return deduplicatedAtivos.map((ativo, idx) => ({
-        isCluster: false,
-        lng: ativo.lng,
-        lat: ativo.lat,
-        ativo,
-        key: `ativo-focused-${ativo.id}-${idx}`
-      }));
-    }
-
-    if (!bounds || !superclusterIndex) return [];
-
-    const clusters = superclusterIndex.getClusters(bounds, Math.floor(zoom));
-    const elements = [];
-
-    clusters.forEach((c) => {
-      if (c.properties.cluster) {
-        elements.push({
-          isCluster: true,
-          lng: c.geometry.coordinates[0],
-          lat: c.geometry.coordinates[1],
-          pointCount: c.properties.point_count,
-          clusterId: c.properties.cluster_id,
-          key: `cluster-${c.properties.cluster_id}`
-        });
-      } else {
-        const ativo = c.properties.ativoData;
-        elements.push({
-          isCluster: false,
-          lng: c.geometry.coordinates[0],
-          lat: c.geometry.coordinates[1],
-          ativo,
-          key: `ativo-${c.properties.ativoId}`
-        });
-      }
-    });
-
-    return elements;
-  }, [bounds, zoom, superclusterIndex, selectedCadeia, deduplicatedAtivos]);
-
-  return (
-    <>
-      {renderedElements.map((elem) => {
-        if (elem.isCluster) {
-          return (
-            <Marker
-              key={elem.key}
-              position={[elem.lat, elem.lng]}
-              icon={createClusterIcon(elem.pointCount, filtroSemiarido)}
-              eventHandlers={{
-                click: () => {
-                  const expansionZoom = Math.min(
-                    superclusterIndex.getClusterExpansionZoom(elem.clusterId),
-                    16
-                  );
-                  map.flyTo([elem.lat, elem.lng], expansionZoom, { duration: 0.8 });
-                }
-              }}
-            />
-          );
-        }
-
-        const ativo = elem.ativo;
-        if (!ativo) return null;
-        const isSelected = Boolean(
-          (selectedCadeia && (selectedCadeia.id_cadeia === ativo.id_cadeia || selectedCadeia.id === ativo.id)) ||
-          (pinnedAssetId != null && (pinnedAssetId === ativo.id || pinnedAssetId === ativo.id_ativo))
-        );
-
-        return (
-          <SingleAssetMarkerItem
-            key={elem.key}
-            elem={elem}
-            ativo={ativo}
-            pinnedAssetId={pinnedAssetId}
-            setPinnedAssetId={setPinnedAssetId}
-            onAssetClick={onAssetClick}
-            isSelected={isSelected}
-            mode={mode}
-            filtroSemiarido={filtroSemiarido}
-          />
-        );
-      })}
-    </>
-  );
-}
-
-function MapResizeHandler({ isExpanded }) {
- const map = useMap();
- useEffect(() => {
- const timer = setTimeout(() => {
- map.invalidateSize();
- }, 250);
- return () => clearTimeout(timer);
- }, [isExpanded, map]);
- return null;
-}
-
-function MapZoomWatcher({ onZoomChange }) {
- const map = useMap();
- useMapEvents({
- zoomend: () => onZoomChange(map.getZoom()),
- zoom: () => onZoomChange(map.getZoom())
- });
- useEffect(() => {
- onZoomChange(map.getZoom());
- }, [map, onZoomChange]);
- return null;
-}
 
 export default function SideMap({
   processedAtivos = [],
@@ -884,6 +91,7 @@ export default function SideMap({
   const { filtroSemiarido: contextFiltroSemiarido, setFiltroSemiarido } = useContext(DataContext) || {};
   const filtroSemiarido = propFiltroSemiarido !== undefined ? Boolean(propFiltroSemiarido) : Boolean(contextFiltroSemiarido);
   const { isDark } = useTheme();
+  const mapPalette = useMapTheme(filtroSemiarido);
   const mapRef = useRef(null);
   const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
   const [municipiosGeoJson, setMunicipiosGeoJson] = useState(null);
@@ -1475,13 +683,13 @@ export default function SideMap({
     if (mode === 'cursos') {
       const tStat = cursosStatsByTerritory[`id_${idTerr}`] || cursosStatsByTerritory[norm];
       const count = tStat ? tStat.count : 0;
-      const heatColor = getHeatColor(count, filtroSemiarido);
+      const heatColor = getHeatColor(count, filtroSemiarido, isDark);
 
       if (filtroSemiarido && !isTerrSemiarido) {
         return {
-          fillColor: isDark ? '#111827' : '#E2E8F0',
+          fillColor: mapPalette.choropleth.zero,
           fillOpacity: 0.35,
-          color: isDark ? '#1f293d' : '#CBD5E1',
+          color: mapPalette.stroke.default,
           weight: 0.8,
           opacity: 0.8,
           lineCap: 'round',
@@ -1495,7 +703,7 @@ export default function SideMap({
           return {
             fillColor: 'transparent',
             fillOpacity: 0,
-            color: filtroSemiarido ? (isDark ? '#F59E0B' : '#78350F') : (isDark ? '#38BDF8' : '#1E293B'),
+            color: mapPalette.stroke.selected,
             weight: 2.2,
             opacity: 0.95,
             lineCap: 'round',
@@ -1506,7 +714,7 @@ export default function SideMap({
         return {
           fillColor: isDark ? '#141c2c' : '#CBD5E1',
           fillOpacity: isDark ? 0.40 : 0.55,
-          color: isDark ? '#1f2a3e' : '#FFFFFF',
+          color: mapPalette.stroke.default,
           weight: 0.8,
           opacity: 0.9,
           lineCap: 'round',
@@ -1518,7 +726,7 @@ export default function SideMap({
       return {
         fillColor: heatColor,
         fillOpacity: isHovered ? 1.0 : 0.92,
-        color: filtroSemiarido && isHovered ? '#D97706' : (isDark ? '#26364d' : '#FFFFFF'),
+        color: isHovered ? mapPalette.stroke.hover : mapPalette.stroke.default,
         weight: isHovered ? 1.8 : 1.1,
         opacity: 1,
         lineCap: 'round',
@@ -1530,9 +738,9 @@ export default function SideMap({
     // mode !== 'cursos' (Ativos ou Cadeias)
     if (filtroSemiarido && !isTerrSemiarido) {
       return {
-        fillColor: isDark ? '#111827' : '#E2E8F0',
+        fillColor: mapPalette.choropleth.zero,
         fillOpacity: 0.35,
-        color: isDark ? '#1f293d' : '#CBD5E1',
+        color: mapPalette.stroke.default,
         weight: 0.8,
         opacity: 0.8,
         lineCap: 'round',
@@ -1546,7 +754,7 @@ export default function SideMap({
         return {
           fillColor: filtroSemiarido ? (isDark ? '#78350F40' : '#FEF3C7') : (isDark ? 'rgba(30, 58, 138, 0.3)' : '#EFF6FF'),
           fillOpacity: 1,
-          color: filtroSemiarido ? '#D97706' : (isDark ? '#60A5FA' : '#1D4ED8'),
+          color: mapPalette.stroke.selected,
           weight: 2.2,
           opacity: 1,
           lineCap: 'round',
@@ -1643,12 +851,12 @@ export default function SideMap({
     const isHovered = hoveredFeatureName === munNome;
     
     // Aplicação da Escala Logarítmica para equilibrar o contraste visual
-    const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado, filtroSemiarido);
+    const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado, filtroSemiarido, isDark);
 
     return {
       fillColor: relativeHeatColor,
       fillOpacity: isHovered ? 1.0 : 0.95,
-      color: '#FFFFFF',
+      color: isHovered ? mapPalette.stroke.hover : (isDark ? mapPalette.stroke.default : '#FFFFFF'),
       weight: isHovered ? 2.0 : 1.2,
       opacity: 1,
       lineCap: 'round',
@@ -1883,7 +1091,10 @@ export default function SideMap({
 
   const partnerPin = useMemo(() => createPartnerPinIcon(filtroSemiarido), [filtroSemiarido]);
   const selectedPartnerPin = useMemo(() => createSelectedPartnerPinIcon(filtroSemiarido), [filtroSemiarido]);
-  const currentHeatLevels = filtroSemiarido ? SEMIARIDO_HEAT_LEVELS : HEAT_LEVELS;
+  const currentHeatLevels = useMemo(
+    () => getDynamicHeatLevels(filtroSemiarido, isDark),
+    [filtroSemiarido, isDark]
+  );
 
   return (
     <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-[#FFFDF7] dark:bg-[#120e06]' : 'bg-[#EBF1F6] dark:bg-[#0b0f19]'} bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1`}>
@@ -2048,7 +1259,7 @@ export default function SideMap({
                 <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
                   p.isSelected
                     ? (filtroSemiarido ? 'text-white bg-[#B45309] border-[#B45309] font-bold' : 'text-white bg-[#1E40AF] border-[#1E40AF] font-bold')
-                    : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface/95 backdrop-blur-xs border-amber-500/30' : 'text-primary-700 dark:text-primary-300 bg-surface/95 backdrop-blur-xs border-border')
+                    : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface border-amber-500/30' : 'text-text-primary bg-surface border-border')
                 }`}>
                   {p.municipio}
                 </span>
@@ -2078,12 +1289,12 @@ export default function SideMap({
           (mode === 'cursos' && selectedCategory && selectedCategory !== 'todas') ||
           (mode === 'cadeias' && (selectedSegmento || (selectedTipo && selectedTipo !== 'todos')))
         ) && (
-          <div className="pointer-events-auto flex items-center gap-2 bg-surface/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-border shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
             <span
               className="w-2 h-2 rounded-full animate-pulse shrink-0"
               style={{ backgroundColor: filtroSemiarido ? '#D97706' : '#2563EB' }}
             />
-            <span className="text-[11px] font-semibold text-text-primary truncate">
+            <span className="text-caption font-semibold text-text-primary truncate">
               {mode === 'ativos' && (selectedTipos && selectedTipos.length > 1 ? `${selectedTipos.length} Tipos Selecionados` : `Categoria: ${selectedTipo || selectedTipos[0]}`)}
               {mode === 'cursos' && `Área: ${selectedCategory}`}
               {mode === 'cadeias' && (selectedSegmento ? `Segmento: ${selectedSegmento}` : `Tipo: ${selectedTipo}`)}
@@ -2102,7 +1313,7 @@ export default function SideMap({
                   else onSelectTipo?.('todos');
                 }
               }}
-              className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-neutral-100 transition-colors ml-auto cursor-pointer leading-none text-xs font-bold"
+              className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-soft transition-colors ml-auto cursor-pointer leading-none text-xs font-bold"
               title="Remover filtro"
             >
               ×
@@ -2117,12 +1328,12 @@ export default function SideMap({
           const isSelectedBadge = !hoveredInfo && Boolean(selectedTerritoryInfo);
 
           return (
-            <div className="pointer-events-auto flex items-center gap-1.5 bg-surface/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-border shadow-sm animate-in fade-in slide-in-from-top-1 duration-150">
-              <Icon size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
-              <span className="text-text-primary font-extrabold text-[12px] tracking-tight truncate max-w-[160px]">
+            <div className="pointer-events-auto flex items-center gap-1.5 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-1 duration-150">
+              <Icon size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+              <span className="text-text-primary font-semibold text-caption tracking-tight truncate max-w-[160px]">
                 {display.label}
               </span>
-              <span className={`font-black text-[11px] px-2 py-0.5 rounded-full whitespace-nowrap ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15' : 'text-primary-600 dark:text-primary-300 bg-primary-500/10'}`}>
+              <span className={`font-semibold text-caption px-2 py-0.5 rounded-control whitespace-nowrap tnum ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15' : 'text-primary-600 dark:text-primary-300 bg-primary-500/10'}`}>
                 {display.count} {display.unit}
               </span>
               {isSelectedBadge && (
@@ -2132,7 +1343,7 @@ export default function SideMap({
                     e.stopPropagation();
                     onSelectTerritory?.(null);
                   }}
-                  className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-neutral-100 dark:hover:bg-slate-800 transition-colors ml-0.5 cursor-pointer leading-none text-xs font-bold"
+                  className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-soft transition-colors ml-0.5 cursor-pointer leading-none text-xs font-bold"
                   title="Remover filtro de território"
                 >
                   ×
@@ -2144,16 +1355,16 @@ export default function SideMap({
       </div>
 
       {mode === 'cursos' && (
-        <div className="absolute bottom-3 left-3 z-[400] bg-surface/95 backdrop-blur-md rounded-2xl p-2.5 border border-border shadow-card pointer-events-auto">
+        <div className="absolute bottom-3 left-3 z-[400] bg-surface rounded-control p-2.5 border border-border shadow-card pointer-events-auto">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1">
-              <Flame size={12} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
-              <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
+              <Flame size={12} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+              <span className={`text-caption font-semibold uppercase tracking-wider ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
                 {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
               </span>
             </div>
             {selectedTerritory && (
-              <span className={`text-[8.5px] font-black px-1.5 py-0.2 rounded-md ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
+              <span className={`text-micro font-semibold px-1.5 py-0.5 rounded-control tnum ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
                 Máx: {maxCursosNoTerritorioSelecionado}
               </span>
             )}
@@ -2168,11 +1379,11 @@ export default function SideMap({
               return (
                 <div key={idx} className="flex flex-col items-center gap-1">
                   <div
-                    className="w-5 h-2.5 rounded-[3px] shadow-2xs border border-black/10"
+                    className="w-5 h-2.5 rounded-[3px] shadow-2xs border border-border"
                     style={{ backgroundColor: lvl.color }}
                     title={lvl.label}
                   />
-                  <span className={`text-[7.5px] font-bold whitespace-nowrap ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'}`}>
+                  <span className={`text-micro font-medium whitespace-nowrap tnum ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'}`}>
                     {labelText}
                   </span>
                 </div>
@@ -2188,17 +1399,17 @@ export default function SideMap({
           <button
             type="button"
             onClick={() => setShowAllConnections((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-bold transition-all border cursor-pointer select-none shadow-sm ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all border cursor-pointer select-none shadow-card ${
               showAllConnections
                 ? (filtroSemiarido
-                    ? 'bg-amber-600 text-white border-amber-600 shadow-[0_3px_12px_rgba(217,119,6,0.3)]'
-                    : 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]')
+                    ? 'bg-amber-600 text-white border-amber-600 shadow-card'
+                    : 'bg-primary-700 text-white border-primary-700 shadow-card')
                 : (filtroSemiarido
-                    ? 'bg-surface/95 backdrop-blur-md text-amber-800 dark:text-amber-300 border-amber-500/30 hover:bg-surface hover:border-amber-400'
-                    : 'bg-surface/95 backdrop-blur-md text-text-primary border-border hover:bg-surface hover:border-primary-500')
+                    ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
+                    : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
             }`}
           >
-            <Network size={13} className={showAllConnections ? (filtroSemiarido ? 'text-amber-200' : 'text-[#00B4D8]') : (filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]')} />
+            <Network size={13} className={showAllConnections ? (filtroSemiarido ? 'text-amber-200' : 'text-primary-200') : (filtroSemiarido ? 'text-amber-600' : 'text-primary-600')} />
             <span>Teia de Conexões</span>
           </button>
         )}
@@ -2209,10 +1420,10 @@ export default function SideMap({
             type="button"
             onClick={() => setFiltroSemiarido(prev => !prev)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-full text-[11px] font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${
               filtroSemiarido
-                ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
-                : 'bg-surface/90 border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-sm'
+                ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
+                : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
             }`}
           >
             <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
@@ -2246,30 +1457,30 @@ export default function SideMap({
             onClick={onToggleExpand}
             title={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
             aria-label={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
-            className={`flex items-center justify-center w-[32px] h-[32px] rounded-full transition-all border cursor-pointer select-none shadow-sm ${
+            className={`flex items-center justify-center w-[32px] h-[32px] rounded-control transition-all border cursor-pointer select-none shadow-card ${
               isExpanded
                 ? (filtroSemiarido
-                    ? 'bg-amber-600 text-white border-amber-600 shadow-[0_3px_12px_rgba(217,119,6,0.3)]'
-                    : 'bg-[#1D3557] text-white border-[#1D3557] shadow-[0_3px_12px_rgba(29,53,87,0.3)]')
+                    ? 'bg-amber-600 text-white border-amber-600 shadow-card'
+                    : 'bg-primary-700 text-white border-primary-700 shadow-card')
                 : (filtroSemiarido
-                    ? 'bg-surface/95 backdrop-blur-md text-amber-800 dark:text-amber-300 border-amber-500/30 hover:bg-surface hover:border-amber-400'
-                    : 'bg-surface/95 backdrop-blur-md text-text-primary border-border hover:bg-surface hover:border-primary-500')
+                    ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
+                    : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
             }`}
           >
             {isExpanded ? (
-              <Shrink size={15} className={filtroSemiarido ? 'text-amber-200' : 'text-[#00B4D8]'} />
+              <Shrink size={15} className={filtroSemiarido ? 'text-amber-200' : 'text-primary-200'} />
             ) : (
-              <Expand size={15} className={filtroSemiarido ? 'text-amber-600' : 'text-[#2563EB]'} />
+              <Expand size={15} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
             )}
           </button>
         )}
       </div>
 
-      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-surface/95 backdrop-blur-md rounded-[18px] border border-border shadow-sm overflow-hidden">
+      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-surface rounded-control border border-border shadow-card overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-border/70 cursor-pointer ${
-            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
+          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${
+            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
           }`}
           title="Aproximar"
         >
@@ -2277,8 +1488,8 @@ export default function SideMap({
         </button>
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-          className={`w-10 h-10 flex items-center justify-center transition-colors border-b border-border/70 cursor-pointer ${
-            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
+          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${
+            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
           }`}
           title="Afastar"
         >
@@ -2288,7 +1499,7 @@ export default function SideMap({
           onClick={() => {
             setPinnedAssetId(null);
             setActiveCategoryKeys(new Set(allCategories.map((c) => c.key)));
-            mapRef.current?.flyTo([-13.1, -41.7], 5.6, { duration: 0.8 });
+            mapRef.current?.flyTo([-13.1, -41.7], 5.6, { duration: 0.6 });
             onSelectTerritory(null);
             onSelectIES?.(null);
             onSelectSegmento?.(null);
@@ -2296,10 +1507,10 @@ export default function SideMap({
             onSelectCategory?.('todas');
             onAssetClick?.(null);
           }}
-          className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${
+          className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${
             hasActiveFilter
-              ? 'text-red-500 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/50'
-              : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft')
+              ? 'text-danger-600 bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 dark:hover:bg-danger-900/50'
+              : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft')
           }`}
           title="Limpar filtros"
         >

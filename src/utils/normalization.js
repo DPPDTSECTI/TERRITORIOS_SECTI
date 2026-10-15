@@ -129,9 +129,9 @@ export function extractSigla(entidade) {
   if (norm.includes('santa cruz') || norm.includes('uesc')) return 'UESC';
   if (norm.includes('sudoeste da bahia') || norm.includes('uesb')) return 'UESB';
   if (norm.includes('feira de santana') || norm.includes('uefs')) return 'UEFS';
-  if (norm.includes('federal da bahia') || norm.includes('ufba')) return 'UFBA';
   if (norm.includes('ifbaiano') || norm.includes('baiano')) return 'IF BAIANO';
   if (norm.includes('instituto federal da bahia') || norm.includes('ifba')) return 'IFBA';
+  if (norm.includes('federal da bahia') || norm.includes('ufba')) return 'UFBA';
   if (norm.includes('sertao pernambucano') || norm.includes('ifsertao')) return 'IF SERTÃO-PE';
   const match = str.match(/\(([^)]+)\)/);
   if (match && match[1]) {

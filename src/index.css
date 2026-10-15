@@ -4,87 +4,116 @@
 
 @layer base {
   :root {
-    /* PRIMARY */
-    --color-primary-950: 16 42 67;
-    --color-primary-900: 23 59 94;
-    --color-primary-800: 29 78 115;
-    --color-primary-700: 37 101 143;
-    --color-primary-600: 47 117 181;
-    --color-primary-500: 63 134 199;
-    --color-primary-400: 112 169 214;
-    --color-primary-300: 168 203 229;
-    --color-primary-200: 213 231 243;
-    --color-primary-100: 234 243 249;
-    --color-primary-50: 245 249 252;
+    /* PRIMARY (Azul Institucional SECTI) */
+    --color-primary-950: 15 39 64;
+    --color-primary-900: 21 55 90;
+    --color-primary-800: 27 74 115;
+    --color-primary-700: 33 95 148;
+    --color-primary-600: 37 112 184;
+    --color-primary-500: 54 132 207;
+    --color-primary-400: 104 168 224;
+    --color-primary-300: 162 203 236;
+    --color-primary-200: 210 230 247;
+    --color-primary-100: 233 243 251;
+    --color-primary-50: 244 249 253;
 
-    /* NEUTRALS */
-    --color-neutral-950: 22 32 42;
-    --color-neutral-900: 30 41 51;
-    --color-neutral-800: 51 65 85;
-    --color-neutral-700: 71 85 105;
-    --color-neutral-600: 100 116 139;
-    --color-neutral-500: 138 153 168;
-    --color-neutral-400: 170 181 192;
-    --color-neutral-300: 203 213 222;
-    --color-neutral-200: 226 232 238;
-    --color-neutral-100: 238 242 245;
-    --color-neutral-50: 247 249 250;
+    /* NEUTRALS (Frios com contraste AA garantido) */
+    --color-neutral-950: 15 23 42;
+    --color-neutral-900: 24 34 50;
+    --color-neutral-800: 45 58 78;
+    --color-neutral-700: 67 81 104;
+    --color-neutral-600: 92 108 132;
+    --color-neutral-500: 128 143 164;
+    --color-neutral-400: 163 176 194;
+    --color-neutral-300: 201 211 224;
+    --color-neutral-200: 224 231 239;
+    --color-neutral-100: 238 242 247;
+    --color-neutral-50: 247 249 252;
     --color-white: 255 255 255;
 
     /* SURFACES */
-    --color-background: 245 247 250;
+    --color-background: 244 247 251;
     --color-surface: 255 255 255;
-    --color-surface-soft: 249 251 253;
+    --color-surface-raised: 255 255 255;
+    --color-surface-soft: 248 250 253;
+    --color-surface-sunken: 238 243 248;
 
     /* SEMANTIC: SUCCESS */
-    --color-success-700: 35 122 87;
-    --color-success-600: 47 143 104;
-    --color-success-100: 232 245 238;
+    --color-success-700: 28 115 80;
+    --color-success-600: 38 138 98;
+    --color-success-100: 228 245 236;
     --color-success-50: 242 250 246;
 
     /* SEMANTIC: WARNING */
-    --color-warning-700: 166 106 0;
-    --color-warning-600: 193 132 8;
-    --color-warning-100: 255 243 214;
-    --color-warning-50: 255 249 236;
+    --color-warning-700: 161 98 7;
+    --color-warning-600: 190 124 8;
+    --color-warning-100: 254 243 199;
+    --color-warning-50: 255 250 235;
 
     /* SEMANTIC: DANGER */
-    --color-danger-700: 177 58 58;
-    --color-danger-600: 200 74 74;
-    --color-danger-100: 252 234 234;
-    --color-danger-50: 254 245 245;
+    --color-danger-700: 175 48 48;
+    --color-danger-600: 202 64 64;
+    --color-danger-100: 254 226 226;
+    --color-danger-50: 254 242 242;
 
-    /* ACCENT */
-    --color-accent-700: 168 120 22;
-    --color-accent-600: 196 146 36;
-    --color-accent-500: 212 166 58;
-    --color-accent-100: 249 240 216;
-    --color-accent-50: 252 248 237;
+    /* ACCENT (Dourado / Âmbar Bahia) */
+    --color-accent-700: 161 110 18;
+    --color-accent-600: 192 138 28;
+    --color-accent-500: 214 162 48;
+    --color-accent-400: 234 186 78;
+    --color-accent-100: 250 240 212;
+    --color-accent-50: 253 249 237;
 
-    /* TEXT & BORDERS MAP (Semantic aliases) */
+    /* TEXT, BORDERS & RING */
     --color-text-primary: var(--color-neutral-900);
     --color-text-secondary: var(--color-neutral-700);
     --color-text-muted: var(--color-neutral-600);
     --color-border: var(--color-neutral-200);
     --color-border-strong: var(--color-neutral-300);
+    --color-ring: var(--color-primary-500);
 
-    /* DATA VISUALIZATION */
+    /* BRAND GRADIENT */
+    --gradient-brand: linear-gradient(135deg, rgb(21 55 90) 0%, rgb(33 95 148) 100%);
+
+    /* SHADOWS (Tema Claro) */
+    --shadow-xs: 0 1px 2px rgba(16, 42, 67, 0.05);
+    --shadow-card: 0 1px 3px rgba(16, 42, 67, 0.04), 0 4px 16px rgba(16, 42, 67, 0.04);
+    --shadow-card-hover: 0 8px 24px rgba(16, 42, 67, 0.08), 0 2px 6px rgba(16, 42, 67, 0.04);
+    --shadow-float: 0 12px 32px rgba(16, 42, 67, 0.12), 0 2px 8px rgba(16, 42, 67, 0.06);
+
+    /* DATA VISUALIZATION (8 cores amigáveis a daltonismo) */
     --color-chart-1: 47 117 181;
-    --color-chart-2: 92 155 200;
-    --color-chart-3: 118 185 176;
-    --color-chart-4: 138 166 193;
-    --color-chart-5: 196 146 36;
-    --color-chart-6: 123 138 153;
-    --color-chart-7: 76 111 141;
-    --color-chart-8: 166 181 194;
+    --color-chart-2: 20 150 160;
+    --color-chart-3: 196 146 36;
+    --color-chart-4: 124 108 196;
+    --color-chart-5: 92 155 200;
+    --color-chart-6: 217 108 90;
+    --color-chart-7: 76 140 110;
+    --color-chart-8: 123 138 153;
 
     /* MAPS */
-    --color-map-1: 23 59 94;
-    --color-map-2: 37 101 143;
-    --color-map-3: 63 134 199;
-    --color-map-4: 112 169 214;
-    --color-map-5: 168 203 229;
-    --color-map-neutral: 232 236 239;
+    --color-map-1: 21 55 90;
+    --color-map-2: 33 95 148;
+    --color-map-3: 54 132 207;
+    --color-map-4: 104 168 224;
+    --color-map-5: 162 203 236;
+    --color-map-neutral: 232 237 243;
+
+    /* ASSET TYPES (13 Tipologias CT&I) */
+    --color-asset-privada: 56 189 248;       /* #38BDF8 - Sky */
+    --color-asset-estadual: 37 99 235;       /* #2563EB - Royal Blue */
+    --color-asset-federal: 30 58 138;        /* #1E3A8A - Navy / Indigo */
+    --color-asset-if: 2 132 199;             /* #0284C7 - Ocean Blue */
+    --color-asset-aceleradora: 16 185 129;   /* #10B981 - Emerald */
+    --color-asset-dinamizador: 6 182 212;    /* #06B6D4 - Turquoise */
+    --color-asset-incubadora: 99 102 241;    /* #6366F1 - Indigo */
+    --color-asset-parque: 15 23 42;          /* #0F172A - Midnight Navy */
+    --color-asset-ict: 13 148 136;           /* #0D9488 - Teal */
+    --color-asset-hub: 139 92 246;           /* #8B5CF6 - Violet */
+    --color-asset-centro-pd: 245 158 11;     /* #F59E0B - Amber */
+    --color-asset-investimento: 236 72 153;  /* #EC4899 - Magenta */
+    --color-asset-pesquisa: 100 116 139;     /* #64748B - Slate */
+    --color-asset-outro: 148 163 184;        /* #94A3B8 - Neutral Slate */
   }
 
   .dark {
@@ -92,11 +121,11 @@
     --color-primary-950: 10 24 44;
     --color-primary-900: 16 38 68;
     --color-primary-800: 24 55 96;
-    --color-primary-700: 32 75 128;
-    --color-primary-600: 47 117 181;
-    --color-primary-500: 63 134 199;
-    --color-primary-400: 96 160 216;
-    --color-primary-300: 140 190 230;
+    --color-primary-700: 35 80 136;
+    --color-primary-600: 54 126 196;
+    --color-primary-500: 74 148 216;
+    --color-primary-400: 108 172 228;
+    --color-primary-300: 152 198 238;
     --color-primary-200: 42 85 140;
     --color-primary-100: 22 48 82;
     --color-primary-50: 14 32 58;
@@ -106,19 +135,21 @@
     --color-neutral-900: 241 245 249;
     --color-neutral-800: 226 232 240;
     --color-neutral-700: 203 213 225;
-    --color-neutral-600: 148 163 184;
-    --color-neutral-500: 100 116 139;
-    --color-neutral-400: 71 85 105;
+    --color-neutral-600: 156 171 192;
+    --color-neutral-500: 112 128 150;
+    --color-neutral-400: 75 90 112;
     --color-neutral-300: 51 65 85;
     --color-neutral-200: 33 45 66;
-    --color-neutral-100: 24 33 48;
-    --color-neutral-50: 15 22 34;
-    --color-white: 19 28 46;
+    --color-neutral-100: 24 34 54;
+    --color-neutral-50: 14 20 32;
+    --color-white: 17 25 41;
 
-    /* SURFACES */
+    /* SURFACES (Elevação por luminância no escuro) */
     --color-background: 11 15 25;
-    --color-surface: 19 28 46;
-    --color-surface-soft: 27 38 60;
+    --color-surface: 17 25 41;
+    --color-surface-raised: 24 34 54;
+    --color-surface-soft: 22 32 50;
+    --color-surface-sunken: 8 12 20;
 
     /* SEMANTIC: SUCCESS */
     --color-success-700: 74 222 128;
@@ -139,26 +170,63 @@
     --color-danger-50: 45 12 12;
 
     /* ACCENT */
-    --color-accent-700: 251 191 36;
-    --color-accent-600: 245 158 11;
-    --color-accent-500: 217 119 6;
+    --color-accent-700: 252 211 77;
+    --color-accent-600: 245 176 42;
+    --color-accent-500: 228 150 24;
+    --color-accent-400: 250 196 70;
     --color-accent-100: 120 53 15;
     --color-accent-50: 45 20 7;
 
-    /* TEXT & BORDERS MAP (Semantic aliases) */
-    --color-text-primary: 248 250 252;
-    --color-text-secondary: 170 185 205;
-    --color-text-muted: 115 135 158;
+    /* TEXT, BORDERS & RING (text-muted 156 171 192 sobre surface 17 25 41 = 6.9:1 AA+) */
+    --color-text-primary: 241 245 249;
+    --color-text-secondary: 194 206 222;
+    --color-text-muted: 150 166 188;
     --color-border: 33 45 66;
     --color-border-strong: 48 64 90;
+    --color-ring: var(--color-primary-400);
+
+    /* BRAND GRADIENT */
+    --gradient-brand: linear-gradient(135deg, rgb(16 38 68) 0%, rgb(35 80 136) 100%);
+
+    /* SHADOWS (Tema Escuro: highlight interno sutil + sombra escura) */
+    --shadow-xs: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 16px rgba(0, 0, 0, 0.35);
+    --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.45);
+    --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 36px rgba(0, 0, 0, 0.6);
+
+    /* DATA VISUALIZATION (8 cores vibrantes e legíveis no escuro) */
+    --color-chart-1: 96 160 216;
+    --color-chart-2: 45 190 195;
+    --color-chart-3: 232 178 60;
+    --color-chart-4: 160 145 225;
+    --color-chart-5: 130 185 225;
+    --color-chart-6: 240 135 115;
+    --color-chart-7: 100 190 150;
+    --color-chart-8: 148 163 184;
 
     /* MAPS */
-    --color-map-1: 56 139 210;
+    --color-map-1: 96 160 216;
     --color-map-2: 63 134 199;
-    --color-map-3: 92 155 200;
-    --color-map-4: 37 101 143;
-    --color-map-5: 29 78 115;
-    --color-map-neutral: 24 33 48;
+    --color-map-3: 47 112 175;
+    --color-map-4: 35 82 135;
+    --color-map-5: 25 58 98;
+    --color-map-neutral: 24 34 54;
+
+    /* ASSET TYPES (13 Tipologias CT&I no Escuro) */
+    --color-asset-privada: 56 189 248;
+    --color-asset-estadual: 96 165 250;
+    --color-asset-federal: 129 140 248;
+    --color-asset-if: 56 189 248;
+    --color-asset-aceleradora: 52 211 153;
+    --color-asset-dinamizador: 34 211 238;
+    --color-asset-incubadora: 129 140 248;
+    --color-asset-parque: 148 163 184;
+    --color-asset-ict: 45 212 191;
+    --color-asset-hub: 167 139 250;
+    --color-asset-centro-pd: 251 191 36;
+    --color-asset-investimento: 244 114 182;
+    --color-asset-pesquisa: 148 163 184;
+    --color-asset-outro: 203 213 225;
   }
 
   html {
@@ -171,6 +239,20 @@
     background-color: rgb(var(--color-background));
     color: rgb(var(--color-text-primary));
   }
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.bg-gradient-brand,
+.bg-brand-gradient {
+  background-image: var(--gradient-brand);
+}
+
+/* A escala "kpi" é sempre tabular (fontSize do Tailwind não define font-variant) */
+.text-kpi {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Firefox Scrollbar using Design Tokens */
@@ -199,6 +281,10 @@
 /* Tile layer suave e neutra para o SideMap (sem marcas d'água) */
 .map-tiles-clean {
   filter: grayscale(100%) opacity(0.45) brightness(1.06) contrast(0.92);
+}
+
+.dark .map-tiles-clean {
+  filter: grayscale(100%) invert(92%) hue-rotate(185deg) opacity(0.35) contrast(0.95);
 }
 
 
@@ -433,26 +519,24 @@
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Tons escuros da marca usados como texto no tema claro ficam ilegíveis no escuro.
-   :where() zera a especificidade: variantes explícitas (dark:text-primary-*) continuam vencendo. */
-.dark :where(.text-primary-700, .text-primary-800, .text-primary-900, .text-primary-950) {
-  color: rgb(var(--color-primary-300));
-}
-
+.leaflet-container,
 .dark .leaflet-container {
-  background-color: #0b0f19 !important;
+  background-color: rgb(var(--color-surface)) !important;
 }
 
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip,
 .dark .leaflet-popup-content-wrapper,
 .dark .leaflet-popup-tip {
-  background: #131c2e !important;
-  color: #f1f5f9 !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
-  border: 1px solid #24334c !important;
+  background: rgb(var(--color-surface-raised)) !important;
+  color: rgb(var(--color-text-primary)) !important;
+  box-shadow: var(--shadow-float) !important;
+  border: 1px solid rgb(var(--color-border)) !important;
 }
 
+.leaflet-popup-content,
 .dark .leaflet-popup-content {
-  color: #f1f5f9 !important;
+  color: rgb(var(--color-text-primary)) !important;
 }
 
 .dark .bg-carto-grid {

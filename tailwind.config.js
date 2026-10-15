@@ -9,8 +9,33 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Roboto Flex"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['Righteous', 'cursive'],
+        sans: ['"Plus Jakarta Sans Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      fontSize: {
+        'micro': ['11px', { lineHeight: '14px', letterSpacing: '0.06em', fontWeight: '600' }],
+        'caption': ['12px', { lineHeight: '16px', fontWeight: '500' }],
+        'body-sm': ['13px', { lineHeight: '20px', fontWeight: '400' }],
+        'body': ['14px', { lineHeight: '22px', fontWeight: '400' }],
+        'subtitle': ['16px', { lineHeight: '24px', fontWeight: '600' }],
+        'title': ['20px', { lineHeight: '28px', letterSpacing: '-0.01em', fontWeight: '650' }],
+        'headline': ['28px', { lineHeight: '34px', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'kpi': ['36px', { lineHeight: '40px', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display': ['44px', { lineHeight: '48px', letterSpacing: '-0.03em', fontWeight: '700' }],
+      },
+      borderRadius: {
+        'control': '10px',
+        'card': '16px',
+        'panel': '20px',
+      },
+      transitionDuration: {
+        120: '120ms',
+        200: '200ms',
+        320: '320ms',
+        500: '500ms',
+      },
+      transitionTimingFunction: {
+        standard: 'cubic-bezier(0.2, 0, 0, 1)',
+        emphasized: 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
       colors: {
         primary: {
@@ -67,19 +92,23 @@ module.exports = {
         accent: {
           50: 'rgb(var(--color-accent-50) / <alpha-value>)',
           100: 'rgb(var(--color-accent-100) / <alpha-value>)',
+          400: 'rgb(var(--color-accent-400) / <alpha-value>)',
           500: 'rgb(var(--color-accent-500) / <alpha-value>)',
           600: 'rgb(var(--color-accent-600) / <alpha-value>)',
           700: 'rgb(var(--color-accent-700) / <alpha-value>)',
         },
-          accentPrimary: 'rgb(var(--color-primary-600) / <alpha-value>)',
-          accentSuccess: 'rgb(var(--color-success-600) / <alpha-value>)',
-          accentAccent: 'rgb(var(--color-accent-600) / <alpha-value>)',
-          accentWarning: 'rgb(var(--color-warning-600) / <alpha-value>)',
+        accentPrimary: 'rgb(var(--color-primary-600) / <alpha-value>)',
+        accentSuccess: 'rgb(var(--color-success-600) / <alpha-value>)',
+        accentAccent: 'rgb(var(--color-accent-600) / <alpha-value>)',
+        accentWarning: 'rgb(var(--color-warning-600) / <alpha-value>)',
         surface: {
           DEFAULT: 'rgb(var(--color-surface) / <alpha-value>)',
+          raised: 'rgb(var(--color-surface-raised) / <alpha-value>)',
           soft: 'rgb(var(--color-surface-soft) / <alpha-value>)',
+          sunken: 'rgb(var(--color-surface-sunken) / <alpha-value>)',
         },
         background: 'rgb(var(--color-background) / <alpha-value>)',
+        ring: 'rgb(var(--color-ring) / <alpha-value>)',
         // Aliases semânticos: geram text-text-*, bg-text-*, border-border, bg-border-strong etc.
         text: {
           primary: 'rgb(var(--color-text-primary) / <alpha-value>)',
@@ -108,6 +137,22 @@ module.exports = {
           5: 'rgb(var(--color-map-5) / <alpha-value>)',
           neutral: 'rgb(var(--color-map-neutral) / <alpha-value>)',
         },
+        asset: {
+          privada: 'rgb(var(--color-asset-privada) / <alpha-value>)',
+          estadual: 'rgb(var(--color-asset-estadual) / <alpha-value>)',
+          federal: 'rgb(var(--color-asset-federal) / <alpha-value>)',
+          if: 'rgb(var(--color-asset-if) / <alpha-value>)',
+          aceleradora: 'rgb(var(--color-asset-aceleradora) / <alpha-value>)',
+          dinamizador: 'rgb(var(--color-asset-dinamizador) / <alpha-value>)',
+          incubadora: 'rgb(var(--color-asset-incubadora) / <alpha-value>)',
+          parque: 'rgb(var(--color-asset-parque) / <alpha-value>)',
+          ict: 'rgb(var(--color-asset-ict) / <alpha-value>)',
+          hub: 'rgb(var(--color-asset-hub) / <alpha-value>)',
+          'centro-pd': 'rgb(var(--color-asset-centro-pd) / <alpha-value>)',
+          investimento: 'rgb(var(--color-asset-investimento) / <alpha-value>)',
+          pesquisa: 'rgb(var(--color-asset-pesquisa) / <alpha-value>)',
+          outro: 'rgb(var(--color-asset-outro) / <alpha-value>)',
+        },
       },
       borderColor: {
         DEFAULT: 'rgb(var(--color-border) / <alpha-value>)',
@@ -133,13 +178,14 @@ module.exports = {
         },
       },
       boxShadow: {
-        'xs': '0 1px 2px rgba(15, 23, 42, 0.05)',
-        'glass':'0 4px 20px 0 rgba(15, 23, 42, 0.03)',
-        'glass-hover': '0 8px 30px 0 rgba(15, 23, 42, 0.06)',
-        'card-soft': '0 2px 10px rgba(15, 23, 42, 0.02), 0 1px 3px rgba(15, 23, 42, 0.02)',
-        'card-hover': '0 10px 30px rgba(15, 23, 42, 0.06), 0 4px 10px rgba(15, 23, 42, 0.03)',
-        'card': '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)',
-        'card-elevated': '0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.03)',
+        'xs': 'var(--shadow-xs)',
+        'card': 'var(--shadow-card)',
+        'card-soft': 'var(--shadow-card)',
+        'card-hover': 'var(--shadow-card-hover)',
+        'card-elevated': 'var(--shadow-card-hover)',
+        'float': 'var(--shadow-float)',
+        'glass': 'var(--shadow-card)',
+        'glass-hover': 'var(--shadow-card-hover)',
       }
     },
   },

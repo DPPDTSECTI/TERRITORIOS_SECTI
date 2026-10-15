@@ -1,6 +1,7 @@
 import React from 'react';
 import { HelpCircle, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { IconButton } from './ui/Button';
 
 export default function UserHeaderProfile() {
   const { isDark, toggleTheme } = useTheme();
@@ -12,42 +13,44 @@ export default function UserHeaderProfile() {
         <img
           src={isDark ? '/img/Brasao-Horizontal_Branco.webp' : '/img/brasao_preto.webp'}
           alt="Brasão do Estado da Bahia"
-          className="h-12 w-auto object-contain shrink-0 transition-opacity duration-300"
+          className="h-10 w-auto object-contain shrink-0 transition-opacity duration-300 select-none"
         />
       </div>
 
       {/* ÁREA DE AÇÕES */}
-      <div className="tour-user-menu flex items-center gap-3">
+      <div className="tour-user-menu flex items-center gap-2.5">
         {/* DIVISOR SUTIL DIREITA */}
-        <div className="h-6 w-[1px] bg-border-strong hidden sm:block"></div>
+        <div className="h-6 w-px bg-border hidden sm:block" />
 
         {/* BOTÕES: TEMA + TUTORIAL */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {/* BOTÃO ALTERNADOR DE MODO ESCURO / CLARO */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
+          <IconButton
+            size="sm"
+            variant="secondary"
             aria-label={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            className="w-8 h-8 rounded-full bg-surface-soft text-text-secondary hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95"
+            title={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
+            onClick={toggleTheme}
+            className="text-text-secondary hover:text-text-primary rounded-control shadow-xs"
           >
             {isDark ? (
-              <Sun size={16} strokeWidth={2} className="text-amber-400 hover:rotate-45 transition-transform duration-300" />
+              <Sun size={16} strokeWidth={1.75} className="text-amber-400" />
             ) : (
-              <Moon size={16} strokeWidth={2} className="text-neutral-600 hover:-rotate-12 transition-transform duration-300" />
+              <Moon size={16} strokeWidth={1.75} className="text-text-secondary" />
             )}
-          </button>
+          </IconButton>
 
           {/* BOTÃO DE TUTORIAL / AJUDA */}
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new Event('start-tour'))}
-            title="Tutorial / Ajuda"
+          <IconButton
+            size="sm"
+            variant="secondary"
             aria-label="Tutorial e Ajuda do Painel"
-            className="tour-help-button w-8 h-8 rounded-full bg-surface-soft text-text-muted hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-colors shadow-xs active:scale-95"
+            title="Tutorial / Ajuda"
+            onClick={() => window.dispatchEvent(new Event('start-tour'))}
+            className="tour-help-button text-text-muted hover:text-text-primary rounded-control shadow-xs"
           >
-            <HelpCircle size={16} strokeWidth={2} />
-          </button>
+            <HelpCircle size={16} strokeWidth={1.75} />
+          </IconButton>
         </div>
       </div>
     </div>

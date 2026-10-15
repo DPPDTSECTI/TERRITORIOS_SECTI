@@ -104,7 +104,7 @@ export function buildMunicipiosInstituicoesList(inputData = [], filtros = {}) {
   }
 
   const { selectedLocation } = filtros;
-  const isGlobalView = !(selectedLocation && (selectedLocation.matchType === 'Território' || !selectedLocation.matchType));
+  const isGlobalView = Boolean(filtros.isGlobalView || filtros.groupByTerritory);
   const isTerritoryList = inputData.some(
     item =>
       item &&
@@ -213,7 +213,7 @@ export function buildAreaHeatmapData(territoriosData = [], filtros = {}) {
   }
 
   const { selectedLocation } = filtros;
-  const isGlobalView = !(selectedLocation && (selectedLocation.matchType === 'Território' || !selectedLocation.matchType));
+  const isGlobalView = Boolean(filtros.isGlobalView || filtros.groupByTerritory);
 
   const areasSet = new Set();
   const munMap = new Map();
