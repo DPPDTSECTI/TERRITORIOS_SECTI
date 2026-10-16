@@ -18,9 +18,12 @@ import DonutChart from './graph/DonutChart.jsx';
 import CustomPieChart from './graph/CustomPieChart.jsx';
 import RankingBarChart from './graph/RankingBarChart.jsx';
 import ProportionBarChart from './graph/ProportionBarChart.jsx';
+import { useChartTheme } from './graph/chartTheme';
 
 // COMPONENTES DE UI DESIGN SYSTEM
 import { Card, Badge, IconButton, KpiSkeleton, ChartSkeleton } from './ui';
+import { motion } from 'framer-motion';
+import { fadeUp, staggerContainer } from '../lib/motion';
 
 function normalizeName(value) {
   if (!value) return '';
@@ -88,7 +91,12 @@ function SortableCard({ id, className = '', children }) {
           className="cursor-grab active:cursor-grabbing text-text-muted hover:text-text-primary hover:bg-surface-soft"
         />
       </div>
-      {children}
+      <motion.div
+        variants={fadeUp}
+        className="h-full flex flex-col min-h-0 flex-1"
+      >
+        {children}
+      </motion.div>
     </div>
   );
 }
@@ -108,6 +116,7 @@ export default function DashboardPainel() {
     filtroSemiarido = false,
     setFiltroSemiarido
   } = useContext(DataContext);
+  const chartTheme = useChartTheme();
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
 
   // 1. Ativos Filtrados pelo Território Selecionado
@@ -225,29 +234,7 @@ export default function DashboardPainel() {
       counts[cat] = (counts[cat] || 0) + 1;
     });
 
-    const bluePalette = [
-      '#1D3557', // 1. Deep Navy
-      '#2563EB', // 2. Primary Royal Blue
-      '#0284C7', // 3. Vibrant Ocean Blue
-      '#3B82F6', // 4. Bright Blue
-      '#1E40AF', // 5. Cobalt Blue
-      '#0EA5E9', // 6. Sky Cyan Blue
-      '#38BDF8', // 7. Light Sky Blue
-      '#60A5FA', // 8. Soft Blue
-    ];
-
-    const goldenPalette = [
-      '#D97706', // 1. Amber 600 (Rich Gold)
-      '#F59E0B', // 2. Amber 500 (Vibrant Sun Gold)
-      '#B45309', // 3. Amber 700 (Deep Warm Bronze)
-      '#EAB308', // 4. Yellow 500 (Bright Gold)
-      '#FBBF24', // 5. Amber 400 (Warm Sun Yellow)
-      '#CA8A04', // 6. Yellow 600 (Deep Ochre Gold)
-      '#92400E', // 7. Amber 800 (Rich Dark Caramel)
-      '#FCD34D', // 8. Amber 300 (Soft Warm Gold)
-    ];
-
-    const palette = filtroSemiarido ? goldenPalette : bluePalette;
+    const palette = filtroSemiarido ? chartTheme.goldenPalette : chartTheme.palette;
 
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
@@ -256,7 +243,7 @@ export default function DashboardPainel() {
         value,
         color: palette[idx % palette.length]
       }));
-  }, [activeScopedCursos, filtroSemiarido]);
+  }, [activeScopedCursos, filtroSemiarido, chartTheme.goldenPalette, chartTheme.palette]);
 
   // Top Instituições de Ensino com Cursos
   const topEntidadesCursos = useMemo(() => {
@@ -312,16 +299,7 @@ export default function DashboardPainel() {
       counts[tipo] = (counts[tipo] || 0) + 1;
     });
 
-    const goldenPalette = [
-      '#F59E0B', // 1. Amber 500
-      '#D97706', // 2. Amber 600
-      '#EAB308', // 3. Yellow 500
-      '#FBBF24', // 4. Amber 400
-      '#CA8A04', // 5. Yellow 600
-      '#FCD34D', // 6. Amber 300
-      '#B45309', // 7. Amber 700
-      '#FDE68A'  // 8. Amber 200
-    ];
+    const goldenPalette = chartTheme.goldenPalette;
 
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
@@ -330,7 +308,7 @@ export default function DashboardPainel() {
         value,
         ...(filtroSemiarido ? { colorHex: goldenPalette[idx % goldenPalette.length] } : {})
       }));
-  }, [activeScopedAtivos, filtroSemiarido]);
+  }, [activeScopedAtivos, filtroSemiarido, chartTheme.goldenPalette]);
 
   // Top Territórios (ou Municípios se território selecionado) com mais ativos
   const topTerritoriosOuMunicipiosAtivos = useMemo(() => {
@@ -606,8 +584,8 @@ export default function DashboardPainel() {
     },
     {
       label: filtroSemiarido
-        ? (selectedTerritory ? `IFDM · ${territoryName}` : 'IFDM Médio · Semiárido')
-        : (selectedTerritory ? `IFDM · ${territoryName}` : 'D. Territorial (IFDM)'),
+        ? (selectedTerritory ? `IFDM · ${territoryName}` : 'IFDM')
+        : (selectedTerritory ? `IFDM · ${territoryName}` : 'IFDM'),
       value: formattedIfdm,
       percent: null,
       tooltip: filtroSemiarido ? 'Média dos territórios com área semiárida' : undefined,
@@ -616,8 +594,8 @@ export default function DashboardPainel() {
     },
     {
       label: filtroSemiarido
-        ? (selectedTerritory ? `Cadeias no Território` : 'Cadeias no Semiárido')
-        : (selectedTerritory ? `Cadeias no Território` : 'Cadeias Produtivas'),
+        ? (selectedTerritory ? `Cadeias no Território` : 'Cadeias')
+        : (selectedTerritory ? `Cadeias no Território` : 'Cadeias'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCadeias : (selectedTerritory ? (scopedTerritorioRow?.cadeias_produtivas ?? 0) : kpisGlobais.cadeias)),
       percent: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}% do total de cadeias` : null,
       tooltip: filtroSemiarido && !selectedTerritory
@@ -628,8 +606,8 @@ export default function DashboardPainel() {
     },
     {
       label: filtroSemiarido
-        ? (selectedTerritory ? 'Municípios no Semiárido' : 'Municípios no Semiárido')
-        : (selectedTerritory ? 'Municípios no Território' : 'Municípios Semiárido'),
+        ? (selectedTerritory ? 'Municípios no Semiárido' : 'Municípios')
+        : (selectedTerritory ? 'Municípios no Território' : 'Municípios'),
       value: loadingStats ? '...' : (filtroSemiarido ? `${semiaridoMetrics.munSemi}` : (selectedTerritory ? (scopedTerritorioRow ? `${scopedTerritorioRow.qtd_mun_total || (Number(scopedTerritorioRow.qtd_mun_semiarido || 0) + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0))} mun.` : '-') : `${semiaridoStats.semiarido}`)),
       percent: filtroSemiarido ? `${semiaridoMetrics.pctMun}% do total de municípios` : null,
       tooltip: filtroSemiarido
@@ -704,40 +682,16 @@ export default function DashboardPainel() {
           <p className="text-body-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
           <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
         </div>
-
-        {/* CONTROLE DE ALTERNÂNCIA NORMAL vs. SEMIÁRIDO */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setFiltroSemiarido?.(!filtroSemiarido)}
-            title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-9 pl-1.5 pr-3.5 rounded-full text-caption font-semibold transition-all duration-300 cursor-pointer border select-none backdrop-blur-md ${
-              filtroSemiarido
-                ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]'
-                : 'bg-surface/90 border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-xs'
-            }`}
-          >
-            <span
-              className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
-                filtroSemiarido
-                  ? 'bg-amber-500 text-white'
-                  : 'bg-surface-soft border border-border text-text-muted'
-              }`}
-            >
-              {filtroSemiarido ? (
-                <SunMedium size={14} />
-              ) : (
-                <span className="w-2 h-2 rounded-full bg-border-strong block" />
-              )}
-            </span>
-            <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
-          </button>
-        </div>
       </div>
 
       {/* GRID DE KPIs */}
       <div className="tour-kpis w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
+        <motion.div
+          variants={staggerContainer(0.04)}
+          initial="initial"
+          animate="animate"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full"
+        >
           {loadingStats ? (
             Array.from({ length: 5 }).map((_, i) => (
               <KpiSkeleton key={i} />
@@ -754,75 +708,76 @@ export default function DashboardPainel() {
               ];
 
               return (
-                <Card
-                  key={index}
-                  title={kpi.tooltip || kpi.label}
-                  variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
-                  className={`p-4 flex flex-col justify-between h-[96px] cursor-default overflow-hidden transition-all duration-300 hover:shadow-card-hover ${
-                    isHero && filtroSemiarido
-                      ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border-amber-400/40 shadow-card shadow-amber-500/20'
-                      : ''
-                  } ${
-                    !isHero && filtroSemiarido
-                      ? 'border-amber-200/50 dark:border-amber-500/30'
-                      : ''
-                  }`}
-                >
-                  {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                  <div className="flex items-center gap-2 w-full min-w-0">
-                    <kpi.icon
-                      size={16}
-                      strokeWidth={2}
-                      className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]}
-                    />
-                    <span
-                      className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
-                        isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
-                      }`}
-                      title={kpi.label}
-                    >
-                      {kpi.label}
-                    </span>
-                    {!filtroSemiarido && kpi.isIndex && (
+                <motion.div key={index} variants={fadeUp} className="h-full">
+                  <Card
+                    title={kpi.tooltip || kpi.label}
+                    variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
+                    className={`p-4 flex flex-col justify-between h-[96px] cursor-default overflow-hidden transition-all duration-300 hover:shadow-card-hover ${
+                      isHero && filtroSemiarido
+                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border-amber-400/40 shadow-card shadow-amber-500/20'
+                        : ''
+                    } ${
+                      !isHero && filtroSemiarido
+                        ? 'border-amber-200/50 dark:border-amber-500/30'
+                        : ''
+                    }`}
+                  >
+                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                    <div className="flex items-center gap-2 w-full min-w-0">
+                      <kpi.icon
+                        size={16}
+                        strokeWidth={2}
+                        className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]}
+                      />
                       <span
-                        className={`text-micro font-semibold uppercase px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${
-                          isHero
-                            ? 'bg-white/15 text-white/90 border border-white/20'
-                            : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60'
+                        className={`text-micro font-medium uppercase tracking-wider line-clamp-2 leading-tight flex-1 ${
+                          isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
                         }`}
+                        title={kpi.label}
                       >
-                        Índice
+                        {kpi.label}
                       </span>
-                    )}
-                  </div>
-
-                  {/* LINHA INFERIOR: NÚMERO */}
-                  <div className="flex items-baseline w-full justify-between min-w-0">
-                    <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                      <span
-                        className={`text-kpi font-bold tracking-tight leading-none shrink-0 tnum ${
-                          isHero ? 'text-white' : 'text-text-primary'
-                        }`}
-                      >
-                        {kpi.value}
-                      </span>
-                      {filtroSemiarido && kpi.percent && (
+                      {!filtroSemiarido && kpi.isIndex && (
                         <span
-                          title={`(${kpi.percent})`}
-                          className={`text-caption font-semibold truncate ${
-                            isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                          className={`text-micro font-semibold uppercase px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${
+                            isHero
+                              ? 'bg-white/15 text-white/90 border border-white/20'
+                              : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60'
                           }`}
                         >
-                          ({kpi.percent})
+                          Índice
                         </span>
                       )}
                     </div>
-                  </div>
-                </Card>
+
+                    {/* LINHA INFERIOR: NÚMERO */}
+                    <div className="flex items-baseline w-full justify-between min-w-0">
+                      <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                        <span
+                          className={`text-kpi font-bold tracking-tight leading-none shrink-0 tnum ${
+                            isHero ? 'text-white' : 'text-text-primary'
+                          }`}
+                        >
+                          {kpi.value}
+                        </span>
+                        {filtroSemiarido && kpi.percent && (
+                          <span
+                            title={`(${kpi.percent})`}
+                            className={`text-caption font-semibold truncate ${
+                              isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                            }`}
+                          >
+                            ({kpi.percent})
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
               );
             })
           )}
-        </div>
+        </motion.div>
       </div>
 
       {/* GRID PRINCIPAL */}
@@ -845,9 +800,14 @@ export default function DashboardPainel() {
 
         {/* LADO DIREITO: DASHBOARD DE CARDS (DND) COM TRANSIÇÃO DOURADA SUAVE */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-          <div className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
-            filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-card' : ''
-          }`}>
+          <motion.div
+            variants={staggerContainer(0.04)}
+            initial="initial"
+            animate="animate"
+            className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
+              filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-card' : ''
+            }`}
+          >
             {loadingStats ? (
               Array.from({ length: 4 }).map((_, i) => (
                 <ChartSkeleton key={i} height="h-44" className="h-full" />
@@ -855,93 +815,83 @@ export default function DashboardPainel() {
             ) : (
               <SortableContext items={cardsOrder} strategy={rectSortingStrategy}>
               {cardsOrder.map(cardId => (
-                <React.Fragment key={cardId}>
-
+                <SortableCard key={cardId} id={cardId}>
                   {/* CARD 1: DONUT CHART (CURSOS) - Superior Esquerdo */}
                   {cardId === 'card-donut' && (
-                    <SortableCard id="card-donut">
-                      <DonutChart
-                        title={filtroSemiarido ? (selectedTerritory ? `Cursos CT&I no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido') : (selectedTerritory ? `Cursos CT&I em ${territoryName}` : 'Cursos de CT&I por Área')}
-                        subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos de CT&I mapeados na região` : 'Oferta presencial de cursos superiores em CT&I')}
-                        totalLabel="Total Cursos CT&I"
-                        listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições na Região' : 'Top 5 Instituições com mais cursos')}
-                        data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 0, color: '#E2E8F0', isEmpty: true }]}
-                        topList={topEntidadesCursos}
-                        badge={null}
-                        isSemiarido={filtroSemiarido}
-                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-1' : ''}
-                      />
-                    </SortableCard>
+                    <DonutChart
+                      title={filtroSemiarido ? (selectedTerritory ? `Cursos CT&I no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido') : (selectedTerritory ? `Cursos CT&I em ${territoryName}` : 'Cursos de CT&I por Área')}
+                      subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos de CT&I mapeados na região` : 'Oferta presencial de cursos superiores em CT&I')}
+                      totalLabel="Total Cursos CT&I"
+                      listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições' : 'Top 5 instituições')}
+                      data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 0, color: chartTheme.grid, isEmpty: true }]}
+                      topList={topEntidadesCursos}
+                      badge={null}
+                      isSemiarido={filtroSemiarido}
+                      cardClassName={filtroSemiarido ? 'semiarido-card-warmth-1' : ''}
+                    />
                   )}
 
                   {/* CARD 2: PIE CHART (ATIVOS CT&I) - Superior Direito (Mais próximo do Sol) */}
                   {cardId === 'card-pie' && (
-                    <SortableCard id="card-pie">
-                      <CustomPieChart
-                        data={ecosystemData}
-                        topList={topTerritoriosOuMunicipiosAtivos}
-                        title={filtroSemiarido ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido') : (selectedTerritory ? `Ativos em ${territoryName}` : 'Distribuição dos Ativos de CT&I')}
-                        subtitle={filtroSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking')}
-                        listTitle={filtroSemiarido ? 'Top Municípios do Semiárido' : (selectedTerritory ? 'Top Municípios com Mais Ativos' : 'Top 5 Territórios com Mais Ativos')}
-                        defaultCenterLabel="Ativos Mapeados"
-                        labelKey="region"
-                        valueKey="value"
-                        colorKey="colorHex"
-                        badge={null}
-                        isSemiarido={filtroSemiarido}
-                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-2' : ''}
-                      />
-                    </SortableCard>
+                    <CustomPieChart
+                      data={ecosystemData}
+                      topList={topTerritoriosOuMunicipiosAtivos}
+                      title={filtroSemiarido ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido') : (selectedTerritory ? `Ativos em ${territoryName}` : 'Distribuição dos Ativos de CT&I')}
+                      subtitle={filtroSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking')}
+                      listTitle={filtroSemiarido ? 'Top Municípios' : (selectedTerritory ? 'Top Municípios' : 'Top 5 territórios')}
+                      defaultCenterLabel="Ativos Mapeados"
+                      labelKey="region"
+                      valueKey="value"
+                      colorKey="colorHex"
+                      badge={null}
+                      isSemiarido={filtroSemiarido}
+                      cardClassName={filtroSemiarido ? 'semiarido-card-warmth-2' : ''}
+                    />
                   )}
 
                   {/* CARD 3: RANKING IFDM - Inferior Esquerdo (Mais distante do Sol) */}
                   {cardId === 'card-ranking' && (
-                    <SortableCard id="card-ranking">
-                      <RankingBarChart
-                        data={selectedTerritory ? rankingIfdmData : (filtroSemiarido ? rankingDataSemiarido : territoriosData)}
-                        title={selectedTerritory ? `Ranking IFDM · ${territoryName}` : (filtroSemiarido ? "Ranking IFDM · Semiárido" : "Ranking IFDM")}
-                        valueKey="media_ifdm"
-                        labelKey={selectedTerritory ? "nome_municipio" : "territorio"}
-                        extraKey={selectedTerritory ? "populacao" : "cadeias_produtivas"}
-                        extraLabel={selectedTerritory ? "População" : "Cadeias"}
-                        topSubtitle={selectedTerritory ? "Top Municípios" : (filtroSemiarido ? "Top no Semiárido" : "Top 5 melhores")}
-                        mediumSubtitle={selectedTerritory ? "" : "5 na média"}
-                        bottomSubtitle={selectedTerritory ? "Menores IFDMs" : (filtroSemiarido ? "Menores no Semiárido" : "Top 5 piores")}
-                        highlightLabel={selectedTerritory ? null : territoryName}
-                        maxScale={1}
-                        badge={null}
-                        isSemiarido={filtroSemiarido}
-                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-3' : ''}
-                      />
-                    </SortableCard>
+                    <RankingBarChart
+                      data={selectedTerritory ? rankingIfdmData : (filtroSemiarido ? rankingDataSemiarido : territoriosData)}
+                      title={selectedTerritory ? `Ranking IFDM · ${territoryName}` : (filtroSemiarido ? "Ranking IFDM · Semiárido" : "Ranking IFDM")}
+                      valueKey="media_ifdm"
+                      labelKey={selectedTerritory ? "nome_municipio" : "territorio"}
+                      extraKey={selectedTerritory ? "populacao" : "cadeias_produtivas"}
+                      extraLabel={selectedTerritory ? "População" : "Cadeias"}
+                      topSubtitle={selectedTerritory ? "Top Municípios" : (filtroSemiarido ? "Top no Semiárido" : "Top 5 melhores")}
+                      mediumSubtitle={selectedTerritory ? "" : "5 na média"}
+                      bottomSubtitle={selectedTerritory ? "Menores IFDMs" : (filtroSemiarido ? "Menores no Semiárido" : "Top 5 piores")}
+                      highlightLabel={selectedTerritory ? null : territoryName}
+                      maxScale={1}
+                      badge={null}
+                      isSemiarido={filtroSemiarido}
+                      cardClassName={filtroSemiarido ? 'semiarido-card-warmth-3' : ''}
+                    />
                   )}
 
                   {/* CARD 4: PROPORTION RNP - Inferior Direito */}
                   {cardId === 'card-mapeamento' && (
-                    <SortableCard id="card-mapeamento">
-                      <ProportionBarChart
-                        isVisaoGeral={true}
-                        isSemiarido={filtroSemiarido}
-                        data={rnpComparisonData}
-                        title={filtroSemiarido ? (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP · Semiárido") : (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP")}
-                        subtitle={filtroSemiarido ? (selectedTerritory ? `Proporção de ativos conectados à RNP no Semiárido (${territoryName})` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa no Semiárido') : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
-                        positiveLabel="Com RNP"
-                        negativeLabel="Sem RNP"
-                        positiveColor={filtroSemiarido ? "bg-amber-600" : "bg-primary-500"}
-                        negativeColor={filtroSemiarido ? "bg-amber-500/15" : "bg-primary-100"}
-                        positiveTextColor={filtroSemiarido ? "text-amber-700 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}
-                        negativeTextColor={filtroSemiarido ? "text-amber-800 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}
-                        badge={null}
-                        cardClassName={filtroSemiarido ? 'semiarido-card-warmth-4' : ''}
-                      />
-                    </SortableCard>
+                    <ProportionBarChart
+                      isVisaoGeral={true}
+                      isSemiarido={filtroSemiarido}
+                      data={rnpComparisonData}
+                      title={filtroSemiarido ? (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP · Semiárido") : (selectedTerritory ? `Infraestrutura RNP · ${territoryName}` : "Infraestrutura RNP")}
+                      subtitle={filtroSemiarido ? (selectedTerritory ? `Proporção de ativos conectados à RNP no Semiárido (${territoryName})` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa no Semiárido') : (selectedTerritory ? `Proporção de ativos conectados à RNP em ${territoryName}` : 'Proporção de ativos conectados à Rede Nacional de Pesquisa')}
+                      positiveLabel="Com RNP"
+                      negativeLabel="Sem RNP"
+                      positiveColor={filtroSemiarido ? "bg-amber-600" : "bg-primary-500"}
+                      negativeColor={filtroSemiarido ? "bg-amber-500/15" : "bg-primary-100"}
+                      positiveTextColor={filtroSemiarido ? "text-amber-700 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}
+                      negativeTextColor={filtroSemiarido ? "text-amber-800 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}
+                      badge={null}
+                      cardClassName={filtroSemiarido ? 'semiarido-card-warmth-4' : ''}
+                    />
                   )}
-
-                </React.Fragment>
+                </SortableCard>
               ))}
             </SortableContext>
             )}
-          </div>
+          </motion.div>
         </DndContext>
       </div>
     </main>

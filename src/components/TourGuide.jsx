@@ -192,7 +192,7 @@ export default function TourGuide() {
     {
       target: '.tour-toggle-semiarido',
       title: 'Filtro do Semiárido',
-      content: 'Ative este botão para alternar instantaneamente para o recorte oficial do Semiárido Baiano. Todos os KPIs, gráficos e mapas serão filtrados dinamicamente em tempo real.',
+      content: 'Localizado no canto do mapa interativo, use este botão para alternar instantaneamente para o recorte oficial do Semiárido Baiano. Todos os KPIs, gráficos e mapas serão filtrados dinamicamente em tempo real.',
       placement: 'left',
       spotlightPadding: 6,
     },

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { MapContainer, GeoJSON, TileLayer, useMapEvents } from 'react-leaflet';
+import { MapContainer, GeoJSON, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
@@ -651,7 +651,7 @@ export default function PtiMap({
   return (
     <div
       ref={mapContainerRef}
-      className="tour-map relative isolate w-full h-full min-h-0 flex items-center justify-center bg-transparent rounded-card overflow-hidden select-none z-10"
+      className="tour-map relative isolate w-full h-full min-h-0 flex items-center justify-center bg-surface-sunken rounded-card overflow-hidden select-none z-10"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0 })}
     >
@@ -677,22 +677,9 @@ export default function PtiMap({
           scrollWheelZoom={true}
           doubleClickZoom={false}
           className="w-full h-full outline-none z-0"
-          style={{ background: 'transparent' }}
+          style={{ background: 'rgb(var(--color-surface-sunken))' }}
         >
           <ZoomTracker onZoomChange={setCurrentZoom} />
-
-          <TileLayer
-            key={isDark ? 'dark-canvas-tiles' : 'light-canvas-tiles'}
-            className="map-tiles-clean"
-            url={
-              isDark
-                ? "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-                : "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-            }
-            opacity={isDark ? 0.85 : 0.7}
-            maxZoom={16}
-            crossOrigin="anonymous"
-          />
 
           <GeoJSON
             key={`${selectedTerritory ? `sel-${selectedTerritory.id_territorio}-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}` : (isZoomedIn ? `zoom-${filtroSemiarido ? '1' : '0'}-${isDark ? 'dark' : 'light'}` : `overview-${filtroSemiarido ? '1' : '0'}-${isDark ? 'dark' : 'light'}`)}`}

@@ -330,16 +330,6 @@
   display: none !important;
 }
 
-/* Tile layer suave e neutra para o SideMap (sem marcas d'água) */
-.map-tiles-clean {
-  filter: grayscale(100%) opacity(0.45) brightness(1.06) contrast(0.92);
-}
-
-.dark .map-tiles-clean {
-  filter: grayscale(100%) invert(92%) hue-rotate(185deg) opacity(0.35) contrast(0.95);
-}
-
-
 /* CARTOGRAPHIC PATTERNS (INTELIGNCIA TERRITORIAL) */
 .bg-carto-grid {
   background-image: linear-gradient(to right, rgba(100, 116, 139, 0.04) 1px, transparent 1px),
@@ -584,7 +574,7 @@
 
 .leaflet-container,
 .dark .leaflet-container {
-  background-color: rgb(var(--color-surface)) !important;
+  background-color: rgb(var(--color-surface-sunken)) !important;
 }
 
 .leaflet-popup-content-wrapper,

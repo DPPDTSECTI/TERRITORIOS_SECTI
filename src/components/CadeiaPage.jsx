@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo, useEffect, useRef } from 'react';
+import React, { useContext, useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import {
     GitPullRequest,
     Award,
@@ -36,33 +36,28 @@ import {
     KpiSkeleton,
     ListRowSkeleton
 } from './ui';
+import { useChartTheme, resolveCssRgb } from './graph/chartTheme';
+import { motion } from 'framer-motion';
+import { fadeUp, staggerContainer } from '../lib/motion';
 
-const SEGMENT_PALETTE = [
-    '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#06B6D4',
-    '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#84CC16',
-    '#A855F7', '#E11D48', '#0EA5E9', '#D97706'
-];
+function getAlphaColor(color, alpha = 0.12) {
+    if (!color) return 'transparent';
+    if (color.startsWith('rgb(')) {
+        return color.replace('rgb(', 'rgba(').replace(')', `, ${alpha})`);
+    }
+    return color.startsWith('#') ? `${color}20` : color;
+}
 
-const SEMIARIDO_SEGMENT_PALETTE = [
-    '#D97706', // Âmbar Intenso
-    '#F59E0B', // Âmbar Dourado
-    '#CA8A04', // Ouro Mostarda
-    '#B45309', // Âmbar Terracota
-    '#EAB308', // Ouro Girassol
-    '#FBBF24', // Calêndula Solar
-    '#92400E', // Castanho Dourado
-    '#CD7F32', // Bronze Âmbar
-    '#D48806', // Mel Queimado
-    '#ECC94B', // Trigo Ouro
-    '#B8860B', // Dark Goldenrod
-    '#78350F'  // Ocre Profundo
-];
-
-export const getSemiaridoArrangementColor = (nomeTipo) => {
+export const getSemiaridoArrangementColor = (nomeTipo, chartTheme) => {
     const str = String(nomeTipo || '').toLowerCase();
-    if (str.includes('potencial')) return '#FBBF24'; // IG Potencial: Amarelo Ouro Solar
-    if (str.includes('ig') || str.includes('indica')) return '#CA8A04'; // IG: Ouro Mostarda
-    return '#B45309'; // APL: Âmbar Terracota
+    if (chartTheme?.goldenPalette) {
+        if (str.includes('potencial')) return chartTheme.goldenPalette[2];
+        if (str.includes('ig') || str.includes('indica')) return chartTheme.goldenPalette[1];
+        return chartTheme.goldenPalette[0];
+    }
+    if (str.includes('potencial')) return 'rgb(250, 196, 70)';
+    if (str.includes('ig') || str.includes('indica')) return 'rgb(228, 150, 24)';
+    return 'rgb(192, 138, 28)';
 };
 
 function normalizeName(name) {
@@ -118,32 +113,36 @@ function findMunicipioCoords(nome) {
     return null;
 }
 
-const getTipoCadeiaConfig = (nomeTipo) => {
+const getTipoCadeiaConfig = (nomeTipo, chartTheme) => {
     const str = String(nomeTipo || '').toLowerCase();
+    const corWarning = chartTheme?.warning || resolveCssRgb('--color-warning-600', 'rgb(245, 158, 11)');
+    const corSuccess = chartTheme?.success || resolveCssRgb('--color-success-600', 'rgb(34, 197, 94)');
+    const corPrimary = chartTheme?.primary || resolveCssRgb('--color-primary-600', 'rgb(37, 112, 184)');
+
     if (str.includes('potencial')) {
         return {
-            corHex: '#F59E0B',
+            corHex: corWarning,
             bgBadge: 'bg-warning-600/15 text-warning-700',
             icone: Compass,
             label: 'IG Potencial',
-            iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`
+            iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${corWarning}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`
         };
     }
     if (str.includes('ig') || str.includes('indica')) {
         return {
-            corHex: '#10B981',
+            corHex: corSuccess,
             bgBadge: 'bg-success-500/15 text-success-700',
             icone: Award,
             label: 'IG',
-            iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`
+            iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${corSuccess}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`
         };
     }
     return {
-        corHex: '#2563EB',
+        corHex: corPrimary,
         bgBadge: 'bg-primary-600/15 text-primary-600',
         icone: Wheat,
         label: 'APL',
-        iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22 12 12"/><path d="M7 17a5 5 0 0 1 5-5"/><path d="M12 12a5 5 0 0 1 5-5"/><path d="M17 7a5 5 0 0 1 5-5"/></svg>`
+        iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${corPrimary}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22 12 12"/><path d="M7 17a5 5 0 0 1 5-5"/><path d="M12 12a5 5 0 0 1 5-5"/><path d="M17 7a5 5 0 0 1 5-5"/></svg>`
     };
 };
 
@@ -155,6 +154,7 @@ export const getTipoBadgeVariant = (nomeTipo) => {
 };
 
 export default function CadeiaPage() {
+    const chartTheme = useChartTheme();
     const {
         listaCadeias = [],
         distribuicaoCadeias = [],
@@ -256,7 +256,7 @@ export default function CadeiaPage() {
         sourceData.forEach((row, idx) => {
             const idCadeia = Number(row.id_cadeia || idx + 1);
             const tipoNome = row.nome_tipo || row.tipo || 'APL';
-            const configTipo = getTipoCadeiaConfig(tipoNome);
+            const configTipo = getTipoCadeiaConfig(tipoNome, chartTheme);
             const entidadeStr = String(row.entidade || '').toLowerCase();
 
             let overrideSede = null;
@@ -391,7 +391,7 @@ export default function CadeiaPage() {
         });
 
         return Array.from(mapCadeias.values());
-    }, [listaCadeias, distribuicaoCadeias]);
+    }, [listaCadeias, distribuicaoCadeias, chartTheme]);
 
     const availableTipos = useMemo(() => {
         const tipos = new Set();
@@ -436,6 +436,81 @@ export default function CadeiaPage() {
         return counts;
     }, [territoryCadeias]);
 
+    const baseCadeiasForStats = useMemo(() => {
+        let list = territoryCadeias;
+        if (selectedTipo !== 'todos') list = list.filter(c => c.tipo === selectedTipo);
+        return list;
+    }, [territoryCadeias, selectedTipo]);
+
+    // 1. Ranking global de segmentos (calculado uma vez sobre o conjunto COMPLETO de cadeias, estável entre filtros)
+    const { globalTop7Set, segmentColorMap, neutralSegmentColor } = useMemo(() => {
+        const counts = {};
+        (enrichedCadeias || []).forEach(c => {
+            const seg = c.segmento || 'Outros Segmentos';
+            counts[seg] = (counts[seg] || 0) + 1;
+        });
+
+        const sorted = Object.entries(counts)
+            .sort((a, b) => b[1] - a[1]);
+
+        const palette = chartTheme.palette || [];
+        const neutral = palette[7] || chartTheme.textMuted || 'rgb(148, 163, 184)';
+
+        const colorMap = new Map();
+        const top7 = new Set();
+
+        sorted.forEach(([name], idx) => {
+            if (idx < 7) {
+                top7.add(name);
+                colorMap.set(name, palette[idx] || palette[0]);
+            } else {
+                colorMap.set(name, neutral);
+            }
+        });
+
+        return {
+            globalTop7Set: top7,
+            segmentColorMap: colorMap,
+            neutralSegmentColor: neutral
+        };
+    }, [enrichedCadeias, chartTheme.palette, chartTheme.textMuted]);
+
+    // 2. getSegmentColor estável que consulta exclusivamente o ranking global
+    const getSegmentColor = useCallback((segName) => {
+        if (!segName) return neutralSegmentColor;
+        return segmentColorMap.get(segName) || neutralSegmentColor;
+    }, [segmentColorMap, neutralSegmentColor]);
+
+    const segmentStats = useMemo(() => {
+        if (!baseCadeiasForStats || baseCadeiasForStats.length === 0) return [];
+        const counts = {};
+        const total = baseCadeiasForStats.length;
+
+        baseCadeiasForStats.forEach(c => {
+            const seg = c.segmento || 'Outros Segmentos';
+            counts[seg] = (counts[seg] || 0) + 1;
+        });
+
+        const sorted = Object.entries(counts)
+            .sort((a, b) => b[1] - a[1]);
+
+        return sorted.map(([name, count]) => {
+            const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
+            const isTop7 = globalTop7Set.has(name);
+            const color = getSegmentColor(name);
+            const legendLabel = isTop7 ? name : 'Demais segmentos';
+
+            return {
+                name,
+                count,
+                percent,
+                color,
+                isTop7,
+                legendLabel
+            };
+        });
+    }, [baseCadeiasForStats, globalTop7Set, getSegmentColor]);
+
     const filteredCadeias = useMemo(() => {
         let list = territoryCadeias;
         if (selectedTipo !== 'todos') list = list.filter(c => c.tipo === selectedTipo);
@@ -453,8 +528,11 @@ export default function CadeiaPage() {
                 (c.texto_referencia && normalizeName(c.texto_referencia).includes(q))
             );
         }
-        return list;
-    }, [territoryCadeias, selectedTipo, selectedSegmento, searchQuery]);
+        return list.map(c => ({
+            ...c,
+            corSegmento: getSegmentColor(c.segmento)
+        }));
+    }, [territoryCadeias, selectedTipo, selectedSegmento, searchQuery, getSegmentColor]);
 
     const compactCadeiasList = useMemo(() => {
         if (!sidebarSearch.trim()) return filteredCadeias;
@@ -468,33 +546,6 @@ export default function CadeiaPage() {
             normalizeName(c.municipio).includes(q)
         );
     }, [filteredCadeias, sidebarSearch]);
-
-    const baseCadeiasForStats = useMemo(() => {
-        let list = territoryCadeias;
-        if (selectedTipo !== 'todos') list = list.filter(c => c.tipo === selectedTipo);
-        return list;
-    }, [territoryCadeias, selectedTipo]);
-
-    const segmentStats = useMemo(() => {
-        if (!baseCadeiasForStats || baseCadeiasForStats.length === 0) return [];
-        const counts = {};
-        const total = baseCadeiasForStats.length;
-
-        baseCadeiasForStats.forEach(c => {
-            const seg = c.segmento || 'Outros Segmentos';
-            counts[seg] = (counts[seg] || 0) + 1;
-        });
-
-        const palette = filtroSemiarido ? SEMIARIDO_SEGMENT_PALETTE : SEGMENT_PALETTE;
-
-        return Object.entries(counts)
-            .map(([name, count], idx) => {
-                const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
-                const color = palette[idx % palette.length];
-                return { name, count, percent, color };
-            })
-            .sort((a, b) => b.count - a.count);
-    }, [baseCadeiasForStats, filtroSemiarido]);
 
     const totalMunicipiosBeneficiados = useMemo(() => {
         const munSet = new Set();
@@ -550,9 +601,9 @@ export default function CadeiaPage() {
                 ...t,
                 rank: idx + 1,
                 percentBar: Math.min(100, (t.count / maxCount) * 100),
-                heatColor: t.count >= 8 ? (filtroSemiarido ? '#B45309' : '#1D3557') : t.count >= 4 ? (filtroSemiarido ? '#D97706' : '#2563EB') : (filtroSemiarido ? '#F59E0B' : '#60A5FA')
+                heatColor: t.count >= 8 ? (filtroSemiarido ? chartTheme.goldenPalette[5] : chartTheme.palette[0]) : t.count >= 4 ? (filtroSemiarido ? chartTheme.goldenPalette[1] : chartTheme.palette[1]) : (filtroSemiarido ? chartTheme.goldenPalette[2] : chartTheme.palette[4])
             }));
-    }, [activeScopedCadeias, filtroSemiarido]);
+    }, [activeScopedCadeias, filtroSemiarido, chartTheme.goldenPalette, chartTheme.palette]);
 
     const municipalityRanking = useMemo(() => {
         if (!filteredCadeias || filteredCadeias.length === 0) return [];
@@ -575,11 +626,20 @@ export default function CadeiaPage() {
                 count,
                 rank: idx + 1,
                 percentBar: Math.min(100, (count / maxCount) * 100),
-                heatColor: count >= 5 ? (filtroSemiarido ? '#B45309' : '#1D3557') : count >= 2 ? (filtroSemiarido ? '#D97706' : '#2563EB') : (filtroSemiarido ? '#F59E0B' : '#60A5FA')
+                heatColor: count >= 5 ? (filtroSemiarido ? chartTheme.goldenPalette[5] : chartTheme.palette[0]) : count >= 2 ? (filtroSemiarido ? chartTheme.goldenPalette[1] : chartTheme.palette[1]) : (filtroSemiarido ? chartTheme.goldenPalette[2] : chartTheme.palette[4])
             }));
-    }, [selectedTerritory, filteredCadeias, filtroSemiarido]);
+    }, [selectedTerritory, filteredCadeias, filtroSemiarido, chartTheme.goldenPalette, chartTheme.palette]);
 
     const topSegment = segmentStats[0];
+
+    const rankingBaseColor = filtroSemiarido
+        ? (chartTheme.accent || 'rgb(228, 150, 24)')
+        : (chartTheme.primary || 'rgb(37, 112, 184)');
+
+    const getRankingBarOpacity = (index, totalItems) => {
+        if (!totalItems || totalItems <= 8) return 1;
+        return Math.max(0.45, 1 - (index / Math.max(1, totalItems - 1)) * 0.55);
+    };
 
     const semiaridoMetrics = useMemo(() => {
         const total = enrichedCadeias.length || 1;
@@ -699,7 +759,12 @@ export default function CadeiaPage() {
             </div>
 
             {/* GRID DE KPIS */}
-            <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
+            <motion.div
+                variants={staggerContainer(0.04)}
+                initial="initial"
+                animate="animate"
+                className="tour-kpis w-full relative z-10 shrink-0 min-w-0"
+            >
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0">
                     {loadingStats ? (
                         <KpiSkeleton count={5} />
@@ -708,57 +773,68 @@ export default function CadeiaPage() {
                             const isHero = index === 0;
 
                             return (
-                                <Card
+                                <motion.div
                                     key={index}
-                                    variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
-                                    title={kpi.tooltip || kpi.label}
-                                    className="p-4 flex flex-col justify-between min-h-[92px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
+                                    variants={fadeUp}
+                                    className="h-full"
                                 >
-                                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                    <div className="flex items-center gap-2 w-full min-w-0">
-                                        <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
-                                        <span
-                                            className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
-                                                isHero ? 'text-white/80' : 'text-text-muted'
-                                            }`}
-                                            title={kpi.label}
-                                        >
-                                            {kpi.label}
-                                        </span>
-                                    </div>
-
-                                    {/* LINHA INFERIOR: NÚMERO */}
-                                    <div className="flex items-baseline w-full justify-between">
-                                        <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                            <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
-                                                isHero ? 'text-white' : 'text-text-primary'
-                                            }`}>
-                                                {kpi.value}
+                                    <Card
+                                        variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
+                                        title={kpi.tooltip || kpi.label}
+                                        className="p-4 flex flex-col justify-between min-h-[92px] min-w-0 h-full transition-all duration-300 hover:shadow-card-elevated"
+                                    >
+                                        {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                                        <div className="flex items-center gap-2 w-full min-w-0">
+                                            <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
+                                            <span
+                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
+                                                    isHero ? 'text-white/80' : 'text-text-muted'
+                                                }`}
+                                                title={kpi.label}
+                                            >
+                                                {kpi.label}
                                             </span>
-                                            {filtroSemiarido && kpi.percent && (
-                                                <span
-                                                    title={`(${kpi.percent})`}
-                                                    className={`text-caption font-semibold truncate ${
-                                                        isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
-                                                    }`}
-                                                >
-                                                    ({kpi.percent})
-                                                </span>
-                                            )}
                                         </div>
-                                    </div>
-                                </Card>
+
+                                        {/* LINHA INFERIOR: NÚMERO */}
+                                        <div className="flex items-baseline w-full justify-between">
+                                            <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
+                                                    isHero ? 'text-white' : 'text-text-primary'
+                                                }`}>
+                                                    {kpi.value}
+                                                </span>
+                                                {filtroSemiarido && kpi.percent && (
+                                                    <span
+                                                        title={`(${kpi.percent})`}
+                                                        className={`text-caption font-semibold truncate ${
+                                                            isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                        }`}
+                                                    >
+                                                        ({kpi.percent})
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </motion.div>
                             );
                         })
                     )}
                 </div>
-            </div>
+            </motion.div>
 
             {/* GRID PRINCIPAL: MAPA (40% ou Expandido) + CARDLISTA ou KPIS VERTICAIS */}
-            <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4">
+            <motion.div
+                variants={staggerContainer(0.04)}
+                initial="initial"
+                animate="animate"
+                className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4"
+            >
 
                 {/* MAPA DE CADEIAS */}
-                <div
+                <motion.div
+                    variants={fadeUp}
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
                     className="shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-0 min-w-0 transition-[width] duration-300"
                 >
@@ -776,12 +852,16 @@ export default function CadeiaPage() {
                         onAssetClick={handleSelectFromMap}
                         isExpanded={isMapExpanded}
                         onToggleExpand={() => setIsMapExpanded(prev => !prev)}
+                        getSegmentColor={getSegmentColor}
                     />
-                </div>
+                </motion.div>
 
                 {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
                 {isMapExpanded ? (
-                    <div className="w-[320px] shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card p-4 flex flex-col min-h-0 min-w-0 overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                    <motion.div
+                        variants={fadeUp}
+                        className="w-[320px] shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card p-4 flex flex-col min-h-0 min-w-0 overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300"
+                    >
                         {/* CABEÇALHO DA LISTA COMPACTA */}
                         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
                             <div className="flex items-center gap-2 min-w-0">
@@ -827,7 +907,7 @@ export default function CadeiaPage() {
                                 compactCadeiasList.map((c, idx) => {
                                     const IconComp = c.icone || Wheat;
                                     const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
-                                    const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo) : c.corHex;
+                                    const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo, chartTheme) : c.corHex;
                                     const tipoVariant = getTipoBadgeVariant(c.tipo);
 
                                     return (
@@ -859,7 +939,7 @@ export default function CadeiaPage() {
                                                 <div
                                                     className="w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-transform group-hover:scale-105"
                                                     style={{
-                                                        backgroundColor: `${itemColor}20`,
+                                                        backgroundColor: getAlphaColor(itemColor),
                                                         color: itemColor
                                                     }}
                                                 >
@@ -873,8 +953,14 @@ export default function CadeiaPage() {
                                                     }`}>
                                                         {c.entidade}
                                                     </h5>
-                                                    <span className="text-micro text-text-secondary truncate leading-tight">
-                                                        {c.segmento} • <strong className="font-semibold text-text-secondary">{c.municipio_sede}</strong>
+                                                    <span className="text-micro text-text-secondary truncate leading-tight flex items-center gap-1.5">
+                                                        <span
+                                                            className="w-1.5 h-1.5 rounded-full shrink-0"
+                                                            style={{ backgroundColor: getSegmentColor(c.segmento) }}
+                                                        />
+                                                        <span className="truncate">
+                                                            {c.segmento} • <strong className="font-semibold text-text-secondary">{c.municipio_sede}</strong>
+                                                        </span>
                                                     </span>
                                                 </div>
                                             </div>
@@ -896,10 +982,13 @@ export default function CadeiaPage() {
                                 />
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 ) : (
                     /* LADO DIREITO: TABS, FILTROS E CONTEÚDO */
-                    <div className="flex-1 min-w-0 h-[520px] lg:h-full flex flex-col gap-3 min-h-0 overflow-hidden">
+                    <motion.div
+                        variants={fadeUp}
+                        className="flex-1 min-w-0 h-[520px] lg:h-full flex flex-col gap-3 min-h-0 overflow-hidden"
+                    >
                         {/* BARRA SUPERIOR: TABS + BUSCA */}
                         <div className="flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0">
                             <Tabs
@@ -1041,7 +1130,7 @@ export default function CadeiaPage() {
                                                 const IconComp = c.icone || Wheat;
                                                 const totalAbrangencia = (c.municipios_cobertos && c.municipios_cobertos.length > 0) ? c.municipios_cobertos.length : 1;
                                                 const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
-                                                const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo) : c.corHex;
+                                                const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo, chartTheme) : c.corHex;
                                                 const tipoVariant = getTipoBadgeVariant(c.tipo);
 
                                                 const listaNomes = (c.municipios_cobertos && c.municipios_cobertos.length > 0)
@@ -1078,7 +1167,7 @@ export default function CadeiaPage() {
                                                                 <div
                                                                     className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform group-hover:scale-105"
                                                                     style={{
-                                                                        backgroundColor: `${itemColor}20`,
+                                                                        backgroundColor: getAlphaColor(itemColor),
                                                                         color: itemColor
                                                                     }}
                                                                 >
@@ -1094,7 +1183,15 @@ export default function CadeiaPage() {
                                                                     </h4>
 
                                                                     <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-caption text-text-secondary mt-1 font-medium">
-                                                                        <Badge variant="neutral" className="text-micro font-medium">
+                                                                        <Badge
+                                                                            variant="neutral"
+                                                                            className="text-micro font-medium"
+                                                                            style={{
+                                                                                backgroundColor: `${getSegmentColor(c.segmento)}15`,
+                                                                                color: getSegmentColor(c.segmento),
+                                                                                borderColor: `${getSegmentColor(c.segmento)}30`
+                                                                            }}
+                                                                        >
                                                                             {c.segmento}
                                                                         </Badge>
                                                                         <span>•</span>
@@ -1179,7 +1276,7 @@ export default function CadeiaPage() {
                             {/* ABA 2: SEGMENTOS */}
                             {activeTab === 'segmentos' && (
                                 <div className="flex-1 flex flex-col min-h-0 w-full overflow-hidden">
-                                    <div className="mb-3 shrink-0 flex items-center justify-between">
+                                    <div className="mb-2.5 shrink-0 flex items-center justify-between">
                                         <div>
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Segmentos em ${territoryName}` : 'Segmentos Econômicos da Bahia'}
@@ -1191,11 +1288,30 @@ export default function CadeiaPage() {
                                         </Badge>
                                     </div>
 
+                                    {/* LEGENDA DE SEGMENTOS: TOP 7 DESTACADOS + DEMAIS SEGMENTOS */}
+                                    <div className="flex items-center gap-2.5 text-micro text-text-muted mb-2 px-0.5 shrink-0 flex-wrap">
+                                        <span className="flex items-center gap-1.5 font-medium">
+                                            <span
+                                                className="w-2 h-2 rounded-full"
+                                                style={{ backgroundColor: chartTheme.palette?.[0] }}
+                                            />
+                                            Top 7 segmentos (em destaque)
+                                        </span>
+                                        <span className="text-border-strong">•</span>
+                                        <span className="flex items-center gap-1.5 font-medium">
+                                            <span
+                                                className="w-2 h-2 rounded-full"
+                                                style={{ backgroundColor: neutralSegmentColor }}
+                                            />
+                                            Demais segmentos
+                                        </span>
+                                    </div>
+
                                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full">
                                         {segmentStats.length > 0 ? (
                                             segmentStats.map((seg) => {
                                                 const isSelected = selectedSegmento === seg.name;
-                                                const dotColor = seg.color;
+                                                const dotColor = getSegmentColor(seg.name);
 
                                                 return (
                                                     <div
@@ -1219,12 +1335,17 @@ export default function CadeiaPage() {
                                                             <div className="flex items-center gap-2 min-w-0">
                                                                 <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: dotColor }} />
                                                                 <span className="text-body-sm font-semibold text-text-primary truncate">{seg.name}</span>
+                                                                {!seg.isTop7 && (
+                                                                    <span className="text-micro font-medium text-text-muted px-1.5 py-0.5 rounded-control bg-surface-soft border border-border/60 shrink-0">
+                                                                        Demais segmentos
+                                                                    </span>
+                                                                )}
                                                             </div>
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-caption font-medium text-text-secondary tnum">{seg.count} {seg.count === 1 ? 'arranjo' : 'arranjos'}</span>
                                                                 <span
                                                                     className="text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none tnum"
-                                                                    style={{ backgroundColor: `${seg.color}20`, color: seg.color }}
+                                                                    style={{ backgroundColor: `${dotColor}20`, color: dotColor }}
                                                                 >
                                                                     {seg.percent}%
                                                                 </span>
@@ -1235,7 +1356,7 @@ export default function CadeiaPage() {
                                                         }`}>
                                                             <div
                                                                 className="h-full rounded-full transition-all duration-500"
-                                                                style={{ width: `${seg.percent}%`, backgroundColor: seg.color }}
+                                                                style={{ width: `${seg.percent}%`, backgroundColor: dotColor }}
                                                             />
                                                         </div>
                                                     </div>
@@ -1293,10 +1414,12 @@ export default function CadeiaPage() {
                                                             filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
                                                         }`}>
                                                             <div
-                                                                className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
-                                                                    filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
-                                                                }`}
-                                                                style={{ width: `${m.percentBar}%` }}
+                                                                className="absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500"
+                                                                style={{
+                                                                    width: `${m.percentBar}%`,
+                                                                    backgroundColor: rankingBaseColor,
+                                                                    opacity: getRankingBarOpacity(index, municipalityRanking.length)
+                                                                }}
                                                             />
                                                             <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${
                                                                 filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
@@ -1343,10 +1466,12 @@ export default function CadeiaPage() {
                                                             filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
                                                         }`}>
                                                             <div
-                                                                className={`absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500 ${
-                                                                    filtroSemiarido ? 'bg-amber-300/70' : 'bg-primary-200/50'
-                                                                }`}
-                                                                style={{ width: `${t.percentBar}%` }}
+                                                                className="absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500"
+                                                                style={{
+                                                                    width: `${t.percentBar}%`,
+                                                                    backgroundColor: rankingBaseColor,
+                                                                    opacity: getRankingBarOpacity(index, territoryRanking.length)
+                                                                }}
                                                             />
                                                             <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${
                                                                 filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
@@ -1374,10 +1499,10 @@ export default function CadeiaPage() {
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 )}
 
-            </div>
+            </motion.div>
 
             {/* DRAWER LATERAL DE DETALHES DA CADEIA */}
             <Drawer
@@ -1424,7 +1549,15 @@ export default function CadeiaPage() {
                                 >
                                     {selectedCadeiaDrawer.tipo}
                                 </Badge>
-                                <Badge variant="neutral" className="text-caption">
+                                <Badge
+                                    variant="neutral"
+                                    className="text-caption font-semibold"
+                                    style={{
+                                        backgroundColor: `${getSegmentColor(selectedCadeiaDrawer.segmento)}15`,
+                                        color: getSegmentColor(selectedCadeiaDrawer.segmento),
+                                        borderColor: `${getSegmentColor(selectedCadeiaDrawer.segmento)}35`
+                                    }}
+                                >
                                     {selectedCadeiaDrawer.segmento}
                                 </Badge>
                                 {isMunicipioSemiarido(selectedCadeiaDrawer.municipio_sede) && (

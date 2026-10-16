@@ -38,6 +38,8 @@ import {
     KpiSkeleton,
     ListRowSkeleton
 } from './ui';
+import { motion } from 'framer-motion';
+import { fadeUp, staggerContainer } from '../lib/motion';
 
 function normalizeName(name) {
     if (!name) return '';
@@ -574,7 +576,12 @@ export default function AtivosPage() {
 
             {/* GRID DE KPIS */}
             <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0">
+                <motion.div
+                    variants={staggerContainer(0.04)}
+                    initial="initial"
+                    animate="animate"
+                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0"
+                >
                     {loadingStats ? (
                         Array.from({ length: 5 }).map((_, i) => (
                             <KpiSkeleton key={i} />
@@ -594,77 +601,84 @@ export default function AtivosPage() {
                             const isClickable = isRnpKpi;
 
                             return (
-                                <Card
-                                    key={index}
-                                    title={isRnpKpi ? (filterRnp === 'com_rnp' ? 'Clique para desativar filtro de RNP' : 'Clique para filtrar apenas ativos com RNP') : (kpi.tooltip || kpi.label)}
-                                    variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
-                                    onClick={() => {
-                                        if (isRnpKpi) {
-                                            setFilterRnp(prev => prev === 'com_rnp' ? 'todos' : 'com_rnp');
-                                            setActiveTab('catalogo');
-                                        }
-                                    }}
-                                    className={`p-4 flex flex-col justify-between h-[96px] overflow-hidden min-w-0 transition-all duration-300 ${
-                                        isClickable ? 'cursor-pointer hover:shadow-card-hover' : 'cursor-default'
-                                    } ${
-                                        isRnpKpi && filterRnp === 'com_rnp'
-                                            ? (filtroSemiarido ? 'ring-2 ring-amber-500 bg-amber-500/10' : 'ring-2 ring-emerald-500 bg-emerald-500/10')
-                                            : ''
-                                    } ${
-                                        isHero && filtroSemiarido
-                                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card shadow-amber-500/20 border border-amber-400/40'
-                                            : ''
-                                    } ${
-                                        !isHero && filtroSemiarido
-                                            ? 'border-amber-200/50 dark:border-amber-500/30'
-                                            : ''
-                                    }`}
-                                >
-                                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                    <div className="flex items-center gap-2 w-full min-w-0">
-                                        <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
-                                        <span
-                                            className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
-                                                isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
-                                            }`}
-                                            title={kpi.label}
-                                        >
-                                            {kpi.label}
-                                        </span>
-                                    </div>
-
-                                    {/* LINHA INFERIOR: NÚMERO */}
-                                    <div className="flex items-baseline w-full justify-between min-w-0">
-                                        <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                            <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
-                                                isHero ? 'text-white' : 'text-text-primary'
-                                            }`}>
-                                                {kpi.value}
+                                <motion.div key={index} variants={fadeUp} className="h-full">
+                                    <Card
+                                        title={isRnpKpi ? (filterRnp === 'com_rnp' ? 'Clique para desativar filtro de RNP' : 'Clique para filtrar apenas ativos com RNP') : (kpi.tooltip || kpi.label)}
+                                        variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
+                                        onClick={() => {
+                                            if (isRnpKpi) {
+                                                setFilterRnp(prev => prev === 'com_rnp' ? 'todos' : 'com_rnp');
+                                                setActiveTab('catalogo');
+                                            }
+                                        }}
+                                        className={`p-4 flex flex-col justify-between h-[96px] overflow-hidden min-w-0 transition-all duration-300 ${
+                                            isClickable ? 'cursor-pointer hover:shadow-card-hover' : 'cursor-default'
+                                        } ${
+                                            isRnpKpi && filterRnp === 'com_rnp'
+                                                ? (filtroSemiarido ? 'ring-2 ring-amber-500 bg-amber-500/10' : 'ring-2 ring-emerald-500 bg-emerald-500/10')
+                                                : ''
+                                        } ${
+                                            isHero && filtroSemiarido
+                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card shadow-amber-500/20 border border-amber-400/40'
+                                                : ''
+                                        } ${
+                                            !isHero && filtroSemiarido
+                                                ? 'border-amber-200/50 dark:border-amber-500/30'
+                                                : ''
+                                        }`}
+                                    >
+                                        {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                                        <div className="flex items-center gap-2 w-full min-w-0">
+                                            <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
+                                            <span
+                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
+                                                    isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                                                }`}
+                                                title={kpi.label}
+                                            >
+                                                {kpi.label}
                                             </span>
-                                            {filtroSemiarido && kpi.percent && (
-                                                <span
-                                                    title={`(${kpi.percent})`}
-                                                    className={`text-caption font-semibold truncate ${
-                                                        isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
-                                                    }`}
-                                                >
-                                                    ({kpi.percent})
-                                                </span>
-                                            )}
                                         </div>
-                                    </div>
-                                </Card>
+
+                                        {/* LINHA INFERIOR: NÚMERO */}
+                                        <div className="flex items-baseline w-full justify-between min-w-0">
+                                            <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
+                                                    isHero ? 'text-white' : 'text-text-primary'
+                                                }`}>
+                                                    {kpi.value}
+                                                </span>
+                                                {filtroSemiarido && kpi.percent && (
+                                                    <span
+                                                        title={`(${kpi.percent})`}
+                                                        className={`text-caption font-semibold truncate ${
+                                                            isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                                                        }`}
+                                                    >
+                                                        ({kpi.percent})
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </motion.div>
                             );
                         })
                     )}
-                </div>
+                </motion.div>
             </div>
 
             {/* GRID PRINCIPAL: MAPA (calc(40% - 12px) ou Expandido) + DASHBOARD / KPIS VERTICAIS */}
-            <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+            <motion.div
+                variants={staggerContainer(0.04)}
+                initial="initial"
+                animate="animate"
+                className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]"
+            >
 
                 {/* LADO ESQUERDO: MAPA DE PONTOS DE ATIVOS */}
-                <div
+                <motion.div
+                    variants={fadeUp}
                     style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
                     className="shrink-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] min-w-0 transition-[width] duration-300"
                 >
@@ -682,11 +696,11 @@ export default function AtivosPage() {
                         isExpanded={isMapExpanded}
                         onToggleExpand={() => setIsMapExpanded(prev => !prev)}
                     />
-                </div>
+                </motion.div>
 
                 {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
                 {isMapExpanded ? (
-                    <div className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col min-h-0 min-w-0 overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                    <motion.div variants={fadeUp} className="w-[305px] shrink-0 h-[460px] lg:h-full bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col min-h-0 min-w-0 overflow-hidden">
                         {/* CABEÇALHO DA LISTA COMPACTA */}
                         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
                             <div className="flex items-center gap-2 min-w-0">
@@ -896,10 +910,10 @@ export default function AtivosPage() {
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 ) : (
                     /* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS */
-                    <div className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
+                    <motion.div variants={fadeUp} className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0">
 
                         {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
                         <div className="bg-surface rounded-card p-2.5 border border-border shadow-card flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0 min-w-0 relative z-30 overflow-visible">
@@ -1701,10 +1715,10 @@ export default function AtivosPage() {
                             )}
 
                         </div>
-                    </div>
+                    </motion.div>
                 )}
 
-            </div>
+            </motion.div>
 
             {/* DRAWER DE DETALHES DO ATIVO */}
             <Drawer

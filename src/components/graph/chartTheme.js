@@ -57,6 +57,17 @@ export function useChartTheme() {
       resolveCssRgb('--color-chart-8', isDark ? 'rgb(148, 163, 184)' : 'rgb(123, 138, 153)'),
     ];
 
+    const goldenPalette = [
+      resolveCssRgb('--color-accent-600', isDark ? 'rgb(245, 176, 42)' : 'rgb(192, 138, 28)'),
+      resolveCssRgb('--color-accent-500', isDark ? 'rgb(228, 150, 24)' : 'rgb(214, 162, 48)'),
+      resolveCssRgb('--color-accent-400', isDark ? 'rgb(250, 196, 70)' : 'rgb(234, 186, 78)'),
+      resolveCssRgb('--color-accent-700', isDark ? 'rgb(252, 211, 77)' : 'rgb(161, 110, 18)'),
+      resolveCssRgb('--color-accent-300', isDark ? 'rgb(252, 211, 77)' : 'rgb(245, 208, 115)'),
+      resolveCssRgb('--color-accent-800', isDark ? 'rgb(96, 52, 16)' : 'rgb(115, 68, 15)'),
+      resolveCssRgb('--color-accent-200', isDark ? 'rgb(253, 230, 138)' : 'rgb(248, 225, 165)'),
+      resolveCssRgb('--color-accent-900', isDark ? 'rgb(68, 36, 12)' : 'rgb(78, 46, 10)'),
+    ];
+
     const primary = resolveCssRgb('--color-primary-600', isDark ? 'rgb(54, 126, 196)' : 'rgb(37, 112, 184)');
     const accent = resolveCssRgb('--color-accent-500', isDark ? 'rgb(228, 150, 24)' : 'rgb(214, 162, 48)');
     const success = resolveCssRgb('--color-success-600', isDark ? 'rgb(34, 197, 94)' : 'rgb(38, 138, 98)');
@@ -71,6 +82,8 @@ export function useChartTheme() {
     return {
       isDark,
       palette,
+      goldenPalette,
+      semiaridoPalette: goldenPalette,
       primary,
       accent,
       success,

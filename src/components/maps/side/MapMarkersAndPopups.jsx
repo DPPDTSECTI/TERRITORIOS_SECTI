@@ -63,15 +63,17 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
   );
 }
 
-export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false }) {
+export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getSegmentColor = null }) {
   if (!cadeia) return null;
   const badgeColor = filtroSemiarido
     ? getSemiaridoPointColor(cadeia.corHex, cadeia.tipo || cadeia.shortTipo || cadeia.nome)
     : (cadeia.corHex || '#2563EB');
 
+  const corSegmento = cadeia?.corSegmento || (getSegmentColor && cadeia?.segmento ? getSegmentColor(cadeia.segmento) : null);
+
   return (
     <div className="p-3 max-w-[280px] text-left select-text font-sans bg-surface text-text-primary border border-border rounded-card">
-      <div className="flex items-center gap-2 mb-1.5">
+      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
         <span
           className="text-micro font-semibold uppercase tracking-wider px-2 py-0.5 rounded-control"
           style={{
@@ -81,6 +83,18 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false }) {
         >
           {cadeia.shortTipo || cadeia.tipo || 'Cadeia Produtiva'}
         </span>
+        {cadeia.segmento && (
+          <span
+            className="text-micro font-semibold px-2 py-0.5 rounded-control border border-border/60"
+            style={corSegmento ? {
+              backgroundColor: `${corSegmento}18`,
+              color: corSegmento,
+              borderColor: `${corSegmento}35`
+            } : undefined}
+          >
+            {cadeia.segmento}
+          </span>
+        )}
       </div>
 
       <h4 className="text-body-sm font-semibold text-text-primary leading-snug mb-1.5">
@@ -128,7 +142,7 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false }) {
   );
 }
 
-export function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false }) {
+export function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
   return (
     <Marker
       key={elem.key}
@@ -153,14 +167,14 @@ export function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAss
         </Popup>
       ) : (
         <Popup className="custom-premium-popup" autoPan={true}>
-          <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} />
+          <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} getSegmentColor={getSegmentColor} />
         </Popup>
       )}
     </Marker>
   );
 }
 
-export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode, filtroSemiarido = false }) {
+export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode, filtroSemiarido = false, getSegmentColor = null }) {
   const map = useMap();
   const { isDark } = useTheme();
   const [bounds, setBounds] = useState(null);
@@ -344,6 +358,7 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
             isSelected={isSelected}
             mode={mode}
             filtroSemiarido={filtroSemiarido}
+            getSegmentColor={getSegmentColor}
           />
         );
       })}

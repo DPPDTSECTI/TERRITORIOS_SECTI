@@ -35,23 +35,17 @@ import {
     KpiSkeleton,
     ListRowSkeleton
 } from './ui';
+import { useChartTheme } from './graph/chartTheme';
+import { motion } from 'framer-motion';
+import { fadeUp, staggerContainer } from '../lib/motion';
 
-const PALETTE_CORES = ['#2563EB', '#10B981', '#06B6D4', '#F59E0B', '#8B5CF6', '#EC4899', '#14B8A6', '#6366F1'];
-
-const SEMIARIDO_PALETTE_CORES = [
-    '#D97706', // Âmbar Intenso
-    '#F59E0B', // Âmbar Dourado
-    '#CA8A04', // Ouro Mostarda
-    '#B45309', // Âmbar Terracota
-    '#EAB308', // Amarelo Girassol
-    '#FBBF24', // Calêndula Solar
-    '#92400E', // Castanho Dourado
-    '#CD7F32', // Bronze Âmbar
-    '#D48806', // Mel Queimado
-    '#ECC94B', // Trigo Ouro
-    '#B8860B', // Dark Goldenrod
-    '#78350F'  // Ocre Profundo
-];
+function getAlphaColor(color, alpha = 0.12) {
+    if (!color) return 'transparent';
+    if (color.startsWith('rgb(')) {
+        return color.replace('rgb(', 'rgba(').replace(')', `, ${alpha})`);
+    }
+    return color.startsWith('#') ? `${color}20` : color;
+}
 
 export function cleanIesName(name, municipio) {
     if (!name) return '';
@@ -90,6 +84,7 @@ export function isCursoEad(c) {
 }
 
 export default function CursosPage() {
+    const chartTheme = useChartTheme();
     const {
         cursosData = [],
         cursosEadData = [],
@@ -324,7 +319,7 @@ export default function CursosPage() {
             counts[cat].total += 1;
         });
 
-        const palette = filtroSemiarido ? SEMIARIDO_PALETTE_CORES : PALETTE_CORES;
+        const palette = filtroSemiarido ? chartTheme.semiaridoPalette : chartTheme.palette;
 
         return Object.entries(counts)
             .map(([name, data], idx) => {
@@ -339,7 +334,7 @@ export default function CursosPage() {
                 };
             })
             .sort((a, b) => b.count - a.count);
-    }, [activeScopedCursos, filtroSemiarido]);
+    }, [activeScopedCursos, filtroSemiarido, chartTheme.semiaridoPalette, chartTheme.palette]);
 
     const categoryColorMap = useMemo(() => {
         const map = {};
@@ -570,7 +565,12 @@ export default function CursosPage() {
 
             {/* GRID DE KPIS */}
             <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0">
+                <motion.div
+                    variants={staggerContainer(0.04)}
+                    initial="initial"
+                    animate="animate"
+                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0"
+                >
                     {loadingStats ? (
                         <KpiSkeleton count={5} />
                     ) : (
@@ -578,57 +578,64 @@ export default function CursosPage() {
                             const isHero = index === 0;
 
                             return (
-                                <Card
-                                    key={index}
-                                    variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
-                                    title={kpi.tooltip || kpi.label}
-                                    className="p-4 flex flex-col justify-between h-[88px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
-                                >
-                                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                    <div className="flex items-center gap-2 w-full min-w-0">
-                                        <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
-                                        <span
-                                            className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
-                                                isHero ? 'text-white/80' : 'text-text-muted'
-                                            }`}
-                                            title={kpi.label}
-                                        >
-                                            {kpi.label}
-                                        </span>
-                                    </div>
-
-                                    {/* LINHA INFERIOR: NÚMERO */}
-                                    <div className="flex items-baseline w-full justify-between">
-                                        <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                            <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
-                                                isHero ? 'text-white' : 'text-text-primary'
-                                            }`}>
-                                                {kpi.value}
+                                <motion.div key={index} variants={fadeUp} className="h-full">
+                                    <Card
+                                        variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
+                                        title={kpi.tooltip || kpi.label}
+                                        className="p-4 flex flex-col justify-between h-[88px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
+                                    >
+                                        {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
+                                        <div className="flex items-center gap-2 w-full min-w-0">
+                                            <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
+                                            <span
+                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
+                                                    isHero ? 'text-white/80' : 'text-text-muted'
+                                                }`}
+                                                title={kpi.label}
+                                            >
+                                                {kpi.label}
                                             </span>
-                                            {filtroSemiarido && kpi.percent && (
-                                                <span
-                                                    title={`(${kpi.percent})`}
-                                                    className={`text-caption font-semibold truncate ${
-                                                        isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
-                                                    }`}
-                                                >
-                                                    ({kpi.percent})
-                                                </span>
-                                            )}
                                         </div>
-                                    </div>
-                                </Card>
+
+                                        {/* LINHA INFERIOR: NÚMERO */}
+                                        <div className="flex items-baseline w-full justify-between">
+                                            <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
+                                                    isHero ? 'text-white' : 'text-text-primary'
+                                                }`}>
+                                                    {kpi.value}
+                                                </span>
+                                                {filtroSemiarido && kpi.percent && (
+                                                    <span
+                                                        title={`(${kpi.percent})`}
+                                                        className={`text-caption font-semibold truncate ${
+                                                            isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                        }`}
+                                                    >
+                                                        ({kpi.percent})
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </motion.div>
                             );
                         })
                     )}
-                </div>
+                </motion.div>
             </div>
 
             {/* GRID PRINCIPAL: MAPA + DASHBOARD */}
-            <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+            <motion.div
+                variants={staggerContainer(0.04)}
+                initial="initial"
+                animate="animate"
+                className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]"
+            >
 
                 {/* LADO ESQUERDO: MAPA */}
-                <div
+                <motion.div
+                    variants={fadeUp}
                     style={{ width: isMapExpanded ? 'calc(100% - 330px)' : 'calc(40% - 12px)' }}
                     className="shrink-0 min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
                 >
@@ -644,11 +651,11 @@ export default function CursosPage() {
                         isExpanded={isMapExpanded}
                         onToggleExpand={() => setIsMapExpanded(prev => !prev)}
                     />
-                </div>
+                </motion.div>
 
                 {/* MODO EXPANDIDO */}
                 {isMapExpanded ? (
-                    <div className="w-[320px] shrink-0 h-[460px] lg:h-full bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col min-h-0 animate-in fade-in slide-in-from-right-4 duration-300 overflow-hidden">
+                    <motion.div variants={fadeUp} className="w-[320px] shrink-0 h-[460px] lg:h-full bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col min-h-0 overflow-hidden">
                         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
                             <div className="flex items-center gap-2 min-w-0">
                                 <span className="text-body-sm font-semibold text-text-primary truncate">
@@ -683,7 +690,7 @@ export default function CursosPage() {
                         <div className="flex-1 overflow-y-auto pr-1 flex flex-col min-h-0 divide-y divide-border/40">
                             {compactCursosList.length > 0 ? (
                                 compactCursosList.map((c, idx) => {
-                                    const catColor = categoryColorMap[c.categoria || c.tipo] || '#64748B';
+                                    const catColor = categoryColorMap[c.categoria || c.tipo] || chartTheme.textMuted;
                                     const cursoKey = c.id_curso || c.id || `${c.curso || c.nome}-${c.municipio}-${idx}`;
                                     const isSelected = selectedCursoId === cursoKey;
                                     const redeInfo = classificarInstituicao(c);
@@ -705,7 +712,7 @@ export default function CursosPage() {
                                                 <div
                                                     className={`w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-transform ${isSelected ? 'scale-105 shadow-2xs' : ''}`}
                                                     style={{
-                                                        backgroundColor: `${catColor}20`,
+                                                        backgroundColor: getAlphaColor(catColor),
                                                         color: catColor
                                                     }}
                                                 >
@@ -730,7 +737,7 @@ export default function CursosPage() {
                                                 </Badge>
                                                 <span
                                                     className="text-micro font-semibold px-1.5 py-0.5 rounded-control shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
-                                                    style={{ backgroundColor: `${catColor}18`, color: catColor }}
+                                                    style={{ backgroundColor: getAlphaColor(catColor, 0.1), color: catColor }}
                                                 >
                                                     {c.categoria || c.tipo || 'Geral'}
                                                 </span>
@@ -747,10 +754,10 @@ export default function CursosPage() {
                                 />
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 ) : (
                     /* LADO DIREITO: CATÁLOGO COM A NOVA ABA DE CURSOS EAD */
-                    <div className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
+                    <motion.div variants={fadeUp} className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0">
 
                         {/* BARRA SUPERIOR DE ABAS E BUSCA */}
                         <div className="bg-surface rounded-card p-2.5 border border-border shadow-card flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0 min-w-0 overflow-hidden">
@@ -936,7 +943,7 @@ export default function CursosPage() {
                                             </div>
                                         ) : filteredCursos.length > 0 ? (
                                             filteredCursos.map((c, idx) => {
-                                                const catColor = categoryColorMap[c.categoria || c.tipo] || '#2563EB';
+                                                const catColor = categoryColorMap[c.categoria || c.tipo] || chartTheme.palette[0];
                                                 const cursoKey = c.id || `${c.curso || c.nome}-${idx}`;
                                                 const isSelected = selectedCursoId === cursoKey;
                                                 const redeInfo = classificarInstituicao(c);
@@ -960,7 +967,7 @@ export default function CursosPage() {
                                                         <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
                                                             <div
                                                                 className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform"
-                                                                style={{ backgroundColor: `${catColor}20`, color: catColor }}
+                                                                style={{ backgroundColor: getAlphaColor(catColor), color: catColor }}
                                                             >
                                                                 <GraduationCap size={16} />
                                                             </div>
@@ -996,7 +1003,7 @@ export default function CursosPage() {
                                                             <span
                                                                 className="text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
                                                                 style={{
-                                                                    backgroundColor: `${catColor}20`,
+                                                                    backgroundColor: getAlphaColor(catColor),
                                                                     color: catColor
                                                                 }}
                                                             >
@@ -1069,7 +1076,7 @@ export default function CursosPage() {
                                             </div>
                                         ) : filteredEadCursos.length > 0 ? (
                                             filteredEadCursos.map((c, idx) => {
-                                                const catColor = categoryColorMap[c.categoria || c.tipo] || '#2563EB';
+                                                const catColor = categoryColorMap[c.categoria || c.tipo] || chartTheme.palette[0];
                                                 const redeInfo = classificarInstituicao(c);
 
                                                 return (
@@ -1082,7 +1089,7 @@ export default function CursosPage() {
                                                         <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
                                                             <div 
                                                                 className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform"
-                                                                style={{ backgroundColor: `${catColor}20`, color: catColor }}
+                                                                style={{ backgroundColor: getAlphaColor(catColor), color: catColor }}
                                                             >
                                                                 <Laptop size={16} />
                                                             </div>
@@ -1119,7 +1126,7 @@ export default function CursosPage() {
                                                             <span
                                                                 className="text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
                                                                 style={{ 
-                                                                    backgroundColor: `${catColor}20`, 
+                                                                    backgroundColor: getAlphaColor(catColor), 
                                                                     color: catColor 
                                                                 }}
                                                             >
@@ -1473,10 +1480,10 @@ export default function CursosPage() {
                             )}
 
                         </div>
-                    </div>
+                    </motion.div>
                 )}
 
-            </div>
+            </motion.div>
 
             {/* DRAWER LATERAL DE DETALHES DO CURSO */}
             <Drawer
@@ -1515,7 +1522,7 @@ export default function CursosPage() {
             >
                 {selectedCursoDrawer && (() => {
                     const redeInfo = classificarInstituicao(selectedCursoDrawer);
-                    const catColor = categoryColorMap[selectedCursoDrawer.categoria || selectedCursoDrawer.tipo] || '#2563EB';
+                    const catColor = categoryColorMap[selectedCursoDrawer.categoria || selectedCursoDrawer.tipo] || chartTheme.palette[0];
                     const modalidade = selectedCursoDrawer.modalidade || (selectedCursoDrawer.tipo_oferta?.toLowerCase().includes('ead') ? 'EaD / A Distância' : activeTab === 'ead' ? 'EaD / A Distância' : 'Presencial');
 
                     return (
@@ -1533,7 +1540,7 @@ export default function CursosPage() {
                                 </Badge>
                                 <span
                                     className="text-caption font-medium px-2.5 py-0.5 rounded-full inline-flex items-center"
-                                    style={{ backgroundColor: `${catColor}20`, color: catColor }}
+                                    style={{ backgroundColor: getAlphaColor(catColor), color: catColor }}
                                 >
                                     {selectedCursoDrawer.categoria || selectedCursoDrawer.tipo || 'CT&I'}
                                 </span>

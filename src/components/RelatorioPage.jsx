@@ -37,6 +37,7 @@ import {
   Chip,
   Badge,
   KpiCard,
+  PageHeader,
   useToast
 } from './ui';
 import {
@@ -1266,24 +1267,12 @@ export default function RelatorioPage() {
         </div>
 
         {/* ================= TOPO: CABEÇALHO DO MÓDULO DE RELATÓRIOS ================= */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 shrink-0 pr-4 relative z-10 print:hidden min-w-0">
-          <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400 p-2 rounded-control flex items-center justify-center border border-primary-200/50 dark:border-primary-800/50">
-                <FileText className="w-5 h-5" strokeWidth={2} />
-              </span>
-              <h1 className="text-display font-bold text-text-primary tracking-tight">
-                Relatórios Executivos de CT&I
-              </h1>
-              <Badge variant="success">
-                Dados Oficiais SECTI/BA
-              </Badge>
-            </div>
-            <p className="text-body-sm text-text-secondary font-normal mt-1 max-w-2xl">
-              Geração de relatórios, sínteses territoriais e exportação de dados consolidados
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          title="Relatórios Executivos de CT&I"
+          subtitle="Geração de relatórios, sínteses territoriais e exportação de dados consolidados"
+          badge={<Badge variant="success">Dados Oficiais SECTI/BA</Badge>}
+          className="mb-4 pr-4 relative z-10 print:hidden border-b-0 pb-0"
+        />
 
         {/* ================= CORPO PRINCIPAL: AS DUAS CAIXAS ESPECIFICADAS ================= */}
         <div id="relatorio-export-container" className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 overflow-hidden print:block print:h-auto print:overflow-visible min-h-0">
@@ -1352,7 +1341,6 @@ export default function RelatorioPage() {
       territoriesDynamicStats={territoriesDynamicStats}
       semiaridoMunicipios={reportMode === 'semiarido' ? SEMIARIDO_MUNICIPIOS : []}
       filtroSemiarido={reportMode === 'semiarido'}
-      onToggleSemiarido={() => setReportMode(m => m === 'semiarido' ? 'normal' : 'semiarido')}
     />
   );
   })()}
@@ -1503,18 +1491,19 @@ export default function RelatorioPage() {
     />
 
     <KpiCard
-      label="Cadeias Mapeadas"
+      label="Cadeias"
       value={statsSintese.totalCadeias}
       icon={GitPullRequest}
       hint="Setores econômicos"
     />
 
     <KpiCard
-      label="Cobertura CT&I"
-      value={`${statsSintese.munAtendidosCount} / ${statsSintese.totalMunEscopo}`}
+      label="Municípios"
+      value={<span className="whitespace-nowrap text-headline">{`${statsSintese.munAtendidosCount} / ${statsSintese.totalMunEscopo}`}</span>}
       format="raw"
       icon={MapPin}
       hint={`${statsSintese.taxaCoberturaMun}% dos municípios`}
+      className="[&_.text-kpi]:whitespace-nowrap [&_.text-kpi]:text-headline"
     />
   </div>
 

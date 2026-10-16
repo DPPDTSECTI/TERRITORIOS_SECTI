@@ -42,7 +42,8 @@ export function resolveCssRgb(varName, fallback = 'rgb(33, 95, 148)') {
  * @returns {object} Objeto com paleta choropleth, strokes, surface, border e tipografia
  */
 export function getMapPalette(isDark = false, isSemiarido = false) {
-  const surface = resolveCssRgb('--color-surface', isDark ? 'rgb(17, 25, 41)' : 'rgb(255, 255, 255)');
+  const surface = resolveCssRgb('--color-surface-sunken', isDark ? 'rgb(8, 12, 20)' : 'rgb(238, 243, 248)');
+  const surfaceSunken = resolveCssRgb('--color-surface-sunken', isDark ? 'rgb(8, 12, 20)' : 'rgb(238, 243, 248)');
   const textPrimary = resolveCssRgb('--color-text-primary', isDark ? 'rgb(241, 245, 249)' : 'rgb(16, 42, 67)');
   const textSecondary = resolveCssRgb('--color-text-secondary', isDark ? 'rgb(194, 206, 222)' : 'rgb(72, 101, 129)');
   const textMuted = resolveCssRgb('--color-text-muted', isDark ? 'rgb(150, 166, 188)' : 'rgb(130, 154, 178)');
@@ -74,6 +75,7 @@ export function getMapPalette(isDark = false, isSemiarido = false) {
         selected: isDark ? 'rgb(251, 191, 36)' : 'rgb(180, 83, 9)',
       },
       surface,
+      surfaceSunken,
       textPrimary,
       textSecondary,
       textMuted,
@@ -106,6 +108,7 @@ export function getMapPalette(isDark = false, isSemiarido = false) {
       selected: isDark ? 'rgb(96, 165, 250)' : 'rgb(29, 78, 216)',
     },
     surface,
+    surfaceSunken,
     textPrimary,
     textSecondary,
     textMuted,

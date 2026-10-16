@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback, useContext } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, Polyline, Tooltip, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, Marker, Popup, GeoJSON, Polyline, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
@@ -35,7 +35,6 @@ import {
 } from './side/mapIcons';
 
 import {
-  ZoomDependentTileLayer,
   MapPaneManager,
   MapClickHandler,
   TerritoryFocusController,
@@ -86,7 +85,8 @@ export default function SideMap({
   onAssetClick = () => { },
   isExpanded = false,
   onToggleExpand = null,
-  filtroSemiarido: propFiltroSemiarido
+  filtroSemiarido: propFiltroSemiarido,
+  getSegmentColor = null
 }) {
   const { filtroSemiarido: contextFiltroSemiarido, setFiltroSemiarido } = useContext(DataContext) || {};
   const filtroSemiarido = propFiltroSemiarido !== undefined ? Boolean(propFiltroSemiarido) : Boolean(contextFiltroSemiarido);
@@ -1097,7 +1097,7 @@ export default function SideMap({
   );
 
   return (
-    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-amber-50/40 dark:bg-amber-950/20' : 'bg-surface-sunken dark:bg-background'} bg-carto-grid rounded-panel overflow-hidden select-none z-10 flex-1`}>
+    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-amber-50/40 dark:bg-amber-950/20' : 'bg-surface-sunken'} bg-carto-grid rounded-panel overflow-hidden select-none z-10 flex-1`}>
       <MapContainer
         ref={mapRef}
         center={[-13.1, -41.7]}
@@ -1116,7 +1116,6 @@ export default function SideMap({
         <MapPaneManager />
         <MapResizeHandler isExpanded={isExpanded} />
         <MapZoomWatcher onZoomChange={setCurrentZoom} />
-        <ZoomDependentTileLayer />
         <MapClickHandler
           onClearPinned={() => setPinnedAssetId(null)}
           onClearTerritory={() => onSelectTerritory(null)}
@@ -1277,6 +1276,7 @@ export default function SideMap({
             selectedCadeia={selectedCadeia}
             mode={mode}
             filtroSemiarido={filtroSemiarido}
+            getSegmentColor={getSegmentColor}
           />
         )}
       </MapContainer>
@@ -1291,7 +1291,16 @@ export default function SideMap({
         ) && (
           <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
             <span
-              className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${filtroSemiarido ? 'bg-warning-600' : 'bg-primary-600'}`}
+              className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${
+                mode === 'cadeias' && selectedSegmento && getSegmentColor
+                  ? ''
+                  : (filtroSemiarido ? 'bg-warning-600' : 'bg-primary-600')
+              }`}
+              style={
+                mode === 'cadeias' && selectedSegmento && getSegmentColor
+                  ? { backgroundColor: getSegmentColor(selectedSegmento) }
+                  : undefined
+              }
             />
             <span className="text-caption font-semibold text-text-primary truncate">
               {mode === 'ativos' && (selectedTipos && selectedTipos.length > 1 ? `${selectedTipos.length} Tipos Selecionados` : `Categoria: ${selectedTipo || selectedTipos[0]}`)}
