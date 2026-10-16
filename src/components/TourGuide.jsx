@@ -3,6 +3,7 @@ import { Joyride, STATUS } from 'react-joyride';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { X, ChevronRight } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const CustomTooltip = ({
   continuous,
@@ -24,7 +25,7 @@ const CustomTooltip = ({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 6, scale: 0.98 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="bg-surface border border-border shadow-card-hover rounded-card p-4 sm:p-5 w-[330px] sm:w-[380px] relative z-50 flex flex-col font-sans overflow-hidden"
+      className="bg-surface-raised border border-border shadow-card-hover rounded-card p-4 sm:p-5 w-[330px] sm:w-[380px] relative z-50 flex flex-col font-sans overflow-hidden"
     >
       {/* Cabeçalho do Card */}
       <div className="flex items-center justify-between gap-2 mb-2.5">
@@ -111,6 +112,7 @@ const CustomTooltip = ({
 };
 
 export default function TourGuide() {
+  const { isDark } = useTheme();
   const [run, setRun] = useState(false);
   const [tourKey, setTourKey] = useState(0);
   const location = useLocation();
@@ -317,7 +319,7 @@ export default function TourGuide() {
       styles={{
         options: {
           zIndex: 10000,
-          arrowColor: '#ffffff', // A seta vai pegar a cor de fundo padrão
+          arrowColor: isDark ? 'rgb(24, 34, 54)' : '#ffffff', // A seta acompanha a cor do card no tema escuro
         },
         overlay: {
           backgroundColor: 'rgba(29, 53, 87, 0.4)', // Overlay mais escuro e elegante
