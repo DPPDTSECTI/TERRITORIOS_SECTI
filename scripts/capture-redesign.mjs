@@ -123,7 +123,7 @@ async function run() {
         await page.setViewportSize({ width: res.width, height: res.height });
 
         for (const theme of THEMES) {
-          const targetUrl = `${baseUrl}${route.path}`;
+          const targetUrl = `${baseUrl}${route.path}?theme=${theme}`;
           
           try {
             await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
@@ -135,9 +135,11 @@ async function run() {
           await page.evaluate((t) => {
             if (t === 'dark') {
               document.documentElement.classList.add('dark');
+              localStorage.setItem('secti-theme', 'dark');
               localStorage.setItem('theme', 'dark');
             } else {
               document.documentElement.classList.remove('dark');
+              localStorage.setItem('secti-theme', 'light');
               localStorage.setItem('theme', 'light');
             }
             // Remove overlay do Joyride se ativo
@@ -146,7 +148,7 @@ async function run() {
           }, theme);
 
           // Aguarda estabilização de fontes e transições
-          await page.waitForTimeout(600);
+          await page.waitForTimeout(900);
 
           // Medição de overflow horizontal
           const overflowData = await page.evaluate(() => {

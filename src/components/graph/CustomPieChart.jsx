@@ -83,6 +83,7 @@ export default function CustomPieChart({
               <PieChart width={130} height={130}>
                 <Tooltip content={<ChartTooltip />} />
                 <Pie
+                  isAnimationActive={false}
                   data={chartData}
                   cx="50%"
                   cy="50%"
@@ -165,7 +166,7 @@ export default function CustomPieChart({
 
                   const fillColor = isFirst
                     ? (isSemi ? 'bg-accent-500' : 'bg-primary-600')
-                    : (isSemi ? 'bg-accent-100 dark:bg-accent-950' : 'bg-primary-100 dark:bg-primary-900/40');
+                    : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
                   const textStyle = isFirst
                     ? 'font-medium text-white'
@@ -187,7 +188,7 @@ export default function CustomPieChart({
                       </div>
 
                       {/* BARRA: TRACK + FILL + NOME */}
-                      <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-accent-50/50 dark:bg-accent-950/30' : 'bg-surface-sunken'} overflow-hidden min-w-0 flex items-center`}>
+                      <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-accent-50/50 dark:bg-accent-950/30 border border-accent-200/40 dark:border-accent-800/40' : 'bg-surface-sunken border border-border/60'} overflow-hidden min-w-0 flex items-center`}>
                         <div
                           className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                           style={{ width: `${percentOfMax}%` }}

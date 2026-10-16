@@ -560,6 +560,7 @@ export default function RelatorioPage() {
       rnpAtivos,
       rnpTaxa,
       totalCursos,
+      presencialCursos: totalCursos,
       federalCursos,
       estadualCursos,
       privadaCursos,
@@ -1458,17 +1459,17 @@ export default function RelatorioPage() {
               setTableSearch('');
               setSelectedCadeia(null);
             }}
-            className={`px-3 py-1.5 rounded-control text-caption font-semibold transition-all duration-120 cursor-pointer whitespace-nowrap flex items-center gap-2 flex-1 justify-center select-none ${
+            className={`px-2.5 py-1.5 rounded-control text-caption font-semibold transition-all duration-120 cursor-pointer whitespace-nowrap flex items-center gap-1.5 flex-1 justify-center select-none ${
               isActive
                 ? (reportMode === 'semiarido' ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-600 text-white shadow-xs')
                 : 'text-text-secondary hover:text-text-primary hover:bg-surface'
             }`}
           >
             <Icon className="w-3.5 h-3.5 shrink-0" />
-            <span>{opt.label}</span>
+            <span className="truncate">{opt.label}</span>
             {count !== null && (
               <span
-                className={`text-micro px-1.5 py-0.5 rounded-full font-semibold tnum leading-none ${
+                className={`text-micro px-1.5 py-0.5 rounded-full font-semibold tnum leading-none shrink-0 ${
                   isActive
                     ? 'bg-white/20 text-white'
                     : 'bg-surface border border-border text-text-muted'

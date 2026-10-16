@@ -39,28 +39,54 @@
     --color-surface-sunken: 238 243 248;
 
     /* SEMANTIC: SUCCESS */
+    --color-success-950: 6 46 30;
+    --color-success-900: 14 68 45;
+    --color-success-800: 20 90 60;
     --color-success-700: 28 115 80;
     --color-success-600: 38 138 98;
+    --color-success-500: 16 185 129;
+    --color-success-400: 52 211 153;
+    --color-success-300: 110 231 183;
+    --color-success-200: 167 243 208;
     --color-success-100: 228 245 236;
     --color-success-50: 242 250 246;
 
     /* SEMANTIC: WARNING */
+    --color-warning-950: 54 26 6;
+    --color-warning-900: 82 40 10;
+    --color-warning-800: 120 58 14;
     --color-warning-700: 161 98 7;
     --color-warning-600: 190 124 8;
+    --color-warning-500: 245 158 11;
+    --color-warning-400: 251 191 36;
+    --color-warning-300: 252 211 77;
+    --color-warning-200: 253 230 138;
     --color-warning-100: 254 243 199;
     --color-warning-50: 255 250 235;
 
     /* SEMANTIC: DANGER */
+    --color-danger-950: 58 14 14;
+    --color-danger-900: 88 22 22;
+    --color-danger-800: 127 29 29;
     --color-danger-700: 175 48 48;
     --color-danger-600: 202 64 64;
+    --color-danger-500: 239 68 68;
+    --color-danger-400: 248 113 113;
+    --color-danger-300: 252 165 165;
+    --color-danger-200: 254 202 202;
     --color-danger-100: 254 226 226;
     --color-danger-50: 254 242 242;
 
     /* ACCENT (Dourado / Âmbar Bahia) */
+    --color-accent-950: 52 30 6;
+    --color-accent-900: 78 46 10;
+    --color-accent-800: 115 68 15;
     --color-accent-700: 161 110 18;
     --color-accent-600: 192 138 28;
     --color-accent-500: 214 162 48;
     --color-accent-400: 234 186 78;
+    --color-accent-300: 245 208 115;
+    --color-accent-200: 248 225 165;
     --color-accent-100: 250 240 212;
     --color-accent-50: 253 249 237;
 
@@ -152,28 +178,54 @@
     --color-surface-sunken: 8 12 20;
 
     /* SEMANTIC: SUCCESS */
+    --color-success-950: 16 42 30;
+    --color-success-900: 20 60 40;
+    --color-success-800: 24 75 50;
     --color-success-700: 74 222 128;
     --color-success-600: 34 197 94;
+    --color-success-500: 22 163 74;
+    --color-success-400: 74 222 128;
+    --color-success-300: 134 239 172;
+    --color-success-200: 167 243 208;
     --color-success-100: 20 83 45;
     --color-success-50: 12 40 24;
 
     /* SEMANTIC: WARNING */
+    --color-warning-950: 45 24 8;
+    --color-warning-900: 70 36 12;
+    --color-warning-800: 95 48 15;
     --color-warning-700: 251 191 36;
     --color-warning-600: 245 158 11;
+    --color-warning-500: 217 119 6;
+    --color-warning-400: 251 191 36;
+    --color-warning-300: 252 211 77;
+    --color-warning-200: 253 230 138;
     --color-warning-100: 120 53 15;
     --color-warning-50: 45 20 7;
 
     /* SEMANTIC: DANGER */
+    --color-danger-950: 48 16 16;
+    --color-danger-900: 75 22 22;
+    --color-danger-800: 100 28 28;
     --color-danger-700: 248 113 113;
     --color-danger-600: 239 68 68;
+    --color-danger-500: 220 38 38;
+    --color-danger-400: 248 113 113;
+    --color-danger-300: 252 165 165;
+    --color-danger-200: 254 202 202;
     --color-danger-100: 127 29 29;
     --color-danger-50: 45 12 12;
 
     /* ACCENT */
+    --color-accent-950: 45 24 8;
+    --color-accent-900: 68 36 12;
+    --color-accent-800: 96 52 16;
     --color-accent-700: 252 211 77;
     --color-accent-600: 245 176 42;
     --color-accent-500: 228 150 24;
     --color-accent-400: 250 196 70;
+    --color-accent-300: 252 211 77;
+    --color-accent-200: 253 230 138;
     --color-accent-100: 120 53 15;
     --color-accent-50: 45 20 7;
 

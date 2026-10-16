@@ -16,7 +16,7 @@ export function ThemeProvider({ children }) {
       if (urlTheme === 'dark' || urlTheme === 'light') return urlTheme;
     }
     // 1. Verifica localStorage
-    const saved = localStorage.getItem('secti-theme');
+    const saved = localStorage.getItem('secti-theme') || localStorage.getItem('theme');
     if (saved === 'dark' || saved === 'light') return saved;
     // 2. Verifica preferência do sistema
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -36,16 +36,33 @@ export function ThemeProvider({ children }) {
     }
     try {
       localStorage.setItem('secti-theme', theme);
+      localStorage.setItem('theme', theme);
     } catch (e) {
       console.warn('Não foi possível salvar tema no localStorage:', e);
     }
   }, [theme]);
 
+  // Sincroniza estado caso o atributo class do <html> mude externamente (ex: scripts, automação)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => {
+      const isDarkDom = root.classList.contains('dark');
+      setThemeState((prev) => {
+        const domTheme = isDarkDom ? 'dark' : 'light';
+        return prev === domTheme ? prev : domTheme;
+      });
+    });
+
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   // Listener para sincronizar caso o usuário mude o tema no SO e não tenha fixado
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e) => {
-      const saved = localStorage.getItem('secti-theme');
+      const saved = localStorage.getItem('secti-theme') || localStorage.getItem('theme');
       if (!saved) {
         setThemeState(e.matches ? 'dark' : 'light');
       }

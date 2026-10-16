@@ -902,7 +902,7 @@ export default function AtivosPage() {
                     <div className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0 animate-in fade-in duration-200">
 
                         {/* BARRA SUPERIOR DE NAVEGAÇÃO / ABAS E BUSCA */}
-                        <div className="bg-surface rounded-card p-2.5 border border-border shadow-card flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 shrink-0 min-w-0 relative z-30 overflow-visible">
+                        <div className="bg-surface rounded-card p-2.5 border border-border shadow-card flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0 min-w-0 relative z-30 overflow-visible">
 
                             {/* ABAS */}
                             <Tabs
@@ -928,11 +928,11 @@ export default function AtivosPage() {
                                 value={activeTab}
                                 onChange={(tab) => setActiveTab(tab)}
                                 variant="pill"
-                                className="w-full xl:w-auto"
+                                className="w-full 2xl:w-auto"
                             />
 
                             {/* INPUT DE BUSCA + BOTÃO DE FILTROS */}
-                            <div className="flex items-center gap-2 w-full xl:w-auto min-w-0 justify-end">
+                            <div className="flex items-center gap-2 w-full 2xl:w-auto min-w-0 justify-end">
                                 <div className="flex-1 sm:w-64 min-w-0">
                                     <SearchInput
                                         value={searchQuery}

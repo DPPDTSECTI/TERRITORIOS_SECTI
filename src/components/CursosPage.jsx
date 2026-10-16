@@ -776,12 +776,12 @@ export default function CursosPage() {
                                     },
                                     {
                                         id: 'ranking',
-                                        label: selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios',
+                                        label: selectedTerritory ? 'Municípios' : 'Territórios',
                                         icon: <TrendingUp size={15} />
                                     },
                                     {
                                         id: 'ies',
-                                        label: 'Top Instituições',
+                                        label: 'Instituições',
                                         icon: <Building2 size={15} />
                                     }
                                 ]}

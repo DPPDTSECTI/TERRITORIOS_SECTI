@@ -11,9 +11,14 @@ export default function UserHeaderProfile() {
       {/* BRASÃO / LOGOMARCA COM TRANSIÇÃO CLARO/ESCURO */}
       <div className="flex items-center">
         <img
-          src={isDark ? '/img/Brasao-Horizontal_Branco.webp' : '/img/brasao_preto.webp'}
+          src="/img/brasao_preto.webp"
           alt="Brasão do Estado da Bahia"
-          className="h-10 w-auto object-contain shrink-0 transition-opacity duration-300 select-none"
+          className="h-10 w-auto object-contain shrink-0 block dark:hidden select-none"
+        />
+        <img
+          src="/img/Brasao-Horizontal_Branco.webp"
+          alt="Brasão do Estado da Bahia"
+          className="h-10 w-auto object-contain shrink-0 hidden dark:block select-none"
         />
       </div>
 

@@ -19,8 +19,9 @@ export function AnimatedNumber({
   duration = 600,
   className,
 }) {
-  const numericTarget = typeof value === 'number' ? value : parseFloat(value);
-  const isInvalid = isNaN(numericTarget);
+  const isPureNumber = typeof value === 'number' || (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value.trim()));
+  const numericTarget = isPureNumber ? Number(value) : NaN;
+  const isInvalid = Number.isNaN(numericTarget);
 
   const [current, setCurrent] = useState(() => (isInvalid ? value : 0));
   const startTimeRef = useRef(null);
@@ -83,7 +84,7 @@ export function AnimatedNumber({
       case 'compact':
         return formatCompact(num);
       case 'raw':
-        return String(num);
+        return String(Math.round(num));
       case 'int':
       default:
         return formatInt(num);
@@ -128,13 +129,13 @@ export function KpiCard({
   const renderIcon = () => {
     if (!Icon) return null;
     if (React.isValidElement(Icon)) return Icon;
-    return <Icon className="w-5 h-5" />;
+    return <Icon className="w-4 h-4" />;
   };
 
   return (
     <div
       className={cn(
-        'p-5 rounded-card flex flex-col justify-between gap-3 border transition-all duration-200',
+        'p-4 sm:p-5 rounded-card flex flex-col justify-between gap-3 border transition-all duration-200',
         isBrand
           ? 'bg-gradient-brand text-white border-primary-700/40 shadow-card'
           : 'bg-surface text-text-primary border-border shadow-card hover:shadow-card-hover hover:border-border-strong',
@@ -154,7 +155,7 @@ export function KpiCard({
         {Icon && (
           <div
             className={cn(
-              'w-10 h-10 rounded-control flex items-center justify-center shrink-0',
+              'w-8 h-8 rounded-control flex items-center justify-center shrink-0',
               isBrand
                 ? 'bg-white/10 text-white border border-white/10'
                 : 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border border-primary-200/50 dark:border-primary-800/50'
@@ -167,10 +168,10 @@ export function KpiCard({
 
       <div className="flex items-baseline gap-2 flex-wrap">
         <div className="text-kpi font-bold leading-none tracking-tight">
-          {typeof value === 'number' || (typeof value === 'string' && !isNaN(parseFloat(value))) ? (
+          {typeof value === 'number' || (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value.trim())) ? (
             <AnimatedNumber value={value} format={format} />
           ) : (
-            value
+            <span className="tnum">{value}</span>
           )}
         </div>
 

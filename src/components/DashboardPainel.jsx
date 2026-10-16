@@ -312,40 +312,23 @@ export default function DashboardPainel() {
       counts[tipo] = (counts[tipo] || 0) + 1;
     });
 
-    const bluePalette = [
-      '#1D3557', // 1. Deep Navy
-      '#2563EB', // 2. Primary Royal Blue
-      '#0284C7', // 3. Vibrant Ocean Blue
-      '#3B82F6', // 4. Bright Blue
-      '#1E40AF', // 5. Cobalt Blue
-      '#0EA5E9', // 6. Sky Cyan Blue
-      '#38BDF8', // 7. Light Sky Blue
-      '#1E3A8A', // 8. Midnight Blue
-      '#60A5FA', // 9. Soft Blue
-      '#93C5FD'  // 10. Ice Sky Blue
-    ];
-
     const goldenPalette = [
-      '#D97706', // 1. Amber 600 (Rich Gold)
-      '#F59E0B', // 2. Amber 500 (Vibrant Sun Gold)
-      '#B45309', // 3. Amber 700 (Deep Warm Bronze)
-      '#EAB308', // 4. Yellow 500 (Bright Gold)
-      '#FBBF24', // 5. Amber 400 (Warm Sun Yellow)
-      '#CA8A04', // 6. Yellow 600 (Deep Ochre Gold)
-      '#92400E', // 7. Amber 800 (Rich Dark Caramel)
-      '#FCD34D', // 8. Amber 300 (Soft Warm Gold)
-      '#A16207', // 9. Yellow 700 (Antique Gold)
-      '#FDE68A'  // 10. Amber 200 (Light Cream Gold)
+      '#F59E0B', // 1. Amber 500
+      '#D97706', // 2. Amber 600
+      '#EAB308', // 3. Yellow 500
+      '#FBBF24', // 4. Amber 400
+      '#CA8A04', // 5. Yellow 600
+      '#FCD34D', // 6. Amber 300
+      '#B45309', // 7. Amber 700
+      '#FDE68A'  // 8. Amber 200
     ];
-
-    const palette = filtroSemiarido ? goldenPalette : bluePalette;
 
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .map(([region, value], idx) => ({
         region,
         value,
-        colorHex: palette[idx % palette.length]
+        ...(filtroSemiarido ? { colorHex: goldenPalette[idx % goldenPalette.length] } : {})
       }));
   }, [activeScopedAtivos, filtroSemiarido]);
 

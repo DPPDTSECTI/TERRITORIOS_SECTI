@@ -614,7 +614,7 @@ export default function CadeiaPage() {
         },
         {
             label: filtroSemiarido ? 'Segmentos no Semiárido' : 'Qtd. de Segmentos',
-            value: loadingStats ? '...' : `${segmentStats.length} Segmentos`,
+            value: loadingStats ? '...' : segmentStats.length,
             icon: Layers
         },
         {
@@ -712,7 +712,7 @@ export default function CadeiaPage() {
                                     key={index}
                                     variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
                                     title={kpi.tooltip || kpi.label}
-                                    className="p-4 flex flex-col justify-between h-[88px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
+                                    className="p-4 flex flex-col justify-between min-h-[92px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
                                 >
                                     {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
                                     <div className="flex items-center gap-2 w-full min-w-0">
@@ -901,7 +901,7 @@ export default function CadeiaPage() {
                     /* LADO DIREITO: TABS, FILTROS E CONTEÚDO */
                     <div className="flex-1 min-w-0 h-[520px] lg:h-full flex flex-col gap-3 min-h-0 overflow-hidden">
                         {/* BARRA SUPERIOR: TABS + BUSCA */}
-                        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 shrink-0">
+                        <div className="flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0">
                             <Tabs
                                 items={[
                                     {
@@ -918,18 +918,18 @@ export default function CadeiaPage() {
                                     },
                                     {
                                         id: 'ranking',
-                                        label: selectedTerritory ? 'Ranking Municípios' : 'Ranking Territórios',
+                                        label: selectedTerritory ? 'Municípios' : 'Territórios',
                                         icon: <TrendingUp size={15} />
                                     }
                                 ]}
                                 value={activeTab}
                                 onChange={setActiveTab}
                                 variant="pill"
-                                className="w-full xl:w-auto"
+                                className="w-full 2xl:w-auto"
                             />
 
                             {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
-                            <div className="w-full xl:w-72 min-w-0">
+                            <div className="w-full 2xl:w-72 min-w-0">
                                 <SearchInput
                                     value={searchQuery}
                                     onChange={(e) => {

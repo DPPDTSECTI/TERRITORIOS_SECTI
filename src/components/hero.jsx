@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { useTheme } from '../context/ThemeContext';
-import UserHeaderProfile from './UserHeaderProfile';
 import { Card } from './ui/Card';
 import { Button, IconButton } from './ui/Button';
 import { Badge } from './ui/Chip';
@@ -311,9 +310,14 @@ export default function LandingHero() {
             <span className="text-border-strong font-light text-xl select-none hidden sm:inline" aria-hidden="true">|</span>
 
             <img
-              src={isDark ? '/img/Brasao-Horizontal_Branco.webp' : '/img/brasao_preto.webp'}
+              src="/img/brasao_preto.webp"
               alt="Governo do Estado da Bahia"
-              className="h-9 sm:h-11 w-auto object-contain shrink-0 transition-opacity duration-300"
+              className="h-9 sm:h-11 w-auto object-contain shrink-0 block dark:hidden select-none"
+            />
+            <img
+              src="/img/Brasao-Horizontal_Branco.webp"
+              alt="Governo do Estado da Bahia"
+              className="h-9 sm:h-11 w-auto object-contain shrink-0 hidden dark:block select-none"
             />
           </div>
 
@@ -342,11 +346,6 @@ export default function LandingHero() {
             >
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </IconButton>
-
-            {/* Perfil e Acesso Administrativo */}
-            <div className="hidden sm:block">
-              <UserHeaderProfile />
-            </div>
 
             {/* CTA Acessar Painel */}
             <Button

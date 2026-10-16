@@ -72,7 +72,7 @@ export function Tabs({
               'relative inline-flex items-center gap-2 font-medium transition-colors duration-120 whitespace-nowrap select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               isUnderline
                 ? 'px-3.5 py-2.5 text-caption -mb-px'
-                : 'px-3 py-1.5 rounded-control text-caption',
+                : 'px-2.5 py-1.5 rounded-control text-caption',
               isActive
                 ? isUnderline
                   ? 'text-primary-700 dark:text-primary-300 font-semibold'
@@ -93,7 +93,7 @@ export function Tabs({
               />
             )}
 
-            <span className="relative z-10 inline-flex items-center gap-1.5">
+            <span className="relative z-10 inline-flex items-center gap-1">
               {item.icon && <span className="inline-flex shrink-0">{item.icon}</span>}
               <span>{item.label}</span>
               {item.count !== undefined && item.count !== null && (
