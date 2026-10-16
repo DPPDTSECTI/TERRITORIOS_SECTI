@@ -153,6 +153,10 @@ async function captureReportElementToCanvas(element, scale = 2) {
       const clonedWin = clonedDoc.defaultView || window;
       patchCanvasGradient(clonedWin);
 
+      // Garante tema claro forçado na exportação
+      clonedDoc.documentElement?.classList.remove('dark');
+      clonedDoc.body?.classList.remove('dark');
+
       const allNodes = clonedDoc.querySelectorAll('*');
       allNodes.forEach((node) => {
         if (node.style) {
@@ -368,6 +372,10 @@ async function captureReportViaIframe(route, scale = 2) {
           onclone: (clonedDoc) => {
             const clonedWin = clonedDoc.defaultView || window;
             patchCanvasGradient(clonedWin);
+
+            // Garante tema claro forçado na exportação
+            clonedDoc.documentElement?.classList.remove('dark');
+            clonedDoc.body?.classList.remove('dark');
 
             const allElements = clonedDoc.querySelectorAll('*');
             allElements.forEach((el) => {

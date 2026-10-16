@@ -129,6 +129,7 @@ export const IconButton = forwardRef(function IconButton(
     variant = 'ghost',
     size = 'md',
     'aria-label': ariaLabel,
+    label,
     icon,
     loading = false,
     disabled = false,
@@ -139,13 +140,15 @@ export const IconButton = forwardRef(function IconButton(
   },
   ref
 ) {
+  const resolvedAriaLabel = ariaLabel || label;
   const isDisabled = disabled || loading;
 
   return (
     <button
       ref={ref}
       type={type}
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
+      title={props.title || resolvedAriaLabel}
       disabled={isDisabled}
       aria-busy={loading || undefined}
       className={cn(

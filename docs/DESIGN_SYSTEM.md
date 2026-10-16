@@ -161,3 +161,14 @@ Mapeamento centralizado de variáveis CSS e tokens semânticos Tailwind para as 
 | `investimento` | `#EC4899` | `--color-asset-investimento` | `bg-asset-investimento`, `text-asset-investimento`, `border-asset-investimento` |
 | `pesquisa` | `#64748B` | `--color-asset-pesquisa` | `bg-asset-pesquisa`, `text-asset-pesquisa`, `border-asset-pesquisa` |
 | `outro` | `#94A3B8` | `--color-asset-outro` | `bg-asset-outro`, `text-asset-outro`, `border-asset-outro` |
+
+---
+
+## 6. Acessibilidade e Preferência de Movimento
+
+- **Foco Visível Obrigatório:** Todos os elementos interativos (`Button`, `IconButton`, `Link`, inputs, checkboxes e triggers de dropdown/modal) utilizam o anel de foco padronizado `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`.
+- **Rótulos Acessíveis em Botões de Ícone:** O componente `IconButton` aceita obrigatoriamente `aria-label` ou `label`, propagando automaticamente para `aria-label` e atribuindo `title` nativo se não for especificado.
+- **Redução de Movimento (`prefers-reduced-motion: reduce`):**
+  - Configurado globalmente via `<MotionConfig reducedMotion="user">` no `src/App.jsx`.
+  - No CSS (`src/index.css`), o bloco `@media (prefers-reduced-motion: reduce)` neutraliza `animate-sun-breath`, `animate-sun-arc`, `animate-pulse`, `animate-spin`, `animate-bounce` e zera as durações de animação e transição para `0.01ms`.
+

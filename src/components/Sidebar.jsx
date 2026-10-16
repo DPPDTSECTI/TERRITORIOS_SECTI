@@ -137,7 +137,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                   to={item.path}
                   title={!isExpanded ? item.label : undefined}
                   className={cn(
-                    'relative w-full h-10 flex items-center rounded-control transition-colors duration-120 group',
+                    'relative w-full h-10 flex items-center rounded-control transition-colors duration-120 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
                     item.tourClass,
                     isActive
                       ? 'text-primary-900 dark:text-primary-200 font-semibold'
@@ -205,7 +205,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                       to={item.path}
                       title={!isExpanded ? item.label : undefined}
                       className={cn(
-                        'relative w-full h-10 flex items-center rounded-control transition-colors duration-120 group',
+                        'relative w-full h-10 flex items-center rounded-control transition-colors duration-120 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
                         item.tourClass,
                         isActive
                           ? 'text-primary-900 dark:text-primary-200 font-semibold'

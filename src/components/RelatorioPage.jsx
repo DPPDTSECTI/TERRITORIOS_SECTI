@@ -936,8 +936,8 @@ export default function RelatorioPage() {
       : 'territorio=bahia';
 
     const modoParam = `&modo=${reportMode}`;
-    const themeParam = `&theme=${isDark ? 'dark' : 'light'}`;
-    const filename = `${fileBase}_${reportMode}_${isDark ? 'dark' : 'light'}.pdf`;
+    const themeParam = `&theme=light`;
+    const filename = `${fileBase}_${reportMode}_light.pdf`;
     const apiUrl = `/api/export-pdf?type=${type}&${terrParam}${modoParam}${themeParam}`;
 
     try {
@@ -1043,14 +1043,14 @@ export default function RelatorioPage() {
 
     const type = overrideType || reportType;
     const fileType = type === 'cursos' ? 'cursos' : type;
-    const pngName = `relatorio_${fileType}_${reportMode}_${isDark ? 'dark' : 'light'}.png`;
+    const pngName = `relatorio_${fileType}_${reportMode}_light.png`;
 
     const terrParam = selectedTerritoryId && selectedTerritoryId !== 'bahia'
       ? `territorio=${encodeURIComponent(selectedTerritoryId)}`
       : 'territorio=bahia';
 
     const modoParam = `&modo=${reportMode}`;
-    const themeParam = `&theme=${isDark ? 'dark' : 'light'}`;
+    const themeParam = `&theme=light`;
     const apiUrl = `/api/export-png?type=${type}&${terrParam}${modoParam}${themeParam}`;
 
     try {

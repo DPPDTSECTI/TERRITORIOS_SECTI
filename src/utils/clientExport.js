@@ -36,6 +36,13 @@ export async function captureDomElement(element, options = {}) {
         el.classList?.contains('leaflet-control-attribution')
       );
     },
+    onclone: (clonedDoc) => {
+      clonedDoc.documentElement?.classList.remove('dark');
+      clonedDoc.body?.classList.remove('dark');
+      if (typeof options.onclone === 'function') {
+        options.onclone(clonedDoc);
+      }
+    },
     ...options
   });
 

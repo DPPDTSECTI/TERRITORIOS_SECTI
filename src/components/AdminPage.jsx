@@ -1,293 +1,498 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, Filter, Search, Pencil, ChevronDown, FileText, MapPin, Layers, CheckCircle, Settings, LogOut } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import {
+  Plus,
+  Trash2,
+  Filter,
+  Pencil,
+  FileText,
+  MapPin,
+  CheckCircle
+} from 'lucide-react';
 import UserHeaderProfile from './UserHeaderProfile';
+import {
+  Card,
+  KpiCard,
+  Button,
+  IconButton,
+  Input,
+  SearchInput,
+  Select,
+  PageHeader,
+  Drawer,
+  Dialog,
+  Badge,
+  useToast
+} from './ui';
 
-export default function AdminPage() {
- const [isAddDropdownOpen, setIsAddDropdownOpen] = useState(false);
- const dropdownRef = useRef(null);
-
- useEffect(() => {
- function handleClickOutside(event) {
- if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
- setIsAddDropdownOpen(false);
- }
- }
- document.addEventListener("mousedown", handleClickOutside);
- return () => document.removeEventListener("mousedown", handleClickOutside);
- }, []);
-
- const [ativos, setAtivos] = useState([
- { id: 1, nome: 'Senai CIMATEC', tipo: 'Hub', municipio: 'Salvador', referencia: 'FIEB', sigla: 'CIMATEC' },
- { id: 2, nome: 'Parque Tecnológico', tipo: 'Parque', municipio: 'Salvador', referencia: 'SECTI', sigla: 'PTB' },
- { id: 3, nome: 'Polo de Inovação', tipo: 'Polo', municipio: 'Ilhéus', referencia: 'UESC', sigla: 'CEPEDI' },
- { id: 4, nome: 'Incubadora Casulo', tipo: 'Incubadora', municipio: 'Feira de Santana', referencia: 'UEFS', sigla: 'INC' },
- { id: 5, nome: 'Hub de IA', tipo: 'Hub', municipio: 'Vitória da Conquista', referencia: 'UESB', sigla: 'HIA' },
- { id: 6, nome: 'Centro de Pesquisa', tipo: 'Laboratório', municipio: 'Camaçari', referencia: 'IFBA', sigla: 'CPQ' },
- ]);
-
- const handleDeleteRow = (id) => {
- setAtivos(ativos.filter(ativo => ativo.id !== id));
- };
-
- const handleSaveAssets = (newAssets) => {
- const validAssets = newAssets.filter(a => a.nome || a.municipio);
- if (validAssets.length > 0) {
- setAtivos([...ativos, ...validAssets]);
- }
- };
-
- const todayFormatted = new Date().toLocaleDateString('pt-BR', {
-   weekday: 'long',
-   day: 'numeric',
-   month: 'long',
-   year: 'numeric'
- });
- const capitalizedDate = todayFormatted.charAt(0).toUpperCase() + todayFormatted.slice(1);
-
- const getBadgeStyle = (tipo) => {
-   const t = tipo?.toLowerCase() || '';
-   if (t.includes('hub')) return 'bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 border border-primary-200/80 dark:border-primary-700/60';
-   if (t.includes('parque')) return 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60';
-   if (t.includes('polo')) return 'bg-cyan-50 dark:bg-cyan-950/50 text-cyan-800 dark:text-cyan-300 border border-cyan-200/80 dark:border-cyan-800/60';
-   if (t.includes('incubadora')) return 'bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60';
-   return 'bg-surface-soft text-text-secondary border border-border';
- };
-
- return (
- <div className="w-full h-screen py-6 pr-6 pl-5 bg-background font-sans flex flex-col overflow-hidden">
- <div className="max-w-[1300px] w-full h-full mx-auto flex flex-col gap-6">
- 
- {/* HEADER DA PÁGINA */}
- <div className="flex items-center justify-between w-full">
- <div>
- <h1 className="text-2xl lg:text-3xl font-bold text-text-primary tracking-tight">Ativos de CT&I</h1>
- <p className="text-xs lg:text-sm text-text-secondary mt-1 font-medium">{capitalizedDate}</p>
- </div>
-
- {/* AÇÕES E PERFIL DO USUÁRIO */}
- <UserHeaderProfile />
- </div>
-
- {/* SUMMARY CARDS */}
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
- {/* Card 1 - Destaque Azul */}
- <div className="bg-primary-600 rounded-xl p-7 text-surface-soft flex flex-col shadow-card-soft gap-8 relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
- {/* Decoração sutil de fundo */}
- <div className="absolute top-0 right-0 w-32 h-32 bg-surface-soft/10 rounded-lg blur-2xl -mr-10 -mt-10 pointer-events-none transition-transform duration-500 "></div>
- 
- <div className="flex justify-between items-start z-10">
- <div className="w-11 h-11 bg-surface-soft text-text-primary rounded-xl flex items-center justify-center shadow-sm transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ">
- <FileText size={20} strokeWidth={2} />
- </div>
- <div className="px-2.5 py-1 bg-primary-900 rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
- +12.4%
- </div>
- </div>
- <div className="z-10 mt-2">
- <p className="text-surface-soft/80 text-[14px] font-medium mb-1">Total de Ativos</p>
- <div className="flex items-baseline gap-2">
- <h2 className="text-[40px] leading-none font-medium tracking-tight">{ativos.length}</h2>
- <span className="text-surface-soft/60 text-[13px] font-medium max-w-[80px] leading-tight"></span>
- </div>
- </div>
- </div>
-
- {/* Card 2 */}
- <div className="bg-surface rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-border hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
- <div className="flex justify-between items-start">
- <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-3">
- <MapPin size={20} strokeWidth={2} />
- </div>
- <div className="px-2.5 py-1 bg-primary-300/30 text-text-primary rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
- +8.4%
- </div>
- </div>
- <div className="mt-2">
- <p className="text-text-secondary text-[14px] font-medium mb-1">Municípios Cobertos</p>
- <div className="flex items-baseline gap-2">
- <h2 className="text-[40px] leading-none font-medium text-text-primary tracking-tight">43</h2>
- <span className="text-primary-300 text-[13px] font-medium max-w-[80px] leading-tight"></span>
- </div>
- </div>
- </div>
-
- {/* Card 3 */}
- <div className="bg-surface rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-border hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
- <div className="flex justify-between items-start">
- <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-[-3deg]">
- <Layers size={20} strokeWidth={2} />
- </div>
- <div className="px-2.5 py-1 bg-surface-soft text-text-secondary rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
- -2.08%
- </div>
- </div>
- <div className="mt-2">
- <p className="text-text-secondary text-[14px] font-medium mb-1">Tipos de Ativo</p>
- <div className="flex items-baseline gap-2">
- <h2 className="text-[40px] leading-none font-medium text-text-primary tracking-tight">12</h2>
- </div>
- </div>
- </div>
-
- {/* Card 4 */}
- <div className="bg-surface rounded-xl p-7 flex flex-col shadow-card-soft gap-8 border border-border hover:border-primary-200/50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-card-hover cursor-default group">
- <div className="flex justify-between items-start">
- <div className="w-11 h-11 text-text-secondary rounded-xl flex items-center justify-center bg-primary-200 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]  group-hover:rotate-3">
- <CheckCircle size={20} strokeWidth={2} />
- </div>
- <div className="px-2.5 py-1 bg-primary-300/30 text-text-primary rounded-full text-[12px] font-medium inline-flex items-center justify-center leading-none">
- +12.1%
- </div>
- </div>
- <div className="mt-2">
- <p className="text-text-secondary text-[14px] font-medium mb-1">Conectados RNP</p>
- <div className="flex items-baseline gap-2">
- <h2 className="text-[40px] leading-none font-medium text-text-primary tracking-tight">0</h2>
- </div>
- </div>
- </div>
- </div>
-
- {/* LISTAGEM PRINCIPAL COMO UM DASHBOARD CARD */}
- <div className="w-full bg-surface rounded-xl shadow-card-soft border border-border hover:shadow-card-hover transition-shadow duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-7 md:p-8 flex flex-col flex-1 min-h-0">
- 
- {/* HEADER DA TABELA */}
- <div className="flex flex-col md:flex-row md:items-center justify-between w-full mb-8 gap-4">
- <div>
- <h2 className="text-[22px] font-medium text-text-primary tracking-tight">Lista de Ativos</h2>
- <p className="text-sm text-text-secondary mt-1 font-medium">Gestão e cadastro de ativos de CT&I no estado</p>
- </div>
- 
- <div className="flex items-center gap-3">
- <button className="w-11 h-11 bg-surface-soft rounded-lg flex items-center justify-center text-text-primary hover:bg-primary-200 transition-colors shadow-sm">
- <Search size={18} />
- </button>
- <button className="w-11 h-11 bg-surface-soft rounded-lg flex items-center justify-center text-text-primary hover:bg-primary-200 transition-colors shadow-sm relative">
- <Filter size={18} />
- <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary-300 rounded-full"></span>
- </button>
- 
- <div className="relative" ref={dropdownRef}>
- <button 
- onClick={() => setIsAddDropdownOpen(!isAddDropdownOpen)}
- className="h-11 px-6 bg-primary-900 rounded-lg flex items-center gap-2 text-surface-soft hover:bg-primary-600 transition-all font-medium text-[15px] shadow-lg shadow-primary-900/20 "
- >
- <Plus size={18} strokeWidth={2} />
- <span>Novo Ativo</span>
- </button>
-
- {/* DROPDOWN MENU */}
- {isAddDropdownOpen && (
- <div className="absolute right-[calc(100%+12px)] top-0 w-96 bg-surface border border-border shadow-card-soft rounded-xl p-6 z-50 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
- <div className="flex items-center gap-2 mb-2">
- <div className="w-8 h-8 rounded-xl bg-primary-200 text-text-primary flex items-center justify-center">
- <Plus size={16} strokeWidth={2} />
- </div>
- <h3 className="text-[16px] font-medium text-text-primary">Cadastro Rápido</h3>
- </div>
- 
- <div className="space-y-3">
- <input type="text" placeholder="Nome do ativo *" className="w-full px-4 py-3 text-sm bg-surface-soft border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition-all placeholder-primary-600/60 font-medium text-text-primary" id="quick-nome" />
- 
- <div className="flex gap-3">
- <select className="w-full px-4 py-3 text-sm bg-surface-soft border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition-all font-medium text-text-secondary" id="quick-tipo">
- <option value="">Tipo... *</option>
- <option value="Hub">Hub</option>
- <option value="Parque">Parque</option>
- <option value="Polo">Polo</option>
- <option value="Incubadora">Incubadora</option>
- <option value="Laboratório">Laboratório</option>
- </select>
- <input type="text" placeholder="Município *" className="w-full px-4 py-3 text-sm bg-surface-soft border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition-all placeholder-primary-600/60 font-medium text-text-primary" id="quick-municipio" />
- </div>
-
- <div className="flex gap-3">
- <input type="text" placeholder="Sigla (Opcional)" className="w-1/3 px-4 py-3 text-sm bg-surface-soft border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition-all placeholder-primary-600/60 font-medium text-text-primary" id="quick-sigla" />
- <input type="text" placeholder="Referência" className="w-2/3 px-4 py-3 text-sm bg-surface-soft border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition-all placeholder-primary-600/60 font-medium text-text-primary" id="quick-referencia" />
- </div>
- </div>
- 
- <div className="pt-4 mt-2">
- <button 
- onClick={() => {
- const nome = document.getElementById('quick-nome').value;
- const tipo = document.getElementById('quick-tipo').value;
- const municipio = document.getElementById('quick-municipio').value;
- const sigla = document.getElementById('quick-sigla').value;
- const referencia = document.getElementById('quick-referencia').value;
- 
- if (nome || municipio) {
- handleSaveAssets([{ id: Date.now(), nome, tipo, municipio, referencia: referencia, sigla: sigla }]);
- setIsAddDropdownOpen(false);
- }
- }}
- className="w-full bg-primary-600 text-surface-soft rounded-xl py-3 text-[14px] font-medium hover:bg-primary-900 transition-all active:scale-[0.98] shadow-md shadow-primary-600/20"
- >
- Salvar Ativo
- </button>
- </div>
- </div>
- )}
- </div>
- </div>
- </div>
-
- {/* TABLE HEADER */}
- <div className="w-full pb-4 border-b border-border grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4">
- <span className="text-[12px] font-medium text-text-muted">ATIVO</span>
- <span className="text-[12px] font-medium text-text-muted">CATEGORIA</span>
- <span className="text-[12px] font-medium text-text-muted">LOCALIDADE</span>
- <span className="text-[12px] font-medium text-text-muted">FONTE/REF</span>
- <span className="text-[12px] font-medium text-text-muted">ABREV.</span>
- <span className="text-[12px] font-medium text-text-muted text-center">AÇÕES</span>
- </div>
-
- {/* DATA ROWS */}
- <div className="flex flex-col w-full mt-3 overflow-y-auto flex-1 pr-2 custom-scrollbar">
- {ativos.map((ativo) => (
- <div key={ativo.id} className="w-full py-3.5 border-b border-border/50 last:border-b-0 grid grid-cols-[1.5fr_1fr_1.2fr_1.2fr_0.8fr_70px] items-center px-4 hover:bg-surface-soft/60 transition-colors group rounded-xl cursor-default">
-
- <div className="w-full h-full flex items-center pr-2 gap-3.5">
- <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 flex items-center justify-center font-bold shrink-0">
- <span className="text-[13px]">{ativo.nome.charAt(0)}</span>
- </div>
- <span className="text-text-primary font-semibold text-[13.5px] truncate">{ativo.nome}</span>
- </div>
-
- <div className="w-full h-full flex items-center">
- <div className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${getBadgeStyle(ativo.tipo)}`}>
- {ativo.tipo}
- </div>
- </div>
-
- <div className="w-full h-full flex items-center pr-2">
- <span className="text-text-secondary font-medium text-[13px] truncate">{ativo.municipio}</span>
- </div>
-
- <div className="w-full h-full flex items-center pr-2">
- <span className="text-text-secondary font-medium text-[13px] truncate">{ativo.referencia || '-'}</span>
- </div>
-
- <div className="w-full h-full flex items-center pr-2">
- <span className="text-text-primary font-medium text-[12px] bg-surface-soft px-2.5 py-1 rounded-lg truncate border border-border inline-flex items-center justify-center leading-none">{ativo.sigla || '-'}</span>
- </div>
-
- <div className="w-full h-full flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
- <button title="Editar" className="text-text-muted hover:text-primary-600 p-2 rounded-lg hover:bg-surface transition-colors cursor-pointer">
- <Pencil size={15} strokeWidth={2} />
- </button>
- <button title="Excluir" onClick={() => handleDeleteRow(ativo.id)} className="text-text-muted hover:text-danger-600 p-2 rounded-lg hover:bg-danger-50 dark:hover:bg-danger-950/40 transition-colors cursor-pointer">
- <Trash2 size={15} strokeWidth={2} />
- </button>
- </div>
-
- </div>
- ))}
- </div>
-
- </div>
- </div>
- </div>
- ); 
+function getBadgeVariant(tipo) {
+  const t = tipo?.toLowerCase() || '';
+  if (t.includes('hub')) return 'primary';
+  if (t.includes('parque')) return 'success';
+  if (t.includes('polo')) return 'accent';
+  if (t.includes('incubadora')) return 'warning';
+  return 'neutral';
 }
 
+const INITIAL_ATIVOS = [
+  { id: 1, nome: 'Senai CIMATEC', tipo: 'Hub', municipio: 'Salvador', referencia: 'FIEB', sigla: 'CIMATEC' },
+  { id: 2, nome: 'Parque Tecnológico', tipo: 'Parque', municipio: 'Salvador', referencia: 'SECTI', sigla: 'PTB' },
+  { id: 3, nome: 'Polo de Inovação', tipo: 'Polo', municipio: 'Ilhéus', referencia: 'UESC', sigla: 'CEPEDI' },
+  { id: 4, nome: 'Incubadora Casulo', tipo: 'Incubadora', municipio: 'Feira de Santana', referencia: 'UEFS', sigla: 'INC' },
+  { id: 5, nome: 'Hub de IA', tipo: 'Hub', municipio: 'Vitória da Conquista', referencia: 'UESB', sigla: 'HIA' },
+  { id: 6, nome: 'Centro de Pesquisa', tipo: 'Laboratório', municipio: 'Camaçari', referencia: 'IFBA', sigla: 'CPQ' },
+];
+
+export default function AdminPage() {
+  const { toast } = useToast();
+  const [ativos, setAtivos] = useState(INITIAL_ATIVOS);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
+
+  // Drawer de criação / edição
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    nome: '',
+    tipo: 'Hub',
+    municipio: '',
+    sigla: '',
+    referencia: '',
+  });
+
+  // Diálogo de confirmação de exclusão
+  const [deletingAtivo, setDeletingAtivo] = useState(null);
+
+  const todayFormatted = useMemo(() => {
+    const raw = new Date().toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
+  }, []);
+
+  const availableTypes = useMemo(() => {
+    const set = new Set(ativos.map(a => a.tipo).filter(Boolean));
+    return Array.from(set).sort();
+  }, [ativos]);
+
+  const totalMunicipios = useMemo(() => {
+    return new Set(ativos.map(a => a.municipio).filter(Boolean)).size;
+  }, [ativos]);
+
+  const filteredAtivos = useMemo(() => {
+    return ativos.filter((item) => {
+      const matchesType = selectedType === 'all' || item.tipo === selectedType;
+      if (!matchesType) return false;
+
+      if (!searchTerm.trim()) return true;
+      const term = searchTerm.toLowerCase().trim();
+      return (
+        item.nome?.toLowerCase().includes(term) ||
+        item.municipio?.toLowerCase().includes(term) ||
+        item.sigla?.toLowerCase().includes(term) ||
+        item.referencia?.toLowerCase().includes(term)
+      );
+    });
+  }, [ativos, selectedType, searchTerm]);
+
+  const handleOpenCreate = () => {
+    setEditingId(null);
+    setFormData({
+      nome: '',
+      tipo: 'Hub',
+      municipio: '',
+      sigla: '',
+      referencia: '',
+    });
+    setIsDrawerOpen(true);
+  };
+
+  const handleOpenEdit = (ativo) => {
+    setEditingId(ativo.id);
+    setFormData({
+      nome: ativo.nome || '',
+      tipo: ativo.tipo || 'Hub',
+      municipio: ativo.municipio || '',
+      sigla: ativo.sigla || '',
+      referencia: ativo.referencia || '',
+    });
+    setIsDrawerOpen(true);
+  };
+
+  const handleSave = (e) => {
+    e?.preventDefault();
+    const cleanNome = formData.nome.trim();
+    const cleanMunicipio = formData.municipio.trim();
+
+    if (!cleanNome || !cleanMunicipio) {
+      toast({
+        title: 'Campos Obrigatórios',
+        description: 'Por favor, informe ao menos o Nome do ativo e o Município.',
+        variant: 'warning',
+      });
+      return;
+    }
+
+    if (editingId) {
+      setAtivos((prev) =>
+        prev.map((item) =>
+          item.id === editingId
+            ? { ...item, ...formData, nome: cleanNome, municipio: cleanMunicipio }
+            : item
+        )
+      );
+      toast({
+        title: 'Registro Atualizado',
+        description: `O ativo "${cleanNome}" foi atualizado com sucesso.`,
+        variant: 'success',
+      });
+    } else {
+      const newAtivo = {
+        id: Date.now(),
+        ...formData,
+        nome: cleanNome,
+        municipio: cleanMunicipio,
+      };
+      setAtivos((prev) => [newAtivo, ...prev]);
+      toast({
+        title: 'Registro Cadastrado',
+        description: `O ativo "${cleanNome}" foi adicionado com sucesso.`,
+        variant: 'success',
+      });
+    }
+
+    setIsDrawerOpen(false);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deletingAtivo) return;
+    const deletedName = deletingAtivo.nome;
+    setAtivos((prev) => prev.filter((item) => item.id !== deletingAtivo.id));
+    setDeletingAtivo(null);
+    toast({
+      title: 'Registro Excluído',
+      description: `O ativo "${deletedName}" foi removido da base.`,
+      variant: 'success',
+    });
+  };
+
+  return (
+    <div className="w-full h-full p-4 sm:p-6 lg:p-8 bg-background font-sans flex flex-col overflow-hidden min-h-0">
+      <div className="max-w-7xl w-full mx-auto flex flex-col gap-5 flex-1 min-h-0">
+
+        {/* CABEÇALHO DA PÁGINA (PASSO 2.1) */}
+        <PageHeader
+          title="Administração de Dados CT&I"
+          subtitle={`Gestão, cadastro e auditoria de registros de CT&I no estado da Bahia • ${todayFormatted}`}
+          actions={
+            <div className="flex items-center gap-3">
+              <Button
+                variant="primary"
+                size="md"
+                iconLeft={<Plus className="w-4 h-4" />}
+                onClick={handleOpenCreate}
+              >
+                Novo Registro
+              </Button>
+              <UserHeaderProfile />
+            </div>
+          }
+        />
+
+        {/* FAIXA BENTO BOX DE MÉTRICAS (PASSO 2.2) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
+          <KpiCard
+            label="Total na Base"
+            value={ativos.length}
+            icon={FileText}
+            variant="brand"
+            hint="Registros cadastrados"
+          />
+
+          <KpiCard
+            label="Registros Exibidos"
+            value={filteredAtivos.length}
+            icon={Filter}
+            hint={selectedType !== 'all' || searchTerm ? 'Filtro aplicado' : 'Todos os registros'}
+          />
+
+          <KpiCard
+            label="Municípios Cobertos"
+            value={totalMunicipios}
+            icon={MapPin}
+            hint="Cidades com ativos mapeados"
+          />
+
+          <KpiCard
+            label="Status da Base"
+            value={
+              <span className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-success-600 dark:text-success-400">
+                <span className="w-2 h-2 rounded-full bg-success-500 animate-pulse" />
+                Sincronizado
+              </span>
+            }
+            format="raw"
+            icon={CheckCircle}
+            hint="Base Oficial SECTI/BA"
+          />
+        </div>
+
+        {/* TABELA PRINCIPAL DENTRO DE CARD COM CABEÇALHO FIXO (PASSO 3.1) */}
+        <Card className="flex-1 flex flex-col min-h-0 overflow-hidden shadow-card">
+          {/* BARRA DE FERRAMENTAS / FILTROS (PASSO 2.3) */}
+          <div className="p-4 sm:p-5 border-b border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 max-w-xl min-w-0">
+              <SearchInput
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClear={() => setSearchTerm('')}
+                enableShortcut
+                placeholder="Buscar por nome, município, sigla ou referência... (Pressione /)"
+              />
+              <Select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                containerClassName="w-full sm:w-48 shrink-0"
+              >
+                <option value="all">Todas as Categorias</option>
+                {availableTypes.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </Select>
+            </div>
+
+            <div className="text-caption text-text-muted shrink-0 self-end sm:self-center">
+              Mostrando <strong className="text-text-primary tnum">{filteredAtivos.length}</strong> de <span className="tnum">{ativos.length}</span>
+            </div>
+          </div>
+
+          {/* TABELA COM SCROLL INTERNO E CABEÇALHO STICKY */}
+          <div className="flex-1 overflow-y-auto overflow-x-auto min-h-0 [scrollbar-gutter:stable]">
+            <table className="w-full text-left border-collapse text-body-sm min-w-[720px]">
+              <thead className="sticky top-0 bg-surface-soft border-b border-border text-micro uppercase tracking-wider text-text-muted z-10 select-none">
+                <tr>
+                  <th className="py-3 px-4 font-semibold">Ativo</th>
+                  <th className="py-3 px-4 font-semibold">Categoria</th>
+                  <th className="py-3 px-4 font-semibold">Localidade</th>
+                  <th className="py-3 px-4 font-semibold">Fonte / Referência</th>
+                  <th className="py-3 px-4 font-semibold">Sigla</th>
+                  <th className="py-3 px-4 font-semibold text-center w-28">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60 text-text-primary">
+                {filteredAtivos.length > 0 ? (
+                  filteredAtivos.map((ativo) => (
+                    <tr
+                      key={ativo.id}
+                      className="hover:bg-surface-soft/70 transition-colors group"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-8 h-8 rounded-full bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 font-bold flex items-center justify-center shrink-0 border border-primary-200/50 dark:border-primary-800/50 text-caption select-none">
+                            {ativo.nome?.charAt(0) || 'A'}
+                          </div>
+                          <span className="font-semibold text-text-primary truncate" title={ativo.nome}>
+                            {ativo.nome}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge variant={getBadgeVariant(ativo.tipo)}>
+                          {ativo.tipo}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4 text-text-secondary truncate" title={ativo.municipio}>
+                        {ativo.municipio}
+                      </td>
+                      <td className="py-3 px-4 text-text-secondary truncate" title={ativo.referencia || '-'}>
+                        {ativo.referencia || '-'}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="bg-surface-soft text-text-primary px-2.5 py-1 rounded-control text-caption font-medium border border-border inline-flex items-center justify-center leading-none">
+                          {ativo.sigla || '-'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                          <IconButton
+                            size="sm"
+                            variant="ghost"
+                            icon={<Pencil className="w-4 h-4 text-text-secondary group-hover:text-primary-600" />}
+                            onClick={() => handleOpenEdit(ativo)}
+                            aria-label="Editar registro"
+                            title="Editar registro"
+                          />
+                          <IconButton
+                            size="sm"
+                            variant="ghost"
+                            icon={<Trash2 className="w-4 h-4 text-text-secondary group-hover:text-danger-600" />}
+                            onClick={() => setDeletingAtivo(ativo)}
+                            aria-label="Excluir registro"
+                            title="Excluir registro"
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-text-muted">
+                      <p className="text-body-sm font-medium">Nenhum ativo encontrado para os filtros informados.</p>
+                      {(searchTerm || selectedType !== 'all') && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="mt-2 text-primary-600"
+                          onClick={() => { setSearchTerm(''); setSelectedType('all'); }}
+                        >
+                          Limpar filtros
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        {/* DRAWER DE CADASTRO E EDIÇÃO (PASSO 3.2) */}
+        <Drawer
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          title={editingId ? 'Editar Registro' : 'Novo Registro de CT&I'}
+          subtitle={
+            editingId
+              ? 'Altere as informações do ativo selecionado.'
+              : 'Preencha os campos abaixo para cadastrar um novo ativo institucional.'
+          }
+          footer={
+            <>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setIsDrawerOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleSave}
+              >
+                {editingId ? 'Salvar Alterações' : 'Cadastrar Ativo'}
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleSave} className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="ativo-nome" className="text-caption font-medium text-text-primary">
+                Nome do Ativo <span className="text-danger-600">*</span>
+              </label>
+              <Input
+                id="ativo-nome"
+                value={formData.nome}
+                onChange={(e) => setFormData(prev => ({ ...prev, nome: e.target.value }))}
+                placeholder="Ex: Senai CIMATEC"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="ativo-tipo" className="text-caption font-medium text-text-primary">
+                Categoria / Tipo <span className="text-danger-600">*</span>
+              </label>
+              <Select
+                id="ativo-tipo"
+                value={formData.tipo}
+                onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))}
+              >
+                <option value="Hub">Hub</option>
+                <option value="Parque">Parque</option>
+                <option value="Polo">Polo</option>
+                <option value="Incubadora">Incubadora</option>
+                <option value="Laboratório">Laboratório</option>
+                <option value="Centro de Pesquisa">Centro de Pesquisa</option>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="ativo-municipio" className="text-caption font-medium text-text-primary">
+                Município <span className="text-danger-600">*</span>
+              </label>
+              <Input
+                id="ativo-municipio"
+                value={formData.municipio}
+                onChange={(e) => setFormData(prev => ({ ...prev, municipio: e.target.value }))}
+                placeholder="Ex: Salvador"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label htmlFor="ativo-sigla" className="text-caption font-medium text-text-primary">
+                  Sigla
+                </label>
+                <Input
+                  id="ativo-sigla"
+                  value={formData.sigla}
+                  onChange={(e) => setFormData(prev => ({ ...prev, sigla: e.target.value }))}
+                  placeholder="Ex: CIMATEC"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="ativo-ref" className="text-caption font-medium text-text-primary">
+                  Referência
+                </label>
+                <Input
+                  id="ativo-ref"
+                  value={formData.referencia}
+                  onChange={(e) => setFormData(prev => ({ ...prev, referencia: e.target.value }))}
+                  placeholder="Ex: FIEB / SECTI"
+                />
+              </div>
+            </div>
+          </form>
+        </Drawer>
+
+        {/* DIÁLOGO MODAL DE EXCLUSÃO (PASSO 3.3) */}
+        <Dialog
+          open={Boolean(deletingAtivo)}
+          onClose={() => setDeletingAtivo(null)}
+          title="Confirmar Exclusão"
+          description={`Esta ação removerá o registro da listagem ativa.`}
+          size="sm"
+          footer={
+            <>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setDeletingAtivo(null)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                size="md"
+                onClick={handleConfirmDelete}
+              >
+                Excluir Registro
+              </Button>
+            </>
+          }
+        >
+          <p className="text-body-sm text-text-secondary leading-relaxed">
+            Tem certeza que deseja remover o registro de{' '}
+            <strong className="text-text-primary">{deletingAtivo?.nome}</strong> ({deletingAtivo?.municipio})?
+          </p>
+        </Dialog>
+
+      </div>
+    </div>
+  );
+}

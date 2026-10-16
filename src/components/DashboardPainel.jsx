@@ -764,7 +764,7 @@ export default function DashboardPainel() {
               const isHero = index === 0;
               const accentColors = [
                 'text-white/80',
-                'text-[#0D9488]',
+                'text-primary-600',
                 'text-accent-600',
                 'text-warning-600',
                 'text-success-600'

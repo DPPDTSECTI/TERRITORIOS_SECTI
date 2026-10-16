@@ -24,12 +24,12 @@ const CustomTooltip = ({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 6, scale: 0.98 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="bg-surface border border-border shadow-card-hover rounded-xl p-4 sm:p-5 w-[330px] sm:w-[380px] relative z-50 flex flex-col font-sans overflow-hidden"
+      className="bg-surface border border-border shadow-card-hover rounded-card p-4 sm:p-5 w-[330px] sm:w-[380px] relative z-50 flex flex-col font-sans overflow-hidden"
     >
       {/* Cabeçalho do Card */}
       <div className="flex items-center justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-2 min-w-0">
-          <h3 className="text-[14px] font-semibold text-text-primary tracking-tight truncate">
+          <h3 className="text-body font-semibold text-text-primary tracking-tight truncate">
             {step.title || 'Guia Interativo'}
           </h3>
         </div>
@@ -38,7 +38,7 @@ const CustomTooltip = ({
           {!isLastStep && (
             <button 
               {...skipProps} 
-              className="text-[11px] font-medium text-text-muted hover:text-text-primary px-1.5 py-0.5 rounded transition-colors bg-transparent border-none cursor-pointer"
+              className="text-micro font-medium text-text-muted hover:text-text-primary px-1.5 py-0.5 rounded-control transition-colors bg-transparent border-none cursor-pointer"
             >
               Pular
             </button>
@@ -46,7 +46,7 @@ const CustomTooltip = ({
           <button 
             {...closeProps} 
             title="Fechar Tutorial" 
-            className="text-text-muted hover:text-text-primary hover:bg-surface-soft p-1 rounded-md transition-colors cursor-pointer"
+            className="text-text-muted hover:text-text-primary hover:bg-surface-soft p-1 rounded-control transition-colors cursor-pointer"
           >
             <X size={16} />
           </button>
@@ -54,7 +54,7 @@ const CustomTooltip = ({
       </div>
 
       {/* Conteúdo */}
-      <div className="text-[13px] text-text-secondary leading-relaxed font-normal mb-4">
+      <div className="text-body-sm text-text-secondary leading-relaxed font-normal mb-4">
         {step.content}
       </div>
 
@@ -82,7 +82,7 @@ const CustomTooltip = ({
           {index > 0 && (
             <button 
               {...backProps} 
-              className="px-2.5 py-1 text-[12px] font-medium text-text-secondary hover:text-text-primary hover:bg-surface-soft rounded-full transition-colors bg-transparent border-none cursor-pointer inline-flex items-center justify-center leading-none"
+              className="px-2.5 py-1 text-caption font-medium text-text-secondary hover:text-text-primary hover:bg-surface-soft rounded-control transition-colors bg-transparent border-none cursor-pointer inline-flex items-center justify-center leading-none"
             >
               Voltar
             </button>
@@ -90,7 +90,7 @@ const CustomTooltip = ({
           {continuous && !isLastStep && (
             <button 
               {...primaryProps} 
-              className="px-3.5 py-1 text-[12px] font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-full transition-colors cursor-pointer flex items-center gap-1 justify-center leading-none"
+              className="px-3.5 py-1 text-caption font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-control transition-colors cursor-pointer flex items-center gap-1 justify-center leading-none"
             >
               <span>Próximo</span>
               <ChevronRight size={16} />
@@ -99,7 +99,7 @@ const CustomTooltip = ({
           {(!continuous || isLastStep) && (
             <button 
               {...primaryProps} 
-              className="px-4 py-1 text-[12px] font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-full transition-colors cursor-pointer inline-flex items-center justify-center leading-none"
+              className="px-4 py-1 text-caption font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 hover:text-primary-700 rounded-control transition-colors cursor-pointer inline-flex items-center justify-center leading-none"
             >
               Concluir
             </button>

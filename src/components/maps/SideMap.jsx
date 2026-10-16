@@ -1097,7 +1097,7 @@ export default function SideMap({
   );
 
   return (
-    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-[#FFFDF7] dark:bg-[#120e06]' : 'bg-[#EBF1F6] dark:bg-[#0b0f19]'} bg-carto-grid rounded-[24px] overflow-hidden select-none z-10 flex-1`}>
+    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-amber-50/40 dark:bg-amber-950/20' : 'bg-surface-sunken dark:bg-background'} bg-carto-grid rounded-panel overflow-hidden select-none z-10 flex-1`}>
       <MapContainer
         ref={mapRef}
         center={[-13.1, -41.7]}
@@ -1256,9 +1256,9 @@ export default function SideMap({
                 permanent={showLabel}
                 className="clean-city-tooltip"
               >
-                <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-sm border tracking-tight whitespace-nowrap transition-all ${
+                <span className={`text-micro font-semibold px-2 py-0.5 rounded-full shadow-2xs border tracking-tight whitespace-nowrap transition-all ${
                   p.isSelected
-                    ? (filtroSemiarido ? 'text-white bg-[#B45309] border-[#B45309] font-bold' : 'text-white bg-[#1E40AF] border-[#1E40AF] font-bold')
+                    ? (filtroSemiarido ? 'text-white bg-warning-700 border-warning-700 font-bold' : 'text-white bg-primary-700 border-primary-700 font-bold')
                     : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface border-amber-500/30' : 'text-text-primary bg-surface border-border')
                 }`}>
                   {p.municipio}
@@ -1291,8 +1291,7 @@ export default function SideMap({
         ) && (
           <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
             <span
-              className="w-2 h-2 rounded-full animate-pulse shrink-0"
-              style={{ backgroundColor: filtroSemiarido ? '#D97706' : '#2563EB' }}
+              className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${filtroSemiarido ? 'bg-warning-600' : 'bg-primary-600'}`}
             />
             <span className="text-caption font-semibold text-text-primary truncate">
               {mode === 'ativos' && (selectedTipos && selectedTipos.length > 1 ? `${selectedTipos.length} Tipos Selecionados` : `Categoria: ${selectedTipo || selectedTipos[0]}`)}
