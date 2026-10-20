@@ -546,7 +546,7 @@ export default function CursosPage() {
                         <Badge
                             variant={filtroSemiarido ? 'warning' : 'primary'}
                             icon={<Flame size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />}
-                            className="text-micro font-medium uppercase px-2.5 py-1"
+                            className="text-caption font-medium px-2.5 py-1"
                         >
                             Somente Oferta de CT&I
                         </Badge>
@@ -583,7 +583,7 @@ export default function CursosPage() {
                                         <div className="flex items-center gap-2 w-full min-w-0">
                                             <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
                                             <span
-                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
+                                                className={`text-caption font-medium truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
                                                     }`}
                                                 title={kpi.label}
                                             >
@@ -661,7 +661,7 @@ export default function CursosPage() {
                                 <button
                                     type="button"
                                     onClick={() => setSelectedCursoId(null)}
-                                    className="text-micro font-medium text-text-secondary hover:text-danger-600 bg-surface-soft hover:bg-danger-50 dark:hover:bg-danger-950/40 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0 leading-none"
+                                    className="text-caption font-medium text-text-secondary hover:text-danger-600 bg-surface-soft hover:bg-danger-50 dark:hover:bg-danger-950/40 px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors cursor-pointer shrink-0 leading-none"
                                 >
                                     <span>Limpar</span>
                                     <X size={12} />
@@ -714,7 +714,7 @@ export default function CursosPage() {
                                                     <h5 className={`text-caption font-bold leading-tight truncate transition-colors ${isSelected ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200') : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')}`}>
                                                         {c.curso || c.nome}
                                                     </h5>
-                                                    <span className="text-micro text-text-secondary truncate leading-tight">
+                                                    <span className="text-caption text-text-secondary truncate leading-tight">
                                                         {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)} • <strong className="font-semibold text-text-secondary">{c.municipio}</strong>
                                                     </span>
                                                 </div>
@@ -723,12 +723,12 @@ export default function CursosPage() {
                                             <div className="flex items-center gap-1.5 shrink-0">
                                                 <Badge
                                                     variant={redeInfo.isPublica ? 'success' : 'accent'}
-                                                    className="text-micro font-semibold px-1.5 py-0.2"
+                                                    className="text-caption font-medium px-1.5 py-0.2"
                                                 >
                                                     {redeInfo.isPublica ? 'Pública' : 'Privada'}
                                                 </Badge>
                                                 <span
-                                                    className="text-micro font-semibold px-1.5 py-0.5 rounded-control shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
+                                                    className="text-caption font-medium px-1.5 py-0.5 rounded-control shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
                                                     style={{ backgroundColor: getAlphaColor(catColor, 0.1), color: catColor }}
                                                 >
                                                     {c.categoria || c.tipo || 'Geral'}
@@ -812,7 +812,7 @@ export default function CursosPage() {
                         {/* BARRA DE FILTROS: REDE (PÚBLICA VS PRIVADA) E FILTROS ATIVOS */}
                         <div className="flex items-center justify-between gap-2 flex-wrap px-3 py-2 bg-surface rounded-card border border-border shadow-card shrink-0 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                                <span className="text-micro font-bold text-text-muted uppercase tracking-wider pl-0.5">Rede:</span>
+                                <span className="text-caption font-medium text-text-muted pl-0.5">Rede:</span>
                                 <Chip
                                     selected={selectedRede === 'todas'}
                                     onClick={() => setSelectedRede('todas')}
@@ -982,18 +982,18 @@ export default function CursosPage() {
                                                         <div className="flex items-center flex-wrap gap-2 ml-auto max-w-full">
                                                             <Badge
                                                                 variant={redeInfo.isPublica ? 'success' : 'accent'}
-                                                                className="text-micro font-semibold"
+                                                                className="text-caption font-medium"
                                                             >
                                                                 {redeInfo.isPublica ? 'Pública' : 'Privada'}
                                                             </Badge>
                                                             <Badge
                                                                 variant="neutral"
-                                                                className="text-micro font-medium"
+                                                                className="text-caption font-medium"
                                                             >
                                                                 Presencial
                                                             </Badge>
                                                             <span
-                                                                className="text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
+                                                                className="text-caption font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
                                                                 style={{
                                                                     backgroundColor: getAlphaColor(catColor),
                                                                     color: catColor
@@ -1104,19 +1104,19 @@ export default function CursosPage() {
                                                         <div className="flex items-center flex-wrap gap-2 ml-auto max-w-full">
                                                             <Badge
                                                                 variant={redeInfo.isPublica ? 'success' : 'accent'}
-                                                                className="text-micro font-semibold"
+                                                                className="text-caption font-medium"
                                                             >
                                                                 {redeInfo.isPublica ? 'Pública' : 'Privada'}
                                                             </Badge>
                                                             <Badge
                                                                 variant="primary"
                                                                 icon={<Wifi size={12} strokeWidth={2} />}
-                                                                className="text-micro font-medium"
+                                                                className="text-caption font-medium"
                                                             >
                                                                 EaD
                                                             </Badge>
                                                             <span
-                                                                className="text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
+                                                                className="text-caption font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
                                                                 style={{
                                                                     backgroundColor: getAlphaColor(catColor),
                                                                     color: catColor
@@ -1216,7 +1216,7 @@ export default function CursosPage() {
                                                                     {cat.count} {cat.count === 1 ? 'curso' : 'cursos'}
                                                                 </span>
                                                                 <span
-                                                                    className="text-micro font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none tnum"
+                                                                    className="text-caption font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none tnum"
                                                                     style={{ backgroundColor: `${cat.color}20`, color: cat.color }}
                                                                 >
                                                                     {cat.percent}%
@@ -1291,7 +1291,7 @@ export default function CursosPage() {
                                                             className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
                                                         >
                                                             {/* RANK */}
-                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
+                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${rankStyle}`}>
                                                                 {rankStr}
                                                             </div>
 
@@ -1344,7 +1344,7 @@ export default function CursosPage() {
                                                         className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
                                                     >
                                                         {/* RANK */}
-                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${rankStyle}`}>
                                                             {rankStr}
                                                         </div>
 
@@ -1433,7 +1433,7 @@ export default function CursosPage() {
                                                             }`}
                                                     >
                                                         {/* RANK */}
-                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${rankStyle}`}>
                                                             {rankStr}
                                                         </div>
 
@@ -1444,12 +1444,12 @@ export default function CursosPage() {
                                                                 style={{ width: `${Math.max(4, pct)}%` }}
                                                             />
                                                             <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
-                                                                {ies.sigla} <span className="opacity-75 text-micro">· {ies.fullName}</span>
+                                                                {ies.sigla} <span className="opacity-75 text-caption">· {ies.fullName}</span>
                                                             </span>
                                                         </div>
 
                                                         {/* BADGE CIDADES */}
-                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/60'}`}>
+                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/60'}`}>
                                                             {ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}
                                                         </div>
 
@@ -1540,20 +1540,20 @@ export default function CursosPage() {
                             {/* METADADOS */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Instituição (IES)</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Instituição (IES)</span>
                                     <p className="font-bold text-text-primary">{selectedCursoDrawer.sigla || '—'}</p>
                                     <p className="text-caption text-text-secondary truncate">{selectedCursoDrawer.entidade || selectedCursoDrawer.instituicao || '—'}</p>
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Rede Administrativa</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Rede Administrativa</span>
                                     <p className="font-bold text-text-primary">
                                         {redeInfo.isPublica ? 'Pública (Estadual/Federal/Municipal)' : 'Privada / Comunitária'}
                                     </p>
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Município</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Município</span>
                                     <p className="font-bold text-text-primary flex items-center gap-1.5">
                                         <MapPin size={14} className="text-primary-600" />
                                         {selectedCursoDrawer.municipio || '—'}
@@ -1561,19 +1561,19 @@ export default function CursosPage() {
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Território de Identidade</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Território de Identidade</span>
                                     <p className="font-bold text-text-primary">
                                         {selectedCursoDrawer.territorio_identidade || selectedCursoDrawer.territorio || '—'}
                                     </p>
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Modalidade de Ensino</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Modalidade de Ensino</span>
                                     <p className="font-bold text-text-primary">{modalidade}</p>
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Vagas / Matrículas</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Vagas / Matrículas</span>
                                     <p className="font-bold text-text-primary tnum">
                                         {selectedCursoDrawer.vagas || selectedCursoDrawer.matriculas
                                             ? `${selectedCursoDrawer.vagas || '—'} vagas / ${selectedCursoDrawer.matriculas || '—'} matrículas`
@@ -1584,7 +1584,7 @@ export default function CursosPage() {
 
                             {selectedCursoDrawer.grau && (
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Grau Acadêmico</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Grau Acadêmico</span>
                                     <p className="font-bold text-text-primary">{selectedCursoDrawer.grau}</p>
                                 </div>
                             )}

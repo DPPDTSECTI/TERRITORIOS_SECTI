@@ -658,7 +658,7 @@ export default function PtiMap({
       {loading || !currentData ? (
         <div className="flex flex-col items-center text-primary-600">
           <svg className="animate-spin h-6 w-6 mb-2 text-primary-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-          <span className="text-caption font-medium uppercase">Processando Malha...</span>
+          <span className="text-caption font-medium">Processando Malha...</span>
         </div>
       ) : (
         <MapContainer
@@ -842,7 +842,7 @@ export default function PtiMap({
       {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
         <div className={`absolute ${isTerritoryOnRight ? 'top-4 left-4' : 'top-[58px] right-4'} z-[400] w-64 max-h-[calc(100%-80px)] overflow-y-auto hide-scroll p-4 rounded-card border bg-surface border-border shadow-card transition-all duration-300 animate-soft-fade pointer-events-auto`}>
           <div className="flex justify-between items-center mb-3 border-b border-border pb-3">
-            <h4 className="text-caption font-semibold text-text-primary uppercase leading-tight">
+            <h4 className="text-caption font-medium text-text-primary leading-tight">
               {selectedTerritory.nome_territorio || selectedTerritory.territorio}
             </h4>
             <button
@@ -866,7 +866,7 @@ export default function PtiMap({
           {selectedTerritoryMunicipalities.length > 4 && (
             <button
               onClick={() => setIsMunListExpanded(!isMunListExpanded)}
-              className="w-full mt-3 text-center text-caption font-semibold text-primary-600 hover:text-primary-700 uppercase py-2 rounded-control bg-surface-soft hover:bg-primary-50 dark:hover:bg-primary-950/40 transition-colors cursor-pointer"
+              className="w-full mt-3 text-center text-caption font-medium text-primary-600 hover:text-primary-700 py-2 rounded-control bg-surface-soft hover:bg-primary-50 dark:hover:bg-primary-950/40 transition-colors cursor-pointer"
             >
               {isMunListExpanded ? 'Ver menos' : `Ver os ${selectedTerritoryMunicipalities.length} municípios`}
             </button>
@@ -892,7 +892,7 @@ export default function PtiMap({
             <div className="flex justify-between items-start mb-2.5">
               <div className="flex flex-col">
                 {hoveredMunName && (
-                  <span className="text-micro font-semibold text-primary-600 uppercase tracking-wide mb-0.5">
+                  <span className="text-caption font-medium text-primary-600 mb-0.5">
                     {hoveredMunName}
                   </span>
                 )}
@@ -903,11 +903,11 @@ export default function PtiMap({
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-control p-2 border bg-surface-soft border-border flex flex-col">
-                <span className="text-micro text-text-muted font-medium mb-0.5">Ativos</span>
+                <span className="text-caption text-text-muted font-medium mb-0.5">Ativos</span>
                 <span className="text-body-sm font-semibold text-text-primary tnum">{hoveredData?.ativos_cti || 0}</span>
               </div>
               <div className="rounded-control p-2 border bg-surface-soft border-border flex flex-col">
-                <span className="text-micro text-text-muted font-medium mb-0.5">Média IFDM</span>
+                <span className="text-caption text-text-muted font-medium mb-0.5">Média IFDM</span>
                 <span className="text-body-sm font-semibold text-text-primary tnum">
                   {hoveredData?.media_ifdm
                     ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3)

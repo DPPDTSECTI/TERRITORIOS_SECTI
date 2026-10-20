@@ -57,7 +57,7 @@ export const Badge = forwardRef(function Badge(
     <span
       ref={ref}
       className={cn(
-        'text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1.5 border leading-none shrink-0 select-none',
+        'text-caption font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1.5 border leading-none shrink-0 select-none',
         badgeVariants[variant] || badgeVariants.neutral,
         className
       )}
@@ -129,7 +129,7 @@ export const Chip = forwardRef(function Chip(
       {count !== undefined && count !== null && (
         <span
           className={cn(
-            'tnum text-micro font-semibold px-1.5 py-0.5 rounded-full ml-1 shrink-0 leading-none',
+            'tnum text-caption font-medium px-1.5 py-0.5 rounded-full ml-1 shrink-0 leading-none',
             selected
               ? 'bg-white/80 dark:bg-black/30 text-current'
               : 'bg-surface-sunken text-text-muted border border-border/70'

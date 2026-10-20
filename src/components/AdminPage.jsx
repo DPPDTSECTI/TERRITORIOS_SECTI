@@ -271,7 +271,7 @@ export default function AdminPage() {
           {/* TABELA COM SCROLL INTERNO E CABEÇALHO STICKY */}
           <div className="flex-1 overflow-y-auto overflow-x-auto min-h-0 [scrollbar-gutter:stable]">
             <table className="w-full text-left border-collapse text-body-sm min-w-[720px]">
-              <thead className="sticky top-0 bg-surface-soft border-b border-border text-micro uppercase tracking-wider text-text-muted z-10 select-none">
+              <thead className="sticky top-0 bg-surface-soft border-b border-border text-caption font-medium text-text-muted z-10 select-none">
                 <tr>
                   <th className="py-3 px-4 font-semibold">Ativo</th>
                   <th className="py-3 px-4 font-semibold">Categoria</th>

@@ -1249,7 +1249,7 @@ export default function SideMap({
                 permanent={showLabel}
                 className="clean-city-tooltip"
               >
-                <span className={`text-micro font-semibold px-2 py-0.5 rounded-full shadow-2xs border tracking-tight whitespace-nowrap transition-all ${p.isSelected
+                <span className={`text-caption font-medium px-2 py-0.5 rounded-full shadow-2xs border whitespace-nowrap transition-all ${p.isSelected
                     ? (filtroSemiarido ? 'text-white bg-warning-700 border-warning-700 font-bold' : 'text-white bg-primary-700 border-primary-700 font-bold')
                     : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface border-amber-500/30' : 'text-text-primary bg-surface border-border')
                   }`}>
@@ -1359,12 +1359,12 @@ export default function SideMap({
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1">
               <Flame size={12} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
-              <span className={`text-caption font-semibold uppercase tracking-wider ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
+              <span className={`text-caption font-medium ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
                 {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
               </span>
             </div>
             {selectedTerritory && (
-              <span className={`text-micro font-semibold px-1.5 py-0.5 rounded-control tnum ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
+              <span className={`text-caption font-medium px-1.5 py-0.5 rounded-control tnum ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
                 Máx: {maxCursosNoTerritorioSelecionado}
               </span>
             )}
@@ -1383,7 +1383,7 @@ export default function SideMap({
                     style={{ backgroundColor: lvl.color }}
                     title={lvl.label}
                   />
-                  <span className={`text-micro font-medium whitespace-nowrap tnum ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'}`}>
+                  <span className={`text-caption font-medium whitespace-nowrap tnum ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'}`}>
                     {labelText}
                   </span>
                 </div>

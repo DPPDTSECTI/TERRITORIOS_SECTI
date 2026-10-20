@@ -140,7 +140,7 @@ export const SearchInput = forwardRef(function SearchInput(
 
         {!hasValue && enableShortcut && !disabled && (
           <kbd
-            className="hidden sm:inline-flex text-micro text-text-muted px-1.5 py-0.5 rounded bg-surface-sunken border border-border/80 font-mono select-none pointer-events-none leading-none"
+            className="hidden sm:inline-flex text-caption text-text-muted px-1.5 py-0.5 rounded bg-surface-sunken border border-border/80 font-mono select-none pointer-events-none leading-none"
             title="Pressione / para buscar"
           >
             /

@@ -479,11 +479,11 @@ export default function UiShowcasePage() {
           </p>
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 bg-surface-sunken rounded-control">
-              <span className="text-micro text-text-muted uppercase">Municípios</span>
+              <span className="text-caption font-medium text-text-muted">Municípios</span>
               <p className="text-subtitle font-bold mt-1">13</p>
             </div>
             <div className="p-3 bg-surface-sunken rounded-control">
-              <span className="text-micro text-text-muted uppercase">População Estimada</span>
+              <span className="text-caption font-medium text-text-muted">População Estimada</span>
               <p className="text-subtitle font-bold mt-1">3,9 Mi</p>
             </div>
           </div>
@@ -535,7 +535,7 @@ export default function UiShowcasePage() {
               <Info className="w-4 h-4" /> Dica de Navegação
             </span>
             <p className="text-caption text-text-muted leading-relaxed">
-              Você pode usar o atalho <kbd className="px-1 py-0.5 rounded bg-surface border text-micro font-mono">/</kbd> em qualquer tela para ativar o campo de busca rápido.
+              Você pode usar o atalho <kbd className="px-1 py-0.5 rounded bg-surface border text-caption font-mono">/</kbd> em qualquer tela para ativar o campo de busca rápido.
             </p>
           </div>
         </div>

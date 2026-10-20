@@ -116,9 +116,9 @@ export default function RankingBarChart({
       <div className="flex justify-between items-start mb-2 shrink-0">
         <div className="flex flex-col min-w-0 pr-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-text-primary font-bold text-subtitle tracking-tight">{title}</h3>
+            <h3 className="text-text-primary font-semibold text-subtitle tracking-tight">{title}</h3>
             {badge && (
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-micro font-semibold bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                 {badge}
               </span>
@@ -174,6 +174,8 @@ export default function RankingBarChart({
         </div>
       </div>
 
+      <div className="w-full h-px bg-border/70 mb-2 shrink-0"></div>
+
       {/* ÁREA DO GRÁFICO (BARRAS HORIZONTAIS) */}
       {data.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
@@ -224,7 +226,7 @@ export default function RankingBarChart({
                 }`}
               >
                 {/* RANK PILL */}
-                <div className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full shrink-0 flex items-center justify-center text-micro sm:text-caption tabular-nums leading-none shadow-2xs ${rankStyle}`}>
+                <div className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full shrink-0 flex items-center justify-center text-caption tabular-nums leading-none shadow-2xs ${rankStyle}`}>
                   {rankStr}
                 </div>
 
@@ -254,7 +256,7 @@ export default function RankingBarChart({
                     <span>IFDM: <strong className="text-text-primary font-bold tabular-nums ml-1">{formattedVal}</strong></span>
                   </div>
                   {item.extra > 0 && (
-                    <div className="flex items-center text-micro text-text-muted mt-0.5">
+                    <div className="flex items-center text-caption text-text-muted mt-0.5">
                       <span>{item.extra} {extraLabel}</span>
                     </div>
                   )}

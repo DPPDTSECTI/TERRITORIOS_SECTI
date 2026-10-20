@@ -739,7 +739,7 @@ export default function CadeiaPage() {
                         <Badge
                             variant={filtroSemiarido ? 'warning' : 'success'}
                             icon={<Award size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-success-600'} />}
-                            className="text-micro font-medium uppercase px-2.5 py-1"
+                            className="text-caption font-medium px-2.5 py-1"
                         >
                             Arranjos & Indicações Geográficas
                         </Badge>
@@ -782,7 +782,7 @@ export default function CadeiaPage() {
                                         <div className="flex items-center gap-2 w-full min-w-0">
                                             <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
                                             <span
-                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
+                                                className={`text-caption font-medium truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
                                                     }`}
                                                 title={kpi.label}
                                             >
@@ -862,7 +862,7 @@ export default function CadeiaPage() {
                                 </span>
                                 <Badge
                                     variant={filtroSemiarido ? 'warning' : 'primary'}
-                                    className="text-micro font-medium tnum"
+                                    className="text-caption font-medium tnum"
                                 >
                                     {compactCadeiasList.length}
                                 </Badge>
@@ -943,7 +943,7 @@ export default function CadeiaPage() {
                                                         }`}>
                                                         {c.entidade}
                                                     </h5>
-                                                    <span className="text-micro text-text-secondary truncate leading-tight flex items-center gap-1.5">
+                                                    <span className="text-caption text-text-secondary truncate leading-tight flex items-center gap-1.5">
                                                         <span
                                                             className="w-1.5 h-1.5 rounded-full shrink-0"
                                                             style={{ backgroundColor: getSegmentColor(c.segmento) }}
@@ -957,7 +957,7 @@ export default function CadeiaPage() {
 
                                             <Badge
                                                 variant={tipoVariant}
-                                                className="text-micro font-semibold"
+                                                className="text-caption font-medium"
                                             >
                                                 {c.tipo}
                                             </Badge>
@@ -1173,7 +1173,7 @@ export default function CadeiaPage() {
                                                                     <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-caption text-text-secondary mt-1 font-medium">
                                                                         <Badge
                                                                             variant="neutral"
-                                                                            className="text-micro font-medium"
+                                                                            className="text-caption font-medium"
                                                                             style={{
                                                                                 backgroundColor: `${getSegmentColor(c.segmento)}15`,
                                                                                 color: getSegmentColor(c.segmento),
@@ -1193,7 +1193,7 @@ export default function CadeiaPage() {
                                                             <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
                                                                 <Badge
                                                                     variant={tipoVariant}
-                                                                    className="text-micro font-semibold"
+                                                                    className="text-caption font-medium"
                                                                 >
                                                                     {c.tipo}
                                                                 </Badge>
@@ -1229,7 +1229,7 @@ export default function CadeiaPage() {
                                                                     ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
                                                                     : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
                                                                 }`}>
-                                                                <div className="flex items-center gap-1.5 font-bold text-micro uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">
+                                                                <div className="flex items-center gap-1.5 font-medium text-caption text-amber-800 dark:text-amber-300 mb-1">
                                                                     <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
                                                                     <span>Referência / Citação do Artigo:</span>
                                                                 </div>
@@ -1275,7 +1275,7 @@ export default function CadeiaPage() {
                                     </div>
 
                                     {/* LEGENDA DE SEGMENTOS: TOP 7 DESTACADOS + DEMAIS SEGMENTOS */}
-                                    <div className="flex items-center gap-2.5 text-micro text-text-muted mb-2 px-0.5 shrink-0 flex-wrap">
+                                    <div className="flex items-center gap-2.5 text-caption font-medium text-text-muted mb-2 px-0.5 shrink-0 flex-wrap">
                                         <span className="flex items-center gap-1.5 font-medium">
                                             <span
                                                 className="w-2 h-2 rounded-full"
@@ -1321,7 +1321,7 @@ export default function CadeiaPage() {
                                                                 <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: dotColor }} />
                                                                 <span className="text-body-sm font-semibold text-text-primary truncate">{seg.name}</span>
                                                                 {!seg.isTop7 && (
-                                                                    <span className="text-micro font-medium text-text-muted px-1.5 py-0.5 rounded-control bg-surface-soft border border-border/60 shrink-0">
+                                                                    <span className="text-caption font-medium text-text-muted px-1.5 py-0.5 rounded-control bg-surface-soft border border-border/60 shrink-0">
                                                                         Demais segmentos
                                                                     </span>
                                                                 )}
@@ -1546,17 +1546,17 @@ export default function CadeiaPage() {
                             {/* GRID DE METADADOS */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Tipo / Classificação</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Tipo / Classificação</span>
                                     <p className="font-bold text-text-primary">{selectedCadeiaDrawer.tipo || '—'}</p>
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Segmento Produtivo</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Segmento Produtivo</span>
                                     <p className="font-bold text-text-primary">{selectedCadeiaDrawer.segmento || '—'}</p>
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Município Sede</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Município Sede</span>
                                     <p className="font-bold text-text-primary flex items-center gap-1.5">
                                         <MapPin size={14} className="text-primary-600" />
                                         {selectedCadeiaDrawer.municipio_sede || '—'}
@@ -1564,7 +1564,7 @@ export default function CadeiaPage() {
                                 </div>
 
                                 <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-micro font-semibold uppercase text-text-muted block mb-0.5">Território de Identidade</span>
+                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Território de Identidade</span>
                                     <p className="font-bold text-text-primary">
                                         {selectedCadeiaDrawer.territorio_identidade || '—'}
                                     </p>
@@ -1574,10 +1574,10 @@ export default function CadeiaPage() {
                             {/* MUNICÍPIOS COBERTOS / ABRANGÊNCIA */}
                             <div className="p-3 bg-surface-soft rounded-control border border-border/70 flex flex-col gap-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-micro font-semibold uppercase text-text-muted">
+                                    <span className="text-caption font-medium text-text-muted">
                                         Municípios Cobertos / Parceiros
                                     </span>
-                                    <Badge variant="neutral" className="text-micro tnum font-semibold">
+                                    <Badge variant="neutral" className="text-caption tnum font-medium">
                                         {totalAbrangencia} {totalAbrangencia === 1 ? 'município' : 'municípios'}
                                     </Badge>
                                 </div>
@@ -1602,7 +1602,7 @@ export default function CadeiaPage() {
                             {/* CITAÇÃO / REFERÊNCIA */}
                             {selectedCadeiaDrawer.texto_referencia && (
                                 <div className="p-3 bg-amber-50/80 dark:bg-amber-950/30 rounded-control border border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200">
-                                    <div className="flex items-center gap-1.5 font-bold text-micro uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">
+                                    <div className="flex items-center gap-1.5 font-medium text-caption text-amber-800 dark:text-amber-300 mb-1">
                                         <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
                                         <span>Referência / Citação do Artigo</span>
                                     </div>

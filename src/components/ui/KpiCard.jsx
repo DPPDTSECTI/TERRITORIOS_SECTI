@@ -145,7 +145,7 @@ export function KpiCard({
       <div className="flex items-center justify-between gap-3">
         <span
           className={cn(
-            'text-micro font-semibold uppercase tracking-wider line-clamp-1',
+            'text-caption font-medium line-clamp-1',
             isBrand ? 'text-white/80' : 'text-text-muted'
           )}
         >

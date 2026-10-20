@@ -39,7 +39,7 @@ const CustomTooltip = ({
           {!isLastStep && (
             <button 
               {...skipProps} 
-              className="text-micro font-medium text-text-muted hover:text-text-primary px-1.5 py-0.5 rounded-control transition-colors bg-transparent border-none cursor-pointer"
+              className="text-caption font-medium text-text-muted hover:text-text-primary px-1.5 py-0.5 rounded-control transition-colors bg-transparent border-none cursor-pointer"
             >
               Pular
             </button>

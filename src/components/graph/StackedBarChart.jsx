@@ -115,7 +115,7 @@ function StackedBarChart({
             </button>
           </div>
         ) : showTopBadge && data.length > 0 ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-micro font-bold bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption font-medium bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-primary-600"></span>
             Top {Math.min(limit, data.length)}
           </span>
@@ -175,7 +175,7 @@ function StackedBarChart({
                         <span className="text-caption font-semibold text-text-primary truncate max-w-[100px]">
                           {hoveredSlice.label}
                         </span>
-                        <span className="text-micro tnum font-semibold text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
+                        <span className="text-caption tnum font-medium text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
                           {hoveredSlice.total} tot
                         </span>
                       </div>
@@ -204,7 +204,7 @@ function StackedBarChart({
                         <span className="text-caption font-semibold text-text-primary truncate max-w-[115px]">
                           {hoveredTotalTerritory.label}
                         </span>
-                        <span className="text-micro tnum font-semibold text-text-muted bg-surface-sunken px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
+                        <span className="text-caption tnum font-medium text-text-muted bg-surface-sunken px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
                           {hoveredTotalTerritory.total} ativos
                         </span>
                       </div>
@@ -234,7 +234,7 @@ function StackedBarChart({
                         segments: item.segments
                       });
                     }}
-                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-control bg-surface-sunken border border-border text-micro tnum font-bold text-text-primary group-hover/bar:bg-primary-600 group-hover/bar:text-white group-hover/bar:scale-105 transition-all mb-1 select-none cursor-pointer shadow-xs leading-none shrink-0"
+                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-control bg-surface-sunken border border-border text-caption tnum font-semibold text-text-primary group-hover/bar:bg-primary-600 group-hover/bar:text-white group-hover/bar:scale-105 transition-all mb-1 select-none cursor-pointer shadow-xs leading-none shrink-0"
                     title="Ver todos os ativos da região"
                   >
                     {totalVal}
@@ -295,7 +295,7 @@ function StackedBarChart({
                 className="flex-1 flex items-start justify-center px-0.5 text-center leading-[11px] select-none min-w-0"
                 title={item.label}
               >
-                <span className="text-micro font-semibold text-text-secondary group-hover/bar:text-text-primary transition-colors whitespace-pre-line break-words">
+                <span className="text-caption font-medium text-text-secondary group-hover/bar:text-text-primary transition-colors whitespace-pre-line break-words">
                   {formattedName}
                 </span>
               </div>

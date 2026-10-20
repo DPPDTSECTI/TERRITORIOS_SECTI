@@ -106,7 +106,7 @@ function CardLista({
                   {TabIcon && <TabIcon size={16} />}
                   <span>{tab.label}</span>
                   {tab.count !== undefined && (
-                    <span className={`text-micro tnum px-1.5 py-0.5 rounded-full leading-none ${
+                    <span className={`text-caption tnum px-1.5 py-0.5 rounded-full leading-none ${
                       isActive ? 'bg-white/20 text-white' : 'bg-surface text-text-muted border border-border/40'
                     }`}>
                       {tab.count}
@@ -165,7 +165,7 @@ function CardLista({
                 <h3 className="text-text-primary font-semibold text-subtitle tracking-tight truncate max-w-[180px]">
                   {selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : title}
                 </h3>
-                <span className="text-micro tnum font-semibold text-text-muted bg-surface-sunken px-2 py-0.5 rounded-full border border-border shrink-0 inline-flex items-center justify-center leading-none">
+                <span className="text-caption tnum font-medium text-text-muted bg-surface-sunken px-2 py-0.5 rounded-full border border-border shrink-0 inline-flex items-center justify-center leading-none">
                   {displayItems.length}
                 </span>
               </div>
@@ -206,7 +206,7 @@ function CardLista({
                       className="absolute right-0 top-full mt-1.5 w-[260px] max-h-[260px] overflow-y-auto scrollbar-none bg-surface-raised rounded-control shadow-float border border-border p-1.5 z-[200] flex flex-col gap-0.5"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="px-2.5 py-1 text-micro font-semibold uppercase text-text-muted border-b border-border/60 mb-1">
+                      <div className="px-2.5 py-1 text-caption font-medium text-text-muted border-b border-border/60 mb-1">
                         {filterTitle}
                       </div>
 
@@ -223,7 +223,7 @@ function CardLista({
                         }`}
                       >
                         <span className="truncate">Todos</span>
-                        <span className="text-micro tnum text-text-muted">({items.length})</span>
+                        <span className="text-caption tnum text-text-muted">({items.length})</span>
                       </button>
 
                       {filterOptions.map((option) => (
@@ -283,7 +283,7 @@ function CardLista({
                           {item.nome || item.entidade}
                         </span>
                         <div className="flex items-center justify-between mt-0.5 gap-1.5">
-                          <span className="text-micro font-medium text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded-full border border-border truncate max-w-[135px] inline-flex items-center justify-center leading-none">
+                          <span className="text-caption font-medium text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded-full border border-border truncate max-w-[135px] inline-flex items-center justify-center leading-none">
                             {item.shortTipo || item.tipo || item.segmento}
                           </span>
                           <span className="text-caption font-normal text-text-secondary truncate">

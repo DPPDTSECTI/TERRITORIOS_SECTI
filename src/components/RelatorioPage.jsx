@@ -1438,7 +1438,7 @@ export default function RelatorioPage() {
                         <span className="truncate">{opt.label}</span>
                         {count !== null && (
                           <span
-                            className={`text-micro px-1.5 py-0.5 rounded-full font-semibold tnum leading-none shrink-0 ${isActive
+                            className={`text-caption px-1.5 py-0.5 rounded-full font-medium tnum leading-none shrink-0 ${isActive
                                 ? 'bg-white/20 text-white'
                                 : 'bg-surface border border-border text-text-muted'
                               }`}
@@ -1502,7 +1502,7 @@ export default function RelatorioPage() {
                     <div className="flex flex-col max-w-xl min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <Award size={16} className={reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'} />
-                        <span className={`text-micro font-semibold uppercase tracking-wider ${reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'
+                        <span className={`text-caption font-medium ${reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'
                           }`}>
                           {reportMode === 'semiarido' ? 'Recorte Estratégico Semiárido • SECTI' : 'Documento Analítico SECTI'}
                         </span>
@@ -1526,14 +1526,14 @@ export default function RelatorioPage() {
 
                     <div className="flex flex-row sm:flex-col gap-2 shrink-0 sm:items-end">
                       <div className="bg-white/15 px-3.5 py-1.5 rounded-control border border-white/20">
-                        <span className="text-micro text-white/80 block font-semibold uppercase tracking-wider">
+                        <span className="text-caption text-white/80 block font-medium">
                           {reportMode === 'semiarido' ? 'População Semiárido' : 'População Estimada'}
                         </span>
                         <strong className="text-body font-semibold tnum text-white">{statsSintese.populacaoTotal} hab.</strong>
                       </div>
                       {statsSintese.ifdmMedio && (
                         <div className="bg-white/15 px-3.5 py-1.5 rounded-control border border-white/20">
-                          <span className="text-micro text-white/80 block font-semibold uppercase tracking-wider">
+                          <span className="text-caption text-white/80 block font-medium">
                             {reportMode === 'semiarido' ? 'IFDM Médio (Semiárido)' : 'IFDM Médio FIRJAN'}
                           </span>
                           <strong className="text-body font-semibold tnum text-white">{statsSintese.ifdmMedio}</strong>
@@ -1698,7 +1698,7 @@ export default function RelatorioPage() {
                         {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
                         {reportType !== 'cadeias' && <col className="w-[10%]" />}
                       </colgroup>
-                      <thead className={`font-semibold text-micro uppercase tracking-wider ${reportMode === 'semiarido' ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'
+                      <thead className={`font-medium text-caption ${reportMode === 'semiarido' ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'
                         }`}>
                         <tr>
                           <th className="py-2.5 px-3">

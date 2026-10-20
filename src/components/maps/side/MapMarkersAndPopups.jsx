@@ -25,7 +25,7 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
           >
             {IconComp && <IconComp size={11} className="text-white" />}
           </div>
-          <span className="text-caption font-semibold text-text-muted uppercase tracking-wider truncate">
+          <span className="text-caption font-medium text-text-muted truncate">
             {ativo.shortTipo || ativo.tipo}
           </span>
         </div>
@@ -49,7 +49,7 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
           </div>
         )}
         {ativo.rnp && (
-          <div className={`flex items-center gap-1.5 text-micro font-medium px-2 py-1 rounded-control border ${
+          <div className={`flex items-center gap-1.5 text-caption font-medium px-2 py-1 rounded-control border ${
             filtroSemiarido
               ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15 border-amber-500/30'
               : 'text-info-600 dark:text-info-400 bg-info-500/15 border-info-500/20'
@@ -75,7 +75,7 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
     <div className="p-3 max-w-[280px] text-left select-text font-sans bg-surface text-text-primary border border-border rounded-card">
       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
         <span
-          className="text-micro font-semibold uppercase tracking-wider px-2 py-0.5 rounded-control"
+          className="text-caption font-medium px-2 py-0.5 rounded-control"
           style={{
             backgroundColor: `${badgeColor}20`,
             color: badgeColor
@@ -85,7 +85,7 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
         </span>
         {cadeia.segmento && (
           <span
-            className="text-micro font-semibold px-2 py-0.5 rounded-control border border-border/60"
+            className="text-caption font-medium px-2 py-0.5 rounded-control border border-border/60"
             style={corSegmento ? {
               backgroundColor: `${corSegmento}18`,
               color: corSegmento,
@@ -129,8 +129,8 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
         )}
 
         {cadeia.texto_referencia && (
-          <div className="mt-2 p-2 rounded-control bg-amber-500/10 border border-amber-500/20 text-micro text-amber-900 dark:text-amber-200 leading-snug">
-            <div className="flex items-center gap-1 font-semibold uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-0.5">
+          <div className="mt-2 p-2 rounded-control bg-amber-500/10 border border-amber-500/20 text-caption text-amber-900 dark:text-amber-200 leading-snug">
+            <div className="flex items-center gap-1 font-medium text-amber-800 dark:text-amber-300 mb-0.5">
               <BookOpen size={11} className="text-amber-700 dark:text-amber-400 shrink-0" />
               <span>Artigo / Referência Acadêmica:</span>
             </div>

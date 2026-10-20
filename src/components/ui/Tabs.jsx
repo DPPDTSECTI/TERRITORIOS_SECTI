@@ -99,7 +99,7 @@ export function Tabs({
               {item.count !== undefined && item.count !== null && (
                 <span
                   className={cn(
-                    'tnum text-micro px-1.5 py-0.5 rounded-full leading-none shrink-0',
+                    'tnum text-caption px-1.5 py-0.5 rounded-full leading-none shrink-0',
                     isActive
                       ? isUnderline
                         ? 'bg-primary-100 text-primary-800 dark:bg-primary-950 dark:text-primary-200'

@@ -169,7 +169,7 @@ function StatKpiCard({ title, subtitle, value, format = 'int', icon: Icon }) {
   return (
     <Card ref={cardRef} className="p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
       <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-caption font-semibold text-text-secondary uppercase tracking-wider truncate">
+        <span className="text-caption font-medium text-text-secondary truncate">
           {title}
         </span>
         {Icon && (
@@ -302,7 +302,7 @@ export default function LandingHero() {
                 alt="Favicon Painel Territorial CT&I"
                 className="h-7 w-auto object-contain shrink-0"
               />
-              <span className="font-bold text-caption sm:text-body-sm tracking-wider uppercase text-text-primary">
+              <span className="font-bold text-caption sm:text-body-sm text-text-primary">
                 Painel Territorial CT&I
               </span>
             </Link>
@@ -364,7 +364,7 @@ export default function LandingHero() {
       <section className="relative w-full min-h-[calc(100vh-80px)] flex flex-col justify-between px-6 sm:px-10 lg:px-12 pt-8 sm:pt-14 pb-12 sm:pb-16 z-10 max-w-[1600px] mx-auto">
         <div className="w-full flex-1 flex flex-col justify-center max-w-4xl lg:max-w-5xl py-6 sm:py-12">
           
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface border border-primary-500/30 text-caption font-bold uppercase tracking-wider text-primary-700 dark:text-primary-300 mb-5 sm:mb-6 shadow-2xs w-fit">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface border border-primary-500/30 text-caption font-medium text-primary-700 dark:text-primary-300 mb-5 sm:mb-6 shadow-2xs w-fit">
             <span className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-400 animate-pulse" />
             Plataforma de Inteligência Territorial · SECTI
           </div>
@@ -453,7 +453,7 @@ export default function LandingHero() {
         <div className="flex flex-col gap-10">
 
           <div className="flex flex-col gap-2 max-w-4xl lg:max-w-5xl">
-            <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+            <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
               Sobre a Iniciativa · SECTI Bahia
             </span>
             <h2 className="text-headline font-bold tracking-tight text-text-primary leading-tight">
@@ -470,7 +470,7 @@ export default function LandingHero() {
 
           {/* 4 OBJETIVOS ESTRATÉGICOS EM CARDS */}
           <div>
-            <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 block mb-3">
+            <span className="text-caption font-medium text-primary-600 dark:text-primary-400 block mb-3">
               Nossos Objetivos Estratégicos
             </span>
 
@@ -525,7 +525,7 @@ export default function LandingHero() {
         <div className="flex flex-col gap-8">
 
           <div className="flex flex-col gap-1.5 max-w-4xl lg:max-w-5xl">
-            <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+            <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
               Arquitetura & Navegação
             </span>
             <h2 className="text-headline font-bold tracking-tight text-text-primary">
@@ -574,7 +574,7 @@ export default function LandingHero() {
                       </p>
 
                       <div className="space-y-1.5 border-t border-border/80 pt-3.5 mb-5">
-                        <span className="text-micro font-bold uppercase tracking-wider text-text-muted block mb-1">
+                        <span className="text-caption font-medium text-text-muted block mb-1">
                           O que compõe:
                         </span>
                         {modulo.destaques.map((item, dIdx) => (
@@ -604,7 +604,7 @@ export default function LandingHero() {
         <div className="flex flex-col gap-8">
 
           <div className="flex flex-col gap-1.5 max-w-4xl lg:max-w-5xl">
-            <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+            <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
               Métricas & Dados Territoriais
             </span>
             <h2 className="text-headline font-bold tracking-tight text-text-primary">
@@ -625,7 +625,7 @@ export default function LandingHero() {
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2.5">
-                      <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+                      <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
                         {ind.tag}
                       </span>
                       <div className="w-7 h-7 rounded-control bg-surface-soft text-text-muted flex items-center justify-center shrink-0 border border-border">

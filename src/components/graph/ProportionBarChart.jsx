@@ -55,13 +55,13 @@ export default function ProportionBarChart({
                   <span className="truncate flex-1 min-w-0 pr-2" title={item.label}>{item.label}</span>
                   <div className="flex items-center gap-1.5 text-caption shrink-0">
                     <span className={`font-bold tnum ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
-                      {pos} <span className="text-micro font-medium opacity-90">({percentPos}%)</span>
+                      {pos} <span className="text-caption font-medium opacity-90">({percentPos}%)</span>
                     </span>
                     <span className="text-text-muted font-bold">/</span>
                     <span className={`font-bold tnum ${negativeTextColor}`} title={`${negativeLabel}: ${neg} (${percentNeg}%)`}>
-                      {neg} <span className="text-micro font-medium opacity-90">({percentNeg}%)</span>
+                      {neg} <span className="text-caption font-medium opacity-90">({percentNeg}%)</span>
                     </span>
-                    <span className="text-text-muted text-micro font-medium ml-0.5 tnum">de {total}</span>
+                    <span className="text-text-muted text-caption font-medium ml-0.5 tnum">de {total}</span>
                   </div>
                 </div>
                 <div className="flex w-full h-2 shrink-0 rounded-full overflow-hidden bg-surface-sunken border border-border/50">
@@ -107,7 +107,7 @@ export default function ProportionBarChart({
             <div className="flex items-center gap-2">
               <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate">{title}</h2>
               {badge && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-micro font-semibold bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                   {badge}
                 </span>
@@ -157,7 +157,7 @@ export default function ProportionBarChart({
                           <span className="text-caption font-semibold tnum leading-none">
                             {pos}
                           </span>
-                          <span className="text-micro font-normal opacity-90 ml-1 tnum leading-none">
+                          <span className="text-caption font-normal opacity-90 ml-1 tnum leading-none">
                             ({percentPos}%)
                           </span>
                         </div>
@@ -176,7 +176,7 @@ export default function ProportionBarChart({
                           <span className="text-caption font-semibold tnum leading-none">
                             {neg}
                           </span>
-                          <span className="text-micro font-normal opacity-85 ml-1 tnum leading-none">
+                          <span className="text-caption font-normal opacity-85 ml-1 tnum leading-none">
                             ({percentNeg}%)
                           </span>
                         </div>
@@ -224,7 +224,7 @@ export default function ProportionBarChart({
           <div className="flex items-center gap-2">
             <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate">{title}</h2>
             {badge && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-micro font-semibold bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                 {badge}
               </span>
@@ -255,15 +255,15 @@ export default function ProportionBarChart({
                 <div key={idx} className="flex flex-col justify-center gap-1 py-1.5 px-3 rounded-control bg-surface-soft border border-border flex-1 min-h-[34px] max-h-[46px]">
                   <div className="flex justify-between items-center text-caption font-semibold text-text-primary leading-tight">
                     <span className="truncate flex-1 min-w-0 pr-2" title={item.label}>{item.label}</span>
-                    <div className="flex items-center gap-1 text-micro shrink-0">
+                    <div className="flex items-center gap-1 text-caption shrink-0">
                       <span className={`font-bold tnum ${positiveTextColor}`} title={`${positiveLabel}: ${pos} (${percentPos}%)`}>
-                        {pos} <span className="text-micro font-medium opacity-90">({percentPos}%)</span>
+                        {pos} <span className="text-caption font-medium opacity-90">({percentPos}%)</span>
                       </span>
                       <span className="text-text-muted font-bold">/</span>
                       <span className={`font-bold tnum ${negativeTextColor}`} title={`${negativeLabel}: ${neg} (${percentNeg}%)`}>
-                        {neg} <span className="text-micro font-medium opacity-90">({percentNeg}%)</span>
+                        {neg} <span className="text-caption font-medium opacity-90">({percentNeg}%)</span>
                       </span>
-                      <span className="text-text-muted text-micro font-medium ml-0.5 tnum">de {total}</span>
+                      <span className="text-text-muted text-caption font-medium ml-0.5 tnum">de {total}</span>
                     </div>
                   </div>
                   <div className="flex w-full h-1.5 rounded-full overflow-hidden bg-surface-sunken">

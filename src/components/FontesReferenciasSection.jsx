@@ -118,7 +118,7 @@ export default function FontesReferenciasSection() {
     <section id="fontes-referencias" className="flex flex-col gap-8 scroll-mt-8">
       {/* TÍTULO DA SEÇÃO */}
       <div className="flex flex-col gap-1.5 mb-2">
-        <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+        <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
           Metodologia & Transparência
         </span>
         <h2 className="text-headline font-bold tracking-tight text-text-primary">
@@ -194,7 +194,7 @@ export default function FontesReferenciasSection() {
 
         {/* Nível 1: Pílulas de Categorias Principais */}
         <div>
-          <span className="text-micro font-bold uppercase tracking-wider text-text-muted block mb-2">
+          <span className="text-caption font-medium text-text-muted block mb-2">
             Categorias Principais:
           </span>
           <div className="flex flex-wrap items-center gap-2">
@@ -215,7 +215,7 @@ export default function FontesReferenciasSection() {
                   <IconComp size={14} className={isSelected ? 'text-white' : 'text-primary-600 dark:text-primary-400'} />
                   <span>{cat.label}</span>
                   <span
-                    className={`text-micro px-1.5 py-0.5 rounded-full font-bold ${
+                    className={`text-caption px-1.5 py-0.5 rounded-full font-medium ${
                       isSelected ? 'bg-primary-700 text-white' : 'bg-surface border border-border text-text-secondary'
                     }`}
                   >
@@ -230,7 +230,7 @@ export default function FontesReferenciasSection() {
         {/* Nível 2: Pílulas de Subcategorias (Contextuais ou Todas) */}
         {subcategoriasDisponiveis.length > 1 && (
           <div className="pt-3 border-t border-border">
-            <span className="text-micro font-bold uppercase tracking-wider text-text-muted block mb-2">
+            <span className="text-caption font-medium text-text-muted block mb-2">
               Subcategorias:
             </span>
             <div className="flex flex-wrap items-center gap-2">
@@ -252,7 +252,7 @@ export default function FontesReferenciasSection() {
                   >
                     <span>{sub.label}</span>
                     <span
-                      className={`text-micro px-1.5 py-0.5 rounded-full font-semibold ${
+                      className={`text-caption px-1.5 py-0.5 rounded-full font-medium ${
                         isSelected ? 'bg-primary-950 text-white' : 'bg-surface border border-border text-text-muted'
                       }`}
                     >
@@ -331,7 +331,7 @@ export default function FontesReferenciasSection() {
                       aria-label="Copiar citação ABNT"
                     >
                       {isCopied ? (
-                        <span className="inline-flex items-center gap-1 text-micro font-bold text-success-600">
+                        <span className="inline-flex items-center gap-1 text-caption font-medium text-success-600">
                           <Check size={14} /> Copiado!
                         </span>
                       ) : (
@@ -367,7 +367,7 @@ export default function FontesReferenciasSection() {
                   <div className="p-3 rounded-control bg-surface-soft border border-border/80 flex items-start gap-2.5 text-caption">
                     <Compass size={16} className="text-primary-600 dark:text-primary-400 shrink-0 mt-0.5" />
                     <div className="leading-snug">
-                      <span className="font-bold text-text-primary block text-micro uppercase tracking-wider">
+                      <span className="font-medium text-text-primary block text-caption">
                         Onde encontrar no painel:
                       </span>
                       <span className="text-text-secondary font-medium text-caption block mt-0.5 leading-relaxed">

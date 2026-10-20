@@ -645,7 +645,7 @@ export default function DashboardPainel() {
                         className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]}
                       />
                       <span
-                        className={`text-micro font-medium uppercase tracking-wider line-clamp-2 leading-tight flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                        className={`text-caption font-medium line-clamp-2 leading-tight flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
                           }`}
                         title={kpi.label}
                       >
@@ -653,7 +653,7 @@ export default function DashboardPainel() {
                       </span>
                       {!filtroSemiarido && kpi.isIndex && (
                         <span
-                          className={`text-micro font-semibold uppercase px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${isHero
+                          className={`text-caption font-medium px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${isHero
                               ? 'bg-white/15 text-white/90 border border-white/20'
                               : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60'
                             }`}

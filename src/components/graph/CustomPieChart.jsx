@@ -57,7 +57,7 @@ export default function CustomPieChart({
           <div className="flex items-center gap-2">
             <h2 className="text-text-primary font-semibold text-subtitle tracking-tight">{title}</h2>
             {badge && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-micro font-semibold bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                 {badge}
               </span>
@@ -145,7 +145,7 @@ export default function CustomPieChart({
           ) : (
             <div className="flex flex-col flex-1 pl-3 border-l border-border/70 justify-center h-full py-0.5 min-w-0">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-text-muted font-bold text-micro uppercase tracking-wider truncate">
+                <h3 className="text-text-muted font-medium text-caption truncate">
                   {listTitle}
                 </h3>
               </div>
@@ -183,7 +183,7 @@ export default function CustomPieChart({
                       className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
                     >
                       {/* RANK */}
-                      <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
+                      <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${rankStyle}`}>
                         {rankStr}
                       </div>
 

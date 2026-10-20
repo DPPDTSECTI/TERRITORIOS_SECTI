@@ -548,7 +548,7 @@ export default function AtivosPage() {
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Ativos de CT&I
                         </h1>
-                        <span className={`text-micro font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${filtroSemiarido
+                        <span className={`text-caption font-medium px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${filtroSemiarido
                                 ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30'
                                 : 'bg-primary-600/10 text-primary-700 dark:text-primary-300 border-primary-600/20'
                             }`}>
@@ -619,7 +619,7 @@ export default function AtivosPage() {
                                         <div className="flex items-center gap-2 w-full min-w-0">
                                             <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
                                             <span
-                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                                                className={`text-caption font-medium truncate flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
                                                     }`}
                                                 title={kpi.label}
                                             >
@@ -707,7 +707,7 @@ export default function AtivosPage() {
                                         setSelectedAssetId(null);
                                         setFocusedAsset(null);
                                     }}
-                                    className="text-micro font-medium text-text-secondary hover:text-danger-600 h-6 px-2"
+                                    className="text-caption font-medium text-text-secondary hover:text-danger-600 h-6 px-2"
                                 >
                                     Limpar
                                 </Button>
@@ -742,13 +742,13 @@ export default function AtivosPage() {
                                 <div className="flex items-center justify-between pb-1.5 border-b border-border/70">
                                     <div className="flex items-center gap-1.5">
                                         <Filter size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
-                                        <span className="text-micro font-bold text-text-primary">Filtros</span>
+                                        <span className="text-caption font-medium text-text-primary">Filtros</span>
                                     </div>
                                     {activeFiltersCount > 0 && (
                                         <button
                                             type="button"
                                             onClick={handleClearAllFilters}
-                                            className="text-micro font-semibold text-danger-600 hover:underline cursor-pointer"
+                                            className="text-caption font-medium text-danger-600 hover:underline cursor-pointer"
                                         >
                                             Limpar
                                         </button>
@@ -757,14 +757,14 @@ export default function AtivosPage() {
 
                                 {/* CONECTIVIDADE RNP */}
                                 <div className="flex items-center justify-between gap-1.5">
-                                    <label className="text-micro font-medium text-text-secondary flex items-center gap-1">
+                                    <label className="text-caption font-medium text-text-secondary flex items-center gap-1">
                                         <Network size={12} />
                                         <span>RNP:</span>
                                     </label>
                                     <select
                                         value={filterRnp}
                                         onChange={(e) => setFilterRnp(e.target.value)}
-                                        className="text-micro rounded-control border border-border bg-surface px-2 py-0.5 text-text-primary"
+                                        className="text-caption rounded-control border border-border bg-surface px-2 py-0.5 text-text-primary"
                                     >
                                         <option value="todos">Todos</option>
                                         <option value="com_rnp">Apenas com RNP ({totalRnp})</option>
@@ -780,7 +780,7 @@ export default function AtivosPage() {
                                             setSelectedTipos([]);
                                             setSelectedTipo('todos');
                                         }}
-                                        className={`text-micro text-left px-2 py-1 rounded-md transition-colors ${selectedTipos.length === 0 || selectedTipos.includes('todos')
+                                        className={`text-caption text-left px-2 py-1 rounded-md transition-colors ${selectedTipos.length === 0 || selectedTipos.includes('todos')
                                                 ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-100 font-semibold'
                                                 : 'text-text-secondary hover:bg-surface'
                                             }`}
@@ -794,7 +794,7 @@ export default function AtivosPage() {
                                                 key={cat.name}
                                                 type="button"
                                                 onClick={() => handleToggleTipo(cat.name)}
-                                                className={`text-micro text-left px-2 py-1 rounded-md flex items-center justify-between transition-colors ${isChecked
+                                                className={`text-caption text-left px-2 py-1 rounded-md flex items-center justify-between transition-colors ${isChecked
                                                         ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-100 font-semibold'
                                                         : 'text-text-secondary hover:bg-surface'
                                                     }`}
@@ -803,7 +803,7 @@ export default function AtivosPage() {
                                                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cat.corHex }} />
                                                     <span className="truncate">{cat.shortName || cat.name}</span>
                                                 </span>
-                                                <span className="text-micro text-text-muted shrink-0 ml-1">{cat.count}</span>
+                                                <span className="text-caption text-text-muted shrink-0 ml-1">{cat.count}</span>
                                             </button>
                                         );
                                     })}
@@ -860,13 +860,13 @@ export default function AtivosPage() {
                                                     <IconComp size={12} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-micro font-bold leading-tight truncate transition-colors ${isSelected
+                                                    <h5 className={`text-caption font-medium leading-tight truncate transition-colors ${isSelected
                                                             ? (filtroSemiarido ? 'text-amber-900 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200')
                                                             : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-700')
                                                         }`}>
                                                         {ativo.nome}
                                                     </h5>
-                                                    <span className="text-micro text-text-secondary truncate leading-tight">
+                                                    <span className="text-caption text-text-secondary truncate leading-tight">
                                                         {ativo.shortTipo || ativo.tipo} • <strong className="font-semibold text-text-secondary">{ativo.municipio}</strong>
                                                     </span>
                                                 </div>
@@ -874,7 +874,7 @@ export default function AtivosPage() {
 
                                             {ativo.sigla ? (
                                                 <span
-                                                    className="text-micro font-semibold px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
+                                                    className="text-caption font-medium px-1.5 py-0.5 rounded-md shrink-0 whitespace-nowrap inline-flex items-center justify-center leading-none"
                                                     style={{
                                                         backgroundColor: `${itemColor}20`,
                                                         color: itemColor
@@ -888,7 +888,7 @@ export default function AtivosPage() {
                                 })
                             ) : (
                                 <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-text-muted">
-                                    <p className="text-micro font-medium">Nenhum ativo encontrado</p>
+                                    <p className="text-caption font-medium">Nenhum ativo encontrado</p>
                                 </div>
                             )}
                         </div>
@@ -960,7 +960,7 @@ export default function AtivosPage() {
                                         <Filter size={14} className={activeFiltersCount > 0 ? (filtroSemiarido ? 'text-amber-600' : 'text-primary-600') : ''} />
                                         <span>Filtros</span>
                                         {activeFiltersCount > 0 && (
-                                            <span className={`w-4 h-4 rounded-full text-micro font-bold flex items-center justify-center text-white leading-none ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'
+                                            <span className={`w-4 h-4 rounded-full text-caption font-medium flex items-center justify-center text-white leading-none ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'
                                                 }`}>
                                                 {activeFiltersCount}
                                             </span>
@@ -981,7 +981,7 @@ export default function AtivosPage() {
                                                     <button
                                                         type="button"
                                                         onClick={handleClearAllFilters}
-                                                        className="text-micro font-semibold text-danger-600 hover:underline cursor-pointer"
+                                                        className="text-caption font-medium text-danger-600 hover:underline cursor-pointer"
                                                     >
                                                         Limpar
                                                     </button>
@@ -991,13 +991,13 @@ export default function AtivosPage() {
                                             {/* DROPDOWN 1: TIPOS DE ATIVO (MULTI-SELEÇÃO) */}
                                             <div className="flex flex-col gap-2">
                                                 <div className="flex items-center justify-between">
-                                                    <label className="text-micro font-semibold text-text-secondary flex items-center gap-1.5">
+                                                    <label className="text-caption font-medium text-text-secondary flex items-center gap-1.5">
                                                         <Layers size={13} />
                                                         <span>Tipos de Ativo</span>
                                                     </label>
                                                     {selectedTipos.length > 0 && !selectedTipos.includes('todos') ? (
                                                         <div className="flex items-center gap-1.5">
-                                                            <span className="text-micro font-semibold text-primary-600 dark:text-primary-400">
+                                                            <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
                                                                 {selectedTipos.length} selecionado{selectedTipos.length > 1 ? 's' : ''}
                                                             </span>
                                                             <button
@@ -1006,13 +1006,13 @@ export default function AtivosPage() {
                                                                     setSelectedTipos([]);
                                                                     setSelectedTipo('todos');
                                                                 }}
-                                                                className="text-micro font-medium text-text-muted hover:text-danger-600 cursor-pointer"
+                                                                className="text-caption font-medium text-text-muted hover:text-danger-600 cursor-pointer"
                                                             >
                                                                 (Limpar)
                                                             </button>
                                                         </div>
                                                     ) : (
-                                                        <span className="text-micro text-text-muted">Todos ({activeScopedAtivos.length})</span>
+                                                        <span className="text-caption text-text-muted">Todos ({activeScopedAtivos.length})</span>
                                                     )}
                                                 </div>
 
@@ -1038,7 +1038,7 @@ export default function AtivosPage() {
                                                             />
                                                             <span>Todos os tipos</span>
                                                         </div>
-                                                        <span className="text-micro px-1.5 py-0.2 rounded bg-surface border border-border/60 text-text-secondary font-medium">
+                                                        <span className="text-caption px-1.5 py-0.2 rounded bg-surface border border-border/60 text-text-secondary font-medium">
                                                             {activeScopedAtivos.length}
                                                         </span>
                                                     </div>
@@ -1065,7 +1065,7 @@ export default function AtivosPage() {
                                                                     <span className="w-2 h-2 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.corHex }} />
                                                                     <span className="truncate">{cat.shortName || cat.name}</span>
                                                                 </div>
-                                                                <span className="text-micro px-1.5 py-0.2 rounded bg-surface border border-border/60 text-text-secondary font-medium shrink-0 ml-1">
+                                                                <span className="text-caption px-1.5 py-0.2 rounded bg-surface border border-border/60 text-text-secondary font-medium shrink-0 ml-1">
                                                                     {cat.count}
                                                                 </span>
                                                             </div>
@@ -1076,13 +1076,13 @@ export default function AtivosPage() {
 
                                             {/* DROPDOWN 2: CONECTIVIDADE RNP */}
                                             <div className="flex flex-col gap-1.5">
-                                                <label className="text-micro font-semibold text-text-secondary flex items-center justify-between">
+                                                <label className="text-caption font-medium text-text-secondary flex items-center justify-between">
                                                     <span className="flex items-center gap-1.5">
                                                         <Network size={13} />
                                                         Conectividade RNP
                                                     </span>
                                                     {filterRnp !== 'todos' && (
-                                                        <span className="text-micro font-medium text-emerald-600 dark:text-emerald-400">Ativo</span>
+                                                        <span className="text-caption font-medium text-emerald-600 dark:text-emerald-400">Ativo</span>
                                                     )}
                                                 </label>
                                                 <div className="relative">
@@ -1101,7 +1101,7 @@ export default function AtivosPage() {
                                             </div>
 
                                             {/* STATUS E FECHAR */}
-                                            <div className="flex items-center justify-between pt-2 border-t border-border/70 text-micro">
+                                            <div className="flex items-center justify-between pt-2 border-t border-border/70 text-caption font-medium">
                                                 <span className="text-text-secondary">
                                                     <strong>{filteredAtivosList.length}</strong> de {activeScopedAtivos.length} ativos
                                                 </span>
@@ -1153,7 +1153,7 @@ export default function AtivosPage() {
                                     {/* BARRA DE TAGS DE FILTROS ATIVOS */}
                                     {(activeFiltersCount > 0 || searchQuery.trim() !== '') && (
                                         <div className="flex items-center gap-1.5 flex-wrap px-3 py-2 mb-3 bg-surface-sunken rounded-control border border-border/70 shrink-0">
-                                            <span className="text-micro font-bold text-text-muted uppercase tracking-wider pl-0.5">Filtros:</span>
+                                            <span className="text-caption font-medium text-text-muted pl-0.5">Filtros:</span>
                                             {searchQuery.trim() !== '' && (
                                                 <Chip
                                                     selected
@@ -1277,13 +1277,13 @@ export default function AtivosPage() {
                                                                         {ativo.nome}
                                                                     </h4>
                                                                     {ativo.sigla && (
-                                                                        <span className="text-micro font-medium px-1.5 py-0.5 bg-surface-sunken text-text-primary border border-border/60 rounded-control shrink-0 inline-flex items-center justify-center leading-none">
+                                                                        <span className="text-caption font-medium px-1.5 py-0.5 bg-surface-sunken text-text-primary border border-border/60 rounded-control shrink-0 inline-flex items-center justify-center leading-none">
                                                                             {ativo.sigla}
                                                                         </span>
                                                                     )}
                                                                     {ativo.rnp && (
                                                                         <span
-                                                                            className={`inline-flex items-center gap-1 text-micro font-semibold px-1.5 py-0.5 rounded-control shrink-0 justify-center leading-none border ${filtroSemiarido
+                                                                            className={`inline-flex items-center gap-1 text-caption font-medium px-1.5 py-0.5 rounded-control shrink-0 justify-center leading-none border ${filtroSemiarido
                                                                                     ? 'bg-amber-500/15 text-amber-900 dark:text-amber-200 border-amber-500/30'
                                                                                     : 'bg-primary-50 dark:bg-primary-950 text-primary-800 dark:text-primary-200 border-primary-200/60 dark:border-primary-800/60'
                                                                                 }`}
@@ -1378,13 +1378,13 @@ export default function AtivosPage() {
                                                     : 'Classificação dos Ativos de CT&I do Estado'
                                                 }
                                             </h3>
-                                            <p className="text-micro text-text-secondary font-medium">
+                                            <p className="text-caption text-text-secondary font-medium">
                                                 Proporção de ativos conectados à Rede Nacional de Pesquisa
                                             </p>
                                         </div>
 
                                         {selectedTerritory && (
-                                            <span className={`text-micro font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none ${filtroSemiarido ? 'bg-amber-200/60' : 'bg-primary-200/40'}`}>
+                                            <span className={`text-caption font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none ${filtroSemiarido ? 'bg-amber-200/60' : 'bg-primary-200/40'}`}>
                                                 <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-500'} />
                                                 {territoryName}
                                             </span>
@@ -1443,8 +1443,8 @@ export default function AtivosPage() {
                                                                     }}
                                                                     title={`Com RNP: ${pos} (${percentPos}%)`}
                                                                 >
-                                                                    <span className="text-micro font-bold tabular-nums leading-none">
-                                                                        {pos} <span className="text-micro font-medium opacity-90">({percentPos}%)</span>
+                                                                    <span className="text-caption font-medium tabular-nums leading-none">
+                                                                        {pos} <span className="text-caption font-medium opacity-90">({percentPos}%)</span>
                                                                     </span>
                                                                 </div>
                                                             )}
@@ -1460,8 +1460,8 @@ export default function AtivosPage() {
                                                                     }}
                                                                     title={`Sem RNP: ${neg} (${percentNeg}%)`}
                                                                 >
-                                                                    <span className="text-micro font-bold tabular-nums leading-none">
-                                                                        {neg} <span className="text-micro font-medium opacity-85">({percentNeg}%)</span>
+                                                                    <span className="text-caption font-medium tabular-nums leading-none">
+                                                                        {neg} <span className="text-caption font-medium opacity-85">({percentNeg}%)</span>
                                                                     </span>
                                                                 </div>
                                                             )}
@@ -1519,7 +1519,7 @@ export default function AtivosPage() {
                                                     : 'Ranking Territorial de Ativos de CT&I'
                                                 }
                                             </h3>
-                                            <p className="text-micro text-text-secondary font-medium">
+                                            <p className="text-caption text-text-secondary font-medium">
                                                 {selectedTerritory
                                                     ? 'Distribuição de ativos e proporção com conexão à rede RNP nos municípios'
                                                     : 'Densidade de infraestrutura e proporção com conexão RNP nos 27 Territórios'
@@ -1532,7 +1532,7 @@ export default function AtivosPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedTerritory(null)}
-                                                    className={`text-micro font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${filtroSemiarido
+                                                    className={`text-caption font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${filtroSemiarido
                                                             ? 'text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 bg-amber-100/70 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-700/50'
                                                             : 'text-primary-700 dark:text-primary-300 hover:text-primary-900 dark:hover:text-primary-100 hover:underline bg-primary-200/50 dark:bg-primary-950/40'
                                                         }`}
@@ -1540,7 +1540,7 @@ export default function AtivosPage() {
                                                     ← Ver Todos os Territórios
                                                 </button>
                                             ) : (
-                                                <span className="text-micro font-semibold text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
+                                                <span className="text-caption font-medium text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
                                                     {territoryRanking.length} territórios
                                                 </span>
                                             )}
@@ -1582,7 +1582,7 @@ export default function AtivosPage() {
                                                             className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
                                                         >
                                                             {/* RANK */}
-                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                            <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tabular-nums leading-none ${rankStyle}`}>
                                                                 {rankStr}
                                                             </div>
 
@@ -1593,21 +1593,21 @@ export default function AtivosPage() {
                                                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                     style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
                                                                 />
-                                                                <span className={`absolute left-2.5 right-2.5 text-micro truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                                <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                     {m.name}
                                                                 </span>
                                                             </div>
 
                                                             {/* RNP PILL */}
                                                             {m.rnpCount > 0 && (
-                                                                <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none border ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                                <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-medium tabular-nums leading-none border ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
                                                                     }`} title={`${m.rnpCount} com RNP`}>
                                                                     {m.rnpCount} RNP
                                                                 </div>
                                                             )}
 
                                                             {/* VALOR PILL */}
-                                                            <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                            <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-medium tabular-nums leading-none ${valueStyle}`}>
                                                                 {m.count}
                                                             </div>
                                                         </div>
@@ -1646,7 +1646,7 @@ export default function AtivosPage() {
                                                         className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-pointer"
                                                     >
                                                         {/* RANK */}
-                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none ${rankStyle}`}>
+                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tabular-nums leading-none ${rankStyle}`}>
                                                             {rankStr}
                                                         </div>
 
@@ -1657,21 +1657,21 @@ export default function AtivosPage() {
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
                                                             />
-                                                            <span className={`absolute left-2.5 right-2.5 text-micro truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                                                            <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
                                                                 {t.name}
                                                             </span>
                                                         </div>
 
                                                         {/* RNP PILL */}
                                                         {t.rnpCount > 0 && (
-                                                            <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none border ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                            <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-medium tabular-nums leading-none border ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
                                                                 }`} title={`${t.rnpCount} com RNP`}>
                                                                 {t.rnpCount} RNP
                                                             </div>
                                                         )}
 
                                                         {/* VALOR PILL */}
-                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none ${valueStyle}`}>
+                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-medium tabular-nums leading-none ${valueStyle}`}>
                                                             {t.count}
                                                         </div>
                                                     </div>

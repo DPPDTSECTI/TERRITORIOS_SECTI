@@ -14,15 +14,15 @@ Guia de referência da fundação visual e tokens do Painel Territorial CT&I (SE
 
 | Token Tailwind | Tamanho | Line Height | Letter Spacing | Font Weight | Uso Recomendado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `text-micro` | `11px` | `14px` | `0.06em` | 600 (Semibold) | Badges ultra-compactos, tags de metadados, legendas técnicas |
+| `text-micro` | `12px` | `16px` | normal | 500 (Medium) | Legendas, tooltips, hints, compatibilidade retroativa |
 | `text-caption` | `12px` | `16px` | normal | 500 (Medium) | Legendas, tooltips, hints de formulário, breadcrumbs |
 | `text-body-sm` | `13px` | `20px` | normal | 400 (Regular) | Textos secundários, tabelas densas, filtros compactos |
 | `text-body` | `14px` | `22px` | normal | 400 (Regular) | Corpo padrão de leitura, inputs, parágrafos |
-| `text-subtitle` | `16px` | `24px` | normal | 600 (Semibold) | Cabeçalhos de cards secundários, itens de menu |
-| `text-title` | `20px` | `28px` | `-0.01em` | 650 (Semibold+) | Títulos de seções, cabeçalhos de cards principais |
-| `text-headline` | `28px` | `34px` | `-0.02em` | 700 (Bold) | Títulos de módulos e páginas |
-| `text-kpi` | `36px` | `40px` | `-0.02em` | 700 (Bold) | Números de destaque em métricas (usar com `.tnum`) |
-| `text-display` | `44px` | `48px` | `-0.03em` | 700 (Bold) | Hero banner, totais consolidados estaduais |
+| `text-subtitle` | `15px` | `22px` | normal | 600 (Semibold) | Cabeçalhos de cards secundários, itens de menu |
+| `text-title` | `18px` | `26px` | normal | 650 (Semibold+) | Títulos de seções, cabeçalhos de cards principais |
+| `text-headline` | `28px` | `34px` | normal | 700 (Bold) | Títulos de módulos e páginas |
+| `text-kpi` | `36px` | `40px` | normal | 700 (Bold) | Números de destaque em métricas (usar com `.tnum`) |
+| `text-display` | `44px` | `48px` | normal | 700 (Bold) | Hero banner, totais consolidados estaduais |
 
 ---
 

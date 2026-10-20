@@ -6,7 +6,7 @@ import { formatPercent } from '../../lib/format';
 const barSizes = {
   sm: 'h-1.5',
   md: 'h-2.5',
-  lg: 'h-4 text-micro',
+  lg: 'h-4 text-caption',
 };
 
 /**

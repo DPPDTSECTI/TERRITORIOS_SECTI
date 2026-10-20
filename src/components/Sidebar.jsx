@@ -119,7 +119,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
           <div className="w-full h-5 flex items-center px-2 shrink-0">
             <span
               className={cn(
-                'text-micro font-bold uppercase text-text-muted transition-all duration-200 ease-standard',
+                'text-caption font-medium text-text-muted transition-all duration-200 ease-standard',
                 isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
               )}
             >
@@ -187,7 +187,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               <div className="w-full h-5 flex items-center px-2 shrink-0">
                 <span
                   className={cn(
-                    'text-micro font-bold uppercase text-text-muted transition-all duration-200 ease-standard',
+                    'text-caption font-medium text-text-muted transition-all duration-200 ease-standard',
                     isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
                   )}
                 >

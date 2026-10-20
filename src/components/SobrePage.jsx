@@ -28,7 +28,7 @@ function SectionTitle({ tag, title, subtitle }) {
   return (
     <div className="flex flex-col gap-1.5 mb-6">
       {tag && (
-        <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+        <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
           {tag}
         </span>
       )}
@@ -172,7 +172,7 @@ export default function SobrePage() {
         >
           <Card className="p-6 sm:p-8 bg-surface border-border">
             <div className="max-w-4xl space-y-4">
-              <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 block">
+              <span className="text-caption font-medium text-primary-600 dark:text-primary-400 block">
                 Apresentação & Contexto Estratégico
               </span>
               <h2 className="text-headline font-bold text-text-primary tracking-tight">
@@ -201,7 +201,7 @@ export default function SobrePage() {
           <Card className="p-6 sm:p-8">
             <div className="flex flex-col gap-6 max-w-5xl">
               <div>
-                <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 block mb-1.5">
+                <span className="text-caption font-medium text-primary-600 dark:text-primary-400 block mb-1.5">
                   Infraestrutura Digital · Rede Nacional de Ensino e Pesquisa (RNP)
                 </span>
                 <h2 className="text-headline font-bold tracking-tight text-text-primary mb-2.5">
@@ -214,7 +214,7 @@ export default function SobrePage() {
 
               {/* As 5 Tipologias Estritas Monitoradas */}
               <div>
-                <h3 className="text-caption font-semibold uppercase tracking-wider text-text-muted mb-3.5">
+                <h3 className="text-caption font-medium text-text-muted mb-3.5">
                   As 5 Tipologias Institucionais Monitoradas
                 </h3>
 
@@ -254,7 +254,7 @@ export default function SobrePage() {
                         <strong className="block text-body-sm font-semibold text-text-primary tracking-tight mb-0.5">
                           {cat.titulo}
                         </strong>
-                        <span className="inline-block text-micro font-medium text-text-muted mb-2">
+                        <span className="inline-block text-caption font-medium text-text-muted mb-2">
                           {cat.siglas}
                         </span>
                         <p className="text-caption text-text-secondary leading-relaxed font-normal">
@@ -265,7 +265,7 @@ export default function SobrePage() {
                   ))}
 
                   <div className="bg-surface-soft border border-border rounded-control p-4 flex flex-col justify-center">
-                    <span className="text-caption font-semibold uppercase tracking-wider text-text-primary block mb-1">
+                    <span className="text-caption font-medium text-text-primary block mb-1">
                       Critério & Ordenação
                     </span>
                     <p className="text-caption text-text-secondary leading-relaxed font-normal">
@@ -325,7 +325,7 @@ export default function SobrePage() {
                     </p>
 
                     <div className="space-y-1.5 border-t border-border/80 pt-3.5 mb-5">
-                      <span className="text-micro font-bold uppercase tracking-wider text-text-muted block mb-1">
+                      <span className="text-caption font-medium text-text-muted block mb-1">
                         Destaques analíticos:
                       </span>
                       {sec.destaques.map((item, dIdx) => (
@@ -415,7 +415,7 @@ export default function SobrePage() {
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-micro font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
+                      <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
                         {kpi.tag}
                       </span>
                       <div className="w-6 h-6 rounded-control bg-surface-soft text-text-muted flex items-center justify-center shrink-0 border border-border">
