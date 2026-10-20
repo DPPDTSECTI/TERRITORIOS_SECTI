@@ -110,21 +110,21 @@ export default function RankingBarChart({
   }, [allRanked, filterMode, highlightedItem]);
 
   return (
-    <div className={`flex-1 bg-surface rounded-card border border-border shadow-card transition-all duration-300 hover:shadow-card-hover p-5 relative flex flex-col group cursor-default h-full ${cardClassName}`}>
+    <div className={`flex-1 bg-surface rounded-card border border-border shadow-card transition-all duration-300 hover:shadow-card-hover p-4 sm:p-4.5 relative flex flex-col group cursor-default h-full min-h-0 ${cardClassName}`}>
 
       {/* HEADER + CONTROLES */}
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start mb-2 shrink-0">
         <div className="flex flex-col min-w-0 pr-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-text-primary font-semibold text-subtitle tracking-tight">{title}</h3>
+            <h3 className="text-text-primary font-bold text-subtitle tracking-tight">{title}</h3>
             {badge && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-micro font-semibold bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-micro font-semibold bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                 {badge}
               </span>
             )}
             {highlightedItem && (
-              <span className={`text-micro font-semibold tnum px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none ${
+              <span className={`text-caption font-semibold tabular-nums px-2.5 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none ${
                 (isSemiarido || !!badge)
                   ? 'bg-accent-50 text-accent-800 dark:bg-accent-950 dark:text-accent-200 border border-accent-200/60'
                   : 'bg-primary-50 text-primary-800 dark:bg-primary-950 dark:text-primary-200 border border-primary-200/60'
@@ -136,36 +136,40 @@ export default function RankingBarChart({
           <p className="text-text-muted font-normal text-caption mt-0.5 truncate">{subtitle}</p>
         </div>
 
-        <div className="flex flex-row items-center justify-center gap-0.5 bg-surface-sunken border border-border rounded-control p-1 mr-7 relative z-40 shrink-0">
+        <div className="flex flex-row items-center justify-center gap-0.5 bg-surface-sunken border border-border rounded-control p-1 relative z-40 shrink-0 shadow-2xs">
           {highlightedItem && (
             <button
               onClick={() => setFilterMode('focus')}
-              className={`p-1 rounded transition-colors duration-200 flex items-center justify-center ${filterMode === 'focus' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
+              className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'focus' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
               title={`Foco em ${highlightedItem.cleanName} (${highlightedItem.rank}º de ${allRanked.length})`}
+              aria-label={`Foco em ${highlightedItem.cleanName}`}
             >
-              <MapPin size={15} strokeWidth={2} />
+              <MapPin size={15} strokeWidth={2.2} />
             </button>
           )}
           <button
             onClick={() => setFilterMode('top')}
-            className={`p-1 rounded transition-colors duration-200 ${filterMode === 'top' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
+            className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'top' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={topSubtitle}
+            aria-label={topSubtitle}
           >
-            <ChevronUp size={15} strokeWidth={2} />
+            <ChevronUp size={15} strokeWidth={2.2} />
           </button>
           <button
             onClick={() => setFilterMode('medium')}
-            className={`p-1 rounded transition-colors duration-200 ${filterMode === 'medium' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
+            className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'medium' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={mediumSubtitle}
+            aria-label={mediumSubtitle}
           >
-            <Minus size={15} strokeWidth={2} />
+            <Minus size={15} strokeWidth={2.2} />
           </button>
           <button
             onClick={() => setFilterMode('bottom')}
-            className={`p-1 rounded transition-colors duration-200 ${filterMode === 'bottom' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs' : 'text-primary-600 bg-surface shadow-xs') : 'text-text-muted hover:text-text-primary'}`}
+            className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'bottom' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={bottomSubtitle}
+            aria-label={bottomSubtitle}
           >
-            <ChevronDown size={15} strokeWidth={2} />
+            <ChevronDown size={15} strokeWidth={2.2} />
           </button>
         </div>
       </div>
@@ -177,7 +181,7 @@ export default function RankingBarChart({
           <span className="text-text-muted font-medium text-body-sm">Nenhum dado disponível</span>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col justify-center gap-3.5 w-full my-auto py-1">
+        <div className="flex-1 flex flex-col justify-between py-0.5 w-full min-h-0 gap-1.5">
           {processedData.map((item, idx) => {
             const isSelected = highlightedItem && item.normName === highlightedItem.normName;
             const maxVal = Math.max(...processedData.map(d => Number(d.val) || 0), 0.001);
@@ -189,10 +193,10 @@ export default function RankingBarChart({
             const isSemi = isSemiarido || !!badge;
 
             const rankStyle = isFirst
-              ? (isSemi ? 'bg-accent-600 text-white shadow-xs' : 'bg-primary-600 text-white shadow-xs')
+              ? (isSemi ? 'bg-accent-600 text-white shadow-xs font-bold' : 'bg-primary-600 text-white shadow-xs font-bold')
               : isSelected
-                ? (isSemi ? 'bg-accent-700 text-white shadow-xs' : 'bg-primary-700 text-white shadow-xs')
-                : (isSemi ? 'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100' : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60');
+                ? (isSemi ? 'bg-accent-700 text-white shadow-xs font-bold' : 'bg-primary-700 text-white shadow-xs font-bold')
+                : (isSemi ? 'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-200/60' : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60');
 
             const fillColor = isFirst
               ? (isSemi ? 'bg-accent-500' : 'bg-primary-600')
@@ -201,53 +205,53 @@ export default function RankingBarChart({
                 : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
             const textStyle = (isFirst || isSelected)
-              ? 'font-medium text-white'
-              : (isSemi ? 'font-medium text-accent-900 dark:text-accent-200' : 'font-medium text-text-primary');
+              ? 'font-semibold text-white drop-shadow-xs'
+              : (isSemi ? 'font-semibold text-accent-950 dark:text-accent-100' : 'font-semibold text-text-primary');
 
             const valueStyle = isFirst
-              ? (isSemi ? 'bg-accent-100 text-accent-800 dark:bg-accent-950 dark:text-accent-200 border border-accent-200/60' : 'bg-primary-100 text-primary-800 dark:bg-primary-950 dark:text-primary-200 border border-primary-200/60')
+              ? (isSemi ? 'bg-accent-600 text-white shadow-xs font-bold' : 'bg-primary-600 text-white shadow-xs font-bold')
               : isSelected
-                ? (isSemi ? 'bg-accent-100 text-accent-900 dark:text-accent-100 border border-accent-300 font-semibold' : 'bg-primary-100 text-primary-900 dark:text-primary-100 border border-primary-300 font-semibold')
-                : (isSemi ? 'bg-surface-sunken text-accent-800 dark:text-accent-300 border border-border' : 'bg-surface-sunken text-text-secondary border border-border');
+                ? (isSemi ? 'bg-accent-100 text-accent-900 dark:text-accent-100 border border-accent-300 font-bold' : 'bg-primary-100 text-primary-900 dark:text-primary-100 border border-primary-300 font-bold')
+                : (isSemi ? 'bg-surface-sunken text-accent-900 dark:text-accent-200 border border-border/80 font-bold' : 'bg-surface-sunken text-text-primary dark:text-zinc-200 border border-border/80 font-bold');
 
             const formattedVal = val < 1 && val > 0 ? val.toFixed(3).replace('.', ',') : String(val);
 
             return (
               <div
                 key={idx}
-                className={`group/row relative flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-95 cursor-default ${
-                  isSelected ? (isSemi ? 'ring-2 ring-accent-400/80 rounded-full p-0.5 -m-0.5' : 'ring-2 ring-primary-500/80 rounded-full p-0.5 -m-0.5') : ''
+                className={`group/row relative flex items-center gap-2 sm:gap-2.5 w-full min-w-0 transition-all duration-150 hover:scale-[1.006] cursor-default ${
+                  isSelected ? (isSemi ? 'ring-2 ring-accent-400/80 rounded-xl p-0.5 -m-0.5' : 'ring-2 ring-primary-500/80 rounded-xl p-0.5 -m-0.5') : ''
                 }`}
               >
                 {/* RANK PILL */}
-                <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
+                <div className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full shrink-0 flex items-center justify-center text-micro sm:text-caption tabular-nums leading-none shadow-2xs ${rankStyle}`}>
                   {rankStr}
                 </div>
 
                 {/* BARRA: TRACK + FILL + NOME */}
-                <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-accent-50/50 dark:bg-accent-950/30 border border-accent-200/40 dark:border-accent-800/40' : 'bg-surface-sunken border border-border/60'} overflow-hidden min-w-0 flex items-center`}>
+                <div className={`relative flex-1 h-[30px] sm:h-[32px] rounded-xl sm:rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
                   <div
-                    className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                    className={`absolute left-0 top-0 bottom-0 rounded-xl sm:rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                     style={{ width: `${percentOfMax}%` }}
                   />
 
-                  <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                  <span className={`absolute left-3 right-3 text-caption sm:text-body-sm truncate leading-none pointer-events-none select-none z-10 tracking-tight ${textStyle}`}>
                     {item.cleanName}
                   </span>
                 </div>
 
                 {/* VALOR PILL */}
-                <div className={`h-[24px] min-w-[50px] px-2 rounded-full shrink-0 flex items-center justify-end text-caption font-semibold tnum leading-none ${valueStyle}`}>
+                <div className={`h-[30px] sm:h-[32px] min-w-[56px] sm:min-w-[62px] px-2.5 sm:px-3 rounded-xl sm:rounded-full shrink-0 flex items-center justify-center text-caption sm:text-body-sm tabular-nums leading-none shadow-2xs ${valueStyle}`}>
                   {formattedVal}
                 </div>
 
                 {/* TOOLTIP FLUTUANTE */}
-                <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 bg-surface-raised border border-border shadow-float rounded-control px-3 py-1.5 flex flex-col justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-200 pointer-events-none z-30 min-w-[130px]">
-                  <div className="text-caption font-semibold text-text-primary mb-0.5 leading-tight">
+                <div className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-surface-raised border border-border shadow-float rounded-control px-3.5 py-2 flex flex-col justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-200 pointer-events-none z-30 min-w-[140px]">
+                  <div className="text-body-sm font-bold text-text-primary mb-0.5 leading-tight">
                     {item.rank}º · {item.cleanName}
                   </div>
                   <div className="flex items-center text-caption text-text-secondary">
-                    <span>IFDM: <strong className="text-text-primary font-semibold tnum ml-1">{formattedVal}</strong></span>
+                    <span>IFDM: <strong className="text-text-primary font-bold tabular-nums ml-1">{formattedVal}</strong></span>
                   </div>
                   {item.extra > 0 && (
                     <div className="flex items-center text-micro text-text-muted mt-0.5">

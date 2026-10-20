@@ -1,11 +1,10 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
-import { DataProvider, DataContext } from './context/DataContext';
+import { DataProvider } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Analytics } from '@vercel/analytics/react';
-
 
 import Sidebar from './components/Sidebar';
 import UserHeaderProfile from './components/UserHeaderProfile';
@@ -30,31 +29,31 @@ const UiShowcasePage = lazy(() => import('./components/ui/UiShowcasePage'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
- const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
- useEffect(() => {
- const savedScrollPosition = sessionStorage.getItem(`scroll-${pathname}`);
- if (savedScrollPosition) {
- setTimeout(() => {
- window.scrollTo({
- top: parseInt(savedScrollPosition, 10),
- behavior: 'instant'
- });
- }, 0);
- } else {
- window.scrollTo({ top: 0, behavior: 'instant' });
- }
- }, [pathname]);
+  useEffect(() => {
+    const savedScrollPosition = sessionStorage.getItem(`scroll-${pathname}`);
+    if (savedScrollPosition) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: parseInt(savedScrollPosition, 10),
+          behavior: 'instant'
+        });
+      }, 0);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [pathname]);
 
- useEffect(() => {
- const handleBeforeUnload = () => {
- sessionStorage.setItem(`scroll-${window.location.pathname}`, window.scrollY);
- };
- window.addEventListener('beforeunload', handleBeforeUnload);
- return () => window.removeEventListener('beforeunload', handleBeforeUnload);
- }, []);
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem(`scroll-${window.location.pathname}`, window.scrollY);
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
- return null;
+  return null;
 }
 
 
@@ -117,36 +116,35 @@ const PageWrapper = ({ children }) => {
 };
 
 function AnimatedRoutes() {
- const location = useLocation();
- const isHome = location.pathname === '/';
- const isPrintPage = location.pathname.startsWith('/relatorio/');
- const hideNavigation = isHome || isPrintPage;
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+  const isPrintPage = location.pathname.startsWith('/relatorio/');
+  const hideNavigation = isHome || isPrintPage;
 
- return (
-  <div className={`flex w-full ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-screen bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
- 
- {/* SIDEBAR GLOBAL */}
- <AnimatePresence initial={false} mode="wait">
- {!hideNavigation && (
- <motion.div
- key="global-sidebar"
- initial={{ x: -50, opacity: 0 }}
- animate={{ x: 0, opacity: 1 }}
- exit={{ x: -50, opacity: 0 }}
- transition={{ duration: 0.3, ease: "easeOut" }}
- className="h-screen sticky top-0 z-50 flex-shrink-0 print:hidden"
- >
- <Sidebar 
-username="PTI Bahia" 
- navOnly={location.pathname === '/sobre'} 
- />
- </motion.div>
- )}
- </AnimatePresence>
+  return (
+    <div className={`flex w-full ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-screen bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
+      {/* SIDEBAR GLOBAL */}
+      <AnimatePresence initial={false} mode="wait">
+        {!hideNavigation && (
+          <motion.div
+            key="global-sidebar"
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -50, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="h-screen sticky top-0 z-50 flex-shrink-0 print:hidden"
+          >
+            <Sidebar
+              username="PTI Bahia"
+              navOnly={location.pathname === '/sobre'}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
- {/* ÁREA PRINCIPAL COM HEADER FIXO */}
- <div className={`flex-1 min-w-0 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
- {!hideNavigation && <TopFixedBar />}
+      {/* ÁREA PRINCIPAL COM HEADER FIXO */}
+      <div className={`flex-1 min-w-0 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
+        {!hideNavigation && <TopFixedBar />}
 
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
@@ -178,19 +176,19 @@ username="PTI Bahia"
 }
 
 function MainApp() {
- return (
- <>
- <Helmet>
- <title>Painel Territorial CT&I | Governo da Bahia</title>
- </Helmet>
- 
- <TourGuide />
- <GlobalScroll />
- <Analytics />
+  return (
+    <>
+      <Helmet>
+        <title>Painel Territorial CT&I | Governo da Bahia</title>
+      </Helmet>
 
- <AnimatedRoutes />
- </>
- );
+      <TourGuide />
+      <GlobalScroll />
+      <Analytics />
+
+      <AnimatedRoutes />
+    </>
+  );
 }
 
 export default function AppWrapper() {

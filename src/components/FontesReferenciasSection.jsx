@@ -6,7 +6,6 @@ import {
   Copy,
   Layers,
   X,
-  ArrowUpRight,
   GraduationCap,
   Building2,
   Milestone,
@@ -253,7 +252,7 @@ export default function FontesReferenciasSection() {
                   >
                     <span>{sub.label}</span>
                     <span
-                      className={`text-micro px-1.5 py-0.2 rounded-full font-semibold ${
+                      className={`text-micro px-1.5 py-0.5 rounded-full font-semibold ${
                         isSelected ? 'bg-primary-950 text-white' : 'bg-surface border border-border text-text-muted'
                       }`}
                     >

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Joyride, STATUS } from 'react-joyride';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -181,7 +181,7 @@ export default function TourGuide() {
     },
     {
       target: '.tour-charts',
-      content: 'Estes gráficos apresentam um resumo visual da distribuição de ativos e cursos no estado. Ah, você pode arrastá-los para reordenar a tela!',
+      content: 'Estes gráficos apresentam um resumo visual da distribuição de ativos, cursos e infraestrutura no estado.',
       placement: 'left',
     },
     {
@@ -246,56 +246,56 @@ export default function TourGuide() {
     ...step,
   }));
 
- useEffect(() => {
-  if (location.pathname === '/territorios') {
-    const hasSeenTour = sessionStorage.getItem('hasSeenTour');
-    if (!hasSeenTour) {
-    sessionStorage.setItem('hasSeenTour', 'true');
-    setTourKey(prev => prev + 1);
-    setTimeout(() => setRun(true), 1200);
+  useEffect(() => {
+    if (location.pathname === '/territorios') {
+      const hasSeenTour = sessionStorage.getItem('hasSeenTour');
+      if (!hasSeenTour) {
+        sessionStorage.setItem('hasSeenTour', 'true');
+        setTourKey(prev => prev + 1);
+        setTimeout(() => setRun(true), 1200);
+      }
+    } else if (location.pathname === '/relatorio') {
+      const hasSeenRelatorioTour = sessionStorage.getItem('hasSeenRelatorioTour');
+      if (!hasSeenRelatorioTour) {
+        sessionStorage.setItem('hasSeenRelatorioTour', 'true');
+        setTourKey(prev => prev + 1);
+        setTimeout(() => setRun(true), 1200);
+      }
     }
-  } else if (location.pathname === '/relatorio') {
-    const hasSeenRelatorioTour = sessionStorage.getItem('hasSeenRelatorioTour');
-    if (!hasSeenRelatorioTour) {
-    sessionStorage.setItem('hasSeenRelatorioTour', 'true');
-    setTourKey(prev => prev + 1);
-    setTimeout(() => setRun(true), 1200);
-    }
-  }
   }, [location.pathname]);
 
- useEffect(() => {
- // Escutar evento para reiniciar o tour
- const handleStartTour = () => {
- setTourKey(prev => prev + 1);
- if (location.pathname === '/territorios' || location.pathname === '/relatorio') {
- setRun(true);
- } else {
- navigate('/territorios');
- setTimeout(() => setRun(true), 1000);
- }
- };
- window.addEventListener('start-tour', handleStartTour);
+  useEffect(() => {
+    // Escutar evento para reiniciar o tour
+    const handleStartTour = () => {
+      setTourKey(prev => prev + 1);
+      if (location.pathname === '/territorios' || location.pathname === '/relatorio') {
+        setRun(true);
+      } else {
+        navigate('/territorios');
+        setTimeout(() => setRun(true), 1000);
+      }
+    };
+    window.addEventListener('start-tour', handleStartTour);
 
- return () => {
- window.removeEventListener('start-tour', handleStartTour);
- };
- }, [location.pathname, navigate]);
+    return () => {
+      window.removeEventListener('start-tour', handleStartTour);
+    };
+  }, [location.pathname, navigate]);
 
- const handleJoyrideCallback = (data) => {
- const { status, type, action } = data;
- 
- // Quando o tour for concluído ou pulado
- if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) || type === 'tour:end' || action === 'skip' || action === 'close') {
- setRun(false);
- // Salvar no sessionStorage para não mostrar novamente nesta sessão
- if (location.pathname === '/territorios') {
- sessionStorage.setItem('hasSeenTour', 'true');
- } else if (location.pathname === '/relatorio') {
- sessionStorage.setItem('hasSeenRelatorioTour', 'true');
- }
- }
- };
+  const handleJoyrideCallback = (data) => {
+    const { status, type, action } = data;
+
+    // Quando o tour for concluído ou pulado
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) || type === 'tour:end' || action === 'skip' || action === 'close') {
+      setRun(false);
+      // Salvar no sessionStorage para não mostrar novamente nesta sessão
+      if (location.pathname === '/territorios') {
+        sessionStorage.setItem('hasSeenTour', 'true');
+      } else if (location.pathname === '/relatorio') {
+        sessionStorage.setItem('hasSeenRelatorioTour', 'true');
+      }
+    }
+  };
 
   return (
     <Joyride

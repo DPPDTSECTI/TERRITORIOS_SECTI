@@ -1,21 +1,15 @@
 import React, { useContext, useState, useMemo, useRef, useEffect } from 'react';
 import {
     Database,
-    Building2,
     Layers,
     MapPin,
-    Search,
     TrendingUp,
     Sparkles,
     ExternalLink,
     Filter,
     GraduationCap,
-    Microscope,
-    Rocket,
-    Cpu,
     Network,
     Wifi,
-    X,
     SunMedium,
     ChevronDown
 } from 'lucide-react';

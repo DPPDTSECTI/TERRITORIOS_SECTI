@@ -1,25 +1,16 @@
-import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import {
  FileText,
  Download,
  Printer,
  Search,
- Building2,
  GraduationCap,
  GitPullRequest,
  Database,
  MapPin,
- TrendingUp,
- Users,
- Check,
  Layers,
  Globe,
  Wifi,
- ShieldCheck,
- ChevronRight,
- Filter,
- ArrowUpDown,
- Sparkles,
  Award,
  BarChart3,
  Compass,
@@ -34,16 +25,11 @@ import {
   Dropdown,
   Card,
   SectionHeader,
-  Chip,
   Badge,
   KpiCard,
   PageHeader,
   useToast
 } from './ui';
-import {
- BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
- PieChart, Pie, Cell, Legend
-} from 'recharts';
 import SideMap from './maps/SideMap';
 import PtiMap from './maps/PtiMap';
 import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../constants/semiarido';

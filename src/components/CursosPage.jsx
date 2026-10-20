@@ -4,18 +4,15 @@ import {
     BookOpen,
     Building2,
     MapPin,
-    Search,
     Flame,
     TrendingUp,
     Sparkles,
     ExternalLink,
     Filter,
     Database,
-    Check,
     X,
     Wifi,
-    Laptop,
-    SunMedium
+    Laptop
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { isMunicipioSemiarido } from '../constants/semiarido';
@@ -25,7 +22,6 @@ import { normalize, classificarInstituicao } from '../utils/normalization';
 import {
     Card,
     Button,
-    IconButton,
     Badge,
     Chip,
     SearchInput,

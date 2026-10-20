@@ -102,7 +102,7 @@ export default function ProportionBarChart({
     return (
       <div className={`flex-1 bg-surface rounded-card border border-border shadow-card transition-all duration-300 hover:shadow-card-hover p-4 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
         {/* CABEÇALHO */}
-        <div className="flex justify-between items-start mb-1.5 relative z-10 w-full pr-9 shrink-0">
+        <div className="flex justify-between items-start mb-1.5 relative z-10 w-full shrink-0">
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate">{title}</h2>

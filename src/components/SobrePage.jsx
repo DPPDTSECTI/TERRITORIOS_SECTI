@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
   ArrowDown,
-  ArrowUpRight,
   Network,
   Building2,
   GraduationCap,
@@ -15,10 +14,8 @@ import {
   ShieldCheck,
   Sparkles,
   Database,
-  Layers,
   Compass,
-  MapPin,
-  HelpCircle
+  MapPin
 } from 'lucide-react';
 import FontesReferenciasSection from './FontesReferenciasSection';
 import { PageHeader } from './ui/PageHeader';

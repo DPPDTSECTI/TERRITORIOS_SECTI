@@ -1,9 +1,9 @@
-import React, { useRef, useEffect, useState, useMemo, useCallback, useContext } from 'react';
-import { MapContainer, Marker, Popup, GeoJSON, Polyline, Tooltip, useMap, useMapEvents } from 'react-leaflet';
+import React, { useRef, useEffect, useState, useMemo, useContext } from 'react';
+import { MapContainer, Marker, GeoJSON, Polyline, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
-import { MapPin, Layers, Check, ChevronDown, ChevronUp, Building, Flame, Network, Expand, Shrink, Maximize2, Minimize2, BookOpen, SunMedium } from 'lucide-react';
+import { Layers, Flame, Network, Expand, Shrink } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
 import { useTheme } from '../../context/ThemeContext';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
@@ -12,7 +12,6 @@ import {
   SEMIARIDO_TERRITORY_IDS,
   normalizeName,
   buildMunicipioTerritoryMap,
-  MUN_LOOKUP,
   findMunicipioCoords,
   isInsideBahia
 } from './side/mapGeoUtils';
@@ -27,9 +26,7 @@ import {
 } from './side/mapHeatScale';
 
 import {
-  createClusterIcon,
   getSemiaridoPointColor,
-  createSingleAssetIconWithSvg,
   createPartnerPinIcon,
   createSelectedPartnerPinIcon
 } from './side/mapIcons';
@@ -46,9 +43,6 @@ import {
 } from './side/MapControllers';
 
 import {
-  SingleAssetPopupContent,
-  SingleCadeiaPopupContent,
-  SingleAssetMarkerItem,
   SuperclusteredMarkers
 } from './side/MapMarkersAndPopups';
 
