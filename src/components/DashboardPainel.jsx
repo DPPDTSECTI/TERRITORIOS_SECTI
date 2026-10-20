@@ -80,17 +80,17 @@ export default function DashboardPainel() {
       const munKey = normalizeName(a.municipio || '');
       const munRow = MUN_LOOKUP.byName[munKey];
       const idTerr = a.id_territorio != null && a.id_territorio !== '' ? String(a.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
-      
+
       if (tid && idTerr) return idTerr === tid;
 
       const rawTerr = a.territorio_identidade || a.territorio || munRow?.nome_territorio || '';
       const normTerr = normalizeTerritoryName(rawTerr);
 
       if (tNorm && normTerr && (normTerr === tNorm || tNorm.includes(normTerr) || normTerr.includes(tNorm))) {
-          // Avoid matching very short strings like "do", "de", "sul"
-          if (normTerr.length > 3 && tNorm.length > 3) {
-              return true;
-          }
+        // Avoid matching very short strings like "do", "de", "sul"
+        if (normTerr.length > 3 && tNorm.length > 3) {
+          return true;
+        }
       }
       return false;
     });
@@ -108,16 +108,16 @@ export default function DashboardPainel() {
       const munKey = normalizeName(c.municipio || '');
       const munRow = MUN_LOOKUP.byName[munKey];
       const idTerr = c.id_territorio != null && c.id_territorio !== '' ? String(c.id_territorio) : (munRow?.id_territorio ? String(munRow.id_territorio) : null);
-      
+
       if (tid && idTerr) return idTerr === tid;
 
       const rawTerr = c.territorio_identidade || c.territorio || munRow?.nome_territorio || '';
       const normTerr = normalizeTerritoryName(rawTerr);
 
       if (tNorm && normTerr && (normTerr === tNorm || tNorm.includes(normTerr) || normTerr.includes(tNorm))) {
-          if (normTerr.length > 3 && tNorm.length > 3) {
-              return true;
-          }
+        if (normTerr.length > 3 && tNorm.length > 3) {
+          return true;
+        }
       }
       return false;
     });
@@ -135,7 +135,7 @@ export default function DashboardPainel() {
 
       const norm = normalizeTerritoryName(t.territorio || t.nome_territorio || '');
       if (tNorm && norm && (norm === tNorm || norm.includes(tNorm) || tNorm.includes(norm))) {
-          if (norm.length > 3 && tNorm.length > 3) return true;
+        if (norm.length > 3 && tNorm.length > 3) return true;
       }
       return false;
     });
@@ -386,7 +386,7 @@ export default function DashboardPainel() {
   // Ranking de IFDM por Município (quando um território é selecionado)
   const rankingIfdmData = useMemo(() => {
     if (!selectedTerritory || !firjanData || firjanData.length === 0 || !municipiosTerritorios) return [];
-    
+
     const tid = String(selectedTerritory.id_territorio);
     const munIdsDoTerritorio = municipiosTerritorios
       .filter(m => String(m.id_territorio) === tid)
@@ -542,9 +542,8 @@ export default function DashboardPainel() {
       {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
-          filtroSemiarido ? 'opacity-100' : 'opacity-0'
-        }`}
+        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
+          }`}
       >
         {/* 1. HALO RADIAL DIFUSO (Região de calor com opacidade sutil entre 6% e 12%) */}
         <div
@@ -630,15 +629,13 @@ export default function DashboardPainel() {
                   <Card
                     title={kpi.tooltip || kpi.label}
                     variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
-                    className={`p-4 flex flex-col justify-between h-[96px] cursor-default overflow-hidden transition-all duration-300 hover:shadow-card-hover ${
-                      isHero && filtroSemiarido
+                    className={`p-4 flex flex-col justify-between h-[96px] cursor-default overflow-hidden transition-all duration-300 hover:shadow-card-hover ${isHero && filtroSemiarido
                         ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border-amber-400/40 shadow-card shadow-amber-500/20'
                         : ''
-                    } ${
-                      !isHero && filtroSemiarido
+                      } ${!isHero && filtroSemiarido
                         ? 'border-amber-200/50 dark:border-amber-500/30'
                         : ''
-                    }`}
+                      }`}
                   >
                     {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
                     <div className="flex items-center gap-2 w-full min-w-0">
@@ -648,20 +645,18 @@ export default function DashboardPainel() {
                         className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]}
                       />
                       <span
-                        className={`text-micro font-medium uppercase tracking-wider line-clamp-2 leading-tight flex-1 ${
-                          isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
-                        }`}
+                        className={`text-micro font-medium uppercase tracking-wider line-clamp-2 leading-tight flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                          }`}
                         title={kpi.label}
                       >
                         {kpi.label}
                       </span>
                       {!filtroSemiarido && kpi.isIndex && (
                         <span
-                          className={`text-micro font-semibold uppercase px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${
-                            isHero
+                          className={`text-micro font-semibold uppercase px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${isHero
                               ? 'bg-white/15 text-white/90 border border-white/20'
                               : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60'
-                          }`}
+                            }`}
                         >
                           Índice
                         </span>
@@ -672,18 +667,16 @@ export default function DashboardPainel() {
                     <div className="flex items-baseline w-full justify-between min-w-0">
                       <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
                         <span
-                          className={`text-kpi font-bold tracking-tight leading-none shrink-0 tnum ${
-                            isHero ? 'text-white' : 'text-text-primary'
-                          }`}
+                          className={`text-kpi font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
+                            }`}
                         >
                           {kpi.value}
                         </span>
                         {filtroSemiarido && kpi.percent && (
                           <span
                             title={`(${kpi.percent})`}
-                            className={`text-caption font-semibold truncate ${
-                              isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
-                            }`}
+                            className={`text-caption font-semibold truncate ${isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                              }`}
                           >
                             ({kpi.percent})
                           </span>
@@ -721,9 +714,8 @@ export default function DashboardPainel() {
           variants={staggerContainer(0.04)}
           initial="initial"
           animate="animate"
-          className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${
-            filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-card' : ''
-          }`}
+          className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-card' : ''
+            }`}
         >
           {loadingStats ? (
             Array.from({ length: 4 }).map((_, i) => (

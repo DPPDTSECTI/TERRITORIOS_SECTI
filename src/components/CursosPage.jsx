@@ -493,9 +493,8 @@ export default function CursosPage() {
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
-                    filtroSemiarido ? 'opacity-100' : 'opacity-0'
-                }`}
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                    }`}
             >
                 {/* 1. HALO RADIAL DIFUSO */}
                 <div
@@ -584,9 +583,8 @@ export default function CursosPage() {
                                         <div className="flex items-center gap-2 w-full min-w-0">
                                             <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
                                             <span
-                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
-                                                    isHero ? 'text-white/80' : 'text-text-muted'
-                                                }`}
+                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
+                                                    }`}
                                                 title={kpi.label}
                                             >
                                                 {kpi.label}
@@ -596,17 +594,15 @@ export default function CursosPage() {
                                         {/* LINHA INFERIOR: NÚMERO */}
                                         <div className="flex items-baseline w-full justify-between">
                                             <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
-                                                    isHero ? 'text-white' : 'text-text-primary'
-                                                }`}>
+                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${isHero ? 'text-white' : 'text-text-primary'
+                                                    }`}>
                                                     {kpi.value}
                                                 </span>
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold truncate ${
-                                                            isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
-                                                        }`}
+                                                        className={`text-caption font-semibold truncate ${isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                            }`}
                                                     >
                                                         ({kpi.percent})
                                                     </span>
@@ -700,8 +696,8 @@ export default function CursosPage() {
                                                 setSelectedCursoDrawer(c);
                                             }}
                                             className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer w-full ${isSelected
-                                                    ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50 dark:bg-primary-950/40')
-                                                    : 'bg-transparent hover:bg-surface-soft'
+                                                ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50 dark:bg-primary-950/40')
+                                                : 'bg-transparent hover:bg-surface-soft'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -956,8 +952,8 @@ export default function CursosPage() {
                                                             setSelectedCursoDrawer(c);
                                                         }}
                                                         className={`p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 group cursor-pointer border-b border-border/40 ${isSelected
-                                                                ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50 dark:bg-primary-950/40')
-                                                                : 'bg-transparent hover:bg-surface-soft'
+                                                            ? (filtroSemiarido ? 'bg-amber-500/15' : 'bg-primary-50/50 dark:bg-primary-950/40')
+                                                            : 'bg-transparent hover:bg-surface-soft'
                                                             }`}
                                                     >
                                                         <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
@@ -1083,7 +1079,7 @@ export default function CursosPage() {
                                                         className="p-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 transition-colors duration-200 bg-transparent hover:bg-surface-soft border-b border-border/40 group cursor-pointer"
                                                     >
                                                         <div className="flex items-start gap-3 min-w-0 flex-1 basis-[240px]">
-                                                            <div 
+                                                            <div
                                                                 className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform"
                                                                 style={{ backgroundColor: getAlphaColor(catColor), color: catColor }}
                                                             >
@@ -1121,9 +1117,9 @@ export default function CursosPage() {
                                                             </Badge>
                                                             <span
                                                                 className="text-micro font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none"
-                                                                style={{ 
-                                                                    backgroundColor: getAlphaColor(catColor), 
-                                                                    color: catColor 
+                                                                style={{
+                                                                    backgroundColor: getAlphaColor(catColor),
+                                                                    color: catColor
                                                                 }}
                                                             >
                                                                 {c.categoria || c.tipo || 'Geral'}
@@ -1201,8 +1197,8 @@ export default function CursosPage() {
                                                         key={cat.name}
                                                         onClick={() => setSelectedCategory(isSelected ? 'todas' : cat.name)}
                                                         className={`rounded-card p-3 border transition-all cursor-pointer ${isSelected
-                                                                ? (filtroSemiarido ? 'bg-surface border-amber-500 shadow-md ring-2 ring-amber-500/20' : 'bg-surface border-primary-600 shadow-md ring-2 ring-primary-600/20')
-                                                                : (filtroSemiarido ? 'bg-surface-soft/60 border-border hover:bg-surface hover:border-amber-300 shadow-2xs' : 'bg-surface-soft/60 border-border hover:bg-surface hover:border-primary-200 dark:hover:border-primary-800 shadow-2xs')
+                                                            ? (filtroSemiarido ? 'bg-surface border-amber-500 shadow-md ring-2 ring-amber-500/20' : 'bg-surface border-primary-600 shadow-md ring-2 ring-primary-600/20')
+                                                            : (filtroSemiarido ? 'bg-surface-soft/60 border-border hover:bg-surface hover:border-amber-300 shadow-2xs' : 'bg-surface-soft/60 border-border hover:bg-surface hover:border-primary-200 dark:hover:border-primary-800 shadow-2xs')
                                                             }`}
                                                     >
                                                         <div className="flex items-center justify-between mb-2">
@@ -1301,7 +1297,7 @@ export default function CursosPage() {
 
                                                             {/* BARRA: TRACK + FILL + NOME */}
                                                             <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'}`}>
-                                                                <div 
+                                                                <div
                                                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                     style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
                                                                 />
@@ -1354,7 +1350,7 @@ export default function CursosPage() {
 
                                                         {/* BARRA: TRACK + FILL + NOME */}
                                                         <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'}`}>
-                                                            <div 
+                                                            <div
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
                                                             />
@@ -1433,9 +1429,8 @@ export default function CursosPage() {
                                                         style={{ contentVisibility: 'auto', containIntrinsicSize: '0 32px' }}
                                                         onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
                                                         title={`${ies.fullName}: ${ies.count} cursos em ${ies.municipios.size} cidades`}
-                                                        className={`flex items-center gap-2 w-full min-w-0 transition-all duration-200 hover:opacity-95 cursor-pointer p-1 rounded-xl ${
-                                                            isSelected ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/30 ring-1 ring-amber-500/30' : 'bg-primary-50/80 dark:bg-primary-950/30 ring-1 ring-primary-500/30') : ''
-                                                        }`}
+                                                        className={`flex items-center gap-2 w-full min-w-0 transition-all duration-200 hover:opacity-95 cursor-pointer p-1 rounded-xl ${isSelected ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/30 ring-1 ring-amber-500/30' : 'bg-primary-50/80 dark:bg-primary-950/30 ring-1 ring-primary-500/30') : ''
+                                                            }`}
                                                     >
                                                         {/* RANK */}
                                                         <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tnum leading-none ${rankStyle}`}>
@@ -1444,7 +1439,7 @@ export default function CursosPage() {
 
                                                         {/* BARRA: TRACK + FILL + NOME */}
                                                         <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-50/60 dark:bg-amber-950/20' : 'bg-primary-50/50 dark:bg-primary-950/20'}`}>
-                                                            <div 
+                                                            <div
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, pct)}%` }}
                                                             />

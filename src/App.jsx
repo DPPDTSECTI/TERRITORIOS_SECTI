@@ -156,7 +156,7 @@ function AnimatedRoutes() {
             <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
             <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />
             <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
-            
+
             {/* ROTAS DE RELATÓRIO EXECUTIVO / PDF */}
             <Route path="/relatorio/sintese" element={<PageWrapper><RelatorioSintesePage /></PageWrapper>} />
             <Route path="/relatorio/cursos" element={<PageWrapper><RelatorioCursosPage /></PageWrapper>} />

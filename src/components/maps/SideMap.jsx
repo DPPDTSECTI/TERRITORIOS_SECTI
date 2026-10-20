@@ -843,7 +843,7 @@ export default function SideMap({
     const munStat = cursosStatsByMunicipio[munNorm];
     const count = munStat ? munStat.count : 0;
     const isHovered = hoveredFeatureName === munNome;
-    
+
     // Aplicação da Escala Logarítmica para equilibrar o contraste visual
     const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado, filtroSemiarido, isDark);
 
@@ -1205,8 +1205,8 @@ export default function SideMap({
             pane="territoryOutlinePane"
             data={selectedTerritoryMesh}
             style={{
-              color: filtroSemiarido 
-                ? (isDark ? '#F59E0B' : '#D97706') 
+              color: filtroSemiarido
+                ? (isDark ? '#F59E0B' : '#D97706')
                 : (isDark ? '#60A5FA' : '#1D4ED8'),
               weight: 2.8,
               opacity: 1,
@@ -1226,8 +1226,8 @@ export default function SideMap({
             pane="connectionsPane"
             positions={line.positions}
             pathOptions={{
-              color: line.isSelected 
-                ? (filtroSemiarido ? '#B45309' : '#1E40AF') 
+              color: line.isSelected
+                ? (filtroSemiarido ? '#B45309' : '#1E40AF')
                 : (filtroSemiarido ? '#F59E0B' : '#3B82F6'),
               weight: line.isSelected ? 2.4 : 1.15,
               opacity: line.isSelected ? 0.95 : (filtroSemiarido ? 0.45 : 0.38),
@@ -1249,11 +1249,10 @@ export default function SideMap({
                 permanent={showLabel}
                 className="clean-city-tooltip"
               >
-                <span className={`text-micro font-semibold px-2 py-0.5 rounded-full shadow-2xs border tracking-tight whitespace-nowrap transition-all ${
-                  p.isSelected
+                <span className={`text-micro font-semibold px-2 py-0.5 rounded-full shadow-2xs border tracking-tight whitespace-nowrap transition-all ${p.isSelected
                     ? (filtroSemiarido ? 'text-white bg-warning-700 border-warning-700 font-bold' : 'text-white bg-primary-700 border-primary-700 font-bold')
                     : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface border-amber-500/30' : 'text-text-primary bg-surface border-border')
-                }`}>
+                  }`}>
                   {p.municipio}
                 </span>
               </Tooltip>
@@ -1283,45 +1282,44 @@ export default function SideMap({
           (mode === 'cursos' && selectedCategory && selectedCategory !== 'todas') ||
           (mode === 'cadeias' && (selectedSegmento || (selectedTipo && selectedTipo !== 'todos')))
         ) && (
-          <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
-            <span
-              className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${
-                mode === 'cadeias' && selectedSegmento && getSegmentColor
-                  ? ''
-                  : (filtroSemiarido ? 'bg-warning-600' : 'bg-primary-600')
-              }`}
-              style={
-                mode === 'cadeias' && selectedSegmento && getSegmentColor
-                  ? { backgroundColor: getSegmentColor(selectedSegmento) }
-                  : undefined
-              }
-            />
-            <span className="text-caption font-semibold text-text-primary truncate">
-              {mode === 'ativos' && (selectedTipos && selectedTipos.length > 1 ? `${selectedTipos.length} Tipos Selecionados` : `Categoria: ${selectedTipo || selectedTipos[0]}`)}
-              {mode === 'cursos' && `Área: ${selectedCategory}`}
-              {mode === 'cadeias' && (selectedSegmento ? `Segmento: ${selectedSegmento}` : `Tipo: ${selectedTipo}`)}
-            </span>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (mode === 'ativos') {
-                  onSelectTipo?.('todos');
-                  onSelectTipos?.([]);
+            <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
+              <span
+                className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${mode === 'cadeias' && selectedSegmento && getSegmentColor
+                    ? ''
+                    : (filtroSemiarido ? 'bg-warning-600' : 'bg-primary-600')
+                  }`}
+                style={
+                  mode === 'cadeias' && selectedSegmento && getSegmentColor
+                    ? { backgroundColor: getSegmentColor(selectedSegmento) }
+                    : undefined
                 }
-                if (mode === 'cursos') onSelectCategory?.('todas');
-                if (mode === 'cadeias') {
-                  if (selectedSegmento) onSelectSegmento?.(null);
-                  else onSelectTipo?.('todos');
-                }
-              }}
-              className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-soft transition-colors ml-auto cursor-pointer leading-none text-xs font-bold"
-              title="Remover filtro"
-            >
-              ×
-            </button>
-          </div>
-        )}
+              />
+              <span className="text-caption font-semibold text-text-primary truncate">
+                {mode === 'ativos' && (selectedTipos && selectedTipos.length > 1 ? `${selectedTipos.length} Tipos Selecionados` : `Categoria: ${selectedTipo || selectedTipos[0]}`)}
+                {mode === 'cursos' && `Área: ${selectedCategory}`}
+                {mode === 'cadeias' && (selectedSegmento ? `Segmento: ${selectedSegmento}` : `Tipo: ${selectedTipo}`)}
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (mode === 'ativos') {
+                    onSelectTipo?.('todos');
+                    onSelectTipos?.([]);
+                  }
+                  if (mode === 'cursos') onSelectCategory?.('todas');
+                  if (mode === 'cadeias') {
+                    if (selectedSegmento) onSelectSegmento?.(null);
+                    else onSelectTipo?.('todos');
+                  }
+                }}
+                className="w-4 h-4 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-soft transition-colors ml-auto cursor-pointer leading-none text-xs font-bold"
+                title="Remover filtro"
+              >
+                ×
+              </button>
+            </div>
+          )}
 
         {/* INFO DO TERRITÓRIO NO TOPO (HOVER OU TERRITÓRIO SELECIONADO) */}
         {(hoveredInfo || selectedTerritoryInfo) && (() => {
@@ -1371,10 +1369,10 @@ export default function SideMap({
               </span>
             )}
           </div>
-          
+
           <div className="flex items-center gap-1.5">
             {currentHeatLevels.map((lvl, idx) => {
-              const labelText = selectedTerritory 
+              const labelText = selectedTerritory
                 ? (idx === 0 ? '0' : idx === currentHeatLevels.length - 1 ? `${maxCursosNoTerritorioSelecionado}` : '')
                 : lvl.label.replace(' cursos', '');
 
@@ -1401,15 +1399,14 @@ export default function SideMap({
           <button
             type="button"
             onClick={() => setShowAllConnections((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all border cursor-pointer select-none shadow-card ${
-              showAllConnections
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all border cursor-pointer select-none shadow-card ${showAllConnections
                 ? (filtroSemiarido
-                    ? 'bg-amber-600 text-white border-amber-600 shadow-card'
-                    : 'bg-primary-700 text-white border-primary-700 shadow-card')
+                  ? 'bg-amber-600 text-white border-amber-600 shadow-card'
+                  : 'bg-primary-700 text-white border-primary-700 shadow-card')
                 : (filtroSemiarido
-                    ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
-                    : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
-            }`}
+                  ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
+                  : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
+              }`}
           >
             <Network size={13} className={showAllConnections ? (filtroSemiarido ? 'text-amber-200' : 'text-primary-200') : (filtroSemiarido ? 'text-amber-600' : 'text-primary-600')} />
             <span>Teia de Conexões</span>
@@ -1422,28 +1419,26 @@ export default function SideMap({
             type="button"
             onClick={() => setFiltroSemiarido(prev => !prev)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${
-              filtroSemiarido
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${filtroSemiarido
                 ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
                 : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
-            }`}
+              }`}
           >
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
-              filtroSemiarido
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${filtroSemiarido
                 ? 'bg-amber-500 text-white'
                 : 'bg-surface-soft border border-border text-text-muted'
-            }`}>
+              }`}>
               {filtroSemiarido ? (
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="4"/>
-                  <line x1="12" y1="2" x2="12" y2="5"/>
-                  <line x1="12" y1="19" x2="12" y2="22"/>
-                  <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
-                  <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
-                  <line x1="2" y1="12" x2="5" y2="12"/>
-                  <line x1="19" y1="12" x2="22" y2="12"/>
-                  <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
-                  <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+                  <circle cx="12" cy="12" r="4" />
+                  <line x1="12" y1="2" x2="12" y2="5" />
+                  <line x1="12" y1="19" x2="12" y2="22" />
+                  <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
+                  <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
+                  <line x1="2" y1="12" x2="5" y2="12" />
+                  <line x1="19" y1="12" x2="22" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
+                  <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
                 </svg>
               ) : (
                 <span className="w-2 h-2 rounded-full bg-slate-300 block" />
@@ -1459,15 +1454,14 @@ export default function SideMap({
             onClick={onToggleExpand}
             title={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
             aria-label={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
-            className={`flex items-center justify-center w-[32px] h-[32px] rounded-control transition-all border cursor-pointer select-none shadow-card ${
-              isExpanded
+            className={`flex items-center justify-center w-[32px] h-[32px] rounded-control transition-all border cursor-pointer select-none shadow-card ${isExpanded
                 ? (filtroSemiarido
-                    ? 'bg-amber-600 text-white border-amber-600 shadow-card'
-                    : 'bg-primary-700 text-white border-primary-700 shadow-card')
+                  ? 'bg-amber-600 text-white border-amber-600 shadow-card'
+                  : 'bg-primary-700 text-white border-primary-700 shadow-card')
                 : (filtroSemiarido
-                    ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
-                    : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
-            }`}
+                  ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
+                  : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
+              }`}
           >
             {isExpanded ? (
               <Shrink size={15} className={filtroSemiarido ? 'text-amber-200' : 'text-primary-200'} />
@@ -1481,18 +1475,16 @@ export default function SideMap({
       <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-surface rounded-control border border-border shadow-card overflow-hidden">
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${
-            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
-          }`}
+          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
+            }`}
           title="Aproximar"
         >
           <span className="text-lg font-medium leading-none">+</span>
         </button>
         <button
           onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${
-            filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
-          }`}
+          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
+            }`}
           title="Afastar"
         >
           <span className="text-lg font-medium leading-none">−</span>
@@ -1509,11 +1501,10 @@ export default function SideMap({
             onSelectCategory?.('todas');
             onAssetClick?.(null);
           }}
-          className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${
-            hasActiveFilter
+          className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${hasActiveFilter
               ? 'text-danger-600 bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 dark:hover:bg-danger-900/50'
               : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft')
-          }`}
+            }`}
           title="Limpar filtros"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

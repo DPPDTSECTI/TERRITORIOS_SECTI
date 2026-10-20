@@ -355,8 +355,8 @@ export default function AtivosPage() {
     // 4A. Ranking Territorial de Ativos (com dados empilhados de RNP e filtro de Semiárido)
     const territoryRanking = useMemo(() => {
         if (!ativosProcessados || ativosProcessados.length === 0) return [];
-        const baseAtivos = filtroSemiarido 
-            ? ativosProcessados.filter(a => isMunicipioSemiarido(a.municipio)) 
+        const baseAtivos = filtroSemiarido
+            ? ativosProcessados.filter(a => isMunicipioSemiarido(a.municipio))
             : ativosProcessados;
         const counts = {};
 
@@ -498,9 +498,8 @@ export default function AtivosPage() {
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
-                    filtroSemiarido ? 'opacity-100' : 'opacity-0'
-                }`}
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                    }`}
             >
                 {/* 1. HALO RADIAL DIFUSO */}
                 <div
@@ -549,11 +548,10 @@ export default function AtivosPage() {
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Ativos de CT&I
                         </h1>
-                        <span className={`text-micro font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${
-                            filtroSemiarido
+                        <span className={`text-micro font-medium uppercase px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${filtroSemiarido
                                 ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30'
                                 : 'bg-primary-600/10 text-primary-700 dark:text-primary-300 border-primary-600/20'
-                        }`}>
+                            }`}>
                             <Sparkles size={14} className={filtroSemiarido ? 'text-amber-700' : 'text-primary-700'} />
                             Ecossistema de Inovação da Bahia
                         </span>
@@ -561,7 +559,7 @@ export default function AtivosPage() {
                     <p className="text-body-sm text-text-secondary mt-0.5 font-medium">
                         Explore universidades, ICTs, parques tecnológicos, hubs e centros de pesquisa distribuídos pelo estado
                     </p>
-                    <div 
+                    <div
                         className="divider-territorial w-48 mt-3"
                         style={filtroSemiarido ? { background: 'linear-gradient(90deg, rgb(var(--color-warning-500)) 0%, rgb(var(--color-warning-600)) 50%, transparent 100%)' } : undefined}
                     />
@@ -605,29 +603,24 @@ export default function AtivosPage() {
                                                 setActiveTab('catalogo');
                                             }
                                         }}
-                                        className={`p-4 flex flex-col justify-between h-[96px] overflow-hidden min-w-0 transition-all duration-300 ${
-                                            isClickable ? 'cursor-pointer hover:shadow-card-hover' : 'cursor-default'
-                                        } ${
-                                            isRnpKpi && filterRnp === 'com_rnp'
+                                        className={`p-4 flex flex-col justify-between h-[96px] overflow-hidden min-w-0 transition-all duration-300 ${isClickable ? 'cursor-pointer hover:shadow-card-hover' : 'cursor-default'
+                                            } ${isRnpKpi && filterRnp === 'com_rnp'
                                                 ? (filtroSemiarido ? 'ring-2 ring-amber-500 bg-amber-500/10' : 'ring-2 ring-emerald-500 bg-emerald-500/10')
                                                 : ''
-                                        } ${
-                                            isHero && filtroSemiarido
+                                            } ${isHero && filtroSemiarido
                                                 ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card shadow-amber-500/20 border border-amber-400/40'
                                                 : ''
-                                        } ${
-                                            !isHero && filtroSemiarido
+                                            } ${!isHero && filtroSemiarido
                                                 ? 'border-amber-200/50 dark:border-amber-500/30'
                                                 : ''
-                                        }`}
+                                            }`}
                                     >
                                         {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
                                         <div className="flex items-center gap-2 w-full min-w-0">
                                             <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
                                             <span
-                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
-                                                    isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
-                                                }`}
+                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                                                    }`}
                                                 title={kpi.label}
                                             >
                                                 {kpi.label}
@@ -637,17 +630,15 @@ export default function AtivosPage() {
                                         {/* LINHA INFERIOR: NÚMERO */}
                                         <div className="flex items-baseline w-full justify-between min-w-0">
                                             <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
-                                                    isHero ? 'text-white' : 'text-text-primary'
-                                                }`}>
+                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${isHero ? 'text-white' : 'text-text-primary'
+                                                    }`}>
                                                     {kpi.value}
                                                 </span>
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold truncate ${
-                                                            isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
-                                                        }`}
+                                                        className={`text-caption font-semibold truncate ${isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                                                            }`}
                                                     >
                                                         ({kpi.percent})
                                                     </span>
@@ -789,11 +780,10 @@ export default function AtivosPage() {
                                             setSelectedTipos([]);
                                             setSelectedTipo('todos');
                                         }}
-                                        className={`text-micro text-left px-2 py-1 rounded-md transition-colors ${
-                                            selectedTipos.length === 0 || selectedTipos.includes('todos')
+                                        className={`text-micro text-left px-2 py-1 rounded-md transition-colors ${selectedTipos.length === 0 || selectedTipos.includes('todos')
                                                 ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-100 font-semibold'
                                                 : 'text-text-secondary hover:bg-surface'
-                                        }`}
+                                            }`}
                                     >
                                         Todos os tipos ({activeScopedAtivos.length})
                                     </button>
@@ -804,11 +794,10 @@ export default function AtivosPage() {
                                                 key={cat.name}
                                                 type="button"
                                                 onClick={() => handleToggleTipo(cat.name)}
-                                                className={`text-micro text-left px-2 py-1 rounded-md flex items-center justify-between transition-colors ${
-                                                    isChecked
+                                                className={`text-micro text-left px-2 py-1 rounded-md flex items-center justify-between transition-colors ${isChecked
                                                         ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-100 font-semibold'
                                                         : 'text-text-secondary hover:bg-surface'
-                                                }`}
+                                                    }`}
                                             >
                                                 <span className="flex items-center gap-1.5 truncate">
                                                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cat.corHex }} />
@@ -827,8 +816,8 @@ export default function AtivosPage() {
                             {compactAtivosList.length > 0 ? (
                                 compactAtivosList.map((ativo) => {
                                     const IconComp = ativo.icone || Database;
-                                    const itemColor = filtroSemiarido 
-                                        ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome) 
+                                    const itemColor = filtroSemiarido
+                                        ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome)
                                         : (ativo.corHex || '#3B82F6');
                                     const isSelected = selectedAssetId === ativo.id;
 
@@ -855,8 +844,8 @@ export default function AtivosPage() {
                                                 }
                                             }}
                                             className={`p-2 flex items-center justify-between gap-2 transition-colors duration-200 group cursor-pointer w-full ${isSelected
-                                                    ? (filtroSemiarido ? 'bg-amber-50/80 border-amber-300' : 'bg-primary-50/50')
-                                                    : 'bg-transparent hover:bg-surface-soft'
+                                                ? (filtroSemiarido ? 'bg-amber-50/80 border-amber-300' : 'bg-primary-50/50')
+                                                : 'bg-transparent hover:bg-surface-soft'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -871,9 +860,8 @@ export default function AtivosPage() {
                                                     <IconComp size={12} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-micro font-bold leading-tight truncate transition-colors ${
-                                                        isSelected 
-                                                            ? (filtroSemiarido ? 'text-amber-900 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200') 
+                                                    <h5 className={`text-micro font-bold leading-tight truncate transition-colors ${isSelected
+                                                            ? (filtroSemiarido ? 'text-amber-900 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200')
                                                             : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-700')
                                                         }`}>
                                                         {ativo.nome}
@@ -961,21 +949,19 @@ export default function AtivosPage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsFilterDropdownOpen(prev => !prev)}
-                                        className={`px-3 py-1.5 rounded-control border text-caption font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
-                                            activeFiltersCount > 0
+                                        className={`px-3 py-1.5 rounded-control border text-caption font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${activeFiltersCount > 0
                                                 ? (filtroSemiarido
                                                     ? 'bg-amber-500/20 border-amber-400 text-amber-900 dark:text-amber-200 shadow-xs ring-1 ring-amber-400/40'
                                                     : 'bg-primary-50 dark:bg-primary-950 border-primary-400 text-primary-900 dark:text-primary-100 shadow-xs ring-1 ring-primary-500/40')
                                                 : 'bg-surface-soft border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
-                                        }`}
+                                            }`}
                                         title="Filtros por Tipo de Ativo e Conectividade RNP"
                                     >
                                         <Filter size={14} className={activeFiltersCount > 0 ? (filtroSemiarido ? 'text-amber-600' : 'text-primary-600') : ''} />
                                         <span>Filtros</span>
                                         {activeFiltersCount > 0 && (
-                                            <span className={`w-4 h-4 rounded-full text-micro font-bold flex items-center justify-center text-white leading-none ${
-                                                filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'
-                                            }`}>
+                                            <span className={`w-4 h-4 rounded-full text-micro font-bold flex items-center justify-center text-white leading-none ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'
+                                                }`}>
                                                 {activeFiltersCount}
                                             </span>
                                         )}
@@ -1038,17 +1024,16 @@ export default function AtivosPage() {
                                                             setSelectedTipos([]);
                                                             setSelectedTipo('todos');
                                                         }}
-                                                        className={`flex items-center justify-between px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors select-none ${
-                                                            selectedTipos.length === 0 || selectedTipos.includes('todos')
+                                                        className={`flex items-center justify-between px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors select-none ${selectedTipos.length === 0 || selectedTipos.includes('todos')
                                                                 ? (filtroSemiarido ? 'bg-amber-100/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 font-semibold' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-100 font-semibold')
                                                                 : 'hover:bg-surface text-text-secondary'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <div className="flex items-center gap-2">
                                                             <input
                                                                 type="checkbox"
                                                                 checked={selectedTipos.length === 0 || selectedTipos.includes('todos')}
-                                                                onChange={() => {}}
+                                                                onChange={() => { }}
                                                                 className="rounded accent-primary-600 cursor-pointer w-3.5 h-3.5"
                                                             />
                                                             <span>Todos os tipos</span>
@@ -1065,17 +1050,16 @@ export default function AtivosPage() {
                                                             <div
                                                                 key={cat.name}
                                                                 onClick={() => handleToggleTipo(cat.name)}
-                                                                className={`flex items-center justify-between px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors select-none ${
-                                                                    isChecked
+                                                                className={`flex items-center justify-between px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors select-none ${isChecked
                                                                         ? (filtroSemiarido ? 'bg-amber-100/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 font-semibold border border-amber-300/50 dark:border-amber-700/50' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-100 font-semibold border border-primary-200/50 dark:border-primary-800/50')
                                                                         : 'hover:bg-surface text-text-primary'
-                                                                }`}
+                                                                    }`}
                                                             >
                                                                 <div className="flex items-center gap-2 min-w-0">
                                                                     <input
                                                                         type="checkbox"
                                                                         checked={isChecked}
-                                                                        onChange={() => {}}
+                                                                        onChange={() => { }}
                                                                         className="rounded accent-primary-600 cursor-pointer w-3.5 h-3.5 shrink-0"
                                                                     />
                                                                     <span className="w-2 h-2 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.corHex }} />
@@ -1105,9 +1089,8 @@ export default function AtivosPage() {
                                                     <select
                                                         value={filterRnp}
                                                         onChange={(e) => setFilterRnp(e.target.value)}
-                                                        className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft border border-border text-xs text-text-primary font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${
-                                                            filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
-                                                        }`}
+                                                        className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft border border-border text-xs text-text-primary font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                                            }`}
                                                     >
                                                         <option value="todos">Todos (com ou sem RNP)</option>
                                                         <option value="com_rnp">Apenas com RNP ({totalRnp})</option>
@@ -1125,9 +1108,8 @@ export default function AtivosPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setIsFilterDropdownOpen(false)}
-                                                    className={`px-3 py-1 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer ${
-                                                        filtroSemiarido ? 'bg-amber-600 hover:bg-amber-700' : 'bg-primary-900 hover:bg-primary-800'
-                                                    }`}
+                                                    className={`px-3 py-1 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer ${filtroSemiarido ? 'bg-amber-600 hover:bg-amber-700' : 'bg-primary-900 hover:bg-primary-800'
+                                                        }`}
                                                 >
                                                     Fechar
                                                 </button>
@@ -1242,8 +1224,8 @@ export default function AtivosPage() {
                                             filteredAtivosList.map((ativo, idx) => {
                                                 const IconComponent = ativo.icone || Database;
                                                 const isSelected = selectedAssetId === ativo.id;
-                                                const itemColor = filtroSemiarido 
-                                                    ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome) 
+                                                const itemColor = filtroSemiarido
+                                                    ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome)
                                                     : (ativo.corHex || '#2563EB');
                                                 const assetUrl = ativo.urlReferencia || ativo.url || ativo.link || ativo.site;
 
@@ -1273,11 +1255,10 @@ export default function AtivosPage() {
                                                             }
                                                             setSelectedAtivoDrawer(ativo);
                                                         }}
-                                                        className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors duration-200 group cursor-pointer border-b border-border/60 ${
-                                                            isSelected
+                                                        className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors duration-200 group cursor-pointer border-b border-border/60 ${isSelected
                                                                 ? (filtroSemiarido ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-300')
                                                                 : `bg-transparent hover:bg-surface-soft ${ativo.rnp ? (filtroSemiarido ? 'shadow-[inset_3px_0_0_rgb(var(--color-warning-500))]' : 'shadow-[inset_3px_0_0_rgb(var(--color-primary-500))]') : ''}`
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <div className="flex items-center gap-3 min-w-0 flex-1">
                                                             <div
@@ -1291,9 +1272,8 @@ export default function AtivosPage() {
                                                             </div>
                                                             <div className="flex flex-col min-w-0 flex-1">
                                                                 <div className="flex items-center gap-2">
-                                                                    <h4 className={`text-body-sm font-semibold text-text-primary ${
-                                                                        filtroSemiarido ? 'group-hover:text-amber-700' : 'group-hover:text-primary-600'
-                                                                    } transition-colors leading-tight truncate`}>
+                                                                    <h4 className={`text-body-sm font-semibold text-text-primary ${filtroSemiarido ? 'group-hover:text-amber-700' : 'group-hover:text-primary-600'
+                                                                        } transition-colors leading-tight truncate`}>
                                                                         {ativo.nome}
                                                                     </h4>
                                                                     {ativo.sigla && (
@@ -1303,11 +1283,10 @@ export default function AtivosPage() {
                                                                     )}
                                                                     {ativo.rnp && (
                                                                         <span
-                                                                            className={`inline-flex items-center gap-1 text-micro font-semibold px-1.5 py-0.5 rounded-control shrink-0 justify-center leading-none border ${
-                                                                                filtroSemiarido
+                                                                            className={`inline-flex items-center gap-1 text-micro font-semibold px-1.5 py-0.5 rounded-control shrink-0 justify-center leading-none border ${filtroSemiarido
                                                                                     ? 'bg-amber-500/15 text-amber-900 dark:text-amber-200 border-amber-500/30'
                                                                                     : 'bg-primary-50 dark:bg-primary-950 text-primary-800 dark:text-primary-200 border-primary-200/60 dark:border-primary-800/60'
-                                                                            }`}
+                                                                                }`}
                                                                             title="Ponto de Presença / Conexão RNP"
                                                                         >
                                                                             <Network size={14} className={filtroSemiarido ? "text-amber-600 shrink-0" : "text-primary-600 shrink-0"} />
@@ -1416,10 +1395,10 @@ export default function AtivosPage() {
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat) => {
                                                 const isSelected = selectedTipos.includes(cat.name) || selectedTipo === cat.name;
-                                                const catColor = filtroSemiarido 
-                                                    ? getSemiaridoPointColor(cat.corHex, cat.name || cat.key) 
+                                                const catColor = filtroSemiarido
+                                                    ? getSemiaridoPointColor(cat.corHex, cat.name || cat.key)
                                                     : '#2563EB';
-                                                
+
                                                 const pos = Number(cat.rnpCount || 0);
                                                 const total = Number(cat.count || 0);
                                                 const neg = Math.max(0, total - pos);
@@ -1553,11 +1532,10 @@ export default function AtivosPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedTerritory(null)}
-                                                    className={`text-micro font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${
-                                                        filtroSemiarido
+                                                    className={`text-micro font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${filtroSemiarido
                                                             ? 'text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 bg-amber-100/70 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-700/50'
                                                             : 'text-primary-700 dark:text-primary-300 hover:text-primary-900 dark:hover:text-primary-100 hover:underline bg-primary-200/50 dark:bg-primary-950/40'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     ← Ver Todos os Territórios
                                                 </button>
@@ -1609,10 +1587,9 @@ export default function AtivosPage() {
                                                             </div>
 
                                                             {/* BARRA: TRACK + FILL + NOME */}
-                                                            <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                                                filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
-                                                            }`}>
-                                                                <div 
+                                                            <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
+                                                                }`}>
+                                                                <div
                                                                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                     style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
                                                                 />
@@ -1623,9 +1600,8 @@ export default function AtivosPage() {
 
                                                             {/* RNP PILL */}
                                                             {m.rnpCount > 0 && (
-                                                                <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none border ${
-                                                                    filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                                                }`} title={`${m.rnpCount} com RNP`}>
+                                                                <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none border ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                                    }`} title={`${m.rnpCount} com RNP`}>
                                                                     {m.rnpCount} RNP
                                                                 </div>
                                                             )}
@@ -1675,10 +1651,9 @@ export default function AtivosPage() {
                                                         </div>
 
                                                         {/* BARRA: TRACK + FILL + NOME */}
-                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${
-                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
-                                                        }`}>
-                                                            <div 
+                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'
+                                                            }`}>
+                                                            <div
                                                                 className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                                                                 style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
                                                             />
@@ -1689,16 +1664,15 @@ export default function AtivosPage() {
 
                                                         {/* RNP PILL */}
                                                         {t.rnpCount > 0 && (
-                                                            <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none border ${
-                                                                filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                                            }`} title={`${t.rnpCount} com RNP`}>
+                                                            <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none border ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' : 'bg-primary-100/80 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                                }`} title={`${t.rnpCount} com RNP`}>
                                                                 {t.rnpCount} RNP
                                                             </div>
                                                         )}
 
                                                         {/* VALOR PILL */}
                                                         <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-micro font-semibold tabular-nums leading-none ${valueStyle}`}>
-                                                                {t.count}
+                                                            {t.count}
                                                         </div>
                                                     </div>
                                                 );

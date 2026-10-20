@@ -117,7 +117,7 @@ export const Chip = forwardRef(function Chip(
         'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control text-caption border select-none transition-all duration-120',
         variantClass,
         isInteractive &&
-          'cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
+        'cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
         disabled && 'opacity-50 pointer-events-none',
         className
       )}

@@ -686,9 +686,8 @@ export default function CadeiaPage() {
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
-                    filtroSemiarido ? 'opacity-100' : 'opacity-0'
-                }`}
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                    }`}
             >
                 {/* 1. HALO RADIAL DIFUSO */}
                 <div
@@ -748,7 +747,7 @@ export default function CadeiaPage() {
                     <p className="text-body-sm text-text-secondary mt-1 font-normal">
                         Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
                     </p>
-                    <div 
+                    <div
                         className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}
                     />
                 </div>
@@ -783,9 +782,8 @@ export default function CadeiaPage() {
                                         <div className="flex items-center gap-2 w-full min-w-0">
                                             <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
                                             <span
-                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${
-                                                    isHero ? 'text-white/80' : 'text-text-muted'
-                                                }`}
+                                                className={`text-micro font-medium uppercase tracking-wider truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
+                                                    }`}
                                                 title={kpi.label}
                                             >
                                                 {kpi.label}
@@ -795,17 +793,15 @@ export default function CadeiaPage() {
                                         {/* LINHA INFERIOR: NÚMERO */}
                                         <div className="flex items-baseline w-full justify-between">
                                             <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${
-                                                    isHero ? 'text-white' : 'text-text-primary'
-                                                }`}>
+                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${isHero ? 'text-white' : 'text-text-primary'
+                                                    }`}>
                                                     {kpi.value}
                                                 </span>
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold truncate ${
-                                                            isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
-                                                        }`}
+                                                        className={`text-caption font-semibold truncate ${isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                            }`}
                                                     >
                                                         ({kpi.percent})
                                                     </span>
@@ -921,15 +917,14 @@ export default function CadeiaPage() {
                                                 }
                                                 setSelectedCadeiaDrawer(c);
                                             }}
-                                            className={`p-2 rounded-control flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${
-                                                isSelected
+                                            className={`p-2 rounded-control flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${isSelected
                                                     ? (filtroSemiarido
                                                         ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 ring-2 ring-amber-500/25 shadow-xs'
                                                         : 'bg-primary-50 dark:bg-primary-950/40 border-primary-600 ring-2 ring-primary-600/25 shadow-xs')
                                                     : (filtroSemiarido
                                                         ? 'bg-surface-soft border-transparent hover:bg-surface hover:border-amber-300'
                                                         : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200')
-                                            }`}
+                                                }`}
                                         >
                                             <div className="flex items-center gap-2 min-w-0 flex-1">
                                                 <div
@@ -942,11 +937,10 @@ export default function CadeiaPage() {
                                                     <IconComp size={12} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-caption font-bold leading-tight truncate transition-colors ${
-                                                        isSelected
+                                                    <h5 className={`text-caption font-bold leading-tight truncate transition-colors ${isSelected
                                                             ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200')
                                                             : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
-                                                    }`}>
+                                                        }`}>
                                                         {c.entidade}
                                                     </h5>
                                                     <span className="text-micro text-text-secondary truncate leading-tight flex items-center gap-1.5">
@@ -1148,15 +1142,14 @@ export default function CadeiaPage() {
                                                             }
                                                             setSelectedCadeiaDrawer(c);
                                                         }}
-                                                        className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-all duration-200 group cursor-pointer border w-full scroll-mt-2 ${
-                                                            isSelected
+                                                        className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-all duration-200 group cursor-pointer border w-full scroll-mt-2 ${isSelected
                                                                 ? (filtroSemiarido
                                                                     ? 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-500 ring-2 ring-amber-500/20 shadow-card-elevated'
                                                                     : 'bg-primary-50/50 dark:bg-primary-950/30 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated')
                                                                 : (filtroSemiarido
                                                                     ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated'
                                                                     : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <div className="flex items-start justify-between gap-3 w-full">
                                                             <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -1170,11 +1163,10 @@ export default function CadeiaPage() {
                                                                     <IconComp size={16} />
                                                                 </div>
                                                                 <div className="flex flex-col min-w-0 flex-1">
-                                                                    <h4 className={`text-body-sm font-semibold leading-tight break-words transition-colors ${
-                                                                        isSelected
+                                                                    <h4 className={`text-body-sm font-semibold leading-tight break-words transition-colors ${isSelected
                                                                             ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300')
                                                                             : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
-                                                                    }`}>
+                                                                        }`}>
                                                                         {c.entidade}
                                                                     </h4>
 
@@ -1220,11 +1212,10 @@ export default function CadeiaPage() {
                                                             </div>
                                                         </div>
 
-                                                        <div className={`text-caption leading-relaxed break-words rounded-control p-2 transition-colors border ${
-                                                            isSelected
+                                                        <div className={`text-caption leading-relaxed break-words rounded-control p-2 transition-colors border ${isSelected
                                                                 ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
                                                                 : 'bg-surface-soft border-border text-text-secondary'
-                                                        }`}>
+                                                            }`}>
                                                             <span className="font-semibold text-text-primary">
                                                                 {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios: ` : 'Atua em 1 município: '}
                                                             </span>
@@ -1234,11 +1225,10 @@ export default function CadeiaPage() {
                                                         </div>
 
                                                         {c.texto_referencia && (
-                                                            <div className={`text-caption leading-relaxed break-words rounded-control p-2.5 transition-colors border ${
-                                                                isSelected
+                                                            <div className={`text-caption leading-relaxed break-words rounded-control p-2.5 transition-colors border ${isSelected
                                                                     ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
                                                                     : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
-                                                            }`}>
+                                                                }`}>
                                                                 <div className="flex items-center gap-1.5 font-bold text-micro uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">
                                                                     <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
                                                                     <span>Referência / Citação do Artigo:</span>
@@ -1321,11 +1311,10 @@ export default function CadeiaPage() {
                                                                 setFocusedAsset(null);
                                                             }
                                                         }}
-                                                        className={`rounded-card p-3 border transition-all cursor-pointer ${
-                                                            isSelected
+                                                        className={`rounded-card p-3 border transition-all cursor-pointer ${isSelected
                                                                 ? (filtroSemiarido ? 'bg-amber-50/50 dark:bg-amber-950/40 border-amber-500 shadow-sm ring-2 ring-amber-500/20' : 'bg-primary-50/40 dark:bg-primary-950/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20')
                                                                 : (filtroSemiarido ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <div className="flex items-center justify-between mb-1.5">
                                                             <div className="flex items-center gap-2 min-w-0">
@@ -1347,9 +1336,8 @@ export default function CadeiaPage() {
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div className={`w-full h-2 rounded-full overflow-hidden relative flex items-center ${
-                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
-                                                        }`}>
+                                                        <div className={`w-full h-2 rounded-full overflow-hidden relative flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
+                                                            }`}>
                                                             <div
                                                                 className="h-full rounded-full transition-all duration-500"
                                                                 style={{ width: `${seg.percent}%`, backgroundColor: dotColor }}
@@ -1398,17 +1386,15 @@ export default function CadeiaPage() {
                                                         }}
                                                         className="flex items-center gap-2 p-1.5 rounded-control hover:bg-surface-soft transition-colors cursor-pointer group"
                                                     >
-                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${
-                                                            index === 0
+                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${index === 0
                                                                 ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-600 text-white')
                                                                 : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
-                                                        }`}>
+                                                            }`}>
                                                             {m.rank}
                                                         </span>
 
-                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${
-                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
-                                                        }`}>
+                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
+                                                            }`}>
                                                             <div
                                                                 className="absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500"
                                                                 style={{
@@ -1417,16 +1403,14 @@ export default function CadeiaPage() {
                                                                     opacity: getRankingBarOpacity(index, municipalityRanking.length)
                                                                 }}
                                                             />
-                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${
-                                                                filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
-                                                            }`}>
+                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
+                                                                }`}>
                                                                 {m.name}
                                                             </span>
                                                         </div>
 
-                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${
-                                                            filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                                        }`}>
+                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                            }`}>
                                                             {m.count}
                                                         </span>
                                                     </div>
@@ -1450,17 +1434,15 @@ export default function CadeiaPage() {
                                                         }}
                                                         className="flex items-center gap-2 p-1.5 rounded-control hover:bg-surface-soft transition-colors cursor-pointer group"
                                                     >
-                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${
-                                                            index === 0
+                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${index === 0
                                                                 ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-600 text-white')
                                                                 : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
-                                                        }`}>
+                                                            }`}>
                                                             {t.rank}
                                                         </span>
 
-                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${
-                                                            filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
-                                                        }`}>
+                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
+                                                            }`}>
                                                             <div
                                                                 className="absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500"
                                                                 style={{
@@ -1469,16 +1451,14 @@ export default function CadeiaPage() {
                                                                     opacity: getRankingBarOpacity(index, territoryRanking.length)
                                                                 }}
                                                             />
-                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${
-                                                                filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
-                                                            }`}>
+                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
+                                                                }`}>
                                                                 {t.name}
                                                             </span>
                                                         </div>
 
-                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${
-                                                            filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                                        }`}>
+                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
+                                                            }`}>
                                                             {t.count}
                                                         </span>
                                                     </div>

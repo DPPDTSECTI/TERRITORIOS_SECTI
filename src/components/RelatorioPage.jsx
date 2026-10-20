@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import {
- FileText,
- Download,
- Printer,
- Search,
- GraduationCap,
- GitPullRequest,
- Database,
- MapPin,
- Layers,
- Globe,
- Wifi,
- Award,
- BarChart3,
- Compass,
- FileSpreadsheet,
- ChevronDown
+  FileText,
+  Download,
+  Printer,
+  Search,
+  GraduationCap,
+  GitPullRequest,
+  Database,
+  MapPin,
+  Layers,
+  Globe,
+  Wifi,
+  Award,
+  BarChart3,
+  Compass,
+  FileSpreadsheet,
+  ChevronDown
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { DataContext } from '../context/DataContext';
@@ -108,13 +108,13 @@ const getTipoCadeiaConfig = (nomeTipo) => {
 
 // Helper para limpeza de sufixos de campus / cidade nas IES
 function cleanIes(name) {
- if (!name) return '';
- return String(name)
- .replace(/\s*-\s*Campus\b.*$/i, '')
- .replace(/\s*-\s*Polo\b.*$/i, '')
- .replace(/\s*-\s*Unidade\b.*$/i, '')
- .replace(/\s*\((?:campus|polo|sede|ead).*?\)/gi, '')
- .trim();
+  if (!name) return '';
+  return String(name)
+    .replace(/\s*-\s*Campus\b.*$/i, '')
+    .replace(/\s*-\s*Polo\b.*$/i, '')
+    .replace(/\s*-\s*Unidade\b.*$/i, '')
+    .replace(/\s*\((?:campus|polo|sede|ead).*?\)/gi, '')
+    .trim();
 }
 
 console.log('RelatorioPage montado!');
@@ -325,8 +325,8 @@ export default function RelatorioPage() {
         rawMunSede = row.nome_municipio;
       }
 
-      const lookupSede = (row.id_sede && MUN_LOOKUP.byId[row.id_sede]) || 
-                         (rawMunSede && MUN_LOOKUP.byName[normalize(rawMunSede)]);
+      const lookupSede = (row.id_sede && MUN_LOOKUP.byId[row.id_sede]) ||
+        (rawMunSede && MUN_LOOKUP.byName[normalize(rawMunSede)]);
 
       const nomeSedeFinal = lookupSede ? lookupSede.nome_municipio : (rawMunSede || 'Juazeiro');
       const idTerrSede = overrideTerritorioId || (lookupSede ? lookupSede.id_territorio : (row.id_territorio || null));
@@ -348,9 +348,9 @@ export default function RelatorioPage() {
         }
 
         if (!lat || !lng) {
-          const huntedCoords = findMunicipioCoords(nomeSedeFinal) || 
-                               (overrideSede ? findMunicipioCoords(overrideSede) : null) || 
-                               [-12.9714, -38.5014];
+          const huntedCoords = findMunicipioCoords(nomeSedeFinal) ||
+            (overrideSede ? findMunicipioCoords(overrideSede) : null) ||
+            [-12.9714, -38.5014];
           lat = huntedCoords[0];
           lng = huntedCoords[1];
 
@@ -393,8 +393,8 @@ export default function RelatorioPage() {
 
       if (row.id_municipio || row.nome_municipio) {
         const cadeiaObj = mapCadeias.get(idCadeia);
-        const lookupMun = (row.id_municipio && MUN_LOOKUP.byId[row.id_municipio]) || 
-                          (row.nome_municipio && MUN_LOOKUP.byName[normalize(row.nome_municipio)]);
+        const lookupMun = (row.id_municipio && MUN_LOOKUP.byId[row.id_municipio]) ||
+          (row.nome_municipio && MUN_LOOKUP.byName[normalize(row.nome_municipio)]);
 
         const mId = row.id_municipio || (lookupMun ? lookupMun.id_municipio : null);
         const mNome = row.nome_municipio || (lookupMun ? lookupMun.nome_municipio : '');
@@ -457,7 +457,7 @@ export default function RelatorioPage() {
       list = list.filter(c => {
         const matchSedeId = Number(c.id_territorio) === tid;
         const matchSedeNome = normalize(c.territorio_identidade) === tNorm;
-        const matchAbrangencia = c.municipios_cobertos?.some(m => 
+        const matchAbrangencia = c.municipios_cobertos?.some(m =>
           Number(m.id_territorio) === tid || normalize(m.nome_territorio) === tNorm
         );
         return matchSedeId || matchSedeNome || matchAbrangencia;
@@ -465,9 +465,9 @@ export default function RelatorioPage() {
     }
 
     if (reportMode === 'semiarido') {
-      list = list.filter(c => 
-        c.semiarido === true || 
-        isMunicipioSemiarido(c.municipio_sede) || 
+      list = list.filter(c =>
+        c.semiarido === true ||
+        isMunicipioSemiarido(c.municipio_sede) ||
         c.municipios_cobertos?.some(m => m.semiarido || isMunicipioSemiarido(m.nome_municipio))
       );
     }
@@ -495,7 +495,7 @@ export default function RelatorioPage() {
       return e.includes('estadual') || e.includes('estado da bahia');
     }).length;
     const privadaCursos = totalCursos - federalCursos - estadualCursos;
-    
+
     const federalTaxa = totalCursos > 0 ? ((federalCursos / totalCursos) * 100).toFixed(1) : '0.0';
     const estadualTaxa = totalCursos > 0 ? ((estadualCursos / totalCursos) * 100).toFixed(1) : '0.0';
     const privadaTaxa = totalCursos > 0 ? ((privadaCursos / totalCursos) * 100).toFixed(1) : '0.0';
@@ -563,64 +563,64 @@ export default function RelatorioPage() {
     };
   }, [scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, selectedTerritory, selectedTerritoryId, territoriosData, reportMode]);
 
- // TIPOS DE RELATÓRIO CONFIGURADOS
- const reportOptions = [
- {
- id: 'sintese',
- label: 'Síntese Executiva',
- icon: BarChart3,
- desc: 'Visão geral integrada de indicadores, cobertura e infraestrutura',
- badge: 'Geral'
- },
- {
- id: 'ativos',
- label: 'Ativos de CT&I',
- icon: Database,
- desc: 'Laboratórios, centros de pesquisa, polos e conectividade RNP',
- badge: `${scopedAtivos.length} ativos`
- },
- {
- id: 'cursos',
- label: 'Cursos Superiores',
- icon: GraduationCap,
- desc: 'Graduações e pós-graduações, instituições ofertantes e EaD',
- badge: `${scopedCursos.length} cursos`
- },
- {
- id: 'cadeias',
- label: 'Cadeias Produtivas',
- icon: GitPullRequest,
- desc: 'Sectores econômicos mapeados, tipologias e teia territorial',
- badge: `${statsSintese.totalCadeias} cadeias`
- }
- ];
+  // TIPOS DE RELATÓRIO CONFIGURADOS
+  const reportOptions = [
+    {
+      id: 'sintese',
+      label: 'Síntese Executiva',
+      icon: BarChart3,
+      desc: 'Visão geral integrada de indicadores, cobertura e infraestrutura',
+      badge: 'Geral'
+    },
+    {
+      id: 'ativos',
+      label: 'Ativos de CT&I',
+      icon: Database,
+      desc: 'Laboratórios, centros de pesquisa, polos e conectividade RNP',
+      badge: `${scopedAtivos.length} ativos`
+    },
+    {
+      id: 'cursos',
+      label: 'Cursos Superiores',
+      icon: GraduationCap,
+      desc: 'Graduações e pós-graduações, instituições ofertantes e EaD',
+      badge: `${scopedCursos.length} cursos`
+    },
+    {
+      id: 'cadeias',
+      label: 'Cadeias Produtivas',
+      icon: GitPullRequest,
+      desc: 'Sectores econômicos mapeados, tipologias e teia territorial',
+      badge: `${statsSintese.totalCadeias} cadeias`
+    }
+  ];
 
- // FILTRAGEM E ORDENAÇÃO DE TABELAS CONFORME O RELATÓRIO
- const tableData = useMemo(() => {
-   let list = [];
-   const q = normalize(tableSearch);
+  // FILTRAGEM E ORDENAÇÃO DE TABELAS CONFORME O RELATÓRIO
+  const tableData = useMemo(() => {
+    let list = [];
+    const q = normalize(tableSearch);
 
- if (reportType === 'ativos') {
- list = scopedAtivos.map(a => ({
- col1: a.nome_ativo || a.ativo || 'Ativo sem nome',
- col2: a.sigla || '-',
- col3: a.tipo || 'Geral',
- col4: a.municipio || '-',
- col5: a.territorio_identidade || a.territorio || '-',
- col6: a.rnp ? 'Sim' : 'Não',
- raw: a
- }));
- } else if (reportType === 'cursos') {
- list = scopedCursos.map(c => ({
- col1: c.nome || c.curso || 'Curso',
- col2: c.sigla || cleanIes(c.instituicao) || cleanIes(c.entidade) || '-',
- col3: c.tipo || c.categoria || 'Geral',
- col4: c.municipio || '-',
- col5: c.territorio_identidade || c.territorio || '-',
- col6: c.ead ? 'EaD' : 'Presencial',
- raw: c
- }));
- } else if (reportType === 'cadeias') {
+    if (reportType === 'ativos') {
+      list = scopedAtivos.map(a => ({
+        col1: a.nome_ativo || a.ativo || 'Ativo sem nome',
+        col2: a.sigla || '-',
+        col3: a.tipo || 'Geral',
+        col4: a.municipio || '-',
+        col5: a.territorio_identidade || a.territorio || '-',
+        col6: a.rnp ? 'Sim' : 'Não',
+        raw: a
+      }));
+    } else if (reportType === 'cursos') {
+      list = scopedCursos.map(c => ({
+        col1: c.nome || c.curso || 'Curso',
+        col2: c.sigla || cleanIes(c.instituicao) || cleanIes(c.entidade) || '-',
+        col3: c.tipo || c.categoria || 'Geral',
+        col4: c.municipio || '-',
+        col5: c.territorio_identidade || c.territorio || '-',
+        col6: c.ead ? 'EaD' : 'Presencial',
+        raw: c
+      }));
+    } else if (reportType === 'cadeias') {
       list = scopedCadeias.map(cad => {
         const terrs = new Set();
         if (cad.territorio && cad.territorio !== 'Não identificado') {
@@ -643,33 +643,33 @@ export default function RelatorioPage() {
         };
       });
     } else if (reportType === 'municipios') {
- // Contagem por município
- const ativosPorMun = {};
- scopedAtivos.forEach(a => {
- const m = a.municipio;
- if (m) ativosPorMun[m] = (ativosPorMun[m] || 0) + 1;
- });
- const cursosPorMun = {};
- scopedCursos.forEach(c => {
- const m = c.municipio;
- if (m) cursosPorMun[m] = (cursosPorMun[m] || 0) + 1;
- });
+      // Contagem por município
+      const ativosPorMun = {};
+      scopedAtivos.forEach(a => {
+        const m = a.municipio;
+        if (m) ativosPorMun[m] = (ativosPorMun[m] || 0) + 1;
+      });
+      const cursosPorMun = {};
+      scopedCursos.forEach(c => {
+        const m = c.municipio;
+        if (m) cursosPorMun[m] = (cursosPorMun[m] || 0) + 1;
+      });
 
- list = scopedMunicipios.map(m => {
- const nomeMun = m.municipio || m.nome_municipio || 'Município';
- const qtdAtivos = ativosPorMun[nomeMun] || 0;
- const qtdCursos = cursosPorMun[nomeMun] || 0;
- return {
- col1: nomeMun,
- col2: m.territorio || m.nome_territorio || '-',
- col3: m.codigo_ibge || m.id_municipio || '-',
- col4: `${qtdAtivos} ativo(s)`,
- col5: `${qtdCursos} curso(s)`,
- col6: qtdAtivos > 0 || qtdCursos > 0 ? 'Sim' : 'Não',
- raw: m
- };
- });
- }
+      list = scopedMunicipios.map(m => {
+        const nomeMun = m.municipio || m.nome_municipio || 'Município';
+        const qtdAtivos = ativosPorMun[nomeMun] || 0;
+        const qtdCursos = cursosPorMun[nomeMun] || 0;
+        return {
+          col1: nomeMun,
+          col2: m.territorio || m.nome_territorio || '-',
+          col3: m.codigo_ibge || m.id_municipio || '-',
+          col4: `${qtdAtivos} ativo(s)`,
+          col5: `${qtdCursos} curso(s)`,
+          col6: qtdAtivos > 0 || qtdCursos > 0 ? 'Sim' : 'Não',
+          raw: m
+        };
+      });
+    }
 
     if (q) {
       list = list.filter(row =>
@@ -682,16 +682,16 @@ export default function RelatorioPage() {
       );
     }
 
- if (sortField) {
- list.sort((a, b) => {
- const valA = String(a[sortField] || '').toLowerCase();
- const valB = String(b[sortField] || '').toLowerCase();
- return sortAsc ? valA.localeCompare(valB, 'pt-BR') : valB.localeCompare(valA, 'pt-BR');
- });
- }
+    if (sortField) {
+      list.sort((a, b) => {
+        const valA = String(a[sortField] || '').toLowerCase();
+        const valB = String(b[sortField] || '').toLowerCase();
+        return sortAsc ? valA.localeCompare(valB, 'pt-BR') : valB.localeCompare(valA, 'pt-BR');
+      });
+    }
 
- return list;
- }, [reportType, scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, tableSearch, sortField, sortAsc]);
+    return list;
+  }, [reportType, scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, tableSearch, sortField, sortAsc]);
 
   // FUNÇÕES DE EXPORTAÇÃO EXCEL (.XLSX)
   const handleExportExcel = () => {
@@ -936,7 +936,7 @@ export default function RelatorioPage() {
         try {
           const errData = await res.json();
           if (errData?.error) errorMsg = errData.error;
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errorMsg);
       }
 
@@ -1049,7 +1049,7 @@ export default function RelatorioPage() {
         try {
           const errData = await res.json();
           if (errData?.error) errorMsg = errData.error;
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errorMsg);
       }
 
@@ -1174,43 +1174,42 @@ export default function RelatorioPage() {
 
 
   const ativosPorTipo = useMemo(() => {
- if (reportType !== 'ativos') return [];
- const counts = {};
- scopedAtivos.forEach(a => {
- const t = a.tipo || 'Outros';
- counts[t] = (counts[t] || 0) + 1;
- });
- return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value).slice(0, 10);
- }, [scopedAtivos, reportType]);
+    if (reportType !== 'ativos') return [];
+    const counts = {};
+    scopedAtivos.forEach(a => {
+      const t = a.tipo || 'Outros';
+      counts[t] = (counts[t] || 0) + 1;
+    });
+    return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 10);
+  }, [scopedAtivos, reportType]);
 
- const cadeiasPorTipo = useMemo(() => {
- if (reportType !== 'cadeias') return [];
+  const cadeiasPorTipo = useMemo(() => {
+    if (reportType !== 'cadeias') return [];
     if (reportType !== 'cadeias') return [];
     const counts = {};
     scopedCadeias.forEach(c => {
       const t = c.segmento || c.shortTipo || c.tipo || 'Setor Econômico';
       counts[t] = (counts[t] || 0) + 1;
     });
-    return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value).slice(0, 10);
+    return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 10);
   }, [scopedCadeias, reportType]);
 
- const cursosPorModalidade = useMemo(() => {
- return [
- { name: 'Presencial', value: statsSintese.presencialCursos, color: '#2563EB' },
- { name: 'EaD', value: statsSintese.eadCursos, color: '#8B5CF6' }
- ];
- }, [statsSintese]);
+  const cursosPorModalidade = useMemo(() => {
+    return [
+      { name: 'Presencial', value: statsSintese.presencialCursos, color: '#2563EB' },
+      { name: 'EaD', value: statsSintese.eadCursos, color: '#8B5CF6' }
+    ];
+  }, [statsSintese]);
 
- return (
+  return (
     <>
       <div className={`flex-1 w-full h-full flex flex-col p-4 sm:p-6 lg:p-7 min-h-0 overflow-hidden font-sans select-none bg-transparent relative print:hidden`}>
 
         {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
         <div
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${
-            reportMode === 'semiarido' ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${reportMode === 'semiarido' ? 'opacity-100' : 'opacity-0'
+            }`}
         >
           {/* 1. HALO RADIAL DIFUSO (Região de calor com opacidade sutil entre 6% e 12%) */}
           <div
@@ -1263,593 +1262,580 @@ export default function RelatorioPage() {
         {/* ================= CORPO PRINCIPAL: AS DUAS CAIXAS ESPECIFICADAS ================= */}
         <div id="relatorio-export-container" className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 overflow-hidden print:block print:h-auto print:overflow-visible min-h-0">
 
-        {/* -------------------------------------------------------------
+          {/* -------------------------------------------------------------
         WRAPPER DE IMPRESSÃO (CONTÉM O MAPA E A CAIXA 2)
         ------------------------------------------------------------- */}
-        <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 min-h-0">
+          <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 min-h-0">
 
-        {/* CARD DO MAPA (MEIO) */}
-        <div className="w-full lg:w-[420px] xl:w-[480px] shrink-0 bg-surface rounded-card border border-border shadow-card p-4 sm:p-5 flex flex-col print:hidden min-h-0 overflow-hidden">
-          <h3 className="text-subtitle font-semibold text-text-primary tracking-tight mb-3">Visão Espacial</h3>
-          <div className="flex-1 w-full rounded-card overflow-hidden border border-border shadow-card relative z-0 bg-surface-soft min-h-0">
- {(() => {
- const handleMapSelect = (t) => {
- if (t && t.id_territorio) setSelectedTerritoryId(String(t.id_territorio));
- else setSelectedTerritoryId('bahia');
- };
+            {/* CARD DO MAPA (MEIO) */}
+            <div className="w-full lg:w-[420px] xl:w-[480px] shrink-0 bg-surface rounded-card border border-border shadow-card p-4 sm:p-5 flex flex-col print:hidden min-h-0 overflow-hidden">
+              <h3 className="text-subtitle font-semibold text-text-primary tracking-tight mb-3">Visão Espacial</h3>
+              <div className="flex-1 w-full rounded-card overflow-hidden border border-border shadow-card relative z-0 bg-surface-soft min-h-0">
+                {(() => {
+                  const handleMapSelect = (t) => {
+                    if (t && t.id_territorio) setSelectedTerritoryId(String(t.id_territorio));
+                    else setSelectedTerritoryId('bahia');
+                  };
 
- if (reportType === 'ativos') {
-    return (
-      <SideMap
-        key={`map-ativos-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
-        mode="ativos"
-        processedAtivos={scopedAtivos}
-        selectedTerritory={selectedTerritory}
-        onSelectTerritory={handleMapSelect}
-        filtroSemiarido={reportMode === 'semiarido'}
-      />
-    );
-  }
-  if (reportType === 'cursos') {
-    return (
-      <SideMap
-        key={`map-cursos-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
-        mode="cursos"
-        cursosData={scopedCursos}
-        selectedTerritory={selectedTerritory}
-        onSelectTerritory={handleMapSelect}
-        filtroSemiarido={reportMode === 'semiarido'}
-      />
-    );
-  }
-  if (reportType === 'cadeias') {
-    return (
-      <SideMap
-        key={`map-cadeias-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
-        mode="cadeias"
-        cadeiasData={scopedCadeias}
-        processedAtivos={scopedCadeias.map(c => ({...c, coords: c.coords || [0,0]}))}
-        selectedTerritory={selectedTerritory}
-        selectedCadeia={selectedCadeia}
-        onAssetClick={(cad) => setSelectedCadeia((prev) => (prev?.id === cad?.id ? null : cad))}
-        onSelectTerritory={handleMapSelect}
-        filtroSemiarido={reportMode === 'semiarido'}
-      />
-    );
-  }
+                  if (reportType === 'ativos') {
+                    return (
+                      <SideMap
+                        key={`map-ativos-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+                        mode="ativos"
+                        processedAtivos={scopedAtivos}
+                        selectedTerritory={selectedTerritory}
+                        onSelectTerritory={handleMapSelect}
+                        filtroSemiarido={reportMode === 'semiarido'}
+                      />
+                    );
+                  }
+                  if (reportType === 'cursos') {
+                    return (
+                      <SideMap
+                        key={`map-cursos-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+                        mode="cursos"
+                        cursosData={scopedCursos}
+                        selectedTerritory={selectedTerritory}
+                        onSelectTerritory={handleMapSelect}
+                        filtroSemiarido={reportMode === 'semiarido'}
+                      />
+                    );
+                  }
+                  if (reportType === 'cadeias') {
+                    return (
+                      <SideMap
+                        key={`map-cadeias-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+                        mode="cadeias"
+                        cadeiasData={scopedCadeias}
+                        processedAtivos={scopedCadeias.map(c => ({ ...c, coords: c.coords || [0, 0] }))}
+                        selectedTerritory={selectedTerritory}
+                        selectedCadeia={selectedCadeia}
+                        onAssetClick={(cad) => setSelectedCadeia((prev) => (prev?.id === cad?.id ? null : cad))}
+                        onSelectTerritory={handleMapSelect}
+                        filtroSemiarido={reportMode === 'semiarido'}
+                      />
+                    );
+                  }
 
-  return (
-    <PtiMap
-      key={`map-sintese-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
-      selectedTerritory={selectedTerritory}
-      onSelectTerritory={handleMapSelect}
-      territoriosData={territoriosData}
-      territoriesDynamicStats={territoriesDynamicStats}
-      semiaridoMunicipios={reportMode === 'semiarido' ? SEMIARIDO_MUNICIPIOS : []}
-      filtroSemiarido={reportMode === 'semiarido'}
-    />
-  );
-  })()}
- </div>
- </div>
+                  return (
+                    <PtiMap
+                      key={`map-sintese-${reportMode}-${selectedTerritory?.id_territorio || 'all'}`}
+                      selectedTerritory={selectedTerritory}
+                      onSelectTerritory={handleMapSelect}
+                      territoriosData={territoriosData}
+                      territoriesDynamicStats={territoriesDynamicStats}
+                      semiaridoMunicipios={reportMode === 'semiarido' ? SEMIARIDO_MUNICIPIOS : []}
+                      filtroSemiarido={reportMode === 'semiarido'}
+                    />
+                  );
+                })()}
+              </div>
+            </div>
 
- {/* -------------------------------------------------------------
+            {/* -------------------------------------------------------------
  CAIXA 2: TIPOS DE RELATÓRIO E OS SEUS DADOS (DIREITA)
  ------------------------------------------------------------- */}
-  <div
-    className={`flex-1 min-w-0 rounded-card border p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden transition-all duration-700 print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0 relative z-10 ${
-      reportMode === 'semiarido'
-        ? 'bg-surface/95 dark:bg-surface border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.05)]'
-        : 'bg-surface border-border shadow-card'
-    }`}
-  >
-
-  {/* CABEÇALHO DA CAIXA 2: ESCOPO, EXPORTAÇÃO E SELETOR DOS TIPOS DE RELATÓRIO */}
-  <div className="mb-4 shrink-0 flex flex-col gap-2.5 min-w-0">
-    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 min-h-[32px] shrink-0 min-w-0">
-      <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
-        <div className="flex items-center gap-1.5 text-caption font-medium text-text-primary bg-surface-soft px-3 h-8 rounded-control border border-border justify-center leading-none min-w-0 max-w-full sm:max-w-xs box-border">
-          <Globe className="w-3.5 h-3.5 text-primary-600 shrink-0" />
-          <span className="truncate">Exibindo: <strong className="text-text-primary">{territoryTitle}</strong></span>
-        </div>
-
-        {/* SELETOR DE MODO: NORMAL VS SEMIÁRIDO — toggle compacto */}
-        <button
-          type="button"
-          onClick={handleToggleReportMode}
-          title={reportMode === 'normal' ? 'Ativar Modo Semiárido' : 'Voltar ao Modo Normal'}
-          className={`relative flex items-center gap-2 h-8 pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border shrink-0 select-none ${
-            reportMode === 'semiarido'
-              ? 'bg-amber-500/10 border-amber-300 dark:border-amber-500/40 text-amber-800 dark:text-amber-200 shadow-2xs'
-              : 'bg-surface-soft border-border text-text-secondary hover:border-border-strong hover:text-text-primary'
-          }`}
-        >
-          {/* thumb deslizante */}
-          <span className={`w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-all duration-300 shadow-2xs ${
-            reportMode === 'semiarido'
-              ? 'bg-amber-500 text-white'
-              : 'bg-surface border border-border text-text-muted'
-          }`}>
-            {reportMode === 'semiarido' ? (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="4"/>
-                <line x1="12" y1="2" x2="12" y2="5"/>
-                <line x1="12" y1="19" x2="12" y2="22"/>
-                <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
-                <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
-                <line x1="2" y1="12" x2="5" y2="12"/>
-                <line x1="19" y1="12" x2="22" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
-                <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
-              </svg>
-            ) : (
-              <span className="w-2 h-2 rounded-full bg-border-strong block" />
-            )}
-          </span>
-          <span>{reportMode === 'semiarido' ? 'Semiárido' : 'Normal'}</span>
-        </button>
-      </div>
-
-      {/* ÁREA DE EXPORTAÇÃO UNIFICADA EM DROPDOWN (PASSO 1) */}
-      <div className="tour-relatorio-export flex items-center gap-1.5 min-h-[32px] shrink-0 print:hidden min-w-0">
-        <Dropdown
-          align="right"
-          trigger={
-            <Button
-              variant="primary"
-              size="sm"
-              loading={isExportingAny}
-              iconLeft={<Download className="w-3.5 h-3.5" />}
-              iconRight={<ChevronDown className="w-3.5 h-3.5 opacity-70" />}
-              title={`Opções de exportação para ${currentReportLabel}`}
-            >
-              {isExportingAny ? 'Exportando...' : 'Exportar'}
-            </Button>
-          }
-          items={exportMenuItems}
-        />
-      </div>
-    </div>
-
-    {/* ABAS / BOTÕES DOS TIPOS DE RELATÓRIO (PASSO 2.1) */}
-    <div className="tour-relatorio-tipo flex items-center bg-surface-soft p-1 rounded-control border border-border gap-1 overflow-x-auto print:hidden min-w-0">
-      {reportOptions.map((opt) => {
-        const isActive = reportType === opt.id;
-        const Icon = opt.icon;
-        const count = opt.id === 'ativos'
-          ? scopedAtivos.length
-          : opt.id === 'cursos'
-          ? scopedCursos.length
-          : opt.id === 'cadeias'
-          ? statsSintese.totalCadeias
-          : null;
-
-        return (
-          <button
-            key={opt.id}
-            type="button"
-            onClick={() => {
-              setReportType(opt.id);
-              setTableSearch('');
-              setSelectedCadeia(null);
-            }}
-            className={`px-2.5 py-1.5 rounded-control text-caption font-semibold transition-all duration-120 cursor-pointer whitespace-nowrap flex items-center gap-1.5 flex-1 justify-center select-none ${
-              isActive
-                ? (reportMode === 'semiarido' ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-600 text-white shadow-xs')
-                : 'text-text-secondary hover:text-text-primary hover:bg-surface'
-            }`}
-          >
-            <Icon className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{opt.label}</span>
-            {count !== null && (
-              <span
-                className={`text-micro px-1.5 py-0.5 rounded-full font-semibold tnum leading-none shrink-0 ${
-                  isActive
-                    ? 'bg-white/20 text-white'
-                    : 'bg-surface border border-border text-text-muted'
+            <div
+              className={`flex-1 min-w-0 rounded-card border p-4 sm:p-5 lg:p-6 flex flex-col overflow-hidden transition-all duration-700 print:h-auto print:overflow-visible print:shadow-none print:border-none print:p-0 print:rounded-none min-h-0 relative z-10 ${reportMode === 'semiarido'
+                  ? 'bg-surface/95 dark:bg-surface border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.05)]'
+                  : 'bg-surface border-border shadow-card'
                 }`}
-              >
-                {count}
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
-  </div>
-
-  {/* FAIXA DE KPIS DINÂMICOS DO RELATÓRIO (PASSO 2.2) */}
-  <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-4 shrink-0 transition-colors duration-700 min-w-0">
-    <KpiCard
-      label="Ativos de CT&I"
-      value={statsSintese.totalAtivos}
-      icon={Database}
-      variant={reportMode === 'semiarido' ? 'default' : 'brand'}
-      hint={`${statsSintese.rnpAtivos} RNP (${statsSintese.rnpTaxa}%)`}
-      className={reportMode === 'semiarido' ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white border-amber-500/40 shadow-card' : ''}
-    />
-
-    <KpiCard
-      label="Cursos CT&I"
-      value={statsSintese.totalCursos}
-      icon={GraduationCap}
-      hint={`${statsSintese.presencialCursos} presenciais`}
-    />
-
-    <KpiCard
-      label="Cadeias"
-      value={statsSintese.totalCadeias}
-      icon={GitPullRequest}
-      hint="Setores econômicos"
-    />
-
-    <KpiCard
-      label="Municípios"
-      value={<span className="whitespace-nowrap text-headline">{`${statsSintese.munAtendidosCount} / ${statsSintese.totalMunEscopo}`}</span>}
-      format="raw"
-      icon={MapPin}
-      hint={`${statsSintese.taxaCoberturaMun}% dos municípios`}
-      className="[&_.text-kpi]:whitespace-nowrap [&_.text-kpi]:text-headline"
-    />
-  </div>
-
-
-  {/* ================= CONTEÚDO ESPECÍFICO DO TIPO DE RELATÓRIO ================= */}
-
-  {/* CASO 1: SÍNTESE EXECUTIVA TERRITORIAL */}
-  {reportType === 'sintese' && (
-    <div className="flex-1 overflow-y-auto [scrollbar-gutter:stable] px-1 pr-3 pb-8 flex flex-col gap-5 min-h-0">
-
-  {/* CARTÃO DE APRESENTAÇÃO DO ESCOPO */}
-  <div className={`p-5 sm:p-6 rounded-card text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-500 shadow-card ${
-    reportMode === 'semiarido'
-      ? 'bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-amber-600/20'
-      : 'bg-gradient-brand'
-  }`}>
-    <div className="flex flex-col max-w-xl min-w-0">
-      <div className="flex items-center gap-2 mb-1">
-        <Award size={16} className={reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'} />
-        <span className={`text-micro font-semibold uppercase tracking-wider ${
-          reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'
-        }`}>
-          {reportMode === 'semiarido' ? 'Recorte Estratégico Semiárido • SECTI' : 'Documento Analítico SECTI'}
-        </span>
-      </div>
-      <h3 className="text-title font-bold leading-tight truncate">
-        {territoryTitle}
-      </h3>
-      <p className="text-body-sm text-white/85 mt-1 leading-relaxed">
-        {selectedTerritory
-          ? (reportMode === 'semiarido'
-              ? `Relatório territorial consolidado com foco nos ${statsSintese.totalMunEscopo} municípios pertencentes ao Semiárido neste território, integrando infraestrutura científica, capacitação tecnológica e vocações produtivas resilientes.`
-              : `Relatório territorial consolidado abrangendo ${statsSintese.totalMunEscopo} municípios pertencentes a este Território de Identidade, integrando infraestrutura física, formação superior e vocações produtivas.`
-            )
-          : (reportMode === 'semiarido'
-              ? 'Panorama executivo estadual consolidando os 278 municípios do Semiárido Baiano com dados homologados de infraestrutura de CT&I, oferta universitária presencial e cadeias produtivas prioritárias.'
-              : 'Panorama executivo estadual consolidando os 27 Territórios de Identidade e todos os 417 municípios da Bahia cadastrados na infraestrutura pública e privada de Ciência, Tecnologia e Inovação.'
-            )
-        }
-      </p>
-    </div>
-
-    <div className="flex flex-row sm:flex-col gap-2 shrink-0 sm:items-end">
-      <div className="bg-white/15 px-3.5 py-1.5 rounded-control border border-white/20">
-        <span className="text-micro text-white/80 block font-semibold uppercase tracking-wider">
-          {reportMode === 'semiarido' ? 'População Semiárido' : 'População Estimada'}
-        </span>
-        <strong className="text-body font-semibold tnum text-white">{statsSintese.populacaoTotal} hab.</strong>
-      </div>
-      {statsSintese.ifdmMedio && (
-        <div className="bg-white/15 px-3.5 py-1.5 rounded-control border border-white/20">
-          <span className="text-micro text-white/80 block font-semibold uppercase tracking-wider">
-            {reportMode === 'semiarido' ? 'IFDM Médio (Semiárido)' : 'IFDM Médio FIRJAN'}
-          </span>
-          <strong className="text-body font-semibold tnum text-white">{statsSintese.ifdmMedio}</strong>
-        </div>
-      )}
-    </div>
-  </div>
-
-  {/* GRIDS DE ANÁLISE COMPARATIVA */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-    {/* BLOCO 1: INFRAESTRUTURA DE ATIVOS E CONECTIVIDADE */}
-    <Card className="p-5 sm:p-6 flex flex-col gap-3.5">
-      <SectionHeader
-        title="Infraestrutura de CT&I & RNP"
-        subtitle="Distribuição da conectividade avançada e polos de tecnologia operando no escopo"
-        icon={Database}
-      />
-
-      <div className="space-y-3 mt-1">
-        <div className="flex flex-col gap-1.5">
-          <div className="flex justify-between items-center text-caption text-text-primary">
-            <div className="flex items-center gap-1.5 font-medium">
-              <span className={`w-2 h-2 rounded-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'}`}></span>
-              Pontos de Presença / Conexão RNP
-            </div>
-            <span className="font-medium tnum">{statsSintese.rnpAtivos} de {statsSintese.totalAtivos} <span className="text-text-secondary font-medium">({statsSintese.rnpTaxa}%)</span></span>
-          </div>
-          <div className="flex justify-between items-center text-caption text-text-primary">
-            <div className="flex items-center gap-1.5 font-medium">
-              <span className="w-2 h-2 rounded-full bg-border-strong"></span>
-              Demais Ativos Institucionais / Lab
-            </div>
-            <span className="font-medium tnum">{statsSintese.totalAtivos - statsSintese.rnpAtivos} <span className="text-text-secondary font-medium">({(100 - Number(statsSintese.rnpTaxa)).toFixed(1)}%)</span></span>
-          </div>
-        </div>
-        <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
-          <div
-            className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`}
-            style={{ width: `${statsSintese.rnpTaxa}%` }}
-          />
-          <div
-            className="h-full bg-border-strong/40 transition-all rounded-full"
-            style={{ width: `${100 - Number(statsSintese.rnpTaxa)}%` }}
-          />
-        </div>
-      </div>
-    </Card>
-
-    {/* BLOCO 2: FORMAÇÃO SUPERIOR E MODALIDADES */}
-    <Card className="p-5 sm:p-6 flex flex-col gap-3.5">
-      <SectionHeader
-        title="Oferta Educacional CT&I"
-        subtitle="Cursos superiores presenciais de ciência, tecnologia e inovação mapeados e ativos"
-        icon={GraduationCap}
-      />
-
-      <div className="space-y-3 mt-1">
-        <div>
-          <div className="flex justify-between items-center text-caption font-medium text-text-primary mb-1">
-            <span>Rede Pública Estadual</span>
-            <span className="tnum font-medium">{statsSintese.estadualCursos} ({statsSintese.estadualTaxa}%)</span>
-          </div>
-          <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
-            <div className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`} style={{ width: `${statsSintese.estadualTaxa}%` }} />
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center text-caption font-medium text-text-primary mb-1">
-            <span>Rede Pública Federal</span>
-            <span className="tnum font-medium">{statsSintese.federalCursos} ({statsSintese.federalTaxa}%)</span>
-          </div>
-          <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
-            <div className="h-full bg-success-600 transition-all rounded-full" style={{ width: `${statsSintese.federalTaxa}%` }} />
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center text-caption font-medium text-text-primary mb-1">
-            <span>Rede Privada / Outros</span>
-            <span className="tnum font-medium">{statsSintese.privadaCursos} ({statsSintese.privadaTaxa}%)</span>
-          </div>
-          <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
-            <div className="h-full bg-accent-600 transition-all rounded-full" style={{ width: `${statsSintese.privadaTaxa}%` }} />
-          </div>
-        </div>
-      </div>
-    </Card>
-
-  </div>
-
-  {/* VOCAÇÕES PRODUTIVAS MAPEADAS */}
-  <Card className="p-5 sm:p-6 flex flex-col gap-3">
-    <SectionHeader
-      title={`Vocações Econômicas e Cadeias Produtivas Mapeadas (${statsSintese.totalCadeias})`}
-      subtitle="Fonte: Base Oficial SECTI / SDR"
-      icon={GitPullRequest}
-    />
-    <div className="flex flex-wrap gap-1.5 pt-1">
-      {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx) => (
-        <span
-          key={idx}
-          className={`text-caption font-medium px-2.5 py-1 rounded-control shadow-2xs inline-flex items-center justify-center leading-none transition-colors ${
-            reportMode === 'semiarido'
-              ? 'bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-200 hover:bg-amber-500/25'
-              : 'bg-surface-soft border border-border text-text-secondary hover:text-text-primary'
-          }`}
-        >
-          {cad}
-        </span>
-      ))}
-      {scopedCadeias.length === 0 && (
-        <span className="text-body-sm text-text-muted">Nenhuma cadeia produtiva mapeada individualmente neste escopo.</span>
-      )}
-    </div>
-  </Card>
-
- </div>
- )}
-
-  {/* CASO 2, 3, 4 e 5: TABELA DETALHADA DO RELATÓRIO SELECIONADO */}
-  {reportType !== 'sintese' && (
-    <Card className="flex-1 flex flex-col overflow-hidden print:block print:h-auto print:overflow-visible min-h-0 p-4 sm:p-5">
-
-      {/* BARRA DE BUSCA E FILTROS DA TABELA */}
-      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 print:hidden min-w-0">
-        <div className="relative flex-1 max-w-sm min-w-0">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-          <input
-            type="text"
-            value={tableSearch}
-            onChange={(e) => setTableSearch(e.target.value)}
-            placeholder={`Pesquisar nos ${tableData.length} registros...`}
-            className={`w-full pl-9 pr-7 py-1.5 rounded-control bg-surface-soft border border-border text-body-sm text-text-primary placeholder-text-muted focus:bg-surface focus:outline-none transition-colors ${
-              reportMode === 'semiarido' ? 'focus:border-amber-500 focus:ring-1 focus:ring-amber-400' : 'focus:border-primary-600 focus:ring-1 focus:ring-primary-500'
-            }`}
-          />
-          {tableSearch && (
-            <button
-              type="button"
-              onClick={() => setTableSearch('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-body-sm font-medium"
             >
-              ×
-            </button>
-          )}
-        </div>
 
-        <div className="text-caption font-medium text-text-secondary shrink-0">
-          Mostrando <strong className="text-text-primary tnum">{tableData.length}</strong> registro(s)
-        </div>
-      </div>
+              {/* CABEÇALHO DA CAIXA 2: ESCOPO, EXPORTAÇÃO E SELETOR DOS TIPOS DE RELATÓRIO */}
+              <div className="mb-4 shrink-0 flex flex-col gap-2.5 min-w-0">
+                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 min-h-[32px] shrink-0 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 text-caption font-medium text-text-primary bg-surface-soft px-3 h-8 rounded-control border border-border justify-center leading-none min-w-0 max-w-full sm:max-w-xs box-border">
+                      <Globe className="w-3.5 h-3.5 text-primary-600 shrink-0" />
+                      <span className="truncate">Exibindo: <strong className="text-text-primary">{territoryTitle}</strong></span>
+                    </div>
 
-      {/* TABELA - CABEÇALHO (Estático, fora do scroll) */}
-      <div className={`border border-b-0 rounded-t-control transition-colors print:hidden ${
-        reportMode === 'semiarido' ? 'border-amber-500/30 bg-amber-500/10' : 'border-border bg-surface-soft'
-      }`}>
-        <table className="w-full text-left border-collapse text-caption table-fixed">
-          <colgroup>
-            <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
-            {reportType !== 'municipios' && <col className={reportType === 'cadeias' ? "w-[20%]" : "w-[15%]"} />}
-            {reportType !== 'municipios' && <col className="w-[20%]" />}
-            <col className="w-[20%]" />
-            {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
-            {reportType !== 'cadeias' && <col className="w-[10%]" />}
-          </colgroup>
-          <thead className={`font-semibold text-micro uppercase tracking-wider ${
-            reportMode === 'semiarido' ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'
-          }`}>
-            <tr>
-              <th className="py-2.5 px-3">
-                {reportType === 'ativos' && 'Nome do Ativo'}
-                {reportType === 'cursos' && 'Curso Superior'}
-                {reportType === 'cadeias' && 'Cadeia Produtiva'}
-                {reportType === 'municipios' && 'Município'}
-              </th>
-              {reportType !== 'municipios' && (
-                <th className="py-2.5 px-3">
-                  {reportType === 'ativos' && 'Sigla'}
-                  {reportType === 'cursos' && 'Instituição (IES)'}
-                  {reportType === 'cadeias' && 'Setor / Tipologia'}
-                </th>
-              )}
-              {reportType !== 'municipios' && (
-                <th className="py-2.5 px-3">
-                  {reportType === 'ativos' && 'Tipo'}
-                  {reportType === 'cursos' && 'Área de Conhecimento'}
-                  {reportType === 'cadeias' && 'Abrangência'}
-                </th>
-              )}
-              <th className="py-2.5 px-3">
-                {reportType === 'ativos' && 'Município'}
-                {reportType === 'cursos' && 'Município'}
-                {reportType === 'cadeias' && 'Territórios'}
-                {reportType === 'municipios' && 'Ativos CT&I'}
-              </th>
-              {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && (
-                <th className="py-2.5 px-3">
-                  {reportType === 'municipios' && 'Cursos CT&I'}
-                </th>
-              )}
-              {reportType !== 'cadeias' && (
-                <th className="py-2.5 px-3 text-right">
-                  {reportType === 'ativos' && 'RNP'}
-                  {reportType === 'cursos' && 'Modalidade'}
-                  {reportType === 'municipios' && 'Cobertura'}
-                </th>
-              )}
-            </tr>
-          </thead>
-        </table>
-      </div>
-
-      {/* TABELA DE DADOS COM SCROLL INTERNO */}
-      <div className={`flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] border rounded-b-control shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0 transition-colors ${
-        reportMode === 'semiarido' ? 'border-amber-500/30' : 'border-border'
-      }`}>
-        <table className="w-full text-left border-collapse text-body-sm table-fixed">
-          <colgroup>
-            <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
-            {reportType !== 'municipios' && <col className={reportType === 'cadeias' ? "w-[20%]" : "w-[15%]"} />}
-            {reportType !== 'municipios' && <col className="w-[20%]" />}
-            <col className="w-[20%]" />
-            {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
-            {reportType !== 'cadeias' && <col className="w-[10%]" />}
-          </colgroup>
-          
-          <tbody className="divide-y divide-border/70 text-text-primary">
-            {tableData.length > 0 ? (
-              tableData.map((row, idx) => {
-                const isRowSelected = reportType === 'cadeias' && selectedCadeia && (row.raw?.id === selectedCadeia.id || row.raw?.nome === selectedCadeia.nome);
-                return (
-                  <tr
-                    key={idx}
-                    onClick={() => {
-                      if (reportType === 'cadeias' && row.raw) {
-                        setSelectedCadeia((prev) => (prev?.id === row.raw.id ? null : row.raw));
-                      }
-                    }}
-                    className={`transition-colors group cursor-pointer ${
-                      isRowSelected 
-                        ? (reportMode === 'semiarido' ? 'bg-amber-500/20 font-semibold border-l-4 border-amber-600' : 'bg-primary-500/15 font-semibold border-l-4 border-primary-600') 
-                        : (reportMode === 'semiarido' ? 'hover:bg-amber-500/10' : 'hover:bg-surface-soft')
-                    }`}
-                  >
-                    <td className="py-2.5 px-3 font-medium text-text-primary truncate" title={row.col1}>
-                      {row.col1}
-                    </td>
-                    {reportType !== 'municipios' && (
-                      <td className="py-2.5 px-3 text-text-secondary font-medium max-w-[160px] truncate" title={row.col2}>
-                        {row.col2}
-                      </td>
-                    )}
-                    {reportType !== 'municipios' && (
-                      <td className="py-2.5 px-3 max-w-[180px] truncate" title={row.col3}>
-                        <span className="bg-surface-soft text-text-primary px-2 py-0.5 rounded-control text-caption font-medium inline-flex items-center justify-center leading-none border border-border/60">
-                          {row.col3}
-                        </span>
-                      </td>
-                    )}
-                    <td className="py-2.5 px-3 text-text-secondary max-w-[140px] truncate" title={row.col4}>
-                      {row.col4}
-                    </td>
-                    {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && (
-                      <td className="py-2.5 px-3 text-text-secondary max-w-[140px] truncate" title={row.col5}>
-                        {row.col5}
-                      </td>
-                    )}
-                    {reportType !== 'cadeias' && (
-                      <td className="py-2.5 px-3 text-right font-medium whitespace-nowrap">
-                        {row.col6 === 'EaD' || row.col6 === 'Sim (RNP Conectado)' ? (
-                          <span className="text-caption font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 px-2 py-0.5 rounded-control inline-flex items-center gap-1 justify-center leading-none">
-                            <Wifi size={14} />
-                            {row.col6}
-                          </span>
-                        ) : row.col6 === 'Presencial' ? (
-                          <span className="text-caption font-semibold text-text-secondary bg-surface-soft border border-border/60 px-2 py-0.5 rounded-control inline-flex items-center justify-center leading-none">
-                            Presencial
-                          </span>
+                    {/* SELETOR DE MODO: NORMAL VS SEMIÁRIDO — toggle compacto */}
+                    <button
+                      type="button"
+                      onClick={handleToggleReportMode}
+                      title={reportMode === 'normal' ? 'Ativar Modo Semiárido' : 'Voltar ao Modo Normal'}
+                      className={`relative flex items-center gap-2 h-8 pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border shrink-0 select-none ${reportMode === 'semiarido'
+                          ? 'bg-amber-500/10 border-amber-300 dark:border-amber-500/40 text-amber-800 dark:text-amber-200 shadow-2xs'
+                          : 'bg-surface-soft border-border text-text-secondary hover:border-border-strong hover:text-text-primary'
+                        }`}
+                    >
+                      {/* thumb deslizante */}
+                      <span className={`w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-all duration-300 shadow-2xs ${reportMode === 'semiarido'
+                          ? 'bg-amber-500 text-white'
+                          : 'bg-surface border border-border text-text-muted'
+                        }`}>
+                        {reportMode === 'semiarido' ? (
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <line x1="12" y1="2" x2="12" y2="5" />
+                            <line x1="12" y1="19" x2="12" y2="22" />
+                            <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
+                            <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
+                            <line x1="2" y1="12" x2="5" y2="12" />
+                            <line x1="19" y1="12" x2="22" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
+                            <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
+                          </svg>
                         ) : (
-                          <span className="text-caption font-medium text-text-secondary">
-                            {row.col6}
+                          <span className="w-2 h-2 rounded-full bg-border-strong block" />
+                        )}
+                      </span>
+                      <span>{reportMode === 'semiarido' ? 'Semiárido' : 'Normal'}</span>
+                    </button>
+                  </div>
+
+                  {/* ÁREA DE EXPORTAÇÃO UNIFICADA EM DROPDOWN (PASSO 1) */}
+                  <div className="tour-relatorio-export flex items-center gap-1.5 min-h-[32px] shrink-0 print:hidden min-w-0">
+                    <Dropdown
+                      align="right"
+                      trigger={
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          loading={isExportingAny}
+                          iconLeft={<Download className="w-3.5 h-3.5" />}
+                          iconRight={<ChevronDown className="w-3.5 h-3.5 opacity-70" />}
+                          title={`Opções de exportação para ${currentReportLabel}`}
+                        >
+                          {isExportingAny ? 'Exportando...' : 'Exportar'}
+                        </Button>
+                      }
+                      items={exportMenuItems}
+                    />
+                  </div>
+                </div>
+
+                {/* ABAS / BOTÕES DOS TIPOS DE RELATÓRIO (PASSO 2.1) */}
+                <div className="tour-relatorio-tipo flex items-center bg-surface-soft p-1 rounded-control border border-border gap-1 overflow-x-auto print:hidden min-w-0">
+                  {reportOptions.map((opt) => {
+                    const isActive = reportType === opt.id;
+                    const Icon = opt.icon;
+                    const count = opt.id === 'ativos'
+                      ? scopedAtivos.length
+                      : opt.id === 'cursos'
+                        ? scopedCursos.length
+                        : opt.id === 'cadeias'
+                          ? statsSintese.totalCadeias
+                          : null;
+
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => {
+                          setReportType(opt.id);
+                          setTableSearch('');
+                          setSelectedCadeia(null);
+                        }}
+                        className={`px-2.5 py-1.5 rounded-control text-caption font-semibold transition-all duration-120 cursor-pointer whitespace-nowrap flex items-center gap-1.5 flex-1 justify-center select-none ${isActive
+                            ? (reportMode === 'semiarido' ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-600 text-white shadow-xs')
+                            : 'text-text-secondary hover:text-text-primary hover:bg-surface'
+                          }`}
+                      >
+                        <Icon className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{opt.label}</span>
+                        {count !== null && (
+                          <span
+                            className={`text-micro px-1.5 py-0.5 rounded-full font-semibold tnum leading-none shrink-0 ${isActive
+                                ? 'bg-white/20 text-white'
+                                : 'bg-surface border border-border text-text-muted'
+                              }`}
+                          >
+                            {count}
                           </span>
                         )}
-                      </td>
-                    )}
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan={6} className="py-8 text-center text-text-muted font-medium text-body-sm">
-                  Nenhum registro encontrado para os filtros selecionados.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* FAIXA DE KPIS DINÂMICOS DO RELATÓRIO (PASSO 2.2) */}
+              <div className="tour-relatorio-kpis grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-4 shrink-0 transition-colors duration-700 min-w-0">
+                <KpiCard
+                  label="Ativos de CT&I"
+                  value={statsSintese.totalAtivos}
+                  icon={Database}
+                  variant={reportMode === 'semiarido' ? 'default' : 'brand'}
+                  hint={`${statsSintese.rnpAtivos} RNP (${statsSintese.rnpTaxa}%)`}
+                  className={reportMode === 'semiarido' ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white border-amber-500/40 shadow-card' : ''}
+                />
+
+                <KpiCard
+                  label="Cursos CT&I"
+                  value={statsSintese.totalCursos}
+                  icon={GraduationCap}
+                  hint={`${statsSintese.presencialCursos} presenciais`}
+                />
+
+                <KpiCard
+                  label="Cadeias"
+                  value={statsSintese.totalCadeias}
+                  icon={GitPullRequest}
+                  hint="Setores econômicos"
+                />
+
+                <KpiCard
+                  label="Municípios"
+                  value={<span className="whitespace-nowrap text-headline">{`${statsSintese.munAtendidosCount} / ${statsSintese.totalMunEscopo}`}</span>}
+                  format="raw"
+                  icon={MapPin}
+                  hint={`${statsSintese.taxaCoberturaMun}% dos municípios`}
+                  className="[&_.text-kpi]:whitespace-nowrap [&_.text-kpi]:text-headline"
+                />
+              </div>
+
+
+              {/* ================= CONTEÚDO ESPECÍFICO DO TIPO DE RELATÓRIO ================= */}
+
+              {/* CASO 1: SÍNTESE EXECUTIVA TERRITORIAL */}
+              {reportType === 'sintese' && (
+                <div className="flex-1 overflow-y-auto [scrollbar-gutter:stable] px-1 pr-3 pb-8 flex flex-col gap-5 min-h-0">
+
+                  {/* CARTÃO DE APRESENTAÇÃO DO ESCOPO */}
+                  <div className={`p-5 sm:p-6 rounded-card text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-500 shadow-card ${reportMode === 'semiarido'
+                      ? 'bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-amber-600/20'
+                      : 'bg-gradient-brand'
+                    }`}>
+                    <div className="flex flex-col max-w-xl min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Award size={16} className={reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'} />
+                        <span className={`text-micro font-semibold uppercase tracking-wider ${reportMode === 'semiarido' ? 'text-amber-200' : 'text-primary-300'
+                          }`}>
+                          {reportMode === 'semiarido' ? 'Recorte Estratégico Semiárido • SECTI' : 'Documento Analítico SECTI'}
+                        </span>
+                      </div>
+                      <h3 className="text-title font-bold leading-tight truncate">
+                        {territoryTitle}
+                      </h3>
+                      <p className="text-body-sm text-white/85 mt-1 leading-relaxed">
+                        {selectedTerritory
+                          ? (reportMode === 'semiarido'
+                            ? `Relatório territorial consolidado com foco nos ${statsSintese.totalMunEscopo} municípios pertencentes ao Semiárido neste território, integrando infraestrutura científica, capacitação tecnológica e vocações produtivas resilientes.`
+                            : `Relatório territorial consolidado abrangendo ${statsSintese.totalMunEscopo} municípios pertencentes a este Território de Identidade, integrando infraestrutura física, formação superior e vocações produtivas.`
+                          )
+                          : (reportMode === 'semiarido'
+                            ? 'Panorama executivo estadual consolidando os 278 municípios do Semiárido Baiano com dados homologados de infraestrutura de CT&I, oferta universitária presencial e cadeias produtivas prioritárias.'
+                            : 'Panorama executivo estadual consolidando os 27 Territórios de Identidade e todos os 417 municípios da Bahia cadastrados na infraestrutura pública e privada de Ciência, Tecnologia e Inovação.'
+                          )
+                        }
+                      </p>
+                    </div>
+
+                    <div className="flex flex-row sm:flex-col gap-2 shrink-0 sm:items-end">
+                      <div className="bg-white/15 px-3.5 py-1.5 rounded-control border border-white/20">
+                        <span className="text-micro text-white/80 block font-semibold uppercase tracking-wider">
+                          {reportMode === 'semiarido' ? 'População Semiárido' : 'População Estimada'}
+                        </span>
+                        <strong className="text-body font-semibold tnum text-white">{statsSintese.populacaoTotal} hab.</strong>
+                      </div>
+                      {statsSintese.ifdmMedio && (
+                        <div className="bg-white/15 px-3.5 py-1.5 rounded-control border border-white/20">
+                          <span className="text-micro text-white/80 block font-semibold uppercase tracking-wider">
+                            {reportMode === 'semiarido' ? 'IFDM Médio (Semiárido)' : 'IFDM Médio FIRJAN'}
+                          </span>
+                          <strong className="text-body font-semibold tnum text-white">{statsSintese.ifdmMedio}</strong>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* GRIDS DE ANÁLISE COMPARATIVA */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    {/* BLOCO 1: INFRAESTRUTURA DE ATIVOS E CONECTIVIDADE */}
+                    <Card className="p-5 sm:p-6 flex flex-col gap-3.5">
+                      <SectionHeader
+                        title="Infraestrutura de CT&I & RNP"
+                        subtitle="Distribuição da conectividade avançada e polos de tecnologia operando no escopo"
+                        icon={Database}
+                      />
+
+                      <div className="space-y-3 mt-1">
+                        <div className="flex flex-col gap-1.5">
+                          <div className="flex justify-between items-center text-caption text-text-primary">
+                            <div className="flex items-center gap-1.5 font-medium">
+                              <span className={`w-2 h-2 rounded-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'}`}></span>
+                              Pontos de Presença / Conexão RNP
+                            </div>
+                            <span className="font-medium tnum">{statsSintese.rnpAtivos} de {statsSintese.totalAtivos} <span className="text-text-secondary font-medium">({statsSintese.rnpTaxa}%)</span></span>
+                          </div>
+                          <div className="flex justify-between items-center text-caption text-text-primary">
+                            <div className="flex items-center gap-1.5 font-medium">
+                              <span className="w-2 h-2 rounded-full bg-border-strong"></span>
+                              Demais Ativos Institucionais / Lab
+                            </div>
+                            <span className="font-medium tnum">{statsSintese.totalAtivos - statsSintese.rnpAtivos} <span className="text-text-secondary font-medium">({(100 - Number(statsSintese.rnpTaxa)).toFixed(1)}%)</span></span>
+                          </div>
+                        </div>
+                        <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
+                          <div
+                            className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`}
+                            style={{ width: `${statsSintese.rnpTaxa}%` }}
+                          />
+                          <div
+                            className="h-full bg-border-strong/40 transition-all rounded-full"
+                            style={{ width: `${100 - Number(statsSintese.rnpTaxa)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </Card>
+
+                    {/* BLOCO 2: FORMAÇÃO SUPERIOR E MODALIDADES */}
+                    <Card className="p-5 sm:p-6 flex flex-col gap-3.5">
+                      <SectionHeader
+                        title="Oferta Educacional CT&I"
+                        subtitle="Cursos superiores presenciais de ciência, tecnologia e inovação mapeados e ativos"
+                        icon={GraduationCap}
+                      />
+
+                      <div className="space-y-3 mt-1">
+                        <div>
+                          <div className="flex justify-between items-center text-caption font-medium text-text-primary mb-1">
+                            <span>Rede Pública Estadual</span>
+                            <span className="tnum font-medium">{statsSintese.estadualCursos} ({statsSintese.estadualTaxa}%)</span>
+                          </div>
+                          <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
+                            <div className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`} style={{ width: `${statsSintese.estadualTaxa}%` }} />
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex justify-between items-center text-caption font-medium text-text-primary mb-1">
+                            <span>Rede Pública Federal</span>
+                            <span className="tnum font-medium">{statsSintese.federalCursos} ({statsSintese.federalTaxa}%)</span>
+                          </div>
+                          <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
+                            <div className="h-full bg-success-600 transition-all rounded-full" style={{ width: `${statsSintese.federalTaxa}%` }} />
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex justify-between items-center text-caption font-medium text-text-primary mb-1">
+                            <span>Rede Privada / Outros</span>
+                            <span className="tnum font-medium">{statsSintese.privadaCursos} ({statsSintese.privadaTaxa}%)</span>
+                          </div>
+                          <div className="w-full h-4 rounded-full bg-surface-soft border border-border/70 overflow-hidden flex">
+                            <div className="h-full bg-accent-600 transition-all rounded-full" style={{ width: `${statsSintese.privadaTaxa}%` }} />
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+
+                  </div>
+
+                  {/* VOCAÇÕES PRODUTIVAS MAPEADAS */}
+                  <Card className="p-5 sm:p-6 flex flex-col gap-3">
+                    <SectionHeader
+                      title={`Vocações Econômicas e Cadeias Produtivas Mapeadas (${statsSintese.totalCadeias})`}
+                      subtitle="Fonte: Base Oficial SECTI / SDR"
+                      icon={GitPullRequest}
+                    />
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx) => (
+                        <span
+                          key={idx}
+                          className={`text-caption font-medium px-2.5 py-1 rounded-control shadow-2xs inline-flex items-center justify-center leading-none transition-colors ${reportMode === 'semiarido'
+                              ? 'bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-200 hover:bg-amber-500/25'
+                              : 'bg-surface-soft border border-border text-text-secondary hover:text-text-primary'
+                            }`}
+                        >
+                          {cad}
+                        </span>
+                      ))}
+                      {scopedCadeias.length === 0 && (
+                        <span className="text-body-sm text-text-muted">Nenhuma cadeia produtiva mapeada individualmente neste escopo.</span>
+                      )}
+                    </div>
+                  </Card>
+
+                </div>
+              )}
+
+              {/* CASO 2, 3, 4 e 5: TABELA DETALHADA DO RELATÓRIO SELECIONADO */}
+              {reportType !== 'sintese' && (
+                <Card className="flex-1 flex flex-col overflow-hidden print:block print:h-auto print:overflow-visible min-h-0 p-4 sm:p-5">
+
+                  {/* BARRA DE BUSCA E FILTROS DA TABELA */}
+                  <div className="flex items-center justify-between gap-3 mb-3 shrink-0 print:hidden min-w-0">
+                    <div className="relative flex-1 max-w-sm min-w-0">
+                      <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                      <input
+                        type="text"
+                        value={tableSearch}
+                        onChange={(e) => setTableSearch(e.target.value)}
+                        placeholder={`Pesquisar nos ${tableData.length} registros...`}
+                        className={`w-full pl-9 pr-7 py-1.5 rounded-control bg-surface-soft border border-border text-body-sm text-text-primary placeholder-text-muted focus:bg-surface focus:outline-none transition-colors ${reportMode === 'semiarido' ? 'focus:border-amber-500 focus:ring-1 focus:ring-amber-400' : 'focus:border-primary-600 focus:ring-1 focus:ring-primary-500'
+                          }`}
+                      />
+                      {tableSearch && (
+                        <button
+                          type="button"
+                          onClick={() => setTableSearch('')}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-body-sm font-medium"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="text-caption font-medium text-text-secondary shrink-0">
+                      Mostrando <strong className="text-text-primary tnum">{tableData.length}</strong> registro(s)
+                    </div>
+                  </div>
+
+                  {/* TABELA - CABEÇALHO (Estático, fora do scroll) */}
+                  <div className={`border border-b-0 rounded-t-control transition-colors print:hidden ${reportMode === 'semiarido' ? 'border-amber-500/30 bg-amber-500/10' : 'border-border bg-surface-soft'
+                    }`}>
+                    <table className="w-full text-left border-collapse text-caption table-fixed">
+                      <colgroup>
+                        <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
+                        {reportType !== 'municipios' && <col className={reportType === 'cadeias' ? "w-[20%]" : "w-[15%]"} />}
+                        {reportType !== 'municipios' && <col className="w-[20%]" />}
+                        <col className="w-[20%]" />
+                        {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
+                        {reportType !== 'cadeias' && <col className="w-[10%]" />}
+                      </colgroup>
+                      <thead className={`font-semibold text-micro uppercase tracking-wider ${reportMode === 'semiarido' ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'
+                        }`}>
+                        <tr>
+                          <th className="py-2.5 px-3">
+                            {reportType === 'ativos' && 'Nome do Ativo'}
+                            {reportType === 'cursos' && 'Curso Superior'}
+                            {reportType === 'cadeias' && 'Cadeia Produtiva'}
+                            {reportType === 'municipios' && 'Município'}
+                          </th>
+                          {reportType !== 'municipios' && (
+                            <th className="py-2.5 px-3">
+                              {reportType === 'ativos' && 'Sigla'}
+                              {reportType === 'cursos' && 'Instituição (IES)'}
+                              {reportType === 'cadeias' && 'Setor / Tipologia'}
+                            </th>
+                          )}
+                          {reportType !== 'municipios' && (
+                            <th className="py-2.5 px-3">
+                              {reportType === 'ativos' && 'Tipo'}
+                              {reportType === 'cursos' && 'Área de Conhecimento'}
+                              {reportType === 'cadeias' && 'Abrangência'}
+                            </th>
+                          )}
+                          <th className="py-2.5 px-3">
+                            {reportType === 'ativos' && 'Município'}
+                            {reportType === 'cursos' && 'Município'}
+                            {reportType === 'cadeias' && 'Territórios'}
+                            {reportType === 'municipios' && 'Ativos CT&I'}
+                          </th>
+                          {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && (
+                            <th className="py-2.5 px-3">
+                              {reportType === 'municipios' && 'Cursos CT&I'}
+                            </th>
+                          )}
+                          {reportType !== 'cadeias' && (
+                            <th className="py-2.5 px-3 text-right">
+                              {reportType === 'ativos' && 'RNP'}
+                              {reportType === 'cursos' && 'Modalidade'}
+                              {reportType === 'municipios' && 'Cobertura'}
+                            </th>
+                          )}
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+
+                  {/* TABELA DE DADOS COM SCROLL INTERNO */}
+                  <div className={`flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] border rounded-b-control shadow-2xs bg-surface print:overflow-visible print:border-none print:shadow-none min-h-0 transition-colors ${reportMode === 'semiarido' ? 'border-amber-500/30' : 'border-border'
+                    }`}>
+                    <table className="w-full text-left border-collapse text-body-sm table-fixed">
+                      <colgroup>
+                        <col className={reportType === 'municipios' ? "w-[55%]" : reportType === 'cadeias' ? "w-[40%]" : "w-[35%]"} />
+                        {reportType !== 'municipios' && <col className={reportType === 'cadeias' ? "w-[20%]" : "w-[15%]"} />}
+                        {reportType !== 'municipios' && <col className="w-[20%]" />}
+                        <col className="w-[20%]" />
+                        {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && <col className="w-[15%]" />}
+                        {reportType !== 'cadeias' && <col className="w-[10%]" />}
+                      </colgroup>
+
+                      <tbody className="divide-y divide-border/70 text-text-primary">
+                        {tableData.length > 0 ? (
+                          tableData.map((row, idx) => {
+                            const isRowSelected = reportType === 'cadeias' && selectedCadeia && (row.raw?.id === selectedCadeia.id || row.raw?.nome === selectedCadeia.nome);
+                            return (
+                              <tr
+                                key={idx}
+                                onClick={() => {
+                                  if (reportType === 'cadeias' && row.raw) {
+                                    setSelectedCadeia((prev) => (prev?.id === row.raw.id ? null : row.raw));
+                                  }
+                                }}
+                                className={`transition-colors group cursor-pointer ${isRowSelected
+                                    ? (reportMode === 'semiarido' ? 'bg-amber-500/20 font-semibold border-l-4 border-amber-600' : 'bg-primary-500/15 font-semibold border-l-4 border-primary-600')
+                                    : (reportMode === 'semiarido' ? 'hover:bg-amber-500/10' : 'hover:bg-surface-soft')
+                                  }`}
+                              >
+                                <td className="py-2.5 px-3 font-medium text-text-primary truncate" title={row.col1}>
+                                  {row.col1}
+                                </td>
+                                {reportType !== 'municipios' && (
+                                  <td className="py-2.5 px-3 text-text-secondary font-medium max-w-[160px] truncate" title={row.col2}>
+                                    {row.col2}
+                                  </td>
+                                )}
+                                {reportType !== 'municipios' && (
+                                  <td className="py-2.5 px-3 max-w-[180px] truncate" title={row.col3}>
+                                    <span className="bg-surface-soft text-text-primary px-2 py-0.5 rounded-control text-caption font-medium inline-flex items-center justify-center leading-none border border-border/60">
+                                      {row.col3}
+                                    </span>
+                                  </td>
+                                )}
+                                <td className="py-2.5 px-3 text-text-secondary max-w-[140px] truncate" title={row.col4}>
+                                  {row.col4}
+                                </td>
+                                {reportType !== 'ativos' && reportType !== 'cursos' && reportType !== 'cadeias' && (
+                                  <td className="py-2.5 px-3 text-text-secondary max-w-[140px] truncate" title={row.col5}>
+                                    {row.col5}
+                                  </td>
+                                )}
+                                {reportType !== 'cadeias' && (
+                                  <td className="py-2.5 px-3 text-right font-medium whitespace-nowrap">
+                                    {row.col6 === 'EaD' || row.col6 === 'Sim (RNP Conectado)' ? (
+                                      <span className="text-caption font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 px-2 py-0.5 rounded-control inline-flex items-center gap-1 justify-center leading-none">
+                                        <Wifi size={14} />
+                                        {row.col6}
+                                      </span>
+                                    ) : row.col6 === 'Presencial' ? (
+                                      <span className="text-caption font-semibold text-text-secondary bg-surface-soft border border-border/60 px-2 py-0.5 rounded-control inline-flex items-center justify-center leading-none">
+                                        Presencial
+                                      </span>
+                                    ) : (
+                                      <span className="text-caption font-medium text-text-secondary">
+                                        {row.col6}
+                                      </span>
+                                    )}
+                                  </td>
+                                )}
+                              </tr>
+                            );
+                          })
+                        ) : (
+                          <tr>
+                            <td colSpan={6} className="py-8 text-center text-text-muted font-medium text-body-sm">
+                              Nenhum registro encontrado para os filtros selecionados.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              )}
+
+            </div> {/* FIM DO WRAPPER DE IMPRESSÃO */}
+          </div>
+
+        </div>
       </div>
-    </Card>
-  )}
-
- </div> {/* FIM DO WRAPPER DE IMPRESSÃO */}
- </div>
-
- </div>
- </div>
- </>
- );
+    </>
+  );
 }

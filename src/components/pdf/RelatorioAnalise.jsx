@@ -75,7 +75,7 @@ export default function RelatorioAnalisePage() {
     try {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
-    } catch (_) {}
+    } catch (_) { }
   }, []);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function RelatorioAnalisePage() {
       try {
         document.documentElement.classList.remove('dark');
         document.documentElement.style.colorScheme = 'light';
-      } catch (_) {}
+      } catch (_) { }
       const originalTitle = document.title;
       document.title = '';
       const timer = setTimeout(() => {
@@ -108,7 +108,7 @@ export default function RelatorioAnalisePage() {
         if (window.parent && window.parent !== window) {
           window.parent.postMessage('analise-print-done', '*');
         }
-      } catch (_) {}
+      } catch (_) { }
     };
     window.addEventListener('afterprint', handleAfterPrint);
     return () => window.removeEventListener('afterprint', handleAfterPrint);
@@ -259,7 +259,7 @@ export default function RelatorioAnalisePage() {
       list = list.filter(c => {
         const matchSedeId = Number(c.id_territorio) === tid;
         const matchSedeNome = normalize(c.territorio_identidade) === tNorm;
-        const matchAbrangencia = c.municipios_cobertos?.some(m => 
+        const matchAbrangencia = c.municipios_cobertos?.some(m =>
           Number(m.id_territorio) === tid || normalize(m.nome_territorio) === tNorm
         );
         return matchSedeId || matchSedeNome || matchAbrangencia;
@@ -267,9 +267,9 @@ export default function RelatorioAnalisePage() {
     }
 
     if (isSemiarido) {
-      list = list.filter(c => 
-        c.semiarido === true || 
-        isMunicipioSemiarido(c.municipio_sede) || 
+      list = list.filter(c =>
+        c.semiarido === true ||
+        isMunicipioSemiarido(c.municipio_sede) ||
         c.municipios_cobertos?.some(m => m.semiarido || isMunicipioSemiarido(m.nome_municipio))
       );
     }
@@ -563,7 +563,7 @@ export default function RelatorioAnalisePage() {
         {/* ================= BARRA DE CONTROLE EM TELA (OCULTA NA IMPRESSÃO) ================= */}
         <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-xs px-4 py-3 print:hidden">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-            
+
             {/* Esquerda: Voltar e Título */}
             <div className="flex items-center gap-3 w-full md:w-auto">
               <button
@@ -597,55 +597,50 @@ export default function RelatorioAnalisePage() {
               <button
                 type="button"
                 onClick={() => { setActiveTab('sintese'); setSearchParams({ tipo: 'sintese', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === 'sintese'
+                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'sintese'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 Dossiê Geral
               </button>
               <button
                 type="button"
                 onClick={() => { setActiveTab('ativos'); setSearchParams({ tipo: 'ativos', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === 'ativos'
+                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'ativos'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 Ativos ({scopedAtivos.length})
               </button>
               <button
                 type="button"
                 onClick={() => { setActiveTab('cursos'); setSearchParams({ tipo: 'cursos', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === 'cursos'
+                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'cursos'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 Cursos ({scopedCursos.length})
               </button>
               <button
                 type="button"
                 onClick={() => { setActiveTab('cadeias'); setSearchParams({ tipo: 'cadeias', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === 'cadeias'
+                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'cadeias'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 Cadeias ({scopedCadeias.length})
               </button>
               <button
                 type="button"
                 onClick={() => { setActiveTab('municipios'); setSearchParams({ tipo: 'municipios', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === 'municipios'
+                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'municipios'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 Municípios ({scopedMunicipios.length})
               </button>
@@ -887,9 +882,8 @@ export default function RelatorioAnalisePage() {
                               </span>
                             </td>
                             <td className="text-center">
-                              <span className={`text-[8.5px] font-semibold ${
-                                c.ead ? 'text-purple-700' : 'text-slate-600'
-                              }`}>
+                              <span className={`text-[8.5px] font-semibold ${c.ead ? 'text-purple-700' : 'text-slate-600'
+                                }`}>
                                 {c.ead ? 'EaD' : 'Presencial'}
                               </span>
                             </td>

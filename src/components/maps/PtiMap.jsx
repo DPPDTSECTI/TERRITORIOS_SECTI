@@ -74,74 +74,74 @@ const SEMIARIDO_TERRITORY_COLORS = [
 ];
 
 const GEOGRAPHICAL_ORDER = [
- 'Bacia do Rio Grande', 'Bacia do Rio Corrente', 'Velho Chico', 'Sertão do São Francisco',
- 'Piemonte Norte do Itapicuru', 'Itaparica', 'Irecê', 'Chapada Diamantina',
- 'Piemonte da Diamantina', 'Sisal', 'Bacia do Jacuípe', 'Semiárido Nordeste II',
- 'Litoral Norte e Agreste Baiano', 'Portal do Sertão', 'Metropolitano de Salvador',
- 'Recôncavo', 'Baixo Sul', 'Vale do Jiquiriçá', 'Piemonte do Paraguaçu',
- 'Médio Rio de Contas', 'Sudoeste Baiano', 'Sertão Produtivo', 'Bacia do Paramirim',
- 'Médio Sudoeste da Bahia', 'Litoral Sul', 'Costa do Descobrimento', 'Extremo Sul'
+  'Bacia do Rio Grande', 'Bacia do Rio Corrente', 'Velho Chico', 'Sertão do São Francisco',
+  'Piemonte Norte do Itapicuru', 'Itaparica', 'Irecê', 'Chapada Diamantina',
+  'Piemonte da Diamantina', 'Sisal', 'Bacia do Jacuípe', 'Semiárido Nordeste II',
+  'Litoral Norte e Agreste Baiano', 'Portal do Sertão', 'Metropolitano de Salvador',
+  'Recôncavo', 'Baixo Sul', 'Vale do Jiquiriçá', 'Piemonte do Paraguaçu',
+  'Médio Rio de Contas', 'Sudoeste Baiano', 'Sertão Produtivo', 'Bacia do Paramirim',
+  'Médio Sudoeste da Bahia', 'Litoral Sul', 'Costa do Descobrimento', 'Extremo Sul'
 ];
 
 function normalizeName(value) {
- if (!value) return '';
- let norm = String(value || '')
- .normalize('NFD')
- .replace(/[\u0300-\u036f]/g, '')
- .toLowerCase()
- .replace(/[^a-z0-9]/g, ' ')
- .replace(/\s+/g, ' ')
- .trim();
+  if (!value) return '';
+  let norm = String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
- // Dicionario de Correcao (O que vem do GeoJSON -> O que esta no nosso Banco)
- // NOTA: Verifique o console e adicione os municipios faltantes aqui se necessario:
- const correcoes = {
- 'dias davila': 'dias d avila',
- 'santa teresinha': 'santa terezinha',
- 'camaca': 'camacan',
- 'xique xique': 'xiquexique',
- 'muquem de sao francisco': 'muquem do sao francisco'
- };
+  // Dicionario de Correcao (O que vem do GeoJSON -> O que esta no nosso Banco)
+  // NOTA: Verifique o console e adicione os municipios faltantes aqui se necessario:
+  const correcoes = {
+    'dias davila': 'dias d avila',
+    'santa teresinha': 'santa terezinha',
+    'camaca': 'camacan',
+    'xique xique': 'xiquexique',
+    'muquem de sao francisco': 'muquem do sao francisco'
+  };
 
- return correcoes[norm] || norm;
+  return correcoes[norm] || norm;
 }
 
 // 1. Mapeamos os Territórios únicos direto do nosso DB estático
 const uniqueTerritories = Object.values(
- municipiosDB.reduce((acc, row) => {
- if (!acc[row.id_territorio]) {
- acc[row.id_territorio] = { id: row.id_territorio, nome: row.nome_territorio };
- }
- return acc;
- }, {})
+  municipiosDB.reduce((acc, row) => {
+    if (!acc[row.id_territorio]) {
+      acc[row.id_territorio] = { id: row.id_territorio, nome: row.nome_territorio };
+    }
+    return acc;
+  }, {})
 ).sort((a, b) => {
- const indexA = GEOGRAPHICAL_ORDER.indexOf(a.nome);
- const indexB = GEOGRAPHICAL_ORDER.indexOf(b.nome);
- if (indexA === -1) return 1;
- if (indexB === -1) return -1;
- return indexA - indexB;
+  const indexA = GEOGRAPHICAL_ORDER.indexOf(a.nome);
+  const indexB = GEOGRAPHICAL_ORDER.indexOf(b.nome);
+  if (indexA === -1) return 1;
+  if (indexB === -1) return -1;
+  return indexA - indexB;
 });
 
 // 2. Agora as cores são indexadas pelo ID DO TERRITÓRIO (Zero chance de falha!)
 const territoryColorMap = {};
 const semiaridoTerritoryColorMap = {};
 uniqueTerritories.forEach((territorio, index) => {
- territoryColorMap[territorio.id] = TERRITORY_COLORS[index] || '#333333';
- semiaridoTerritoryColorMap[territorio.id] = SEMIARIDO_TERRITORY_COLORS[index] || '#F59E0B';
+  territoryColorMap[territorio.id] = TERRITORY_COLORS[index] || '#333333';
+  semiaridoTerritoryColorMap[territorio.id] = SEMIARIDO_TERRITORY_COLORS[index] || '#F59E0B';
 });
 
 // 3. Ponte de cruzamento: Nome do GeoJSON -> Objeto de IDs do Supabase
 const buildMunicipioTerritoryMap = () => {
- const m = {};
- municipiosDB.forEach((row) => {
-  m[normalizeName(row.nome_municipio)] = {
-  id_municipio: row.id_municipio,
-  id_territorio: row.id_territorio,
-  nome_territorio: row.nome_territorio,
-  nome_municipio: row.nome_municipio
-  };
- });
- return m;
+  const m = {};
+  municipiosDB.forEach((row) => {
+    m[normalizeName(row.nome_municipio)] = {
+      id_municipio: row.id_municipio,
+      id_territorio: row.id_territorio,
+      nome_territorio: row.nome_territorio,
+      nome_municipio: row.nome_municipio
+    };
+  });
+  return m;
 };
 
 // Rastreador de zoom do Leaflet
@@ -161,14 +161,14 @@ function ZoomTracker({ onZoomChange }) {
 
 // ================= MAPA PRINCIPAL =================
 export default function PtiMap({
-	territoriosData = [],
-	territoriesDynamicStats = {},
-	searchTerm = '',
-	filtroSemiarido = false,
-	selectedTerritory = null,
-	onSelectTerritory = () => { },
-	semiaridoMunicipios = [],
-	onToggleSemiarido = null
+  territoriosData = [],
+  territoriesDynamicStats = {},
+  searchTerm = '',
+  filtroSemiarido = false,
+  selectedTerritory = null,
+  onSelectTerritory = () => { },
+  semiaridoMunicipios = [],
+  onToggleSemiarido = null
 }) {
   const { isDark } = useTheme();
   const mapPalette = useMapTheme(filtroSemiarido);
@@ -508,20 +508,20 @@ export default function PtiMap({
     });
   };
 
- const handleMouseMove = (e) => {
- if (!hoveredTerritoryId && !hoveredMunicipalityId) return;
- const rect = mapContainerRef.current?.getBoundingClientRect();
- if (!rect) return;
+  const handleMouseMove = (e) => {
+    if (!hoveredTerritoryId && !hoveredMunicipalityId) return;
+    const rect = mapContainerRef.current?.getBoundingClientRect();
+    if (!rect) return;
 
- const tooltipWidth = 220; const tooltipHeight = 160; const offset = 15;
- let x = e.clientX - rect.left + offset;
- let y = e.clientY - rect.top + offset;
+    const tooltipWidth = 220; const tooltipHeight = 160; const offset = 15;
+    let x = e.clientX - rect.left + offset;
+    let y = e.clientY - rect.top + offset;
 
- if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
- if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
+    if (x + tooltipWidth > rect.width) x = e.clientX - rect.left - tooltipWidth - offset;
+    if (y + tooltipHeight > rect.height) y = e.clientY - rect.top - tooltipHeight - offset;
 
- setTooltip({ visible: true, x, y });
- };
+    setTooltip({ visible: true, x, y });
+  };
 
   const hoveredData = hoveredTerritoryId ? territoriosData.find(t => Number(t.id_territorio) === hoveredTerritoryId) : null;
 
@@ -532,7 +532,7 @@ export default function PtiMap({
     ? municipiosDB.find(m => m.id_municipio === hoveredMunicipalityId)?.nome_municipio
     : null;
 
- const selectedTerritoryMunicipalities = useMemo(() => {
+  const selectedTerritoryMunicipalities = useMemo(() => {
     if (!selectedTerritory || !selectedTerritory.id_territorio) return [];
     const terId = Number(selectedTerritory.id_territorio);
 
@@ -550,10 +550,10 @@ export default function PtiMap({
   const isTerritoryOnRight = useMemo(() => {
     if (!selectedTerritory) return false;
     const idTer = Number(selectedTerritory.id_territorio);
-    const muns = idTer 
+    const muns = idTer
       ? municipiosDB.filter(m => Number(m.id_territorio) === idTer)
       : municipiosDB.filter(m => normalizeName(m.nome_territorio) === normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || ''));
-  
+
     if (muns.length === 0) return false;
 
     let sumLng = 0;
@@ -787,17 +787,16 @@ export default function PtiMap({
             }
             onSelectTerritory(null);
           }}
-          className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${
-            selectedTerritory
+          className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${selectedTerritory
               ? 'text-danger-600 bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 dark:hover:bg-danger-900/50'
               : 'text-primary-600 dark:text-primary-400 hover:text-text-primary hover:bg-surface-soft'
-          }`}
+            }`}
           title="Limpar seleção e ver toda a Bahia"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
-            <path d="M22 21H7"/>
-            <path d="m5 11 9 9"/>
+            <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" />
+            <path d="M22 21H7" />
+            <path d="m5 11 9 9" />
           </svg>
         </button>
       </div>
@@ -809,28 +808,26 @@ export default function PtiMap({
             type="button"
             onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${
-              filtroSemiarido
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${filtroSemiarido
                 ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
                 : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
-            }`}
+              }`}
           >
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${
-              filtroSemiarido
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${filtroSemiarido
                 ? 'bg-amber-500 text-white'
                 : 'bg-surface-soft border border-border text-text-muted'
-            }`}>
+              }`}>
               {filtroSemiarido ? (
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="4"/>
-                  <line x1="12" y1="2" x2="12" y2="5"/>
-                  <line x1="12" y1="19" x2="12" y2="22"/>
-                  <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
-                  <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
-                  <line x1="2" y1="12" x2="5" y2="12"/>
-                  <line x1="19" y1="12" x2="22" y2="12"/>
-                  <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
-                  <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+                  <circle cx="12" cy="12" r="4" />
+                  <line x1="12" y1="2" x2="12" y2="5" />
+                  <line x1="12" y1="19" x2="12" y2="22" />
+                  <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
+                  <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
+                  <line x1="2" y1="12" x2="5" y2="12" />
+                  <line x1="19" y1="12" x2="22" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
+                  <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
                 </svg>
               ) : (
                 <span className="w-2 h-2 rounded-full bg-slate-300 block" />
@@ -921,6 +918,6 @@ export default function PtiMap({
           </div>
         </div>
       )}
- </div>
- );
+    </div>
+  );
 }
