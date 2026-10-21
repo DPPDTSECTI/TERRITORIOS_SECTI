@@ -70,8 +70,8 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          'tour-sidebar absolute top-4 bottom-4 left-4 bg-surface border border-border rounded-panel shadow-card flex flex-col py-4 px-3 transition-[width,box-shadow] duration-200 ease-standard overflow-hidden z-50',
-          isExpanded ? 'w-[232px] shadow-float' : 'w-[64px]'
+          'tour-sidebar absolute top-4 bottom-4 left-4 bg-white dark:bg-carbon border border-border/80 rounded-[28px] shadow-bento flex flex-col py-4 px-3 transition-[width,box-shadow] duration-200 ease-standard overflow-hidden z-50',
+          isExpanded ? 'w-[236px] shadow-float' : 'w-[64px]'
         )}
       >
         {/* ================= TOPO: LOGO & PIN BUTTON ================= */}
@@ -102,7 +102,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               aria-label={isPinned ? 'Desafixar barra lateral' : 'Fixar barra lateral'}
               title={isPinned ? 'Desafixar barra lateral' : 'Fixar barra lateral'}
               onClick={togglePin}
-              className="text-text-muted hover:text-text-primary shrink-0 ml-1"
+              className="text-text-muted hover:text-text-primary shrink-0 ml-1 rounded-full"
             >
               {isPinned ? (
                 <PinOff size={16} strokeWidth={1.75} className="text-primary-600 dark:text-primary-400" />
@@ -119,7 +119,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
           <div className="w-full h-5 flex items-center px-2 shrink-0">
             <span
               className={cn(
-                'text-caption font-medium text-text-muted transition-all duration-200 ease-standard',
+                'text-caption font-semibold uppercase tracking-wider text-text-muted transition-all duration-200 ease-standard text-[11px]',
                 isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
               )}
             >
@@ -137,41 +137,44 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                   to={item.path}
                   title={!isExpanded ? item.label : undefined}
                   className={cn(
-                    'relative w-full h-10 flex items-center rounded-control transition-colors duration-120 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
+                    'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
                     item.tourClass,
                     isActive
-                      ? 'text-primary-900 dark:text-primary-200 font-semibold'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft'
+                      ? isExpanded
+                        ? 'bg-neutral-100/90 dark:bg-surface-elevated text-text-primary font-semibold'
+                        : 'text-white'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-neutral-100/70 dark:hover:bg-surface-elevated/70'
                   )}
                 >
-                  {isActive && (
-                    <motion.div
-                      layoutId="sidebar-active-pill"
-                      className="absolute inset-0 bg-primary-50 dark:bg-primary-900/50 border border-primary-200/70 dark:border-primary-700/50 rounded-control -z-10"
-                      transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                    />
-                  )}
-
-                  <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                    <Icon
-                      size={18}
-                      strokeWidth={1.75}
+                  <div
+                    className={cn(
+                      'w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-150',
+                      isActive ? 'scale-100' : 'group-hover:scale-105'
+                    )}
+                  >
+                    <div
                       className={cn(
-                        'transition-colors',
+                        'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150',
                         isActive
-                          ? 'text-primary-600 dark:text-primary-400'
+                          ? 'bg-carbon dark:bg-primary-600 text-white shadow-xs'
                           : 'text-text-muted group-hover:text-text-primary'
                       )}
-                    />
+                    >
+                      <Icon
+                        size={17}
+                        strokeWidth={1.75}
+                        className={isActive ? 'text-white' : 'currentColor'}
+                      />
+                    </div>
                   </div>
 
                   <span
                     className={cn(
-                      'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2',
+                      'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2 pl-1',
                       isExpanded
                         ? 'opacity-100 translate-x-0'
                         : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
-                      isActive ? 'font-semibold' : 'font-medium'
+                      isActive ? 'font-semibold text-text-primary' : 'font-medium text-text-secondary'
                     )}
                   >
                     {item.label}
@@ -187,7 +190,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               <div className="w-full h-5 flex items-center px-2 shrink-0">
                 <span
                   className={cn(
-                    'text-caption font-medium text-text-muted transition-all duration-200 ease-standard',
+                    'text-caption font-semibold uppercase tracking-wider text-text-muted transition-all duration-200 ease-standard text-[11px]',
                     isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
                   )}
                 >
@@ -205,41 +208,44 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                       to={item.path}
                       title={!isExpanded ? item.label : undefined}
                       className={cn(
-                        'relative w-full h-10 flex items-center rounded-control transition-colors duration-120 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
+                        'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
                         item.tourClass,
                         isActive
-                          ? 'text-primary-900 dark:text-primary-200 font-semibold'
-                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft'
+                          ? isExpanded
+                            ? 'bg-neutral-100/90 dark:bg-surface-elevated text-text-primary font-semibold'
+                            : 'text-white'
+                          : 'text-text-secondary hover:text-text-primary hover:bg-neutral-100/70 dark:hover:bg-surface-elevated/70'
                       )}
                     >
-                      {isActive && (
-                        <motion.div
-                          layoutId="sidebar-active-pill"
-                          className="absolute inset-0 bg-primary-50 dark:bg-primary-900/50 border border-primary-200/70 dark:border-primary-700/50 rounded-control -z-10"
-                          transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                        />
-                      )}
-
-                      <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                        <Icon
-                          size={18}
-                          strokeWidth={1.75}
+                      <div
+                        className={cn(
+                          'w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-150',
+                          isActive ? 'scale-100' : 'group-hover:scale-105'
+                        )}
+                      >
+                        <div
                           className={cn(
-                            'transition-colors',
+                            'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150',
                             isActive
-                              ? 'text-primary-600 dark:text-primary-400'
+                              ? 'bg-carbon dark:bg-primary-600 text-white shadow-xs'
                               : 'text-text-muted group-hover:text-text-primary'
                           )}
-                        />
+                        >
+                          <Icon
+                            size={17}
+                            strokeWidth={1.75}
+                            className={isActive ? 'text-white' : 'currentColor'}
+                          />
+                        </div>
                       </div>
 
                       <span
                         className={cn(
-                          'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2',
+                          'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2 pl-1',
                           isExpanded
                             ? 'opacity-100 translate-x-0'
                             : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
-                          isActive ? 'font-semibold' : 'font-medium'
+                          isActive ? 'font-semibold text-text-primary' : 'font-medium text-text-secondary'
                         )}
                       >
                         {item.label}

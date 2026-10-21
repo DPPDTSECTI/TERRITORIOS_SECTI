@@ -47,37 +47,37 @@ export function useChartTheme() {
 
   return useMemo(() => {
     const palette = [
-      resolveCssRgb('--color-chart-1', isDark ? 'rgb(96, 160, 216)' : 'rgb(47, 117, 181)'),
-      resolveCssRgb('--color-chart-2', isDark ? 'rgb(45, 190, 195)' : 'rgb(20, 150, 160)'),
-      resolveCssRgb('--color-chart-3', isDark ? 'rgb(232, 178, 60)' : 'rgb(196, 146, 36)'),
-      resolveCssRgb('--color-chart-4', isDark ? 'rgb(160, 145, 225)' : 'rgb(124, 108, 196)'),
-      resolveCssRgb('--color-chart-5', isDark ? 'rgb(130, 185, 225)' : 'rgb(92, 155, 200)'),
-      resolveCssRgb('--color-chart-6', isDark ? 'rgb(240, 135, 115)' : 'rgb(217, 108, 90)'),
-      resolveCssRgb('--color-chart-7', isDark ? 'rgb(100, 190, 150)' : 'rgb(76, 140, 110)'),
-      resolveCssRgb('--color-chart-8', isDark ? 'rgb(148, 163, 184)' : 'rgb(123, 138, 153)'),
+      resolveCssRgb('--color-chart-1', isDark ? 'rgb(56, 189, 248)' : 'rgb(37, 99, 235)'),
+      resolveCssRgb('--color-chart-2', isDark ? 'rgb(96, 165, 250)' : 'rgb(15, 23, 42)'),
+      resolveCssRgb('--color-chart-3', isDark ? 'rgb(241, 245, 249)' : 'rgb(2, 132, 199)'),
+      resolveCssRgb('--color-chart-4', isDark ? 'rgb(45, 212, 191)' : 'rgb(71, 85, 105)'),
+      resolveCssRgb('--color-chart-5', isDark ? 'rgb(129, 140, 248)' : 'rgb(67, 56, 202)'),
+      resolveCssRgb('--color-chart-6', isDark ? 'rgb(59, 130, 246)' : 'rgb(13, 148, 136)'),
+      resolveCssRgb('--color-chart-7', isDark ? 'rgb(148, 163, 184)' : 'rgb(29, 78, 216)'),
+      resolveCssRgb('--color-chart-8', isDark ? 'rgb(186, 230, 253)' : 'rgb(100, 116, 139)'),
     ];
 
     const goldenPalette = [
-      resolveCssRgb('--color-accent-600', isDark ? 'rgb(245, 176, 42)' : 'rgb(192, 138, 28)'),
-      resolveCssRgb('--color-accent-500', isDark ? 'rgb(228, 150, 24)' : 'rgb(214, 162, 48)'),
-      resolveCssRgb('--color-accent-400', isDark ? 'rgb(250, 196, 70)' : 'rgb(234, 186, 78)'),
-      resolveCssRgb('--color-accent-700', isDark ? 'rgb(252, 211, 77)' : 'rgb(161, 110, 18)'),
-      resolveCssRgb('--color-accent-300', isDark ? 'rgb(252, 211, 77)' : 'rgb(245, 208, 115)'),
-      resolveCssRgb('--color-accent-800', isDark ? 'rgb(96, 52, 16)' : 'rgb(115, 68, 15)'),
-      resolveCssRgb('--color-accent-200', isDark ? 'rgb(253, 230, 138)' : 'rgb(248, 225, 165)'),
-      resolveCssRgb('--color-accent-900', isDark ? 'rgb(68, 36, 12)' : 'rgb(78, 46, 10)'),
+      resolveCssRgb('--color-accent-600', isDark ? 'rgb(251, 191, 36)' : 'rgb(180, 83, 9)'),
+      resolveCssRgb('--color-accent-500', isDark ? 'rgb(253, 224, 71)' : 'rgb(217, 119, 6)'),
+      resolveCssRgb('--color-accent-400', isDark ? 'rgb(252, 211, 77)' : 'rgb(146, 64, 14)'),
+      resolveCssRgb('--color-accent-700', isDark ? 'rgb(250, 204, 21)' : 'rgb(202, 138, 4)'),
+      resolveCssRgb('--color-accent-300', isDark ? 'rgb(251, 146, 60)' : 'rgb(120, 53, 15)'),
+      resolveCssRgb('--color-accent-800', isDark ? 'rgb(253, 230, 138)' : 'rgb(245, 158, 11)'),
+      resolveCssRgb('--color-accent-200', isDark ? 'rgb(254, 240, 138)' : 'rgb(161, 98, 7)'),
+      resolveCssRgb('--color-accent-900', isDark ? 'rgb(253, 186, 116)' : 'rgb(154, 52, 18)'),
     ];
 
-    const primary = resolveCssRgb('--color-primary-600', isDark ? 'rgb(54, 126, 196)' : 'rgb(37, 112, 184)');
+    const primary = resolveCssRgb('--color-primary-600', isDark ? 'rgb(59, 130, 246)' : 'rgb(37, 99, 235)');
     const accent = resolveCssRgb('--color-accent-500', isDark ? 'rgb(228, 150, 24)' : 'rgb(214, 162, 48)');
-    const success = resolveCssRgb('--color-success-600', isDark ? 'rgb(34, 197, 94)' : 'rgb(38, 138, 98)');
-    const warning = resolveCssRgb('--color-warning-600', isDark ? 'rgb(245, 158, 11)' : 'rgb(190, 124, 8)');
+    const success = resolveCssRgb('--color-success-700', isDark ? 'rgb(74, 222, 128)' : 'rgb(21, 128, 61)');
+    const warning = resolveCssRgb('--color-warning-700', isDark ? 'rgb(251, 191, 36)' : 'rgb(180, 83, 9)');
 
-    const grid = resolveCssRgb('--color-border', isDark ? 'rgb(33, 45, 66)' : 'rgb(224, 231, 239)');
-    const textPrimary = resolveCssRgb('--color-text-primary', isDark ? 'rgb(241, 245, 249)' : 'rgb(24, 34, 50)');
-    const textSecondary = resolveCssRgb('--color-text-secondary', isDark ? 'rgb(194, 206, 222)' : 'rgb(67, 81, 104)');
-    const textMuted = resolveCssRgb('--color-text-muted', isDark ? 'rgb(150, 166, 188)' : 'rgb(92, 108, 132)');
-    const surface = resolveCssRgb('--color-surface-raised', isDark ? 'rgb(24, 34, 54)' : 'rgb(255, 255, 255)');
+    const grid = resolveCssRgb('--color-border', isDark ? 'rgb(30, 41, 59)' : 'rgb(226, 232, 240)');
+    const textPrimary = resolveCssRgb('--color-text-primary', isDark ? 'rgb(248, 250, 252)' : 'rgb(9, 13, 22)');
+    const textSecondary = resolveCssRgb('--color-text-secondary', isDark ? 'rgb(148, 163, 184)' : 'rgb(100, 116, 139)');
+    const textMuted = resolveCssRgb('--color-text-muted', isDark ? 'rgb(100, 116, 139)' : 'rgb(148, 163, 184)');
+    const surface = resolveCssRgb('--color-surface', isDark ? 'rgb(17, 24, 39)' : 'rgb(255, 255, 255)');
 
     return {
       isDark,
@@ -114,7 +114,7 @@ export function ChartTooltip({ active, payload, label, formatter }) {
         'div',
         {
           key: 'label',
-          className: 'font-semibold text-text-primary text-body-sm pb-1 border-b border-border/50',
+          className: 'font-semibold text-text-primary text-body-sm pb-1.5 border-b border-border/60',
         },
         label
       )
@@ -137,18 +137,18 @@ export function ChartTooltip({ active, payload, label, formatter }) {
         'div',
         { className: 'flex items-center gap-1.5 min-w-0' },
         React.createElement('span', {
-          className: 'w-2.5 h-2.5 rounded-full shrink-0',
+          className: 'w-2 h-2 rounded-full shrink-0',
           style: { backgroundColor: color },
         }),
         React.createElement(
           'span',
-          { className: 'text-text-secondary truncate' },
+          { className: 'text-text-secondary truncate text-caption' },
           name
         )
       ),
       React.createElement(
         'span',
-        { className: 'tnum font-semibold text-text-primary shrink-0' },
+        { className: 'tnum font-semibold text-text-primary shrink-0 text-caption' },
         value
       )
     );
@@ -162,7 +162,7 @@ export function ChartTooltip({ active, payload, label, formatter }) {
     'div',
     {
       className:
-        'bg-surface-raised border border-border rounded-control shadow-float px-3 py-2 text-caption select-none space-y-1.5 z-50',
+        'bg-surface/95 backdrop-blur-md border border-border/80 rounded-subcard shadow-card px-3.5 py-2.5 text-caption select-none space-y-1.5 z-50',
     },
     children
   );

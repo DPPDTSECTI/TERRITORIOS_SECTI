@@ -616,74 +616,68 @@ export default function DashboardPainel() {
           ) : (
             kpis.map((kpi, index) => {
               const isHero = index === 0;
-              const accentColors = [
-                'text-white/80',
-                'text-primary-600',
-                'text-accent-600',
-                'text-warning-600',
-                'text-success-600'
-              ];
 
               return (
                 <motion.div key={index} variants={fadeUp} className="h-full">
-                  <Card
+                  <div
                     title={kpi.tooltip || kpi.label}
-                    variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
-                    className={`p-4 flex flex-col justify-between h-[96px] cursor-default overflow-hidden transition-all duration-300 hover:shadow-card-hover ${isHero && filtroSemiarido
-                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border-amber-400/40 shadow-card shadow-amber-500/20'
-                        : ''
-                      } ${!isHero && filtroSemiarido
-                        ? 'border-amber-200/50 dark:border-amber-500/30'
-                        : ''
+                    className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-all duration-300 select-none ${isHero
+                        ? (filtroSemiarido
+                          ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-card shadow-amber-500/20'
+                          : 'bg-gradient-brand text-white border border-primary-500/40 shadow-kpi-blue')
+                        : (filtroSemiarido
+                          ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary shadow-card hover:shadow-card-hover'
+                          : 'bg-surface-soft border border-border/70 text-text-primary shadow-card hover:shadow-card-hover hover:border-border')
                       }`}
                   >
-                    {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                    <div className="flex items-center gap-2 w-full min-w-0">
-                      <kpi.icon
-                        size={16}
-                        strokeWidth={2}
-                        className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]}
-                      />
-                      <span
-                        className={`text-caption font-medium line-clamp-2 leading-tight flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
-                          }`}
-                        title={kpi.label}
-                      >
-                        {kpi.label}
-                      </span>
-                      {!filtroSemiarido && kpi.isIndex && (
+                    {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
+                    <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                      <div className="flex flex-col min-w-0 flex-1">
                         <span
-                          className={`text-caption font-medium px-1.5 py-0.5 rounded-control shrink-0 leading-none inline-flex items-center justify-center ${isHero
-                              ? 'bg-white/15 text-white/90 border border-white/20'
-                              : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60'
+                          className={`text-[13px] font-medium leading-tight truncate ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
                             }`}
+                          title={kpi.label}
                         >
-                          Índice
+                          {kpi.label}
                         </span>
-                      )}
+                      </div>
+
+                      {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
+                      <div
+                        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center shadow-2xs ${isHero
+                            ? 'bg-white/15 text-white border border-white/20'
+                            : 'bg-surface border border-border/80 text-text-secondary'
+                          }`}
+                      >
+                        <kpi.icon size={15} strokeWidth={2} />
+                      </div>
                     </div>
 
-                    {/* LINHA INFERIOR: NÚMERO */}
-                    <div className="flex items-baseline w-full justify-between min-w-0">
-                      <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+                    {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + BADGE */}
+                    <div className="flex items-baseline w-full justify-between min-w-0 pt-0.5">
+                      <div className="flex items-baseline gap-2 min-w-0 flex-1">
                         <span
-                          className={`text-kpi font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
+                          className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
                             }`}
                         >
                           {kpi.value}
                         </span>
+
                         {filtroSemiarido && kpi.percent && (
                           <span
                             title={`(${kpi.percent})`}
-                            className={`text-caption font-semibold truncate ${isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                            className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                                ? 'bg-white/15 text-white border border-white/20'
+                                : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                               }`}
                           >
-                            ({kpi.percent})
+                            {kpi.percent}
                           </span>
                         )}
+
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 </motion.div>
               );
             })
@@ -725,13 +719,16 @@ export default function DashboardPainel() {
             <>
               {/* CARD 1: DONUT CHART (CURSOS) - Superior Esquerdo */}
               <motion.div variants={fadeUp} className="h-full flex flex-col min-h-0">
-                <DonutChart
+                <CustomPieChart
                   title={filtroSemiarido ? (selectedTerritory ? `Cursos CT&I no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido') : (selectedTerritory ? `Cursos CT&I em ${territoryName}` : 'Cursos de CT&I por Área')}
                   subtitle={filtroSemiarido ? `${activeScopedCursos.length} no Semiárido · ${Math.max(0, scopedCursos.length - activeScopedCursos.length)} fora (${semiaridoMetrics.pctCursos}%)` : (selectedTerritory ? `${scopedCursos.length} cursos de CT&I mapeados na região` : 'Oferta presencial de cursos superiores em CT&I')}
-                  totalLabel="Total Cursos CT&I"
                   listTitle={filtroSemiarido ? 'Top IES no Semiárido' : (selectedTerritory ? 'Top Instituições' : 'Top 5 instituições')}
-                  data={donutChartData.length > 0 ? donutChartData : [{ label: 'Sem cursos mapeados', value: 0, color: chartTheme.grid, isEmpty: true }]}
+                  defaultCenterLabel="Cursos CT&I"
+                  data={donutChartData}
                   topList={topEntidadesCursos}
+                  labelKey="label"
+                  valueKey="value"
+                  colorKey="color"
                   badge={null}
                   isSemiarido={filtroSemiarido}
                   cardClassName={filtroSemiarido ? 'semiarido-card-warmth-1' : ''}

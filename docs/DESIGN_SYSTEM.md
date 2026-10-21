@@ -1,174 +1,133 @@
-# Design System — SECTI Territórios
+# Design System — SECTI Territórios (Bento Grid SaaS)
 
-Guia de referência da fundação visual e tokens do Painel Territorial CT&I (SECTI - Governo da Bahia).
+Guia de referência da fundação visual e tokens do Painel Territorial CT&I (SECTI - Governo da Bahia), redesenhado na estética moderna SaaS Bento Grid (inspirada no Finexy) com arquitetura cromática estrita **60-30-10** (Azul Royal, Preto Carbono e Cinza/Branco).
 
 ---
 
-## 1. Tipografia
+## 1. Princípios & Proporção Cromática 60-30-10
 
-- **Família Principal:** `Plus Jakarta Sans Variable` (`@fontsource-variable/plus-jakarta-sans`)
+- **Canvas Geral da Página (60%):** `#F4F5F7` — Cinza gelo quente de baixa saturação, provendo respiro visual e contraste suave com as superfícies elevadas.
+- **Superfície Primária / Cards Principais (30%):** `#FFFFFF` — Branco puro com `border-radius: 24px`, borda sutil `1px solid rgba(226, 232, 240, 0.6)` e sombra difusa `0 4px 20px -2px rgba(15, 23, 42, 0.04)`.
+- **Superfície Secundária / Sub-cards (Caixa dentro de Caixa):** `#F8FAFC` — Cinza ultra claro com borda `1px solid #F1F5F9` e `border-radius: 16px`.
+- **Contraste Forte (Preto Carbono):** `#111827` (Hover: `#1E293B`) — Usado para abas ativas, botões primários de ação, ícones selecionados no dock de navegação e série secundária de gráficos.
+- **Destaque Principal (Accent Blue - 10%):**
+  - Sólido: `#2563EB` (Royal Blue)
+  - Gradiente Principal: `linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)` (Hero KPI Card)
+  - Sombra do Card Azul: `0 10px 25px -5px rgba(37, 99, 235, 0.30)`
+  - Azul Suave (Badges/Ícones): `#DBEAFE` com texto `#1D4ED8`
+- **Dark Mode Proporcional:**
+  - Canvas: `#090D16`
+  - Cards: `#111827`
+  - Sub-cards: `#1E293B`
+  - Destaque: `#2563EB`
+
+---
+
+## 2. Tipografia
+
+- **Família:** `Plus Jakarta Sans Variable` (`@fontsource-variable/plus-jakarta-sans`)
 - **Fallback:** `ui-sans-serif, system-ui, -apple-system, sans-serif`
-- **Variante Numérica Tabular:** `.tnum` (`font-variant-numeric: tabular-nums`) para dados, KPIs, tabelas e valores monetários/estatísticos.
+- **Numeração Tabular:** `.tnum` (`font-variant-numeric: tabular-nums`) obrigatória em KPIs, métricas, rankings, tabelas e coordenadas.
 
-### Escala Tipográfica (Tailwind Tokens)
+### Escala Tipográfica & Hierarquia
 
-| Token Tailwind | Tamanho | Line Height | Letter Spacing | Font Weight | Uso Recomendado |
+| Elemento | Tamanho | Peso | Cor (Claro) | Cor (Escuro) | Tracking |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `text-micro` | `12px` | `16px` | normal | 500 (Medium) | Legendas, tooltips, hints, compatibilidade retroativa |
-| `text-caption` | `12px` | `16px` | normal | 500 (Medium) | Legendas, tooltips, hints de formulário, breadcrumbs |
-| `text-body-sm` | `13px` | `20px` | normal | 400 (Regular) | Textos secundários, tabelas densas, filtros compactos |
-| `text-body` | `14px` | `22px` | normal | 400 (Regular) | Corpo padrão de leitura, inputs, parágrafos |
-| `text-subtitle` | `15px` | `22px` | normal | 600 (Semibold) | Cabeçalhos de cards secundários, itens de menu |
-| `text-title` | `18px` | `26px` | normal | 650 (Semibold+) | Títulos de seções, cabeçalhos de cards principais |
-| `text-headline` | `28px` | `34px` | normal | 700 (Bold) | Títulos de módulos e páginas |
-| `text-kpi` | `36px` | `40px` | normal | 700 (Bold) | Números de destaque em métricas (usar com `.tnum`) |
-| `text-display` | `44px` | `48px` | normal | 700 (Bold) | Hero banner, totais consolidados estaduais |
+| **Títulos de Boas-Vindas / Cabeçalho** | `28px` – `32px` | Semibold (`600`) | `#090D16` | `#F8FAFC` | `-0.02em` |
+| **KPI Grande (Valor Principal)** | `28px` – `34px` | Bold (`700`) | `#090D16` (`#FFF` no card azul) | `#F8FAFC` | `-0.03em` |
+| **KPI Label (Acima do valor)** | `13px` – `14px` | Medium (`500`) | `#64748B` (`rgba(255,255,255,0.85)` no azul) | `#94A3B8` | Normal |
+| **KPI Mini-Pílula (Meta/Variação)** | `12px` | Semibold (`600`) | Semantic Badge (`#15803D` / `#B91C1C`) | Semantic Dark | Normal |
+| **Subtítulos / Headers de Cards** | `15px` – `18px` | Semibold (`600`) | `#090D16` | `#F8FAFC` | `-0.01em` |
+| **Corpo de Texto (Leitura)** | `14px` | Regular (`400`) | `#64748B` | `#94A3B8` | Normal |
+| **Títulos de Colunas / Captions** | `12px` | Medium (`500`) | `#64748B` | `#94A3B8` | `0.025em` |
 
 ---
 
-## 2. Superfícies, Cores e Contraste
+## 3. Tokens de Cor & Variáveis CSS Globais
 
-O sistema adota variáveis CSS no formato `R G B` com suporte nativo a opacidade (`rgb(var(--token) / <alpha-value>)`) e alternância de tema claro/escuro via classe `.dark`.
+### Superfícies e Canvas
 
-### Superfícies e Fundo
-
-| Token | CSS Variable | Claro (RGB) | Escuro (RGB) | Descrição |
+| Token | CSS Variable | Claro (RGB / Hex) | Escuro (RGB / Hex) | Descrição |
 | :--- | :--- | :--- | :--- | :--- |
-| `bg-background` | `--color-background` | `244 247 251` | `11 15 25` | Canvas global da aplicação |
-| `bg-surface` | `--color-surface` | `255 255 255` | `17 25 41` | Superfície base para cards e containers |
-| `bg-surface-raised` | `--color-surface-raised` | `255 255 255` | `24 34 54` | Modais, dropdowns, popovers, cards suspensos |
-| `bg-surface-soft` | `--color-surface-soft` | `248 250 253` | `22 32 50` | Áreas de agrupamento secundárias, headers de tabela |
-| `bg-surface-sunken` | `--color-surface-sunken` | `238 243 248` | `8 12 20` | Caixas de entrada em repouso, fundos rebaixados |
+| `bg-background` | `--color-background` | `244 245 247` (`#F4F5F7`) | `9 13 22` (`#090D16`) | Canvas Global da página (60%) |
+| `bg-surface` | `--color-surface` | `255 255 255` (`#FFFFFF`) | `17 24 39` (`#111827`) | Cards Principais (30%) |
+| `bg-surface-soft` | `--color-surface-soft` | `248 250 252` (`#F8FAFC`) | `30 41 59` (`#1E293B`) | Sub-cards e caixas internas |
+| `bg-carbon` | `--color-carbon` | `17 24 39` (`#111827`) | `17 24 39` (`#111827`) | Preto Carbono contraste forte |
+| `bg-carbon-hover` | `--color-carbon-hover` | `30 41 59` (`#1E293B`) | `30 41 59` (`#1E293B`) | Hover do Preto Carbono |
 
-### Texto, Bordas e Foco
+### Destaque (Accent Royal Blue - 10%)
 
-| Token | CSS Variable | Claro (RGB / Hex) | Escuro (RGB / Hex) | Contraste Mínimo |
-| :--- | :--- | :--- | :--- | :--- |
-| `text-text-primary` | `--color-text-primary` | `var(--color-neutral-900)` | `241 245 249` | > 10:1 (AAA) |
-| `text-text-secondary` | `--color-text-secondary` | `var(--color-neutral-700)` | `194 206 222` | > 7:1 (AAA) |
-| `text-text-muted` | `--color-text-muted` | `var(--color-neutral-600)` | `150 166 188` | > 4.5:1 (AA) |
-| `border-border` | `--color-border` | `var(--color-neutral-200)` | `33 45 66` | Estrutural |
-| `border-border-strong` | `--color-border-strong` | `var(--color-neutral-300)` | `48 64 90` | Divisores destacados |
-| `ring-ring` | `--color-ring` | `var(--color-primary-500)` | `var(--color-primary-400)` | Indicador de foco acessível |
-
-### Paletas Semânticas
-
-| Domínio | 50 (Fundo) | 100 (Badge) | 600 (Base) | 700 (Texto/Forte) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Success** | `var(--color-success-50)` | `var(--color-success-100)` | `var(--color-success-600)` | `var(--color-success-700)` |
-| **Warning** | `var(--color-warning-50)` | `var(--color-warning-100)` | `var(--color-warning-600)` | `var(--color-warning-700)` |
-| **Danger** | `var(--color-danger-50)` | `var(--color-danger-100)` | `var(--color-danger-600)` | `var(--color-danger-700)` |
-| **Accent (Bahia)** | `var(--color-accent-50)` | `var(--color-accent-100)` | `var(--color-accent-600)` | `var(--color-accent-700)` |
-
-### Visualização de Dados (Gráficos amigáveis a daltonismo)
-
-Paleta com 8 tonalidades balanceadas para contraste e distinção cromática em ambos os temas:
-
-| Token | Claro (RGB) | Escuro (RGB) | Aplicação |
+| Token | CSS Variable | Claro (RGB / Hex) | Descrição |
 | :--- | :--- | :--- | :--- |
-| `chart-1` | `47 117 181` | `96 160 216` | Série primária / barras principais |
-| `chart-2` | `20 150 160` | `45 190 195` | Cursos / Formação tecnológica |
-| `chart-3` | `196 146 36` | `232 178 60` | Ativos / Cadeias produtivas |
-| `chart-4` | `124 108 196` | `160 145 225` | Inovação / Ambientes promotores |
-| `chart-5` | `92 155 200` | `130 185 225` | Séries secundárias |
-| `chart-6` | `217 108 90` | `240 135 115` | Alertas / Demandas setoriais |
-| `chart-7` | `76 140 110` | `100 190 150` | Indicadores de sustentabilidade |
-| `chart-8` | `123 138 153` | `148 163 184` | Neutro / Outros / Dados residuais |
+| `bg-primary-600` | `--color-primary-600` | `37 99 235` (`#2563EB`) | Azul Royal sólido de destaque |
+| `bg-primary-700` | `--color-primary-700` | `29 78 216` (`#1D4ED8`) | Azul profundo para gradientes |
+| `bg-primary-100` | `--color-primary-100` | `219 234 254` (`#DBEAFE`) | Fundo de badges/ícones azul suave |
+| `bg-brand-gradient` | `--gradient-brand` | `linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)` | Gradiente do Hero KPI Card |
 
-### Mapas Coropléticos
+### Badges Semânticos (Pílulas de Status/Variação)
 
-Gradiente institucional em 5 faixas (`color-map-1` até `color-map-5`) + neutro (`color-map-neutral`):
-- `map-1`: Densidade máxima
-- `map-2` a `map-4`: Faixas intermediárias
-- `map-5`: Densidade baixa
-- `map-neutral`: Sem dados / município não selecionado
-
----
-
-## 3. Raios de Borda e Sombras
-
-### Raios (`borderRadius`)
-
-| Token Tailwind | Valor | Aplicação |
-| :--- | :--- | :--- |
-| `rounded-control` | `10px` | Botões, inputs, selects, segmented controls |
-| `rounded-card` | `16px` | Cards métricos, gráficos, blocos de conteúdo |
-| `rounded-panel` | `20px` | Gavetas laterais (drawers), modais, containers mestres |
-
-### Sombras (`boxShadow`)
-
-As sombras adaptam-se dinamicamente por variáveis CSS: sombras difusas no tema claro e elevação com inner highlight sutil (`inset 0 1px 0 rgba(...)`) no tema escuro.
-
-| Token Tailwind | Variável CSS | Comportamento |
-| :--- | :--- | :--- |
-| `shadow-xs` | `--shadow-xs` | Borda sutil de repouso / microelevação |
-| `shadow-card` | `--shadow-card` | Cards em repouso |
-| `shadow-card-hover` | `--shadow-card-hover` | Cards interativos no hover |
-| `shadow-float` | `--shadow-float` | Modais, tooltips flutuantes e menus |
-
-*Nota de retrocompatibilidade:* Os aliases `shadow-card-soft`, `shadow-card-elevated`, `shadow-glass` e `shadow-glass-hover` foram mantidos mapeados para os tokens oficiais.
-
----
-
-## 4. Transições e Animações (`src/lib/motion.js`)
-
-Centralização das configurações de movimento com respeito estrito a acessibilidade (`reducedMotion="user"` via `<MotionConfig>`).
-
-### Curvas de Aceleração (Easings)
-
-- **Standard:** `[0.2, 0, 0, 1]` — Uso geral em transições e hover.
-- **Emphasized:** `[0.16, 1, 0.3, 1]` — Entradas de modais, expansões de cards.
-
-### Durações
-
-- `fast`: `120ms` (`0.12s`) — Feedback de botões, hovers, trocas de abas.
-- `normal`: `200ms` (`0.2s`) — Transições de cor, colapsáveis.
-- `emphasized`: `320ms` (`0.32s`) — Troca de páginas, cards que surgem na tela.
-- `slow`: `500ms` (`0.5s`) — Transições complexas de layouts.
-
-### Variantes Framer-Motion
-
-```javascript
-import { fadeIn, fadeUp, scaleIn, staggerContainer } from '@/lib/motion';
-
-// Exemplo de uso:
-<motion.div variants={staggerContainer(0.05)} initial="initial" animate="animate">
-  <motion.div variants={fadeUp} className="bg-surface rounded-card p-4 shadow-card">
-    ...
-  </motion.div>
-</motion.div>
-```
-
----
-
-## 5. Cores dos Tipos de Ativos (CT&I)
-
-Mapeamento centralizado de variáveis CSS e tokens semânticos Tailwind para as 13 tipologias de ativos de Ciência, Tecnologia e Inovação da Bahia:
-
-| Tipologia / Chave | Hex Padrão | Variável CSS | Token Tailwind |
+| Estado | Fundo (Hex) | Texto (Hex) | Borda |
 | :--- | :--- | :--- | :--- |
-| `univ_privada` | `#38BDF8` | `--color-asset-privada` | `bg-asset-privada`, `text-asset-privada`, `border-asset-privada` |
-| `univ_estadual` | `#2563EB` | `--color-asset-estadual` | `bg-asset-estadual`, `text-asset-estadual`, `border-asset-estadual` |
-| `univ_federal` | `#1E3A8A` | `--color-asset-federal` | `bg-asset-federal`, `text-asset-federal`, `border-asset-federal` |
-| `inst_federal` | `#0284C7` | `--color-asset-if` | `bg-asset-if`, `text-asset-if`, `border-asset-if` |
-| `aceleradora` | `#10B981` | `--color-asset-aceleradora` | `bg-asset-aceleradora`, `text-asset-aceleradora`, `border-asset-aceleradora` |
-| `espaco_dinamizador` | `#06B6D4` | `--color-asset-dinamizador` | `bg-asset-dinamizador`, `text-asset-dinamizador`, `border-asset-dinamizador` |
-| `incubadora` | `#6366F1` | `--color-asset-incubadora` | `bg-asset-incubadora`, `text-asset-incubadora`, `border-asset-incubadora` |
-| `parque` | `#0F172A` | `--color-asset-parque` | `bg-asset-parque`, `text-asset-parque`, `border-asset-parque` |
-| `ict` | `#0D9488` | `--color-asset-ict` | `bg-asset-ict`, `text-asset-ict`, `border-asset-ict` |
-| `hub_inovacao` | `#8B5CF6` | `--color-asset-hub` | `bg-asset-hub`, `text-asset-hub`, `border-asset-hub` |
-| `centro_pd` | `#F59E0B` | `--color-asset-centro-pd` | `bg-asset-centro-pd`, `text-asset-centro-pd`, `border-asset-centro-pd` |
-| `investimento` | `#EC4899` | `--color-asset-investimento` | `bg-asset-investimento`, `text-asset-investimento`, `border-asset-investimento` |
-| `pesquisa` | `#64748B` | `--color-asset-pesquisa` | `bg-asset-pesquisa`, `text-asset-pesquisa`, `border-asset-pesquisa` |
-| `outro` | `#94A3B8` | `--color-asset-outro` | `bg-asset-outro`, `text-asset-outro`, `border-asset-outro` |
+| **Positivo / Ativo** | `#DCFCE7` | `#15803D` | `1px solid rgba(22, 163, 74, 0.2)` |
+| **Negativo / Inativo** | `#FEE2E2` | `#B91C1C` | `1px solid rgba(220, 38, 38, 0.2)` |
+| **Alerta / Em Progresso**| `#FEF3C7` | `#B45309` | `1px solid rgba(217, 119, 6, 0.2)` |
+| **Informativo / Primário**| `#DBEAFE` | `#1D4ED8` | `1px solid rgba(37, 99, 235, 0.2)` |
 
 ---
 
-## 6. Acessibilidade e Preferência de Movimento
+## 4. Geometria, Bordas e Sombras (Estilo Bento Grid)
 
-- **Foco Visível Obrigatório:** Todos os elementos interativos (`Button`, `IconButton`, `Link`, inputs, checkboxes e triggers de dropdown/modal) utilizam o anel de foco padronizado `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`.
-- **Rótulos Acessíveis em Botões de Ícone:** O componente `IconButton` aceita obrigatoriamente `aria-label` ou `label`, propagando automaticamente para `aria-label` e atribuindo `title` nativo se não for especificado.
-- **Redução de Movimento (`prefers-reduced-motion: reduce`):**
-  - Configurado globalmente via `<MotionConfig reducedMotion="user">` no `src/App.jsx`.
-  - No CSS (`src/index.css`), o bloco `@media (prefers-reduced-motion: reduce)` neutraliza `animate-sun-breath`, `animate-sun-arc`, `animate-pulse`, `animate-spin`, `animate-bounce` e zera as durações de animação e transição para `0.01ms`.
+### Hierarquia Caixa dentro de Caixa
+- **Card Principal:** `border-radius: 24px` (`rounded-card` / `rounded-bento`), fundo `#FFFFFF`, borda `1px solid rgba(226, 232, 240, 0.6)`, sombra `shadow-bento` (`0 4px 20px -2px rgba(15, 23, 42, 0.04)`).
+- **Sub-card Interno:** `border-radius: 16px` (`rounded-subcard`), fundo `#F8FAFC`, borda `1px solid #F1F5F9`.
+- **Elementos Pílula:** `border-radius: 9999px` (`rounded-full` / `rounded-control`) em botões de ação, chips de filtro, abas de navegação e busca.
 
+### Regra do Grid de KPIs
+- Em grades métricas (ex: 4 a 5 KPIs), **apenas o 1º indicador (Hero)** recebe o gradiente Azul Royal (`linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)`), textos em branco e sombra `shadow-kpi-blue` (`0 10px 25px -5px rgba(37, 99, 235, 0.30)`).
+- Os demais KPIs mantêm fundo neutro `#F8FAFC`, valor em `#090D16` e ícone circular no topo direito com fundo `#FFFFFF` e borda `#E2E8F0`.
+
+### Menu Lateral (Dock Vertical)
+- Container estilizado como dock vertical em formato de pílula branca com cantos arredondados (`rounded-[28px]`), borda sutil `#E2E8F0` e sombra Bento.
+- Ícone do item ativo posicionado dentro de um círculo Preto Carbono (`#111827`) com ícone em branco (`#FFFFFF`).
+
+---
+
+## 5. Visualização de Dados (Gráficos, Mapas e Tabelas)
+
+### Gráficos (Recharts / SVG)
+- **Paleta Cromática Semântica:**
+  1. Preto Carbono (`#111827`)
+  2. Azul Royal (`#2563EB`)
+  3. Cinza Claro (`#CBD5E1`)
+  4. Slate (`#64748B`)
+  5. Sky Blue (`#93C5FD`)
+  6. Deep Carbon (`#1E293B`)
+- **Cantos Arredondados:** Barras verticais e horizontais com `borderRadius: 8px` no topo.
+- **Barras Empilhadas:** Espaçamento visual de `1.5px` com borda sutil entre fatias.
+- **Linhas de Grade (Gridlines):** Tracejadas (`stroke-dasharray: 4 4`) com cor suave `#E2E8F0`.
+- **Tooltips:** Fundo branco/translúcido (`bg-surface/95 backdrop-blur-md`), `border-radius: 12px` (`rounded-subcard`), borda sutil e sombra suave.
+
+### Mapa Coroplético da Bahia (Leaflet)
+- **Escala de Tons de Azul:**
+  - Nível 1 (Máximo): `#1E3A8A` (Azul profundo)
+  - Nível 2: `#2563EB` (Azul Royal)
+  - Nível 3: `#60A5FA` (Azul Médio)
+  - Nível 4: `#93C5FD` (Azul Claro)
+  - Nível 5 (Mínimo): `#DBEAFE` (Azul Ultra Claro)
+  - Neutro / Sem Dados: `#F1F5F9`
+- **Seleção Ativa:** Contorno de borda em Preto Carbono (`#111827` / `#0F172A`).
+- **Tooltips e Popups do Mapa:** Fundo `#FFFFFF`, `border-radius: 12px`, borda `1px solid #E2E8F0` e sombra difusa.
+
+### Tabelas de Dados e Listagens
+- **Cabeçalho (`thead`):** Fundo `#F8FAFC`, texto `#64748B`, `font-weight: 500`, sem divisores verticais.
+- **Linhas (`tr`):** Fundo `#FFFFFF`, divisor inferior `1px solid #F1F5F9`, altura mínima `56px` para respiro visual, hover suave em `#F8FAFC`.
+- **Checkboxes:** Estilizados com acento Preto Carbono (`#111827` no claro / `#2563EB` no escuro).
+- **Controles de Busca e Filtro:** Fundo `#FFFFFF` ou `#F8FAFC`, borda `1px solid #E2E8F0` e formato pílula (`rounded-full`).
+
+---
+
+## 6. Acessibilidade & Micro-Interações
+
+- **Foco Visível:** Todos os controles interativos mantêm o anel de foco `focus-visible:ring-2 focus-visible:ring-carbon dark:focus-visible:ring-primary-500`.
+- **Feedback Tátil:** Botões e chips com transições rápidas (`150ms ease-out`), leve escala em clique (`active:scale-[0.99]`).
+- **Respeito a `prefers-reduced-motion`:** Animações intensas são automaticamente desabilitadas quando solicitado pelo usuário no sistema operacional.

@@ -37,20 +37,19 @@ export default function DonutChart({
     percent: maxValue > 0 ? d.value / maxValue : 0
   }));
 
-  const size = 130;
-  const strokeWidth = 8.5;
-  const gap = 9.6;
+  const size = 136;
+  const strokeWidth = 6.5;
+  const gap = 6;
   const center = size / 2;
-  const baseRadius = 58;
+  const baseRadius = 60;
   const arcFraction = 0.75;
 
-  const displayValue = hoveredIndex !== null && normalizedData[hoveredIndex]
-    ? normalizedData[hoveredIndex].value
-    : totalValue;
-
-  const displayLabel = hoveredIndex !== null && normalizedData[hoveredIndex]
-    ? normalizedData[hoveredIndex].label
-    : totalLabel;
+  const isSliceHovered = hoveredIndex !== null && normalizedData[hoveredIndex] && !normalizedData[hoveredIndex].isEmpty;
+  const displayValue = isSliceHovered ? normalizedData[hoveredIndex].value : totalValue;
+  const displayLabel = isSliceHovered ? normalizedData[hoveredIndex].label : totalLabel;
+  const hoveredPct = isSliceHovered && totalValue > 0
+    ? Math.round((normalizedData[hoveredIndex].value / totalValue) * 100)
+    : null;
 
   const isEmpty = sortedData.length === 0 || totalValue === 0;
 
@@ -80,9 +79,9 @@ export default function DonutChart({
           <span className="text-text-muted font-medium text-body-sm">Nenhum dado disponível</span>
         </div>
       ) : (
-        <div className="flex flex-row items-center justify-between flex-1 gap-3 min-w-0">
+        <div className="flex flex-row items-center justify-between flex-1 gap-4 sm:gap-5 min-w-0">
           {/* LADO ESQUERDO: GRÁFICO E RÓTULOS */}
-          <div className="flex flex-col items-center justify-center w-[130px] shrink-0">
+          <div className="flex flex-col items-center justify-center w-[170px] shrink-0">
             <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
               <svg width={size} height={size} className="absolute inset-0" style={{ transform: 'rotate(45deg)' }}>
                 {normalizedData.map((item, index) => {
@@ -103,7 +102,7 @@ export default function DonutChart({
                     >
                       <circle
                         cx={center} cy={center} r={radius} fill="none"
-                        stroke={isSemiarido ? 'rgba(214, 162, 48, 0.2)' : (chartTheme.isDark ? 'rgba(51, 65, 85, 0.6)' : 'rgba(224, 231, 239, 0.8)')}
+                        stroke={isSemiarido ? 'rgba(245, 158, 11, 0.22)' : (chartTheme.isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.08)')}
                         strokeWidth={strokeWidth}
                         strokeLinecap="round" strokeDasharray={`${trackLength} ${circumference}`}
                         className={`transition-opacity duration-300 pointer-events-none ${isOtherHovered ? 'opacity-20' : 'opacity-60'}`}
@@ -126,13 +125,30 @@ export default function DonutChart({
                   );
                 })}
               </svg>
+
+              {/* VALOR NO CENTRO DO GRÁFICO (PARTE VAZIA DO MEIO) */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-10 transition-all duration-200">
+                <span className="text-text-primary font-bold text-xl sm:text-2xl tnum leading-none tracking-tight">
+                  {displayValue.toLocaleString('pt-BR')}
+                </span>
+                {hoveredPct !== null && (
+                  <span className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 tnum leading-none mt-1">
+                    {hoveredPct}%
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center text-center w-full mt-2 min-h-[38px]">
-              <span className="text-text-primary font-bold text-kpi tnum leading-none mb-0.5 tracking-tight transition-all duration-200">
-                {displayValue.toLocaleString('pt-BR')}
-              </span>
-              <span className="text-text-muted font-normal text-caption leading-tight transition-all duration-200 px-1 w-full truncate">
+            {/* LEGENDA ABAIXO DO GRÁFICO (ALTURA FIXA E ALINHADA - NUNCA REDIMENSIONA) */}
+            <div
+              title={displayLabel}
+              className="w-full h-[52px] shrink-0 mt-2 bg-surface-sunken border border-border/70 rounded-xl px-2.5 py-1.5 flex items-center justify-center text-center shadow-2xs transition-colors duration-150 overflow-hidden"
+            >
+              <span
+                className={`text-text-muted font-medium text-center leading-[14px] transition-all duration-150 break-words line-clamp-3 select-none ${
+                  displayLabel.length > 30 ? 'text-[10.5px] leading-[13px]' : displayLabel.length > 20 ? 'text-[11px] leading-[14px]' : 'text-caption'
+                }`}
+              >
                 {displayLabel}
               </span>
             </div>
@@ -142,14 +158,14 @@ export default function DonutChart({
           {children ? (
             children
           ) : showTopList && topList.length > 0 ? (
-            <div className="flex flex-col flex-1 pl-3 border-l border-border/70 justify-center h-full py-0.5 min-w-0">
-              <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col flex-1 justify-between h-full py-0.5 min-w-0">
+              <div className="flex items-center justify-between mb-1.5 shrink-0">
                 <h3 className="text-text-muted font-medium text-caption truncate">
                   {listTitle}
                 </h3>
               </div>
 
-              <div className="flex flex-col gap-2.5 w-full">
+              <div className="flex flex-col justify-between flex-1 gap-2 w-full min-h-0">
                 {topList.slice(0, 5).map((item, index) => {
                   const maxCount = Math.max(...topList.slice(0, 5).map(t => Number(t.count) || 0), 1);
                   const count = Number(item.count) || 0;
@@ -161,46 +177,46 @@ export default function DonutChart({
                   const displayName = item.sigla || item.name;
 
                   const rankStyle = isFirst
-                    ? (isSemi ? 'bg-accent-600 text-white shadow-xs' : 'bg-primary-600 text-white shadow-xs')
-                    : (isSemi ? 'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100' : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60');
+                    ? (isSemi ? 'bg-accent-600 text-white shadow-xs font-bold' : 'bg-primary-600 text-white shadow-xs font-bold')
+                    : (isSemi ? 'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-200/60 font-semibold' : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60 font-semibold');
 
                   const fillColor = isFirst
                     ? (isSemi ? 'bg-accent-500' : 'bg-primary-600')
                     : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
                   const textStyle = isFirst
-                    ? 'font-medium text-white'
-                    : (isSemi ? 'font-medium text-accent-900 dark:text-accent-200' : 'font-medium text-text-primary');
+                    ? 'font-semibold text-white drop-shadow-xs'
+                    : (isSemi ? 'font-medium text-accent-950 dark:text-accent-100' : 'font-medium text-text-primary');
 
                   const valueStyle = isFirst
-                    ? (isSemi ? 'bg-accent-100 text-accent-800 dark:bg-accent-950 dark:text-accent-200 border border-accent-200/60' : 'bg-primary-100 text-primary-800 dark:bg-primary-950 dark:text-primary-200 border border-primary-200/60')
-                    : (isSemi ? 'bg-surface-sunken text-accent-800 dark:text-accent-300 border border-border' : 'bg-surface-sunken text-text-secondary border border-border');
+                    ? (isSemi ? 'bg-accent-600 text-white shadow-xs font-bold' : 'bg-primary-600 text-white shadow-xs font-bold')
+                    : (isSemi ? 'bg-surface-sunken text-accent-800 dark:text-accent-300 border border-border/80 font-semibold' : 'bg-surface-sunken text-text-primary dark:text-zinc-200 border border-border/80 font-semibold');
 
                   return (
                     <div
                       key={index}
                       title={`${displayName}: ${count} cursos`}
-                      className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
+                      className="flex items-center gap-2 sm:gap-2.5 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
                     >
                       {/* RANK */}
-                      <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${rankStyle}`}>
+                      <div className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full shrink-0 flex items-center justify-center text-caption tabular-nums leading-none shadow-2xs ${rankStyle}`}>
                         {rankStr}
                       </div>
 
                       {/* BARRA: TRACK + FILL + NOME */}
-                      <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-accent-50/50 dark:bg-accent-950/30 border border-accent-200/40 dark:border-accent-800/40' : 'bg-surface-sunken border border-border/60'} overflow-hidden min-w-0 flex items-center`}>
+                      <div className={`relative flex-1 h-[26px] sm:h-[28px] rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
                         <div
                           className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                           style={{ width: `${percentOfMax}%` }}
                         />
 
-                        <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                        <span className={`absolute left-3 right-3 text-caption truncate leading-none pointer-events-none select-none z-10 tracking-tight ${textStyle}`}>
                           {displayName}
                         </span>
                       </div>
 
                       {/* VALOR PILL */}
-                      <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tnum leading-none ${valueStyle}`}>
+                      <div className={`h-[26px] sm:h-[28px] min-w-[38px] sm:min-w-[44px] px-2.5 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tabular-nums leading-none shadow-2xs ${valueStyle}`}>
                         {count.toLocaleString('pt-BR')}
                       </div>
                     </div>

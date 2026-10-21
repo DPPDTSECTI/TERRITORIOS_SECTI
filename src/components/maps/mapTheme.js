@@ -42,12 +42,12 @@ export function resolveCssRgb(varName, fallback = 'rgb(33, 95, 148)') {
  * @returns {object} Objeto com paleta choropleth, strokes, surface, border e tipografia
  */
 export function getMapPalette(isDark = false, isSemiarido = false) {
-  const surface = resolveCssRgb('--color-surface-sunken', isDark ? 'rgb(8, 12, 20)' : 'rgb(238, 243, 248)');
-  const surfaceSunken = resolveCssRgb('--color-surface-sunken', isDark ? 'rgb(8, 12, 20)' : 'rgb(238, 243, 248)');
-  const textPrimary = resolveCssRgb('--color-text-primary', isDark ? 'rgb(241, 245, 249)' : 'rgb(16, 42, 67)');
-  const textSecondary = resolveCssRgb('--color-text-secondary', isDark ? 'rgb(194, 206, 222)' : 'rgb(72, 101, 129)');
-  const textMuted = resolveCssRgb('--color-text-muted', isDark ? 'rgb(150, 166, 188)' : 'rgb(130, 154, 178)');
-  const border = resolveCssRgb('--color-border', isDark ? 'rgb(33, 45, 66)' : 'rgb(218, 226, 236)');
+  const surface = resolveCssRgb('--color-surface', isDark ? 'rgb(17, 24, 39)' : 'rgb(255, 255, 255)');
+  const surfaceSunken = resolveCssRgb('--color-surface-soft', isDark ? 'rgb(9, 13, 22)' : 'rgb(248, 250, 252)');
+  const textPrimary = resolveCssRgb('--color-text-primary', isDark ? 'rgb(248, 250, 252)' : 'rgb(9, 13, 22)');
+  const textSecondary = resolveCssRgb('--color-text-secondary', isDark ? 'rgb(148, 163, 184)' : 'rgb(100, 116, 139)');
+  const textMuted = resolveCssRgb('--color-text-muted', isDark ? 'rgb(100, 116, 139)' : 'rgb(148, 163, 184)');
+  const border = resolveCssRgb('--color-border', isDark ? 'rgb(30, 41, 59)' : 'rgb(226, 232, 240)');
 
   if (isSemiarido) {
     const zero = isDark ? 'rgb(40, 28, 18)' : 'rgb(254, 249, 195)';
@@ -83,12 +83,12 @@ export function getMapPalette(isDark = false, isSemiarido = false) {
     };
   }
 
-  const zero = resolveCssRgb('--color-map-neutral', isDark ? 'rgb(24, 34, 54)' : 'rgb(232, 237, 243)');
-  const level1 = resolveCssRgb('--color-map-1', isDark ? 'rgb(96, 160, 216)' : 'rgb(21, 55, 90)');
-  const level2 = resolveCssRgb('--color-map-2', isDark ? 'rgb(63, 134, 199)' : 'rgb(33, 95, 148)');
-  const level3 = resolveCssRgb('--color-map-3', isDark ? 'rgb(47, 112, 175)' : 'rgb(54, 132, 207)');
-  const level4 = resolveCssRgb('--color-map-4', isDark ? 'rgb(35, 82, 135)' : 'rgb(104, 168, 224)');
-  const level5 = resolveCssRgb('--color-map-5', isDark ? 'rgb(25, 58, 98)' : 'rgb(162, 203, 236)');
+  const zero = resolveCssRgb('--color-map-neutral', isDark ? 'rgb(30, 41, 59)' : 'rgb(241, 245, 249)');
+  const level1 = resolveCssRgb('--color-map-1', isDark ? 'rgb(96, 165, 250)' : 'rgb(30, 58, 138)');
+  const level2 = resolveCssRgb('--color-map-2', isDark ? 'rgb(59, 130, 246)' : 'rgb(37, 99, 235)');
+  const level3 = resolveCssRgb('--color-map-3', isDark ? 'rgb(37, 99, 235)' : 'rgb(96, 165, 250)');
+  const level4 = resolveCssRgb('--color-map-4', isDark ? 'rgb(30, 58, 138)' : 'rgb(147, 197, 253)');
+  const level5 = resolveCssRgb('--color-map-5', isDark ? 'rgb(23, 37, 84)' : 'rgb(219, 234, 254)');
 
   return {
     isDark,
@@ -103,9 +103,9 @@ export function getMapPalette(isDark = false, isSemiarido = false) {
       levels: [level1, level2, level3, level4, level5]
     },
     stroke: {
-      default: isDark ? 'rgb(51, 65, 85)' : 'rgb(203, 213, 225)',
-      hover: isDark ? 'rgb(148, 163, 184)' : 'rgb(71, 85, 105)',
-      selected: isDark ? 'rgb(96, 165, 250)' : 'rgb(29, 78, 216)',
+      default: isDark ? 'rgb(51, 65, 85)' : 'rgb(226, 232, 240)',
+      hover: isDark ? 'rgb(148, 163, 184)' : 'rgb(30, 41, 59)',
+      selected: isDark ? 'rgb(96, 165, 250)' : 'rgb(17, 24, 39)',
     },
     surface,
     surfaceSunken,

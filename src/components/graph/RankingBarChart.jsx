@@ -136,40 +136,40 @@ export default function RankingBarChart({
           <p className="text-text-muted font-normal text-caption mt-0.5 truncate">{subtitle}</p>
         </div>
 
-        <div className="flex flex-row items-center justify-center gap-0.5 bg-surface-sunken border border-border rounded-control p-1 relative z-40 shrink-0 shadow-2xs">
+        <div className="flex flex-row items-center justify-center gap-0.5 bg-surface-sunken border border-border rounded-full p-0.5 relative z-40 shrink-0 shadow-2xs">
           {highlightedItem && (
             <button
               onClick={() => setFilterMode('focus')}
-              className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'focus' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+              className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'focus' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
               title={`Foco em ${highlightedItem.cleanName} (${highlightedItem.rank}º de ${allRanked.length})`}
               aria-label={`Foco em ${highlightedItem.cleanName}`}
             >
-              <MapPin size={15} strokeWidth={2.2} />
+              <MapPin size={13} strokeWidth={2.2} />
             </button>
           )}
           <button
             onClick={() => setFilterMode('top')}
-            className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'top' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'top' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={topSubtitle}
             aria-label={topSubtitle}
           >
-            <ChevronUp size={15} strokeWidth={2.2} />
+            <ChevronUp size={14} strokeWidth={2.2} />
           </button>
           <button
             onClick={() => setFilterMode('medium')}
-            className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'medium' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'medium' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={mediumSubtitle}
             aria-label={mediumSubtitle}
           >
-            <Minus size={15} strokeWidth={2.2} />
+            <Minus size={14} strokeWidth={2.2} />
           </button>
           <button
             onClick={() => setFilterMode('bottom')}
-            className={`p-1.5 rounded-md transition-all duration-150 flex items-center justify-center ${filterMode === 'bottom' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'bottom' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={bottomSubtitle}
             aria-label={bottomSubtitle}
           >
-            <ChevronDown size={15} strokeWidth={2.2} />
+            <ChevronDown size={14} strokeWidth={2.2} />
           </button>
         </div>
       </div>
@@ -221,6 +221,7 @@ export default function RankingBarChart({
             return (
               <div
                 key={idx}
+                title={`${item.rank}º · ${item.cleanName} (IFDM: ${formattedVal}${item.extra > 0 ? ` · ${item.extra} ${extraLabel}` : ''})`}
                 className={`group/row relative flex items-center gap-2 sm:gap-2.5 w-full min-w-0 transition-all duration-150 hover:scale-[1.006] cursor-default ${
                   isSelected ? (isSemi ? 'ring-2 ring-accent-400/80 rounded-xl p-0.5 -m-0.5' : 'ring-2 ring-primary-500/80 rounded-xl p-0.5 -m-0.5') : ''
                 }`}
@@ -245,21 +246,6 @@ export default function RankingBarChart({
                 {/* VALOR PILL */}
                 <div className={`h-[30px] sm:h-[32px] min-w-[56px] sm:min-w-[62px] px-2.5 sm:px-3 rounded-xl sm:rounded-full shrink-0 flex items-center justify-center text-caption sm:text-body-sm tabular-nums leading-none shadow-2xs ${valueStyle}`}>
                   {formattedVal}
-                </div>
-
-                {/* TOOLTIP FLUTUANTE */}
-                <div className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-surface-raised border border-border shadow-float rounded-control px-3.5 py-2 flex flex-col justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-200 pointer-events-none z-30 min-w-[140px]">
-                  <div className="text-body-sm font-bold text-text-primary mb-0.5 leading-tight">
-                    {item.rank}º · {item.cleanName}
-                  </div>
-                  <div className="flex items-center text-caption text-text-secondary">
-                    <span>IFDM: <strong className="text-text-primary font-bold tabular-nums ml-1">{formattedVal}</strong></span>
-                  </div>
-                  {item.extra > 0 && (
-                    <div className="flex items-center text-caption text-text-muted mt-0.5">
-                      <span>{item.extra} {extraLabel}</span>
-                    </div>
-                  )}
                 </div>
               </div>
             );

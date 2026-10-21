@@ -52,7 +52,7 @@ export function Tabs({
       className={cn(
         isUnderline
           ? 'flex items-center gap-2 border-b border-border w-full overflow-x-auto scrollbar-none'
-          : 'inline-flex items-center gap-1 p-1 bg-surface-sunken rounded-control border border-border/70 overflow-x-auto max-w-full',
+          : 'inline-flex items-center gap-1 p-1 bg-white dark:bg-neutral-900 rounded-full border border-border/80 overflow-x-auto max-w-full shadow-xs',
         className
       )}
     >
@@ -72,12 +72,12 @@ export function Tabs({
               'relative inline-flex items-center gap-2 font-medium transition-colors duration-120 whitespace-nowrap select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               isUnderline
                 ? 'px-3.5 py-2.5 text-caption -mb-px'
-                : 'px-2.5 py-1.5 rounded-control text-caption',
+                : 'px-3.5 py-1.5 rounded-full text-caption',
               isActive
                 ? isUnderline
                   ? 'text-primary-700 dark:text-primary-300 font-semibold'
-                  : 'text-text-primary font-semibold'
-                : 'text-text-secondary hover:text-text-primary'
+                  : 'text-white dark:text-neutral-950 font-semibold'
+                : 'text-text-secondary hover:text-text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full'
             )}
           >
             {isActive && (
@@ -87,7 +87,7 @@ export function Tabs({
                   'pointer-events-none',
                   isUnderline
                     ? 'absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full'
-                    : 'absolute inset-0 bg-surface rounded-[8px] shadow-xs border border-border/40'
+                    : 'absolute inset-0 bg-carbon dark:bg-white rounded-full shadow-xs'
                 )}
                 transition={{ type: 'spring', stiffness: 400, damping: 32 }}
               />
@@ -96,20 +96,6 @@ export function Tabs({
             <span className="relative z-10 inline-flex items-center gap-1">
               {item.icon && <span className="inline-flex shrink-0">{item.icon}</span>}
               <span>{item.label}</span>
-              {item.count !== undefined && item.count !== null && (
-                <span
-                  className={cn(
-                    'tnum text-caption px-1.5 py-0.5 rounded-full leading-none shrink-0',
-                    isActive
-                      ? isUnderline
-                        ? 'bg-primary-100 text-primary-800 dark:bg-primary-950 dark:text-primary-200'
-                        : 'bg-surface-sunken text-text-primary'
-                      : 'bg-surface-sunken/80 text-text-muted border border-border/40'
-                  )}
-                >
-                  {item.count}
-                </span>
-              )}
             </span>
           </button>
         );

@@ -612,7 +612,7 @@ export default function RelatorioAnalisePage() {
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
               >
-                Ativos ({scopedAtivos.length})
+                Ativos
               </button>
               <button
                 type="button"
@@ -622,7 +622,7 @@ export default function RelatorioAnalisePage() {
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
               >
-                Cursos ({scopedCursos.length})
+                Cursos
               </button>
               <button
                 type="button"
@@ -632,7 +632,7 @@ export default function RelatorioAnalisePage() {
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
               >
-                Cadeias ({scopedCadeias.length})
+                Cadeias
               </button>
               <button
                 type="button"
@@ -642,7 +642,7 @@ export default function RelatorioAnalisePage() {
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
               >
-                Municípios ({scopedMunicipios.length})
+                Municípios
               </button>
             </div>
 

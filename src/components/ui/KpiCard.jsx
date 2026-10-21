@@ -135,18 +135,18 @@ export function KpiCard({
   return (
     <div
       className={cn(
-        'p-4 sm:p-5 rounded-card flex flex-col justify-between gap-3 border transition-all duration-200',
+        'p-5 rounded-card flex flex-col justify-between gap-3 border transition-all duration-200 select-none',
         isBrand
-          ? 'bg-gradient-brand text-white border-primary-700/40 shadow-card'
-          : 'bg-surface text-text-primary border-border shadow-card hover:shadow-card-hover hover:border-border-strong',
+          ? 'bg-gradient-brand text-white border-primary-500/40 shadow-kpi-blue'
+          : 'bg-surface-soft text-text-primary border-border/70 shadow-card hover:shadow-card-hover hover:border-border',
         className
       )}
     >
       <div className="flex items-center justify-between gap-3">
         <span
           className={cn(
-            'text-caption font-medium line-clamp-1',
-            isBrand ? 'text-white/80' : 'text-text-muted'
+            'text-body-sm font-medium line-clamp-1',
+            isBrand ? 'text-white/85' : 'text-text-secondary'
           )}
         >
           {label}
@@ -155,10 +155,10 @@ export function KpiCard({
         {Icon && (
           <div
             className={cn(
-              'w-8 h-8 rounded-control flex items-center justify-center shrink-0',
+              'w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-2xs',
               isBrand
-                ? 'bg-white/10 text-white border border-white/10'
-                : 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border border-primary-200/50 dark:border-primary-800/50'
+                ? 'bg-white/15 text-white border border-white/20'
+                : 'bg-surface text-text-secondary border border-border/80'
             )}
           >
             {renderIcon()}
@@ -167,7 +167,10 @@ export function KpiCard({
       </div>
 
       <div className="flex items-baseline gap-2 flex-wrap">
-        <div className="text-kpi font-bold leading-none tracking-tight">
+        <div className={cn(
+          'text-[30px] font-bold leading-none tracking-tight',
+          isBrand ? 'text-white' : 'text-text-primary'
+        )}>
           {typeof value === 'number' || (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value.trim())) ? (
             <AnimatedNumber value={value} format={format} />
           ) : (
@@ -182,7 +185,7 @@ export function KpiCard({
         <div
           className={cn(
             'text-caption leading-tight',
-            isBrand ? 'text-white/70' : 'text-text-secondary'
+            isBrand ? 'text-white/75' : 'text-text-muted'
           )}
         >
           {hint}

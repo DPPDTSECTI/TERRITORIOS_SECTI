@@ -5,8 +5,9 @@ const buttonBaseClass =
   'rounded-control font-medium inline-flex items-center justify-center gap-2 transition-all duration-120 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none select-none';
 
 const buttonVariants = {
-  primary: 'bg-primary-600 hover:bg-primary-700 text-white shadow-xs',
-  secondary: 'bg-surface hover:bg-surface-soft text-text-primary border border-border shadow-xs',
+  primary: 'bg-carbon hover:bg-carbon-hover text-white dark:bg-primary-600 dark:hover:bg-primary-700 shadow-xs',
+  royal: 'bg-primary-600 hover:bg-primary-700 text-white shadow-xs',
+  secondary: 'bg-neutral-200/70 hover:bg-neutral-200 text-text-primary dark:bg-neutral-800 dark:hover:bg-neutral-700 border border-neutral-300/50 dark:border-neutral-700/50 shadow-xs',
   ghost: 'bg-transparent hover:bg-surface-soft text-text-secondary hover:text-text-primary',
   danger: 'bg-danger-600 hover:bg-danger-700 text-white shadow-xs',
 };

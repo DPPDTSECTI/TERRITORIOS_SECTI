@@ -2,11 +2,12 @@ import React, { forwardRef } from 'react';
 import { cn } from '../../lib/cn';
 
 const cardVariants = {
-  default: 'bg-surface border border-border rounded-card shadow-card',
+  default: 'bg-surface border border-border/60 rounded-card shadow-card',
   interactive:
-    'bg-surface border border-border rounded-card shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border-strong cursor-pointer',
-  sunken: 'bg-surface-sunken border border-border/60 rounded-card',
-  brand: 'bg-gradient-brand text-white border border-primary-700/40 rounded-card shadow-card',
+    'bg-surface border border-border/60 rounded-card shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border cursor-pointer',
+  sunken: 'bg-surface-sunken border border-border/50 rounded-subcard',
+  subcard: 'bg-surface-soft border border-neutral-200/70 dark:border-neutral-700/60 rounded-subcard p-4',
+  brand: 'bg-gradient-brand text-white border border-primary-500/40 rounded-card shadow-kpi-blue',
 };
 
 /**

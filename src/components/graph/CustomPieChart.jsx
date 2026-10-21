@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { PieChart, Pie, Sector, Tooltip } from 'recharts';
+import React, { useState, useRef, useEffect } from 'react';
+import { PieChart, Pie, Sector } from 'recharts';
 import { X } from 'lucide-react';
-import { useChartTheme, ChartTooltip } from './chartTheme';
+import { useChartTheme } from './chartTheme';
 
 /**
  * Componente genérico de Pizza com ranking lateral integrado e cores do Design System.
@@ -21,17 +21,24 @@ export default function CustomPieChart({
   cardClassName = '',
   children
 }) {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [hoveredItem, setHoveredItem] = useState(null);
   const hoverTimeoutRef = useRef(null);
   const chartTheme = useChartTheme();
 
-  const handleMouseEnter = (index) => {
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
+
+  const handleMouseEnter = (item) => {
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setHoveredIndex(index);
+    if (item) setHoveredItem(item);
   };
 
   const handleMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => setHoveredIndex(null), 150);
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setHoveredItem(null), 80);
   };
 
   const normalizedData = data.map((d, index) => ({
@@ -42,8 +49,11 @@ export default function CustomPieChart({
   }));
 
   const totalValue = normalizedData.reduce((acc, item) => acc + item[valueKey], 0);
-  const displayValue = hoveredIndex !== null && normalizedData[hoveredIndex] ? normalizedData[hoveredIndex][valueKey] : totalValue;
-  const displayLabel = hoveredIndex !== null && normalizedData[hoveredIndex] ? normalizedData[hoveredIndex][labelKey] : defaultCenterLabel;
+  const displayValue = hoveredItem ? hoveredItem[valueKey] : totalValue;
+  const displayLabel = hoveredItem ? hoveredItem[labelKey] : defaultCenterLabel;
+  const hoveredPct = hoveredItem && totalValue > 0
+    ? Math.round((hoveredItem[valueKey] / totalValue) * 100)
+    : null;
 
   const isEmpty = normalizedData.length === 0 || totalValue === 0;
   const chartData = !isEmpty ? normalizedData : [{ [valueKey]: 1, fill: chartTheme.grid, [labelKey]: 'Sem dados' }];
@@ -75,82 +85,109 @@ export default function CustomPieChart({
         </div>
       ) : (
         /* CONTEÚDO */
-        <div className="flex flex-row items-center justify-between flex-1 gap-3 min-h-0">
+        <div className="flex flex-row items-center justify-between flex-1 gap-4 sm:gap-5 min-h-0">
 
           {/* GRÁFICO */}
-          <div className="flex flex-col items-center justify-center w-[130px] shrink-0">
-            <div className="relative">
-              <PieChart width={130} height={130}>
-                <Tooltip content={<ChartTooltip />} />
+          <div className="flex flex-col items-center justify-center w-[170px] shrink-0">
+            <div
+              onMouseLeave={handleMouseLeave}
+              className="relative flex items-center justify-center shrink-0 w-[136px] h-[136px]"
+            >
+              <PieChart width={136} height={136}>
                 <Pie
                   isAnimationActive={false}
                   data={chartData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={26}
-                  outerRadius={58}
-                  paddingAngle={3}
-                  cornerRadius={4}
+                  innerRadius={36}
+                  outerRadius={62}
+                  paddingAngle={1.5}
                   dataKey={valueKey}
                   nameKey={labelKey}
-                  stroke="none"
-                  minAngle={12}
+                  stroke={chartTheme.surface}
+                  strokeWidth={1.5}
+                  minAngle={6}
+                  onMouseEnter={(entry) => handleMouseEnter(entry?.payload || entry)}
+                  onClick={(entry) => handleMouseEnter(entry?.payload || entry)}
                   shape={(props) => {
-                    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, cornerRadius, index } = props;
-                    const isHovered = hoveredIndex === index;
-                    const isOtherHovered = hoveredIndex !== null && !isHovered;
+                    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props;
+                    const itemData = payload;
+                    const isHovered = Boolean(hoveredItem && itemData && hoveredItem[labelKey] === itemData[labelKey]);
+                    const isOtherHovered = Boolean(hoveredItem && !isHovered);
+
+                    // Expansão geométrica suave do raio externo em hover (sem scale transform que quebra coordenadas)
+                    const currentOuter = isHovered ? outerRadius + 3 : outerRadius;
+                    const currentInner = innerRadius;
+
+                    // Raio de borda seguro baseado na abertura angular para evitar distorção ou inversão de arco
+                    const angleDelta = Math.abs(endAngle - startAngle);
+                    const safeCornerRadius = Math.max(0, Math.min(2, angleDelta * 0.2));
 
                     return (
-                      <g
+                      <Sector
+                        cx={cx}
+                        cy={cy}
+                        innerRadius={currentInner}
+                        outerRadius={currentOuter}
+                        startAngle={startAngle}
+                        endAngle={endAngle}
+                        fill={fill}
+                        stroke={chartTheme.surface}
+                        strokeWidth={1.5}
+                        cornerRadius={safeCornerRadius}
+                        className="cursor-pointer"
                         style={{
-                          transform: isHovered ? 'scale(1.06)' : 'scale(1)',
-                          transformOrigin: `${cx}px ${cy}px`,
-                          transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)'
+                          opacity: isOtherHovered ? 0.35 : 1,
+                          transition: 'opacity 0.15s ease-out'
                         }}
-                      >
-                        <Sector
-                          cx={cx}
-                          cy={cy}
-                          innerRadius={innerRadius}
-                          outerRadius={outerRadius}
-                          startAngle={startAngle}
-                          endAngle={endAngle}
-                          fill={fill}
-                          cornerRadius={cornerRadius}
-                          className="cursor-pointer transition-opacity duration-300 ease-in-out"
-                          style={{ opacity: isOtherHovered ? 0.3 : 1 }}
-                          onMouseEnter={() => handleMouseEnter(index)}
-                          onMouseLeave={handleMouseLeave}
-                        />
-                      </g>
+                        onMouseEnter={() => handleMouseEnter(itemData)}
+                        onClick={() => handleMouseEnter(itemData)}
+                      />
                     );
                   }}
                 />
               </PieChart>
+
+              {/* VALOR NO CENTRO DO GRÁFICO (PARTE VAZIA DO MEIO) */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-10 transition-all duration-200">
+                <span className="text-text-primary font-bold text-xl sm:text-2xl tnum leading-none tracking-tight">
+                  {displayValue.toLocaleString('pt-BR')}
+                </span>
+                {hoveredPct !== null && (
+                  <span className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 tnum leading-none mt-1">
+                    {hoveredPct}%
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center text-center w-full mt-2 min-h-[38px]">
-              <span className="text-text-primary font-bold text-kpi tnum leading-none mb-0.5 tracking-tight transition-all duration-200">
-                {displayValue.toLocaleString('pt-BR')}
-              </span>
-              <span className="text-text-muted font-normal text-caption leading-tight transition-all duration-200 px-1 w-full truncate">
+            {/* LEGENDA ABAIXO DO GRÁFICO (ALTURA FIXA E ALINHADA - NUNCA REDIMENSIONA) */}
+            <div
+              title={displayLabel}
+              className="w-full h-[52px] shrink-0 mt-2 bg-surface-sunken border border-border/70 rounded-xl px-2.5 py-1.5 flex items-center justify-center text-center shadow-2xs transition-colors duration-150 overflow-hidden"
+            >
+              <span
+                className={`text-text-muted font-medium text-center leading-[14px] transition-all duration-150 break-words line-clamp-3 select-none ${
+                  displayLabel.length > 30 ? 'text-[10.5px] leading-[13px]' : displayLabel.length > 20 ? 'text-[11px] leading-[14px]' : 'text-caption'
+                }`}
+              >
                 {displayLabel}
               </span>
             </div>
           </div>
 
-          {/* LISTA LATERAL */}
+          {/* LISTA LATERAL (RANKING) */}
           {children ? (
             children
           ) : (
-            <div className="flex flex-col flex-1 pl-3 border-l border-border/70 justify-center h-full py-0.5 min-w-0">
-              <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col flex-1 justify-between h-full py-0.5 min-w-0">
+              <div className="flex items-center justify-between mb-1.5 shrink-0">
                 <h3 className="text-text-muted font-medium text-caption truncate">
                   {listTitle}
                 </h3>
               </div>
 
-              <div className="flex flex-col gap-2.5 w-full">
+              <div className="flex flex-col justify-between flex-1 gap-2 w-full min-h-0">
                 {topList.slice(0, 5).map((item, idx) => {
                   const maxCount = Math.max(...topList.slice(0, 5).map(t => Number(t.count) || 0), 1);
                   const count = Number(item.count) || 0;
@@ -161,46 +198,46 @@ export default function CustomPieChart({
                   const isSemi = isSemiarido || !!badge;
 
                   const rankStyle = isFirst
-                    ? (isSemi ? 'bg-accent-600 text-white shadow-xs' : 'bg-primary-600 text-white shadow-xs')
-                    : (isSemi ? 'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100' : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60');
+                    ? (isSemi ? 'bg-accent-600 text-white shadow-xs font-bold' : 'bg-primary-600 text-white shadow-xs font-bold')
+                    : (isSemi ? 'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-200/60 font-semibold' : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60 font-semibold');
 
                   const fillColor = isFirst
                     ? (isSemi ? 'bg-accent-500' : 'bg-primary-600')
                     : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
                   const textStyle = isFirst
-                    ? 'font-medium text-white'
-                    : (isSemi ? 'font-medium text-accent-900 dark:text-accent-200' : 'font-medium text-text-primary');
+                    ? 'font-semibold text-white drop-shadow-xs'
+                    : (isSemi ? 'font-medium text-accent-950 dark:text-accent-100' : 'font-medium text-text-primary');
 
                   const valueStyle = isFirst
-                    ? (isSemi ? 'bg-accent-100 text-accent-800 dark:bg-accent-950 dark:text-accent-200 border border-accent-200/60' : 'bg-primary-100 text-primary-800 dark:bg-primary-950 dark:text-primary-200 border border-primary-200/60')
-                    : (isSemi ? 'bg-surface-sunken text-accent-800 dark:text-accent-300 border border-border' : 'bg-surface-sunken text-text-secondary border border-border');
+                    ? (isSemi ? 'bg-accent-600 text-white shadow-xs font-bold' : 'bg-primary-600 text-white shadow-xs font-bold')
+                    : (isSemi ? 'bg-surface-sunken text-accent-800 dark:text-accent-300 border border-border/80 font-semibold' : 'bg-surface-sunken text-text-primary dark:text-zinc-200 border border-border/80 font-semibold');
 
                   return (
                     <div
                       key={idx}
                       title={`${item.name}: ${count} ativos`}
-                      className="flex items-center gap-2 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
+                      className="flex items-center gap-2 sm:gap-2.5 w-full min-w-0 transition-opacity duration-200 hover:opacity-90 cursor-default"
                     >
                       {/* RANK */}
-                      <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${rankStyle}`}>
+                      <div className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full shrink-0 flex items-center justify-center text-caption tabular-nums leading-none shadow-2xs ${rankStyle}`}>
                         {rankStr}
                       </div>
 
                       {/* BARRA: TRACK + FILL + NOME */}
-                      <div className={`relative flex-1 h-[24px] rounded-full ${isSemi ? 'bg-accent-50/50 dark:bg-accent-950/30 border border-accent-200/40 dark:border-accent-800/40' : 'bg-surface-sunken border border-border/60'} overflow-hidden min-w-0 flex items-center`}>
+                      <div className={`relative flex-1 h-[26px] sm:h-[28px] rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
                         <div
                           className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
                           style={{ width: `${percentOfMax}%` }}
                         />
 
-                        <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
+                        <span className={`absolute left-3 right-3 text-caption truncate leading-none pointer-events-none select-none z-10 tracking-tight ${textStyle}`}>
                           {item.name}
                         </span>
                       </div>
 
                       {/* VALOR PILL */}
-                      <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tnum leading-none ${valueStyle}`}>
+                      <div className={`h-[26px] sm:h-[28px] min-w-[38px] sm:min-w-[44px] px-2.5 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tabular-nums leading-none shadow-2xs ${valueStyle}`}>
                         {count.toLocaleString('pt-BR')}
                       </div>
                     </div>
@@ -209,7 +246,6 @@ export default function CustomPieChart({
               </div>
             </div>
           )}
-
         </div>
       )}
     </div>

@@ -1436,16 +1436,6 @@ export default function RelatorioPage() {
                       >
                         <Icon className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate">{opt.label}</span>
-                        {count !== null && (
-                          <span
-                            className={`text-caption px-1.5 py-0.5 rounded-full font-medium tnum leading-none shrink-0 ${isActive
-                                ? 'bg-white/20 text-white'
-                                : 'bg-surface border border-border text-text-muted'
-                              }`}
-                          >
-                            {count}
-                          </span>
-                        )}
                       </button>
                     );
                   })}

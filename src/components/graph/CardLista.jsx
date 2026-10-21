@@ -105,13 +105,6 @@ function CardLista({
                 >
                   {TabIcon && <TabIcon size={16} />}
                   <span>{tab.label}</span>
-                  {tab.count !== undefined && (
-                    <span className={`text-caption tnum px-1.5 py-0.5 rounded-full leading-none ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-surface text-text-muted border border-border/40'
-                    }`}>
-                      {tab.count}
-                    </span>
-                  )}
                 </button>
               );
             })}

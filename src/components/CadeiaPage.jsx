@@ -736,13 +736,6 @@ export default function CadeiaPage() {
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Cadeias Produtivas & IGs
                         </h1>
-                        <Badge
-                            variant={filtroSemiarido ? 'warning' : 'success'}
-                            icon={<Award size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-success-600'} />}
-                            className="text-caption font-medium px-2.5 py-1"
-                        >
-                            Arranjos & Indicações Geográficas
-                        </Badge>
                     </div>
                     <p className="text-body-sm text-text-secondary mt-1 font-normal">
                         Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
@@ -754,15 +747,17 @@ export default function CadeiaPage() {
             </div>
 
             {/* GRID DE KPIS */}
-            <motion.div
-                variants={staggerContainer(0.04)}
-                initial="initial"
-                animate="animate"
-                className="tour-kpis w-full relative z-10 shrink-0 min-w-0"
-            >
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0">
+            <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
+                <motion.div
+                    variants={staggerContainer(0.04)}
+                    initial="initial"
+                    animate="animate"
+                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0"
+                >
                     {loadingStats ? (
-                        <KpiSkeleton count={5} />
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <KpiSkeleton key={i} />
+                        ))
                     ) : (
                         kpis.map((kpi, index) => {
                             const isHero = index === 0;
@@ -773,48 +768,70 @@ export default function CadeiaPage() {
                                     variants={fadeUp}
                                     className="h-full"
                                 >
-                                    <Card
-                                        variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
+                                    <div
                                         title={kpi.tooltip || kpi.label}
-                                        className="p-4 flex flex-col justify-between min-h-[92px] min-w-0 h-full transition-all duration-300 hover:shadow-card-elevated"
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-all duration-300 select-none ${isHero
+                                            ? (filtroSemiarido
+                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-card shadow-amber-500/20'
+                                                : 'bg-gradient-brand text-white border border-primary-500/40 shadow-kpi-blue')
+                                            : (filtroSemiarido
+                                                ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary shadow-card hover:shadow-card-hover'
+                                                : 'bg-surface-soft border border-border/70 text-text-primary shadow-card hover:shadow-card-hover hover:border-border')
+                                            }`}
                                     >
-                                        {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                        <div className="flex items-center gap-2 w-full min-w-0">
-                                            <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
-                                            <span
-                                                className={`text-caption font-medium truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
+                                        {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
+                                        <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                                <span
+                                                    className={`text-[13px] font-medium leading-tight truncate ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                                                        }`}
+                                                    title={kpi.label}
+                                                >
+                                                    {kpi.label}
+                                                </span>
+                                            </div>
+
+                                            {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
+                                            <div
+                                                className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center shadow-2xs ${isHero
+                                                    ? 'bg-white/15 text-white border border-white/20'
+                                                    : 'bg-surface border border-border/80 text-text-secondary'
                                                     }`}
-                                                title={kpi.label}
                                             >
-                                                {kpi.label}
-                                            </span>
+                                                <kpi.icon size={15} strokeWidth={2} />
+                                            </div>
                                         </div>
 
-                                        {/* LINHA INFERIOR: NÚMERO */}
-                                        <div className="flex items-baseline w-full justify-between">
-                                            <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${isHero ? 'text-white' : 'text-text-primary'
-                                                    }`}>
+                                        {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + BADGE */}
+                                        <div className="flex items-baseline w-full justify-between min-w-0 pt-0.5">
+                                            <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                                                <span
+                                                    className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
+                                                        }`}
+                                                >
                                                     {kpi.value}
                                                 </span>
+
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold truncate ${isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                        className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                                                            ? 'bg-white/15 text-white border border-white/20'
+                                                            : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                                                             }`}
                                                     >
-                                                        ({kpi.percent})
+                                                        {kpi.percent}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
-                                    </Card>
+                                    </div>
                                 </motion.div>
                             );
                         })
                     )}
-                </div>
-            </motion.div>
+                </motion.div>
+            </div>
 
             {/* GRID PRINCIPAL: MAPA (40% ou Expandido) + CARDLISTA ou KPIS VERTICAIS */}
             <motion.div
@@ -860,12 +877,6 @@ export default function CadeiaPage() {
                                 <span className="text-body-sm font-semibold text-text-primary truncate">
                                     Arranjos & IGs
                                 </span>
-                                <Badge
-                                    variant={filtroSemiarido ? 'warning' : 'primary'}
-                                    className="text-caption font-medium tnum"
-                                >
-                                    {compactCadeiasList.length}
-                                </Badge>
                             </div>
                             {selectedCadeia && (
                                 <Button
@@ -986,14 +997,12 @@ export default function CadeiaPage() {
                                     {
                                         id: 'catalogo',
                                         label: 'Catálogo',
-                                        icon: <GitPullRequest size={15} />,
-                                        count: filteredCadeias.length
+                                        icon: <GitPullRequest size={15} />
                                     },
                                     {
                                         id: 'segmentos',
                                         label: 'Segmentos',
-                                        icon: <Filter size={15} />,
-                                        count: segmentStats.length
+                                        icon: <Filter size={15} />
                                     },
                                     {
                                         id: 'ranking',
@@ -1030,7 +1039,6 @@ export default function CadeiaPage() {
                                 <Chip
                                     selected={selectedTipo === 'todos'}
                                     onClick={() => setSelectedTipo('todos')}
-                                    count={tipoStats.todos}
                                     variant={selectedTipo === 'todos' ? (filtroSemiarido ? 'warning' : 'primary') : 'neutral'}
                                     size="sm"
                                 >
@@ -1041,7 +1049,6 @@ export default function CadeiaPage() {
                                         key={tipo}
                                         selected={selectedTipo === tipo}
                                         onClick={() => setSelectedTipo(selectedTipo === tipo ? 'todos' : tipo)}
-                                        count={tipoStats[tipo] || 0}
                                         variant={selectedTipo === tipo ? (filtroSemiarido ? 'warning' : getTipoBadgeVariant(tipo)) : 'neutral'}
                                         size="sm"
                                     >
@@ -1074,16 +1081,6 @@ export default function CadeiaPage() {
                                         {territoryName} ×
                                     </Chip>
                                 )}
-                                {activeFiltersCount > 0 && (
-                                    <Button
-                                        variant="ghost"
-                                        size="xs"
-                                        onClick={handleClearAllFilters}
-                                        className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-caption font-semibold"
-                                    >
-                                        Limpar filtros ({activeFiltersCount})
-                                    </Button>
-                                )}
                             </div>
                         </div>
 
@@ -1097,12 +1094,6 @@ export default function CadeiaPage() {
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
                                             </h3>
-                                            <Badge
-                                                variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                className="tnum"
-                                            >
-                                                {filteredCadeias.length} {filteredCadeias.length === 1 ? 'resultado' : 'resultados'}
-                                            </Badge>
                                         </div>
                                         {selectedTerritory && (
                                             <Badge
@@ -1269,9 +1260,6 @@ export default function CadeiaPage() {
                                             </h3>
                                             <p className="text-caption text-text-secondary font-medium">Distribuição por vocação produtiva</p>
                                         </div>
-                                        <Badge variant="neutral" className="tnum">
-                                            {segmentStats.length} segmentos
-                                        </Badge>
                                     </div>
 
                                     {/* LEGENDA DE SEGMENTOS: TOP 7 DESTACADOS + DEMAIS SEGMENTOS */}
@@ -1367,9 +1355,6 @@ export default function CadeiaPage() {
                                             </h3>
                                             <p className="text-caption text-text-secondary font-medium">Densidade de arranjos produtivos por sede oficial</p>
                                         </div>
-                                        <Badge variant="neutral" className="tnum">
-                                            {selectedTerritory ? `${municipalityRanking.length} sedes` : `${territoryRanking.length} territórios`}
-                                        </Badge>
                                     </div>
 
                                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0 w-full">

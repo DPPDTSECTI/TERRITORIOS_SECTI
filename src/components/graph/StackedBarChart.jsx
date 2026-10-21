@@ -90,11 +90,11 @@ function StackedBarChart({
 
         {/* BADGE TOP 10 OU BOTÕES DE TOGGLE */}
         {allowToggleView ? (
-          <div className="flex items-center bg-surface-sunken p-0.5 rounded-control border border-border">
+          <div className="flex items-center bg-surface-sunken p-0.5 rounded-full border border-border">
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setMinimizedFilter('acima'); }}
-              className={`px-2.5 py-1 text-caption font-semibold rounded-[8px] transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'acima'
+              className={`px-2.5 py-1 text-caption font-semibold rounded-full transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'acima'
                 ? 'bg-primary-600 text-white shadow-xs'
                 : 'text-text-secondary hover:text-text-primary'
                 }`}
@@ -105,7 +105,7 @@ function StackedBarChart({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setMinimizedFilter('abaixo'); }}
-              className={`px-2.5 py-1 text-caption font-semibold rounded-[8px] transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'abaixo'
+              className={`px-2.5 py-1 text-caption font-semibold rounded-full transition-all flex items-center gap-1 cursor-pointer ${minimizedFilter === 'abaixo'
                 ? 'bg-primary-900 text-white shadow-xs'
                 : 'text-text-secondary hover:text-text-primary'
                 }`}

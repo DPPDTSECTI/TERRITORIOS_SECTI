@@ -4,80 +4,84 @@
 
 @layer base {
   :root {
-    /* PRIMARY (Azul Institucional SECTI) */
-    --color-primary-950: 15 39 64;
-    --color-primary-900: 21 55 90;
-    --color-primary-800: 27 74 115;
-    --color-primary-700: 33 95 148;
-    --color-primary-600: 37 112 184;
-    --color-primary-500: 54 132 207;
-    --color-primary-400: 104 168 224;
-    --color-primary-300: 162 203 236;
-    --color-primary-200: 210 230 247;
-    --color-primary-100: 233 243 251;
-    --color-primary-50: 244 249 253;
+    /* PRIMARY (Royal Blue SaaS Accent - 10%) */
+    --color-primary-950: 23 37 84;     /* #172554 */
+    --color-primary-900: 30 58 138;    /* #1E3A8A */
+    --color-primary-800: 30 64 175;    /* #1E40AF */
+    --color-primary-700: 29 78 216;    /* #1D4ED8 */
+    --color-primary-600: 37 99 235;    /* #2563EB - Royal Blue */
+    --color-primary-500: 59 130 246;   /* #3B82F6 */
+    --color-primary-400: 96 165 250;   /* #60A5FA */
+    --color-primary-300: 147 197 253;  /* #93C5FD */
+    --color-primary-200: 191 219 254;  /* #BFDBFE */
+    --color-primary-100: 219 234 254;  /* #DBEAFE - Soft Blue */
+    --color-primary-50: 239 246 255;   /* #EFF6FF */
 
-    /* NEUTRALS (Frios com contraste AA garantido) */
-    --color-neutral-950: 15 23 42;
-    --color-neutral-900: 24 34 50;
-    --color-neutral-800: 45 58 78;
-    --color-neutral-700: 67 81 104;
-    --color-neutral-600: 92 108 132;
-    --color-neutral-500: 128 143 164;
-    --color-neutral-400: 163 176 194;
-    --color-neutral-300: 201 211 224;
-    --color-neutral-200: 224 231 239;
-    --color-neutral-100: 238 242 247;
-    --color-neutral-50: 247 249 252;
+    /* CARBON BLACK (Contraste Forte) */
+    --color-carbon: 17 24 39;          /* #111827 - Carbon Black */
+    --color-carbon-hover: 30 41 59;    /* #1E293B */
+
+    /* NEUTRALS (Escala de Cinzas Quentes/Neutros) */
+    --color-neutral-950: 9 13 22;      /* #090D16 - Texto Principal */
+    --color-neutral-900: 17 24 39;     /* #111827 */
+    --color-neutral-800: 30 41 59;     /* #1E293B */
+    --color-neutral-700: 51 65 85;     /* #334155 */
+    --color-neutral-600: 100 116 139;  /* #64748B - Texto Secundário */
+    --color-neutral-500: 148 163 184;  /* #94A3B8 - Texto Muted */
+    --color-neutral-400: 203 213 225;  /* #CBD5E1 */
+    --color-neutral-300: 226 232 240;  /* #E2E8F0 - Bordas / Divisores */
+    --color-neutral-200: 241 245 249;  /* #F1F5F9 - Borda sutil interna */
+    --color-neutral-100: 248 250 252;  /* #F8FAFC - Superfície secundária */
+    --color-neutral-50: 244 245 247;   /* #F4F5F7 - Canvas geral (60%) */
     --color-white: 255 255 255;
 
-    /* SURFACES */
-    --color-background: 244 247 251;
-    --color-surface: 255 255 255;
+    /* SURFACES (Proporção 60-30-10) */
+    --color-background: 244 245 247;   /* #F4F5F7 - Canvas Global (60%) */
+    --color-surface: 255 255 255;      /* #FFFFFF - Cards Principais (30%) */
     --color-surface-raised: 255 255 255;
-    --color-surface-soft: 248 250 253;
-    --color-surface-sunken: 238 243 248;
+    --color-surface-soft: 248 250 252; /* #F8FAFC - Sub-cards internos */
+    --color-surface-sunken: 248 250 252;
 
     /* SEMANTIC: SUCCESS */
     --color-success-950: 6 46 30;
     --color-success-900: 14 68 45;
     --color-success-800: 20 90 60;
-    --color-success-700: 28 115 80;
-    --color-success-600: 38 138 98;
-    --color-success-500: 16 185 129;
-    --color-success-400: 52 211 153;
-    --color-success-300: 110 231 183;
-    --color-success-200: 167 243 208;
-    --color-success-100: 228 245 236;
-    --color-success-50: 242 250 246;
+    --color-success-700: 21 128 61;    /* #15803D */
+    --color-success-600: 22 163 74;
+    --color-success-500: 34 197 94;
+    --color-success-400: 74 222 128;
+    --color-success-300: 134 239 172;
+    --color-success-200: 187 247 208;  /* #BBF7D0 */
+    --color-success-100: 220 252 231;  /* #DCFCE7 */
+    --color-success-50: 240 253 244;
 
     /* SEMANTIC: WARNING */
     --color-warning-950: 54 26 6;
     --color-warning-900: 82 40 10;
     --color-warning-800: 120 58 14;
-    --color-warning-700: 161 98 7;
-    --color-warning-600: 190 124 8;
+    --color-warning-700: 180 83 9;     /* #B45309 */
+    --color-warning-600: 217 119 6;
     --color-warning-500: 245 158 11;
     --color-warning-400: 251 191 36;
     --color-warning-300: 252 211 77;
     --color-warning-200: 253 230 138;
-    --color-warning-100: 254 243 199;
-    --color-warning-50: 255 250 235;
+    --color-warning-100: 254 243 199;  /* #FEF3C7 */
+    --color-warning-50: 255 251 235;
 
     /* SEMANTIC: DANGER */
     --color-danger-950: 58 14 14;
     --color-danger-900: 88 22 22;
     --color-danger-800: 127 29 29;
-    --color-danger-700: 175 48 48;
-    --color-danger-600: 202 64 64;
+    --color-danger-700: 185 28 28;     /* #B91C1C */
+    --color-danger-600: 220 38 38;
     --color-danger-500: 239 68 68;
     --color-danger-400: 248 113 113;
     --color-danger-300: 252 165 165;
     --color-danger-200: 254 202 202;
-    --color-danger-100: 254 226 226;
+    --color-danger-100: 254 226 226;  /* #FEE2E2 */
     --color-danger-50: 254 242 242;
 
-    /* ACCENT (Dourado / Âmbar Bahia) */
+    /* ACCENT (Dourado / Âmbar Bahia mantido para tags de semiárido) */
     --color-accent-950: 52 30 6;
     --color-accent-900: 78 46 10;
     --color-accent-800: 115 68 15;
@@ -91,91 +95,96 @@
     --color-accent-50: 253 249 237;
 
     /* TEXT, BORDERS & RING */
-    --color-text-primary: var(--color-neutral-900);
-    --color-text-secondary: var(--color-neutral-700);
-    --color-text-muted: var(--color-neutral-600);
-    --color-border: var(--color-neutral-200);
-    --color-border-strong: var(--color-neutral-300);
-    --color-ring: var(--color-primary-500);
+    --color-text-primary: 9 13 22;     /* #090D16 */
+    --color-text-secondary: 100 116 139; /* #64748B */
+    --color-text-muted: 148 163 184;   /* #94A3B8 */
+    --color-border: 226 232 240;       /* #E2E8F0 */
+    --color-border-strong: 203 213 225;/* #CBD5E1 */
+    --color-ring: 37 99 235;           /* #2563EB */
 
-    /* BRAND GRADIENT */
-    --gradient-brand: linear-gradient(135deg, rgb(21 55 90) 0%, rgb(33 95 148) 100%);
+    /* BRAND GRADIENT (Card de Destaque KPI Azul) */
+    --gradient-brand: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
 
-    /* SHADOWS (Tema Claro) */
-    --shadow-xs: 0 1px 2px rgba(16, 42, 67, 0.05);
-    --shadow-card: 0 1px 3px rgba(16, 42, 67, 0.04), 0 4px 16px rgba(16, 42, 67, 0.04);
-    --shadow-card-hover: 0 8px 24px rgba(16, 42, 67, 0.08), 0 2px 6px rgba(16, 42, 67, 0.04);
-    --shadow-float: 0 12px 32px rgba(16, 42, 67, 0.12), 0 2px 8px rgba(16, 42, 67, 0.06);
+    /* SHADOWS BENTO GRID (Tema Claro) */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    --shadow-card-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.08);
+    --shadow-kpi-blue: 0 10px 25px -5px rgba(37, 99, 235, 0.30);
+    --shadow-float: 0 16px 36px -4px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.04);
 
-    /* DATA VISUALIZATION (8 cores amigáveis a daltonismo) */
-    --color-chart-1: 47 117 181;
-    --color-chart-2: 20 150 160;
-    --color-chart-3: 196 146 36;
-    --color-chart-4: 124 108 196;
-    --color-chart-5: 92 155 200;
-    --color-chart-6: 217 108 90;
-    --color-chart-7: 76 140 110;
-    --color-chart-8: 123 138 153;
+    /* DATA VISUALIZATION (Bento Grid SaaS: Alto Contraste em Cards Brancos) */
+    --color-chart-1: 37 99 235;        /* #2563EB - Royal Blue (Hero) */
+    --color-chart-2: 15 23 42;         /* #0F172A - Carbon Navy */
+    --color-chart-3: 2 132 199;        /* #0284C7 - Ocean Cyan 600 */
+    --color-chart-4: 71 85 105;        /* #475569 - Slate 600 */
+    --color-chart-5: 67 56 202;        /* #4338CA - Deep Indigo 700 */
+    --color-chart-6: 13 148 136;       /* #0D9488 - Teal 600 */
+    --color-chart-7: 29 78 216;        /* #1D4ED8 - Cobalt Blue 700 */
+    --color-chart-8: 100 116 139;      /* #64748B - Slate 500 */
 
-    /* MAPS */
-    --color-map-1: 21 55 90;
-    --color-map-2: 33 95 148;
-    --color-map-3: 54 132 207;
-    --color-map-4: 104 168 224;
-    --color-map-5: 162 203 236;
-    --color-map-neutral: 232 237 243;
+    /* MAPS COROPLÉTICO (Escala de Azul: de claro a profundo) */
+    --color-map-1: 30 58 138;         /* #1E3A8A - Nível 1: Azul profundo (máximo) */
+    --color-map-2: 37 99 235;         /* #2563EB - Nível 2: Azul Royal */
+    --color-map-3: 96 165 250;        /* #60A5FA - Nível 3: Azul Médio */
+    --color-map-4: 147 197 253;       /* #93C5FD - Nível 4: Azul Claro */
+    --color-map-5: 219 234 254;       /* #DBEAFE - Nível 5: Azul Ultra Claro (mínimo) */
+    --color-map-neutral: 241 245 249; /* #F1F5F9 - Sem dados / neutro */
 
     /* ASSET TYPES (13 Tipologias CT&I) */
-    --color-asset-privada: 56 189 248;       /* #38BDF8 - Sky */
-    --color-asset-estadual: 37 99 235;       /* #2563EB - Royal Blue */
-    --color-asset-federal: 30 58 138;        /* #1E3A8A - Navy / Indigo */
-    --color-asset-if: 2 132 199;             /* #0284C7 - Ocean Blue */
-    --color-asset-aceleradora: 16 185 129;   /* #10B981 - Emerald */
-    --color-asset-dinamizador: 6 182 212;    /* #06B6D4 - Turquoise */
-    --color-asset-incubadora: 99 102 241;    /* #6366F1 - Indigo */
-    --color-asset-parque: 15 23 42;          /* #0F172A - Midnight Navy */
-    --color-asset-ict: 13 148 136;           /* #0D9488 - Teal */
-    --color-asset-hub: 139 92 246;           /* #8B5CF6 - Violet */
-    --color-asset-centro-pd: 245 158 11;     /* #F59E0B - Amber */
-    --color-asset-investimento: 236 72 153;  /* #EC4899 - Magenta */
-    --color-asset-pesquisa: 100 116 139;     /* #64748B - Slate */
-    --color-asset-outro: 148 163 184;        /* #94A3B8 - Neutral Slate */
+    --color-asset-privada: 96 165 250;      /* #60A5FA */
+    --color-asset-estadual: 37 99 235;      /* #2563EB - Royal Blue */
+    --color-asset-federal: 30 58 138;       /* #1E3A8A - Navy */
+    --color-asset-if: 2 132 199;            /* #0284C7 */
+    --color-asset-aceleradora: 16 185 129;  /* #10B981 */
+    --color-asset-dinamizador: 6 182 212;   /* #06B6D4 */
+    --color-asset-incubadora: 99 102 241;   /* #6366F1 */
+    --color-asset-parque: 17 24 39;         /* #111827 - Carbon Black */
+    --color-asset-ict: 13 148 136;          /* #0D9488 */
+    --color-asset-hub: 139 92 246;          /* #8B5CF6 */
+    --color-asset-centro-pd: 245 158 11;    /* #F59E0B */
+    --color-asset-investimento: 236 72 153; /* #EC4899 */
+    --color-asset-pesquisa: 100 116 139;    /* #64748B */
+    --color-asset-outro: 148 163 184;       /* #94A3B8 */
   }
 
   .dark {
-    /* PRIMARY */
-    --color-primary-950: 10 24 44;
-    --color-primary-900: 16 38 68;
-    --color-primary-800: 24 55 96;
-    --color-primary-700: 35 80 136;
-    --color-primary-600: 54 126 196;
-    --color-primary-500: 74 148 216;
-    --color-primary-400: 108 172 228;
-    --color-primary-300: 152 198 238;
-    --color-primary-200: 42 85 140;
-    --color-primary-100: 22 48 82;
-    --color-primary-50: 14 32 58;
+    /* PRIMARY (Royal Blue em destaque no escuro) */
+    --color-primary-950: 15 23 42;
+    --color-primary-900: 23 37 84;
+    --color-primary-800: 30 58 138;
+    --color-primary-700: 30 64 175;
+    --color-primary-600: 37 99 235;    /* #2563EB */
+    --color-primary-500: 59 130 246;   /* #3B82F6 */
+    --color-primary-400: 96 165 250;   /* #60A5FA */
+    --color-primary-300: 147 197 253;
+    --color-primary-200: 30 58 138;
+    --color-primary-100: 23 37 84;
+    --color-primary-50: 15 23 42;
+
+    /* CARBON BLACK (Superfície Primária Escura) */
+    --color-carbon: 17 24 39;          /* #111827 */
+    --color-carbon-hover: 30 41 59;    /* #1E293B */
 
     /* NEUTRALS */
     --color-neutral-950: 248 250 252;
     --color-neutral-900: 241 245 249;
     --color-neutral-800: 226 232 240;
     --color-neutral-700: 203 213 225;
-    --color-neutral-600: 156 171 192;
-    --color-neutral-500: 112 128 150;
-    --color-neutral-400: 75 90 112;
-    --color-neutral-300: 51 65 85;
-    --color-neutral-200: 33 45 66;
-    --color-neutral-100: 24 34 54;
-    --color-neutral-50: 14 20 32;
-    --color-white: 17 25 41;
+    --color-neutral-600: 148 163 184;  /* #94A3B8 */
+    --color-neutral-500: 100 116 139;  /* #64748B */
+    --color-neutral-400: 71 85 105;
+    --color-neutral-300: 51 65 85;     /* #334155 */
+    --color-neutral-200: 30 41 59;     /* #1E293B */
+    --color-neutral-100: 17 24 39;     /* #111827 */
+    --color-neutral-50: 9 13 22;       /* #090D16 */
+    --color-white: 17 24 39;
 
-    /* SURFACES (Elevação por luminância no escuro) */
-    --color-background: 11 15 25;
-    --color-surface: 17 25 41;
-    --color-surface-raised: 24 34 54;
-    --color-surface-soft: 22 32 50;
-    --color-surface-sunken: 8 12 20;
+    /* SURFACES DARK (Proporcional: #090D16 no canvas, #111827 nos cards, #1E293B nos sub-cards) */
+    --color-background: 9 13 22;       /* #090D16 - Canvas */
+    --color-surface: 17 24 39;         /* #111827 - Cards */
+    --color-surface-raised: 30 41 59;  /* #1E293B */
+    --color-surface-soft: 30 41 59;    /* #1E293B - Sub-cards */
+    --color-surface-sunken: 15 23 42;  /* #0F172A */
 
     /* SEMANTIC: SUCCESS */
     --color-success-950: 16 42 30;
@@ -229,40 +238,41 @@
     --color-accent-100: 120 53 15;
     --color-accent-50: 45 20 7;
 
-    /* TEXT, BORDERS & RING (text-muted 156 171 192 sobre surface 17 25 41 = 6.9:1 AA+) */
-    --color-text-primary: 241 245 249;
-    --color-text-secondary: 194 206 222;
-    --color-text-muted: 150 166 188;
-    --color-border: 33 45 66;
-    --color-border-strong: 48 64 90;
-    --color-ring: var(--color-primary-400);
+    /* TEXT, BORDERS & RING */
+    --color-text-primary: 248 250 252;   /* #F8FAFC */
+    --color-text-secondary: 148 163 184; /* #94A3B8 */
+    --color-text-muted: 100 116 139;     /* #64748B */
+    --color-border: 30 41 59;           /* #1E293B */
+    --color-border-strong: 51 65 85;    /* #334155 */
+    --color-ring: 59 130 246;           /* #3B82F6 */
 
     /* BRAND GRADIENT */
-    --gradient-brand: linear-gradient(135deg, rgb(16 38 68) 0%, rgb(35 80 136) 100%);
+    --gradient-brand: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
 
-    /* SHADOWS (Tema Escuro: highlight interno sutil + sombra escura) */
+    /* SHADOWS (Tema Escuro) */
     --shadow-xs: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 16px rgba(0, 0, 0, 0.35);
-    --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.45);
-    --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 36px rgba(0, 0, 0, 0.6);
+    --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 25px -4px rgba(0, 0, 0, 0.5);
+    --shadow-kpi-blue: 0 10px 25px -5px rgba(37, 99, 235, 0.40);
+    --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 36px -4px rgba(0, 0, 0, 0.6);
 
-    /* DATA VISUALIZATION (8 cores vibrantes e legíveis no escuro) */
-    --color-chart-1: 96 160 216;
-    --color-chart-2: 45 190 195;
-    --color-chart-3: 232 178 60;
-    --color-chart-4: 160 145 225;
-    --color-chart-5: 130 185 225;
-    --color-chart-6: 240 135 115;
-    --color-chart-7: 100 190 150;
-    --color-chart-8: 148 163 184;
+    /* DATA VISUALIZATION (Luminoso no Tema Escuro: Alto Contraste em Cards Carbono) */
+    --color-chart-1: 56 189 248;       /* #38BDF8 - Sky Blue 400 */
+    --color-chart-2: 96 165 250;       /* #60A5FA - Royal Light 400 */
+    --color-chart-3: 241 245 249;      /* #F1F5F9 - Crisp Silver White */
+    --color-chart-4: 45 212 191;       /* #2DD4BF - Luminous Aqua/Teal 400 */
+    --color-chart-5: 129 140 248;      /* #818CF8 - Periwinkle/Indigo 400 */
+    --color-chart-6: 59 130 246;       /* #3B82F6 - Electric Blue 500 */
+    --color-chart-7: 148 163 184;      /* #94A3B8 - Clean Light Slate 400 */
+    --color-chart-8: 186 230 253;      /* #BAE6FD - Ice Cyan 200 */
 
-    /* MAPS */
-    --color-map-1: 96 160 216;
-    --color-map-2: 63 134 199;
-    --color-map-3: 47 112 175;
-    --color-map-4: 35 82 135;
-    --color-map-5: 25 58 98;
-    --color-map-neutral: 24 34 54;
+    /* MAPS COROPLÉTICO NO ESCURO */
+    --color-map-1: 96 165 250;        /* #60A5FA - Nível 1: Azul vibrante no dark */
+    --color-map-2: 59 130 246;        /* #3B82F6 - Nível 2 */
+    --color-map-3: 37 99 235;         /* #2563EB - Nível 3 */
+    --color-map-4: 30 58 138;         /* #1E3A8A - Nível 4 */
+    --color-map-5: 23 37 84;          /* #172554 - Nível 5 */
+    --color-map-neutral: 30 41 59;    /* #1E293B - Sem dados / neutro */
 
     /* ASSET TYPES (13 Tipologias CT&I no Escuro) */
     --color-asset-privada: 56 189 248;
@@ -577,22 +587,85 @@
 
 .leaflet-container,
 .dark .leaflet-container {
-  background-color: rgb(var(--color-surface-sunken)) !important;
+  background-color: rgb(var(--color-surface-soft)) !important;
 }
 
 .leaflet-popup-content-wrapper,
-.leaflet-popup-tip,
+.leaflet-popup-tip {
+  background: #FFFFFF !important;
+  color: #090D16 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08) !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
 .dark .leaflet-popup-content-wrapper,
 .dark .leaflet-popup-tip {
-  background: rgb(var(--color-surface-raised)) !important;
-  color: rgb(var(--color-text-primary)) !important;
-  box-shadow: var(--shadow-float) !important;
-  border: 1px solid rgb(var(--color-border)) !important;
+  background: #111827 !important;
+  color: #F8FAFC !important;
+  border-color: #1E293B !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
+}
+
+.leaflet-tooltip {
+  background: #FFFFFF !important;
+  color: #090D16 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08) !important;
+  border: 1px solid #E2E8F0 !important;
+  padding: 6px 12px !important;
+  font-family: inherit !important;
+}
+
+.dark .leaflet-tooltip {
+  background: #111827 !important;
+  color: #F8FAFC !important;
+  border-color: #1E293B !important;
 }
 
 .leaflet-popup-content,
 .dark .leaflet-popup-content {
-  color: rgb(var(--color-text-primary)) !important;
+  color: inherit !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ================= DATA TABLES & FORM CONTROLS (BENTO STYLE) ================= */
+table thead {
+  background-color: rgb(var(--color-surface-soft));
+  color: #64748B;
+  font-weight: 500;
+}
+
+table thead th {
+  font-weight: 500;
+  border-left: none;
+  border-right: none;
+}
+
+table tbody tr {
+  background-color: rgb(var(--color-surface));
+  border-bottom: 1px solid #F1F5F9;
+  min-height: 56px;
+  transition: background-color 150ms ease-out;
+}
+
+.dark table tbody tr {
+  border-bottom-color: #1E293B;
+}
+
+table tbody tr:hover {
+  background-color: rgb(var(--color-surface-soft));
+}
+
+input[type="checkbox"] {
+  accent-color: #111827;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dark input[type="checkbox"] {
+  accent-color: #2563EB;
 }
 
 .dark .bg-carto-grid {

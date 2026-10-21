@@ -543,13 +543,6 @@ export default function CursosPage() {
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Ensino Superior em CT&I
                         </h1>
-                        <Badge
-                            variant={filtroSemiarido ? 'warning' : 'primary'}
-                            icon={<Flame size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />}
-                            className="text-caption font-medium px-2.5 py-1"
-                        >
-                            Somente Oferta de CT&I
-                        </Badge>
                     </div>
                     <p className="text-body-sm text-text-secondary mt-1 font-normal">
                         Mapeamento territorial da oferta presencial e EaD de ensino superior voltada exclusivamente a Ciência, Tecnologia e Inovação (CT&I)
@@ -567,49 +560,73 @@ export default function CursosPage() {
                     className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full min-w-0"
                 >
                     {loadingStats ? (
-                        <KpiSkeleton count={5} />
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <KpiSkeleton key={i} />
+                        ))
                     ) : (
                         kpis.map((kpi, index) => {
                             const isHero = index === 0;
 
                             return (
                                 <motion.div key={index} variants={fadeUp} className="h-full">
-                                    <Card
-                                        variant={isHero ? (filtroSemiarido ? 'warning' : 'brand') : 'default'}
+                                    <div
                                         title={kpi.tooltip || kpi.label}
-                                        className="p-4 flex flex-col justify-between h-[88px] min-w-0 transition-all duration-300 hover:shadow-card-elevated"
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-all duration-300 select-none ${isHero
+                                            ? (filtroSemiarido
+                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-card shadow-amber-500/20'
+                                                : 'bg-gradient-brand text-white border border-primary-500/40 shadow-kpi-blue')
+                                            : (filtroSemiarido
+                                                ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary shadow-card hover:shadow-card-hover'
+                                                : 'bg-surface-soft border border-border/70 text-text-primary shadow-card hover:shadow-card-hover hover:border-border')
+                                            }`}
                                     >
-                                        {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                        <div className="flex items-center gap-2 w-full min-w-0">
-                                            <kpi.icon size={16} strokeWidth={2} className={isHero ? 'opacity-90' : 'text-primary-600 dark:text-primary-400'} />
-                                            <span
-                                                className={`text-caption font-medium truncate flex-1 ${isHero ? 'text-white/80' : 'text-text-muted'
+                                        {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
+                                        <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                                <span
+                                                    className={`text-[13px] font-medium leading-tight truncate ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                                                        }`}
+                                                    title={kpi.label}
+                                                >
+                                                    {kpi.label}
+                                                </span>
+                                            </div>
+
+                                            {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
+                                            <div
+                                                className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center shadow-2xs ${isHero
+                                                    ? 'bg-white/15 text-white border border-white/20'
+                                                    : 'bg-surface border border-border/80 text-text-secondary'
                                                     }`}
-                                                title={kpi.label}
                                             >
-                                                {kpi.label}
-                                            </span>
+                                                <kpi.icon size={15} strokeWidth={2} />
+                                            </div>
                                         </div>
 
-                                        {/* LINHA INFERIOR: NÚMERO */}
-                                        <div className="flex items-baseline w-full justify-between">
-                                            <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${isHero ? 'text-white' : 'text-text-primary'
-                                                    }`}>
+                                        {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + BADGE */}
+                                        <div className="flex items-baseline w-full justify-between min-w-0 pt-0.5">
+                                            <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                                                <span
+                                                    className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
+                                                        }`}
+                                                >
                                                     {kpi.value}
                                                 </span>
+
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold truncate ${isHero ? 'text-white/90' : 'text-amber-600 dark:text-amber-400'
+                                                        className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                                                            ? 'bg-white/15 text-white border border-white/20'
+                                                            : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                                                             }`}
                                                     >
-                                                        ({kpi.percent})
+                                                        {kpi.percent}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
-                                    </Card>
+                                    </div>
                                 </motion.div>
                             );
                         })
@@ -653,9 +670,6 @@ export default function CursosPage() {
                                 <span className="text-body-sm font-semibold text-text-primary truncate">
                                     Cursos de CT&I
                                 </span>
-                                <Badge variant={filtroSemiarido ? 'warning' : 'primary'} className="tnum">
-                                    {compactCursosList.length}
-                                </Badge>
                             </div>
                             {selectedCursoId && (
                                 <button
@@ -758,20 +772,17 @@ export default function CursosPage() {
                                     {
                                         id: 'catalogo',
                                         label: 'Catálogo',
-                                        icon: <BookOpen size={15} />,
-                                        count: filteredCursos.length
+                                        icon: <BookOpen size={15} />
                                     },
                                     {
                                         id: 'ead',
                                         label: 'Cursos EaD',
-                                        icon: <Laptop size={15} />,
-                                        count: filteredEadCursos.length
+                                        icon: <Laptop size={15} />
                                     },
                                     {
                                         id: 'areas',
                                         label: 'Áreas',
-                                        icon: <Filter size={15} />,
-                                        count: categoryStats.length
+                                        icon: <Filter size={15} />
                                     },
                                     {
                                         id: 'ranking',
@@ -816,7 +827,6 @@ export default function CursosPage() {
                                 <Chip
                                     selected={selectedRede === 'todas'}
                                     onClick={() => setSelectedRede('todas')}
-                                    count={redeStats.total}
                                     variant="neutral"
                                     size="sm"
                                 >
@@ -825,7 +835,6 @@ export default function CursosPage() {
                                 <Chip
                                     selected={selectedRede === 'publica'}
                                     onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
-                                    count={redeStats.publica}
                                     variant="success"
                                     size="sm"
                                 >
@@ -834,7 +843,6 @@ export default function CursosPage() {
                                 <Chip
                                     selected={selectedRede === 'privada'}
                                     onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
-                                    count={redeStats.privada}
                                     variant="accent"
                                     size="sm"
                                 >
@@ -876,16 +884,6 @@ export default function CursosPage() {
                                         {territoryName} ×
                                     </Chip>
                                 )}
-                                {activeFiltersCount > 0 && (
-                                    <Button
-                                        variant="ghost"
-                                        size="xs"
-                                        onClick={handleClearAllFilters}
-                                        className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-caption font-semibold"
-                                    >
-                                        Limpar filtros ({activeFiltersCount})
-                                    </Button>
-                                )}
                             </div>
                         </div>
 
@@ -900,12 +898,6 @@ export default function CursosPage() {
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos Presenciais em ${territoryName}` : 'Cursos Presenciais de CT&I'}
                                             </h3>
-                                            <Badge
-                                                variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                className="tnum"
-                                            >
-                                                {filteredCursos.length} {filteredCursos.length === 1 ? 'resultado' : 'resultados'}
-                                            </Badge>
                                         </div>
 
                                         <div className="flex items-center gap-2">
@@ -1043,12 +1035,6 @@ export default function CursosPage() {
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Oferta de Cursos à Distância (EaD) e Semipresenciais'}
                                             </h3>
-                                            <Badge
-                                                variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                className="tnum"
-                                            >
-                                                {filteredEadCursos.length} {filteredEadCursos.length === 1 ? 'curso' : 'cursos'}
-                                            </Badge>
                                         </div>
 
                                         {selectedTerritory && (
@@ -1259,12 +1245,6 @@ export default function CursosPage() {
                                                 Densidade de cursos de CT&I por localidade
                                             </p>
                                         </div>
-                                        <Badge variant="neutral" className="tnum">
-                                            {selectedTerritory
-                                                ? `${municipalityRanking.length} municípios com oferta`
-                                                : `${territoryRanking.length} territórios`
-                                            }
-                                        </Badge>
                                     </div>
 
                                     {/* LISTA RANKING: RANK + BARRA PROPORCIONAL COM NOME + PILULA DE VALOR */}

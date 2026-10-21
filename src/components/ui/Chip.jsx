@@ -3,17 +3,17 @@ import { cn } from '../../lib/cn';
 
 const badgeVariants = {
   neutral:
-    'bg-surface-sunken text-text-secondary border border-border',
+    'bg-neutral-100 dark:bg-neutral-800 text-text-secondary border border-border',
   primary:
-    'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border border-primary-200/70 dark:border-primary-800/60',
+    'bg-[#DBEAFE] text-[#1D4ED8] dark:bg-primary-950/70 dark:text-primary-300 border border-[#BFDBFE] dark:border-primary-800/60',
   success:
-    'bg-success-50 text-success-700 dark:bg-success-950 dark:text-success-300 border border-success-100/80 dark:border-success-800/60',
+    'bg-[#DCFCE7] text-[#15803D] dark:bg-emerald-950/50 dark:text-emerald-400 border border-[#BBF7D0] dark:border-emerald-800/50',
   warning:
-    'bg-warning-50 text-warning-700 dark:bg-warning-950 dark:text-warning-300 border border-warning-100/80 dark:border-warning-800/60',
+    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-950/50 dark:text-amber-400 border border-[#FDE68A] dark:border-amber-800/50',
   accent:
-    'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100/80 dark:border-accent-800/60',
+    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-950/50 dark:text-amber-400 border border-[#FDE68A] dark:border-amber-800/50',
   danger:
-    'bg-danger-50 text-danger-700 dark:bg-danger-950 dark:text-danger-300 border border-danger-100/80 dark:border-danger-800/60',
+    'bg-[#FEE2E2] text-[#B91C1C] dark:bg-rose-950/50 dark:text-rose-400 border border-[#FECACA] dark:border-rose-800/50',
 };
 
 const chipUnselectedVariants = {
@@ -125,19 +125,6 @@ export const Chip = forwardRef(function Chip(
     >
       {icon && <span className="inline-flex shrink-0">{icon}</span>}
       <span>{children}</span>
-
-      {count !== undefined && count !== null && (
-        <span
-          className={cn(
-            'tnum text-caption font-medium px-1.5 py-0.5 rounded-full ml-1 shrink-0 leading-none',
-            selected
-              ? 'bg-white/80 dark:bg-black/30 text-current'
-              : 'bg-surface-sunken text-text-muted border border-border/70'
-          )}
-        >
-          {count}
-        </span>
-      )}
     </Component>
   );
 });

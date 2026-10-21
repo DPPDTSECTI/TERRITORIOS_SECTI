@@ -548,13 +548,6 @@ export default function AtivosPage() {
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Ativos de CT&I
                         </h1>
-                        <span className={`text-caption font-medium px-2.5 py-1 rounded-full border flex items-center gap-1 justify-center leading-none transition-colors ${filtroSemiarido
-                                ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30'
-                                : 'bg-primary-600/10 text-primary-700 dark:text-primary-300 border-primary-600/20'
-                            }`}>
-                            <Sparkles size={14} className={filtroSemiarido ? 'text-amber-700' : 'text-primary-700'} />
-                            Ecossistema de Inovação da Bahia
-                        </span>
                     </div>
                     <p className="text-body-sm text-text-secondary mt-0.5 font-medium">
                         Explore universidades, ICTs, parques tecnológicos, hubs e centros de pesquisa distribuídos pelo estado
@@ -581,71 +574,79 @@ export default function AtivosPage() {
                     ) : (
                         kpis.map((kpi, index) => {
                             const isHero = index === 0;
-                            const accentColors = [
-                                'text-white/80',
-                                'text-primary-600',
-                                'text-accent-600',
-                                'text-warning-600',
-                                'text-success-600'
-                            ];
-
                             const isRnpKpi = index === 2;
                             const isClickable = isRnpKpi;
 
                             return (
                                 <motion.div key={index} variants={fadeUp} className="h-full">
-                                    <Card
+                                    <div
                                         title={isRnpKpi ? (filterRnp === 'com_rnp' ? 'Clique para desativar filtro de RNP' : 'Clique para filtrar apenas ativos com RNP') : (kpi.tooltip || kpi.label)}
-                                        variant={isHero ? (filtroSemiarido ? 'default' : 'brand') : 'default'}
-                                        onClick={() => {
-                                            if (isRnpKpi) {
-                                                setFilterRnp(prev => prev === 'com_rnp' ? 'todos' : 'com_rnp');
-                                                setActiveTab('catalogo');
-                                            }
-                                        }}
-                                        className={`p-4 flex flex-col justify-between h-[96px] overflow-hidden min-w-0 transition-all duration-300 ${isClickable ? 'cursor-pointer hover:shadow-card-hover' : 'cursor-default'
+                                        onClick={isClickable ? () => {
+                                            setFilterRnp(prev => prev === 'com_rnp' ? 'todos' : 'com_rnp');
+                                            setActiveTab('catalogo');
+                                        } : undefined}
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card overflow-hidden transition-all duration-300 select-none ${isClickable ? 'cursor-pointer hover:shadow-card-hover' : 'cursor-default'
                                             } ${isRnpKpi && filterRnp === 'com_rnp'
                                                 ? (filtroSemiarido ? 'ring-2 ring-amber-500 bg-amber-500/10' : 'ring-2 ring-emerald-500 bg-emerald-500/10')
                                                 : ''
-                                            } ${isHero && filtroSemiarido
-                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-card shadow-amber-500/20 border border-amber-400/40'
-                                                : ''
-                                            } ${!isHero && filtroSemiarido
-                                                ? 'border-amber-200/50 dark:border-amber-500/30'
-                                                : ''
+                                            } ${isHero
+                                                ? (filtroSemiarido
+                                                    ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-card shadow-amber-500/20'
+                                                    : 'bg-gradient-brand text-white border border-primary-500/40 shadow-kpi-blue')
+                                                : (filtroSemiarido
+                                                    ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary shadow-card hover:shadow-card-hover'
+                                                    : 'bg-surface-soft border border-border/70 text-text-primary shadow-card hover:shadow-card-hover hover:border-border')
                                             }`}
                                     >
-                                        {/* LINHA SUPERIOR: ÍCONE + TÍTULO */}
-                                        <div className="flex items-center gap-2 w-full min-w-0">
-                                            <kpi.icon size={16} strokeWidth={2} className={isHero ? (filtroSemiarido ? 'text-white/90' : accentColors[0]) : accentColors[index]} />
-                                            <span
-                                                className={`text-caption font-medium truncate flex-1 ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/70') : 'text-text-muted'
+                                        {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
+                                        <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                                <span
+                                                    className={`text-[13px] font-medium leading-tight truncate ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                                                        }`}
+                                                    title={kpi.label}
+                                                >
+                                                    {kpi.label}
+                                                </span>
+                                            </div>
+
+                                            {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
+                                            <div
+                                                className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center shadow-2xs ${isHero
+                                                    ? 'bg-white/15 text-white border border-white/20'
+                                                    : (isRnpKpi && filterRnp === 'com_rnp'
+                                                        ? (filtroSemiarido ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/40' : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40')
+                                                        : 'bg-surface border border-border/80 text-text-secondary')
                                                     }`}
-                                                title={kpi.label}
                                             >
-                                                {kpi.label}
-                                            </span>
+                                                <kpi.icon size={15} strokeWidth={2} />
+                                            </div>
                                         </div>
 
-                                        {/* LINHA INFERIOR: NÚMERO */}
-                                        <div className="flex items-baseline w-full justify-between min-w-0">
-                                            <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-                                                <span className={`text-kpi font-bold tracking-tight leading-none tnum ${isHero ? 'text-white' : 'text-text-primary'
-                                                    }`}>
+                                        {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + BADGE */}
+                                        <div className="flex items-baseline w-full justify-between min-w-0 pt-0.5">
+                                            <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                                                <span
+                                                    className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
+                                                        }`}
+                                                >
                                                     {kpi.value}
                                                 </span>
+
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold truncate ${isHero ? 'text-amber-100/90 font-medium' : 'text-amber-600 dark:text-amber-400'
+                                                        className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                                                            ? 'bg-white/15 text-white border border-white/20'
+                                                            : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                                                             }`}
                                                     >
-                                                        ({kpi.percent})
+                                                        {kpi.percent}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
-                                    </Card>
+                                    </div>
                                 </motion.div>
                             );
                         })
@@ -692,12 +693,6 @@ export default function AtivosPage() {
                                 <span className="text-body-sm font-semibold text-text-primary truncate">
                                     Ativos de CT&I
                                 </span>
-                                <Badge
-                                    variant={filtroSemiarido ? 'warning' : 'primary'}
-                                    className="tnum"
-                                >
-                                    {compactAtivosList.length}
-                                </Badge>
                             </div>
                             {selectedAssetId && (
                                 <Button
@@ -906,14 +901,12 @@ export default function AtivosPage() {
                                     {
                                         id: 'catalogo',
                                         label: 'Catálogo',
-                                        icon: <Database size={15} />,
-                                        count: filteredAtivosList.length
+                                        icon: <Database size={15} />
                                     },
                                     {
                                         id: 'categorias',
                                         label: 'Categorias',
-                                        icon: <Filter size={15} />,
-                                        count: categoryStats.length
+                                        icon: <Filter size={15} />
                                     },
                                     {
                                         id: 'ranking',
@@ -1132,12 +1125,6 @@ export default function AtivosPage() {
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Ativos de CT&I em ${territoryName}` : 'Catálogo de Ativos do Estado'}
                                             </h3>
-                                            <Badge
-                                                variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                className="tnum"
-                                            >
-                                                {filteredAtivosList.length} ativos
-                                            </Badge>
                                         </div>
 
                                         {selectedTerritory && (
@@ -1182,7 +1169,6 @@ export default function AtivosPage() {
                                                         key={tipo}
                                                         selected
                                                         onClick={() => handleToggleTipo(tipo)}
-                                                        count={cat?.count}
                                                         variant="primary"
                                                         className="cursor-pointer"
                                                     >
@@ -1200,17 +1186,6 @@ export default function AtivosPage() {
                                                     {selectedTipo} ×
                                                 </Chip>
                                             )}
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => {
-                                                    handleClearAllFilters();
-                                                    setSearchQuery('');
-                                                }}
-                                                className="text-danger-600 hover:text-danger-700 font-semibold text-caption ml-auto h-7 px-2"
-                                            >
-                                                Limpar filtros
-                                            </Button>
                                         </div>
                                     )}
 
@@ -1528,7 +1503,7 @@ export default function AtivosPage() {
                                         </div>
 
                                         <div className="flex items-center gap-2.5">
-                                            {selectedTerritory ? (
+                                            {selectedTerritory && (
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedTerritory(null)}
@@ -1539,10 +1514,6 @@ export default function AtivosPage() {
                                                 >
                                                     ← Ver Todos os Territórios
                                                 </button>
-                                            ) : (
-                                                <span className="text-caption font-medium text-text-secondary bg-surface-soft px-2.5 py-1 rounded-full shrink-0 inline-flex items-center justify-center leading-none">
-                                                    {territoryRanking.length} territórios
-                                                </span>
                                             )}
                                         </div>
                                     </div>
