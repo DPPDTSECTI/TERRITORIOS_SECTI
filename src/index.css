@@ -107,10 +107,10 @@
 
     /* SHADOWS BENTO GRID (Tema Claro) */
     --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-    --shadow-card-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.08);
-    --shadow-kpi-blue: 0 10px 25px -5px rgba(37, 99, 235, 0.30);
-    --shadow-float: 0 16px 36px -4px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.04);
+    --shadow-card: none;
+    --shadow-card-hover: 0 1px 2px rgba(15, 23, 42, 0.03);
+    --shadow-kpi-blue: none;
+    --shadow-float: 0 12px 30px -4px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.03);
 
     /* DATA VISUALIZATION (Bento Grid SaaS: Alto Contraste em Cards Brancos) */
     --color-chart-1: 37 99 235;        /* #2563EB - Royal Blue (Hero) */
@@ -250,11 +250,11 @@
     --gradient-brand: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
 
     /* SHADOWS (Tema Escuro) */
-    --shadow-xs: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-    --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 25px -4px rgba(0, 0, 0, 0.5);
-    --shadow-kpi-blue: 0 10px 25px -5px rgba(37, 99, 235, 0.40);
-    --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 36px -4px rgba(0, 0, 0, 0.6);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-card: none;
+    --shadow-card-hover: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-kpi-blue: none;
+    --shadow-float: 0 12px 30px -4px rgba(0, 0, 0, 0.5);
 
     /* DATA VISUALIZATION (Luminoso no Tema Escuro: Alto Contraste em Cards Carbono) */
     --color-chart-1: 56 189 248;       /* #38BDF8 - Sky Blue 400 */

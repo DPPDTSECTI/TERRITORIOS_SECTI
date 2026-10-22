@@ -54,7 +54,7 @@ export default function DonutChart({
   const isEmpty = sortedData.length === 0 || totalValue === 0;
 
   return (
-    <div className={`flex-1 bg-surface rounded-card border border-border shadow-card transition-all duration-300 hover:shadow-card-hover p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
+    <div className={`flex-1 bg-surface rounded-card border border-border p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
 
       {/* HEADER */}
       <div className="flex justify-between items-start mb-3 relative z-10 w-full">

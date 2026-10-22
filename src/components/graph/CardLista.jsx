@@ -142,7 +142,7 @@ function CardLista({
       )}
 
       {/* CONTAINER PRINCIPAL DO CARD */}
-      <div className={`bg-surface rounded-card border border-border shadow-card hover:shadow-card-hover transition-shadow p-5 relative flex flex-col justify-start flex-1 group cursor-default min-h-0 min-w-0 overflow-hidden ${
+      <div className={`bg-surface rounded-card border border-border p-5 relative flex flex-col justify-start flex-1 group cursor-default min-h-0 min-w-0 overflow-hidden ${
         isDropdownOpen ? '!z-50' : 'z-10'
       }`}>
 

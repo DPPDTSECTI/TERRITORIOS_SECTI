@@ -56,6 +56,14 @@ export const getSemiaridoArrangementColor = (nomeTipo, chartTheme) => {
     return 'rgb(192, 138, 28)';
 };
 
+function cleanTerritorioName(name) {
+    if (!name) return '';
+    return String(name)
+        .replace(/^territ[oó]rio(\s+de\s+identidade)?\s+/i, '')
+        .replace(/^ti\s+/i, '')
+        .trim();
+}
+
 function normalizeName(name) {
     if (!name) return '';
     return name
@@ -578,15 +586,32 @@ export default function CadeiaPage() {
     const territoryRanking = useMemo(() => {
         if (!activeScopedCadeias || activeScopedCadeias.length === 0) return [];
         const counts = {};
+        let totalCount = 0;
 
         activeScopedCadeias.forEach(c => {
-            const tid = Number(c.id_territorio) || 0;
-            const tName = c.territorio_identidade || 'Não identificado';
+            const rawName = c.territorio_identidade || c.territorio || '';
+            const tClean = cleanTerritorioName(rawName);
+            if (!tClean || tClean.toLowerCase() === 'não identificado' || tClean.toLowerCase() === 'bahia') return;
 
-            if (tid > 0) {
-                if (!counts[tid]) counts[tid] = { id: tid, name: tName, count: 0 };
-                counts[tid].count += 1;
+            const normKey = normalizeName(tClean);
+            const foundTerr = (territoriosData || []).find(t => {
+                const tName = t.nome_territorio || t.territorio || t.nome || '';
+                return normalizeName(cleanTerritorioName(tName)) === normKey || (c.id_territorio && Number(t.id_territorio) === Number(c.id_territorio));
+            });
+
+            const canonId = foundTerr?.id_territorio || (c.id_territorio ? Number(c.id_territorio) : null);
+            const canonName = (foundTerr ? cleanTerritorioName(foundTerr.nome_territorio || foundTerr.territorio || foundTerr.nome) : '') || tClean;
+            const uniqueKey = canonId ? `id_${canonId}` : normKey;
+
+            if (!counts[uniqueKey]) {
+                counts[uniqueKey] = {
+                    id: canonId,
+                    name: canonName,
+                    count: 0
+                };
             }
+            counts[uniqueKey].count += 1;
+            totalCount += 1;
         });
 
         const maxCount = Math.max(...Object.values(counts).map(t => t.count), 1);
@@ -596,35 +621,47 @@ export default function CadeiaPage() {
             .map((t, idx) => ({
                 ...t,
                 rank: idx + 1,
-                percentBar: Math.min(100, (t.count / maxCount) * 100),
-                heatColor: t.count >= 8 ? (filtroSemiarido ? chartTheme.goldenPalette[5] : chartTheme.palette[0]) : t.count >= 4 ? (filtroSemiarido ? chartTheme.goldenPalette[1] : chartTheme.palette[1]) : (filtroSemiarido ? chartTheme.goldenPalette[2] : chartTheme.palette[4])
+                percentTotal: totalCount > 0 ? ((t.count / totalCount) * 100).toFixed(1) : '0.0',
+                percentBar: Math.min(100, (t.count / maxCount) * 100)
             }));
-    }, [activeScopedCadeias, filtroSemiarido, chartTheme.goldenPalette, chartTheme.palette]);
+    }, [activeScopedCadeias, territoriosData]);
 
     const municipalityRanking = useMemo(() => {
         if (!filteredCadeias || filteredCadeias.length === 0) return [];
         const counts = {};
         const targetId = selectedTerritory ? Number(selectedTerritory.id_territorio) : null;
+        const targetNome = selectedTerritory ? normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+        let totalCount = 0;
 
         filteredCadeias.forEach(c => {
-            if (!targetId || Number(c.id_territorio) === targetId) {
-                const munSede = c.municipio_sede || 'Polo Regional';
-                counts[munSede] = (counts[munSede] || 0) + 1;
+            const matchId = targetId && Number(c.id_territorio) === targetId;
+            const matchNome = targetNome && normalizeName(c.territorio_identidade) === targetNome;
+            if (!selectedTerritory || matchId || matchNome) {
+                const munSede = (c.municipio_sede || c.municipio || '').trim();
+                if (!munSede || munSede.toLowerCase() === 'bahia' || munSede.toLowerCase() === 'não identificado') return;
+                const normKey = normalizeName(munSede);
+                if (!counts[normKey]) {
+                    counts[normKey] = {
+                        name: munSede,
+                        count: 0
+                    };
+                }
+                counts[normKey].count += 1;
+                totalCount += 1;
             }
         });
 
-        const maxCount = Math.max(...Object.values(counts), 1);
+        const maxCount = Math.max(...Object.values(counts).map(c => c.count), 1);
 
-        return Object.entries(counts)
-            .sort((a, b) => b[1] - a[1])
-            .map(([name, count], idx) => ({
-                name,
-                count,
+        return Object.values(counts)
+            .sort((a, b) => b.count - a.count)
+            .map((m, idx) => ({
+                ...m,
                 rank: idx + 1,
-                percentBar: Math.min(100, (count / maxCount) * 100),
-                heatColor: count >= 5 ? (filtroSemiarido ? chartTheme.goldenPalette[5] : chartTheme.palette[0]) : count >= 2 ? (filtroSemiarido ? chartTheme.goldenPalette[1] : chartTheme.palette[1]) : (filtroSemiarido ? chartTheme.goldenPalette[2] : chartTheme.palette[4])
+                percentTotal: totalCount > 0 ? ((m.count / totalCount) * 100).toFixed(1) : '0.0',
+                percentBar: Math.min(100, (m.count / maxCount) * 100)
             }));
-    }, [selectedTerritory, filteredCadeias, filtroSemiarido, chartTheme.goldenPalette, chartTheme.palette]);
+    }, [selectedTerritory, filteredCadeias]);
 
     const topSegment = segmentStats[0];
 
@@ -770,13 +807,13 @@ export default function CadeiaPage() {
                                 >
                                     <div
                                         title={kpi.tooltip || kpi.label}
-                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-all duration-300 select-none ${isHero
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-colors duration-200 select-none ${isHero
                                             ? (filtroSemiarido
-                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-card shadow-amber-500/20'
-                                                : 'bg-gradient-brand text-white border border-primary-500/40 shadow-kpi-blue')
+                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40'
+                                                : 'bg-gradient-brand text-white border border-primary-500/40')
                                             : (filtroSemiarido
-                                                ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary shadow-card hover:shadow-card-hover'
-                                                : 'bg-surface-soft border border-border/70 text-text-primary shadow-card hover:shadow-card-hover hover:border-border')
+                                                ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary'
+                                                : 'bg-surface-soft border border-border/70 text-text-primary')
                                             }`}
                                     >
                                         {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
@@ -793,7 +830,7 @@ export default function CadeiaPage() {
 
                                             {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
                                             <div
-                                                className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center shadow-2xs ${isHero
+                                                className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isHero
                                                     ? 'bg-white/15 text-white border border-white/20'
                                                     : 'bg-surface border border-border/80 text-text-secondary'
                                                     }`}
@@ -844,7 +881,7 @@ export default function CadeiaPage() {
                 {/* MAPA DE CADEIAS */}
                 <motion.div
                     variants={fadeUp}
-                    style={{ width: isMapExpanded ? 'calc(100% - 320px)' : 'calc(40% - 12px)' }}
+                    style={{ width: isMapExpanded ? 'calc(100% - 440px)' : 'calc(40% - 12px)' }}
                     className="shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-0 min-w-0 transition-[width] duration-300"
                 >
                     <SideMap
@@ -865,123 +902,127 @@ export default function CadeiaPage() {
                     />
                 </motion.div>
 
-                {/* MODO EXPANDIDO: LISTA COMPACTA E OTIMIZADA AO LADO DO MAPA */}
+                {/* MODO EXPANDIDO: DUAS CAIXAS SEPARADAS CONFORME PROTÓTIPO */}
                 {isMapExpanded ? (
                     <motion.div
                         variants={fadeUp}
-                        className="w-[320px] shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card p-4 flex flex-col min-h-0 min-w-0 overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300"
+                        className="w-[420px] shrink-0 h-[480px] lg:h-full flex flex-col gap-4 min-h-0 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300"
                     >
-                        {/* CABEÇALHO DA LISTA COMPACTA */}
-                        <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/70 shrink-0">
-                            <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-body-sm font-semibold text-text-primary truncate">
-                                    Arranjos & IGs
-                                </span>
+                        {/* BOX 1: CABEÇALHO & BUSCA */}
+                        <div className="bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col gap-2 shrink-0">
+                            <div className="flex items-center justify-between gap-2 shrink-0">
+                                <div className="flex items-center gap-2 min-w-0">
+                                    <span className="text-body-sm font-semibold text-text-primary truncate">
+                                        Arranjos & IGs
+                                    </span>
+                                </div>
+                                {selectedCadeia && (
+                                    <Button
+                                        variant="ghost"
+                                        size="xs"
+                                        onClick={() => {
+                                            setSelectedCadeia(null);
+                                            setFocusedAsset(null);
+                                        }}
+                                        className="text-caption text-text-secondary hover:text-danger-600"
+                                    >
+                                        Limpar
+                                    </Button>
+                                )}
                             </div>
-                            {selectedCadeia && (
-                                <Button
-                                    variant="ghost"
-                                    size="xs"
-                                    onClick={() => {
-                                        setSelectedCadeia(null);
-                                        setFocusedAsset(null);
-                                    }}
-                                    className="text-caption text-text-secondary hover:text-danger-600"
-                                >
-                                    Limpar
-                                </Button>
-                            )}
-                        </div>
 
-                        {/* BUSCA COMPACTA */}
-                        <div className="my-2 shrink-0">
-                            <SearchInput
-                                value={sidebarSearch}
-                                onChange={(e) => setSidebarSearch(e.target.value)}
-                                onClear={() => setSidebarSearch('')}
-                                placeholder="Filtrar arranjo ou cidade..."
-                                size="sm"
-                            />
-                        </div>
-
-                        {/* LISTA SCROLLÁVEL COMPACTA */}
-                        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0">
-                            {compactCadeiasList.length > 0 ? (
-                                compactCadeiasList.map((c, idx) => {
-                                    const IconComp = c.icone || Wheat;
-                                    const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
-                                    const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo, chartTheme) : c.corHex;
-                                    const tipoVariant = getTipoBadgeVariant(c.tipo);
-
-                                    return (
-                                        <div
-                                            key={c.id_cadeia || idx}
-                                            ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
-                                            style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
-                                            onClick={() => {
-                                                if (isSelected) {
-                                                    setSelectedCadeia(null);
-                                                    setFocusedAsset(null);
-                                                } else {
-                                                    setSelectedCadeia(c);
-                                                    if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
-                                                }
-                                                setSelectedCadeiaDrawer(c);
-                                            }}
-                                            className={`p-2 rounded-control flex items-center justify-between gap-2 transition-all duration-200 group cursor-pointer border w-full ${isSelected
-                                                    ? (filtroSemiarido
-                                                        ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 ring-2 ring-amber-500/25 shadow-xs'
-                                                        : 'bg-primary-50 dark:bg-primary-950/40 border-primary-600 ring-2 ring-primary-600/25 shadow-xs')
-                                                    : (filtroSemiarido
-                                                        ? 'bg-surface-soft border-transparent hover:bg-surface hover:border-amber-300'
-                                                        : 'bg-surface-soft border-transparent hover:bg-surface hover:border-primary-200')
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-2 min-w-0 flex-1">
-                                                <div
-                                                    className="w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-transform group-hover:scale-105"
-                                                    style={{
-                                                        backgroundColor: getAlphaColor(itemColor),
-                                                        color: itemColor
-                                                    }}
-                                                >
-                                                    <IconComp size={12} />
-                                                </div>
-                                                <div className="flex flex-col min-w-0 flex-1">
-                                                    <h5 className={`text-caption font-bold leading-tight truncate transition-colors ${isSelected
-                                                            ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200')
-                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
-                                                        }`}>
-                                                        {c.entidade}
-                                                    </h5>
-                                                    <span className="text-caption text-text-secondary truncate leading-tight flex items-center gap-1.5">
-                                                        <span
-                                                            className="w-1.5 h-1.5 rounded-full shrink-0"
-                                                            style={{ backgroundColor: getSegmentColor(c.segmento) }}
-                                                        />
-                                                        <span className="truncate">
-                                                            {c.segmento} • <strong className="font-semibold text-text-secondary">{c.municipio_sede}</strong>
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <Badge
-                                                variant={tipoVariant}
-                                                className="text-caption font-medium"
-                                            >
-                                                {c.tipo}
-                                            </Badge>
-                                        </div>
-                                    );
-                                })
-                            ) : (
-                                <EmptyState
-                                    icon={GitPullRequest}
-                                    title="Nenhum arranjo encontrado"
-                                    description="Tente ajustar os termos da busca."
+                            <div className="shrink-0">
+                                <SearchInput
+                                    value={sidebarSearch}
+                                    onChange={(e) => setSidebarSearch(e.target.value)}
+                                    onClear={() => setSidebarSearch('')}
+                                    placeholder="Filtrar arranjo ou cidade..."
+                                    size="sm"
                                 />
-                            )}
+                            </div>
+                        </div>
+
+                        {/* BOX 2: LISTA SCROLLÁVEL */}
+                        <div className="flex-1 bg-surface rounded-card border border-border shadow-card p-3 flex flex-col min-h-0 min-w-0 overflow-hidden">
+                            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
+                                {compactCadeiasList.length > 0 ? (
+                                    compactCadeiasList.map((c, idx) => {
+                                        const IconComp = c.icone || Wheat;
+                                        const isSelected = selectedCadeia?.id_cadeia === c.id_cadeia;
+                                        const itemColor = filtroSemiarido ? getSemiaridoArrangementColor(c.tipo, chartTheme) : c.corHex;
+                                        const tipoVariant = getTipoBadgeVariant(c.tipo);
+
+                                        return (
+                                            <div
+                                                key={c.id_cadeia || idx}
+                                                ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
+                                                onClick={() => {
+                                                    if (isSelected) {
+                                                        setSelectedCadeia(null);
+                                                        setFocusedAsset(null);
+                                                    } else {
+                                                        setSelectedCadeia(c);
+                                                        if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
+                                                    }
+                                                    setSelectedCadeiaDrawer(c);
+                                                }}
+                                                className={`rounded-card p-2.5 flex items-center justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full ${isSelected
+                                                    ? (filtroSemiarido
+                                                        ? 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-500 ring-1 ring-amber-500/20'
+                                                        : 'bg-primary-50/50 dark:bg-primary-950/30 border-primary-500 ring-1 ring-primary-500/20')
+                                                    : (filtroSemiarido
+                                                        ? 'bg-surface border-border hover:border-amber-400/70 hover:bg-amber-50/30 dark:hover:bg-amber-950/15'
+                                                        : 'bg-surface border-border hover:border-border-strong hover:bg-surface-soft/60')
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                                                    <div
+                                                        className="w-7 h-7 rounded-control flex items-center justify-center shrink-0 transition-transform group-hover:scale-105"
+                                                        style={{
+                                                            backgroundColor: getAlphaColor(itemColor),
+                                                            color: itemColor
+                                                        }}
+                                                    >
+                                                        <IconComp size={14} />
+                                                    </div>
+                                                    <div className="flex flex-col min-w-0 flex-1">
+                                                        <h5
+                                                            title={c.entidade}
+                                                            className={`text-caption font-semibold leading-tight truncate transition-colors ${isSelected
+                                                                ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-800 dark:text-primary-200')
+                                                                : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-600' : 'text-text-primary group-hover:text-primary-600')
+                                                                }`}>
+                                                            {c.entidade}
+                                                        </h5>
+                                                        <span className="text-caption text-text-secondary truncate leading-tight flex items-center gap-1.5 mt-0.5">
+                                                            <span
+                                                                className="w-1.5 h-1.5 rounded-full shrink-0"
+                                                                style={{ backgroundColor: getSegmentColor(c.segmento) }}
+                                                            />
+                                                            <span className="truncate">
+                                                                {c.segmento} • <strong className="font-semibold text-text-primary">{c.municipio_sede}</strong>
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <Badge
+                                                    variant={tipoVariant}
+                                                    className="text-caption font-medium shrink-0"
+                                                >
+                                                    {c.tipo}
+                                                </Badge>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <EmptyState
+                                        icon={GitPullRequest}
+                                        title="Nenhum arranjo encontrado"
+                                        description="Tente ajustar os termos da busca."
+                                    />
+                                )}
+                            </div>
                         </div>
                     </motion.div>
                 ) : (
@@ -990,75 +1031,62 @@ export default function CadeiaPage() {
                         variants={fadeUp}
                         className="flex-1 min-w-0 h-[520px] lg:h-full flex flex-col gap-3 min-h-0 overflow-hidden"
                     >
-                        {/* BARRA SUPERIOR: TABS + BUSCA */}
-                        <div className="flex flex-col 2xl:flex-row items-stretch 2xl:items-center justify-between gap-3 shrink-0">
-                            <Tabs
-                                items={[
-                                    {
-                                        id: 'catalogo',
-                                        label: 'Catálogo',
-                                        icon: <GitPullRequest size={15} />
-                                    },
-                                    {
-                                        id: 'segmentos',
-                                        label: 'Segmentos',
-                                        icon: <Filter size={15} />
-                                    },
-                                    {
-                                        id: 'ranking',
-                                        label: selectedTerritory ? 'Municípios' : 'Territórios',
-                                        icon: <TrendingUp size={15} />
-                                    }
-                                ]}
-                                value={activeTab}
-                                onChange={setActiveTab}
-                                variant="pill"
-                                className="w-full 2xl:w-auto"
-                            />
-
-                            {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
-                            <div className="w-full 2xl:w-72 min-w-0">
-                                <SearchInput
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value);
-                                        if (e.target.value.trim() && activeTab !== 'catalogo') {
-                                            setActiveTab('catalogo');
+                        {/* BARRA SUPERIOR: TABS + FILTROS AO LADO + BUSCA */}
+                        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 shrink-0">
+                            <div className="flex items-center gap-2.5 flex-nowrap min-w-0 shrink-0 overflow-x-auto scrollbar-none">
+                                <Tabs
+                                    items={[
+                                        {
+                                            id: 'catalogo',
+                                            label: 'Catálogo',
+                                            icon: <GitPullRequest size={15} />
+                                        },
+                                        {
+                                            id: 'segmentos',
+                                            label: 'Segmentos',
+                                            icon: <Filter size={15} />
+                                        },
+                                        {
+                                            id: 'ranking',
+                                            label: selectedTerritory ? 'Municípios' : 'Territórios',
+                                            icon: <TrendingUp size={15} />
                                         }
-                                    }}
-                                    onClear={() => setSearchQuery('')}
-                                    placeholder="Buscar cadeia, segmento ou cidade... (/)"
-                                    size="sm"
+                                    ]}
+                                    value={activeTab}
+                                    onChange={setActiveTab}
+                                    variant="pill"
+                                    className="shrink-0"
                                 />
-                            </div>
-                        </div>
 
-                        {/* BARRA DE FILTROS POR TIPO (CHIPS COM .tnum) + FILTROS ATIVOS */}
-                        <div className="flex items-center justify-between gap-2 flex-wrap shrink-0">
-                            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                                <Chip
-                                    selected={selectedTipo === 'todos'}
-                                    onClick={() => setSelectedTipo('todos')}
-                                    variant={selectedTipo === 'todos' ? (filtroSemiarido ? 'warning' : 'primary') : 'neutral'}
-                                    size="sm"
-                                >
-                                    Todos
-                                </Chip>
-                                {availableTipos.map((tipo) => (
-                                    <Chip
-                                        key={tipo}
-                                        selected={selectedTipo === tipo}
-                                        onClick={() => setSelectedTipo(selectedTipo === tipo ? 'todos' : tipo)}
-                                        variant={selectedTipo === tipo ? (filtroSemiarido ? 'warning' : getTipoBadgeVariant(tipo)) : 'neutral'}
-                                        size="sm"
-                                    >
-                                        {tipo}
-                                    </Chip>
-                                ))}
+                                {/* FILTROS POR TIPO AO LADO DAS ABAS (QUANDO NO CATÁLOGO) */}
+                                {activeTab === 'catalogo' && (
+                                    <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+                                        <div className="h-4 w-px bg-border/80 shrink-0 self-center mx-1" />
+                                        <Chip
+                                            selected={selectedTipo === 'todos'}
+                                            onClick={() => setSelectedTipo('todos')}
+                                            variant={selectedTipo === 'todos' ? (filtroSemiarido ? 'warning' : 'primary') : 'neutral'}
+                                            size="sm"
+                                        >
+                                            Todos
+                                        </Chip>
+                                        {availableTipos.map((tipo) => (
+                                            <Chip
+                                                key={tipo}
+                                                selected={selectedTipo === tipo}
+                                                onClick={() => setSelectedTipo(selectedTipo === tipo ? 'todos' : tipo)}
+                                                variant={selectedTipo === tipo ? (filtroSemiarido ? 'warning' : getTipoBadgeVariant(tipo)) : 'neutral'}
+                                                size="sm"
+                                            >
+                                                {tipo}
+                                            </Chip>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
-                            {/* CHIPS DE FILTROS ATIVOS & BOTÃO LIMPAR */}
-                            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                            {/* LADO DIREITO: CHIPS DE FILTROS ATIVOS + BUSCA */}
+                            <div className="flex items-center gap-2 flex-wrap xl:flex-nowrap justify-end min-w-0">
                                 {selectedSegmento && (
                                     <Chip
                                         selected
@@ -1081,6 +1109,22 @@ export default function CadeiaPage() {
                                         {territoryName} ×
                                     </Chip>
                                 )}
+
+                                {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
+                                <div className="w-full xl:w-64 min-w-0">
+                                    <SearchInput
+                                        value={searchQuery}
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value);
+                                            if (e.target.value.trim() && activeTab !== 'catalogo') {
+                                                setActiveTab('catalogo');
+                                            }
+                                        }}
+                                        onClear={() => setSearchQuery('')}
+                                        placeholder="Buscar cadeia, segmento ou cidade... (/)"
+                                        size="sm"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -1133,13 +1177,13 @@ export default function CadeiaPage() {
                                                             }
                                                             setSelectedCadeiaDrawer(c);
                                                         }}
-                                                        className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-all duration-200 group cursor-pointer border w-full scroll-mt-2 ${isSelected
-                                                                ? (filtroSemiarido
-                                                                    ? 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-500 ring-2 ring-amber-500/20 shadow-card-elevated'
-                                                                    : 'bg-primary-50/50 dark:bg-primary-950/30 border-primary-500 ring-2 ring-primary-500/20 shadow-card-elevated')
-                                                                : (filtroSemiarido
-                                                                    ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated'
-                                                                    : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
+                                                        className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full scroll-mt-2 ${isSelected
+                                                            ? (filtroSemiarido
+                                                                ? 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-500 ring-1 ring-amber-500/20'
+                                                                : 'bg-primary-50/50 dark:bg-primary-950/30 border-primary-500 ring-1 ring-primary-500/20')
+                                                            : (filtroSemiarido
+                                                                ? 'bg-surface border-border hover:border-amber-400/70 hover:bg-amber-50/30 dark:hover:bg-amber-950/15'
+                                                                : 'bg-surface border-border hover:border-border-strong hover:bg-surface-soft/60')
                                                             }`}
                                                     >
                                                         <div className="flex items-start justify-between gap-3 w-full">
@@ -1155,8 +1199,8 @@ export default function CadeiaPage() {
                                                                 </div>
                                                                 <div className="flex flex-col min-w-0 flex-1">
                                                                     <h4 className={`text-body-sm font-semibold leading-tight break-words transition-colors ${isSelected
-                                                                            ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300')
-                                                                            : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
+                                                                        ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300')
+                                                                        : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
                                                                         }`}>
                                                                         {c.entidade}
                                                                     </h4>
@@ -1204,8 +1248,8 @@ export default function CadeiaPage() {
                                                         </div>
 
                                                         <div className={`text-caption leading-relaxed break-words rounded-control p-2 transition-colors border ${isSelected
-                                                                ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
-                                                                : 'bg-surface-soft border-border text-text-secondary'
+                                                            ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
+                                                            : 'bg-surface-soft border-border text-text-secondary'
                                                             }`}>
                                                             <span className="font-semibold text-text-primary">
                                                                 {totalAbrangencia > 1 ? `Atua em ${totalAbrangencia} municípios: ` : 'Atua em 1 município: '}
@@ -1217,8 +1261,8 @@ export default function CadeiaPage() {
 
                                                         {c.texto_referencia && (
                                                             <div className={`text-caption leading-relaxed break-words rounded-control p-2.5 transition-colors border ${isSelected
-                                                                    ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
-                                                                    : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
+                                                                ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
+                                                                : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
                                                                 }`}>
                                                                 <div className="flex items-center gap-1.5 font-medium text-caption text-amber-800 dark:text-amber-300 mb-1">
                                                                     <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
@@ -1299,9 +1343,9 @@ export default function CadeiaPage() {
                                                                 setFocusedAsset(null);
                                                             }
                                                         }}
-                                                        className={`rounded-card p-3 border transition-all cursor-pointer ${isSelected
-                                                                ? (filtroSemiarido ? 'bg-amber-50/50 dark:bg-amber-950/40 border-amber-500 shadow-sm ring-2 ring-amber-500/20' : 'bg-primary-50/40 dark:bg-primary-950/40 border-primary-500 shadow-sm ring-2 ring-primary-500/20')
-                                                                : (filtroSemiarido ? 'bg-surface border-border hover:border-amber-300 shadow-card hover:shadow-card-elevated' : 'bg-surface border-border hover:border-primary-200 shadow-card hover:shadow-card-elevated')
+                                                        className={`rounded-card p-3 border transition-colors duration-150 cursor-pointer ${isSelected
+                                                            ? (filtroSemiarido ? 'bg-amber-50/50 dark:bg-amber-950/40 border-amber-500 ring-1 ring-amber-500/20' : 'bg-primary-50/40 dark:bg-primary-950/40 border-primary-500 ring-1 ring-primary-500/20')
+                                                            : (filtroSemiarido ? 'bg-surface border-border hover:border-amber-400/70 hover:bg-amber-50/30 dark:hover:bg-amber-950/15' : 'bg-surface border-border hover:border-border-strong hover:bg-surface-soft/60')
                                                             }`}
                                                     >
                                                         <div className="flex items-center justify-between mb-1.5">
@@ -1348,56 +1392,67 @@ export default function CadeiaPage() {
                             {/* ABA 3: RANKING */}
                             {activeTab === 'ranking' && (
                                 <div className="flex-1 flex flex-col min-h-0 w-full overflow-hidden">
-                                    <div className="mb-3 shrink-0 flex items-center justify-between">
+                                    <div className="mb-3 shrink-0 flex items-center justify-between gap-3">
                                         <div>
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Ranking Sede Municípios · ${territoryName}` : 'Ranking Sede Territórios'}
                                             </h3>
-                                            <p className="text-caption text-text-secondary font-medium">Densidade de arranjos produtivos por sede oficial</p>
+                                            <p className="text-caption text-text-secondary font-medium">
+                                                Densidade de arranjos produtivos por sede oficial
+                                            </p>
                                         </div>
+
+                                        {selectedTerritory && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleSelectTerritory(null)}
+                                                className="text-caption font-semibold px-2.5 py-1 rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/70 dark:bg-primary-950/40 hover:bg-primary-200/70 dark:hover:bg-primary-900/50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                                            >
+                                                ← Ver Todos os Territórios
+                                            </button>
+                                        )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 min-h-0 w-full">
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0 w-full pb-2">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
-                                                municipalityRanking.map((m, index) => (
+                                                municipalityRanking.map((m) => (
                                                     <div
                                                         key={m.name}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 40px' }}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
                                                         onClick={() => {
                                                             const munKey = String(m.name || '').trim();
                                                             const coords = findMunicipioCoords(munKey);
                                                             if (coords) setFocusedAsset(coords);
                                                         }}
-                                                        className="flex items-center gap-2 p-1.5 rounded-control hover:bg-surface-soft transition-colors cursor-pointer group"
+                                                        className="group flex flex-col gap-1.5 p-2 rounded-xl hover:bg-surface-soft/80 transition-all cursor-pointer"
                                                     >
-                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${index === 0
-                                                                ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-600 text-white')
-                                                                : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
-                                                            }`}>
-                                                            {m.rank}
-                                                        </span>
-
-                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
-                                                            }`}>
-                                                            <div
-                                                                className="absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500"
-                                                                style={{
-                                                                    width: `${m.percentBar}%`,
-                                                                    backgroundColor: rankingBaseColor,
-                                                                    opacity: getRankingBarOpacity(index, municipalityRanking.length)
-                                                                }}
-                                                            />
-                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
-                                                                }`}>
+                                                        {/* LINHA 1: TÍTULO EM CAIXA ALTA */}
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <span className="text-body-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
                                                                 {m.name}
                                                             </span>
                                                         </div>
 
-                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                                            }`}>
-                                                            {m.count}
-                                                        </span>
+                                                        {/* LINHA 2: SUBTÍTULO + VALOR */}
+                                                        <div className="flex items-baseline justify-between text-caption font-medium">
+                                                            <span className="text-text-muted truncate">
+                                                                {m.percentTotal}% da oferta no território
+                                                            </span>
+                                                            <span className="text-text-primary font-bold tabular-nums shrink-0 ml-2">
+                                                                {m.count} <span className="font-normal text-text-muted">{m.count === 1 ? 'arranjo' : 'arranjos'}</span>
+                                                            </span>
+                                                        </div>
+
+                                                        {/* LINHA 3: CÁPSULA COM BORDA E BARRA INTERNA */}
+                                                        <div className="w-full h-3 rounded-full border border-neutral-800/80 dark:border-neutral-200/80 p-[2px] flex items-center bg-transparent">
+                                                            <div
+                                                                className={`h-full rounded-full transition-all duration-500 ease-out ${
+                                                                    filtroSemiarido ? 'bg-amber-600 dark:bg-amber-400' : 'bg-neutral-900 dark:bg-neutral-100'
+                                                                }`}
+                                                                style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 ))
                                             ) : (
@@ -1409,43 +1464,45 @@ export default function CadeiaPage() {
                                             )
                                         ) : (
                                             territoryRanking.length > 0 ? (
-                                                territoryRanking.map((t, index) => (
+                                                territoryRanking.map((t) => (
                                                     <div
-                                                        key={t.id}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 40px' }}
+                                                        key={t.id || t.name}
+                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
                                                         onClick={() => {
-                                                            const found = territoriosData.find(x => Number(x.id_territorio) === Number(t.id));
+                                                            const found = (territoriosData || []).find(x => 
+                                                                (t.id && Number(x.id_territorio) === Number(t.id)) ||
+                                                                normalizeName(x.nome_territorio || x.territorio || x.nome) === normalizeName(t.name)
+                                                            );
                                                             handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
                                                         }}
-                                                        className="flex items-center gap-2 p-1.5 rounded-control hover:bg-surface-soft transition-colors cursor-pointer group"
+                                                        className="group flex flex-col gap-1.5 p-2 rounded-xl hover:bg-surface-soft/80 transition-all cursor-pointer"
                                                     >
-                                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold shrink-0 shadow-xs tnum ${index === 0
-                                                                ? (filtroSemiarido ? 'bg-amber-600 text-white' : 'bg-primary-600 text-white')
-                                                                : (filtroSemiarido ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50')
-                                                            }`}>
-                                                            {t.rank}
-                                                        </span>
-
-                                                        <div className={`relative flex-1 h-6 rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
-                                                            }`}>
-                                                            <div
-                                                                className="absolute left-0 top-0 bottom-0 rounded-full transition-all duration-500"
-                                                                style={{
-                                                                    width: `${t.percentBar}%`,
-                                                                    backgroundColor: rankingBaseColor,
-                                                                    opacity: getRankingBarOpacity(index, territoryRanking.length)
-                                                                }}
-                                                            />
-                                                            <span className={`relative z-10 px-2.5 text-caption font-medium truncate flex-1 ${filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary'
-                                                                }`}>
+                                                        {/* LINHA 1: TÍTULO EM CAIXA ALTA */}
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <span className="text-body-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
                                                                 {t.name}
                                                             </span>
                                                         </div>
 
-                                                        <span className={`h-6 min-w-[34px] px-2 rounded-full text-caption font-semibold flex items-center justify-center tnum shrink-0 ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/50'
-                                                            }`}>
-                                                            {t.count}
-                                                        </span>
+                                                        {/* LINHA 2: SUBTÍTULO + VALOR */}
+                                                        <div className="flex items-baseline justify-between text-caption font-medium">
+                                                            <span className="text-text-muted truncate">
+                                                                {t.percentTotal}% da densidade estadual
+                                                            </span>
+                                                            <span className="text-text-primary font-bold tabular-nums shrink-0 ml-2">
+                                                                {t.count} <span className="font-normal text-text-muted">{t.count === 1 ? 'arranjo' : 'arranjos'}</span>
+                                                            </span>
+                                                        </div>
+
+                                                        {/* LINHA 3: CÁPSULA COM BORDA E BARRA INTERNA */}
+                                                        <div className="w-full h-3 rounded-full border border-neutral-800/80 dark:border-neutral-200/80 p-[2px] flex items-center bg-transparent">
+                                                            <div
+                                                                className={`h-full rounded-full transition-all duration-500 ease-out ${
+                                                                    filtroSemiarido ? 'bg-amber-600 dark:bg-amber-400' : 'bg-neutral-900 dark:bg-neutral-100'
+                                                                }`}
+                                                                style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 ))
                                             ) : (

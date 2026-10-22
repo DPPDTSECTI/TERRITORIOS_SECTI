@@ -791,6 +791,7 @@ export default function SideMap({
     const idTerr = feature?.properties?.id_territorio;
     const terrNome = feature?.properties?.nome_territorio || '';
     const terrNorm = normalizeName(terrNome);
+    const isHovered = hoveredFeatureName === munNome;
 
     const targetId = selectedTerritory?.id_territorio ? String(selectedTerritory.id_territorio) : null;
     const targetTerrNorm = normalizeName(selectedTerritory?.nome_territorio || selectedTerritory?.territorio || '');
@@ -842,7 +843,6 @@ export default function SideMap({
 
     const munStat = cursosStatsByMunicipio[munNorm];
     const count = munStat ? munStat.count : 0;
-    const isHovered = hoveredFeatureName === munNome;
 
     // Aplicação da Escala Logarítmica para equilibrar o contraste visual
     const relativeHeatColor = getRelativeHeatColor(count, maxCursosNoTerritorioSelecionado, filtroSemiarido, isDark);
@@ -1250,8 +1250,8 @@ export default function SideMap({
                 className="clean-city-tooltip"
               >
                 <span className={`text-caption font-medium px-2 py-0.5 rounded-full shadow-2xs border whitespace-nowrap transition-all ${p.isSelected
-                    ? (filtroSemiarido ? 'text-white bg-warning-700 border-warning-700 font-bold' : 'text-white bg-primary-700 border-primary-700 font-bold')
-                    : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface border-amber-500/30' : 'text-text-primary bg-surface border-border')
+                  ? (filtroSemiarido ? 'text-white bg-warning-700 border-warning-700 font-bold' : 'text-white bg-primary-700 border-primary-700 font-bold')
+                  : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-surface border-amber-500/30' : 'text-text-primary bg-surface border-border')
                   }`}>
                   {p.municipio}
                 </span>
@@ -1285,8 +1285,8 @@ export default function SideMap({
             <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
               <span
                 className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${mode === 'cadeias' && selectedSegmento && getSegmentColor
-                    ? ''
-                    : (filtroSemiarido ? 'bg-warning-600' : 'bg-primary-600')
+                  ? ''
+                  : (filtroSemiarido ? 'bg-warning-600' : 'bg-primary-600')
                   }`}
                 style={
                   mode === 'cadeias' && selectedSegmento && getSegmentColor
@@ -1400,12 +1400,12 @@ export default function SideMap({
             type="button"
             onClick={() => setShowAllConnections((prev) => !prev)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all border cursor-pointer select-none shadow-card ${showAllConnections
-                ? (filtroSemiarido
-                  ? 'bg-amber-600 text-white border-amber-600 shadow-card'
-                  : 'bg-primary-700 text-white border-primary-700 shadow-card')
-                : (filtroSemiarido
-                  ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
-                  : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
+              ? (filtroSemiarido
+                ? 'bg-amber-600 text-white border-amber-600 shadow-card'
+                : 'bg-primary-700 text-white border-primary-700 shadow-card')
+              : (filtroSemiarido
+                ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
+                : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
               }`}
           >
             <Network size={13} className={showAllConnections ? (filtroSemiarido ? 'text-amber-200' : 'text-primary-200') : (filtroSemiarido ? 'text-amber-600' : 'text-primary-600')} />
@@ -1420,13 +1420,13 @@ export default function SideMap({
             onClick={() => setFiltroSemiarido(prev => !prev)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
             className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${filtroSemiarido
-                ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
-                : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
+              ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
+              : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
               }`}
           >
             <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${filtroSemiarido
-                ? 'bg-amber-500 text-white'
-                : 'bg-surface-soft border border-border text-text-muted'
+              ? 'bg-amber-500 text-white'
+              : 'bg-surface-soft border border-border text-text-muted'
               }`}>
               {filtroSemiarido ? (
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -1455,12 +1455,12 @@ export default function SideMap({
             title={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
             aria-label={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
             className={`flex items-center justify-center w-[32px] h-[32px] rounded-control transition-all border cursor-pointer select-none shadow-card ${isExpanded
-                ? (filtroSemiarido
-                  ? 'bg-amber-600 text-white border-amber-600 shadow-card'
-                  : 'bg-primary-700 text-white border-primary-700 shadow-card')
-                : (filtroSemiarido
-                  ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
-                  : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
+              ? (filtroSemiarido
+                ? 'bg-amber-600 text-white border-amber-600 shadow-card'
+                : 'bg-primary-700 text-white border-primary-700 shadow-card')
+              : (filtroSemiarido
+                ? 'bg-surface text-amber-800 dark:text-amber-300 border-border hover:bg-surface-soft hover:border-amber-400'
+                : 'bg-surface text-text-primary border-border hover:bg-surface-soft hover:border-primary-500')
               }`}
           >
             {isExpanded ? (
@@ -1502,8 +1502,8 @@ export default function SideMap({
             onAssetClick?.(null);
           }}
           className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${hasActiveFilter
-              ? 'text-danger-600 bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 dark:hover:bg-danger-900/50'
-              : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft')
+            ? 'text-danger-600 bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 dark:hover:bg-danger-900/50'
+            : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft')
             }`}
           title="Limpar filtros"
         >

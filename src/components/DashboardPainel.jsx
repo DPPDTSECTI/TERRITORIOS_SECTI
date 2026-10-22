@@ -621,13 +621,13 @@ export default function DashboardPainel() {
                 <motion.div key={index} variants={fadeUp} className="h-full">
                   <div
                     title={kpi.tooltip || kpi.label}
-                    className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-all duration-300 select-none ${isHero
+                    className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-colors duration-200 select-none ${isHero
                         ? (filtroSemiarido
-                          ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-card shadow-amber-500/20'
-                          : 'bg-gradient-brand text-white border border-primary-500/40 shadow-kpi-blue')
+                          ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40'
+                          : 'bg-gradient-brand text-white border border-primary-500/40')
                         : (filtroSemiarido
-                          ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary shadow-card hover:shadow-card-hover'
-                          : 'bg-surface-soft border border-border/70 text-text-primary shadow-card hover:shadow-card-hover hover:border-border')
+                          ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary'
+                          : 'bg-surface-soft border border-border/70 text-text-primary')
                       }`}
                   >
                     {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
@@ -644,7 +644,7 @@ export default function DashboardPainel() {
 
                       {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
                       <div
-                        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center shadow-2xs ${isHero
+                        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isHero
                             ? 'bg-white/15 text-white border border-white/20'
                             : 'bg-surface border border-border/80 text-text-secondary'
                           }`}

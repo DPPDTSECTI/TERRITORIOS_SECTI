@@ -110,7 +110,7 @@ export default function RankingBarChart({
   }, [allRanked, filterMode, highlightedItem]);
 
   return (
-    <div className={`flex-1 bg-surface rounded-card border border-border shadow-card transition-all duration-300 hover:shadow-card-hover p-4 sm:p-4.5 relative flex flex-col group cursor-default h-full min-h-0 ${cardClassName}`}>
+    <div className={`flex-1 bg-surface rounded-card border border-border p-4 sm:p-4.5 relative flex flex-col group cursor-default h-full min-h-0 ${cardClassName}`}>
 
       {/* HEADER + CONTROLES */}
       <div className="flex justify-between items-start mb-2 shrink-0">

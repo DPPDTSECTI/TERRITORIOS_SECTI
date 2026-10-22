@@ -135,10 +135,10 @@ export function KpiCard({
   return (
     <div
       className={cn(
-        'p-5 rounded-card flex flex-col justify-between gap-3 border transition-all duration-200 select-none',
+        'p-5 rounded-card flex flex-col justify-between gap-3 border transition-colors duration-200 select-none',
         isBrand
-          ? 'bg-gradient-brand text-white border-primary-500/40 shadow-kpi-blue'
-          : 'bg-surface-soft text-text-primary border-border/70 shadow-card hover:shadow-card-hover hover:border-border',
+          ? 'bg-gradient-brand text-white border-primary-500/40'
+          : 'bg-surface-soft text-text-primary border-border/70',
         className
       )}
     >
