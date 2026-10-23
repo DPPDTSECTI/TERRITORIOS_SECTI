@@ -6,7 +6,7 @@ const cardVariants = {
   interactive:
     'bg-surface border border-border/60 rounded-card transition-colors duration-150 hover:border-border-strong hover:bg-surface-soft/60 cursor-pointer',
   sunken: 'bg-surface-sunken border border-border/50 rounded-subcard',
-  subcard: 'bg-surface-soft border border-neutral-200/70 dark:border-neutral-700/60 rounded-subcard p-4',
+  subcard: 'bg-surface-soft border border-border/70 rounded-subcard p-4',
   brand: 'bg-gradient-brand text-white border border-primary-500/40 rounded-card',
 };
 

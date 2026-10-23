@@ -7,21 +7,16 @@ import {
   Database,
   GraduationCap,
   GitPullRequest,
-  Sun,
-  Moon,
   Pin,
   PinOff,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useTheme } from '../context/ThemeContext';
 import { IconButton } from './ui/Button';
-import { SegmentedControl } from './ui/SegmentedControl';
 import { cn } from '../lib/cn';
 
 export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
   const location = useLocation();
-  const { theme, isDark, toggleTheme, setTheme } = useTheme();
 
   const [isPinned, setIsPinned] = useState(() => {
     try {
@@ -141,9 +136,9 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                     item.tourClass,
                     isActive
                       ? isExpanded
-                        ? 'bg-neutral-100/90 dark:bg-surface-elevated text-text-primary font-semibold'
+                        ? 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold'
                         : 'text-white'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-neutral-100/70 dark:hover:bg-surface-elevated/70'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70'
                   )}
                 >
                   <div
@@ -212,9 +207,9 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                         item.tourClass,
                         isActive
                           ? isExpanded
-                            ? 'bg-neutral-100/90 dark:bg-surface-elevated text-text-primary font-semibold'
+                            ? 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold'
                             : 'text-white'
-                          : 'text-text-secondary hover:text-text-primary hover:bg-neutral-100/70 dark:hover:bg-surface-elevated/70'
+                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70'
                       )}
                     >
                       <div
@@ -258,43 +253,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
           )}
         </nav>
 
-        {/* ================= RODAPÉ: CONTROLE DE TEMA ================= */}
-        <div className="pt-3 border-t border-border/70 shrink-0 w-full">
-          {isExpanded ? (
-            <SegmentedControl
-              options={[
-                {
-                  value: 'light',
-                  label: 'Claro',
-                  icon: <Sun size={14} strokeWidth={1.75} className="text-amber-500" />,
-                },
-                {
-                  value: 'dark',
-                  label: 'Escuro',
-                  icon: <Moon size={14} strokeWidth={1.75} className="text-blue-400" />,
-                },
-              ]}
-              value={theme}
-              onChange={(val) => setTheme(val)}
-              size="sm"
-              className="w-full justify-center"
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={toggleTheme}
-              title={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-              aria-label={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-              className="w-10 h-10 mx-auto rounded-control flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-soft transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              {isDark ? (
-                <Sun size={18} strokeWidth={1.75} className="text-amber-400" />
-              ) : (
-                <Moon size={18} strokeWidth={1.75} className="text-text-secondary" />
-              )}
-            </button>
-          )}
-        </div>
+
       </aside>
     </div>
   );

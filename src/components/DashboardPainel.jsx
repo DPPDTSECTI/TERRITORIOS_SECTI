@@ -686,10 +686,10 @@ export default function DashboardPainel() {
       </div>
 
       {/* GRID PRINCIPAL */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+      <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-[400px]">
+        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 h-full min-h-[460px] min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col">
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}

@@ -113,14 +113,14 @@
     --shadow-float: 0 12px 30px -4px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.03);
 
     /* DATA VISUALIZATION (Bento Grid SaaS: Alto Contraste em Cards Brancos) */
-    --color-chart-1: 37 99 235;        /* #2563EB - Royal Blue (Hero) */
-    --color-chart-2: 15 23 42;         /* #0F172A - Carbon Navy */
-    --color-chart-3: 2 132 199;        /* #0284C7 - Ocean Cyan 600 */
-    --color-chart-4: 71 85 105;        /* #475569 - Slate 600 */
-    --color-chart-5: 67 56 202;        /* #4338CA - Deep Indigo 700 */
-    --color-chart-6: 13 148 136;       /* #0D9488 - Teal 600 */
-    --color-chart-7: 29 78 216;        /* #1D4ED8 - Cobalt Blue 700 */
-    --color-chart-8: 100 116 139;      /* #64748B - Slate 500 */
+    --color-chart-1: 37 99 235;        /* #2563EB - Royal Blue 600 */
+    --color-chart-2: 2 132 199;        /* #0284C7 - Cerulean Blue 600 */
+    --color-chart-3: 13 148 136;       /* #0D9488 - Teal 600 */
+    --color-chart-4: 67 56 202;        /* #4338CA - Indigo 700 */
+    --color-chart-5: 217 119 6;        /* #D97706 - Amber 600 */
+    --color-chart-6: 5 150 105;        /* #059669 - Emerald 600 */
+    --color-chart-7: 124 58 237;       /* #7C3AED - Violet 600 */
+    --color-chart-8: 220 38 38;        /* #DC2626 - Red 600 */
 
     /* MAPS COROPLÉTICO (Escala de Azul: de claro a profundo) */
     --color-map-1: 30 58 138;         /* #1E3A8A - Nível 1: Azul profundo (máximo) */
@@ -166,18 +166,18 @@
     --color-carbon-hover: 30 41 59;    /* #1E293B */
 
     /* NEUTRALS */
-    --color-neutral-950: 248 250 252;
-    --color-neutral-900: 241 245 249;
-    --color-neutral-800: 226 232 240;
-    --color-neutral-700: 203 213 225;
-    --color-neutral-600: 148 163 184;  /* #94A3B8 */
+    --color-neutral-950: 9 13 22;      /* #090D16 - Deepest Black */
+    --color-neutral-900: 17 24 39;     /* #111827 - Surface Dark */
+    --color-neutral-800: 30 41 59;     /* #1E293B - Raised Surface */
+    --color-neutral-700: 51 65 85;     /* #334155 - Subtle Border */
+    --color-neutral-600: 71 85 105;    /* #475569 */
     --color-neutral-500: 100 116 139;  /* #64748B */
-    --color-neutral-400: 71 85 105;
-    --color-neutral-300: 51 65 85;     /* #334155 */
-    --color-neutral-200: 30 41 59;     /* #1E293B */
-    --color-neutral-100: 17 24 39;     /* #111827 */
-    --color-neutral-50: 9 13 22;       /* #090D16 */
-    --color-white: 17 24 39;
+    --color-neutral-400: 148 163 184;  /* #94A3B8 */
+    --color-neutral-300: 203 213 225;  /* #CBD5E1 */
+    --color-neutral-200: 226 232 240;  /* #E2E8F0 */
+    --color-neutral-100: 241 245 249;  /* #F1F5F9 */
+    --color-neutral-50: 248 250 252;   /* #F8FAFC */
+    --color-white: 255 255 255;
 
     /* SURFACES DARK (Proporcional: #090D16 no canvas, #111827 nos cards, #1E293B nos sub-cards) */
     --color-background: 9 13 22;       /* #090D16 - Canvas */
@@ -259,12 +259,12 @@
     /* DATA VISUALIZATION (Luminoso no Tema Escuro: Alto Contraste em Cards Carbono) */
     --color-chart-1: 56 189 248;       /* #38BDF8 - Sky Blue 400 */
     --color-chart-2: 96 165 250;       /* #60A5FA - Royal Light 400 */
-    --color-chart-3: 241 245 249;      /* #F1F5F9 - Crisp Silver White */
-    --color-chart-4: 45 212 191;       /* #2DD4BF - Luminous Aqua/Teal 400 */
-    --color-chart-5: 129 140 248;      /* #818CF8 - Periwinkle/Indigo 400 */
-    --color-chart-6: 59 130 246;       /* #3B82F6 - Electric Blue 500 */
-    --color-chart-7: 148 163 184;      /* #94A3B8 - Clean Light Slate 400 */
-    --color-chart-8: 186 230 253;      /* #BAE6FD - Ice Cyan 200 */
+    --color-chart-3: 52 211 153;       /* #34D399 - Emerald 400 */
+    --color-chart-4: 129 140 248;      /* #818CF8 - Indigo 400 */
+    --color-chart-5: 244 114 182;      /* #F472B6 - Pink 400 */
+    --color-chart-6: 45 212 191;       /* #2DD4BF - Aqua 400 */
+    --color-chart-7: 251 191 36;       /* #FBBF24 - Amber 400 */
+    --color-chart-8: 167 139 250;      /* #A78BFA - Purple 400 */
 
     /* MAPS COROPLÉTICO NO ESCURO */
     --color-map-1: 96 165 250;        /* #60A5FA - Nível 1: Azul vibrante no dark */
@@ -666,6 +666,17 @@ input[type="checkbox"] {
 
 .dark input[type="checkbox"] {
   accent-color: #2563EB;
+}
+
+/* Utilitário para ocultar scrollbars preservando rolagem */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .dark .bg-carto-grid {

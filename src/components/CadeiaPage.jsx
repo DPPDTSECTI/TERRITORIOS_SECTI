@@ -28,7 +28,6 @@ import {
     Chip,
     SearchInput,
     Tabs,
-    Drawer,
     EmptyState,
     KpiSkeleton
 } from './ui';
@@ -175,7 +174,6 @@ export default function CadeiaPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('catalogo');
     const [selectedCadeia, setSelectedCadeia] = useState(null);
-    const [selectedCadeiaDrawer, setSelectedCadeiaDrawer] = useState(null);
     const [isMapExpanded, setIsMapExpanded] = useState(false);
     const [sidebarSearch, setSidebarSearch] = useState('');
 
@@ -718,7 +716,7 @@ export default function CadeiaPage() {
     ];
 
     return (
-        <main className="flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full">
+        <main className="flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
@@ -767,14 +765,14 @@ export default function CadeiaPage() {
             </div>
 
             {/* HEADER DA PÁGINA */}
-            <div className="flex items-center justify-between w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
                             Módulo de Cadeias Produtivas & IGs
                         </h1>
                     </div>
-                    <p className="text-body-sm text-text-secondary mt-1 font-normal">
+                    <p className="text-body-sm text-text-secondary mt-1 font-medium">
                         Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
                     </p>
                     <div
@@ -875,14 +873,14 @@ export default function CadeiaPage() {
                 variants={staggerContainer(0.04)}
                 initial="initial"
                 animate="animate"
-                className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px] w-full pb-4"
+                className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]"
             >
 
                 {/* MAPA DE CADEIAS */}
                 <motion.div
                     variants={fadeUp}
                     style={{ width: isMapExpanded ? 'calc(100% - 440px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 h-[480px] lg:h-full bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-0 min-w-0 transition-[width] duration-300"
+                    className="shrink-0 h-full min-h-[460px] min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cadeias"
@@ -964,7 +962,6 @@ export default function CadeiaPage() {
                                                         setSelectedCadeia(c);
                                                         if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
                                                     }
-                                                    setSelectedCadeiaDrawer(c);
                                                 }}
                                                 className={`rounded-card p-2.5 flex items-center justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full ${isSelected
                                                     ? (filtroSemiarido
@@ -1029,89 +1026,65 @@ export default function CadeiaPage() {
                     /* LADO DIREITO: TABS, FILTROS E CONTEÚDO */
                     <motion.div
                         variants={fadeUp}
-                        className="flex-1 min-w-0 h-[520px] lg:h-full flex flex-col gap-3 min-h-0 overflow-hidden"
+                        className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0"
                     >
                         {/* BARRA SUPERIOR: TABS + FILTROS AO LADO + BUSCA */}
-                        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 shrink-0">
-                            <div className="flex items-center gap-2.5 flex-nowrap min-w-0 shrink-0 overflow-x-auto scrollbar-none">
-                                <Tabs
-                                    items={[
-                                        {
-                                            id: 'catalogo',
-                                            label: 'Catálogo',
-                                            icon: <GitPullRequest size={15} />
-                                        },
-                                        {
-                                            id: 'segmentos',
-                                            label: 'Segmentos',
-                                            icon: <Filter size={15} />
-                                        },
-                                        {
-                                            id: 'ranking',
-                                            label: selectedTerritory ? 'Municípios' : 'Territórios',
-                                            icon: <TrendingUp size={15} />
-                                        }
-                                    ]}
-                                    value={activeTab}
-                                    onChange={setActiveTab}
-                                    variant="pill"
-                                    className="shrink-0"
-                                />
+                        <div className="flex flex-col gap-2.5 shrink-0">
+                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 min-w-0">
+                                <div className="flex items-center gap-2.5 flex-nowrap min-w-0 overflow-x-auto scrollbar-none">
+                                    <Tabs
+                                        items={[
+                                            {
+                                                id: 'catalogo',
+                                                label: 'Catálogo',
+                                                icon: <GitPullRequest size={15} />
+                                            },
+                                            {
+                                                id: 'segmentos',
+                                                label: 'Segmentos',
+                                                icon: <Filter size={15} />
+                                            },
+                                            {
+                                                id: 'ranking',
+                                                label: selectedTerritory ? 'Municípios' : 'Territórios',
+                                                icon: <TrendingUp size={15} />
+                                            }
+                                        ]}
+                                        value={activeTab}
+                                        onChange={setActiveTab}
+                                        variant="pill"
+                                        className="shrink-0"
+                                    />
 
-                                {/* FILTROS POR TIPO AO LADO DAS ABAS (QUANDO NO CATÁLOGO) */}
-                                {activeTab === 'catalogo' && (
-                                    <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
-                                        <div className="h-4 w-px bg-border/80 shrink-0 self-center mx-1" />
-                                        <Chip
-                                            selected={selectedTipo === 'todos'}
-                                            onClick={() => setSelectedTipo('todos')}
-                                            variant={selectedTipo === 'todos' ? (filtroSemiarido ? 'warning' : 'primary') : 'neutral'}
-                                            size="sm"
-                                        >
-                                            Todos
-                                        </Chip>
-                                        {availableTipos.map((tipo) => (
+                                    {/* FILTROS POR TIPO AO LADO DAS ABAS (QUANDO NO CATÁLOGO) */}
+                                    {activeTab === 'catalogo' && (
+                                        <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+                                            <div className="h-4 w-px bg-border/80 shrink-0 self-center mx-1" />
                                             <Chip
-                                                key={tipo}
-                                                selected={selectedTipo === tipo}
-                                                onClick={() => setSelectedTipo(selectedTipo === tipo ? 'todos' : tipo)}
-                                                variant={selectedTipo === tipo ? (filtroSemiarido ? 'warning' : getTipoBadgeVariant(tipo)) : 'neutral'}
-                                                size="sm"
+                                                selected={selectedTipo === 'todos'}
+                                                onClick={() => setSelectedTipo('todos')}
+                                                variant={selectedTipo === 'todos' ? (filtroSemiarido ? 'warning' : 'primary') : 'neutral'}
+                                                size="md"
                                             >
-                                                {tipo}
+                                                Todos
                                             </Chip>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* LADO DIREITO: CHIPS DE FILTROS ATIVOS + BUSCA */}
-                            <div className="flex items-center gap-2 flex-wrap xl:flex-nowrap justify-end min-w-0">
-                                {selectedSegmento && (
-                                    <Chip
-                                        selected
-                                        onClick={() => setSelectedSegmento(null)}
-                                        icon={<Filter size={12} />}
-                                        variant="primary"
-                                        size="sm"
-                                    >
-                                        Segmento: {selectedSegmento} ×
-                                    </Chip>
-                                )}
-                                {selectedTerritory && (
-                                    <Chip
-                                        selected
-                                        onClick={() => handleSelectTerritory(null)}
-                                        icon={<MapPin size={12} />}
-                                        variant="neutral"
-                                        size="sm"
-                                    >
-                                        {territoryName} ×
-                                    </Chip>
-                                )}
+                                            {availableTipos.map((tipo) => (
+                                                <Chip
+                                                    key={tipo}
+                                                    selected={selectedTipo === tipo}
+                                                    onClick={() => setSelectedTipo(selectedTipo === tipo ? 'todos' : tipo)}
+                                                    variant={selectedTipo === tipo ? (filtroSemiarido ? 'warning' : getTipoBadgeVariant(tipo)) : 'neutral'}
+                                                    size="md"
+                                                >
+                                                    {tipo}
+                                                </Chip>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
 
                                 {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
-                                <div className="w-full xl:w-64 min-w-0">
+                                <div className="w-full lg:w-64 min-w-0 shrink-0">
                                     <SearchInput
                                         value={searchQuery}
                                         onChange={(e) => {
@@ -1126,6 +1099,49 @@ export default function CadeiaPage() {
                                     />
                                 </div>
                             </div>
+
+                            {/* LINHA DE FILTROS ATIVOS (SE HOUVER FILTRO ATIVO) */}
+                            {(selectedSegmento || selectedTerritory) && (
+                                <div className="flex items-center gap-2 flex-wrap min-w-0 pt-0.5 animate-in fade-in duration-150">
+                                    <span className="text-caption font-medium text-text-muted">Filtros ativos:</span>
+                                    {selectedSegmento && (
+                                        <Chip
+                                            selected
+                                            onClick={() => setSelectedSegmento(null)}
+                                            icon={<Filter size={12} />}
+                                            variant="primary"
+                                            size="sm"
+                                            className="max-w-[280px]"
+                                            title={`Segmento: ${selectedSegmento}`}
+                                        >
+                                            Segmento: {selectedSegmento} ×
+                                        </Chip>
+                                    )}
+                                    {selectedTerritory && (
+                                        <Chip
+                                            selected
+                                            onClick={() => handleSelectTerritory(null)}
+                                            icon={<MapPin size={12} />}
+                                            variant="neutral"
+                                            size="sm"
+                                            className="max-w-[240px]"
+                                            title={`Território: ${territoryName}`}
+                                        >
+                                            {territoryName} ×
+                                        </Chip>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setSelectedSegmento(null);
+                                            handleSelectTerritory(null);
+                                        }}
+                                        className="text-caption font-medium text-text-muted hover:text-danger-600 transition-colors ml-1 cursor-pointer"
+                                    >
+                                        Limpar todos
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* CONTEÚDO DAS ABAS */}
@@ -1175,7 +1191,6 @@ export default function CadeiaPage() {
                                                                 setSelectedCadeia(c);
                                                                 if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
                                                             }
-                                                            setSelectedCadeiaDrawer(c);
                                                         }}
                                                         className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full scroll-mt-2 ${isSelected
                                                             ? (filtroSemiarido
@@ -1247,7 +1262,7 @@ export default function CadeiaPage() {
                                                             </div>
                                                         </div>
 
-                                                        <div className={`text-caption leading-relaxed break-words rounded-control p-2 transition-colors border ${isSelected
+                                                        <div className={`text-caption leading-relaxed break-words rounded-control px-6 sm:px-7 py-3 transition-colors border ${isSelected
                                                             ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
                                                             : 'bg-surface-soft border-border text-text-secondary'
                                                             }`}>
@@ -1260,7 +1275,7 @@ export default function CadeiaPage() {
                                                         </div>
 
                                                         {c.texto_referencia && (
-                                                            <div className={`text-caption leading-relaxed break-words rounded-control p-2.5 transition-colors border ${isSelected
+                                                            <div className={`text-caption leading-relaxed break-words rounded-control px-6 sm:px-7 py-3 transition-colors border ${isSelected
                                                                 ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
                                                                 : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
                                                                 }`}>
@@ -1330,11 +1345,19 @@ export default function CadeiaPage() {
                                             segmentStats.map((seg) => {
                                                 const isSelected = selectedSegmento === seg.name;
                                                 const dotColor = getSegmentColor(seg.name);
+                                                const totalDensity = baseCadeiasForStats.length || segmentStats.reduce((acc, s) => acc + s.count, 0) || 1;
+                                                const remaining = Math.max(0, totalDensity - seg.count);
+
+                                                const negPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+                                                    : 'bg-surface-soft text-text-secondary border border-border';
+                                                const totalPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+                                                    : 'bg-surface-soft text-text-primary border border-border';
 
                                                 return (
                                                     <div
                                                         key={seg.name}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 56px' }}
                                                         onClick={() => {
                                                             const nextSeg = isSelected ? null : seg.name;
                                                             setSelectedSegmento(nextSeg);
@@ -1343,47 +1366,72 @@ export default function CadeiaPage() {
                                                                 setFocusedAsset(null);
                                                             }
                                                         }}
-                                                        className={`rounded-card p-3 border transition-colors duration-150 cursor-pointer ${isSelected
-                                                            ? (filtroSemiarido ? 'bg-amber-50/50 dark:bg-amber-950/40 border-amber-500 ring-1 ring-amber-500/20' : 'bg-primary-50/40 dark:bg-primary-950/40 border-primary-500 ring-1 ring-primary-500/20')
-                                                            : (filtroSemiarido ? 'bg-surface border-border hover:border-amber-400/70 hover:bg-amber-50/30 dark:hover:bg-amber-950/15' : 'bg-surface border-border hover:border-border-strong hover:bg-surface-soft/60')
-                                                            }`}
+                                                        className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
+                                                            ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
+                                                            : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
+                                                        }`}
                                                     >
-                                                        <div className="flex items-center justify-between mb-1.5">
-                                                            <div className="flex items-center gap-2 min-w-0">
+                                                        {/* RÓTULO COM NOME DO SEGMENTO */}
+                                                        <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                            <div className="flex items-center gap-1.5 min-w-0">
                                                                 <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: dotColor }} />
-                                                                <span className="text-body-sm font-semibold text-text-primary truncate">{seg.name}</span>
+                                                                <span className="truncate">{seg.name}</span>
                                                                 {!seg.isTop7 && (
                                                                     <span className="text-caption font-medium text-text-muted px-1.5 py-0.5 rounded-control bg-surface-soft border border-border/60 shrink-0">
                                                                         Demais segmentos
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-caption font-medium text-text-secondary tnum">{seg.count} {seg.count === 1 ? 'arranjo' : 'arranjos'}</span>
-                                                                <span
-                                                                    className="text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none tnum"
-                                                                    style={{ backgroundColor: `${dotColor}20`, color: dotColor }}
-                                                                >
-                                                                    {seg.percent}%
+                                                            <span className="text-caption text-text-muted font-normal tabular-nums">{seg.percent}% da densidade</span>
+                                                        </div>
+
+                                                        {/* BARRAS DE PÍLULAS */}
+                                                        <div className="flex items-center gap-2 w-full">
+                                                            <div
+                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                style={{
+                                                                    flexGrow: seg.count,
+                                                                    flexBasis: 0,
+                                                                    backgroundColor: dotColor,
+                                                                    minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                }}
+                                                                title={`${seg.name}: ${seg.count} arranjos (${seg.percent}%)`}
+                                                            >
+                                                                <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                    {seg.count} <span className="text-caption font-medium opacity-90">({seg.percent}%)</span>
                                                                 </span>
                                                             </div>
-                                                        </div>
-                                                        <div className={`w-full h-2 rounded-full overflow-hidden relative flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-surface-sunken'
-                                                            }`}>
+
+                                                            {remaining > 0 && (
+                                                                <div
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    style={{
+                                                                        flexGrow: remaining,
+                                                                        flexBasis: 0
+                                                                    }}
+                                                                />
+                                                            )}
+
                                                             <div
-                                                                className="h-full rounded-full transition-all duration-500"
-                                                                style={{ width: `${seg.percent}%`, backgroundColor: dotColor }}
-                                                            />
+                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`Total de arranjos: ${seg.count}`}
+                                                            >
+                                                                <span className="text-caption font-bold tabular-nums leading-none">
+                                                                    {seg.count}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 );
                                             })
                                         ) : (
-                                            <EmptyState
-                                                icon={Filter}
-                                                title="Nenhum segmento encontrado"
-                                                description="Não há dados de segmentos para o filtro atual."
-                                            />
+                                            <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                <EmptyState
+                                                    icon={Filter}
+                                                    title="Nenhum segmento encontrado"
+                                                    description="Não há dados de segmentos para o filtro atual."
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -1413,104 +1461,174 @@ export default function CadeiaPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0 w-full pb-2">
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full pb-2">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
-                                                municipalityRanking.map((m) => (
-                                                    <div
-                                                        key={m.name}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
-                                                        onClick={() => {
-                                                            const munKey = String(m.name || '').trim();
-                                                            const coords = findMunicipioCoords(munKey);
-                                                            if (coords) setFocusedAsset(coords);
-                                                        }}
-                                                        className="group flex flex-col gap-1.5 p-2 rounded-xl hover:bg-surface-soft/80 transition-all cursor-pointer"
-                                                    >
-                                                        {/* LINHA 1: TÍTULO EM CAIXA ALTA */}
-                                                        <div className="flex items-center justify-between gap-2">
-                                                            <span className="text-body-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
-                                                                {m.name}
-                                                            </span>
-                                                        </div>
+                                                municipalityRanking.map((m) => {
+                                                    const maxCount = municipalityRanking[0]?.count || 1;
+                                                    const remaining = Math.max(0, maxCount - m.count);
 
-                                                        {/* LINHA 2: SUBTÍTULO + VALOR */}
-                                                        <div className="flex items-baseline justify-between text-caption font-medium">
-                                                            <span className="text-text-muted truncate">
-                                                                {m.percentTotal}% da oferta no território
-                                                            </span>
-                                                            <span className="text-text-primary font-bold tabular-nums shrink-0 ml-2">
-                                                                {m.count} <span className="font-normal text-text-muted">{m.count === 1 ? 'arranjo' : 'arranjos'}</span>
-                                                            </span>
-                                                        </div>
+                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const negPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+                                                        : 'bg-surface-soft text-text-secondary border border-border';
+                                                    const totalPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+                                                        : 'bg-surface-soft text-text-primary border border-border';
 
-                                                        {/* LINHA 3: CÁPSULA COM BORDA E BARRA INTERNA */}
-                                                        <div className="w-full h-3 rounded-full border border-neutral-800/80 dark:border-neutral-200/80 p-[2px] flex items-center bg-transparent">
-                                                            <div
-                                                                className={`h-full rounded-full transition-all duration-500 ease-out ${
-                                                                    filtroSemiarido ? 'bg-amber-600 dark:bg-amber-400' : 'bg-neutral-900 dark:bg-neutral-100'
-                                                                }`}
-                                                                style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
-                                                            />
+                                                    return (
+                                                        <div
+                                                            key={m.name}
+                                                            onClick={() => {
+                                                                const munKey = String(m.name || '').trim();
+                                                                const coords = findMunicipioCoords(munKey);
+                                                                if (coords) setFocusedAsset(coords);
+                                                            }}
+                                                            className={`p-2 rounded-xl transition-all cursor-pointer border ${filtroSemiarido
+                                                                ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200'
+                                                                : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border'
+                                                            }`}
+                                                        >
+                                                            {/* RÓTULO COM NOME DO MUNICÍPIO */}
+                                                            <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                                <span className="truncate">{m.name}</span>
+                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{m.percentTotal}% do território</span>
+                                                            </div>
+
+                                                            {/* BARRAS DE PÍLULAS */}
+                                                            <div className="flex items-center gap-2 w-full">
+                                                                <div
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    style={{
+                                                                        flexGrow: m.count,
+                                                                        flexBasis: 0,
+                                                                        backgroundColor: posPillColor,
+                                                                        minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                    }}
+                                                                    title={`${m.name}: ${m.count} arranjos (${m.percentTotal}%)`}
+                                                                >
+                                                                    <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                        {m.count} <span className="text-caption font-medium opacity-90">({m.percentTotal}%)</span>
+                                                                    </span>
+                                                                </div>
+
+                                                                {remaining > 0 && (
+                                                                    <div
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        style={{
+                                                                            flexGrow: remaining,
+                                                                            flexBasis: 0
+                                                                        }}
+                                                                    />
+                                                                )}
+
+                                                                <div
+                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`Total de arranjos: ${m.count}`}
+                                                                >
+                                                                    <span className="text-caption font-bold tabular-nums leading-none">
+                                                                        {m.count}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))
+                                                    );
+                                                })
                                             ) : (
-                                                <EmptyState
-                                                    icon={TrendingUp}
-                                                    title="Nenhum município com sede registrada"
-                                                    description="Não há sedes de arranjos produtivos registradas para este território."
-                                                />
+                                                <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                    <EmptyState
+                                                        icon={TrendingUp}
+                                                        title="Nenhum município com sede registrada"
+                                                        description="Não há sedes de arranjos produtivos registradas para este território."
+                                                    />
+                                                </div>
                                             )
                                         ) : (
                                             territoryRanking.length > 0 ? (
-                                                territoryRanking.map((t) => (
-                                                    <div
-                                                        key={t.id || t.name}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
-                                                        onClick={() => {
-                                                            const found = (territoriosData || []).find(x => 
-                                                                (t.id && Number(x.id_territorio) === Number(t.id)) ||
-                                                                normalizeName(x.nome_territorio || x.territorio || x.nome) === normalizeName(t.name)
-                                                            );
-                                                            handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
-                                                        }}
-                                                        className="group flex flex-col gap-1.5 p-2 rounded-xl hover:bg-surface-soft/80 transition-all cursor-pointer"
-                                                    >
-                                                        {/* LINHA 1: TÍTULO EM CAIXA ALTA */}
-                                                        <div className="flex items-center justify-between gap-2">
-                                                            <span className="text-body-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
-                                                                {t.name}
-                                                            </span>
-                                                        </div>
+                                                territoryRanking.map((t) => {
+                                                    const isSelected = selectedTerritory && (
+                                                        (t.id && Number(selectedTerritory.id_territorio) === Number(t.id)) ||
+                                                        normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || selectedTerritory.nome) === normalizeName(t.name)
+                                                    );
+                                                    const maxCount = territoryRanking[0]?.count || 1;
+                                                    const remaining = Math.max(0, maxCount - t.count);
 
-                                                        {/* LINHA 2: SUBTÍTULO + VALOR */}
-                                                        <div className="flex items-baseline justify-between text-caption font-medium">
-                                                            <span className="text-text-muted truncate">
-                                                                {t.percentTotal}% da densidade estadual
-                                                            </span>
-                                                            <span className="text-text-primary font-bold tabular-nums shrink-0 ml-2">
-                                                                {t.count} <span className="font-normal text-text-muted">{t.count === 1 ? 'arranjo' : 'arranjos'}</span>
-                                                            </span>
-                                                        </div>
+                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const negPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+                                                        : 'bg-surface-soft text-text-secondary border border-border';
+                                                    const totalPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+                                                        : 'bg-surface-soft text-text-primary border border-border';
 
-                                                        {/* LINHA 3: CÁPSULA COM BORDA E BARRA INTERNA */}
-                                                        <div className="w-full h-3 rounded-full border border-neutral-800/80 dark:border-neutral-200/80 p-[2px] flex items-center bg-transparent">
-                                                            <div
-                                                                className={`h-full rounded-full transition-all duration-500 ease-out ${
-                                                                    filtroSemiarido ? 'bg-amber-600 dark:bg-amber-400' : 'bg-neutral-900 dark:bg-neutral-100'
-                                                                }`}
-                                                                style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
-                                                            />
+                                                    return (
+                                                        <div
+                                                            key={t.id || t.name}
+                                                            onClick={() => {
+                                                                const found = (territoriosData || []).find(x => 
+                                                                    (t.id && Number(x.id_territorio) === Number(t.id)) ||
+                                                                    normalizeName(x.nome_territorio || x.territorio || x.nome) === normalizeName(t.name)
+                                                                );
+                                                                handleSelectTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                                                            }}
+                                                            className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
+                                                                ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
+                                                                : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
+                                                            }`}
+                                                        >
+                                                            {/* RÓTULO COM NOME DO TERRITÓRIO */}
+                                                            <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                                <span className="truncate">{t.name}</span>
+                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{t.percentTotal}% do estado</span>
+                                                            </div>
+
+                                                            {/* BARRAS DE PÍLULAS */}
+                                                            <div className="flex items-center gap-2 w-full">
+                                                                <div
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    style={{
+                                                                        flexGrow: t.count,
+                                                                        flexBasis: 0,
+                                                                        backgroundColor: posPillColor,
+                                                                        minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                    }}
+                                                                    title={`${t.name}: ${t.count} arranjos (${t.percentTotal}%)`}
+                                                                >
+                                                                    <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                        {t.count} <span className="text-caption font-medium opacity-90">({t.percentTotal}%)</span>
+                                                                    </span>
+                                                                </div>
+
+                                                                {remaining > 0 && (
+                                                                    <div
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        style={{
+                                                                            flexGrow: remaining,
+                                                                            flexBasis: 0
+                                                                        }}
+                                                                    />
+                                                                )}
+
+                                                                <div
+                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`Total de arranjos: ${t.count}`}
+                                                                >
+                                                                    <span className="text-caption font-bold tabular-nums leading-none">
+                                                                        {t.count}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))
+                                                    );
+                                                })
                                             ) : (
-                                                <EmptyState
-                                                    icon={TrendingUp}
-                                                    title="Nenhum território encontrado"
-                                                    description="Não há registros de arranjos produtivos."
-                                                />
+                                                <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                    <EmptyState
+                                                        icon={TrendingUp}
+                                                        title="Nenhum território encontrado"
+                                                        description="Não há registros de arranjos produtivos."
+                                                    />
+                                                </div>
                                             )
                                         )}
                                     </div>
@@ -1521,142 +1639,6 @@ export default function CadeiaPage() {
                 )}
 
             </motion.div>
-
-            {/* DRAWER LATERAL DE DETALHES DA CADEIA */}
-            <Drawer
-                open={Boolean(selectedCadeiaDrawer)}
-                onClose={() => setSelectedCadeiaDrawer(null)}
-                title={selectedCadeiaDrawer?.entidade || 'Detalhes da Cadeia Produtiva'}
-                subtitle={selectedCadeiaDrawer ? `${selectedCadeiaDrawer.tipo} • ${selectedCadeiaDrawer.segmento}` : ''}
-                footer={
-                    <div className="flex items-center justify-between w-full">
-                        {selectedCadeiaDrawer?.fonte ? (
-                            <a
-                                href={selectedCadeiaDrawer.fonte}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-control font-medium inline-flex items-center justify-center gap-2 h-8 px-3 text-caption bg-primary-600 hover:bg-primary-700 text-white shadow-xs transition-colors"
-                            >
-                                <span>Acessar Fonte Oficial</span>
-                                <ExternalLink size={14} />
-                            </a>
-                        ) : <div />}
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => setSelectedCadeiaDrawer(null)}
-                        >
-                            Fechar
-                        </Button>
-                    </div>
-                }
-            >
-                {selectedCadeiaDrawer && (() => {
-                    const tipoVariant = getTipoBadgeVariant(selectedCadeiaDrawer.tipo);
-                    const totalAbrangencia = (selectedCadeiaDrawer.municipios_cobertos && selectedCadeiaDrawer.municipios_cobertos.length > 0)
-                        ? selectedCadeiaDrawer.municipios_cobertos.length
-                        : 1;
-
-                    return (
-                        <div className="flex flex-col gap-4 text-body-sm">
-                            {/* BADGES PRINCIPAIS */}
-                            <div className="flex items-center gap-2 flex-wrap pb-3 border-b border-border/70">
-                                <Badge
-                                    variant={tipoVariant}
-                                    className="text-caption font-semibold"
-                                >
-                                    {selectedCadeiaDrawer.tipo}
-                                </Badge>
-                                <Badge
-                                    variant="neutral"
-                                    className="text-caption font-semibold"
-                                    style={{
-                                        backgroundColor: `${getSegmentColor(selectedCadeiaDrawer.segmento)}15`,
-                                        color: getSegmentColor(selectedCadeiaDrawer.segmento),
-                                        borderColor: `${getSegmentColor(selectedCadeiaDrawer.segmento)}35`
-                                    }}
-                                >
-                                    {selectedCadeiaDrawer.segmento}
-                                </Badge>
-                                {isMunicipioSemiarido(selectedCadeiaDrawer.municipio_sede) && (
-                                    <Badge variant="warning" icon={<SunMedium size={12} />} className="text-caption">
-                                        Semiárido
-                                    </Badge>
-                                )}
-                            </div>
-
-                            {/* GRID DE METADADOS */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Tipo / Classificação</span>
-                                    <p className="font-bold text-text-primary">{selectedCadeiaDrawer.tipo || '—'}</p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Segmento Produtivo</span>
-                                    <p className="font-bold text-text-primary">{selectedCadeiaDrawer.segmento || '—'}</p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Município Sede</span>
-                                    <p className="font-bold text-text-primary flex items-center gap-1.5">
-                                        <MapPin size={14} className="text-primary-600" />
-                                        {selectedCadeiaDrawer.municipio_sede || '—'}
-                                    </p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Território de Identidade</span>
-                                    <p className="font-bold text-text-primary">
-                                        {selectedCadeiaDrawer.territorio_identidade || '—'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* MUNICÍPIOS COBERTOS / ABRANGÊNCIA */}
-                            <div className="p-3 bg-surface-soft rounded-control border border-border/70 flex flex-col gap-2">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-caption font-medium text-text-muted">
-                                        Municípios Cobertos / Parceiros
-                                    </span>
-                                    <Badge variant="neutral" className="text-caption tnum font-medium">
-                                        {totalAbrangencia} {totalAbrangencia === 1 ? 'município' : 'municípios'}
-                                    </Badge>
-                                </div>
-                                <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1">
-                                    {selectedCadeiaDrawer.municipios_cobertos && selectedCadeiaDrawer.municipios_cobertos.length > 0 ? (
-                                        selectedCadeiaDrawer.municipios_cobertos.map(m => (
-                                            <span
-                                                key={m.id_municipio || m.nome_municipio}
-                                                className="text-caption bg-surface border border-border/60 px-2 py-0.5 rounded-control text-text-primary font-medium"
-                                            >
-                                                {m.nome_municipio}
-                                            </span>
-                                        ))
-                                    ) : (
-                                        <span className="text-caption bg-surface border border-border/60 px-2 py-0.5 rounded-control text-text-primary font-medium">
-                                            {selectedCadeiaDrawer.municipio_sede}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* CITAÇÃO / REFERÊNCIA */}
-                            {selectedCadeiaDrawer.texto_referencia && (
-                                <div className="p-3 bg-amber-50/80 dark:bg-amber-950/30 rounded-control border border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200">
-                                    <div className="flex items-center gap-1.5 font-medium text-caption text-amber-800 dark:text-amber-300 mb-1">
-                                        <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
-                                        <span>Referência / Citação do Artigo</span>
-                                    </div>
-                                    <p className="text-caption leading-relaxed italic text-text-secondary dark:text-amber-200/90">
-                                        "{selectedCadeiaDrawer.texto_referencia}"
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    );
-                })()}
-            </Drawer>
 
         </main>
     );

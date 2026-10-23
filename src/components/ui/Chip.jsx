@@ -3,17 +3,17 @@ import { cn } from '../../lib/cn';
 
 const badgeVariants = {
   neutral:
-    'bg-neutral-100 dark:bg-neutral-800 text-text-secondary border border-border',
+    'bg-surface-soft text-text-secondary border border-border dark:bg-zinc-800/60 dark:text-zinc-300 dark:border-zinc-700/60',
   primary:
-    'bg-[#DBEAFE] text-[#1D4ED8] dark:bg-primary-950/70 dark:text-primary-300 border border-[#BFDBFE] dark:border-primary-800/60',
+    'bg-[#DBEAFE] text-[#1D4ED8] dark:bg-primary-500/15 dark:text-primary-300 border border-[#BFDBFE] dark:border-primary-500/30',
   success:
-    'bg-[#DCFCE7] text-[#15803D] dark:bg-emerald-950/50 dark:text-emerald-400 border border-[#BBF7D0] dark:border-emerald-800/50',
+    'bg-[#DCFCE7] text-[#15803D] dark:bg-emerald-500/15 dark:text-emerald-300 border border-[#BBF7D0] dark:border-emerald-500/30',
   warning:
-    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-950/50 dark:text-amber-400 border border-[#FDE68A] dark:border-amber-800/50',
+    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-500/15 dark:text-amber-300 border border-[#FDE68A] dark:border-amber-500/30',
   accent:
-    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-950/50 dark:text-amber-400 border border-[#FDE68A] dark:border-amber-800/50',
+    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-500/15 dark:text-amber-300 border border-[#FDE68A] dark:border-amber-500/30',
   danger:
-    'bg-[#FEE2E2] text-[#B91C1C] dark:bg-rose-950/50 dark:text-rose-400 border border-[#FECACA] dark:border-rose-800/50',
+    'bg-[#FEE2E2] text-[#B91C1C] dark:bg-rose-500/15 dark:text-rose-300 border border-[#FECACA] dark:border-rose-500/30',
 };
 
 const chipUnselectedVariants = {
@@ -26,7 +26,7 @@ const chipUnselectedVariants = {
 };
 
 const chipSelectedVariants = {
-  neutral: 'bg-surface-raised border-neutral-400 text-text-primary font-medium shadow-xs',
+  neutral: 'bg-surface-raised border-border-strong text-text-primary font-medium shadow-xs',
   primary:
     'bg-primary-50 text-primary-700 border-primary-500 font-medium dark:bg-primary-950 dark:text-primary-300 dark:border-primary-400 shadow-xs',
   success:
@@ -89,6 +89,7 @@ export const Chip = forwardRef(function Chip(
   {
     variant = 'primary',
     selected = false,
+    size = 'md',
     count,
     icon,
     onClick,
@@ -102,6 +103,8 @@ export const Chip = forwardRef(function Chip(
   const isInteractive = Boolean(onClick);
   const Component = isInteractive ? 'button' : 'span';
 
+  const sizeClass = size === 'sm' ? 'h-7 px-2.5 text-caption' : 'h-9 px-3 text-caption';
+
   const variantClass = selected
     ? chipSelectedVariants[variant] || chipSelectedVariants.primary
     : chipUnselectedVariants[variant] || chipUnselectedVariants.primary;
@@ -114,7 +117,8 @@ export const Chip = forwardRef(function Chip(
       onClick={disabled ? undefined : onClick}
       aria-pressed={isInteractive ? selected : undefined}
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control text-caption border select-none transition-all duration-120',
+        'inline-flex items-center justify-center gap-1.5 rounded-control border select-none transition-all duration-120 shrink-0 leading-none',
+        sizeClass,
         variantClass,
         isInteractive &&
         'cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
@@ -124,7 +128,7 @@ export const Chip = forwardRef(function Chip(
       {...props}
     >
       {icon && <span className="inline-flex shrink-0">{icon}</span>}
-      <span>{children}</span>
+      <span className="truncate">{children}</span>
     </Component>
   );
 });

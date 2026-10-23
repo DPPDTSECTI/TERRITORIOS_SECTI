@@ -1333,9 +1333,6 @@ export default function SideMap({
               <span className="text-text-primary font-semibold text-caption tracking-tight truncate max-w-[160px]">
                 {display.label}
               </span>
-              <span className={`font-semibold text-caption px-2 py-0.5 rounded-control whitespace-nowrap tnum ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15' : 'text-primary-600 dark:text-primary-300 bg-primary-500/10'}`}>
-                {display.count} {display.unit}
-              </span>
               {isSelectedBadge && (
                 <button
                   type="button"

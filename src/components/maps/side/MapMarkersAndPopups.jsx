@@ -8,12 +8,13 @@ import { normalizeName } from './mapGeoUtils';
 import { createClusterIcon, createSingleAssetIconWithSvg, getSemiaridoPointColor } from './mapIcons';
 
 export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
+  const { isDark } = useTheme();
   if (!ativo) return null;
 
   const IconComp = ativo.icone;
   const iconColor = filtroSemiarido
-    ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome)
-    : (ativo.corHex || '#2563EB');
+    ? getSemiaridoPointColor(isDark ? (ativo.corHexDark || ativo.corHex) : ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome, isDark)
+    : (isDark ? (ativo.corHexDark || ativo.corHex || '#60A5FA') : (ativo.corHex || '#2563EB'));
 
   return (
     <div className="p-3 min-w-[220px] max-w-[280px] flex flex-col gap-2 font-sans bg-surface text-text-primary border border-border rounded-card">
@@ -143,11 +144,19 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
 }
 
 export function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
+  const { isDark } = useTheme();
   return (
     <Marker
       key={elem.key}
       position={[elem.lat, elem.lng]}
-      icon={createSingleAssetIconWithSvg(ativo.corHex, ativo.iconSvg, isSelected, filtroSemiarido, ativo.tipo || ativo.shortTipo || ativo.categoria || ativo.nome)}
+      icon={createSingleAssetIconWithSvg(
+        isDark ? (ativo.corHexDark || ativo.corHex) : ativo.corHex,
+        ativo.iconSvg,
+        isSelected,
+        filtroSemiarido,
+        ativo.tipo || ativo.shortTipo || ativo.categoria || ativo.nome,
+        isDark
+      )}
       eventHandlers={{
         click: (e) => {
           L.DomEvent.stopPropagation(e);

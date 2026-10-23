@@ -7,7 +7,7 @@ const buttonBaseClass =
 const buttonVariants = {
   primary: 'bg-carbon hover:bg-carbon-hover text-white dark:bg-primary-600 dark:hover:bg-primary-700 shadow-xs',
   royal: 'bg-primary-600 hover:bg-primary-700 text-white shadow-xs',
-  secondary: 'bg-neutral-200/70 hover:bg-neutral-200 text-text-primary dark:bg-neutral-800 dark:hover:bg-neutral-700 border border-neutral-300/50 dark:border-neutral-700/50 shadow-xs',
+  secondary: 'bg-surface-soft hover:bg-surface-raised text-text-primary border border-border shadow-xs',
   ghost: 'bg-transparent hover:bg-surface-soft text-text-secondary hover:text-text-primary',
   danger: 'bg-danger-600 hover:bg-danger-700 text-white shadow-xs',
 };

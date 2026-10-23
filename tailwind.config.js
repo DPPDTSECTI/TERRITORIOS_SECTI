@@ -139,6 +139,7 @@ module.exports = {
           raised: 'rgb(var(--color-surface-raised) / <alpha-value>)',
           soft: 'rgb(var(--color-surface-soft) / <alpha-value>)',
           sunken: 'rgb(var(--color-surface-sunken) / <alpha-value>)',
+          elevated: 'rgb(var(--color-surface-raised) / <alpha-value>)',
         },
         background: 'rgb(var(--color-background) / <alpha-value>)',
         ring: 'rgb(var(--color-ring) / <alpha-value>)',

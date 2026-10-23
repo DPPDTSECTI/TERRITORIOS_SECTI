@@ -37,6 +37,28 @@ export function resolveCssRgb(varName, fallback = 'rgb(47, 117, 181)') {
   return raw || fallback;
 }
 
+export const LIGHT_CHART_PALETTE = [
+  '#2563EB', // Royal Blue 600
+  '#0284C7', // Cerulean Blue 600
+  '#0D9488', // Teal 600
+  '#4338CA', // Indigo 700
+  '#D97706', // Amber 600
+  '#059669', // Emerald 600
+  '#7C3AED', // Violet 600
+  '#DC2626', // Red 600
+];
+
+export const DARK_CHART_PALETTE = [
+  '#38BDF8', // Sky Blue 400
+  '#60A5FA', // Royal Light 400
+  '#34D399', // Emerald 400
+  '#818CF8', // Indigo 400
+  '#F472B6', // Pink 400
+  '#2DD4BF', // Aqua 400
+  '#FBBF24', // Amber 400
+  '#A78BFA', // Purple 400
+];
+
 /**
  * Hook que observa o tema atual da aplicação e retorna cores resolvidas e tokens para Recharts.
  *
@@ -46,38 +68,40 @@ export function useChartTheme() {
   const { isDark } = useTheme();
 
   return useMemo(() => {
-    const palette = [
-      resolveCssRgb('--color-chart-1', isDark ? 'rgb(56, 189, 248)' : 'rgb(37, 99, 235)'),
-      resolveCssRgb('--color-chart-2', isDark ? 'rgb(96, 165, 250)' : 'rgb(15, 23, 42)'),
-      resolveCssRgb('--color-chart-3', isDark ? 'rgb(241, 245, 249)' : 'rgb(2, 132, 199)'),
-      resolveCssRgb('--color-chart-4', isDark ? 'rgb(45, 212, 191)' : 'rgb(71, 85, 105)'),
-      resolveCssRgb('--color-chart-5', isDark ? 'rgb(129, 140, 248)' : 'rgb(67, 56, 202)'),
-      resolveCssRgb('--color-chart-6', isDark ? 'rgb(59, 130, 246)' : 'rgb(13, 148, 136)'),
-      resolveCssRgb('--color-chart-7', isDark ? 'rgb(148, 163, 184)' : 'rgb(29, 78, 216)'),
-      resolveCssRgb('--color-chart-8', isDark ? 'rgb(186, 230, 253)' : 'rgb(100, 116, 139)'),
-    ];
+    const palette = isDark ? DARK_CHART_PALETTE : LIGHT_CHART_PALETTE;
 
-    const goldenPalette = [
-      resolveCssRgb('--color-accent-600', isDark ? 'rgb(251, 191, 36)' : 'rgb(180, 83, 9)'),
-      resolveCssRgb('--color-accent-500', isDark ? 'rgb(253, 224, 71)' : 'rgb(217, 119, 6)'),
-      resolveCssRgb('--color-accent-400', isDark ? 'rgb(252, 211, 77)' : 'rgb(146, 64, 14)'),
-      resolveCssRgb('--color-accent-700', isDark ? 'rgb(250, 204, 21)' : 'rgb(202, 138, 4)'),
-      resolveCssRgb('--color-accent-300', isDark ? 'rgb(251, 146, 60)' : 'rgb(120, 53, 15)'),
-      resolveCssRgb('--color-accent-800', isDark ? 'rgb(253, 230, 138)' : 'rgb(245, 158, 11)'),
-      resolveCssRgb('--color-accent-200', isDark ? 'rgb(254, 240, 138)' : 'rgb(161, 98, 7)'),
-      resolveCssRgb('--color-accent-900', isDark ? 'rgb(253, 186, 116)' : 'rgb(154, 52, 18)'),
-    ];
+    const goldenPalette = isDark
+      ? [
+          '#FBBF24', // Amber 400
+          '#FDE047', // Yellow 300
+          '#FCD34D', // Amber 300
+          '#FACC15', // Yellow 400
+          '#FB923C', // Orange 400
+          '#FDE68A', // Amber 200
+          '#FEF08A', // Yellow 200
+          '#FDBA74', // Orange 300
+        ]
+      : [
+          '#B45309', // Amber 700
+          '#D97706', // Amber 600
+          '#92400E', // Amber 800
+          '#CA8A04', // Yellow 600
+          '#C2410C', // Orange 700
+          '#EA580C', // Orange 600
+          '#A16207', // Yellow 700
+          '#9A3412', // Orange 800
+        ];
 
-    const primary = resolveCssRgb('--color-primary-600', isDark ? 'rgb(59, 130, 246)' : 'rgb(37, 99, 235)');
-    const accent = resolveCssRgb('--color-accent-500', isDark ? 'rgb(228, 150, 24)' : 'rgb(214, 162, 48)');
-    const success = resolveCssRgb('--color-success-700', isDark ? 'rgb(74, 222, 128)' : 'rgb(21, 128, 61)');
-    const warning = resolveCssRgb('--color-warning-700', isDark ? 'rgb(251, 191, 36)' : 'rgb(180, 83, 9)');
+    const primary = isDark ? '#60A5FA' : '#2563EB';
+    const accent = isDark ? '#FBBF24' : '#D97706';
+    const success = isDark ? '#34D399' : '#16A34A';
+    const warning = isDark ? '#FBBF24' : '#D97706';
 
-    const grid = resolveCssRgb('--color-border', isDark ? 'rgb(30, 41, 59)' : 'rgb(226, 232, 240)');
-    const textPrimary = resolveCssRgb('--color-text-primary', isDark ? 'rgb(248, 250, 252)' : 'rgb(9, 13, 22)');
-    const textSecondary = resolveCssRgb('--color-text-secondary', isDark ? 'rgb(148, 163, 184)' : 'rgb(100, 116, 139)');
-    const textMuted = resolveCssRgb('--color-text-muted', isDark ? 'rgb(100, 116, 139)' : 'rgb(148, 163, 184)');
-    const surface = resolveCssRgb('--color-surface', isDark ? 'rgb(17, 24, 39)' : 'rgb(255, 255, 255)');
+    const grid = isDark ? '#1E293B' : '#E2E8F0';
+    const textPrimary = isDark ? '#F8FAFC' : '#090D16';
+    const textSecondary = isDark ? '#94A3B8' : '#64748B';
+    const textMuted = isDark ? '#64748B' : '#94A3B8';
+    const surface = isDark ? '#111827' : '#FFFFFF';
 
     return {
       isDark,

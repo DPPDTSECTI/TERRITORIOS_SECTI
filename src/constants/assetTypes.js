@@ -32,6 +32,23 @@ export const ASSET_THEME_COLORS = {
   outro: '#94A3B8'
 };
 
+export const ASSET_DARK_THEME_COLORS = {
+  privada: '#38BDF8',       // Sky Blue 400
+  estadual: '#60A5FA',      // Royal Light 400
+  federal: '#818CF8',       // Periwinkle / Light Indigo 400
+  if: '#38BDF8',            // Cyan 400
+  aceleradora: '#34D399',   // Emerald 400
+  dinamizador: '#22D3EE',   // Cyan 400
+  incubadora: '#818CF8',    // Indigo 400
+  parque: '#CBD5E1',        // Light Slate 300
+  ict: '#2DD4BF',           // Aqua / Teal 400
+  pesquisa: '#94A3B8',      // Slate 400
+  hub: '#A78BFA',           // Purple 400
+  centro_pd: '#FBBF24',     // Amber 400
+  investimento: '#F472B6',  // Pink 400
+  outro: '#CBD5E1'
+};
+
 export const TIPOS_ATIVOS_CATALOG = [
   {
     id: 9,
@@ -39,6 +56,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Univ. Privada',
     label: 'Campi Universidade Privada',
     corHex: ASSET_THEME_COLORS.privada,
+    corHexDark: ASSET_DARK_THEME_COLORS.privada,
     bgClass: 'bg-asset-privada',
     textClass: 'text-asset-privada',
     borderClass: 'border-asset-privada',
@@ -51,6 +69,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Univ. Estadual',
     label: 'Campi Universidade Pública - Estadual',
     corHex: ASSET_THEME_COLORS.estadual,
+    corHexDark: ASSET_DARK_THEME_COLORS.estadual,
     bgClass: 'bg-asset-estadual',
     textClass: 'text-asset-estadual',
     borderClass: 'border-asset-estadual',
@@ -63,6 +82,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Univ. Federal',
     label: 'Campi Universidade Pública - Federal',
     corHex: ASSET_THEME_COLORS.federal,
+    corHexDark: ASSET_DARK_THEME_COLORS.federal,
     bgClass: 'bg-asset-federal',
     textClass: 'text-asset-federal',
     borderClass: 'border-asset-federal',
@@ -75,6 +95,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Inst. Federal',
     label: 'Campi Instituto Federal',
     corHex: ASSET_THEME_COLORS.if,
+    corHexDark: ASSET_DARK_THEME_COLORS.if,
     bgClass: 'bg-asset-if',
     textClass: 'text-asset-if',
     borderClass: 'border-asset-if',
@@ -87,6 +108,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Aceleradora',
     label: 'Aceleradora',
     corHex: ASSET_THEME_COLORS.aceleradora,
+    corHexDark: ASSET_DARK_THEME_COLORS.aceleradora,
     bgClass: 'bg-asset-aceleradora',
     textClass: 'text-asset-aceleradora',
     borderClass: 'border-asset-aceleradora',
@@ -99,6 +121,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Espaço Dinamizador',
     label: 'Espaço Dinamizador',
     corHex: ASSET_THEME_COLORS.dinamizador,
+    corHexDark: ASSET_DARK_THEME_COLORS.dinamizador,
     bgClass: 'bg-asset-dinamizador',
     textClass: 'text-asset-dinamizador',
     borderClass: 'border-asset-dinamizador',
@@ -111,6 +134,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Incubadora',
     label: 'Incubadora de Empresas',
     corHex: ASSET_THEME_COLORS.incubadora,
+    corHexDark: ASSET_DARK_THEME_COLORS.incubadora,
     bgClass: 'bg-asset-incubadora',
     textClass: 'text-asset-incubadora',
     borderClass: 'border-asset-incubadora',
@@ -123,6 +147,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Parque Tecnológico',
     label: 'Parque Tecnológico',
     corHex: ASSET_THEME_COLORS.parque,
+    corHexDark: ASSET_DARK_THEME_COLORS.parque,
     bgClass: 'bg-asset-parque',
     textClass: 'text-asset-parque',
     borderClass: 'border-asset-parque',
@@ -135,6 +160,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'ICT',
     label: 'Instituto de Ciência e Tecnologia (ICT)',
     corHex: ASSET_THEME_COLORS.ict,
+    corHexDark: ASSET_DARK_THEME_COLORS.ict,
     bgClass: 'bg-asset-ict',
     textClass: 'text-asset-ict',
     borderClass: 'border-asset-ict',
@@ -147,6 +173,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Hub / Coworking',
     label: 'Hub de Inovação / Coworking / FabLab',
     corHex: ASSET_THEME_COLORS.hub,
+    corHexDark: ASSET_DARK_THEME_COLORS.hub,
     bgClass: 'bg-asset-hub',
     textClass: 'text-asset-hub',
     borderClass: 'border-asset-hub',
@@ -159,6 +186,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Centro de P&D',
     label: 'Centro de P&D / Inovação Corporativa',
     corHex: ASSET_THEME_COLORS.centro_pd,
+    corHexDark: ASSET_DARK_THEME_COLORS.centro_pd,
     bgClass: 'bg-asset-centro-pd',
     textClass: 'text-asset-centro-pd',
     borderClass: 'border-asset-centro-pd',
@@ -171,6 +199,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Fundo / Investimento',
     label: 'Fundo de Investimento / Fomento / VC',
     corHex: ASSET_THEME_COLORS.investimento,
+    corHexDark: ASSET_DARK_THEME_COLORS.investimento,
     bgClass: 'bg-asset-investimento',
     textClass: 'text-asset-investimento',
     borderClass: 'border-asset-investimento',
@@ -183,6 +212,7 @@ export const TIPOS_ATIVOS_CATALOG = [
     shortLabel: 'Entidade Pesquisa',
     label: 'Entidade de Pesquisa',
     corHex: ASSET_THEME_COLORS.pesquisa,
+    corHexDark: ASSET_DARK_THEME_COLORS.pesquisa,
     bgClass: 'bg-asset-pesquisa',
     textClass: 'text-asset-pesquisa',
     borderClass: 'border-asset-pesquisa',

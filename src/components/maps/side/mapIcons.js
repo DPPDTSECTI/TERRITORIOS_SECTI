@@ -41,8 +41,27 @@ export const createClusterIcon = (count, isSemiarido = false, isDark = false) =>
   });
 };
 
-export function getSemiaridoPointColor(corHex, nameOrTipo = '') {
+export function getSemiaridoPointColor(corHex, nameOrTipo = '', isDark = false) {
   const str = String(nameOrTipo || '').toLowerCase();
+  if (isDark) {
+    if (str.includes('privada')) return '#FBBF24'; // Âmbar 400
+    if (str.includes('estadual')) return '#F59E0B'; // Âmbar 500
+    if (str.includes('federal') && str.includes('universidade')) return '#FCD34D'; // Âmbar 300
+    if (str.includes('instituto federal') || str.includes('ifba') || str.includes('if')) return '#FDE047'; // Amarelo 300
+    if (str.includes('aceleradora')) return '#FACC15'; // Amarelo 400
+    if (str.includes('dinamizador')) return '#FBBF24'; // Calêndula 400
+    if (str.includes('incubadora')) return '#F59E0B'; // Âmbar 500
+    if (str.includes('parque')) return '#FDE68A'; // Âmbar claro 200
+    if (str.includes('ict')) return '#FCD34D'; // Dourado claro 300
+    if (str.includes('hub') || str.includes('coworking') || str.includes('fablab') || str.includes('maker')) return '#FEF08A'; // Trigo claro 200
+    if (str.includes('centro') || str.includes('p&d')) return '#FBBF24'; // Âmbar P&D
+    if (str.includes('investimento') || str.includes('fundo') || str.includes('fomento')) return '#FB923C'; // Laranja 400
+    if (str.includes('pesquisa')) return '#FCD34D'; // Âmbar 300
+    if (str.includes('apl') || str.includes('arranjo')) return '#F59E0B'; // Âmbar 500
+    if (str.includes('ig potencial') || str.includes('potencial')) return '#FDE047'; // Amarelo 300
+    if (str.includes('ig') || str.includes('indica')) return '#FACC15'; // Amarelo 400
+    return '#FBBF24';
+  }
   if (str.includes('privada')) return '#F59E0B'; // Âmbar dourado
   if (str.includes('estadual')) return '#D97706'; // Âmbar profundo
   if (str.includes('federal') && str.includes('universidade')) return '#B45309'; // Âmbar terracota
@@ -62,12 +81,13 @@ export function getSemiaridoPointColor(corHex, nameOrTipo = '') {
   return '#D97706';
 }
 
-export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false, isSemiarido = false, assetTipo = '') => {
+export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false, isSemiarido = false, assetTipo = '', isDark = false) => {
   const size = isSelected ? 24 : 18;
   const safeColor = isSemiarido
-    ? getSemiaridoPointColor(corHex, assetTipo)
-    : (corHex || '#3B82F6');
-  const selectedBorderColor = isSemiarido ? '#78350F' : '#1E40AF';
+    ? getSemiaridoPointColor(corHex, assetTipo, isDark)
+    : (corHex || (isDark ? '#60A5FA' : '#3B82F6'));
+  const selectedBorderColor = isSemiarido ? (isDark ? '#FDE68A' : '#78350F') : (isDark ? '#93C5FD' : '#1E40AF');
+  const borderColor = isDark ? '#0F172A' : '#FFFFFF';
   const selectedShadow = isSemiarido ? '0 3px 10px rgba(217, 119, 6, 0.5)' : '0 3px 10px rgba(30, 64, 175, 0.45)';
 
   const defaultSvg = `<svg width="${isSelected ? 13 : 10}" height="${isSelected ? 13 : 10}" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
@@ -83,7 +103,7 @@ export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = fal
       height: ${size}px;
       background-color: ${safeColor};
       color: #ffffff;
-      border: ${isSelected ? `2.5px solid ${selectedBorderColor}` : '1.5px solid #ffffff'};
+      border: ${isSelected ? `2.5px solid ${selectedBorderColor}` : `1.5px solid ${borderColor}`};
       border-radius: 50%;
       display: flex;
       align-items: center;

@@ -12,7 +12,8 @@ import {
     Database,
     X,
     Wifi,
-    Laptop
+    Laptop,
+    SlidersHorizontal
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import { isMunicipioSemiarido } from '../constants/semiarido';
@@ -26,7 +27,6 @@ import {
     Chip,
     SearchInput,
     Tabs,
-    Drawer,
     EmptyState,
     KpiSkeleton,
     ListRowSkeleton
@@ -40,7 +40,45 @@ function getAlphaColor(color, alpha = 0.12) {
     if (color.startsWith('rgb(')) {
         return color.replace('rgb(', 'rgba(').replace(')', `, ${alpha})`);
     }
-    return color.startsWith('#') ? `${color}20` : color;
+    if (color.startsWith('rgba(')) {
+        return color.replace(/,[\s\d\.]+\)$/, `, ${alpha})`);
+    }
+    if (color.startsWith('#')) {
+        let hex = color.slice(1);
+        if (hex.length === 3) {
+            hex = hex.split('').map(c => c + c).join('');
+        }
+        if (hex.length >= 6) {
+            const r = parseInt(hex.slice(0, 2), 16);
+            const g = parseInt(hex.slice(2, 4), 16);
+            const b = parseInt(hex.slice(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+    }
+    return color;
+}
+
+function getContrastTextColor(hexOrRgb) {
+    if (!hexOrRgb) return '#ffffff';
+    let r = 255, g = 255, b = 255;
+    if (hexOrRgb.startsWith('#')) {
+        let hex = hexOrRgb.slice(1);
+        if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+        if (hex.length >= 6) {
+            r = parseInt(hex.slice(0, 2), 16);
+            g = parseInt(hex.slice(2, 4), 16);
+            b = parseInt(hex.slice(4, 6), 16);
+        }
+    } else if (hexOrRgb.startsWith('rgb')) {
+        const match = hexOrRgb.match(/\d+/g);
+        if (match && match.length >= 3) {
+            r = Number(match[0]);
+            g = Number(match[1]);
+            b = Number(match[2]);
+        }
+    }
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.55 ? '#090D16' : '#FFFFFF';
 }
 
 export function cleanTerritorioName(name) {
@@ -104,7 +142,6 @@ export default function CursosPage() {
     const [selectedRede, setSelectedRede] = useState('todas'); // 'todas' | 'publica' | 'privada'
     const [selectedIES, setSelectedIES] = useState(null);
     const [selectedCursoId, setSelectedCursoId] = useState(null);
-    const [selectedCursoDrawer, setSelectedCursoDrawer] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'ead' | 'areas' | 'ranking' | 'ies'
     const [isMapExpanded, setIsMapExpanded] = useState(false);
@@ -145,14 +182,17 @@ export default function CursosPage() {
         if (selectedCategory !== 'todas') count++;
         if (selectedRede !== 'todas') count++;
         if (selectedIES) count++;
+        if (selectedTerritory) count++;
+        if (filtroSemiarido) count++;
         if (searchQuery.trim()) count++;
         return count;
-    }, [selectedCategory, selectedRede, selectedIES, searchQuery]);
+    }, [selectedCategory, selectedRede, selectedIES, selectedTerritory, filtroSemiarido, searchQuery]);
 
     const handleClearAllFilters = () => {
         setSelectedCategory('todas');
         setSelectedRede('todas');
         setSelectedIES(null);
+        setSelectedTerritory(null);
         setSearchQuery('');
         setSelectedCursoId(null);
     };
@@ -374,10 +414,15 @@ export default function CursosPage() {
                 counts[uniqueKey] = {
                     id: canonId,
                     name: canonName,
-                    count: 0
+                    count: 0,
+                    publicaCount: 0,
+                    privadaCount: 0
                 };
             }
             counts[uniqueKey].count += 1;
+            const redeInfo = classificarInstituicao(c);
+            if (redeInfo.isPublica) counts[uniqueKey].publicaCount += 1;
+            else counts[uniqueKey].privadaCount += 1;
             totalCount += 1;
         });
 
@@ -408,10 +453,15 @@ export default function CursosPage() {
             if (!counts[normKey]) {
                 counts[normKey] = {
                     name: mun,
-                    count: 0
+                    count: 0,
+                    publicaCount: 0,
+                    privadaCount: 0
                 };
             }
             counts[normKey].count += 1;
+            const redeInfo = classificarInstituicao(c);
+            if (redeInfo.isPublica) counts[normKey].publicaCount += 1;
+            else counts[normKey].privadaCount += 1;
             totalCount += 1;
         });
 
@@ -579,7 +629,7 @@ export default function CursosPage() {
                             Módulo de Ensino Superior em CT&I
                         </h1>
                     </div>
-                    <p className="text-body-sm text-text-secondary mt-1 font-normal">
+                    <p className="text-body-sm text-text-secondary mt-1 font-medium">
                         Mapeamento territorial da oferta presencial e EaD de ensino superior voltada exclusivamente a Ciência, Tecnologia e Inovação (CT&I)
                     </p>
                     <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
@@ -681,7 +731,7 @@ export default function CursosPage() {
                 <motion.div
                     variants={fadeUp}
                     style={{ width: isMapExpanded ? 'calc(100% - 440px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col min-h-[460px] transition-[width] duration-300"
+                    className="shrink-0 h-full min-h-[460px] min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col transition-[width] duration-300"
                 >
                     <SideMap
                         mode="cursos"
@@ -749,7 +799,6 @@ export default function CursosPage() {
                                                 key={cursoKey}
                                                 onClick={() => {
                                                     setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
-                                                    setSelectedCursoDrawer(c);
                                                 }}
                                                 title={`${c.curso || c.nome} (${redeInfo.isPublica ? 'Pública' : 'Privada'})\n${c.categoria || c.tipo || ''}`}
                                                 className={`rounded-card p-2.5 flex items-center justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full ${isSelected
@@ -819,8 +868,8 @@ export default function CursosPage() {
                     <motion.div variants={fadeUp} className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0">
 
                         {/* BARRA SUPERIOR DE ABAS E BUSCA */}
-                        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 shrink-0">
-                            <div className="flex items-center gap-2.5 flex-nowrap min-w-0 shrink-0 overflow-x-auto scrollbar-none">
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 shrink-0 min-w-0">
+                            <div className="flex items-center gap-2.5 flex-nowrap min-w-0 overflow-x-auto scrollbar-none">
                                 <Tabs
                                     items={[
                                         {
@@ -847,6 +896,20 @@ export default function CursosPage() {
                                             id: 'ies',
                                             label: 'Instituições',
                                             icon: <Building2 size={15} />
+                                        },
+                                        {
+                                            id: 'filtros',
+                                            label: (
+                                                <span className="inline-flex items-center gap-1.5">
+                                                    <span>Filtros</span>
+                                                    {activeFiltersCount > 0 && (
+                                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] leading-none font-bold bg-primary-600 text-white dark:bg-primary-500">
+                                                            {activeFiltersCount}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                            ),
+                                            icon: <SlidersHorizontal size={15} />
                                         }
                                     ]}
                                     value={activeTab}
@@ -854,90 +917,22 @@ export default function CursosPage() {
                                     variant="pill"
                                     className="shrink-0"
                                 />
-
-                                {/* FILTROS DE REDE AO LADO DAS ABAS (QUANDO NO CATÁLOGO OU EAD) */}
-                                {(activeTab === 'catalogo' || activeTab === 'ead') && (
-                                    <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
-                                        <div className="h-4 w-px bg-border/80 shrink-0 self-center mx-1" />
-                                        <span className="text-caption font-medium text-text-muted pl-0.5">Rede:</span>
-                                        <Chip
-                                            selected={selectedRede === 'todas'}
-                                            onClick={() => setSelectedRede('todas')}
-                                            variant="neutral"
-                                            size="sm"
-                                        >
-                                            Todas
-                                        </Chip>
-                                        <Chip
-                                            selected={selectedRede === 'publica'}
-                                            onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
-                                            variant="success"
-                                            size="sm"
-                                        >
-                                            Pública
-                                        </Chip>
-                                        <Chip
-                                            selected={selectedRede === 'privada'}
-                                            onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
-                                            variant="accent"
-                                            size="sm"
-                                        >
-                                            Privada
-                                        </Chip>
-                                    </div>
-                                )}
                             </div>
 
-                            {/* LADO DIREITO: CHIPS DE FILTROS ATIVOS + BUSCA */}
-                            <div className="flex items-center gap-2 flex-wrap xl:flex-nowrap justify-end min-w-0">
-                                {selectedCategory !== 'todas' && (
-                                    <Chip
-                                        selected
-                                        onClick={() => setSelectedCategory('todas')}
-                                        variant="primary"
-                                        size="sm"
-                                    >
-                                        Área: {selectedCategory} ×
-                                    </Chip>
-                                )}
-                                {selectedIES && (
-                                    <Chip
-                                        selected
-                                        onClick={() => setSelectedIES(null)}
-                                        icon={<Building2 size={12} />}
-                                        variant="primary"
-                                        size="sm"
-                                    >
-                                        IES: {selectedIES} ×
-                                    </Chip>
-                                )}
-                                {selectedTerritory && (
-                                    <Chip
-                                        selected
-                                        onClick={() => setSelectedTerritory(null)}
-                                        icon={<MapPin size={12} />}
-                                        variant="neutral"
-                                        size="sm"
-                                    >
-                                        {territoryName} ×
-                                    </Chip>
-                                )}
-
-                                {/* INPUT DE BUSCA */}
-                                <div className="w-full xl:w-64 min-w-0">
-                                    <SearchInput
-                                        value={searchQuery}
-                                        onChange={(e) => {
-                                            setSearchQuery(e.target.value);
-                                            if (e.target.value.trim() && activeTab !== 'catalogo' && activeTab !== 'ead') {
-                                                setActiveTab('catalogo');
-                                            }
-                                        }}
-                                        onClear={() => setSearchQuery('')}
-                                        placeholder="Buscar curso, instituição ou cidade... (/)"
-                                        size="sm"
-                                    />
-                                </div>
+                            {/* INPUT DE BUSCA */}
+                            <div className="w-full lg:w-64 min-w-0 shrink-0">
+                                <SearchInput
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value.trim() && activeTab !== 'catalogo' && activeTab !== 'ead' && activeTab !== 'filtros') {
+                                            setActiveTab('catalogo');
+                                        }
+                                    }}
+                                    onClear={() => setSearchQuery('')}
+                                    placeholder="Buscar curso, instituição ou cidade... (/)"
+                                    size="sm"
+                                />
                             </div>
                         </div>
 
@@ -947,30 +942,72 @@ export default function CursosPage() {
                             {/* ABA 1: CATÁLOGO COMPLETO DE CURSOS PRESENCIAIS */}
                             {activeTab === 'catalogo' && (
                                 <div className="flex-1 flex flex-col min-h-0">
-                                    <div className="flex items-center justify-between mb-3 shrink-0">
-                                        <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-between mb-3 shrink-0 flex-wrap gap-2">
+                                        <div className="flex items-center gap-2 min-w-0">
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos Presenciais em ${territoryName}` : 'Cursos Presenciais de CT&I'}
                                             </h3>
+                                            {activeFiltersCount > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setActiveTab('filtros')}
+                                                    className="text-caption font-medium text-primary-600 hover:text-primary-700 bg-primary-50 dark:bg-primary-950/60 border border-primary-200 dark:border-primary-800 px-2 py-0.5 rounded-full cursor-pointer inline-flex items-center gap-1"
+                                                    title="Ver e gerenciar filtros aplicados na aba Filtros"
+                                                >
+                                                    <SlidersHorizontal size={11} />
+                                                    <span>{activeFiltersCount} filtro{activeFiltersCount > 1 ? 's' : ''} ativo{activeFiltersCount > 1 ? 's' : ''}</span>
+                                                </button>
+                                            )}
                                         </div>
 
-                                        <div className="flex items-center gap-2">
-                                            {selectedIES && (
-                                                <Badge
-                                                    variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                    icon={<Building2 size={13} />}
+                                        <div className="flex items-center gap-3">
+                                            {/* FILTROS DE REDE EMBUTIDOS NO HEADER DA LISTA */}
+                                            <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+                                                <span className="text-caption font-medium text-text-muted pl-0.5">Rede:</span>
+                                                <Chip
+                                                    selected={selectedRede === 'todas'}
+                                                    onClick={() => setSelectedRede('todas')}
+                                                    variant="neutral"
+                                                    size="sm"
                                                 >
-                                                    {selectedIES}
-                                                </Badge>
-                                            )}
-                                            {selectedTerritory && (
-                                                <Badge
-                                                    variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                    icon={<MapPin size={13} />}
+                                                    Todas
+                                                </Chip>
+                                                <Chip
+                                                    selected={selectedRede === 'publica'}
+                                                    onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
+                                                    variant="success"
+                                                    size="sm"
                                                 >
-                                                    {territoryName}
-                                                </Badge>
-                                            )}
+                                                    Pública
+                                                </Chip>
+                                                <Chip
+                                                    selected={selectedRede === 'privada'}
+                                                    onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
+                                                    variant="accent"
+                                                    size="sm"
+                                                >
+                                                    Privada
+                                                </Chip>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                {selectedIES && (
+                                                    <Badge
+                                                        variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                        icon={<Building2 size={13} />}
+                                                    >
+                                                        {selectedIES}
+                                                    </Badge>
+                                                )}
+                                                {selectedTerritory && (
+                                                    <Badge
+                                                        variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                        icon={<MapPin size={13} />}
+                                                    >
+                                                        {territoryName}
+                                                    </Badge>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -995,7 +1032,6 @@ export default function CursosPage() {
                                                         style={{ contentVisibility: 'auto', containIntrinsicSize: '0 88px' }}
                                                         onClick={() => {
                                                             setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
-                                                            setSelectedCursoDrawer(c);
                                                         }}
                                                         className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full scroll-mt-2 ${isSelected
                                                             ? (filtroSemiarido
@@ -1010,14 +1046,14 @@ export default function CursosPage() {
                                                             <div className="flex items-start gap-3 min-w-0 flex-1">
                                                                 <div
                                                                     className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform group-hover:scale-105"
-                                                                    style={{ backgroundColor: getAlphaColor(catColor), color: catColor }}
+                                                                    style={{ backgroundColor: getAlphaColor(catColor, chartTheme.isDark ? 0.22 : 0.12), color: catColor }}
                                                                 >
                                                                     <GraduationCap size={16} />
                                                                 </div>
                                                                 <div className="flex flex-col min-w-0 flex-1">
                                                                     <h4 className={`text-body-sm font-semibold leading-tight break-words transition-colors ${isSelected
-                                                                        ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300')
-                                                                        : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
+                                                                        ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-primary-600 dark:text-primary-400')
+                                                                        : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700 dark:group-hover:text-amber-400' : 'text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400')
                                                                         }`}>
                                                                         {c.curso || c.nome}
                                                                     </h4>
@@ -1051,9 +1087,9 @@ export default function CursosPage() {
                                                                     variant="neutral"
                                                                     className="text-caption font-medium"
                                                                     style={{
-                                                                        backgroundColor: getAlphaColor(catColor),
+                                                                        backgroundColor: getAlphaColor(catColor, chartTheme.isDark ? 0.18 : 0.12),
                                                                         color: catColor,
-                                                                        borderColor: `${catColor}30`
+                                                                        borderColor: getAlphaColor(catColor, chartTheme.isDark ? 0.35 : 0.25)
                                                                     }}
                                                                 >
                                                                     {c.categoria || c.tipo || 'Geral'}
@@ -1096,30 +1132,72 @@ export default function CursosPage() {
                             {/* ABA 2: CURSOS EAD ISOLADOS */}
                             {activeTab === 'ead' && (
                                 <div className="flex-1 flex flex-col min-h-0">
-                                    <div className="flex items-center justify-between mb-3 shrink-0">
-                                        <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-between mb-3 shrink-0 flex-wrap gap-2">
+                                        <div className="flex items-center gap-2 min-w-0">
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Oferta de Cursos à Distância (EaD) e Semipresenciais'}
                                             </h3>
+                                            {activeFiltersCount > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setActiveTab('filtros')}
+                                                    className="text-caption font-medium text-primary-600 hover:text-primary-700 bg-primary-50 dark:bg-primary-950/60 border border-primary-200 dark:border-primary-800 px-2 py-0.5 rounded-full cursor-pointer inline-flex items-center gap-1"
+                                                    title="Ver e gerenciar filtros aplicados na aba Filtros"
+                                                >
+                                                    <SlidersHorizontal size={11} />
+                                                    <span>{activeFiltersCount} filtro{activeFiltersCount > 1 ? 's' : ''} ativo{activeFiltersCount > 1 ? 's' : ''}</span>
+                                                </button>
+                                            )}
                                         </div>
 
-                                        <div className="flex items-center gap-2">
-                                            {selectedIES && (
-                                                <Badge
-                                                    variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                    icon={<Building2 size={13} />}
+                                        <div className="flex items-center gap-3">
+                                            {/* FILTROS DE REDE EMBUTIDOS NO HEADER DA LISTA EAD */}
+                                            <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+                                                <span className="text-caption font-medium text-text-muted pl-0.5">Rede:</span>
+                                                <Chip
+                                                    selected={selectedRede === 'todas'}
+                                                    onClick={() => setSelectedRede('todas')}
+                                                    variant="neutral"
+                                                    size="sm"
                                                 >
-                                                    {selectedIES}
-                                                </Badge>
-                                            )}
-                                            {selectedTerritory && (
-                                                <Badge
-                                                    variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                    icon={<MapPin size={13} />}
+                                                    Todas
+                                                </Chip>
+                                                <Chip
+                                                    selected={selectedRede === 'publica'}
+                                                    onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
+                                                    variant="success"
+                                                    size="sm"
                                                 >
-                                                    {territoryName}
-                                                </Badge>
-                                            )}
+                                                    Pública
+                                                </Chip>
+                                                <Chip
+                                                    selected={selectedRede === 'privada'}
+                                                    onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
+                                                    variant="accent"
+                                                    size="sm"
+                                                >
+                                                    Privada
+                                                </Chip>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                {selectedIES && (
+                                                    <Badge
+                                                        variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                        icon={<Building2 size={13} />}
+                                                    >
+                                                        {selectedIES}
+                                                    </Badge>
+                                                )}
+                                                {selectedTerritory && (
+                                                    <Badge
+                                                        variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                        icon={<MapPin size={13} />}
+                                                    >
+                                                        {territoryName}
+                                                    </Badge>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -1144,7 +1222,6 @@ export default function CursosPage() {
                                                         style={{ contentVisibility: 'auto', containIntrinsicSize: '0 88px' }}
                                                         onClick={() => {
                                                             setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
-                                                            setSelectedCursoDrawer(c);
                                                         }}
                                                         className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full scroll-mt-2 ${isSelected
                                                             ? (filtroSemiarido
@@ -1159,14 +1236,14 @@ export default function CursosPage() {
                                                             <div className="flex items-start gap-3 min-w-0 flex-1">
                                                                 <div
                                                                     className="w-8 h-8 rounded-control flex items-center justify-center shrink-0 mt-0.5 transition-transform group-hover:scale-105"
-                                                                    style={{ backgroundColor: getAlphaColor(catColor), color: catColor }}
+                                                                    style={{ backgroundColor: getAlphaColor(catColor, chartTheme.isDark ? 0.22 : 0.12), color: catColor }}
                                                                 >
                                                                     <Laptop size={16} />
                                                                 </div>
                                                                 <div className="flex flex-col min-w-0 flex-1">
                                                                     <h4 className={`text-body-sm font-semibold leading-tight break-words transition-colors ${isSelected
-                                                                        ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-200' : 'text-primary-600 dark:text-primary-300')
-                                                                        : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700' : 'text-text-primary group-hover:text-primary-600')
+                                                                        ? (filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-primary-600 dark:text-primary-400')
+                                                                        : (filtroSemiarido ? 'text-text-primary group-hover:text-amber-700 dark:group-hover:text-amber-400' : 'text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400')
                                                                         }`}>
                                                                         {c.curso || c.nome}
                                                                     </h4>
@@ -1201,9 +1278,9 @@ export default function CursosPage() {
                                                                     variant="neutral"
                                                                     className="text-caption font-medium"
                                                                     style={{
-                                                                        backgroundColor: getAlphaColor(catColor),
+                                                                        backgroundColor: getAlphaColor(catColor, chartTheme.isDark ? 0.18 : 0.12),
                                                                         color: catColor,
-                                                                        borderColor: `${catColor}30`
+                                                                        borderColor: getAlphaColor(catColor, chartTheme.isDark ? 0.35 : 0.25)
                                                                     }}
                                                                 >
                                                                     {c.categoria || c.tipo || 'Geral'}
@@ -1271,59 +1348,86 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0">
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat) => {
                                                 const isSelected = selectedCategory === cat.name;
-                                                const dotColor = cat.color;
+                                                const totalCourses = activeScopedCursos.length || categoryStats.reduce((acc, c) => acc + c.count, 0) || 1;
+                                                const remaining = Math.max(0, totalCourses - cat.count);
+
+                                                const negPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+                                                    : 'bg-surface-soft text-text-secondary border border-border';
+                                                const totalPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+                                                    : 'bg-surface-soft text-text-primary border border-border';
 
                                                 return (
                                                     <div
                                                         key={cat.name}
                                                         onClick={() => setSelectedCategory(isSelected ? 'todas' : cat.name)}
-                                                        className={`rounded-card p-3 border transition-all cursor-pointer ${isSelected
-                                                            ? (filtroSemiarido ? 'bg-surface border-amber-500 shadow-md ring-2 ring-amber-500/20' : 'bg-surface border-primary-600 shadow-md ring-2 ring-primary-600/20')
-                                                            : (filtroSemiarido ? 'bg-surface-soft/60 border-border hover:bg-surface hover:border-amber-300 shadow-2xs' : 'bg-surface-soft/60 border-border hover:bg-surface hover:border-primary-200 dark:hover:border-primary-800 shadow-2xs')
-                                                            }`}
+                                                        className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
+                                                            ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
+                                                            : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
+                                                        }`}
                                                     >
-                                                        <div className="flex items-center justify-between mb-2">
-                                                            <div className="flex items-center gap-2 min-w-0">
-                                                                <span
-                                                                    className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
-                                                                    style={{ backgroundColor: dotColor }}
-                                                                />
-                                                                <span className="text-body-sm font-semibold text-text-primary truncate">
-                                                                    {cat.name}
-                                                                </span>
+                                                        {/* RÓTULO COM NOME DA ÁREA */}
+                                                        <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                            <div className="flex items-center gap-1.5 min-w-0">
+                                                                <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.color }} />
+                                                                <span className="truncate">{cat.name}</span>
                                                             </div>
-                                                            <div className="flex items-center gap-2 shrink-0">
-                                                                <span className="text-caption font-semibold text-text-primary tnum">
-                                                                    {cat.count} {cat.count === 1 ? 'curso' : 'cursos'}
-                                                                </span>
-                                                                <span
-                                                                    className="text-caption font-medium px-2 py-0.5 rounded-full inline-flex items-center justify-center leading-none tnum"
-                                                                    style={{ backgroundColor: `${cat.color}20`, color: cat.color }}
-                                                                >
-                                                                    {cat.percent}%
-                                                                </span>
-                                                            </div>
+                                                            <span className="text-caption text-text-muted font-normal tabular-nums">{cat.percent}% da oferta</span>
                                                         </div>
 
-                                                        <div className={`w-full h-[18px] rounded-full overflow-hidden relative flex items-center ${filtroSemiarido ? 'bg-amber-500/10 dark:bg-amber-950/30' : 'bg-primary-50/50 dark:bg-primary-950/40'}`}>
+                                                        {/* BARRAS DE PÍLULAS */}
+                                                        <div className="flex items-center gap-2 w-full">
                                                             <div
-                                                                className="h-full rounded-full transition-all duration-500"
-                                                                style={{ width: `${cat.percent}%`, backgroundColor: cat.color }}
-                                                            />
+                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                style={{
+                                                                    flexGrow: cat.count,
+                                                                    flexBasis: 0,
+                                                                    backgroundColor: cat.color,
+                                                                    color: getContrastTextColor(cat.color),
+                                                                    minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                }}
+                                                                title={`${cat.name}: ${cat.count} cursos (${cat.percent}%)`}
+                                                            >
+                                                                <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
+                                                                    {cat.count} <span className="text-caption font-medium opacity-90">({cat.percent}%)</span>
+                                                                </span>
+                                                            </div>
+
+                                                            {remaining > 0 && (
+                                                                <div
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    style={{
+                                                                        flexGrow: remaining,
+                                                                        flexBasis: 0
+                                                                    }}
+                                                                />
+                                                            )}
+
+                                                            <div
+                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`Total de cursos: ${cat.count}`}
+                                                            >
+                                                                <span className="text-caption font-bold tabular-nums leading-none">
+                                                                    {cat.count}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 );
                                             })
                                         ) : (
-                                            <EmptyState
-                                                icon={Filter}
-                                                title="Nenhuma área de ensino registrada"
-                                                description="Nenhum dado encontrado para o filtro atual."
-                                            />
+                                            <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                <EmptyState
+                                                    icon={Filter}
+                                                    title="Nenhuma área de ensino registrada"
+                                                    description="Nenhum dado encontrado para o filtro atual."
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -1353,105 +1457,220 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0 w-full pb-2">
+                                    {/* LISTA RANKING: ESTILO DE PÍLULAS PROPORCIONAIS */}
+                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full pb-2">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
-                                                municipalityRanking.map((m) => (
-                                                    <div
-                                                        key={m.name}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
-                                                        onClick={() => {
-                                                            setSearchQuery(m.name);
-                                                            setActiveTab('catalogo');
-                                                        }}
-                                                        className="group flex flex-col gap-1.5 p-2 rounded-xl hover:bg-surface-soft/80 transition-all cursor-pointer"
-                                                    >
-                                                        {/* LINHA 1: TÍTULO EM CAIXA ALTA */}
-                                                        <div className="flex items-center justify-between gap-2">
-                                                            <span className="text-body-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
-                                                                {m.name}
-                                                            </span>
-                                                        </div>
+                                                municipalityRanking.map((m) => {
+                                                    const pos = Number(m.publicaCount || 0);
+                                                    const total = Number(m.count || 0);
+                                                    const neg = Math.max(0, total - pos);
+                                                    const percentPos = total > 0 ? ((pos / total) * 100).toFixed(1) : '0.0';
+                                                    const percentNeg = total > 0 ? ((neg / total) * 100).toFixed(1) : '0.0';
 
-                                                        {/* LINHA 2: SUBTÍTULO + VALOR */}
-                                                        <div className="flex items-baseline justify-between text-caption font-medium">
-                                                            <span className="text-text-muted truncate">
-                                                                {m.percentTotal}% da oferta no território
-                                                            </span>
-                                                            <span className="text-text-primary font-bold tabular-nums shrink-0 ml-2">
-                                                                {m.count} <span className="font-normal text-text-muted">{m.count === 1 ? 'curso' : 'cursos'}</span>
-                                                            </span>
-                                                        </div>
+                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const negPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+                                                        : 'bg-surface-soft text-text-secondary border border-border';
+                                                    const totalPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+                                                        : 'bg-surface-soft text-text-primary border border-border';
 
-                                                        {/* LINHA 3: CÁPSULA COM BORDA E BARRA INTERNA */}
-                                                        <div className="w-full h-3 rounded-full border border-neutral-800/80 dark:border-neutral-200/80 p-[2px] flex items-center bg-transparent">
-                                                            <div
-                                                                className={`h-full rounded-full transition-all duration-500 ease-out ${
-                                                                    filtroSemiarido ? 'bg-amber-600 dark:bg-amber-400' : 'bg-neutral-900 dark:bg-neutral-100'
-                                                                }`}
-                                                                style={{ width: `${Math.max(4, m.percentBar || 0)}%` }}
-                                                            />
+                                                    return (
+                                                        <div
+                                                            key={m.name}
+                                                            onClick={() => {
+                                                                setSearchQuery(m.name);
+                                                                setActiveTab('catalogo');
+                                                            }}
+                                                            className={`p-2 rounded-xl transition-all cursor-pointer border ${filtroSemiarido
+                                                                ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200'
+                                                                : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border'
+                                                            }`}
+                                                        >
+                                                            {/* RÓTULO COM NOME DO MUNICÍPIO */}
+                                                            <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                                <span className="truncate">{m.name}</span>
+                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{m.percentTotal}% do território</span>
+                                                            </div>
+
+                                                            {/* BARRAS DE PÍLULAS */}
+                                                            <div className="flex items-center gap-2 w-full">
+                                                                {/* PÚBLICA (Positivo) */}
+                                                                {pos > 0 && (
+                                                                    <div
+                                                                        className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                        style={{
+                                                                            flexGrow: pos,
+                                                                            flexBasis: 0,
+                                                                            backgroundColor: posPillColor,
+                                                                            minWidth: neg > 0 ? '76px' : 'auto'
+                                                                        }}
+                                                                        title={`Rede Pública: ${pos} (${percentPos}%)`}
+                                                                    >
+                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                            {pos} <span className="text-caption font-medium opacity-90">({percentPos}%)</span>
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* PRIVADA (Negativo) */}
+                                                                {neg > 0 && (
+                                                                    <div
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        style={{
+                                                                            flexGrow: neg,
+                                                                            flexBasis: 0,
+                                                                            minWidth: pos > 0 ? '76px' : 'auto'
+                                                                        }}
+                                                                        title={`Rede Privada: ${neg} (${percentNeg}%)`}
+                                                                    >
+                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                            {neg} <span className="text-caption font-medium opacity-85">({percentNeg}%)</span>
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* TOTAL */}
+                                                                <div
+                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`Total de cursos: ${total}`}
+                                                                >
+                                                                    <span className="text-caption font-bold tabular-nums leading-none">
+                                                                        {total}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))
+                                                    );
+                                                })
                                             ) : (
-                                                <EmptyState
-                                                    icon={MapPin}
-                                                    title="Nenhum município com cursos cadastrados neste território"
-                                                    description="Não há registros de cursos de CT&I para os municípios deste território."
-                                                />
+                                                <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                    <EmptyState
+                                                        icon={MapPin}
+                                                        title="Nenhum município com cursos cadastrados neste território"
+                                                        description="Não há registros de cursos de CT&I para os municípios deste território."
+                                                    />
+                                                </div>
                                             )
                                         ) : (
                                             territoryRanking.length > 0 ? (
-                                                territoryRanking.map((t) => (
-                                                    <div
-                                                        key={t.id || t.name}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 54px' }}
-                                                        onClick={() => {
-                                                            const found = (territoriosData || []).find(x => 
-                                                                (t.id && Number(x.id_territorio) === Number(t.id)) ||
-                                                                normalize(x.nome_territorio || x.territorio || x.nome) === normalize(t.name)
-                                                            );
-                                                            setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
-                                                        }}
-                                                        className="group flex flex-col gap-1.5 p-2 rounded-xl hover:bg-surface-soft/80 transition-all cursor-pointer"
-                                                    >
-                                                        {/* LINHA 1: TÍTULO EM CAIXA ALTA */}
-                                                        <div className="flex items-center justify-between gap-2">
-                                                            <span className="text-body-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
-                                                                {t.name}
-                                                            </span>
-                                                        </div>
+                                                territoryRanking.map((t) => {
+                                                    const isSelected = selectedTerritory && (
+                                                        (t.id && Number(selectedTerritory.id_territorio) === Number(t.id)) ||
+                                                        normalize(selectedTerritory.nome_territorio || selectedTerritory.territorio || selectedTerritory.nome) === normalize(t.name)
+                                                    );
+                                                    const pos = Number(t.publicaCount || 0);
+                                                    const total = Number(t.count || 0);
+                                                    const neg = Math.max(0, total - pos);
+                                                    const percentPos = total > 0 ? ((pos / total) * 100).toFixed(1) : '0.0';
+                                                    const percentNeg = total > 0 ? ((neg / total) * 100).toFixed(1) : '0.0';
 
-                                                        {/* LINHA 2: SUBTÍTULO + VALOR */}
-                                                        <div className="flex items-baseline justify-between text-caption font-medium">
-                                                            <span className="text-text-muted truncate">
-                                                                {t.percentTotal}% da oferta estadual
-                                                            </span>
-                                                            <span className="text-text-primary font-bold tabular-nums shrink-0 ml-2">
-                                                                {t.count} <span className="font-normal text-text-muted">{t.count === 1 ? 'curso' : 'cursos'}</span>
-                                                            </span>
-                                                        </div>
+                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const negPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+                                                        : 'bg-surface-soft text-text-secondary border border-border';
+                                                    const totalPillStyle = filtroSemiarido
+                                                        ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+                                                        : 'bg-surface-soft text-text-primary border border-border';
 
-                                                        {/* LINHA 3: CÁPSULA COM BORDA E BARRA INTERNA */}
-                                                        <div className="w-full h-3 rounded-full border border-neutral-800/80 dark:border-neutral-200/80 p-[2px] flex items-center bg-transparent">
-                                                            <div
-                                                                className={`h-full rounded-full transition-all duration-500 ease-out ${
-                                                                    filtroSemiarido ? 'bg-amber-600 dark:bg-amber-400' : 'bg-neutral-900 dark:bg-neutral-100'
-                                                                }`}
-                                                                style={{ width: `${Math.max(4, t.percentBar || 0)}%` }}
-                                                            />
+                                                    return (
+                                                        <div
+                                                            key={t.id || t.name}
+                                                            onClick={() => {
+                                                                const found = (territoriosData || []).find(x => 
+                                                                    (t.id && Number(x.id_territorio) === Number(t.id)) ||
+                                                                    normalize(x.nome_territorio || x.territorio || x.nome) === normalize(t.name)
+                                                                );
+                                                                setSelectedTerritory(found || { id_territorio: t.id, nome_territorio: t.name });
+                                                            }}
+                                                            className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
+                                                                ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
+                                                                : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
+                                                            }`}
+                                                        >
+                                                            {/* RÓTULO COM NOME DO TERRITÓRIO */}
+                                                            <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                                <span className="truncate">{t.name}</span>
+                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{t.percentTotal}% do estado</span>
+                                                            </div>
+
+                                                            {/* BARRAS DE PÍLULAS */}
+                                                            <div className="flex items-center gap-2 w-full">
+                                                                {/* PÚBLICA (Positivo) */}
+                                                                {pos > 0 && (
+                                                                    <div
+                                                                        className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                        style={{
+                                                                            flexGrow: pos,
+                                                                            flexBasis: 0,
+                                                                            backgroundColor: posPillColor,
+                                                                            minWidth: neg > 0 ? '76px' : 'auto'
+                                                                        }}
+                                                                        title={`Rede Pública: ${pos} (${percentPos}%)`}
+                                                                    >
+                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                            {pos} <span className="text-caption font-medium opacity-90">({percentPos}%)</span>
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* PRIVADA (Negativo) */}
+                                                                {neg > 0 && (
+                                                                    <div
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        style={{
+                                                                            flexGrow: neg,
+                                                                            flexBasis: 0,
+                                                                            minWidth: pos > 0 ? '76px' : 'auto'
+                                                                        }}
+                                                                        title={`Rede Privada: ${neg} (${percentNeg}%)`}
+                                                                    >
+                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                            {neg} <span className="text-caption font-medium opacity-85">({percentNeg}%)</span>
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* TOTAL */}
+                                                                <div
+                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`Total de cursos: ${total}`}
+                                                                >
+                                                                    <span className="text-caption font-bold tabular-nums leading-none">
+                                                                        {total}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))
+                                                    );
+                                                })
                                             ) : (
-                                                <EmptyState
-                                                    icon={TrendingUp}
-                                                    title="Nenhum território encontrado"
-                                                    description="Não há registros de oferta de cursos de CT&I para os filtros selecionados."
-                                                />
+                                                <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                    <EmptyState
+                                                        icon={TrendingUp}
+                                                        title="Nenhum território encontrado"
+                                                        description="Não há registros de oferta de cursos de CT&I para os filtros selecionados."
+                                                    />
+                                                </div>
                                             )
                                         )}
+                                    </div>
+
+                                    {/* LEGENDA NO RODAPÉ */}
+                                    <div className="flex items-center justify-between gap-4 pt-3 border-t border-border shrink-0 text-caption font-medium mt-auto">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-900 dark:text-amber-300 font-semibold' : 'text-text-primary font-semibold'}>Rede Pública</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-500/20' : 'bg-border'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-secondary'}>Rede Privada</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 ml-auto">
+                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-300' : 'bg-border-strong'} shadow-2xs`}></span>
+                                            <span className={filtroSemiarido ? 'text-amber-800 dark:text-amber-300 font-medium' : 'text-text-secondary font-medium'}>Total</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -1483,7 +1702,7 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
-                                    {/* LISTA RANKING IES COM PADRÃO VISÃO GERAL */}
+                                    {/* LISTA RANKING IES */}
                                     <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
                                         {iesRanking.length > 0 ? (
                                             iesRanking.map((ies, idx) => {
@@ -1491,66 +1710,370 @@ export default function CursosPage() {
                                                     (ies.sigla && selectedIES.toUpperCase() === ies.sigla.toUpperCase()) ||
                                                     selectedIES === ies.fullName
                                                 );
-                                                const isFirst = idx === 0;
                                                 const maxCount = iesRanking[0]?.count || 1;
                                                 const pct = Math.min(100, Math.round((ies.count / maxCount) * 100));
+                                                const remaining = Math.max(0, maxCount - ies.count);
                                                 const rankStr = String(idx + 1).padStart(2, '0');
-                                                const rankStyle = isFirst
-                                                    ? (filtroSemiarido ? 'bg-amber-500 text-white shadow-2xs' : 'bg-primary-500 text-white shadow-2xs')
-                                                    : (filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/50' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
-                                                const fillColor = isSelected
-                                                    ? (filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600')
-                                                    : (isFirst ? (filtroSemiarido ? 'bg-amber-500' : 'bg-primary-500') : (filtroSemiarido ? 'bg-amber-300/80' : 'bg-primary-200'));
-                                                const textStyle = isFirst || isSelected
-                                                    ? 'font-medium text-white'
-                                                    : (filtroSemiarido ? 'font-medium text-amber-950 dark:text-amber-100' : 'font-medium text-primary-950 dark:text-neutral-900');
-                                                const valueStyle = isFirst
-                                                    ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60' : 'bg-primary-50 dark:bg-primary-950/50 text-primary-800 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/60')
-                                                    : (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/50' : 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50');
+
+                                                const fillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                const negPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
+                                                    : 'bg-surface-soft text-text-secondary border border-border';
+                                                const totalPillStyle = filtroSemiarido
+                                                    ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
+                                                    : 'bg-surface-soft text-text-primary border border-border';
 
                                                 return (
                                                     <div
-                                                        key={ies.sigla}
-                                                        style={{ contentVisibility: 'auto', containIntrinsicSize: '0 32px' }}
+                                                        key={ies.sigla || ies.fullName}
                                                         onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
-                                                        title={`${ies.fullName}: ${ies.count} cursos em ${ies.municipios.size} cidades`}
-                                                        className={`flex items-center gap-2 w-full min-w-0 transition-all duration-200 hover:opacity-95 cursor-pointer p-1 rounded-xl ${isSelected ? (filtroSemiarido ? 'bg-amber-50 dark:bg-amber-950/30 ring-1 ring-amber-500/30' : 'bg-primary-50/80 dark:bg-primary-950/30 ring-1 ring-primary-500/30') : ''
-                                                            }`}
+                                                        className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
+                                                            ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
+                                                            : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
+                                                        }`}
                                                     >
-                                                        {/* RANK */}
-                                                        <div className={`w-[22px] h-[22px] rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${rankStyle}`}>
-                                                            {rankStr}
+                                                        {/* RÓTULO COM RANK E NOME DA IES */}
+                                                        <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
+                                                            <div className="flex items-center gap-1.5 min-w-0">
+                                                                <span className="text-text-muted font-bold tnum">{rankStr}.</span>
+                                                                <span className="truncate">{ies.sigla}</span>
+                                                                <span className="text-caption text-text-muted font-normal truncate hidden sm:inline">· {ies.fullName}</span>
+                                                            </div>
+                                                            <span className="text-caption text-text-muted font-normal shrink-0">{ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}</span>
                                                         </div>
 
-                                                        {/* BARRA: TRACK + FILL + NOME */}
-                                                        <div className={`relative flex-1 h-[24px] rounded-full overflow-hidden min-w-0 flex items-center ${filtroSemiarido ? 'bg-amber-50/60 dark:bg-amber-950/20' : 'bg-primary-50/50 dark:bg-primary-950/20'}`}>
+                                                        {/* BARRAS DE PÍLULAS */}
+                                                        <div className="flex items-center gap-2 w-full">
+                                                            {/* PREENCHIMENTO */}
                                                             <div
-                                                                className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
-                                                                style={{ width: `${Math.max(4, pct)}%` }}
-                                                            />
-                                                            <span className={`absolute left-2.5 right-2.5 text-caption truncate leading-none pointer-events-none select-none z-10 ${textStyle}`}>
-                                                                {ies.sigla} <span className="opacity-75 text-caption">· {ies.fullName}</span>
-                                                            </span>
-                                                        </div>
+                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                style={{
+                                                                    flexGrow: ies.count,
+                                                                    flexBasis: 0,
+                                                                    backgroundColor: fillColor,
+                                                                    minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                }}
+                                                                title={`${ies.fullName}: ${ies.count} cursos (${pct}% do líder)`}
+                                                            >
+                                                                <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
+                                                                    {ies.count} <span className="text-caption font-medium opacity-90">({pct}%)</span>
+                                                                </span>
+                                                            </div>
 
-                                                        {/* BADGE CIDADES */}
-                                                        <div className={`h-[24px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-medium tnum leading-none ${filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60' : 'bg-primary-100/80 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 border border-primary-200/60 dark:border-primary-700/60'}`}>
-                                                            {ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}
-                                                        </div>
+                                                            {/* RESTANTE */}
+                                                            {remaining > 0 && (
+                                                                <div
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    style={{
+                                                                        flexGrow: remaining,
+                                                                        flexBasis: 0
+                                                                    }}
+                                                                />
+                                                            )}
 
-                                                        {/* VALOR PILL */}
-                                                        <div className={`h-[24px] min-w-[34px] px-2 rounded-full shrink-0 flex items-center justify-center text-caption font-semibold tnum leading-none ${valueStyle}`}>
-                                                            {ies.count}
+                                                            {/* TOTAL */}
+                                                            <div
+                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`Total de cursos: ${ies.count}`}
+                                                            >
+                                                                <span className="text-caption font-bold tabular-nums leading-none">
+                                                                    {ies.count}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 );
                                             })
                                         ) : (
-                                            <EmptyState
-                                                icon={Building2}
-                                                title="Nenhuma instituição cadastrada neste território"
-                                            />
+                                            <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                                <EmptyState
+                                                    icon={Building2}
+                                                    title="Nenhuma instituição encontrada"
+                                                    description="Não foram encontradas instituições para os filtros selecionados."
+                                                />
+                                            </div>
                                         )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ABA 6: FILTROS APLICADOS */}
+                            {activeTab === 'filtros' && (
+                                <div className="flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
+                                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/70 shrink-0 flex-wrap gap-2">
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="text-body-sm font-semibold text-text-primary">
+                                                    Filtros Aplicados
+                                                </h3>
+                                                <Badge variant={activeFiltersCount > 0 ? 'primary' : 'neutral'} size="sm">
+                                                    {activeFiltersCount} ativo{activeFiltersCount === 1 ? '' : 's'}
+                                                </Badge>
+                                            </div>
+                                            <p className="text-caption text-text-secondary mt-0.5">
+                                                Parâmetros que refinam os cursos apresentados no mapa e no catálogo.
+                                            </p>
+                                        </div>
+                                        {activeFiltersCount > 0 && (
+                                            <Button
+                                                variant="outline"
+                                                size="xs"
+                                                onClick={handleClearAllFilters}
+                                                className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-caption font-semibold cursor-pointer"
+                                            >
+                                                Limpar Todos os Filtros
+                                            </Button>
+                                        )}
+                                    </div>
+
+                                    {/* GRID DE PARÂMETROS / FILTROS */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5 shrink-0">
+                                        {/* 1. ÁREA TEMÁTICA */}
+                                        <div className="p-3.5 rounded-panel border border-border bg-surface-soft flex flex-col justify-between gap-2.5">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-caption font-semibold text-text-secondary flex items-center gap-1.5">
+                                                    <Filter size={13} className="text-primary-600" />
+                                                    Área Temática de CT&I
+                                                </span>
+                                                {selectedCategory !== 'todas' && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSelectedCategory('todas')}
+                                                        className="text-micro font-medium text-text-muted hover:text-danger-600 cursor-pointer"
+                                                    >
+                                                        Remover
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {selectedCategory !== 'todas' ? (
+                                                <Chip
+                                                    selected
+                                                    variant="primary"
+                                                    size="md"
+                                                    onClick={() => setSelectedCategory('todas')}
+                                                    className="w-full justify-between cursor-pointer"
+                                                    title={`Clique para remover filtro de ${selectedCategory}`}
+                                                >
+                                                    <span className="truncate">{selectedCategory}</span>
+                                                    <span className="text-text-muted hover:text-text-primary font-bold ml-1">×</span>
+                                                </Chip>
+                                            ) : (
+                                                <p className="text-caption text-text-muted">
+                                                    Todas as áreas incluídas (sem restrição).
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* 2. INSTITUIÇÃO DE ENSINO (IES) */}
+                                        <div className="p-3.5 rounded-panel border border-border bg-surface-soft flex flex-col justify-between gap-2.5">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-caption font-semibold text-text-secondary flex items-center gap-1.5">
+                                                    <Building2 size={13} className="text-primary-600" />
+                                                    Instituição de Ensino Superior
+                                                </span>
+                                                {selectedIES && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSelectedIES(null)}
+                                                        className="text-micro font-medium text-text-muted hover:text-danger-600 cursor-pointer"
+                                                    >
+                                                        Remover
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {selectedIES ? (
+                                                <Chip
+                                                    selected
+                                                    variant="primary"
+                                                    size="md"
+                                                    onClick={() => setSelectedIES(null)}
+                                                    className="w-full justify-between cursor-pointer"
+                                                    title={`Clique para remover filtro de ${selectedIES}`}
+                                                >
+                                                    <span className="truncate">{selectedIES}</span>
+                                                    <span className="text-text-muted hover:text-text-primary font-bold ml-1">×</span>
+                                                </Chip>
+                                            ) : (
+                                                <p className="text-caption text-text-muted">
+                                                    Todas as instituições incluídas.
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* 3. TERRITÓRIO DE IDENTIDADE */}
+                                        <div className="p-3.5 rounded-panel border border-border bg-surface-soft flex flex-col justify-between gap-2.5">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-caption font-semibold text-text-secondary flex items-center gap-1.5">
+                                                    <MapPin size={13} className="text-primary-600" />
+                                                    Território de Identidade
+                                                </span>
+                                                {selectedTerritory && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSelectedTerritory(null)}
+                                                        className="text-micro font-medium text-text-muted hover:text-danger-600 cursor-pointer"
+                                                    >
+                                                        Remover
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {selectedTerritory ? (
+                                                <Chip
+                                                    selected
+                                                    variant="neutral"
+                                                    size="md"
+                                                    onClick={() => setSelectedTerritory(null)}
+                                                    className="w-full justify-between cursor-pointer"
+                                                    title={`Clique para remover filtro de ${territoryName}`}
+                                                >
+                                                    <span className="truncate">{territoryName}</span>
+                                                    <span className="text-text-muted hover:text-text-primary font-bold ml-1">×</span>
+                                                </Chip>
+                                            ) : (
+                                                <p className="text-caption text-text-muted">
+                                                    Toda a Bahia (27 Territórios de Identidade).
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* 4. REDE DE ENSINO */}
+                                        <div className="p-3.5 rounded-panel border border-border bg-surface-soft flex flex-col justify-between gap-2.5">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-caption font-semibold text-text-secondary flex items-center gap-1.5">
+                                                    <GraduationCap size={13} className="text-primary-600" />
+                                                    Rede de Ensino
+                                                </span>
+                                                {selectedRede !== 'todas' && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSelectedRede('todas')}
+                                                        className="text-micro font-medium text-text-muted hover:text-danger-600 cursor-pointer"
+                                                    >
+                                                        Resetar
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Chip
+                                                    selected={selectedRede === 'todas'}
+                                                    onClick={() => setSelectedRede('todas')}
+                                                    variant="neutral"
+                                                    size="sm"
+                                                >
+                                                    Todas ({redeStats.total})
+                                                </Chip>
+                                                <Chip
+                                                    selected={selectedRede === 'publica'}
+                                                    onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
+                                                    variant="success"
+                                                    size="sm"
+                                                >
+                                                    Pública ({redeStats.publica})
+                                                </Chip>
+                                                <Chip
+                                                    selected={selectedRede === 'privada'}
+                                                    onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
+                                                    variant="accent"
+                                                    size="sm"
+                                                >
+                                                    Privada ({redeStats.privada})
+                                                </Chip>
+                                            </div>
+                                        </div>
+
+                                        {/* 5. RECORTE REGIONAL: SEMIÁRIDO */}
+                                        <div className="p-3.5 rounded-panel border border-border bg-surface-soft flex flex-col justify-between gap-2.5">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-caption font-semibold text-text-secondary flex items-center gap-1.5">
+                                                    <Flame size={13} className="text-amber-500" />
+                                                    Recorte Semiárido Baiano
+                                                </span>
+                                                {filtroSemiarido && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFiltroSemiarido(false)}
+                                                        className="text-micro font-medium text-text-muted hover:text-danger-600 cursor-pointer"
+                                                    >
+                                                        Desativar
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Chip
+                                                    selected={!filtroSemiarido}
+                                                    onClick={() => setFiltroSemiarido(false)}
+                                                    variant="neutral"
+                                                    size="sm"
+                                                >
+                                                    Todo o Estado
+                                                </Chip>
+                                                <Chip
+                                                    selected={filtroSemiarido}
+                                                    onClick={() => setFiltroSemiarido(prev => !prev)}
+                                                    variant="warning"
+                                                    size="sm"
+                                                >
+                                                    Apenas Semiárido
+                                                </Chip>
+                                            </div>
+                                        </div>
+
+                                        {/* 6. BUSCA POR TEXTO */}
+                                        <div className="p-3.5 rounded-panel border border-border bg-surface-soft flex flex-col justify-between gap-2.5">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-caption font-semibold text-text-secondary flex items-center gap-1.5">
+                                                    Busca por Texto
+                                                </span>
+                                                {searchQuery.trim() && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSearchQuery('')}
+                                                        className="text-micro font-medium text-text-muted hover:text-danger-600 cursor-pointer"
+                                                    >
+                                                        Limpar busca
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {searchQuery.trim() ? (
+                                                <p className="text-caption text-text-primary truncate">
+                                                    Termo: &ldquo;<strong>{searchQuery}</strong>&rdquo;
+                                                </p>
+                                            ) : (
+                                                <p className="text-caption text-text-muted">
+                                                    Nenhum termo de busca ativo.
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* FOOTER: RESUMO DE CURSOS COMPATÍVEIS E BOTÕES DE NAVEGAÇÃO */}
+                                    <div className="mt-auto p-4 rounded-panel bg-surface-soft dark:bg-surface-raised border border-border/80 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                                        <div>
+                                            <span className="text-caption font-semibold uppercase tracking-wider text-text-muted block">
+                                                Cursos compatíveis com os filtros
+                                            </span>
+                                            <span className="text-body font-bold text-text-primary tabular-nums">
+                                                {filteredCursos.length} presenciais • {filteredEadCursos.length} EaD
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                onClick={() => setActiveTab('catalogo')}
+                                                className="flex-1 sm:flex-initial cursor-pointer"
+                                            >
+                                                Ver no Catálogo ({filteredCursos.length})
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setActiveTab('ead')}
+                                                className="flex-1 sm:flex-initial cursor-pointer"
+                                            >
+                                                Ver EaD ({filteredEadCursos.length})
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -1560,123 +2083,6 @@ export default function CursosPage() {
                 )}
 
             </motion.div>
-
-            {/* DRAWER LATERAL DE DETALHES DO CURSO */}
-            <Drawer
-                open={Boolean(selectedCursoDrawer)}
-                onClose={() => setSelectedCursoDrawer(null)}
-                title={selectedCursoDrawer?.curso || selectedCursoDrawer?.nome || 'Detalhes do Curso'}
-                subtitle={
-                    selectedCursoDrawer
-                        ? `${selectedCursoDrawer.sigla || cleanIesName(selectedCursoDrawer.entidade || selectedCursoDrawer.instituicao, selectedCursoDrawer.municipio)} • ${selectedCursoDrawer.municipio || 'Bahia'}`
-                        : ''
-                }
-                footer={
-                    <div className="flex items-center justify-between w-full gap-2">
-                        {(selectedCursoDrawer?.url_referencia || selectedCursoDrawer?.url || selectedCursoDrawer?.link || selectedCursoDrawer?.site) ? (
-                            <Button
-                                variant="primary"
-                                size="sm"
-                                as="a"
-                                href={selectedCursoDrawer.url_referencia || selectedCursoDrawer.url || selectedCursoDrawer.link || selectedCursoDrawer.site}
-                                target="_blank"
-                                rel="noreferrer"
-                                icon={<ExternalLink size={14} />}
-                            >
-                                Acessar Fonte Oficial
-                            </Button>
-                        ) : <div />}
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedCursoDrawer(null)}
-                        >
-                            Fechar
-                        </Button>
-                    </div>
-                }
-            >
-                {selectedCursoDrawer && (() => {
-                    const redeInfo = classificarInstituicao(selectedCursoDrawer);
-                    const catColor = categoryColorMap[selectedCursoDrawer.categoria || selectedCursoDrawer.tipo] || chartTheme.palette[0];
-                    const modalidade = selectedCursoDrawer.modalidade || (selectedCursoDrawer.tipo_oferta?.toLowerCase().includes('ead') ? 'EaD / A Distância' : activeTab === 'ead' ? 'EaD / A Distância' : 'Presencial');
-
-                    return (
-                        <div className="flex flex-col gap-4 text-body-sm">
-                            {/* STATUS BADGES */}
-                            <div className="flex items-center gap-2 flex-wrap pb-3 border-b border-border/70">
-                                <Badge
-                                    variant={redeInfo.isPublica ? 'success' : 'accent'}
-                                    className="text-caption font-semibold"
-                                >
-                                    Rede {redeInfo.isPublica ? 'Pública' : 'Privada'}
-                                </Badge>
-                                <Badge variant="neutral" className="text-caption">
-                                    {modalidade}
-                                </Badge>
-                                <span
-                                    className="text-caption font-medium px-2.5 py-0.5 rounded-full inline-flex items-center"
-                                    style={{ backgroundColor: getAlphaColor(catColor), color: catColor }}
-                                >
-                                    {selectedCursoDrawer.categoria || selectedCursoDrawer.tipo || 'CT&I'}
-                                </span>
-                            </div>
-
-                            {/* METADADOS */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Instituição (IES)</span>
-                                    <p className="font-bold text-text-primary">{selectedCursoDrawer.sigla || '—'}</p>
-                                    <p className="text-caption text-text-secondary truncate">{selectedCursoDrawer.entidade || selectedCursoDrawer.instituicao || '—'}</p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Rede Administrativa</span>
-                                    <p className="font-bold text-text-primary">
-                                        {redeInfo.isPublica ? 'Pública (Estadual/Federal/Municipal)' : 'Privada / Comunitária'}
-                                    </p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Município</span>
-                                    <p className="font-bold text-text-primary flex items-center gap-1.5">
-                                        <MapPin size={14} className="text-primary-600" />
-                                        {selectedCursoDrawer.municipio || '—'}
-                                    </p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Território de Identidade</span>
-                                    <p className="font-bold text-text-primary">
-                                        {selectedCursoDrawer.territorio_identidade || selectedCursoDrawer.territorio || '—'}
-                                    </p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Modalidade de Ensino</span>
-                                    <p className="font-bold text-text-primary">{modalidade}</p>
-                                </div>
-
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Vagas / Matrículas</span>
-                                    <p className="font-bold text-text-primary tnum">
-                                        {selectedCursoDrawer.vagas || selectedCursoDrawer.matriculas
-                                            ? `${selectedCursoDrawer.vagas || '—'} vagas / ${selectedCursoDrawer.matriculas || '—'} matrículas`
-                                            : 'Sob consulta institucional'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {selectedCursoDrawer.grau && (
-                                <div className="p-3 bg-surface-soft rounded-control border border-border/70">
-                                    <span className="text-caption font-medium text-text-muted block mb-0.5">Grau Acadêmico</span>
-                                    <p className="font-bold text-text-primary">{selectedCursoDrawer.grau}</p>
-                                </div>
-                            )}
-                        </div>
-                    );
-                })()}
-            </Drawer>
 
         </main>
     );

@@ -146,18 +146,18 @@ export default function ProportionBarChart({
                     <div className="flex items-center gap-1.5 w-full">
                       {pos > 0 && (
                         <div
-                          className={`${pillH} rounded-full ${posPillColor} flex items-center px-2 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-xs`}
+                          className={`${pillH} rounded-full ${posPillColor} flex items-center justify-center px-2 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-xs whitespace-nowrap`}
                           style={{
                             flexGrow: pos,
                             flexBasis: 0,
-                            minWidth: neg > 0 ? (isCompact ? '50px' : '56px') : 'auto'
+                            minWidth: neg > 0 ? (isCompact ? '64px' : '72px') : 'auto'
                           }}
                           title={`${positiveLabel}: ${pos} (${percentPos}%)`}
                         >
-                          <span className="text-caption font-semibold tnum leading-none">
+                          <span className="text-caption font-semibold tnum leading-none whitespace-nowrap">
                             {pos}
                           </span>
-                          <span className="text-caption font-normal opacity-90 ml-1 tnum leading-none">
+                          <span className="text-caption font-normal opacity-90 ml-1 tnum leading-none whitespace-nowrap">
                             ({percentPos}%)
                           </span>
                         </div>
@@ -165,18 +165,18 @@ export default function ProportionBarChart({
 
                       {neg > 0 && (
                         <div
-                          className={`${pillH} rounded-full ${negPillStyle} flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-xs`}
+                          className={`${pillH} rounded-full ${negPillStyle} flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-xs whitespace-nowrap`}
                           style={{
                             flexGrow: neg,
                             flexBasis: 0,
-                            minWidth: pos > 0 ? (isCompact ? '48px' : '54px') : 'auto'
+                            minWidth: pos > 0 ? (isCompact ? '64px' : '72px') : 'auto'
                           }}
                           title={`${negativeLabel}: ${neg} (${percentNeg}%)`}
                         >
-                          <span className="text-caption font-semibold tnum leading-none">
+                          <span className="text-caption font-semibold tnum leading-none whitespace-nowrap">
                             {neg}
                           </span>
-                          <span className="text-caption font-normal opacity-85 ml-1 tnum leading-none">
+                          <span className="text-caption font-normal opacity-85 ml-1 tnum leading-none whitespace-nowrap">
                             ({percentNeg}%)
                           </span>
                         </div>
