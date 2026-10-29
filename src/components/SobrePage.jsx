@@ -248,7 +248,7 @@ export default function SobrePage() {
                   ].map((cat, i) => (
                     <div
                       key={i}
-                      className="bg-surface-soft rounded-control p-4 border border-border flex flex-col justify-between hover:border-border-strong transition-colors"
+                      className="bg-surface-soft rounded-subcard p-4 sm:p-5 border border-border flex flex-col justify-between hover:border-border-strong transition-colors"
                     >
                       <div>
                         <strong className="block text-body-sm font-semibold text-text-primary tracking-tight mb-0.5">
@@ -264,8 +264,8 @@ export default function SobrePage() {
                     </div>
                   ))}
 
-                  <div className="bg-surface-soft border border-border rounded-control p-4 flex flex-col justify-center">
-                    <span className="text-caption font-medium text-text-primary block mb-1">
+                  <div className="bg-surface-soft border border-border rounded-subcard p-4 sm:p-5 flex flex-col justify-center">
+                    <span className="text-body-sm font-semibold text-text-primary tracking-tight block mb-1.5">
                       Critério & Ordenação
                     </span>
                     <p className="text-caption text-text-secondary leading-relaxed font-normal">

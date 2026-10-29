@@ -268,19 +268,39 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* TABELA COM SCROLL INTERNO E CABEÇALHO STICKY */}
-          <div className="flex-1 overflow-y-auto overflow-x-auto min-h-0 [scrollbar-gutter:stable]">
-            <table className="w-full text-left border-collapse text-body-sm min-w-[720px]">
-              <thead className="sticky top-0 bg-surface-soft border-b border-border text-caption font-medium text-text-muted z-10 select-none">
+          {/* TABELA COM CABEÇALHO FIXO E SCROLL APENAS NO CORPO */}
+          <div className="shrink-0 bg-surface-soft border-b border-border overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] select-none">
+            <table className="w-full text-left border-collapse text-body-sm min-w-[720px] table-fixed">
+              <colgroup>
+                <col className="w-[28%]" />
+                <col className="w-[18%]" />
+                <col className="w-[18%]" />
+                <col className="w-[16%]" />
+                <col className="w-[10%]" />
+                <col className="w-[10%]" />
+              </colgroup>
+              <thead className="text-caption font-medium text-text-muted !bg-transparent">
                 <tr>
                   <th className="py-3 px-4 font-semibold">Ativo</th>
                   <th className="py-3 px-4 font-semibold">Categoria</th>
                   <th className="py-3 px-4 font-semibold">Localidade</th>
                   <th className="py-3 px-4 font-semibold">Fonte / Referência</th>
                   <th className="py-3 px-4 font-semibold">Sigla</th>
-                  <th className="py-3 px-4 font-semibold text-center w-28">Ações</th>
+                  <th className="py-3 px-4 font-semibold text-center">Ações</th>
                 </tr>
               </thead>
+            </table>
+          </div>
+          <div className="flex-1 overflow-y-auto overflow-x-auto min-h-0 [scrollbar-gutter:stable]">
+            <table className="w-full text-left border-collapse text-body-sm min-w-[720px] table-fixed">
+              <colgroup>
+                <col className="w-[28%]" />
+                <col className="w-[18%]" />
+                <col className="w-[18%]" />
+                <col className="w-[16%]" />
+                <col className="w-[10%]" />
+                <col className="w-[10%]" />
+              </colgroup>
               <tbody className="divide-y divide-border/60 text-text-primary">
                 {filteredAtivos.length > 0 ? (
                   filteredAtivos.map((ativo) => (

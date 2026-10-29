@@ -111,7 +111,7 @@ function CardLista({
           </div>
 
           {showSearch && (
-            <div className="relative w-full sm:w-64 min-w-0 shrink-0">
+            <div className="relative w-full lg:w-[calc((100%-26px)/3)] min-w-0 shrink-0">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
               <input
                 type="text"
@@ -196,7 +196,7 @@ function CardLista({
 
                   {isDropdownOpen && (
                     <div 
-                      className="absolute right-0 top-full mt-1.5 w-[260px] max-h-[260px] overflow-y-auto scrollbar-none bg-surface-raised rounded-control shadow-float border border-border p-1.5 z-[200] flex flex-col gap-0.5"
+                      className="absolute right-0 top-full mt-1.5 w-[260px] max-h-[260px] overflow-y-auto scrollbar-none bg-surface-raised rounded-subcard shadow-float border border-border p-1.5 z-[200] flex flex-col gap-0.5"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div className="px-2.5 py-1 text-caption font-medium text-text-muted border-b border-border/60 mb-1">
@@ -243,7 +243,7 @@ function CardLista({
             </div>
 
             {/* LISTAGEM DOS ITENS */}
-            <div className={`flex-1 overflow-y-auto pr-1 scrollbar-none min-h-0 relative z-10 pb-4 ${
+            <div className={`flex-1 overflow-y-auto pr-2.5 scrollbar-none min-h-0 relative z-10 pb-4 ${
               isAlone ? 'grid grid-cols-1 md:grid-cols-2 gap-2.5 content-start' : 'flex flex-col gap-2'
             }`}>
               {displayItems.length === 0 ? (
@@ -258,7 +258,7 @@ function CardLista({
                     <div
                       key={item.id}
                       onClick={() => onItemClick(item)}
-                      className={`flex items-start gap-2.5 p-2.5 rounded-control hover:bg-surface-soft transition-colors duration-120 cursor-pointer border border-transparent ${
+                      className={`flex items-start gap-2.5 p-2.5 rounded-subcard hover:bg-surface-soft transition-colors duration-120 cursor-pointer border border-transparent ${
                         filtroSemiarido ? 'hover:border-accent-200' : 'hover:border-border'
                       } group shrink-0`}
                     >
@@ -276,7 +276,7 @@ function CardLista({
                           {item.nome || item.entidade}
                         </span>
                         <div className="flex items-center justify-between mt-0.5 gap-1.5">
-                          <span className="text-caption font-medium text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded-full border border-border truncate max-w-[135px] inline-flex items-center justify-center leading-none">
+                          <span className="text-caption font-medium text-text-muted bg-surface-sunken px-2 py-0.5 rounded-full border border-border truncate max-w-[155px] inline-block leading-tight">
                             {item.shortTipo || item.tipo || item.segmento}
                           </span>
                           <span className="text-caption font-normal text-text-secondary truncate">

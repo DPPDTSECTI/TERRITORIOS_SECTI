@@ -3,7 +3,7 @@ import { MapContainer, Marker, GeoJSON, Polyline, Tooltip } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
-import { Layers, Flame, Network, Expand, Shrink } from 'lucide-react';
+import { Layers, Network, Expand, Shrink, Flame } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
 import { useTheme } from '../../context/ThemeContext';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
@@ -1352,35 +1352,32 @@ export default function SideMap({
       </div>
 
       {mode === 'cursos' && (
-        <div className="absolute bottom-3 left-3 z-[400] bg-surface rounded-control p-2.5 border border-border shadow-card pointer-events-auto">
-          <div className="flex items-center justify-between gap-2 mb-1.5">
-            <div className="flex items-center gap-1">
-              <Flame size={12} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
-              <span className={`text-caption font-medium ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
-                {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
-              </span>
-            </div>
+        <div className="absolute bottom-3 left-3 z-[400] bg-surface/95 dark:bg-surface/95 backdrop-blur-md rounded-xl px-3.5 py-3 border border-border/80 shadow-card pointer-events-auto min-w-[308px]">
+          <div className="flex items-center justify-between gap-3 mb-2.5">
+            <span className={`text-caption font-semibold tracking-tight leading-none ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
+              {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
+            </span>
             {selectedTerritory && (
-              <span className={`text-caption font-medium px-1.5 py-0.5 rounded-control tnum ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
+              <span className={`text-[10px] font-medium leading-none px-1.5 py-0.5 rounded-md tnum ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
                 Máx: {maxCursosNoTerritorioSelecionado}
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="grid grid-cols-6 gap-1.5 items-start">
             {currentHeatLevels.map((lvl, idx) => {
               const labelText = selectedTerritory
                 ? (idx === 0 ? '0' : idx === currentHeatLevels.length - 1 ? `${maxCursosNoTerritorioSelecionado}` : '')
                 : lvl.label.replace(' cursos', '');
 
               return (
-                <div key={idx} className="flex flex-col items-center gap-1">
+                <div key={idx} className="flex flex-col items-center gap-1.5 min-w-0">
                   <div
-                    className="w-5 h-2.5 rounded-[3px] shadow-2xs border border-border"
+                    className="w-full h-2 rounded-[3px] shadow-2xs border border-black/5 dark:border-white/10"
                     style={{ backgroundColor: lvl.color }}
                     title={lvl.label}
                   />
-                  <span className={`text-caption font-medium whitespace-nowrap tnum ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'}`}>
+                  <span className={`w-full text-center text-[10px] font-medium leading-none whitespace-nowrap tnum ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted'}`}>
                     {labelText}
                   </span>
                 </div>
@@ -1416,12 +1413,12 @@ export default function SideMap({
             type="button"
             onClick={() => setFiltroSemiarido(prev => !prev)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${filtroSemiarido
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] w-[114px] min-w-[114px] max-w-[114px] px-2 rounded-control text-caption font-semibold transition-colors duration-150 cursor-pointer border select-none ${filtroSemiarido
               ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
               : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
               }`}
           >
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${filtroSemiarido
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-xs ${filtroSemiarido
               ? 'bg-amber-500 text-white'
               : 'bg-surface-soft border border-border text-text-muted'
               }`}>
@@ -1441,7 +1438,7 @@ export default function SideMap({
                 <span className="w-2 h-2 rounded-full bg-slate-300 block" />
               )}
             </span>
-            <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
+            <span className="truncate flex-1 text-left">{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
           </button>
         )}
 

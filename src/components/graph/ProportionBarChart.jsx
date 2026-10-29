@@ -33,7 +33,6 @@ export default function ProportionBarChart({
             <h2 className="text-title font-bold text-text-primary tracking-tight">{title}</h2>
             {badge && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption font-bold bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                 {badge}
               </span>
             )}
@@ -225,7 +224,6 @@ export default function ProportionBarChart({
             <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate">{title}</h2>
             {badge && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                 {badge}
               </span>
             )}

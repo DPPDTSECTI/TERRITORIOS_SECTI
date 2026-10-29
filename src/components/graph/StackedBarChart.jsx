@@ -168,7 +168,7 @@ function StackedBarChart({
                   {/* TOOLTIP COMPACTO DE FATIA INDIVIDUAL */}
                   {hoveredSlice && hoveredSlice.label === item.label && !hoveredTotalTerritory && (
                     <div
-                      className={`absolute bottom-full mb-2 bg-surface-raised text-text-primary shadow-float rounded-control px-2.5 py-1.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1 border border-border min-w-[140px] max-w-[190px] transition-all duration-150 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
+                      className={`absolute bottom-full mb-2 bg-surface-raised text-text-primary shadow-float rounded-subcard px-2.5 py-1.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1 border border-border min-w-[140px] max-w-[190px] transition-all duration-150 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
                         }`}
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -197,7 +197,7 @@ function StackedBarChart({
                   {/* TOOLTIP COMPLETO DE TODOS OS ATIVOS */}
                   {hoveredTotalTerritory && hoveredTotalTerritory.label === item.label && (
                     <div
-                      className={`absolute bottom-full mb-2 bg-surface-raised text-text-primary shadow-float rounded-control p-2.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1.5 border border-border min-w-[165px] max-w-[210px] transition-all duration-150 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
+                      className={`absolute bottom-full mb-2 bg-surface-raised text-text-primary shadow-float rounded-subcard p-2.5 pointer-events-none z-[100] whitespace-nowrap text-left flex flex-col gap-1.5 border border-border min-w-[165px] max-w-[210px] transition-all duration-150 ${isFirst ? 'left-0' : isLast ? 'right-0' : 'left-1/2 -translate-x-1/2'
                         }`}
                     >
                       <div className="flex items-center justify-between border-b border-border/70 pb-1 gap-2">

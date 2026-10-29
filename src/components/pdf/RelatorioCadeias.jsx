@@ -1069,7 +1069,7 @@ export default function RelatorioCadeiasPage() {
                 <span className="text-[11px] text-[#64748B] dark:text-text-muted">Não há registros de cadeias sediadas ou abrangentes para este recorte.</span>
               </div>
             ) : (
-              <div className="flex-1 grid grid-cols-2 gap-x-2.5 gap-y-1 min-h-0 overflow-y-auto py-0.5 items-stretch">
+              <div className="flex-1 grid grid-cols-2 gap-x-2.5 gap-y-1 min-h-0 overflow-y-auto py-0.5 pr-2.5 items-stretch">
                 {topCadeiasData.map((item, idx) => (
                   <div
                     key={idx}

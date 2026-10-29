@@ -7,7 +7,6 @@ import { ThemeProvider } from './context/ThemeContext';
 import { Analytics } from '@vercel/analytics/react';
 
 import Sidebar from './components/Sidebar';
-import UserHeaderProfile from './components/UserHeaderProfile';
 import TourGuide from './components/TourGuide';
 import { ToastProvider, Skeleton, KpiSkeleton } from './components/ui';
 
@@ -57,19 +56,6 @@ function GlobalScroll() {
 }
 
 
-
-// HEADER SUPERIOR FIXO (Badge e Perfil do Usuário)
-function TopFixedBar() {
-  const location = useLocation();
-
-  if (location.pathname === '/' || location.pathname === '/admin' || location.pathname.startsWith('/relatorio/')) return null;
-
-  return (
-    <div className="fixed top-4 right-4 sm:top-5 sm:right-6 z-40 flex items-center gap-3 pointer-events-auto select-none print:hidden">
-      <UserHeaderProfile />
-    </div>
-  );
-}
 
 // COMPONENTE DE TRANSIÇÃO E SKELETON DE PÁGINA
 const PageLoadingFallback = () => (
@@ -142,10 +128,8 @@ function AnimatedRoutes() {
         )}
       </AnimatePresence>
 
-      {/* ÁREA PRINCIPAL COM HEADER FIXO */}
+      {/* ÁREA PRINCIPAL */}
       <div className={`flex-1 min-w-0 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
-        {!hideNavigation && <TopFixedBar />}
-
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />

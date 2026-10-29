@@ -63,7 +63,6 @@ export default function DonutChart({
             <h2 className="text-text-primary font-semibold text-subtitle tracking-tight">{title}</h2>
             {badge && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                 {badge}
               </span>
             )}
@@ -142,11 +141,11 @@ export default function DonutChart({
             {/* LEGENDA ABAIXO DO GRÁFICO (ALTURA FIXA E ALINHADA - NUNCA REDIMENSIONA) */}
             <div
               title={displayLabel}
-              className="w-full h-[52px] shrink-0 mt-2 bg-surface-sunken border border-border/70 rounded-xl px-2.5 py-1.5 flex items-center justify-center text-center shadow-2xs transition-colors duration-150 overflow-hidden"
+              className="w-full h-[52px] shrink-0 mt-2 bg-surface-soft/80 dark:bg-surface-raised/70 border border-border/80 dark:border-border/60 rounded-xl px-3 py-1.5 flex items-center justify-center text-center shadow-2xs transition-colors duration-150 overflow-hidden"
             >
               <span
-                className={`text-text-muted font-medium text-center leading-[14px] transition-all duration-150 break-words line-clamp-3 select-none ${
-                  displayLabel.length > 30 ? 'text-[10.5px] leading-[13px]' : displayLabel.length > 20 ? 'text-[11px] leading-[14px]' : 'text-caption'
+                className={`font-semibold text-text-primary dark:text-zinc-100 text-center transition-all duration-150 break-words line-clamp-2 select-none tracking-tight ${
+                  displayLabel.length > 30 ? 'text-[11px] leading-[14px]' : displayLabel.length > 20 ? 'text-[11.5px] leading-[15px]' : 'text-xs leading-[16px]'
                 }`}
               >
                 {displayLabel}

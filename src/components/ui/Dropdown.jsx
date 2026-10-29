@@ -105,7 +105,7 @@ export function Dropdown({
             exit={{ opacity: 0, scale: 0.95, y: -4 }}
             transition={{ duration: 0.14, ease: 'easeOut' }}
             className={cn(
-              'absolute top-full mt-1.5 w-56 rounded-control bg-surface border border-border shadow-float p-1 z-[120] focus:outline-none',
+              'absolute top-full mt-1.5 min-w-[240px] w-max max-w-[320px] rounded-2xl bg-surface border border-border shadow-float p-1.5 z-[120] focus:outline-none',
               align === 'left' ? 'left-0' : 'right-0',
               className
             )}
@@ -131,7 +131,7 @@ export function Dropdown({
                     closeMenu();
                   }}
                   className={cn(
-                    'w-full text-left px-2.5 py-1.5 rounded-[6px] text-body-sm flex items-center gap-2 transition-colors duration-120 select-none focus:outline-none focus:bg-surface-soft',
+                    'w-full text-left px-3 py-2 rounded-xl text-body-sm flex items-center gap-2.5 transition-colors duration-120 select-none cursor-pointer focus:outline-none focus:bg-surface-soft',
                     isDanger
                       ? 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/40 focus:bg-danger-50 dark:focus:bg-danger-950/40'
                       : 'text-text-primary hover:bg-surface-soft',

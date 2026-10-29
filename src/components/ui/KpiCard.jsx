@@ -17,13 +17,16 @@ export function AnimatedNumber({
   value,
   format = 'int',
   duration = 600,
+  digits = 1,
   className,
 }) {
-  const isPureNumber = typeof value === 'number' || (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value.trim()));
-  const numericTarget = isPureNumber ? Number(value) : NaN;
+  const cleanStr = typeof value === 'string' ? value.trim().replace(',', '.') : value;
+  const isPureNumber = typeof cleanStr === 'number' || (typeof cleanStr === 'string' && /^-?\d+(\.\d+)?$/.test(cleanStr));
+  const numericTarget = isPureNumber ? Number(cleanStr) : NaN;
   const isInvalid = Number.isNaN(numericTarget);
 
   const [current, setCurrent] = useState(() => (isInvalid ? value : 0));
+  const prevValRef = useRef(0);
   const startTimeRef = useRef(null);
   const frameRef = useRef(null);
 
@@ -41,10 +44,11 @@ export function AnimatedNumber({
 
     if (prefersReducedMotion || duration <= 0) {
       setCurrent(numericTarget);
+      prevValRef.current = numericTarget;
       return;
     }
 
-    const startVal = 0;
+    const startVal = prevValRef.current;
     startTimeRef.current = null;
 
     const animate = (timestamp) => {
@@ -61,6 +65,7 @@ export function AnimatedNumber({
         frameRef.current = requestAnimationFrame(animate);
       } else {
         setCurrent(numericTarget);
+        prevValRef.current = numericTarget;
       }
     };
 
@@ -78,7 +83,7 @@ export function AnimatedNumber({
   const formatNumber = (num) => {
     switch (format) {
       case 'decimal':
-        return formatDecimal(num, 1);
+        return formatDecimal(num, digits);
       case 'percent':
         return formatPercent(num, 1);
       case 'compact':
@@ -135,7 +140,7 @@ export function KpiCard({
   return (
     <div
       className={cn(
-        'p-5 rounded-card flex flex-col justify-between gap-3 border transition-colors duration-200 select-none',
+        'p-4 sm:py-4 sm:px-5 rounded-card flex flex-col justify-between gap-1.5 border transition-colors duration-200 select-none overflow-hidden',
         isBrand
           ? 'bg-gradient-brand text-white border-primary-500/40'
           : 'bg-surface-soft text-text-primary border-border/70',
@@ -184,7 +189,7 @@ export function KpiCard({
       {hint && (
         <div
           className={cn(
-            'text-caption leading-tight',
+            'text-caption leading-tight truncate',
             isBrand ? 'text-white/75' : 'text-text-muted'
           )}
         >

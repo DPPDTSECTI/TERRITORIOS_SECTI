@@ -199,8 +199,8 @@ export default function TourGuide() {
     {
       target: '.tour-help-button',
       title: 'Dúvidas?',
-      content: 'Se precisar rever este tutorial, basta clicar neste botão de ajuda a qualquer momento no cabeçalho!',
-      placement: 'bottom-end',
+      content: 'Se precisar rever este tutorial, basta clicar neste botão de ajuda a qualquer momento na barra lateral!',
+      placement: 'right',
       spotlightPadding: 2,
     },
   ];
@@ -234,8 +234,8 @@ export default function TourGuide() {
     {
       target: '.tour-help-button',
       title: 'Dúvidas?',
-      content: 'Sempre que precisar relembrar as funcionalidades desta tela, é só clicar aqui.',
-      placement: 'bottom-end',
+      content: 'Sempre que precisar relembrar as funcionalidades desta tela, é só clicar aqui na barra lateral.',
+      placement: 'right',
       spotlightPadding: 2,
     },
   ];

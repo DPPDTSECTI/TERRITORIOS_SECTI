@@ -29,7 +29,8 @@ import {
     Tabs,
     EmptyState,
     KpiSkeleton,
-    ListRowSkeleton
+    ListRowSkeleton,
+    AnimatedNumber
 } from './ui';
 import { useChartTheme } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -622,7 +623,7 @@ export default function CursosPage() {
             </div>
 
             {/* HEADER DA PÁGINA */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
@@ -656,10 +657,10 @@ export default function CursosPage() {
                                 <motion.div key={index} variants={fadeUp} className="h-full">
                                     <div
                                         title={kpi.tooltip || kpi.label}
-                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-colors duration-200 select-none ${isHero
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] rounded-card cursor-default overflow-hidden transition-colors duration-150 hover:border-border-strong select-none ${isHero
                                             ? (filtroSemiarido
-                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40'
-                                                : 'bg-gradient-brand text-white border border-primary-500/40')
+                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                                                : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                                             : (filtroSemiarido
                                                 ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary'
                                                 : 'bg-surface-soft border border-border/70 text-text-primary')
@@ -680,8 +681,8 @@ export default function CursosPage() {
                                             {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
                                             <div
                                                 className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isHero
-                                                    ? 'bg-white/15 text-white border border-white/20'
-                                                    : 'bg-surface border border-border/80 text-text-secondary'
+                                                    ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
+                                                    : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
                                                     }`}
                                             >
                                                 <kpi.icon size={15} strokeWidth={2} />
@@ -695,7 +696,7 @@ export default function CursosPage() {
                                                     className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
                                                         }`}
                                                 >
-                                                    {kpi.value}
+                                                    <AnimatedNumber value={kpi.value} />
                                                 </span>
 
                                                 {filtroSemiarido && kpi.percent && (
@@ -786,7 +787,7 @@ export default function CursosPage() {
 
                         {/* BOX 2: LISTA DE CURSOS */}
                         <div className="flex-1 bg-surface rounded-card border border-border shadow-card p-3 flex flex-col min-h-0 min-w-0 overflow-hidden">
-                            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
+                            <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
                                 {compactCursosList.length > 0 ? (
                                     compactCursosList.map((c, idx) => {
                                         const catColor = categoryColorMap[c.categoria || c.tipo] || chartTheme.textMuted;
@@ -831,11 +832,6 @@ export default function CursosPage() {
                                                             {c.curso || c.nome}
                                                         </h5>
                                                         <span className="text-caption text-text-secondary truncate leading-tight flex items-center gap-1.5 mt-0.5">
-                                                            <span
-                                                                className="w-1.5 h-1.5 rounded-full shrink-0"
-                                                                style={{ backgroundColor: catColor }}
-                                                                title={c.categoria || c.tipo}
-                                                            />
                                                             <span className="truncate">
                                                                 {c.sigla || cleanIesName(c.entidade || c.instituicao, c.municipio)} • <strong className="font-semibold text-text-primary">{c.municipio}</strong>
                                                             </span>
@@ -843,12 +839,15 @@ export default function CursosPage() {
                                                     </div>
                                                 </div>
 
-                                                <Badge
-                                                    variant={redeInfo.isPublica ? 'success' : 'accent'}
-                                                    className="text-caption font-medium shrink-0"
+                                                {/* STATUS REDE (Pública / Privada) EM PÍLULA */}
+                                                <span
+                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase shrink-0 transition-colors ${redeInfo.isPublica
+                                                        ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
+                                                        : 'text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20'
+                                                        }`}
                                                 >
-                                                    {redeInfo.isPublica ? 'Pública' : 'Privada'}
-                                                </Badge>
+                                                    <span>{redeInfo.isPublica ? 'Pública' : 'Privada'}</span>
+                                                </span>
                                             </div>
                                         );
                                     })
@@ -920,7 +919,7 @@ export default function CursosPage() {
                             </div>
 
                             {/* INPUT DE BUSCA */}
-                            <div className="w-full lg:w-64 min-w-0 shrink-0">
+                            <div className="w-full lg:w-[calc((100%-26px)/3)] min-w-0 shrink-0">
                                 <SearchInput
                                     value={searchQuery}
                                     onChange={(e) => {
@@ -1011,7 +1010,7 @@ export default function CursosPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
                                         {loadingStats ? (
                                             <div className="p-3">
                                                 <ListRowSkeleton count={6} />
@@ -1070,36 +1069,41 @@ export default function CursosPage() {
                                                                 </div>
                                                             </div>
 
-                                                            <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
-                                                                <Badge
-                                                                    variant={redeInfo.isPublica ? 'success' : 'accent'}
-                                                                    className="text-caption font-medium"
+                                                            {/* METADADOS DO CURSO (Pílulas Clean, cores mantidas, sem corte) */}
+                                                            <div className="flex items-center flex-wrap gap-2 shrink-0 self-start mt-0.5">
+                                                                {/* 1. Indicador de Rede */}
+                                                                <span
+                                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-colors shrink-0 ${redeInfo.isPublica
+                                                                        ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
+                                                                        : 'text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20'
+                                                                        }`}
                                                                 >
-                                                                    {redeInfo.isPublica ? 'Pública' : 'Privada'}
-                                                                </Badge>
-                                                                <Badge
-                                                                    variant="neutral"
-                                                                    className="text-caption font-medium"
+                                                                    <span>{redeInfo.isPublica ? 'Pública' : 'Privada'}</span>
+                                                                </span>
+
+                                                                {/* 2. Modalidade em Pílula Clean */}
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption text-text-muted font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 shrink-0">
+                                                                    <Building2 size={12} className="text-text-muted/70 shrink-0" />
+                                                                    <span>Presencial</span>
+                                                                </span>
+
+                                                                {/* 3. Área / Categoria em Pílula Completa (sem corte/truncate) */}
+                                                                <div
+                                                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-caption font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 text-text-secondary dark:text-zinc-300 shrink-0 transition-colors hover:border-border-strong whitespace-nowrap"
+                                                                    title={c.categoria || c.tipo || 'Geral'}
                                                                 >
-                                                                    Presencial
-                                                                </Badge>
-                                                                <Badge
-                                                                    variant="neutral"
-                                                                    className="text-caption font-medium"
-                                                                    style={{
-                                                                        backgroundColor: getAlphaColor(catColor, chartTheme.isDark ? 0.18 : 0.12),
-                                                                        color: catColor,
-                                                                        borderColor: getAlphaColor(catColor, chartTheme.isDark ? 0.35 : 0.25)
-                                                                    }}
-                                                                >
-                                                                    {c.categoria || c.tipo || 'Geral'}
-                                                                </Badge>
+                                                                    <span>
+                                                                        {c.categoria || c.tipo || 'Geral'}
+                                                                    </span>
+                                                                </div>
+
+                                                                {/* Link oficial */}
                                                                 {c.url_referencia && (
                                                                     <a
                                                                         href={c.url_referencia}
                                                                         target="_blank"
                                                                         rel="noreferrer"
-                                                                        className="p-1 rounded-control text-text-muted hover:text-primary-600 hover:bg-surface-soft transition-colors"
+                                                                        className="p-1 rounded-full text-text-muted hover:text-primary-600 hover:bg-surface-soft transition-colors shrink-0"
                                                                         title="Fonte Oficial"
                                                                         onClick={(e) => e.stopPropagation()}
                                                                     >
@@ -1201,7 +1205,7 @@ export default function CursosPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
                                         {loadingStats ? (
                                             <div className="p-3">
                                                 <ListRowSkeleton count={6} />
@@ -1260,37 +1264,41 @@ export default function CursosPage() {
                                                                 </div>
                                                             </div>
 
-                                                            <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
-                                                                <Badge
-                                                                    variant={redeInfo.isPublica ? 'success' : 'accent'}
-                                                                    className="text-caption font-medium"
+                                                            {/* METADADOS DO CURSO EAD (Pílulas Clean, cores mantidas, sem corte) */}
+                                                            <div className="flex items-center flex-wrap gap-2 shrink-0 self-start mt-0.5">
+                                                                {/* 1. Indicador de Rede */}
+                                                                <span
+                                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-colors shrink-0 ${redeInfo.isPublica
+                                                                        ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
+                                                                        : 'text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20'
+                                                                        }`}
                                                                 >
-                                                                    {redeInfo.isPublica ? 'Pública' : 'Privada'}
-                                                                </Badge>
-                                                                <Badge
-                                                                    variant="primary"
-                                                                    icon={<Wifi size={12} strokeWidth={2} />}
-                                                                    className="text-caption font-medium"
+                                                                    <span>{redeInfo.isPublica ? 'Pública' : 'Privada'}</span>
+                                                                </span>
+
+                                                                {/* 2. Modalidade em Pílula Clean */}
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption text-primary-600 dark:text-primary-400 font-medium bg-primary-500/10 border border-primary-500/20 shrink-0">
+                                                                    <Wifi size={12} className="shrink-0" />
+                                                                    <span>EaD</span>
+                                                                </span>
+
+                                                                {/* 3. Área / Categoria em Pílula Completa (sem corte/truncate) */}
+                                                                <div
+                                                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-caption font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 text-text-secondary dark:text-zinc-300 shrink-0 transition-colors hover:border-border-strong whitespace-nowrap"
+                                                                    title={c.categoria || c.tipo || 'Geral'}
                                                                 >
-                                                                    EaD
-                                                                </Badge>
-                                                                <Badge
-                                                                    variant="neutral"
-                                                                    className="text-caption font-medium"
-                                                                    style={{
-                                                                        backgroundColor: getAlphaColor(catColor, chartTheme.isDark ? 0.18 : 0.12),
-                                                                        color: catColor,
-                                                                        borderColor: getAlphaColor(catColor, chartTheme.isDark ? 0.35 : 0.25)
-                                                                    }}
-                                                                >
-                                                                    {c.categoria || c.tipo || 'Geral'}
-                                                                </Badge>
+                                                                    <span>
+                                                                        {c.categoria || c.tipo || 'Geral'}
+                                                                    </span>
+                                                                </div>
+
+                                                                {/* Link oficial */}
                                                                 {c.url_referencia && (
                                                                     <a
                                                                         href={c.url_referencia}
                                                                         target="_blank"
                                                                         rel="noreferrer"
-                                                                        className="p-1 rounded-control text-text-muted hover:text-primary-600 hover:bg-surface-soft transition-colors"
+                                                                        className="p-1 rounded-full text-text-muted hover:text-primary-600 hover:bg-surface-soft transition-colors shrink-0"
                                                                         title="Fonte Oficial"
                                                                         onClick={(e) => e.stopPropagation()}
                                                                     >
@@ -1348,7 +1356,7 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
+                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat) => {
                                                 const isSelected = selectedCategory === cat.name;
@@ -1369,15 +1377,13 @@ export default function CursosPage() {
                                                         className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
                                                             ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
                                                             : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {/* RÓTULO COM NOME DA ÁREA */}
                                                         <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                             <div className="flex items-center gap-1.5 min-w-0">
-                                                                <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cat.color }} />
                                                                 <span className="truncate">{cat.name}</span>
                                                             </div>
-                                                            <span className="text-caption text-text-muted font-normal tabular-nums">{cat.percent}% da oferta</span>
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
@@ -1389,12 +1395,12 @@ export default function CursosPage() {
                                                                     flexBasis: 0,
                                                                     backgroundColor: cat.color,
                                                                     color: getContrastTextColor(cat.color),
-                                                                    minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                    minWidth: remaining > 0 ? '44px' : 'auto'
                                                                 }}
                                                                 title={`${cat.name}: ${cat.count} cursos (${cat.percent}%)`}
                                                             >
                                                                 <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                    {cat.count} <span className="text-caption font-medium opacity-90">({cat.percent}%)</span>
+                                                                    {cat.count}
                                                                 </span>
                                                             </div>
 
@@ -1409,11 +1415,11 @@ export default function CursosPage() {
                                                             )}
 
                                                             <div
-                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                title={`Total de cursos: ${cat.count}`}
+                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`${cat.percent}% da oferta (${cat.count} cursos)`}
                                                             >
-                                                                <span className="text-caption font-bold tabular-nums leading-none">
-                                                                    {cat.count}
+                                                                <span className="text-caption font-semibold tabular-nums leading-none">
+                                                                    {cat.percent}%
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -1458,15 +1464,15 @@ export default function CursosPage() {
                                     </div>
 
                                     {/* LISTA RANKING: ESTILO DE PÍLULAS PROPORCIONAIS */}
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full pb-2">
+                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
                                                 municipalityRanking.map((m) => {
                                                     const pos = Number(m.publicaCount || 0);
                                                     const total = Number(m.count || 0);
                                                     const neg = Math.max(0, total - pos);
-                                                    const percentPos = total > 0 ? ((pos / total) * 100).toFixed(1) : '0.0';
-                                                    const percentNeg = total > 0 ? ((neg / total) * 100).toFixed(1) : '0.0';
+                                                    const totalMunCourses = municipalityRanking.reduce((acc, x) => acc + Number(x.count || 0), 0) || 1;
+                                                    const remaining = Math.max(0, totalMunCourses - total);
 
                                                     const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
                                                     const negPillStyle = filtroSemiarido
@@ -1486,58 +1492,46 @@ export default function CursosPage() {
                                                             className={`p-2 rounded-xl transition-all cursor-pointer border ${filtroSemiarido
                                                                 ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200'
                                                                 : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {/* RÓTULO COM NOME DO MUNICÍPIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                                 <span className="truncate">{m.name}</span>
-                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{m.percentTotal}% do território</span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
-                                                                {/* PÚBLICA (Positivo) */}
-                                                                {pos > 0 && (
-                                                                    <div
-                                                                        className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                        style={{
-                                                                            flexGrow: pos,
-                                                                            flexBasis: 0,
-                                                                            backgroundColor: posPillColor,
-                                                                            minWidth: neg > 0 ? '76px' : 'auto'
-                                                                        }}
-                                                                        title={`Rede Pública: ${pos} (${percentPos}%)`}
-                                                                    >
-                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                            {pos} <span className="text-caption font-medium opacity-90">({percentPos}%)</span>
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                <div
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    style={{
+                                                                        flexGrow: total,
+                                                                        flexBasis: 0,
+                                                                        backgroundColor: posPillColor,
+                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
+                                                                    }}
+                                                                    title={`${m.name}: ${total} cursos (${m.percentTotal}% do território) · Pública: ${pos} | Privada: ${neg}`}
+                                                                >
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
+                                                                        {total}
+                                                                    </span>
+                                                                </div>
 
-                                                                {/* PRIVADA (Negativo) */}
-                                                                {neg > 0 && (
+                                                                {remaining > 0 && (
                                                                     <div
                                                                         className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
-                                                                            flexGrow: neg,
-                                                                            flexBasis: 0,
-                                                                            minWidth: pos > 0 ? '76px' : 'auto'
+                                                                            flexGrow: remaining,
+                                                                            flexBasis: 0
                                                                         }}
-                                                                        title={`Rede Privada: ${neg} (${percentNeg}%)`}
-                                                                    >
-                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                            {neg} <span className="text-caption font-medium opacity-85">({percentNeg}%)</span>
-                                                                        </span>
-                                                                    </div>
+                                                                    />
                                                                 )}
 
-                                                                {/* TOTAL */}
                                                                 <div
-                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`Total de cursos: ${total}`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`${m.percentTotal}% do território (${total} cursos)`}
                                                                 >
-                                                                    <span className="text-caption font-bold tabular-nums leading-none">
-                                                                        {total}
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
+                                                                        {m.percentTotal}%
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -1563,8 +1557,8 @@ export default function CursosPage() {
                                                     const pos = Number(t.publicaCount || 0);
                                                     const total = Number(t.count || 0);
                                                     const neg = Math.max(0, total - pos);
-                                                    const percentPos = total > 0 ? ((pos / total) * 100).toFixed(1) : '0.0';
-                                                    const percentNeg = total > 0 ? ((neg / total) * 100).toFixed(1) : '0.0';
+                                                    const totalTerrCourses = territoryRanking.reduce((acc, x) => acc + Number(x.count || 0), 0) || 1;
+                                                    const remaining = Math.max(0, totalTerrCourses - total);
 
                                                     const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
                                                     const negPillStyle = filtroSemiarido
@@ -1578,7 +1572,7 @@ export default function CursosPage() {
                                                         <div
                                                             key={t.id || t.name}
                                                             onClick={() => {
-                                                                const found = (territoriosData || []).find(x => 
+                                                                const found = (territoriosData || []).find(x =>
                                                                     (t.id && Number(x.id_territorio) === Number(t.id)) ||
                                                                     normalize(x.nome_territorio || x.territorio || x.nome) === normalize(t.name)
                                                                 );
@@ -1587,58 +1581,46 @@ export default function CursosPage() {
                                                             className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
                                                                 ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
                                                                 : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {/* RÓTULO COM NOME DO TERRITÓRIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                                 <span className="truncate">{t.name}</span>
-                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{t.percentTotal}% do estado</span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
-                                                                {/* PÚBLICA (Positivo) */}
-                                                                {pos > 0 && (
-                                                                    <div
-                                                                        className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                        style={{
-                                                                            flexGrow: pos,
-                                                                            flexBasis: 0,
-                                                                            backgroundColor: posPillColor,
-                                                                            minWidth: neg > 0 ? '76px' : 'auto'
-                                                                        }}
-                                                                        title={`Rede Pública: ${pos} (${percentPos}%)`}
-                                                                    >
-                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                            {pos} <span className="text-caption font-medium opacity-90">({percentPos}%)</span>
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                <div
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    style={{
+                                                                        flexGrow: total,
+                                                                        flexBasis: 0,
+                                                                        backgroundColor: posPillColor,
+                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
+                                                                    }}
+                                                                    title={`${t.name}: ${total} cursos (${t.percentTotal}% do estado) · Pública: ${pos} | Privada: ${neg}`}
+                                                                >
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
+                                                                        {total}
+                                                                    </span>
+                                                                </div>
 
-                                                                {/* PRIVADA (Negativo) */}
-                                                                {neg > 0 && (
+                                                                {remaining > 0 && (
                                                                     <div
                                                                         className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
-                                                                            flexGrow: neg,
-                                                                            flexBasis: 0,
-                                                                            minWidth: pos > 0 ? '76px' : 'auto'
+                                                                            flexGrow: remaining,
+                                                                            flexBasis: 0
                                                                         }}
-                                                                        title={`Rede Privada: ${neg} (${percentNeg}%)`}
-                                                                    >
-                                                                        <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                            {neg} <span className="text-caption font-medium opacity-85">({percentNeg}%)</span>
-                                                                        </span>
-                                                                    </div>
+                                                                    />
                                                                 )}
 
-                                                                {/* TOTAL */}
                                                                 <div
-                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`Total de cursos: ${total}`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`${t.percentTotal}% do estado (${total} cursos)`}
                                                                 >
-                                                                    <span className="text-caption font-bold tabular-nums leading-none">
-                                                                        {total}
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
+                                                                        {t.percentTotal}%
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -1655,22 +1637,6 @@ export default function CursosPage() {
                                                 </div>
                                             )
                                         )}
-                                    </div>
-
-                                    {/* LEGENDA NO RODAPÉ */}
-                                    <div className="flex items-center justify-between gap-4 pt-3 border-t border-border shrink-0 text-caption font-medium mt-auto">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'} shadow-2xs`}></span>
-                                            <span className={filtroSemiarido ? 'text-amber-900 dark:text-amber-300 font-semibold' : 'text-text-primary font-semibold'}>Rede Pública</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-500/20' : 'bg-border'} shadow-2xs`}></span>
-                                            <span className={filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-secondary'}>Rede Privada</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 ml-auto">
-                                            <span className={`w-2.5 h-2.5 rounded-full ${filtroSemiarido ? 'bg-amber-300' : 'bg-border-strong'} shadow-2xs`}></span>
-                                            <span className={filtroSemiarido ? 'text-amber-800 dark:text-amber-300 font-medium' : 'text-text-secondary font-medium'}>Total</span>
-                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -1703,16 +1669,16 @@ export default function CursosPage() {
                                     </div>
 
                                     {/* LISTA RANKING IES */}
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
+                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
                                         {iesRanking.length > 0 ? (
                                             iesRanking.map((ies, idx) => {
                                                 const isSelected = selectedIES && (
                                                     (ies.sigla && selectedIES.toUpperCase() === ies.sigla.toUpperCase()) ||
                                                     selectedIES === ies.fullName
                                                 );
-                                                const maxCount = iesRanking[0]?.count || 1;
-                                                const pct = Math.min(100, Math.round((ies.count / maxCount) * 100));
-                                                const remaining = Math.max(0, maxCount - ies.count);
+                                                const totalScopedCount = activeScopedCursos.length || iesRanking.reduce((acc, x) => acc + x.count, 0) || 1;
+                                                const pct = ((ies.count / totalScopedCount) * 100).toFixed(1);
+                                                const remaining = Math.max(0, totalScopedCount - ies.count);
                                                 const rankStr = String(idx + 1).padStart(2, '0');
 
                                                 const fillColor = filtroSemiarido ? '#D97706' : '#2563EB';
@@ -1730,7 +1696,7 @@ export default function CursosPage() {
                                                         className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
                                                             ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
                                                             : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {/* RÓTULO COM RANK E NOME DA IES */}
                                                         <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
@@ -1739,7 +1705,6 @@ export default function CursosPage() {
                                                                 <span className="truncate">{ies.sigla}</span>
                                                                 <span className="text-caption text-text-muted font-normal truncate hidden sm:inline">· {ies.fullName}</span>
                                                             </div>
-                                                            <span className="text-caption text-text-muted font-normal shrink-0">{ies.municipios.size} {ies.municipios.size === 1 ? 'cid.' : 'cids.'}</span>
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
@@ -1751,12 +1716,12 @@ export default function CursosPage() {
                                                                     flexGrow: ies.count,
                                                                     flexBasis: 0,
                                                                     backgroundColor: fillColor,
-                                                                    minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                    minWidth: remaining > 0 ? '44px' : 'auto'
                                                                 }}
-                                                                title={`${ies.fullName}: ${ies.count} cursos (${pct}% do líder)`}
+                                                                title={`${ies.fullName}: ${ies.count} cursos (${pct}% da oferta · ${ies.municipios.size} ${ies.municipios.size === 1 ? 'cidade' : 'cidades'})`}
                                                             >
-                                                                <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                    {ies.count} <span className="text-caption font-medium opacity-90">({pct}%)</span>
+                                                                <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
+                                                                    {ies.count}
                                                                 </span>
                                                             </div>
 
@@ -1771,13 +1736,13 @@ export default function CursosPage() {
                                                                 />
                                                             )}
 
-                                                            {/* TOTAL */}
+                                                            {/* PERCENTUAL */}
                                                             <div
-                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                title={`Total de cursos: ${ies.count}`}
+                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`${pct}% da oferta (${ies.count} cursos)`}
                                                             >
-                                                                <span className="text-caption font-bold tabular-nums leading-none">
-                                                                    {ies.count}
+                                                                <span className="text-caption font-semibold tabular-nums leading-none">
+                                                                    {pct}%
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -1799,7 +1764,7 @@ export default function CursosPage() {
 
                             {/* ABA 6: FILTROS APLICADOS */}
                             {activeTab === 'filtros' && (
-                                <div className="flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
+                                <div className="flex-1 flex flex-col min-h-0">
                                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/70 shrink-0 flex-wrap gap-2">
                                         <div>
                                             <div className="flex items-center gap-2">
@@ -1826,6 +1791,7 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
+                                    <div className="flex-1 flex flex-col min-h-0 overflow-y-auto pr-2.5">
                                     {/* GRID DE PARÂMETROS / FILTROS */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5 shrink-0">
                                         {/* 1. ÁREA TEMÁTICA */}
@@ -2074,6 +2040,7 @@ export default function CursosPage() {
                                                 Ver EaD ({filteredEadCursos.length})
                                             </Button>
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                             )}

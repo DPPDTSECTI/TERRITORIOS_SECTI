@@ -364,7 +364,7 @@ export default function FontesReferenciasSection() {
                 {/* Bloco Inferior: Localização no Painel + Botão de Acesso */}
                 <div className="pt-3 border-t border-border flex flex-col gap-3 mt-2">
                   {/* LOCALIZAÇÃO NO PAINEL SECTI */}
-                  <div className="p-3 rounded-control bg-surface-soft border border-border/80 flex items-start gap-2.5 text-caption">
+                  <div className="p-3.5 rounded-subcard bg-surface-soft border border-border/80 flex items-start gap-2.5 text-caption">
                     <Compass size={16} className="text-primary-600 dark:text-primary-400 shrink-0 mt-0.5" />
                     <div className="leading-snug">
                       <span className="font-medium text-text-primary block text-caption">

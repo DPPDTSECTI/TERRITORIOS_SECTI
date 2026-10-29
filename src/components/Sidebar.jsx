@@ -9,14 +9,18 @@ import {
   GitPullRequest,
   Pin,
   PinOff,
+  Sun,
+  Moon,
+  HelpCircle,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { IconButton } from './ui/Button';
 import { cn } from '../lib/cn';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
   const location = useLocation();
+  const { isDark, toggleTheme } = useTheme();
 
   const [isPinned, setIsPinned] = useState(() => {
     try {
@@ -90,26 +94,30 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
             {username}
           </span>
 
-          {isExpanded && (
-            <IconButton
-              size="sm"
-              variant="ghost"
-              aria-label={isPinned ? 'Desafixar barra lateral' : 'Fixar barra lateral'}
-              title={isPinned ? 'Desafixar barra lateral' : 'Fixar barra lateral'}
-              onClick={togglePin}
-              className="text-text-muted hover:text-text-primary shrink-0 ml-1 rounded-full"
-            >
-              {isPinned ? (
-                <PinOff size={16} strokeWidth={1.75} className="text-primary-600 dark:text-primary-400" />
-              ) : (
-                <Pin size={16} strokeWidth={1.75} />
-              )}
-            </IconButton>
-          )}
+          <IconButton
+            size="sm"
+            variant="ghost"
+            aria-label={isPinned ? 'Desafixar barra lateral' : 'Fixar barra lateral'}
+            title={isPinned ? 'Desafixar barra lateral' : 'Fixar barra lateral'}
+            onClick={togglePin}
+            tabIndex={isExpanded ? 0 : -1}
+            className={cn(
+              'text-text-muted hover:text-text-primary shrink-0 rounded-full transition-[opacity,transform,width,margin] duration-200 ease-standard overflow-hidden',
+              isExpanded
+                ? 'w-8 ml-1 opacity-100 scale-100'
+                : 'w-0 ml-0 opacity-0 scale-90 pointer-events-none'
+            )}
+          >
+            {isPinned ? (
+              <PinOff size={16} strokeWidth={1.75} className="text-primary-600 dark:text-primary-400 shrink-0" />
+            ) : (
+              <Pin size={16} strokeWidth={1.75} className="shrink-0" />
+            )}
+          </IconButton>
         </div>
 
         {/* ================= NAVEGAÇÃO ================= */}
-        <nav className="flex-1 w-full flex flex-col gap-1 overflow-y-auto overflow-x-hidden scrollbar-none pt-1">
+        <nav className="flex-1 min-h-0 w-full flex flex-col gap-1 overflow-y-auto overflow-x-hidden scrollbar-none pt-1">
           {/* SEÇÃO: MENU */}
           <div className="w-full h-5 flex items-center px-2 shrink-0">
             <span
@@ -253,6 +261,148 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
           )}
         </nav>
 
+        {/* ================= RODAPÉ DA SIDEBAR: BRASÃO, MODO ESCURO & TUTORIAL ================= */}
+        <div className="mt-auto flex flex-col gap-2 shrink-0 w-full pt-1 pb-1">
+          {/* QUADRADO MAIOR COM O BRASÃO (TRANSIÇÃO FLUIDA SEM SQUISH HORIZONTAL) */}
+          <div
+            aria-hidden={!isExpanded}
+            className={cn(
+              'w-full overflow-hidden transition-[max-height,opacity,margin] duration-200 ease-standard shrink-0',
+              isExpanded
+                ? 'max-h-24 opacity-100 mb-0'
+                : 'max-h-0 opacity-0 -mb-2 pointer-events-none'
+            )}
+          >
+            <div
+              className="w-[212px] h-24 rounded-2xl bg-surface-soft/80 dark:bg-surface-raised/40 border border-border/70 dark:border-border/50 p-2.5 flex items-center justify-center select-none overflow-hidden"
+              title="Governo do Estado da Bahia — SECTI"
+            >
+              <img
+                src="/img/brasao_preto.webp"
+                alt="Governo do Estado da Bahia"
+                className="h-12 w-auto max-w-[170px] object-contain block dark:hidden select-none"
+              />
+              <img
+                src="/img/Brasao-Horizontal_Branco.webp"
+                alt="Governo do Estado da Bahia"
+                className="h-12 w-auto max-w-[170px] object-contain hidden dark:block select-none"
+              />
+            </div>
+          </div>
+
+          {/* TOGGLE DARK MODE (CONTAINER ÚNICO H-10 SEM SALTO DE ALTURA OU REMOUNT) */}
+          <div
+            className="relative w-full h-10 rounded-full bg-surface-soft/90 dark:bg-surface-raised/60 border border-border/80 dark:border-border/60 shadow-2xs overflow-hidden shrink-0 select-none"
+            role="radiogroup"
+            aria-label="Alternar modo de exibição claro ou escuro"
+          >
+            {/* ESTADO COLAPSADO: ÍCONE CENTRALIZADO NO CÍRCULO DE 40PX */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              tabIndex={isExpanded ? -1 : 0}
+              aria-label={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
+              title={!isExpanded ? (isDark ? 'Modo Claro' : 'Modo Escuro') : undefined}
+              className={cn(
+                'absolute inset-y-0 left-0 w-[38px] h-full rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary transition-[opacity,transform] duration-200 ease-standard cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 z-20',
+                isExpanded
+                  ? 'opacity-0 scale-90 pointer-events-none'
+                  : 'opacity-100 scale-100'
+              )}
+            >
+              {isDark ? (
+                <Sun size={17} strokeWidth={1.75} className="text-amber-400 shrink-0" />
+              ) : (
+                <Moon size={17} strokeWidth={1.75} className="text-text-secondary shrink-0" />
+              )}
+            </button>
+
+            {/* ESTADO EXPANDIDO: CONTROLE SEGMENTADO DE LARGURA FIXA 210PX */}
+            <div
+              className={cn(
+                'w-[210px] h-full p-1 grid grid-cols-2 relative transition-opacity duration-200 ease-standard',
+                isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              )}
+            >
+              {/* PILL INDICADOR DESLIZANTE (PURO CSS GPU-ACCELERATED) */}
+              <div
+                aria-hidden="true"
+                className={cn(
+                  'absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-white dark:bg-zinc-800 shadow-2xs border border-border/70 dark:border-zinc-700/70 pointer-events-none transition-transform duration-200 ease-standard',
+                  isDark ? 'translate-x-full' : 'translate-x-0'
+                )}
+              />
+
+              {/* OPÇÃO: CLARO */}
+              <button
+                type="button"
+                role="radio"
+                tabIndex={isExpanded ? 0 : -1}
+                aria-checked={!isDark}
+                onClick={() => isDark && toggleTheme()}
+                className={cn(
+                  'relative z-10 h-full rounded-full flex items-center justify-center gap-1.5 text-xs whitespace-nowrap transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                  !isDark
+                    ? 'font-semibold text-text-primary'
+                    : 'font-medium text-text-muted hover:text-text-secondary'
+                )}
+              >
+                <Sun size={13} strokeWidth={2} className={cn('shrink-0', !isDark ? 'text-amber-500' : '')} />
+                <span>Claro</span>
+              </button>
+
+              {/* OPÇÃO: ESCURO */}
+              <button
+                type="button"
+                role="radio"
+                tabIndex={isExpanded ? 0 : -1}
+                aria-checked={isDark}
+                onClick={() => !isDark && toggleTheme()}
+                className={cn(
+                  'relative z-10 h-full rounded-full flex items-center justify-center gap-1.5 text-xs whitespace-nowrap transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                  isDark
+                    ? 'font-semibold text-white'
+                    : 'font-medium text-text-muted hover:text-text-secondary'
+                )}
+              >
+                <Moon size={13} strokeWidth={2} className={cn('shrink-0', isDark ? 'text-primary-400' : '')} />
+                <span>Escuro</span>
+              </button>
+            </div>
+          </div>
+
+          {/* BOTÃO DE TUTORIAL / AJUDA (ELEMENTO ÚNICO PERSISTENTE COM TRANSIÇÃO SINCRONIZADA) */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event('start-tour'))}
+            title={!isExpanded ? 'Tutorial Guiado' : 'Iniciar Tutorial Guiado do Painel'}
+            aria-label="Tutorial do Painel"
+            className="tour-help-button relative w-full h-10 rounded-full bg-surface-soft/90 dark:bg-surface-raised/60 hover:bg-surface-soft dark:hover:bg-surface-raised border border-border/80 dark:border-border/60 flex items-center text-xs font-medium text-text-secondary hover:text-text-primary transition-colors duration-150 cursor-pointer shadow-2xs select-none active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 overflow-hidden shrink-0 group"
+          >
+            <div
+              className={cn(
+                'w-[38px] h-full flex items-center justify-center shrink-0 transition-[margin] duration-200 ease-standard',
+                isExpanded ? 'ml-7' : 'ml-0'
+              )}
+            >
+              <HelpCircle
+                size={17}
+                strokeWidth={1.75}
+                className="text-text-muted group-hover:text-text-primary transition-colors duration-150 shrink-0"
+              />
+            </div>
+            <span
+              className={cn(
+                'whitespace-nowrap overflow-hidden transition-[opacity,transform] duration-200 ease-standard pr-3',
+                isExpanded
+                  ? 'opacity-100 translate-x-0'
+                  : 'w-0 opacity-0 -translate-x-2 pointer-events-none p-0'
+              )}
+            >
+              Tutorial do Painel
+            </span>
+          </button>
+        </div>
 
       </aside>
     </div>

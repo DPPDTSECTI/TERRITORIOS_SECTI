@@ -29,7 +29,8 @@ import {
     SearchInput,
     Tabs,
     EmptyState,
-    KpiSkeleton
+    KpiSkeleton,
+    AnimatedNumber
 } from './ui';
 import { useChartTheme, resolveCssRgb } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -765,7 +766,7 @@ export default function CadeiaPage() {
             </div>
 
             {/* HEADER DA PÁGINA */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full shrink-0 relative z-10">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <h1 className="text-headline font-bold text-text-primary tracking-tight">
@@ -805,10 +806,10 @@ export default function CadeiaPage() {
                                 >
                                     <div
                                         title={kpi.tooltip || kpi.label}
-                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-colors duration-200 select-none ${isHero
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] rounded-card cursor-default overflow-hidden transition-colors duration-150 hover:border-border-strong select-none ${isHero
                                             ? (filtroSemiarido
-                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40'
-                                                : 'bg-gradient-brand text-white border border-primary-500/40')
+                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                                                : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                                             : (filtroSemiarido
                                                 ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary'
                                                 : 'bg-surface-soft border border-border/70 text-text-primary')
@@ -829,8 +830,8 @@ export default function CadeiaPage() {
                                             {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
                                             <div
                                                 className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isHero
-                                                    ? 'bg-white/15 text-white border border-white/20'
-                                                    : 'bg-surface border border-border/80 text-text-secondary'
+                                                    ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
+                                                    : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
                                                     }`}
                                             >
                                                 <kpi.icon size={15} strokeWidth={2} />
@@ -844,7 +845,7 @@ export default function CadeiaPage() {
                                                     className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
                                                         }`}
                                                 >
-                                                    {kpi.value}
+                                                    <AnimatedNumber value={kpi.value} />
                                                 </span>
 
                                                 {filtroSemiarido && kpi.percent && (
@@ -942,7 +943,7 @@ export default function CadeiaPage() {
 
                         {/* BOX 2: LISTA SCROLLÁVEL */}
                         <div className="flex-1 bg-surface rounded-card border border-border shadow-card p-3 flex flex-col min-h-0 min-w-0 overflow-hidden">
-                            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0">
+                            <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
                                 {compactCadeiasList.length > 0 ? (
                                     compactCadeiasList.map((c, idx) => {
                                         const IconComp = c.icone || Wheat;
@@ -992,10 +993,6 @@ export default function CadeiaPage() {
                                                             {c.entidade}
                                                         </h5>
                                                         <span className="text-caption text-text-secondary truncate leading-tight flex items-center gap-1.5 mt-0.5">
-                                                            <span
-                                                                className="w-1.5 h-1.5 rounded-full shrink-0"
-                                                                style={{ backgroundColor: getSegmentColor(c.segmento) }}
-                                                            />
                                                             <span className="truncate">
                                                                 {c.segmento} • <strong className="font-semibold text-text-primary">{c.municipio_sede}</strong>
                                                             </span>
@@ -1084,7 +1081,7 @@ export default function CadeiaPage() {
                                 </div>
 
                                 {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
-                                <div className="w-full lg:w-64 min-w-0 shrink-0">
+                                <div className="w-full lg:w-[calc((100%-26px)/3)] min-w-0 shrink-0">
                                     <SearchInput
                                         value={searchQuery}
                                         onChange={(e) => {
@@ -1165,7 +1162,7 @@ export default function CadeiaPage() {
                                         )}
                                     </div>
 
-                                    <div ref={catalogListRef} className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                    <div ref={catalogListRef} className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
                                         {filteredCadeias.length > 0 ? (
                                             filteredCadeias.map((c, idx) => {
                                                 const IconComp = c.icone || Wheat;
@@ -1262,7 +1259,7 @@ export default function CadeiaPage() {
                                                             </div>
                                                         </div>
 
-                                                        <div className={`text-caption leading-relaxed break-words rounded-control px-6 sm:px-7 py-3 transition-colors border ${isSelected
+                                                        <div className={`text-caption leading-relaxed break-words rounded-subcard px-3.5 py-2.5 transition-colors border ${isSelected
                                                             ? (filtroSemiarido ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200' : 'bg-primary-50/70 dark:bg-primary-950/40 border-primary-200 dark:border-primary-700/60 text-primary-900 dark:text-primary-200')
                                                             : 'bg-surface-soft border-border text-text-secondary'
                                                             }`}>
@@ -1275,7 +1272,7 @@ export default function CadeiaPage() {
                                                         </div>
 
                                                         {c.texto_referencia && (
-                                                            <div className={`text-caption leading-relaxed break-words rounded-control px-6 sm:px-7 py-3 transition-colors border ${isSelected
+                                                            <div className={`text-caption leading-relaxed break-words rounded-subcard px-3.5 py-2.5 transition-colors border ${isSelected
                                                                 ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-2xs'
                                                                 : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-800/40 text-amber-950 dark:text-amber-200'
                                                                 }`}>
@@ -1324,23 +1321,15 @@ export default function CadeiaPage() {
                                     {/* LEGENDA DE SEGMENTOS: TOP 7 DESTACADOS + DEMAIS SEGMENTOS */}
                                     <div className="flex items-center gap-2.5 text-caption font-medium text-text-muted mb-2 px-0.5 shrink-0 flex-wrap">
                                         <span className="flex items-center gap-1.5 font-medium">
-                                            <span
-                                                className="w-2 h-2 rounded-full"
-                                                style={{ backgroundColor: chartTheme.palette?.[0] }}
-                                            />
                                             Top 7 segmentos (em destaque)
                                         </span>
                                         <span className="text-border-strong">•</span>
                                         <span className="flex items-center gap-1.5 font-medium">
-                                            <span
-                                                className="w-2 h-2 rounded-full"
-                                                style={{ backgroundColor: neutralSegmentColor }}
-                                            />
                                             Demais segmentos
                                         </span>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full">
+                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full">
                                         {segmentStats.length > 0 ? (
                                             segmentStats.map((seg) => {
                                                 const isSelected = selectedSegmento === seg.name;
@@ -1374,7 +1363,6 @@ export default function CadeiaPage() {
                                                         {/* RÓTULO COM NOME DO SEGMENTO */}
                                                         <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                             <div className="flex items-center gap-1.5 min-w-0">
-                                                                <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: dotColor }} />
                                                                 <span className="truncate">{seg.name}</span>
                                                                 {!seg.isTop7 && (
                                                                     <span className="text-caption font-medium text-text-muted px-1.5 py-0.5 rounded-control bg-surface-soft border border-border/60 shrink-0">
@@ -1382,7 +1370,6 @@ export default function CadeiaPage() {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <span className="text-caption text-text-muted font-normal tabular-nums">{seg.percent}% da densidade</span>
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
@@ -1393,12 +1380,12 @@ export default function CadeiaPage() {
                                                                     flexGrow: seg.count,
                                                                     flexBasis: 0,
                                                                     backgroundColor: dotColor,
-                                                                    minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                    minWidth: remaining > 0 ? '44px' : 'auto'
                                                                 }}
                                                                 title={`${seg.name}: ${seg.count} arranjos (${seg.percent}%)`}
                                                             >
-                                                                <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                    {seg.count} <span className="text-caption font-medium opacity-90">({seg.percent}%)</span>
+                                                                <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
+                                                                    {seg.count}
                                                                 </span>
                                                             </div>
 
@@ -1413,11 +1400,11 @@ export default function CadeiaPage() {
                                                             )}
 
                                                             <div
-                                                                className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                title={`Total de arranjos: ${seg.count}`}
+                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                title={`${seg.percent}% da densidade (${seg.count} arranjos)`}
                                                             >
-                                                                <span className="text-caption font-bold tabular-nums leading-none">
-                                                                    {seg.count}
+                                                                <span className="text-caption font-semibold tabular-nums leading-none">
+                                                                    {seg.percent}%
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -1461,12 +1448,12 @@ export default function CadeiaPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 min-h-0 w-full pb-2">
+                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
                                                 municipalityRanking.map((m) => {
-                                                    const maxCount = municipalityRanking[0]?.count || 1;
-                                                    const remaining = Math.max(0, maxCount - m.count);
+                                                    const totalMunCount = municipalityRanking.reduce((acc, x) => acc + x.count, 0) || 1;
+                                                    const remaining = Math.max(0, totalMunCount - m.count);
 
                                                     const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
                                                     const negPillStyle = filtroSemiarido
@@ -1492,7 +1479,6 @@ export default function CadeiaPage() {
                                                             {/* RÓTULO COM NOME DO MUNICÍPIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                                 <span className="truncate">{m.name}</span>
-                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{m.percentTotal}% do território</span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
@@ -1503,12 +1489,12 @@ export default function CadeiaPage() {
                                                                         flexGrow: m.count,
                                                                         flexBasis: 0,
                                                                         backgroundColor: posPillColor,
-                                                                        minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
                                                                     }}
                                                                     title={`${m.name}: ${m.count} arranjos (${m.percentTotal}%)`}
                                                                 >
-                                                                    <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                        {m.count} <span className="text-caption font-medium opacity-90">({m.percentTotal}%)</span>
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
+                                                                        {m.count}
                                                                     </span>
                                                                 </div>
 
@@ -1523,11 +1509,11 @@ export default function CadeiaPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`Total de arranjos: ${m.count}`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`${m.percentTotal}% do território (${m.count} arranjos)`}
                                                                 >
-                                                                    <span className="text-caption font-bold tabular-nums leading-none">
-                                                                        {m.count}
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
+                                                                        {m.percentTotal}%
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -1550,8 +1536,8 @@ export default function CadeiaPage() {
                                                         (t.id && Number(selectedTerritory.id_territorio) === Number(t.id)) ||
                                                         normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || selectedTerritory.nome) === normalizeName(t.name)
                                                     );
-                                                    const maxCount = territoryRanking[0]?.count || 1;
-                                                    const remaining = Math.max(0, maxCount - t.count);
+                                                    const totalTerrCount = territoryRanking.reduce((acc, x) => acc + x.count, 0) || 1;
+                                                    const remaining = Math.max(0, totalTerrCount - t.count);
 
                                                     const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
                                                     const negPillStyle = filtroSemiarido
@@ -1579,7 +1565,6 @@ export default function CadeiaPage() {
                                                             {/* RÓTULO COM NOME DO TERRITÓRIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                                 <span className="truncate">{t.name}</span>
-                                                                <span className="text-caption text-text-muted font-normal tabular-nums">{t.percentTotal}% do estado</span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
@@ -1590,12 +1575,12 @@ export default function CadeiaPage() {
                                                                         flexGrow: t.count,
                                                                         flexBasis: 0,
                                                                         backgroundColor: posPillColor,
-                                                                        minWidth: remaining > 0 ? '76px' : 'auto'
+                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
                                                                     }}
                                                                     title={`${t.name}: ${t.count} arranjos (${t.percentTotal}%)`}
                                                                 >
-                                                                    <span className="text-caption font-medium tabular-nums leading-none whitespace-nowrap">
-                                                                        {t.count} <span className="text-caption font-medium opacity-90">({t.percentTotal}%)</span>
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
+                                                                        {t.count}
                                                                     </span>
                                                                 </div>
 
@@ -1610,11 +1595,11 @@ export default function CadeiaPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[36px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`Total de arranjos: ${t.count}`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    title={`${t.percentTotal}% do estado (${t.count} arranjos)`}
                                                                 >
-                                                                    <span className="text-caption font-bold tabular-nums leading-none">
-                                                                        {t.count}
+                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
+                                                                        {t.percentTotal}%
                                                                     </span>
                                                                 </div>
                                                             </div>

@@ -808,12 +808,12 @@ export default function PtiMap({
             type="button"
             onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] pl-1 pr-3 rounded-control text-caption font-semibold transition-all duration-300 cursor-pointer border select-none ${filtroSemiarido
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] w-[114px] min-w-[114px] max-w-[114px] px-2 rounded-control text-caption font-semibold transition-colors duration-150 cursor-pointer border select-none ${filtroSemiarido
                 ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
                 : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
               }`}
           >
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-xs ${filtroSemiarido
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-xs ${filtroSemiarido
                 ? 'bg-amber-500 text-white'
                 : 'bg-surface-soft border border-border text-text-muted'
               }`}>
@@ -833,7 +833,7 @@ export default function PtiMap({
                 <span className="w-2 h-2 rounded-full bg-slate-300 block" />
               )}
             </span>
-            <span>{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
+            <span className="truncate flex-1 text-left">{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
           </button>
         </div>
       )}

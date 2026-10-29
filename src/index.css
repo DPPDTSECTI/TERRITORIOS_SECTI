@@ -156,10 +156,10 @@
     --color-primary-600: 37 99 235;    /* #2563EB */
     --color-primary-500: 59 130 246;   /* #3B82F6 */
     --color-primary-400: 96 165 250;   /* #60A5FA */
-    --color-primary-300: 147 197 253;
-    --color-primary-200: 30 58 138;
-    --color-primary-100: 23 37 84;
-    --color-primary-50: 15 23 42;
+    --color-primary-300: 147 197 253;  /* #93C5FD */
+    --color-primary-200: 191 219 254;  /* #BFDBFE */
+    --color-primary-100: 219 234 254;  /* #DBEAFE */
+    --color-primary-50: 239 246 255;   /* #EFF6FF */
 
     /* CARBON BLACK (Superfície Primária Escura) */
     --color-carbon: 17 24 39;          /* #111827 */
@@ -320,10 +320,12 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Firefox Scrollbar using Design Tokens */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(var(--color-neutral-300), 0.6) transparent;
+/* Firefox Scrollbar using Design Tokens (sem desativar ::-webkit-scrollbar no Chromium) */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-neutral-400) / 0.55) transparent;
+  }
 }
 
 /* Remover atribuição/marca d'água do Leaflet */
@@ -461,21 +463,32 @@
 
 /* CUSTOM SCROLLBAR FOR INSTITUTIONAL LOOK */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
+  margin-block: 4px;
+  margin-inline: 4px;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(var(--color-neutral-300), 0.6);
-  border-radius: 8px;
+  background-color: rgb(var(--color-neutral-400) / 0.55);
+  border-radius: 9999px;
+  transition: background-color 150ms ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--color-neutral-400), 0.8);
+  background-color: rgb(var(--color-neutral-500) / 0.8);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: rgb(var(--color-neutral-600) / 0.95);
 }
 
 /* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */
@@ -549,16 +562,23 @@
 }
 
 /* ================= DARK MODE OVERRIDES ================= */
-.dark * {
-  scrollbar-color: rgba(var(--color-neutral-400), 0.5) transparent;
+@supports not selector(::-webkit-scrollbar) {
+  .dark,
+  .dark * {
+    scrollbar-color: rgb(var(--color-neutral-500) / 0.45) transparent;
+  }
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(var(--color-neutral-400), 0.4);
+  background-color: rgb(var(--color-neutral-500) / 0.45);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--color-neutral-400), 0.7);
+  background-color: rgb(var(--color-neutral-400) / 0.7);
+}
+
+.dark ::-webkit-scrollbar-thumb:active {
+  background-color: rgb(var(--color-neutral-300) / 0.85);
 }
 
 .dark .semiarido-card-warmth-1 {

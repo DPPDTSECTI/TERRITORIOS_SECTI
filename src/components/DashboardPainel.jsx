@@ -17,7 +17,7 @@ import ProportionBarChart from './graph/ProportionBarChart.jsx';
 import { useChartTheme } from './graph/chartTheme';
 
 // COMPONENTES DE UI DESIGN SYSTEM
-import { Card, Badge, KpiSkeleton, ChartSkeleton } from './ui';
+import { Card, Badge, KpiSkeleton, ChartSkeleton, AnimatedNumber } from './ui';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../lib/motion';
 
@@ -586,7 +586,7 @@ export default function DashboardPainel() {
       </div>
 
       {/* HEADER DA PÁGINA */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full pr-52 sm:pr-60 lg:pr-64 shrink-0 relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full shrink-0 relative z-10">
         <div>
           <div className="flex items-center gap-3 relative z-10">
             <h1 className="text-headline font-bold text-text-primary tracking-tight">Visão Geral</h1>
@@ -621,10 +621,10 @@ export default function DashboardPainel() {
                 <motion.div key={index} variants={fadeUp} className="h-full">
                   <div
                     title={kpi.tooltip || kpi.label}
-                    className={`p-4 sm:p-5 flex flex-col justify-between h-[104px] rounded-card cursor-default overflow-hidden transition-colors duration-200 select-none ${isHero
+                    className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] rounded-card cursor-default overflow-hidden transition-colors duration-150 hover:border-border-strong select-none ${isHero
                         ? (filtroSemiarido
-                          ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40'
-                          : 'bg-gradient-brand text-white border border-primary-500/40')
+                          ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                          : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                         : (filtroSemiarido
                           ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary'
                           : 'bg-surface-soft border border-border/70 text-text-primary')
@@ -645,8 +645,8 @@ export default function DashboardPainel() {
                       {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
                       <div
                         className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isHero
-                            ? 'bg-white/15 text-white border border-white/20'
-                            : 'bg-surface border border-border/80 text-text-secondary'
+                            ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
+                            : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
                           }`}
                       >
                         <kpi.icon size={15} strokeWidth={2} />
@@ -660,13 +660,13 @@ export default function DashboardPainel() {
                           className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
                             }`}
                         >
-                          {kpi.value}
+                          <AnimatedNumber value={kpi.value} format={kpi.isIndex ? 'decimal' : 'int'} digits={3} />
                         </span>
 
                         {filtroSemiarido && kpi.percent && (
                           <span
                             title={`(${kpi.percent})`}
-                            className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                            className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none truncate max-w-[130px] shrink-0 ${isHero
                                 ? 'bg-white/15 text-white border border-white/20'
                                 : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                               }`}
