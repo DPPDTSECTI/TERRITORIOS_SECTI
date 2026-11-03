@@ -125,7 +125,7 @@ export default function ProportionBarChart({
           </div>
         ) : (
           <>
-            <div className={`flex flex-col justify-center flex-1 w-full ${data.length > 4 ? 'gap-1 py-0' : 'gap-2 py-0.5'} my-auto min-h-0 overflow-hidden`}>
+            <div className={`flex flex-col justify-between flex-1 w-full ${data.length > 4 ? 'gap-1 py-0.5' : 'gap-2 py-1'} my-auto min-h-0 overflow-hidden`}>
               {data.map((item, idx) => {
                 const pos = Number(item.positive || 0);
                 const neg = Number(item.negative || 0);
@@ -134,7 +134,7 @@ export default function ProportionBarChart({
                 const percentNeg = Number(((neg / total) * 100).toFixed(1));
 
                 const isCompact = data.length > 4;
-                const pillH = isCompact ? 'h-[20px]' : 'h-[24px]';
+                const pillH = isCompact ? 'h-[23px]' : 'h-[26px]';
 
                 return (
                   <div key={idx} className="flex flex-col gap-0.5 w-full group/item">

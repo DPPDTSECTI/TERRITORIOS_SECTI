@@ -6,14 +6,10 @@ import {
   GraduationCap,
   GitPullRequest,
   MapPin,
-  Printer,
-  ArrowLeft,
   X,
   Award,
   Database,
   Wifi,
-  Users,
-  Image as ImageIcon,
   Sun,
   Moon
 } from 'lucide-react';
@@ -89,13 +85,13 @@ export default function RelatorioSintese() {
   // Auto-impressão caso explicitamente solicitado via query param (ex: autoPrint=1 ou autoprint=true)
   useEffect(() => {
     const autoPrint = searchParams.get('autoPrint') || searchParams.get('autoprint');
-    if ((autoPrint === '1' || autoPrint === 'true') && !loadingStats) {
+    if ((autoPrint === '1' || autoPrint === 'true') && !loadingStats && (territoriosData && territoriosData.length > 0)) {
       const timer = setTimeout(() => {
         handlePrint();
-      }, 900);
+      }, 1200);
       return () => clearTimeout(timer);
     }
-  }, [searchParams, loadingStats, handlePrint]);
+  }, [searchParams, loadingStats, handlePrint, territoriosData]);
 
   // Filtragem dos dados conforme escopo e modo
   const scopedAtivos = useMemo(() => {
@@ -142,7 +138,6 @@ export default function RelatorioSintese() {
     return list;
   }, [municipiosTerritorios, selectedTerritoryId, isSemiarido]);
 
-  // Totais estaduais para comparação analítica
   const totalAtivosBahia = useMemo(() => ativosData.length, [ativosData]);
   const totalCursosBahia = useMemo(() => cursosData.length, [cursosData]);
 
@@ -213,11 +208,53 @@ export default function RelatorioSintese() {
   }, [scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, selectedTerritory, selectedTerritoryId, territoriosData, isSemiarido, totalAtivosBahia, totalCursosBahia]);
 
   const cadeiasNomes = useMemo(() => {
-    return Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 20);
+    return Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 16);
   }, [scopedCadeias]);
 
+  // Configuração dos 4 KPIs
+  const kpiCards = [
+    {
+      label: isSemiarido ? 'Ativos no Semiárido' : 'Ativos de CT&I Mapeados',
+      value: loadingStats ? '...' : stats.totalAtivos,
+      suffix: null,
+      badge: isSemiarido ? `${stats.pctAtivosEstado}% da Bahia` : `${stats.rnpAtivos} RNP (${stats.rnpTaxa}%)`,
+      icon: Database,
+      isHero: true
+    },
+    {
+      label: isSemiarido ? 'Cursos no Semiárido' : 'Cursos CT&I Mapeados',
+      value: loadingStats ? '...' : stats.totalCursos,
+      suffix: null,
+      badge: isSemiarido ? `${stats.pctCursosEstado}% da Bahia` : 'Graduação & Pós',
+      icon: GraduationCap,
+      isHero: false
+    },
+    {
+      label: 'Cadeias Produtivas',
+      value: loadingStats ? '...' : stats.totalCadeias,
+      suffix: 'setores',
+      badge: isSemiarido ? 'Vocações Semiárido' : 'Vocações APL',
+      icon: GitPullRequest,
+      isHero: false
+    },
+    {
+      label: 'Cobertura Territorial',
+      value: loadingStats ? '...' : stats.munAtendidosCount,
+      suffix: `/ ${stats.totalMunEscopo}`,
+      badge: `${stats.taxaCoberturaMun}% do total`,
+      icon: MapPin,
+      isHero: false
+    }
+  ];
+
   return (
-    <main id="pdf-report" ref={contentRef} className="flex-1 h-screen overflow-hidden relative p-6 lg:p-8 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-transparent select-none">
+    <main
+      id="pdf-report"
+      data-ready={!loadingStats ? 'true' : 'false'}
+      data-loading={loadingStats ? 'true' : 'false'}
+      ref={contentRef}
+      className="flex-1 h-screen overflow-hidden relative p-5 lg:p-6 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-transparent select-none"
+    >
       {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
       <div
         aria-hidden="true"
@@ -232,80 +269,51 @@ export default function RelatorioSintese() {
             filter: 'blur(35px)',
           }}
         />
-        <div
-          className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
-          style={{
-            border: '1.5px solid rgba(245, 158, 11, 0.22)',
-            boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
-            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
-            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
-          }}
-        />
-        <div
-          className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
-          style={{
-            border: '1px solid rgba(217, 119, 6, 0.11)',
-            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
-            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
-          }}
-        />
-        <div
-          className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
-          style={{
-            background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
-            filter: 'blur(40px)',
-          }}
-        />
       </div>
 
       {/* CABEÇALHO */}
-      <div className="flex items-center justify-between w-full shrink-0 relative z-10">
-        <div className="flex flex-col">
+      <header className="flex items-center justify-between w-full shrink-0 relative z-10">
+        <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-[30px] lg:text-[32px] font-black text-[#1D3557] dark:text-text-primary tracking-tight leading-none">
+            <h1 className="text-headline font-bold text-text-primary tracking-tight leading-none">
               Síntese Executiva de CT&I
             </h1>
 
             {isSemiarido ? (
-              <div className="flex items-center gap-1.5 bg-[#FEF3C7] dark:bg-amber-950/50 border border-[#FDE68A] dark:border-amber-600/40 px-3.5 py-1 rounded-full">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]" />
-                <span className="text-[12px] font-bold text-[#92400E] dark:text-amber-200">
-                  Recorte Oficial: <strong>Semiárido Baiano (278 Municípios)</strong>
-                </span>
-              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                Recorte Oficial: Semiárido Baiano (278 Municípios)
+              </span>
             ) : selectedTerritory ? (
-              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 dark:bg-primary-950/50 border border-[#BAE6FD] dark:border-primary-700/50 px-3 py-1 rounded-full">
-                <MapPin size={13} className="text-[#0284C7] dark:text-primary-400" />
-                <span className="text-[12px] font-bold text-[#0369A1] dark:text-primary-300">
-                  Recorte: <strong className="text-[#0C4A6E] dark:text-text-primary">{territoryTitle}</strong>
-                </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
+                <MapPin size={13} className="text-primary-600 dark:text-primary-400" />
+                Recorte: {territoryTitle}
                 <button
                   type="button"
                   onClick={() => setSelectedTerritory(null)}
-                  className="text-[#0369A1] dark:text-primary-400 hover:text-red-500 transition-colors ml-0.5 cursor-pointer print:hidden"
+                  className="text-primary-600 hover:text-rose-500 transition-colors ml-0.5 cursor-pointer print:hidden"
                   title="Limpar seleção territorial"
                 >
                   <X size={12} />
                 </button>
-              </div>
+              </span>
             ) : (
-              <div className="flex items-center gap-1.5 bg-[#E0F2FE]/80 dark:bg-primary-950/50 border border-[#BAE6FD] dark:border-primary-700/50 px-3.5 py-1 rounded-full">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
-                <span className="text-[12px] font-bold text-[#0369A1] dark:text-primary-300">
-                  Cenário Geral: <strong className="text-[#0C4A6E] dark:text-text-primary">Estado da Bahia (417 Municípios)</strong>
-                </span>
-              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
+                <span className="w-2 h-2 rounded-full bg-primary-600" />
+                Cenário Geral: Estado da Bahia (417 Municípios)
+              </span>
             )}
           </div>
-          <p className="text-[13.5px] text-[#457B9D] dark:text-text-secondary font-medium mt-1">
+
+          <p className="text-body-sm text-text-secondary mt-1 font-medium">
             {isSemiarido
               ? 'Diagnóstico consolidado de infraestrutura física, formação e arranjos econômicos nos 278 municípios do Semiárido'
               : 'Diagnóstico consolidado de infraestrutura física, formação de recursos humanos e arranjos econômicos da Bahia'}
           </p>
+          <div className={`divider-territorial w-48 mt-2 ${isSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`} />
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {/* BOTÃO TOGGLE SEMIÁRIDO (print:hidden) */}
           <button
             type="button"
             onClick={() => {
@@ -320,7 +328,7 @@ export default function RelatorioSintese() {
               navigate(`?${newParams.toString()}`, { replace: true });
             }}
             title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-bold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
               isSemiarido
                 ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
                 : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
@@ -330,10 +338,11 @@ export default function RelatorioSintese() {
             <span>Semiárido</span>
           </button>
 
-          <span className="text-[12px] font-bold text-[#1D3557] dark:text-primary-300 bg-[#D6EAF8]/50 dark:bg-primary-950/40 border border-[#BAE6FD] dark:border-primary-800/40 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
-            <Award size={14} className="text-[#2563EB] dark:text-primary-400" />
+          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/40 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
+            <Award size={14} className="text-primary-600 dark:text-primary-400" />
             Dados Oficiais SECTI/BA
           </span>
+
           <button
             type="button"
             onClick={toggleTheme}
@@ -342,96 +351,93 @@ export default function RelatorioSintese() {
             className="w-8 h-8 rounded-full bg-surface-soft text-text-secondary hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 print:hidden cursor-pointer"
           >
             {isDark ? (
-              <Sun size={15} strokeWidth={2} className="text-amber-400 hover:rotate-45 transition-transform duration-300" />
+              <Sun size={15} strokeWidth={2} className="text-amber-400" />
             ) : (
-              <Moon size={15} strokeWidth={2} className="text-neutral-600 hover:-rotate-12 transition-transform duration-300" />
+              <Moon size={15} strokeWidth={2} className="text-neutral-600" />
             )}
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* GRID DE KPIS (h-[96px]) */}
+      {/* GRID DE KPIS (4 CARDS) */}
       <div className="w-full relative z-10 shrink-0">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 items-stretch w-full">
-          
-          {/* KPI 1: ATIVOS */}
-          <div className={`h-[96px] bg-white dark:bg-surface rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border'}`}>
-            <div className="flex items-center gap-2 text-[#457B9D] dark:text-text-secondary">
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isSemiarido ? 'bg-amber-500/15 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400' : 'bg-[#D6EAF8]/70 dark:bg-primary-950/50 text-[#2563EB] dark:text-primary-400'}`}>
-                <Database size={16} strokeWidth={2.5} />
-              </div>
-              <span className="text-[12px] font-bold text-[#64748B] dark:text-text-muted uppercase tracking-wider">Ativos de CT&I</span>
-            </div>
-            <div className="flex items-baseline justify-between gap-2">
-              <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] dark:text-text-primary leading-none tracking-tight">
-                {loadingStats ? '...' : stats.totalAtivos}
-              </span>
-              <span className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido ? 'text-[#B45309] dark:text-amber-300 bg-[#F59E0B]/12 dark:bg-amber-950/40 border border-[#F59E0B]/25 dark:border-amber-600/30' : 'text-[#10B981] dark:text-emerald-300 bg-[#10B981]/10 dark:bg-emerald-950/40 border border-[#10B981]/25 dark:border-emerald-600/30'}`} title={`${stats.totalAtivos} de ${totalAtivosBahia} ativos estaduais`}>
-                {isSemiarido ? `${stats.pctAtivosEstado}% da Bahia` : `${stats.rnpAtivos} RNP (${stats.rnpTaxa}%)`}
-              </span>
-            </div>
-          </div>
+          {kpiCards.map((kpi, index) => {
+            const isHero = kpi.isHero;
+            const IconComp = kpi.icon;
 
-          {/* KPI 2: CURSOS */}
-          <div className={`h-[96px] bg-white dark:bg-surface rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border'}`}>
-            <div className="flex items-center gap-2 text-[#457B9D] dark:text-text-secondary">
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isSemiarido ? 'bg-amber-500/15 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400' : 'bg-[#CCFBF1] dark:bg-teal-950/50 text-[#0D9488] dark:text-teal-400'}`}>
-                <GraduationCap size={16} strokeWidth={2.5} />
-              </div>
-              <span className="text-[12px] font-bold text-[#64748B] dark:text-text-muted uppercase tracking-wider">Cursos CT&I</span>
-            </div>
-            <div className="flex items-baseline justify-between gap-2">
-              <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] dark:text-text-primary leading-none tracking-tight">
-                {loadingStats ? '...' : stats.totalCursos}
-              </span>
-              <span className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido ? 'text-[#B45309] dark:text-amber-300 bg-[#F59E0B]/12 dark:bg-amber-950/40 border border-[#F59E0B]/25 dark:border-amber-600/30' : 'text-[#0D9488] dark:text-teal-300 bg-[#0D9488]/10 dark:bg-teal-950/40 border border-[#0D9488]/25 dark:border-teal-600/30'}`} title={`${stats.totalCursos} de ${totalCursosBahia} cursos estaduais`}>
-                {isSemiarido ? `${stats.pctCursosEstado}% da Bahia` : 'Graduação & Pós'}
-              </span>
-            </div>
-          </div>
+            return (
+              <div
+                key={index}
+                className={`p-4 flex flex-col justify-between h-[98px] rounded-card cursor-default overflow-hidden select-none ${
+                  isHero
+                    ? (isSemiarido
+                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                        : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
+                    : (isSemiarido
+                        ? 'bg-surface-soft border border-amber-200/60 dark:border-amber-500/30 text-text-primary'
+                        : 'bg-surface-soft border border-border/70 text-text-primary')
+                }`}
+              >
+                {/* LINHA SUPERIOR: LABEL + ÍCONE CIRCULAR À DIREITA */}
+                <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                  <span
+                    className={`text-[13px] font-medium leading-tight truncate ${
+                      isHero ? (isSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                    }`}
+                  >
+                    {kpi.label}
+                  </span>
 
-          {/* KPI 3: CADEIAS MAPEADAS */}
-          <div className={`h-[96px] bg-white dark:bg-surface rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border'}`}>
-            <div className="flex items-center gap-2 text-[#457B9D] dark:text-text-secondary">
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isSemiarido ? 'bg-amber-500/15 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400' : 'bg-[#FEF3C7] dark:bg-amber-950/50 text-[#D97706] dark:text-amber-400'}`}>
-                <GitPullRequest size={16} strokeWidth={2.5} />
-              </div>
-              <span className="text-[12px] font-bold text-[#64748B] dark:text-text-muted uppercase tracking-wider">Cadeias Mapeadas</span>
-            </div>
-            <div className="flex items-baseline justify-between gap-2">
-              <div className="flex items-baseline gap-1">
-                <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] dark:text-text-primary leading-none tracking-tight">
-                  {loadingStats ? '...' : stats.totalCadeias}
-                </span>
-                <span className="text-[14px] font-bold text-[#64748B] dark:text-text-muted">setores</span>
-              </div>
-              <span className={`text-[11.5px] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap ${isSemiarido ? 'text-[#B45309] dark:text-amber-300 bg-[#F59E0B]/12 dark:bg-amber-950/40 border border-[#F59E0B]/25 dark:border-amber-600/30' : 'text-[#D97706] dark:text-amber-300 bg-[#D97706]/10 dark:bg-amber-950/40 border border-[#D97706]/25 dark:border-amber-600/30'}`}>
-                {isSemiarido ? 'Vocações Semiárido' : 'Vocações APL'}
-              </span>
-            </div>
-          </div>
+                  <div
+                    className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
+                      isHero
+                        ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
+                        : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
+                    }`}
+                  >
+                    <IconComp size={15} strokeWidth={2} />
+                  </div>
+                </div>
 
-          {/* KPI 4: COBERTURA MUNICIPAL */}
-          <div className={`h-[96px] bg-white dark:bg-surface rounded-[24px] p-3 px-4 flex flex-col justify-between shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border'}`}>
-            <div className="flex items-center gap-2 text-[#457B9D] dark:text-text-secondary">
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isSemiarido ? 'bg-amber-500/15 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400' : 'bg-[#FEE2E2] dark:bg-rose-950/50 text-[#DC2626] dark:text-rose-400'}`}>
-                <MapPin size={16} strokeWidth={2.5} />
-              </div>
-              <span className="text-[12px] font-bold text-[#64748B] dark:text-text-muted uppercase tracking-wider">Cobertura Territorial</span>
-            </div>
-            <div className="flex items-baseline justify-between gap-2">
-              <div className="flex items-baseline gap-1">
-                <span className="text-[38px] lg:text-[42px] font-black text-[#1D3557] dark:text-text-primary leading-none tracking-tight">
-                  {loadingStats ? '...' : stats.munAtendidosCount}
-                </span>
-                <span className="text-[14px] font-bold text-[#64748B] dark:text-text-muted">/ {stats.totalMunEscopo}</span>
-              </div>
-              <span className="text-[11.5px] font-bold text-[#10B981] dark:text-emerald-300 bg-[#10B981]/10 dark:bg-emerald-950/40 border border-[#10B981]/25 dark:border-emerald-600/30 px-2.5 py-1 rounded-lg whitespace-nowrap">
-                {stats.taxaCoberturaMun}% do total
-              </span>
-            </div>
-          </div>
+                {/* LINHA INFERIOR: VALOR GRANDE + BADGE PILL */}
+                <div className="flex items-baseline justify-between gap-2 w-full min-w-0 pt-0.5">
+                  <div className="flex items-baseline gap-1 min-w-0">
+                    <span
+                      className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${
+                        isHero ? 'text-white' : 'text-text-primary'
+                      }`}
+                    >
+                      {kpi.value}
+                    </span>
+                    {kpi.suffix && (
+                      <span
+                        className={`text-caption font-semibold tnum ${
+                          isHero ? 'text-white/75' : 'text-text-muted'
+                        }`}
+                      >
+                        {kpi.suffix}
+                      </span>
+                    )}
+                  </div>
 
+                  {kpi.badge && (
+                    <span
+                      className={`text-caption font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center leading-none truncate shrink-0 ${
+                        isHero
+                          ? 'bg-white/15 text-white border border-white/20'
+                          : (isSemiarido
+                              ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
+                              : 'bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60')
+                      }`}
+                    >
+                      {kpi.badge}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -442,16 +448,16 @@ export default function RelatorioSintese() {
         <div style={{ width: 'calc(70% - 8px)' }} className="flex flex-col gap-3.5 h-full overflow-hidden">
           
           {/* BANNER INSTITUCIONAL DO ESCOPO */}
-          <div className={`${isSemiarido ? 'bg-gradient-to-br from-[#92400E] via-[#78350F] to-[#451A03] border border-amber-500/30' : 'bg-gradient-to-br from-[#1D3557] to-[#162942] border border-transparent dark:border-border'} text-white p-3.5 px-4 rounded-[20px] shadow-sm flex items-center justify-between shrink-0`}>
+          <div className={`${isSemiarido ? 'bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 border border-amber-400/30' : 'bg-gradient-brand border border-primary-500/30'} text-white p-4 px-5 rounded-card shadow-card flex items-center justify-between shrink-0`}>
             <div className="max-w-xl">
               <div className="flex items-center gap-1.5 mb-1">
-                <Award size={14} className={isSemiarido ? "text-amber-300" : "text-[#A8C7FA]"} />
-                <span className={`text-[11px] font-bold uppercase tracking-wider ${isSemiarido ? "text-amber-200" : "text-[#A8C7FA]"}`}>Panorama Estratégico SECTI</span>
+                <Award size={14} className={isSemiarido ? "text-amber-200" : "text-white/85"} />
+                <span className={`text-[11px] font-semibold uppercase tracking-wider ${isSemiarido ? "text-amber-100" : "text-white/85"}`}>Panorama Estratégico SECTI</span>
               </div>
-              <h2 className="text-[19px] lg:text-[20px] font-black text-white leading-tight">
+              <h2 className="text-xl lg:text-2xl font-bold text-white tracking-tight leading-tight">
                 {isSemiarido ? 'Recorte Territorial do Semiárido Baiano' : territoryTitle}
               </h2>
-              <p className="text-[12.5px] text-white/85 mt-1 leading-snug">
+              <p className="text-caption text-white/85 mt-1 leading-relaxed">
                 {isSemiarido
                   ? `Consolidação executiva de indicadores de CT&I para os 278 municípios do Semiárido Baiano (66,7% dos municípios do estado).`
                   : (selectedTerritory
@@ -462,15 +468,15 @@ export default function RelatorioSintese() {
               </p>
             </div>
 
-            <div className="flex gap-2 shrink-0">
-              <div className="bg-white/10 px-3.5 py-2 rounded-xl border border-white/15 text-center">
-                <span className="text-[10px] text-white/70 block uppercase font-semibold">População</span>
-                <strong className="text-sm font-black">{stats.populacaoTotal} hab.</strong>
+            <div className="flex gap-2.5 shrink-0">
+              <div className="bg-white/15 px-3.5 py-2 rounded-xl border border-white/20 text-center shadow-2xs">
+                <span className="text-[10px] text-white/75 block uppercase font-medium">População</span>
+                <strong className="text-sm font-bold tnum">{stats.populacaoTotal} hab.</strong>
               </div>
               {stats.ifdmMedio && (
-                <div className="bg-white/10 px-3.5 py-2 rounded-xl border border-white/15 text-center">
-                  <span className="text-[10px] text-white/70 block uppercase font-semibold">IFDM Médio</span>
-                  <strong className="text-sm font-black">{stats.ifdmMedio}</strong>
+                <div className="bg-white/15 px-3.5 py-2 rounded-xl border border-white/20 text-center shadow-2xs">
+                  <span className="text-[10px] text-white/75 block uppercase font-medium">IFDM Médio</span>
+                  <strong className="text-sm font-bold tnum">{stats.ifdmMedio}</strong>
                 </div>
               )}
             </div>
@@ -479,87 +485,175 @@ export default function RelatorioSintese() {
           {/* GRID COM 2 BLOCOS ANALÍTICOS (INFRAESTRUTURA E OFERTA EDUCACIONAL) */}
           <div className="grid grid-cols-2 gap-3.5 flex-1 min-h-0">
             
-            {/* BLOCO 1: INFRAESTRUTURA E CONECTIVIDADE */}
-            <div className={`bg-white dark:bg-surface rounded-[24px] p-4 border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card'} flex flex-col justify-between overflow-hidden`}>
-              <div className="border-b border-[#F1F5F9] dark:border-border pb-2 mb-2 flex items-center justify-between shrink-0">
-                <h3 className="text-[16px] font-extrabold text-[#1D3557] dark:text-text-primary flex items-center gap-1.5">
-                  <Database size={17} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
-                  Infraestrutura de CT&I & RNP
-                </h3>
-                <span className="text-[11px] font-bold text-[#2563EB] dark:text-primary-300 bg-[#2563EB]/10 dark:bg-primary-950/40 px-2.5 py-0.5 rounded-full">
+            {/* BLOCO 1: INFRAESTRUTURA E CONECTIVIDADE (PÍLULAS PROPORCIONAIS) */}
+            <div className={`bg-surface rounded-card p-4 border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} flex flex-col justify-between overflow-hidden shadow-card`}>
+              <div className="border-b border-border/70 pb-2 mb-2 flex items-center justify-between shrink-0">
+                <div className="flex flex-col min-w-0">
+                  <h3 className="text-subtitle font-semibold text-text-primary flex items-center gap-1.5">
+                    <Database size={16} className={isSemiarido ? "text-amber-600" : "text-primary-600"} />
+                    Infraestrutura de CT&I & RNP
+                  </h3>
+                  <p className="text-caption text-text-muted font-medium mt-0.5">Conectividade e adesão à rede acadêmica</p>
+                </div>
+                <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/60 px-2.5 py-0.5 rounded-full">
                   {stats.totalAtivos} Ativos
                 </span>
               </div>
 
-              <div className="flex-1 flex flex-col justify-around py-1 gap-2">
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-center text-[13px] font-bold text-[#1D3557] dark:text-text-primary">
-                    <span className="flex items-center gap-1.5 text-[#2563EB] dark:text-primary-400">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
+              <div className="flex-1 flex flex-col justify-around py-1 gap-2.5">
+                <div className="flex flex-col gap-1 w-full">
+                  <div className="flex justify-between items-center text-caption font-semibold text-text-primary px-0.5">
+                    <span className="flex items-center gap-1.5 text-primary-600 dark:text-primary-400">
+                      <span className="w-2 h-2 rounded-full bg-primary-600" />
                       Conexão Rede RNP
                     </span>
-                    <span>{stats.rnpAtivos} ({stats.rnpTaxa}%)</span>
+                    <span className="tabular-nums">{stats.rnpAtivos} de {stats.totalAtivos} ({stats.rnpTaxa}%)</span>
                   </div>
-                  <div className="w-full h-2.5 rounded-full bg-[#E2E8F0] dark:bg-primary-950/40 overflow-hidden flex">
-                    <div className="h-full bg-[#2563EB]" style={{ width: `${stats.rnpTaxa}%` }} />
+
+                  <div className="flex items-center gap-1.5 w-full">
+                    <div
+                      className="h-[22px] rounded-full bg-primary-600 flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                      style={{
+                        flexGrow: Math.max(1, stats.rnpAtivos),
+                        flexBasis: 0,
+                        minWidth: '38px'
+                      }}
+                    >
+                      <span className="text-caption font-bold tabular-nums leading-none">
+                        {stats.rnpAtivos}
+                      </span>
+                    </div>
+
+                    <div
+                      className="h-[22px] rounded-full bg-surface-soft border border-border flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
+                      style={{
+                        flexGrow: Math.max(1, stats.totalAtivos - stats.rnpAtivos),
+                        flexBasis: 0
+                      }}
+                    />
+
+                    <div className="h-[22px] min-w-[50px] px-2 rounded-full bg-surface-soft border border-border text-text-primary flex items-center justify-center shrink-0 select-none shadow-2xs">
+                      <span className="text-caption font-semibold tabular-nums leading-none">
+                        {stats.rnpTaxa}%
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-center text-[13px] font-bold text-[#1D3557] dark:text-text-primary">
-                    <span className="flex items-center gap-1.5 text-[#64748B] dark:text-text-muted">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8]" />
+                <div className="flex flex-col gap-1 w-full">
+                  <div className="flex justify-between items-center text-caption font-semibold text-text-primary px-0.5">
+                    <span className="flex items-center gap-1.5 text-text-secondary">
+                      <span className="w-2 h-2 rounded-full bg-text-muted" />
                       Demais Ativos / Polos
                     </span>
-                    <span>{stats.totalAtivos - stats.rnpAtivos} ({(100 - Number(stats.rnpTaxa)).toFixed(1)}%)</span>
+                    <span className="tabular-nums">{stats.totalAtivos - stats.rnpAtivos} ({(100 - Number(stats.rnpTaxa)).toFixed(1)}%)</span>
                   </div>
-                  <div className="w-full h-2.5 rounded-full bg-[#E2E8F0] dark:bg-primary-950/40 overflow-hidden flex">
-                    <div className="h-full bg-[#94A3B8]" style={{ width: `${100 - Number(stats.rnpTaxa)}%` }} />
+
+                  <div className="flex items-center gap-1.5 w-full">
+                    <div
+                      className="h-[22px] rounded-full bg-text-muted flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                      style={{
+                        flexGrow: Math.max(1, stats.totalAtivos - stats.rnpAtivos),
+                        flexBasis: 0,
+                        minWidth: '38px'
+                      }}
+                    >
+                      <span className="text-caption font-bold tabular-nums leading-none">
+                        {stats.totalAtivos - stats.rnpAtivos}
+                      </span>
+                    </div>
+
+                    <div
+                      className="h-[22px] rounded-full bg-surface-soft border border-border flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
+                      style={{
+                        flexGrow: Math.max(1, stats.rnpAtivos),
+                        flexBasis: 0
+                      }}
+                    />
+
+                    <div className="h-[22px] min-w-[50px] px-2 rounded-full bg-surface-soft border border-border text-text-primary flex items-center justify-center shrink-0 select-none shadow-2xs">
+                      <span className="text-caption font-semibold tabular-nums leading-none">
+                        {(100 - Number(stats.rnpTaxa)).toFixed(1)}%
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* BLOCO 2: OFERTA EDUCACIONAL */}
-            <div className={`bg-white dark:bg-surface rounded-[24px] p-4 border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card'} flex flex-col justify-between overflow-hidden`}>
-              <div className="border-b border-[#F1F5F9] dark:border-border pb-2 mb-2 flex items-center justify-between shrink-0">
-                <h3 className="text-[16px] font-extrabold text-[#1D3557] dark:text-text-primary flex items-center gap-1.5">
-                  <GraduationCap size={17} className="text-[#8B5CF6] dark:text-purple-400" />
-                  Oferta Educacional CT&I
-                </h3>
-                <span className="text-[11px] font-bold text-[#8B5CF6] dark:text-purple-300 bg-[#8B5CF6]/10 dark:bg-purple-950/40 px-2.5 py-0.5 rounded-full">
+            {/* BLOCO 2: OFERTA EDUCACIONAL (PÍLULAS PROPORCIONAIS) */}
+            <div className={`bg-surface rounded-card p-4 border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} flex flex-col justify-between overflow-hidden shadow-card`}>
+              <div className="border-b border-border/70 pb-2 mb-2 flex items-center justify-between shrink-0">
+                <div className="flex flex-col min-w-0">
+                  <h3 className="text-subtitle font-semibold text-text-primary flex items-center gap-1.5">
+                    <GraduationCap size={16} className={isSemiarido ? "text-amber-600" : "text-primary-600"} />
+                    Oferta Educacional CT&I
+                  </h3>
+                  <p className="text-caption text-text-muted font-medium mt-0.5">Distribuição por rede acadêmica</p>
+                </div>
+                <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/60 px-2.5 py-0.5 rounded-full">
                   {stats.totalCursos} Cursos
                 </span>
               </div>
 
               <div className="flex-1 flex flex-col justify-around py-1 gap-2">
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[12.5px] font-bold text-[#1D3557] dark:text-text-primary">
-                    <span className="text-[#2563EB] dark:text-primary-400">Rede Pública Estadual</span>
-                    <span>{stats.estadualCursos} ({stats.estadualTaxa}%)</span>
+                {/* Estadual */}
+                <div className="flex flex-col gap-0.5 w-full">
+                  <div className="flex justify-between items-center text-caption font-medium text-text-primary px-0.5">
+                    <span className="text-[#2563EB] font-semibold">Rede Pública Estadual</span>
+                    <span className="tabular-nums font-semibold">{stats.estadualCursos} ({stats.estadualTaxa}%)</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] dark:bg-primary-950/40 overflow-hidden">
-                    <div className="h-full bg-[#2563EB]" style={{ width: `${stats.estadualTaxa}%` }} />
+                  <div className="flex items-center gap-1.5 w-full">
+                    <div
+                      className="h-[18px] rounded-full bg-[#2563EB] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      style={{ flexGrow: Math.max(1, stats.estadualCursos), flexBasis: 0, minWidth: '32px' }}
+                    >
+                      <span className="text-[10px] font-bold tabular-nums leading-none">{stats.estadualCursos}</span>
+                    </div>
+                    <div
+                      className="h-[18px] rounded-full bg-surface-soft border border-border"
+                      style={{ flexGrow: Math.max(1, stats.totalCursos - stats.estadualCursos), flexBasis: 0 }}
+                    />
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[12.5px] font-bold text-[#1D3557] dark:text-text-primary">
-                    <span className="text-[#10B981] dark:text-emerald-400">Rede Pública Federal</span>
-                    <span>{stats.federalCursos} ({stats.federalTaxa}%)</span>
+                {/* Federal */}
+                <div className="flex flex-col gap-0.5 w-full">
+                  <div className="flex justify-between items-center text-caption font-medium text-text-primary px-0.5">
+                    <span className="text-[#10B981] font-semibold">Rede Pública Federal</span>
+                    <span className="tabular-nums font-semibold">{stats.federalCursos} ({stats.federalTaxa}%)</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] dark:bg-primary-950/40 overflow-hidden">
-                    <div className="h-full bg-[#10B981]" style={{ width: `${stats.federalTaxa}%` }} />
+                  <div className="flex items-center gap-1.5 w-full">
+                    <div
+                      className="h-[18px] rounded-full bg-[#10B981] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      style={{ flexGrow: Math.max(1, stats.federalCursos), flexBasis: 0, minWidth: '32px' }}
+                    >
+                      <span className="text-[10px] font-bold tabular-nums leading-none">{stats.federalCursos}</span>
+                    </div>
+                    <div
+                      className="h-[18px] rounded-full bg-surface-soft border border-border"
+                      style={{ flexGrow: Math.max(1, stats.totalCursos - stats.federalCursos), flexBasis: 0 }}
+                    />
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[12.5px] font-bold text-[#1D3557] dark:text-text-primary">
-                    <span className="text-[#8B5CF6] dark:text-purple-400">Rede Privada / Outros</span>
-                    <span>{stats.privadaCursos} ({stats.privadaTaxa}%)</span>
+                {/* Privada */}
+                <div className="flex flex-col gap-0.5 w-full">
+                  <div className="flex justify-between items-center text-caption font-medium text-text-primary px-0.5">
+                    <span className="text-[#F59E0B] font-semibold">Rede Privada / Outros</span>
+                    <span className="tabular-nums font-semibold">{stats.privadaCursos} ({stats.privadaTaxa}%)</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-[#E2E8F0] dark:bg-primary-950/40 overflow-hidden">
-                    <div className="h-full bg-[#8B5CF6]" style={{ width: `${stats.privadaTaxa}%` }} />
+                  <div className="flex items-center gap-1.5 w-full">
+                    <div
+                      className="h-[18px] rounded-full bg-[#F59E0B] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      style={{ flexGrow: Math.max(1, stats.privadaCursos), flexBasis: 0, minWidth: '32px' }}
+                    >
+                      <span className="text-[10px] font-bold tabular-nums leading-none">{stats.privadaCursos}</span>
+                    </div>
+                    <div
+                      className="h-[18px] rounded-full bg-surface-soft border border-border"
+                      style={{ flexGrow: Math.max(1, stats.totalCursos - stats.privadaCursos), flexBasis: 0 }}
+                    />
                   </div>
                 </div>
               </div>
@@ -568,25 +662,25 @@ export default function RelatorioSintese() {
           </div>
 
           {/* BLOCO INFERIOR: VOCAÇÕES ECONÔMICAS E CADEIAS */}
-          <div className={`bg-white dark:bg-surface rounded-[24px] p-3.5 px-4 border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card'} shrink-0`}>
+          <div className={`bg-surface rounded-card p-3.5 px-4 border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} shadow-card shrink-0`}>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[15px] font-extrabold text-[#1D3557] dark:text-text-primary flex items-center gap-1.5">
-                <GitPullRequest size={16} className={isSemiarido ? "text-[#D97706]" : "text-[#2563EB]"} />
+              <h3 className="text-caption font-semibold text-text-primary flex items-center gap-1.5">
+                <GitPullRequest size={15} className={isSemiarido ? "text-amber-600" : "text-primary-600"} />
                 Vocações Econômicas e Cadeias Produtivas Mapeadas ({stats.totalCadeias})
               </h3>
-              <span className="text-[11px] font-bold text-[#64748B] dark:text-text-muted">Fonte: Base Oficial SECTI/SDR</span>
+              <span className="text-caption text-text-muted font-medium">Base Oficial SECTI/SDR</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {cadeiasNomes.map((nome, idx) => (
                 <span
                   key={idx}
-                  className="text-[12px] font-bold px-3 py-1 rounded-lg bg-[#F8FAFC] dark:bg-surface-soft border border-[#E2E8F0] dark:border-border text-[#1D3557] dark:text-text-primary"
+                  className="text-caption font-semibold px-2.5 py-1 rounded-full bg-surface-soft border border-border text-text-primary shadow-2xs"
                 >
                   {nome}
                 </span>
               ))}
               {cadeiasNomes.length === 0 && (
-                <span className="text-[12px] text-[#94A3B8] dark:text-text-muted">Nenhuma cadeia específica mapeada neste recorte.</span>
+                <span className="text-caption text-text-muted">Nenhuma cadeia específica mapeada neste recorte.</span>
               )}
             </div>
           </div>
@@ -594,7 +688,7 @@ export default function RelatorioSintese() {
         </div>
 
         {/* COLUNA DIREITA: MAPA TERRITORIAL INTEGRADO (30%) */}
-        <div style={{ width: 'calc(30% - 8px)' }} className={`h-full bg-white dark:bg-surface rounded-[24px] border ${isSemiarido ? 'border-amber-200/50 dark:border-amber-500/30 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.06)]' : 'border-transparent dark:border-border shadow-[0_4px_20px_rgba(29,53,87,0.04)] dark:shadow-card'} relative overflow-hidden flex flex-col shrink-0 min-h-0`}>
+        <div style={{ width: 'calc(30% - 8px)' }} className={`h-full bg-surface rounded-card border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} shadow-card relative overflow-hidden flex flex-col shrink-0 min-h-0`}>
           <PtiMap
             key={`map-sintese-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
             selectedTerritory={selectedTerritory}

@@ -78,11 +78,14 @@ export async function waitForReportReady(targetDoc, element, maxWaitMs = 15000) 
     }
   }
 
-  // 2. Aguarda sumiço de loaders/spinners
+  // 2. Aguarda sumiço de loaders/spinners e data-ready
   while (Date.now() - startTime < maxWaitMs) {
+    const isReady = element.getAttribute('data-ready');
+    if (isReady === 'true') break;
+
     const hasSpinner = element.querySelector('.animate-spin') !== null;
     const text = element.innerText || '';
-    const hasLoadingIndicator = text.includes('Carregando') || text.includes('loadingStats');
+    const hasLoadingIndicator = isReady === 'false' || text.includes('Carregando') || text.includes('loadingStats');
     if (!hasSpinner && !hasLoadingIndicator) {
       break;
     }
@@ -333,12 +336,17 @@ async function captureReportViaIframe(route, scale = 2) {
         `;
         iframeDoc.head.appendChild(styleEl);
 
-        // 3. Aguarda os dados do Supabase preencherem os cartões de KPIs (ausência de spinners e de '...')
-        for (let i = 0; i < 50; i++) {
+        // 3. Aguarda os dados do Supabase preencherem os cartões de KPIs (data-ready="true" e ausência de reticências nos KPIs)
+        for (let i = 0; i < 75; i++) {
+          const isReady = reportEl.getAttribute('data-ready') === 'true';
+          if (isReady) break;
+
           const hasSpinner = reportEl.querySelector('.animate-spin') !== null;
           const text = reportEl.innerText || '';
-          const isStillLoading = hasSpinner || (text.includes('...') && !text.includes('245') && !text.includes('550'));
-          if (!isStillLoading) break;
+          const hasPendingDots = /\b\.\.\.\b/.test(text) || text.includes('Carregando');
+          if (!hasSpinner && !hasPendingDots && reportEl.getAttribute('data-ready') !== 'false') {
+            break;
+          }
           await new Promise((r) => setTimeout(r, 200));
         }
 

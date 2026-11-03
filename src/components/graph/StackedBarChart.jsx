@@ -75,17 +75,17 @@ function StackedBarChart({
   }, [visibleData, maxScale]);
 
   return (
-    <div className={`bg-surface rounded-card border ${isSemiarido ? 'border-accent-200/50 dark:border-accent-500/30 shadow-card' : 'border-border shadow-card'} p-4 lg:p-5 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
+    <div className={`bg-surface rounded-card border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
 
-      {/* CABEÇALHO DO CARD */}
-      <div className="flex items-center justify-between gap-2 mb-1.5 shrink-0">
-        <div className="flex flex-col">
-          <h3 className="text-subtitle font-bold text-text-primary tracking-tight flex items-center gap-2">
+      {/* CABEÇALHO DO CARD (IDÊNTICO AO PAINEL) */}
+      <div className="flex items-start justify-between gap-2 mb-1.5 shrink-0">
+        <div className="flex flex-col min-w-0">
+          <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate">
             {title}
-          </h3>
-          <span className="text-caption text-text-muted">
+          </h2>
+          <p className="text-text-muted text-caption font-medium mt-0.5 truncate">
             {subtitle}
-          </span>
+          </p>
         </div>
 
         {/* BADGE TOP 10 OU BOTÕES DE TOGGLE */}
@@ -115,21 +115,25 @@ function StackedBarChart({
             </button>
           </div>
         ) : showTopBadge && data.length > 0 ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption font-medium bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary-600"></span>
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption font-semibold shrink-0 border ${
+            isSemiarido
+              ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800/60'
+              : 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border-primary-200/60 dark:border-primary-800/60'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-primary-600'}`}></span>
             Top {Math.min(limit, data.length)}
           </span>
         ) : null}
       </div>
 
       {/* LEGENDA HORIZONTAL DAS CATEGORIAS */}
-      <div className="flex items-center flex-wrap gap-x-3 gap-y-1 my-1 text-caption font-semibold text-text-primary shrink-0 border-b border-border/70 pb-2">
+      <div className="flex items-center flex-wrap gap-x-3 gap-y-1 pb-2 mb-1 text-caption text-text-secondary shrink-0 border-b border-border/70">
         {categories.map((cat, idx) => {
           const color = cat.colorHex || chartTheme.palette[idx % chartTheme.palette.length];
           return (
             <div key={cat.key} className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" style={{ backgroundColor: color }}></span>
-              <span className="truncate max-w-[140px] text-text-secondary font-medium text-caption">{cat.shortLabel || cat.label}</span>
+              <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: color }}></span>
+              <span className="truncate max-w-[135px] text-text-secondary font-medium text-[11px]">{cat.shortLabel || cat.label}</span>
             </div>
           );
         })}
@@ -138,19 +142,19 @@ function StackedBarChart({
       {/* ÁREA DO GRÁFICO DE BARRAS */}
       <div className="flex-1 w-full h-full relative min-h-0 pt-2 pb-0.5 px-1 flex flex-col justify-between">
         <div className="flex-1 w-full relative min-h-0">
-          {/* LINHAS DE GRADE DISCRETAS */}
-          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-30 z-0 pb-1">
-            <div className="w-full h-px bg-border"></div>
-            <div className="w-full h-px bg-border"></div>
-            <div className="w-full h-px bg-border"></div>
+          {/* LINHAS DE GRADE TRACEJADAS DISCRETAS */}
+          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-45 z-0 pb-1">
+            <div className="w-full border-b border-dashed border-border"></div>
+            <div className="w-full border-b border-dashed border-border"></div>
+            <div className="w-full border-b border-dashed border-border"></div>
           </div>
 
           {/* BARRAS VERTICAIS */}
-          <div className="w-full h-full flex items-end justify-between gap-1.5 sm:gap-2 relative z-10">
+          <div className="w-full h-full flex items-end justify-between gap-2 sm:gap-2.5 relative z-10">
             {visibleData.map((item, index) => {
               const totalVal = Number(item.total || 0);
               const normalized = Math.max(0, totalVal / (calculatedMax || 1));
-              const heightPercent = totalVal === 0 ? 0 : Math.min(100, Math.max(12, Math.pow(normalized, 0.85) * 88 + 10));
+              const heightPercent = totalVal === 0 ? 0 : Math.min(100, Math.max(14, Math.pow(normalized, 0.85) * 86 + 12));
 
               const totalItems = visibleData.length;
               const isFirst = index === 0;
@@ -223,7 +227,7 @@ function StackedBarChart({
                     </div>
                   )}
 
-                  {/* INDICADOR DE TOTAL NO TOPO DA BARRA */}
+                  {/* PILL DE TOTAL NO TOPO DA BARRA */}
                   <div
                     onMouseEnter={(e) => {
                       e.stopPropagation();
@@ -234,16 +238,16 @@ function StackedBarChart({
                         segments: item.segments
                       });
                     }}
-                    className="flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded-control bg-surface-sunken border border-border text-caption tnum font-semibold text-text-primary group-hover/bar:bg-primary-600 group-hover/bar:text-white group-hover/bar:scale-105 transition-all mb-1 select-none cursor-pointer shadow-xs leading-none shrink-0"
+                    className="flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-full bg-surface-soft border border-border text-[11px] tabular-nums font-semibold text-text-primary group-hover/bar:bg-primary-600 group-hover/bar:text-white group-hover/bar:border-primary-600 transition-all mb-1 select-none cursor-pointer leading-none shrink-0 shadow-2xs"
                     title="Ver todos os ativos da região"
                   >
                     {totalVal}
                   </div>
 
-                  {/* BARRA VERTICAL MODERNA */}
+                  {/* BARRA VERTICAL EXPRESSIVA */}
                   <div className="w-full flex items-end justify-center flex-1 min-h-0 relative">
                     <div
-                      className="w-full max-w-[18px] sm:max-w-[21px] rounded-t-control rounded-b-[2px] relative flex flex-col-reverse overflow-hidden transition-all duration-300 ease-out group-hover/bar:scale-105 group-hover/bar:ring-2 group-hover/bar:ring-primary-600/40 shadow-xs border border-black/5"
+                      className="w-full max-w-[28px] sm:max-w-[32px] rounded-t-xl rounded-b-xs relative flex flex-col-reverse overflow-hidden transition-all duration-200 ease-out group-hover/bar:brightness-105 shadow-2xs"
                       style={{ height: `${heightPercent}%` }}
                     >
                       {categories.map((cat, catIndex) => {
@@ -268,7 +272,7 @@ function StackedBarChart({
                                 total: item.total
                               });
                             }}
-                            className={`w-full transition-all duration-150 cursor-pointer min-h-[4px] border-b-[1px] border-white/80 dark:border-black/30 last:border-b-0 ${isThisSliceHovered ? 'brightness-125 saturate-150 ring-1 ring-white z-10' : 'hover:brightness-110'
+                            className={`w-full transition-all duration-150 cursor-pointer min-h-[5px] border-b-[1.5px] border-surface last:border-b-0 ${isThisSliceHovered ? 'brightness-125 saturate-150 ring-1 ring-white z-10' : 'hover:brightness-110'
                               }`}
                             style={{ height: `${segPercent}%`, backgroundColor: sliceColor }}
                           />
@@ -286,7 +290,7 @@ function StackedBarChart({
         <div className="w-full h-px bg-border shrink-0 my-1" />
 
         {/* ÁREA DOS RÓTULOS DOS TERRITÓRIOS */}
-        <div className="w-full flex items-start justify-between gap-1.5 sm:gap-2 shrink-0 h-[32px] overflow-visible">
+        <div className="w-full flex items-start justify-between gap-1 shrink-0 h-[28px] overflow-hidden">
           {visibleData.map((item, index) => {
             const formattedName = formatTerritoryName(item.label);
             return (
@@ -295,7 +299,7 @@ function StackedBarChart({
                 className="flex-1 flex items-start justify-center px-0.5 text-center leading-[11px] select-none min-w-0"
                 title={item.label}
               >
-                <span className="text-caption font-medium text-text-secondary group-hover/bar:text-text-primary transition-colors whitespace-pre-line break-words">
+                <span className="text-[10px] font-medium text-text-secondary group-hover/bar:text-text-primary transition-colors whitespace-pre-line truncate max-w-full">
                   {formattedName}
                 </span>
               </div>

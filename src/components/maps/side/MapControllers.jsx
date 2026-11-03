@@ -41,7 +41,7 @@ export function MapClickHandler({ onClearPinned, onClearTerritory }) {
       onClearPinned?.();
       if (onClearTerritory) {
         onClearTerritory();
-        map.flyTo([-13.1, -41.7], 5.6, { duration: 0.6 });
+        map.flyTo([-13.0, -41.6], 5.75, { duration: 0.55 });
       }
     }
   });
@@ -71,7 +71,7 @@ export function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTer
         if (layer && typeof layer.getBounds === 'function') {
           const bounds = layer.getBounds();
           if (bounds && bounds.isValid()) {
-            map.fitBounds(bounds, { padding: [35, 35], maxZoom: 9, duration: 0.6 });
+            map.fitBounds(bounds, { padding: [28, 28], maxZoom: 8.75, duration: 0.55 });
             return true;
           }
         }
@@ -79,17 +79,15 @@ export function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTer
       };
 
       if (!tryZoom()) {
-        const t1 = setTimeout(tryZoom, 120);
-        const t2 = setTimeout(tryZoom, 350);
-        const t3 = setTimeout(tryZoom, 800);
+        const t1 = setTimeout(tryZoom, 60);
+        const t2 = setTimeout(tryZoom, 220);
         return () => {
           clearTimeout(t1);
           clearTimeout(t2);
-          clearTimeout(t3);
         };
       }
     } else if (prevTerritoryRef.current && !selectedTerritory) {
-      map.flyTo([-13.1, -41.7], 5.6, { duration: 0.6 });
+      map.flyTo([-13.0, -41.6], 5.75, { duration: 0.55 });
     }
     prevTerritoryRef.current = selectedTerritory;
   }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
@@ -105,7 +103,9 @@ export function CadeiaFocusController({ selectedCadeia }) {
       let cLat = Number(selectedCadeia.lat);
       let cLng = Number(selectedCadeia.lng);
       if (!isInsideBahia(cLat, cLng)) {
-        const fallback = findMunicipioCoords(selectedCadeia.municipio || selectedCadeia.municipio_sede || selectedCadeia.sede);
+        const fallback = findMunicipioCoords(
+          selectedCadeia.municipio || selectedCadeia.municipio_sede || selectedCadeia.sede
+        );
         if (fallback) {
           cLat = fallback[0];
           cLng = fallback[1];
@@ -133,13 +133,13 @@ export function CadeiaFocusController({ selectedCadeia }) {
 
       if (bounds.length > 1) {
         map.fitBounds(bounds, {
-          padding: [50, 50],
-          maxZoom: 9,
+          padding: [45, 45],
+          maxZoom: 8.75,
           animate: true,
-          duration: 0.6
+          duration: 0.55
         });
       } else {
-        map.flyTo([cLat, cLng], 9.0, { duration: 0.6 });
+        map.flyTo([cLat, cLng], 8.75, { duration: 0.55 });
       }
     }
   }, [selectedCadeia, map]);
@@ -161,10 +161,10 @@ export function ConnectionsFocusController({ showAllConnections, mode, connectio
       });
       if (points.length > 0) {
         map.fitBounds(points, {
-          padding: [25, 25],
-          maxZoom: 7,
+          padding: [24, 24],
+          maxZoom: 7.25,
           animate: true,
-          duration: 0.6
+          duration: 0.55
         });
       }
     }
@@ -178,7 +178,7 @@ export function ChangeMapView({ coords }) {
   useEffect(() => {
     if (!coords) return;
     let lat, lng;
-    let targetZoom = 15;
+    let targetZoom = 14.5;
     if (Array.isArray(coords) && coords.length >= 2) {
       lat = Number(coords[0]);
       lng = Number(coords[1]);
@@ -193,9 +193,9 @@ export function ChangeMapView({ coords }) {
     if (lat != null && lng != null && !isNaN(lat) && !isNaN(lng) && lat !== 0) {
       const currentZoom = map.getZoom();
       if (currentZoom >= 9.5) {
-        map.panTo([lat, lng], { animate: true, duration: 0.6 });
+        map.panTo([lat, lng], { animate: true, duration: 0.55 });
       } else {
-        map.flyTo([lat, lng], targetZoom, { duration: 0.6 });
+        map.flyTo([lat, lng], targetZoom, { duration: 0.55 });
       }
     }
   }, [coords, map]);
@@ -204,20 +204,33 @@ export function ChangeMapView({ coords }) {
 
 export function MapResizeHandler({ isExpanded }) {
   const map = useMap();
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      map.invalidateSize();
-    }, 250);
-    return () => clearTimeout(timer);
+    const container = map.getContainer();
+    if (!container || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => {
+      map.invalidateSize({ animate: false });
+    });
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [map]);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => map.invalidateSize({ animate: false }), 120);
+    const t2 = setTimeout(() => map.invalidateSize({ animate: false }), 300);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [isExpanded, map]);
+
   return null;
 }
 
 export function MapZoomWatcher({ onZoomChange }) {
   const map = useMap();
   useMapEvents({
-    zoomend: () => onZoomChange(map.getZoom()),
-    zoom: () => onZoomChange(map.getZoom())
+    zoomend: () => onZoomChange(map.getZoom())
   });
   useEffect(() => {
     onZoomChange(map.getZoom());

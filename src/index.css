@@ -708,6 +708,11 @@ input[type="checkbox"] {
   background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
 }
 
+/* Camada base geográfica em modo escuro (OpenStreetMap com alto contraste e sem distorção) */
+.dark .map-tiles-dark {
+  filter: brightness(0.65) invert(1) contrast(1.5) hue-rotate(200deg) saturate(0.35);
+}
+
 /* ================= PRINT RULES (16:9 1920x1080 EXECUTIVE REPORTS) ================= */
 @media print {
   @page {

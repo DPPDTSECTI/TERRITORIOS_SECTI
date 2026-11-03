@@ -946,17 +946,7 @@ export default function CursosPage() {
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos Presenciais em ${territoryName}` : 'Cursos Presenciais de CT&I'}
                                             </h3>
-                                            {activeFiltersCount > 0 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setActiveTab('filtros')}
-                                                    className="text-caption font-medium text-primary-600 hover:text-primary-700 bg-primary-50 dark:bg-primary-950/60 border border-primary-200 dark:border-primary-800 px-2 py-0.5 rounded-full cursor-pointer inline-flex items-center gap-1"
-                                                    title="Ver e gerenciar filtros aplicados na aba Filtros"
-                                                >
-                                                    <SlidersHorizontal size={11} />
-                                                    <span>{activeFiltersCount} filtro{activeFiltersCount > 1 ? 's' : ''} ativo{activeFiltersCount > 1 ? 's' : ''}</span>
-                                                </button>
-                                            )}
+
                                         </div>
 
                                         <div className="flex items-center gap-3">
@@ -1141,17 +1131,7 @@ export default function CursosPage() {
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Oferta de Cursos à Distância (EaD) e Semipresenciais'}
                                             </h3>
-                                            {activeFiltersCount > 0 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setActiveTab('filtros')}
-                                                    className="text-caption font-medium text-primary-600 hover:text-primary-700 bg-primary-50 dark:bg-primary-950/60 border border-primary-200 dark:border-primary-800 px-2 py-0.5 rounded-full cursor-pointer inline-flex items-center gap-1"
-                                                    title="Ver e gerenciar filtros aplicados na aba Filtros"
-                                                >
-                                                    <SlidersHorizontal size={11} />
-                                                    <span>{activeFiltersCount} filtro{activeFiltersCount > 1 ? 's' : ''} ativo{activeFiltersCount > 1 ? 's' : ''}</span>
-                                                </button>
-                                            )}
+
                                         </div>
 
                                         <div className="flex items-center gap-3">

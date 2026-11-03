@@ -291,84 +291,42 @@ export default function LandingHero() {
       </div>
 
       {/* ================= CABEÇALHO FLUTUANTE DA LANDING ================= */}
-      <header className="sticky top-0 z-50 w-full bg-surface/95 backdrop-blur-sm border-b border-border shadow-2xs transition-colors duration-200">
-        <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
+      <header className="relative z-50 w-full bg-transparent">
+        <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-12 h-24 sm:h-28 flex items-center justify-between">
 
-          {/* Brasão do Estado + Identidade */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
+          {/* Identidade + Brasão do Estado */}
+          <div className="flex items-center gap-4 sm:gap-5 select-none">
+            <div className="flex items-center gap-3 sm:gap-3.5">
               <img
                 src="/img/favicon-96x96.webp"
-                alt="Favicon Painel Territorial CT&I"
-                className="h-7 w-auto object-contain shrink-0"
+                alt="Painel Territorial CT&I"
+                className="h-9 sm:h-11 w-auto object-contain shrink-0"
               />
-              <span className="font-bold text-caption sm:text-body-sm text-text-primary">
+              <span className="font-bold text-subtitle sm:text-title tracking-tight text-text-primary">
                 Painel Territorial CT&I
               </span>
-            </Link>
+            </div>
 
-            <span className="text-border-strong font-light text-xl select-none hidden sm:inline" aria-hidden="true">|</span>
+            <div className="hidden sm:block h-7 w-px bg-border-strong/70" aria-hidden="true" />
 
             <img
               src="/img/brasao_preto.webp"
               alt="Governo do Estado da Bahia"
-              className="h-9 sm:h-11 w-auto object-contain shrink-0 block dark:hidden select-none"
+              className="h-11 sm:h-14 w-auto object-contain shrink-0 block dark:hidden"
             />
             <img
               src="/img/Brasao-Horizontal_Branco.webp"
               alt="Governo do Estado da Bahia"
-              className="h-9 sm:h-11 w-auto object-contain shrink-0 hidden dark:block select-none"
+              className="h-11 sm:h-14 w-auto object-contain shrink-0 hidden dark:block"
             />
-          </div>
-
-          {/* Links Rápidos, Alternador de Tema e CTA */}
-          <div className="flex items-center gap-3 sm:gap-5">
-            <nav className="hidden md:flex items-center gap-6 text-body-sm font-semibold text-text-secondary" aria-label="Navegação Principal">
-              <Link to="/territorios" className="hover:text-text-primary transition-colors">
-                Dashboard
-              </Link>
-              <Link to="/sobre" className="hover:text-text-primary transition-colors">
-                Sobre
-              </Link>
-              <Link to="/relatorio" className="hover:text-text-primary transition-colors">
-                Relatórios
-              </Link>
-            </nav>
-
-            {/* Alternador de Tema Claro / Escuro */}
-            <IconButton
-              variant="ghost"
-              size="md"
-              onClick={toggleTheme}
-              aria-label={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
-              title={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
-              className="text-text-secondary hover:text-text-primary"
-            >
-              {isDark ? <Sun size={18} /> : <Moon size={18} />}
-            </IconButton>
-
-            {/* CTA Acessar Painel */}
-            <Button
-              variant="primary"
-              size="md"
-              onClick={() => navigate('/territorios')}
-              iconRight={<ArrowRight size={16} />}
-            >
-              Acessar Painel
-            </Button>
           </div>
         </div>
       </header>
 
       {/* ================= SEÇÃO HERO PRINCIPAL ================= */}
-      <section className="relative w-full min-h-[calc(100vh-80px)] flex flex-col justify-between px-6 sm:px-10 lg:px-12 pt-8 sm:pt-14 pb-12 sm:pb-16 z-10 max-w-[1600px] mx-auto">
+      <section className="relative w-full min-h-[calc(100dvh-72px)] flex flex-col justify-between px-6 sm:px-10 lg:px-12 pt-8 sm:pt-14 pb-12 sm:pb-16 z-10 max-w-[1600px] mx-auto">
         <div className="w-full flex-1 flex flex-col justify-center max-w-4xl lg:max-w-5xl py-6 sm:py-12">
           
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface border border-primary-500/30 text-caption font-medium text-primary-700 dark:text-primary-300 mb-5 sm:mb-6 shadow-2xs w-fit">
-            <span className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-400 animate-pulse" />
-            Plataforma de Inteligência Territorial · SECTI
-          </div>
-
           <h1 className="text-display font-bold text-text-primary tracking-tight leading-[1.06] mb-5 sm:mb-6 text-left">
             Ciência, Tecnologia <br />
             <span className="text-primary-600 dark:text-primary-400">

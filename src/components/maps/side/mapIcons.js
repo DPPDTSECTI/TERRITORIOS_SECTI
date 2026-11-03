@@ -1,6 +1,13 @@
 import L from 'leaflet';
 
+const clusterIconCache = new Map();
+const singleAssetIconCache = new Map();
+
 export const createClusterIcon = (count, isSemiarido = false, isDark = false) => {
+  const cacheKey = `${count}_${isSemiarido ? 1 : 0}_${isDark ? 1 : 0}`;
+  const cached = clusterIconCache.get(cacheKey);
+  if (cached) return cached;
+
   const size = 20;
   const fontSize = 9.5;
   const bg = isSemiarido
@@ -12,7 +19,7 @@ export const createClusterIcon = (count, isSemiarido = false, isDark = false) =>
     ? (isDark ? 'rgba(245, 158, 11, 0.45)' : 'rgba(217, 119, 6, 0.45)')
     : (isDark ? 'rgba(56, 189, 248, 0.45)' : 'rgba(30, 64, 175, 0.3)');
 
-  return L.divIcon({
+  const icon = L.divIcon({
     html: `
     <div style="
       width: ${size}px;
@@ -39,6 +46,9 @@ export const createClusterIcon = (count, isSemiarido = false, isDark = false) =>
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2]
   });
+
+  clusterIconCache.set(cacheKey, icon);
+  return icon;
 };
 
 export function getSemiaridoPointColor(corHex, nameOrTipo = '', isDark = false) {
@@ -82,6 +92,10 @@ export function getSemiaridoPointColor(corHex, nameOrTipo = '', isDark = false) 
 }
 
 export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = false, isSemiarido = false, assetTipo = '', isDark = false) => {
+  const cacheKey = `${corHex || ''}_${svgMarkup || ''}_${isSelected ? 1 : 0}_${isSemiarido ? 1 : 0}_${assetTipo || ''}_${isDark ? 1 : 0}`;
+  const cached = singleAssetIconCache.get(cacheKey);
+  if (cached) return cached;
+
   const size = isSelected ? 24 : 18;
   const safeColor = isSemiarido
     ? getSemiaridoPointColor(corHex, assetTipo, isDark)
@@ -96,7 +110,7 @@ export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = fal
     innerSvg = innerSvg.replace(/stroke="[^"]+"/g, 'stroke="#ffffff"');
   }
 
-  return L.divIcon({
+  const icon = L.divIcon({
     html: `
     <div style="
       width: ${size}px;
@@ -119,6 +133,9 @@ export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = fal
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2]
   });
+
+  singleAssetIconCache.set(cacheKey, icon);
+  return icon;
 };
 
 export const createPartnerPinIcon = (isSemiarido = false) => L.divIcon({

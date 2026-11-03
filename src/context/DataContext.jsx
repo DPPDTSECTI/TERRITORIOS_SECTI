@@ -23,6 +23,7 @@ export const DataProvider = ({ children }) => {
 
   const [loadingStats, setLoadingStats] = useState(true);
   const [selectedTerritory, setSelectedTerritory] = useState(null);
+  const [modoGeografico, setModoGeografico] = useState(false);
   const [filtroSemiarido, setFiltroSemiarido] = useState(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -276,7 +277,9 @@ export const DataProvider = ({ children }) => {
  selectedTerritory,
  setSelectedTerritory,
  filtroSemiarido,
- setFiltroSemiarido 
+ setFiltroSemiarido,
+ modoGeografico,
+ setModoGeografico
  }}>
  {children}
  </DataContext.Provider>

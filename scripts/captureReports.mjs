@@ -115,13 +115,31 @@ export async function captureReportWithPlaywright({
       throw new Error(`Timeout aguardando #pdf-report na rota ${route} (URL atual: ${currentUrl}). Erros na página: ${pageErrors.join(' | ') || pageTextSnippet || selectorErr.message}`);
     }
 
-    // 3. Aguarda ausência de loaders ou estado de carregamento de dados
+    // 3. Aguarda os dados estarem 100% carregados do Supabase/Contexto (data-ready="true" e ausência de reticências nos KPIs)
     await page.waitForFunction(() => {
+      const report = document.querySelector('#pdf-report') || document.querySelector('main');
+      if (!report) return false;
+
+      // 1. Se possui atributo explícito de dados prontos
+      const readyAttr = report.getAttribute('data-ready');
+      if (readyAttr === 'true') return true;
+      if (readyAttr === 'false') return false;
+
+      // 2. Se há spinners ativos
       const hasSpinner = document.querySelector('.animate-spin') !== null;
-      const hasLoadingText = document.body && document.body.innerText.includes('Carregando dados...');
-      return !hasSpinner && !hasLoadingText;
-    }, { timeout: 45000 }).catch(() => {
-      console.warn('[Playwright] Timeout aguardando desaparecimento de loaders, prosseguindo com captura.');
+      if (hasSpinner) return false;
+
+      // 3. Se ainda há texto indicativo de carregamento
+      const text = report.innerText || '';
+      if (text.includes('Carregando dados...') || text.includes('Carregando...')) return false;
+
+      // 4. Se os cartões de KPI ainda exibem '...'
+      const hasPendingDots = /\b\.\.\.\b/.test(text) || text.includes('...\n') || text.includes('\n...\n');
+      if (hasPendingDots) return false;
+
+      return true;
+    }, { timeout: 60000 }).catch((waitErr) => {
+      console.warn('[Playwright] Timeout aguardando carregamento completo de dados, prosseguindo com captura:', waitErr.message);
     });
 
     // 4. Aguarda resolução de fontes, decodificação de imagens, vetores e requestAnimationFrame

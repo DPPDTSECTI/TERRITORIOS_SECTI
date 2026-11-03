@@ -151,14 +151,6 @@ export default function SobrePage() {
               >
                 Fontes Oficiais
               </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => navigate('/territorios')}
-                iconRight={<ArrowRight size={14} />}
-              >
-                Acessar Painel
-              </Button>
             </div>
           }
         />

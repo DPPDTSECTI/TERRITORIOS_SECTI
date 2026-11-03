@@ -143,7 +143,7 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
   );
 }
 
-export function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
+export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({ elem, ativo, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
   const { isDark } = useTheme();
   return (
     <Marker
@@ -181,13 +181,13 @@ export function SingleAssetMarkerItem({ elem, ativo, pinnedAssetId, setPinnedAss
       )}
     </Marker>
   );
-}
+});
 
 export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode, filtroSemiarido = false, getSegmentColor = null }) {
   const map = useMap();
   const { isDark } = useTheme();
   const [bounds, setBounds] = useState(null);
-  const [zoom, setZoom] = useState(map.getZoom());
+  const [zoom, setZoom] = useState(() => map.getZoom());
 
   const deduplicatedAtivos = useMemo(() => {
     const seen = new Map();
@@ -272,7 +272,7 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
   }, [deduplicatedAtivos, selectedCadeia]);
 
   const updateBoundsAndZoom = useCallback(() => {
-    const b = map.getBounds();
+    const b = map.getBounds().pad(0.6);
     setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
     setZoom(map.getZoom());
   }, [map]);

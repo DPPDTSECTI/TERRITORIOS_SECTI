@@ -1,12 +1,19 @@
-import React, { useRef, useEffect, useState, useMemo, useContext } from 'react';
-import { MapContainer, Marker, GeoJSON, Polyline, Tooltip } from 'react-leaflet';
+import React, { useRef, useEffect, useState, useMemo, useContext, useCallback } from 'react';
+import { MapContainer, TileLayer, Marker, GeoJSON, Polyline, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import * as topojson from 'topojson-client';
-import { Layers, Network, Expand, Shrink, Flame } from 'lucide-react';
+import { Layers, Network, Expand, Shrink, Flame, Globe } from 'lucide-react';
 import { DataContext } from '../../context/DataContext';
 import { useTheme } from '../../context/ThemeContext';
 import { isMunicipioSemiarido } from '../../constants/semiarido';
+import { getCachedBahiaTopologia, loadBahiaTopologia } from './bahiaTopologiaCache';
+
+// Buffer equilibrado (65% além da tela) para evitar cortes ao afastar o zoom sem sobrecarregar a GPU
+if (typeof L !== 'undefined' && L.Renderer) {
+  L.Renderer.prototype.options.padding = 0.65;
+  if (L.SVG) L.SVG.prototype.options.padding = 0.65;
+  if (L.Canvas) L.Canvas.prototype.options.padding = 0.65;
+}
 
 import {
   SEMIARIDO_TERRITORY_IDS,
@@ -82,16 +89,33 @@ export default function SideMap({
   filtroSemiarido: propFiltroSemiarido,
   getSegmentColor = null
 }) {
-  const { filtroSemiarido: contextFiltroSemiarido, setFiltroSemiarido } = useContext(DataContext) || {};
+  const {
+    filtroSemiarido: contextFiltroSemiarido,
+    setFiltroSemiarido,
+    modoGeografico: contextModoGeo,
+    setModoGeografico: setContextModoGeo
+  } = useContext(DataContext) || {};
+  const [localModoGeo, setLocalModoGeo] = useState(false);
+  const modoGeografico = contextModoGeo !== undefined ? Boolean(contextModoGeo) : localModoGeo;
+  const toggleModoGeografico = useCallback(() => {
+    if (setContextModoGeo) {
+      setContextModoGeo((prev) => !prev);
+    } else {
+      setLocalModoGeo((prev) => !prev);
+    }
+  }, [setContextModoGeo]);
+
   const filtroSemiarido = propFiltroSemiarido !== undefined ? Boolean(propFiltroSemiarido) : Boolean(contextFiltroSemiarido);
   const { isDark } = useTheme();
   const mapPalette = useMapTheme(filtroSemiarido);
   const mapRef = useRef(null);
-  const [territoriosGeoJson, setTerritoriosGeoJson] = useState(null);
-  const [municipiosGeoJson, setMunicipiosGeoJson] = useState(null);
-  const [territoryMeshes, setTerritoryMeshes] = useState({});
-  const [allTerritoryMesh, setAllTerritoryMesh] = useState(null);
-  const [stateBoundaryMesh, setStateBoundaryMesh] = useState(null);
+  const mapContainerRef = useRef(null);
+  const territoriosLayerRef = useRef(null);
+  const municipiosLayerRef = useRef(null);
+  const tooltipDomRef = useRef(null);
+  const lastPointerPosRef = useRef({ x: 0, y: 0 });
+
+  const [topologia, setTopologia] = useState(() => getCachedBahiaTopologia());
   const [pinnedAssetId, setPinnedAssetId] = useState(null);
   const [hoveredFeatureName, setHoveredFeatureName] = useState(null);
   const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
@@ -99,13 +123,45 @@ export default function SideMap({
   const [showAllConnections, setShowAllConnections] = useState(false);
   const [currentZoom, setCurrentZoom] = useState(6);
 
+  const territoriosGeoJson = topologia?.mergedNormalData || null;
+  const municipiosByTerritory = topologia?.municipiosByTerritory || {};
+  const territoryMeshes = topologia?.territoryMeshes || {};
+  const allTerritoryMesh = topologia?.allTerritoryMesh || null;
+  const stateBoundaryMesh = topologia?.stateBoundaryMesh || null;
+
+  useEffect(() => {
+    if (topologia) return;
+    let active = true;
+    loadBahiaTopologia()
+      .then((data) => {
+        if (active) setTopologia(data);
+      })
+      .catch((err) => console.error('Erro ao carregar topologia:', err));
+    return () => {
+      active = false;
+    };
+  }, [topologia]);
+
+  // Atalho Escape para fechar modo expandido ou limpar seleção de território
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (isExpanded && onToggleExpand) {
+          onToggleExpand();
+        } else if (selectedTerritory) {
+          onSelectTerritory(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded, onToggleExpand, selectedTerritory, onSelectTerritory]);
+
   useEffect(() => {
     if (focusedAsset) {
       if (focusedAsset.id != null) setPinnedAssetId(focusedAsset.id);
     }
   }, [focusedAsset]);
-
-  const municipioTerritoryMap = useMemo(() => buildMunicipioTerritoryMap(), []);
 
   // Categorias
   const allAtivosCategories = useMemo(() => {
@@ -228,8 +284,47 @@ export default function SideMap({
     if (selectedCategory && selectedCategory !== 'todas') {
       list = list.filter((c) => (c.categoria || c.tipo) === selectedCategory);
     }
+    if (selectedTerritory) {
+      const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+      const tNorm = normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '');
+      list = list.filter((c) => {
+        if (tid && String(c.id_territorio) === tid) return true;
+        if (tNorm && normalizeName(c.territorio_identidade || c.territorio || '') === tNorm) return true;
+        return false;
+      });
+    }
     return list.filter((c) => activeCategoryKeys.has(c.categoria || 'Outras Áreas'));
-  }, [cursosData, activeCategoryKeys, selectedCategory, mode]);
+  }, [cursosData, activeCategoryKeys, selectedCategory, selectedTerritory, mode]);
+
+  const visibleCursosGeoMarkers = useMemo(() => {
+    if (mode !== 'cursos' || !modoGeografico) return [];
+    return visibleCursos
+      .map((c, idx) => {
+        let lat = c.lat ? Number(c.lat) : null;
+        let lng = c.lng ? Number(c.lng) : null;
+        if (!isInsideBahia(lat, lng)) {
+          const coords = findMunicipioCoords(c.municipio);
+          if (coords) {
+            lat = coords[0];
+            lng = coords[1];
+          }
+        }
+        if (!isInsideBahia(lat, lng)) return null;
+        return {
+          ...c,
+          id: c.id_curso || c.id || `curso-${idx}`,
+          nome: c.nome_curso || c.curso || c.nome || 'Curso Superior / Técnico',
+          tipo: c.categoria || 'Curso CT&I',
+          shortTipo: c.ies ? `${c.ies} · ${c.categoria || 'Curso'}` : (c.categoria || 'Curso'),
+          territorio: c.territorio_identidade || c.territorio,
+          corHex: '#2563EB',
+          corHexDark: '#60A5FA',
+          lat,
+          lng
+        };
+      })
+      .filter(Boolean);
+  }, [mode, modoGeografico, visibleCursos]);
 
   const visibleCadeias = useMemo(() => {
     if (mode !== 'cadeias') return [];
@@ -556,109 +651,41 @@ export default function SideMap({
     return stats;
   }, [baseCadeiasForStats, mode]);
 
-  // Carrega a topologia base
+  const updateTooltipPosition = useCallback((clientX, clientY) => {
+    const container = mapContainerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const tooltipWidth = 220;
+    const tooltipHeight = 82;
+    const offset = 14;
+
+    let x = clientX - rect.left + offset;
+    let y = clientY - rect.top + offset;
+
+    if (x + tooltipWidth > rect.width - 8) x = clientX - rect.left - tooltipWidth - offset;
+    if (y + tooltipHeight > rect.height - 8) y = clientY - rect.top - tooltipHeight - offset;
+    if (x < 8) x = 8;
+    if (y < 8) y = 8;
+
+    lastPointerPosRef.current = { x, y };
+    if (tooltipDomRef.current) {
+      tooltipDomRef.current.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+    }
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      updateTooltipPosition(e.clientX, e.clientY);
+    },
+    [updateTooltipPosition]
+  );
+
   useEffect(() => {
-    fetch('/BA_(1)9396399957704198.json')
-      .then((resp) => resp.json())
-      .then((topology) => {
-        const geometries = topology.objects.BA.geometries;
-        const groups = {};
-
-        geometries.forEach((geom) => {
-          const nome = geom.properties?.NOME || geom.properties?.nome || '';
-          const dbInfo = municipioTerritoryMap[normalizeName(nome)];
-          const idTerr = dbInfo ? String(dbInfo.id_territorio) : 'outros';
-          const nomeTerr = dbInfo ? dbInfo.nome_territorio : 'Outros';
-
-          geom.id_territorio = idTerr;
-          geom.nome_territorio = nomeTerr;
-          if (!geom.properties) geom.properties = {};
-          geom.properties.id_territorio = idTerr;
-          geom.properties.nome_territorio = nomeTerr;
-
-          if (!groups[idTerr]) {
-            groups[idTerr] = {
-              id_territorio: idTerr,
-              nome_territorio: nomeTerr,
-              geoms: []
-            };
-          }
-          groups[idTerr].geoms.push(geom);
-        });
-
-        const terrFeatures = Object.entries(groups).map(([idTerr, group]) => {
-          const mergedGeometry = topojson.merge(topology, group.geoms);
-          return {
-            type: 'Feature',
-            properties: {
-              id_territorio: idTerr,
-              nome_territorio: group.nome_territorio
-            },
-            geometry: mergedGeometry
-          };
-        });
-
-        setTerritoriosGeoJson({
-          type: 'FeatureCollection',
-          features: terrFeatures
-        });
-
-        const munFeatures = topojson.feature(topology, topology.objects.BA).features.map(feat => {
-          const rawMunName = feat.properties?.NOME || feat.properties?.nome || '';
-          const dbInfo = municipioTerritoryMap[normalizeName(rawMunName)];
-          return {
-            ...feat,
-            properties: {
-              ...feat.properties,
-              nome_municipio: dbInfo ? dbInfo.nome_municipio : rawMunName,
-              id_territorio: dbInfo ? dbInfo.id_territorio : null,
-              nome_territorio: dbInfo ? dbInfo.nome_territorio : null
-            }
-          };
-        });
-
-        setMunicipiosGeoJson({
-          type: 'FeatureCollection',
-          features: munFeatures
-        });
-
-        // Contornos perimetrais individuais nítidos de cada território (sem cortes)
-        const tMeshes = {};
-        Object.entries(groups).forEach(([idTerr, group]) => {
-          const idStr = String(idTerr);
-          const cleanNome = group.nome_territorio.replace(/^Território de Identidade\s+/i, '').trim();
-          const normNome = normalizeName(cleanNome);
-
-          const mesh = topojson.mesh(
-            topology,
-            topology.objects.BA,
-            (a, b) => a === b ? String(a.id_territorio) === idStr : (String(a.id_territorio) === idStr) !== (String(b.id_territorio) === idStr)
-          );
-
-          tMeshes[idStr] = mesh;
-          if (normNome) tMeshes[normNome] = mesh;
-        });
-
-        // Contornos unificados de todas as divisas entre territórios
-        const combinedMesh = topojson.mesh(
-          topology,
-          topology.objects.BA,
-          (a, b) => a !== b && String(a.id_territorio) !== String(b.id_territorio)
-        );
-
-        // Contorno perimetral externo do Estado da Bahia
-        const stateMesh = topojson.mesh(
-          topology,
-          topology.objects.BA,
-          (a, b) => a === b
-        );
-
-        setTerritoryMeshes(tMeshes);
-        setAllTerritoryMesh(combinedMesh);
-        setStateBoundaryMesh(stateMesh);
-      })
-      .catch((err) => console.error('Erro ao carregar topologia:', err));
-  }, [municipioTerritoryMap]);
+    if (hoveredFeatureName && tooltipDomRef.current) {
+      const { x, y } = lastPointerPosRef.current;
+      tooltipDomRef.current.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+    }
+  }, [hoveredFeatureName]);
 
   // 1. Estilização dos Territórios de Identidade
   const territoryBorderStyle = (feature) => {
@@ -860,25 +887,80 @@ export default function SideMap({
   };
 
   const geoJsonLayersByTerritoryRef = useRef({});
+  const styleRefs = useRef({ territoryBorderStyle, municipioBorderStyle, mode, selectedTerritory, filtroSemiarido, onSelectTerritory });
+  useEffect(() => {
+    styleRefs.current = { territoryBorderStyle, municipioBorderStyle, mode, selectedTerritory, filtroSemiarido, onSelectTerritory };
+  });
 
-  const onEachTerritoryFeature = (feature, layer) => {
+  useEffect(() => {
+    if (territoriosLayerRef.current) {
+      territoriosLayerRef.current.setStyle((feature) => styleRefs.current.territoryBorderStyle(feature));
+    }
+  }, [
+    mode,
+    filtroSemiarido,
+    isDark,
+    selectedTerritory,
+    hoveredFeatureName,
+    cursosStatsByTerritory,
+    ativosStatsByTerritory,
+    cadeiasStatsByTerritory
+  ]);
+
+  useEffect(() => {
+    if (municipiosLayerRef.current) {
+      municipiosLayerRef.current.setStyle((feature) => styleRefs.current.municipioBorderStyle(feature));
+    }
+  }, [
+    mode,
+    filtroSemiarido,
+    isDark,
+    selectedTerritory,
+    hoveredFeatureName,
+    cursosStatsByMunicipio,
+    ativosStatsByMunicipio,
+    cadeiasStatsByMunicipio,
+    maxCursosNoTerritorioSelecionado
+  ]);
+
+  const selectedTerritoryMunicipiosGeoJson = useMemo(() => {
+    if (!selectedTerritory) return null;
+    const tid = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+    if (tid && municipiosByTerritory[tid]) return municipiosByTerritory[tid];
+
+    const rawNome = selectedTerritory.nome_territorio || selectedTerritory.territorio || '';
+    const cleanNome = rawNome.replace(/^Território de Identidade\s+/i, '').trim();
+    const norm = normalizeName(cleanNome);
+    if (norm && municipiosByTerritory[norm]) return municipiosByTerritory[norm];
+
+    return topologia?.municipiosGeoJson || null;
+  }, [selectedTerritory, municipiosByTerritory, topologia]);
+
+  const onEachTerritoryFeature = useCallback((feature, layer) => {
     const rawNome = feature?.properties?.nome_territorio || '';
     const nome = rawNome.replace(/^Território de Identidade\s+/i, '').trim();
     const idTerr = feature?.properties?.id_territorio;
     const norm = normalizeName(nome);
 
-    if (idTerr) geoJsonLayersByTerritoryRef.current[idTerr] = layer;
+    if (idTerr != null) {
+      geoJsonLayersByTerritoryRef.current[idTerr] = layer;
+      geoJsonLayersByTerritoryRef.current[String(idTerr)] = layer;
+    }
     if (norm) geoJsonLayersByTerritoryRef.current[norm] = layer;
 
     layer.on({
       mouseover: (e) => {
+        if (e.originalEvent) {
+          updateTooltipPosition(e.originalEvent.clientX, e.originalEvent.clientY);
+        }
         setHoveredFeatureName(nome);
-        setHoveredFeatureId(idTerr ? String(idTerr) : null);
-        if (mode !== 'cursos' && !selectedTerritory) {
+        setHoveredFeatureId(idTerr != null ? String(idTerr) : null);
+        const { mode: curMode, selectedTerritory: selTer, filtroSemiarido: semi } = styleRefs.current;
+        if (curMode !== 'cursos' && !selTer) {
           e.target.setStyle({
-            fillColor: filtroSemiarido ? '#FEF3C7' : '#EFF6FF',
+            fillColor: semi ? '#FEF3C7' : '#EFF6FF',
             fillOpacity: 1,
-            color: filtroSemiarido ? '#D97706' : '#2563EB',
+            color: semi ? '#D97706' : '#2563EB',
             weight: 1.8
           });
           if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -889,53 +971,59 @@ export default function SideMap({
       mouseout: (e) => {
         setHoveredFeatureName(null);
         setHoveredFeatureId(null);
-        if (mode !== 'cursos' && !selectedTerritory) {
-          e.target.setStyle(territoryBorderStyle(feature));
+        const { mode: curMode, selectedTerritory: selTer, territoryBorderStyle: styleFn } = styleRefs.current;
+        if (curMode !== 'cursos' && !selTer) {
+          e.target.setStyle(styleFn(feature));
         }
       },
       click: (e) => {
         L.DomEvent.stopPropagation(e);
-        const isCurrentSelected = selectedTerritory && (
-          (selectedTerritory.id_territorio && String(selectedTerritory.id_territorio) === String(idTerr)) ||
-          normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || '') === norm
+        const { selectedTerritory: selTer, onSelectTerritory: onSelect } = styleRefs.current;
+        const isCurrentSelected = selTer && (
+          (selTer.id_territorio && String(selTer.id_territorio) === String(idTerr)) ||
+          normalizeName(selTer.nome_territorio || selTer.territorio || '') === norm
         );
 
         if (isCurrentSelected) {
-          onSelectTerritory(null);
+          onSelect(null);
         } else {
-          onSelectTerritory({ id_territorio: idTerr, nome_territorio: nome, territorio: nome });
+          onSelect({ id_territorio: idTerr, nome_territorio: nome, territorio: nome });
         }
       }
     });
-  };
+  }, [updateTooltipPosition]);
 
-  const onEachMunicipioFeature = (feature, layer) => {
+  const onEachMunicipioFeature = useCallback((feature, layer) => {
     const munNome = feature?.properties?.nome_municipio || feature?.properties?.NOME || '';
     const idTerr = feature?.properties?.id_territorio;
     const terrNome = feature?.properties?.nome_territorio || '';
 
     layer.on({
       mouseover: (e) => {
+        if (e.originalEvent) {
+          updateTooltipPosition(e.originalEvent.clientX, e.originalEvent.clientY);
+        }
         setHoveredFeatureName(munNome);
-        setHoveredFeatureId(idTerr ? String(idTerr) : null);
+        setHoveredFeatureId(idTerr != null ? String(idTerr) : null);
         e.target.setStyle({
           weight: 2.0,
-          color: filtroSemiarido ? '#D97706' : '#1D3557'
+          color: styleRefs.current.filtroSemiarido ? '#D97706' : '#1D3557'
         });
       },
       mouseout: (e) => {
         setHoveredFeatureName(null);
         setHoveredFeatureId(null);
-        e.target.setStyle(municipioBorderStyle(feature));
+        e.target.setStyle(styleRefs.current.municipioBorderStyle(feature));
       },
       click: (e) => {
         L.DomEvent.stopPropagation(e);
-        if (!selectedTerritory && idTerr) {
-          onSelectTerritory({ id_territorio: idTerr, nome_territorio: terrNome, territorio: terrNome });
+        const { selectedTerritory: selTer, onSelectTerritory: onSelect } = styleRefs.current;
+        if (!selTer && idTerr) {
+          onSelect({ id_territorio: idTerr, nome_territorio: terrNome, territorio: terrNome });
         }
       }
     });
-  };
+  }, [updateTooltipPosition]);
 
   const hoveredInfo = useMemo(() => {
     if (!hoveredFeatureName) return null;
@@ -1091,18 +1179,42 @@ export default function SideMap({
   );
 
   return (
-    <div className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-amber-50/40 dark:bg-amber-950/20' : 'bg-surface-sunken'} bg-carto-grid rounded-panel overflow-hidden select-none z-10 flex-1`}>
+    <div
+      ref={mapContainerRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => {
+        setHoveredFeatureName(null);
+        setHoveredFeatureId(null);
+      }}
+      className={`relative w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-amber-50/40 dark:bg-amber-950/20' : 'bg-surface-sunken'} bg-carto-grid rounded-panel overflow-hidden select-none z-10 flex-1`}
+    >
       <MapContainer
         ref={mapRef}
-        center={[-13.1, -41.7]}
-        zoom={5.6}
-        minZoom={5.0}
-        maxBounds={[
-          [-18.5, -47.0],
-          [-8.0, -37.0]
-        ]}
-        maxBoundsViscosity={1.0}
+        preferCanvas={true}
+        center={[-13.0, -41.6]}
+        zoom={5.75}
+        minZoom={modoGeografico ? 4.0 : 5.0}
+        maxZoom={modoGeografico ? 19 : 15}
+        zoomSnap={0.25}
+        zoomDelta={0.5}
+        wheelPxPerZoomLevel={90}
+        wheelDebounceTime={30}
+        inertia={true}
+        inertiaDeceleration={3000}
+        maxBounds={
+          modoGeografico
+            ? [
+                [-35.0, -75.0],
+                [6.0, -32.0]
+              ]
+            : [
+                [-18.8, -47.5],
+                [-7.5, -36.5]
+              ]
+        }
+        maxBoundsViscosity={modoGeografico ? 0.3 : 0.85}
         scrollWheelZoom={true}
+        doubleClickZoom={false}
         className="w-full h-full z-0 flex-1 min-h-0 outline-none"
         zoomControl={false}
         attributionControl={false}
@@ -1126,26 +1238,57 @@ export default function SideMap({
           selectedTerritory={selectedTerritory}
         />
 
-        {territoriosGeoJson && (
+        {/* MAPA BASE COM PRECISÃO GEOGRÁFICA REAL (SEM BLOQUEIOS OU MARCAS D'ÁGUA) */}
+        {modoGeografico && (
+          <TileLayer
+            key={`geo-tiles-${isDark ? 'dark' : 'light'}`}
+            url={
+              isDark
+                ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+                : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'
+            }
+            maxZoom={19}
+            minZoom={3}
+            keepBuffer={8}
+            updateWhenZooming={false}
+            updateWhenIdle={false}
+            eventHandlers={{
+              tileerror: (e) => {
+                const target = e.tile;
+                if (target && !target._retried) {
+                  target._retried = true;
+                  const currentSrc = target.src;
+                  setTimeout(() => {
+                    target.src = currentSrc;
+                  }, 300);
+                }
+              }
+            }}
+          />
+        )}
+
+        {!modoGeografico && territoriosGeoJson && (
           <GeoJSON
-            key={`territorios-layer-${mode}-${filtroSemiarido ? 'semi' : 'norm'}-${selectedTerritory?.id_territorio || 'none'}-${selectedCategory || 'all'}-${selectedTipo || 'all'}-${selectedSegmento || 'all'}-${activeCategoryKeys.size}-${mode === 'cursos' ? visibleCursos.length : mode === 'cadeias' ? visibleCadeias.length : visibleAtivos.length}`}
+            key="territorios-base-layer"
+            ref={territoriosLayerRef}
             data={territoriosGeoJson}
             style={territoryBorderStyle}
             onEachFeature={onEachTerritoryFeature}
           />
         )}
 
-        {selectedTerritory && municipiosGeoJson && (
+        {!modoGeografico && selectedTerritory && selectedTerritoryMunicipiosGeoJson && (
           <GeoJSON
-            key={`municipios-layer-${mode}-${filtroSemiarido ? 'semi' : 'norm'}-${selectedTerritory.id_territorio || selectedTerritory.territorio}-${activeCategoryKeys.size}-${mode === 'cursos' ? visibleCursos.length : mode === 'cadeias' ? visibleCadeias.length : visibleAtivos.length}`}
-            data={municipiosGeoJson}
+            key={`municipios-layer-${selectedTerritory.id_territorio || selectedTerritory.territorio}`}
+            ref={municipiosLayerRef}
+            data={selectedTerritoryMunicipiosGeoJson}
             style={municipioBorderStyle}
             onEachFeature={onEachMunicipioFeature}
           />
         )}
 
         {/* MALHA DE CONTORNOS UNIFICADOS DE TODOS OS TERRITÓRIOS (SEM LINHAS DUPLAS) */}
-        {!selectedTerritory && allTerritoryMesh && (
+        {!modoGeografico && !selectedTerritory && allTerritoryMesh && (
           <GeoJSON
             key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}`}
             pane="territoryOutlinePane"
@@ -1165,13 +1308,13 @@ export default function SideMap({
         {/* CONTORNO PERIMETRAL EXTERNO DO ESTADO DA BAHIA */}
         {!selectedTerritory && stateBoundaryMesh && (
           <GeoJSON
-            key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}`}
+            key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}-${modoGeografico ? 'geo' : 'carto'}`}
             pane="territoryOutlinePane"
             data={stateBoundaryMesh}
             style={{
-              color: filtroSemiarido ? '#92400E' : (isDark ? '#475569' : '#94A3B8'),
-              weight: 1.8,
-              opacity: 1,
+              color: filtroSemiarido ? '#92400E' : (isDark ? '#475569' : '#64748B'),
+              weight: modoGeografico ? 1.5 : 1.8,
+              opacity: modoGeografico ? 0.55 : 1,
               fill: false,
               lineCap: 'round',
               lineJoin: 'round'
@@ -1181,7 +1324,7 @@ export default function SideMap({
         )}
 
         {/* CONTORNO EM DESTAQUE NO HOVER (QUANDO NÃO HÁ SELEÇÃO) */}
-        {hoveredTerritoryMesh && !selectedTerritory && (
+        {!modoGeografico && hoveredTerritoryMesh && !selectedTerritory && (
           <GeoJSON
             key={`hover-territory-mesh-${hoveredFeatureId || hoveredFeatureName}-${filtroSemiarido ? '1' : '0'}`}
             pane="territoryOutlinePane"
@@ -1260,9 +1403,15 @@ export default function SideMap({
           );
         })}
 
-        {(mode === 'ativos' || mode === 'cadeias') && (
+        {(mode === 'ativos' || mode === 'cadeias' || (mode === 'cursos' && modoGeografico)) && (
           <SuperclusteredMarkers
-            processedAtivos={mode === 'cadeias' ? visibleCadeias : visibleAtivos}
+            processedAtivos={
+              mode === 'cadeias'
+                ? visibleCadeias
+                : mode === 'cursos'
+                  ? visibleCursosGeoMarkers
+                  : visibleAtivos
+            }
             pinnedAssetId={pinnedAssetId}
             setPinnedAssetId={setPinnedAssetId}
             onAssetClick={onAssetClick}
@@ -1351,7 +1500,7 @@ export default function SideMap({
         })()}
       </div>
 
-      {mode === 'cursos' && (
+      {mode === 'cursos' && !modoGeografico && (
         <div className="absolute bottom-3 left-3 z-[400] bg-surface/95 dark:bg-surface/95 backdrop-blur-md rounded-xl px-3.5 py-3 border border-border/80 shadow-card pointer-events-auto min-w-[308px]">
           <div className="flex items-center justify-between gap-3 mb-2.5">
             <span className={`text-caption font-semibold tracking-tight leading-none ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-primary'}`}>
@@ -1406,6 +1555,33 @@ export default function SideMap({
             <span>Teia de Conexões</span>
           </button>
         )}
+
+        {/* TOGGLE MAPA GEOGRÁFICO (SEM CAMADA DE TERRITÓRIOS POR CIMA) */}
+        <button
+          type="button"
+          onClick={toggleModoGeografico}
+          title={
+            modoGeografico
+              ? 'Voltar para camada de Territórios'
+              : 'Ver mapa real com precisão geográfica (sem camada por cima)'
+          }
+          className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-control text-caption font-semibold transition-colors duration-150 cursor-pointer border select-none ${
+            modoGeografico
+              ? 'bg-surface border-primary-500/40 text-primary-700 dark:text-primary-300 shadow-card'
+              : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
+          }`}
+        >
+          <span
+            className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-xs ${
+              modoGeografico
+                ? 'bg-primary-600 text-white'
+                : 'bg-surface-soft border border-border text-text-muted'
+            }`}
+          >
+            <Globe size={13} strokeWidth={2.1} />
+          </span>
+          <span className="truncate text-left">Geográfico</span>
+        </button>
 
         {/* BOTÃO MODO SEMIÁRIDO AO LADO DO EXPANDIR (PADRÃO VISÃO GERAL) */}
         {Boolean(setFiltroSemiarido) && (
@@ -1466,18 +1642,20 @@ export default function SideMap({
         )}
       </div>
 
-      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-surface rounded-control border border-border shadow-card overflow-hidden">
+      <div className="absolute bottom-3 right-3 z-[400] flex flex-col bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-xl border border-zinc-200/80 dark:border-zinc-800 shadow-sm overflow-hidden">
         <button
-          onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
-          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
+          onClick={() => mapRef.current?.zoomIn(0.75)}
+          aria-label="Aproximar mapa"
+          className={`w-9 h-9 flex items-center justify-center transition-all duration-150 ease-out active:scale-[0.99] border-b border-zinc-200/80 dark:border-zinc-800 cursor-pointer ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70' : 'text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70'
             }`}
           title="Aproximar"
         >
           <span className="text-lg font-medium leading-none">+</span>
         </button>
         <button
-          onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
-          className={`w-9 h-9 flex items-center justify-center transition-colors border-b border-border cursor-pointer ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft'
+          onClick={() => mapRef.current?.zoomOut(0.75)}
+          aria-label="Afastar mapa"
+          className={`w-9 h-9 flex items-center justify-center transition-all duration-150 ease-out active:scale-[0.99] border-b border-zinc-200/80 dark:border-zinc-800 cursor-pointer ${filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70' : 'text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70'
             }`}
           title="Afastar"
         >
@@ -1487,7 +1665,7 @@ export default function SideMap({
           onClick={() => {
             setPinnedAssetId(null);
             setActiveCategoryKeys(new Set(allCategories.map((c) => c.key)));
-            mapRef.current?.flyTo([-13.1, -41.7], 5.6, { duration: 0.6 });
+            mapRef.current?.flyTo([-13.0, -41.6], 5.75, { duration: 0.55 });
             onSelectTerritory(null);
             onSelectIES?.(null);
             onSelectSegmento?.(null);
@@ -1495,11 +1673,12 @@ export default function SideMap({
             onSelectCategory?.('todas');
             onAssetClick?.(null);
           }}
-          className={`w-9 h-9 flex items-center justify-center transition-all cursor-pointer ${hasActiveFilter
-            ? 'text-danger-600 bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 dark:hover:bg-danger-900/50'
-            : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-surface-soft' : 'text-primary-600 dark:text-primary-400 hover:bg-surface-soft')
+          aria-label="Limpar filtros"
+          className={`w-9 h-9 flex items-center justify-center transition-all duration-150 ease-out active:scale-[0.99] cursor-pointer ${hasActiveFilter
+            ? 'text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20'
+            : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70' : 'text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70')
             }`}
-          title="Limpar filtros"
+          title="Limpar filtros e centralizar Bahia (Esc)"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" />
@@ -1508,6 +1687,32 @@ export default function SideMap({
           </svg>
         </button>
       </div>
+
+      {/* TOOLTIP FLUTUANTE ACELERADO POR GPU (ZERO RE-RENDERS NO MOUSEMOVE) */}
+      {hoveredInfo && (
+        <div
+          ref={tooltipDomRef}
+          className="absolute top-0 left-0 z-[1000] rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-3 py-2.5 shadow-md pointer-events-none will-change-transform"
+          style={{ width: 216 }}
+        >
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              {selectedTerritory ? 'Município' : 'Território de Identidade'}
+            </span>
+            <span className="text-xs font-semibold text-zinc-950 dark:text-zinc-50 leading-snug truncate">
+              {hoveredInfo.label}
+            </span>
+            <div className="flex items-center justify-between pt-1.5 mt-0.5 border-t border-zinc-200/60 dark:border-zinc-800/60">
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                Total {hoveredInfo.sub}
+              </span>
+              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
+                {hoveredInfo.count} {hoveredInfo.unit}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
