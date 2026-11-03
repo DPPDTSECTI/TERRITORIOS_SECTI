@@ -68,7 +68,6 @@ Fontes: **Roboto Flex** (texto) e **Righteous** (display), carregadas do Google 
 │   ├── bahia_outline.svg, favicon.svg, img/…   Ativos visuais (brasões, favicon)
 │   └── robots.txt, sitemap.xml
 ├── scripts/                   Ingestão, captura de relatórios, otimização de mapa/imagens
-├── scratch/                   Prints e script de apoio de desenvolvimento (não faz parte do app)
 ├── src/
 │   ├── main.jsx               Entrada; ErrorBoundary; registro de service worker
 │   ├── App.jsx                Rotas, layout, transição de páginas, rolagem global

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
-const OUTPUT_DIR = path.join(ROOT_DIR, 'scratch', 'redesign');
+const OUTPUT_DIR = path.join(ROOT_DIR, 'dist', 'screenshots');
 
 const ROUTES = [
   { name: 'home', path: '/' },
@@ -113,7 +113,7 @@ async function run() {
 
     console.log(`\n============================================================`);
     console.log(`INICIANDO CAPTURAS DE QA (8 Rotas x 3 Resoluções x 2 Temas)`);
-    console.log(`Destino: scratch/redesign/`);
+    console.log(`Destino: dist/screenshots/`);
     console.log(`============================================================\n`);
 
     for (const route of ROUTES) {

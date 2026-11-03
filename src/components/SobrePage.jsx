@@ -204,7 +204,7 @@ export default function SobrePage() {
                 </p>
               </div>
 
-              {/* As 5 Tipologias Estritas Monitoradas */}
+              {/* As 5 Tipologias Estritas Monitoradas + Critério */}
               <div>
                 <h3 className="text-caption font-medium text-text-muted mb-3.5">
                   As 5 Tipologias Institucionais Monitoradas
@@ -215,55 +215,75 @@ export default function SobrePage() {
                     {
                       titulo: 'Campi Univ. Público Federal',
                       siglas: 'UFBA · UFRB · UFSB · UFOB · UNIVASF',
-                      desc: 'Polos de programas de pós-graduação stricto sensu e laboratórios avançados com conexão RNP de altíssima performance.'
+                      desc: 'Polos de pós-graduação stricto sensu e laboratórios avançados com conexão RNP de altíssima performance e velocidade.',
+                      tag: 'Pública Federal'
                     },
                     {
                       titulo: 'Campi Univ. Público Estadual',
                       siglas: 'UNEB · UEFS · UESC · UESB',
-                      desc: 'A principal espinha dorsal de interiorização do ensino superior, conectando o semiárido ao litoral baiano.'
+                      desc: 'Principal espinha dorsal de interiorização do ensino superior público, articulando o semiárido ao litoral baiano.',
+                      tag: 'Pública Estadual'
                     },
                     {
                       titulo: 'Campi Inst. Federal',
-                      siglas: 'IFBA e IF Baiano',
-                      desc: 'Institutos dedicados à educação profissionalizante, formação tecnológica e inovação aplicada às vocações regionais.'
+                      siglas: 'IFBA · IF Baiano',
+                      desc: 'Institutos federais de formação profissionalizante e tecnológica, com inovação aplicada às vocações regionais.',
+                      tag: 'Rede Federal EPCT'
                     },
                     {
                       titulo: 'Campi Univ. Privada',
                       siglas: 'Faculdades e Centros Universitários',
-                      desc: 'Instituições privadas credenciadas com graduações ativas nas áreas prioritárias de Ciência, Tecnologia e Inovação.'
+                      desc: 'Instituições privadas credenciadas com graduações ativas e estruturadas nas áreas de Ciência, Tecnologia e Inovação.',
+                      tag: 'Rede Privada'
                     },
                     {
                       titulo: 'ICTs (Institutos de Pesquisa)',
                       siglas: 'SENAI CIMATEC · Fiocruz/IGM · Embrapa',
-                      desc: 'Centros e institutos dedicados à pesquisa aplicada, ensaios laboratoriais e desenvolvimento tecnológico de ponta.'
+                      desc: 'Centros e institutos dedicados à pesquisa aplicada, ensaios laboratoriais certificados e desenvolvimento de ponta.',
+                      tag: 'P&D Tecnológico'
+                    },
+                    {
+                      titulo: 'Critério & Ordenação',
+                      siglas: 'Métrica RNP · Priorização Decrescente',
+                      desc: 'Métrica que compara a proporção com e sem RNP por território e categoria, ordenando os registros em ordem decrescente.',
+                      tag: 'Metodologia',
+                      isMetodologia: true
                     }
                   ].map((cat, i) => (
                     <div
                       key={i}
-                      className="bg-surface-soft rounded-subcard p-4 sm:p-5 border border-border flex flex-col justify-between hover:border-border-strong transition-colors"
+                      className={`rounded-xl p-4 sm:p-5 border flex flex-col justify-between transition-colors h-full ${
+                        cat.isMetodologia
+                          ? 'bg-primary-50/30 dark:bg-primary-950/20 border-primary-200/50 dark:border-primary-800/40'
+                          : 'bg-surface-soft border-border hover:border-border-strong'
+                      }`}
                     >
-                      <div>
-                        <strong className="block text-body-sm font-semibold text-text-primary tracking-tight mb-0.5">
-                          {cat.titulo}
-                        </strong>
-                        <span className="inline-block text-caption font-medium text-text-muted mb-2">
+                      <div className="flex flex-col">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <strong className="block text-body-sm font-semibold text-text-primary tracking-tight truncate">
+                            {cat.titulo}
+                          </strong>
+                          <span
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 border ${
+                              cat.isMetodologia
+                                ? 'bg-primary-100/60 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border-primary-200/60 dark:border-primary-700/50'
+                                : 'bg-surface text-text-muted border-border/80'
+                            }`}
+                          >
+                            {cat.tag}
+                          </span>
+                        </div>
+
+                        <span className="block text-caption font-medium text-text-muted mb-2 truncate">
                           {cat.siglas}
                         </span>
+
                         <p className="text-caption text-text-secondary leading-relaxed font-normal">
                           {cat.desc}
                         </p>
                       </div>
                     </div>
                   ))}
-
-                  <div className="bg-surface-soft border border-border rounded-subcard p-4 sm:p-5 flex flex-col justify-center">
-                    <span className="text-body-sm font-semibold text-text-primary tracking-tight block mb-1.5">
-                      Critério & Ordenação
-                    </span>
-                    <p className="text-caption text-text-secondary leading-relaxed font-normal">
-                      O painel compara a proporção <strong className="text-text-primary font-semibold">Com RNP</strong> vs. <strong className="text-text-primary font-semibold">Sem RNP</strong> por categoria e território, ordenando os registros estritamente em ordem <strong className="text-text-primary font-semibold">decrescente (DESC)</strong> para orientar decisões estratégicas de expansão.
-                    </p>
-                  </div>
                 </div>
               </div>
 
@@ -400,26 +420,39 @@ export default function SobrePage() {
               }
             ].map((kpi, idx) => {
               const KpiIcon = kpi.icon;
+              const isFull = idx === 6;
               return (
                 <Card
                   key={idx}
-                  className="p-5 flex flex-col justify-between hover:border-border-strong transition-colors"
+                  className={`p-5 flex flex-col justify-between hover:border-border-strong transition-colors ${
+                    isFull ? 'sm:col-span-2 lg:col-span-3' : ''
+                  }`}
                 >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
-                        {kpi.tag}
-                      </span>
-                      <div className="w-6 h-6 rounded-control bg-surface-soft text-text-muted flex items-center justify-center shrink-0 border border-border">
-                        <KpiIcon size={13} />
+                  <div className={isFull ? 'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4' : ''}>
+                    <div className={isFull ? 'max-w-3xl' : ''}>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
+                          {kpi.tag}
+                        </span>
+                        {!isFull && (
+                          <div className="w-6 h-6 rounded-control bg-surface-soft text-text-muted flex items-center justify-center shrink-0 border border-border">
+                            <KpiIcon size={13} />
+                          </div>
+                        )}
                       </div>
+                      <h3 className="font-semibold text-body text-text-primary mb-2">
+                        {kpi.t}
+                      </h3>
+                      <p className="text-caption text-text-secondary leading-relaxed font-normal">
+                        {kpi.d}
+                      </p>
                     </div>
-                    <h3 className="font-semibold text-body text-text-primary mb-2">
-                      {kpi.t}
-                    </h3>
-                    <p className="text-caption text-text-secondary leading-relaxed font-normal">
-                      {kpi.d}
-                    </p>
+
+                    {isFull && (
+                      <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0 border border-primary-200/50 dark:border-primary-800/40">
+                        <KpiIcon size={20} />
+                      </div>
+                    )}
                   </div>
                 </Card>
               );

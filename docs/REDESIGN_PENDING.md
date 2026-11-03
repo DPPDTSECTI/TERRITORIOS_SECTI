@@ -45,7 +45,7 @@ Registros vindos do banco de dados (Supabase/JSON) podem possuir o campo `corHex
   - Rotas auditadas: `/`, `/sobre`, `/territorios`, `/ativos`, `/cadeia`, `/cursos`, `/relatorio`, `/admin` (8 rotas).
   - Resoluções: `1280x720`, `1440x900` e `1920x1080` (3 viewports).
   - Temas: Claro e Escuro (alternância via `.dark`).
-  - Total: **48 screenshots gerados em `scratch/redesign/`**.
+  - Total: **48 screenshots gerados durante a auditoria de QA**.
   - **Resultado:** 0 problemas de overflow horizontal (`scrollWidth <= innerWidth` em todas as rotas e resoluções).
 - **Acessibilidade & Foco Visível:**
   - `<IconButton>` atualizado para suportar `label` ou `aria-label` e atributo `title` nativo.
