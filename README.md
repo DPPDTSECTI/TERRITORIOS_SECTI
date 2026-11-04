@@ -20,6 +20,26 @@ npm test
 
 As variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` são opcionais (há valores padrão em `src/services/supabase.js`). Para usar outro projeto Supabase, copie `.env.example` para `.env` e ajuste os valores; na Vercel, configure as mesmas chaves em **Settings → Environment Variables**.
 
+## Grafo de conhecimento (graphify)
+
+O repo traz um grafo do código em `graphify-out/` e a regra `.agents/rules/graphify.md` (`always_on`), que faz o Antigravity/Gemini consultar o grafo antes de responder sobre o código. Cada pessoa precisa fazer **uma vez**:
+
+```bash
+pip install graphifyy          # CLI usado pela regra (graphify query/path/explain/update)
+graphify hook install          # atualiza o grafo a cada commit/checkout (hook local, não é versionado)
+```
+
+Opcional (MCP no Antigravity): adicione em `~/.gemini/antigravity/mcp_config.json`:
+
+```json
+"graphify": {
+  "command": "uv",
+  "args": ["run", "--with", "graphifyy", "--with", "mcp", "-m", "graphify.serve", "${workspace.path}/graphify-out/graph.json"]
+}
+```
+
+Atualização manual: `graphify update .` (só AST, sem custo de API). Para recriar do zero, rode `/graphify .` no assistente.
+
 ## Scripts
 
 | Comando | Função |
