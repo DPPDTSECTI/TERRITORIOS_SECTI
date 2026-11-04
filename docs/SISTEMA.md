@@ -145,7 +145,7 @@ Estado global `filtroSemiarido` (em `DataContext`). Quando ativo, os módulos re
 Cada relatório é uma página de 1920×1080 com raiz `#pdf-report`. Duas rotas de geração:
 
 1. **Cliente (produção e padrão):** `html2canvas` + `jsPDF` capturam `#pdf-report` no navegador. Não depende de servidor.
-2. **Playwright (somente `localhost`):** `ExportPdfButton`/`RelatorioPage` chamam `/api/export-pdf` e `/api/export-png`, endpoints criados como *middleware* no `vite.config.js` que usa `scripts/captureReports.mjs` (Chromium a 1920×1080 @3x). **Não existe em produção** — na Vercel, `api/` só contém `keep-alive.js`; se a chamada falhar, o app volta ao método de cliente.
+2. **Playwright:** `RelatorioPage` chama `/api/export-pdf` e `/api/export-png`, que existem como *middleware* no `vite.config.js` (dev) **e** como funções serverless em `api/export-pdf.js` e `api/export-png.js` (Vercel), ambas usando `scripts/captureReports.mjs` (Chromium a 1920×1080 @3x). Se a chamada falhar, o app volta ao método de cliente. **Atenção:** esses endpoints são anônimos e sem rate limit; ver [AUDITORIA.md](./AUDITORIA.md#segurança).
 
 Regras `@media print` em `index.css` fixam a página em 1920×1080 e ocultam elementos `print:hidden`.
 
@@ -250,6 +250,8 @@ O plano gratuito do Supabase pausa o projeto após ~7 dias sem requisições e *
 - Sombras: `shadow-xs`, `shadow-card`, `shadow-card-soft`, `shadow-card-hover`, `shadow-card-elevated`, `shadow-glass`.
 
 ## 11. Pontos de atenção conhecidos
+
+> Auditoria detalhada por área (dados, relatórios/exportação, segurança, evolução entre branches), com `arquivo:linha` e correção sugerida: **[AUDITORIA.md](./AUDITORIA.md)**. Onde ela contradiz este documento, prevalece a auditoria (corrigido: seção 4.7; `reportAggregation.js` **não** é usado pelas telas, só por testes).
 
 | # | Situação | Impacto / sugestão |
 |---|---|---|
