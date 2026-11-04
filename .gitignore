@@ -35,3 +35,6 @@ public/img/*.exe
 /*_debug.png
 /crop_*.png
 /scratch/
+# graphify: arquivos locais/cache
+graphify-out/.graphify_*
+graphify-out/cache/
