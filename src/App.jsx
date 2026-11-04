@@ -108,7 +108,7 @@ function AnimatedRoutes() {
   const hideNavigation = isHome || isPrintPage;
 
   return (
-    <div className={`flex w-full ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-screen bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
+    <div className={`flex w-full ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-dvh bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">
         {!hideNavigation && (
@@ -118,7 +118,7 @@ function AnimatedRoutes() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -50, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="h-screen sticky top-0 z-50 flex-shrink-0 print:hidden"
+            className="h-dvh sticky top-0 z-50 flex-shrink-0 print:hidden"
           >
             <Sidebar
               username="PTI Bahia"
@@ -129,7 +129,7 @@ function AnimatedRoutes() {
       </AnimatePresence>
 
       {/* ÁREA PRINCIPAL */}
-      <div className={`flex-1 min-w-0 relative ${isHome ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
+      <div className={`flex-1 min-w-0 relative ${isHome ? 'min-h-screen' : 'h-dvh overflow-hidden'} bg-transparent print:h-auto print:overflow-visible`}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />

@@ -319,9 +319,9 @@ export default function AdminPage() {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <Badge variant={getBadgeVariant(ativo.tipo)}>
+                        <span className="text-caption font-medium text-text-secondary">
                           {ativo.tipo}
-                        </Badge>
+                        </span>
                       </td>
                       <td className="py-3 px-4 text-text-secondary truncate" title={ativo.municipio}>
                         {ativo.municipio}
@@ -330,7 +330,7 @@ export default function AdminPage() {
                         {ativo.referencia || '-'}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="bg-surface-soft text-text-primary px-2.5 py-1 rounded-control text-caption font-medium border border-border inline-flex items-center justify-center leading-none">
+                        <span className="text-caption font-semibold text-text-muted dark:text-zinc-400 uppercase tracking-wider">
                           {ativo.sigla || '-'}
                         </span>
                       </td>

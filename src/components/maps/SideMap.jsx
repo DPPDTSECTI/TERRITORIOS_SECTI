@@ -1431,7 +1431,7 @@ export default function SideMap({
           (mode === 'cursos' && selectedCategory && selectedCategory !== 'todas') ||
           (mode === 'cadeias' && (selectedSegmento || (selectedTipo && selectedTipo !== 'todos')))
         ) && (
-            <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="pointer-events-auto flex items-center gap-2 bg-surface px-3 py-1.5 rounded-full border border-border shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
               <span
                 className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${mode === 'cadeias' && selectedSegmento && getSegmentColor
                   ? ''
@@ -1477,7 +1477,7 @@ export default function SideMap({
           const isSelectedBadge = !hoveredInfo && Boolean(selectedTerritoryInfo);
 
           return (
-            <div className="pointer-events-auto flex items-center gap-1.5 bg-surface px-3 py-1.5 rounded-control border border-border shadow-card animate-in fade-in slide-in-from-top-1 duration-150">
+            <div className="pointer-events-auto flex items-center gap-1.5 bg-surface px-3 py-1.5 rounded-full border border-border shadow-card animate-in fade-in slide-in-from-top-1 duration-150">
               <Icon size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
               <span className="text-text-primary font-semibold text-caption tracking-tight truncate max-w-[160px]">
                 {display.label}
@@ -1507,7 +1507,7 @@ export default function SideMap({
               {selectedTerritory ? 'Densidade Relativa Municipal (Log)' : 'Densidade de Cursos'}
             </span>
             {selectedTerritory && (
-              <span className={`text-[10px] font-medium leading-none px-1.5 py-0.5 rounded-md tnum ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
+              <span className={`text-[10px] font-medium leading-none px-1.5 py-0.5 rounded-full tnum ${filtroSemiarido ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'bg-primary-500/10 text-primary-600 dark:text-primary-300'}`}>
                 Máx: {maxCursosNoTerritorioSelecionado}
               </span>
             )}
@@ -1542,7 +1542,7 @@ export default function SideMap({
           <button
             type="button"
             onClick={() => setShowAllConnections((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all border cursor-pointer select-none shadow-card ${showAllConnections
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all border cursor-pointer select-none shadow-card ${showAllConnections
               ? (filtroSemiarido
                 ? 'bg-amber-600 text-white border-amber-600 shadow-card'
                 : 'bg-primary-700 text-white border-primary-700 shadow-card')
@@ -1565,7 +1565,7 @@ export default function SideMap({
               ? 'Voltar para camada de Territórios'
               : 'Ver mapa real com precisão geográfica (sem camada por cima)'
           }
-          className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-control text-caption font-semibold transition-colors duration-150 cursor-pointer border select-none ${
+          className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-full text-caption font-semibold transition-colors duration-150 cursor-pointer border select-none ${
             modoGeografico
               ? 'bg-surface border-primary-500/40 text-primary-700 dark:text-primary-300 shadow-card'
               : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
@@ -1589,13 +1589,13 @@ export default function SideMap({
             type="button"
             onClick={() => setFiltroSemiarido(prev => !prev)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] w-[114px] min-w-[114px] max-w-[114px] px-2 rounded-control text-caption font-semibold transition-colors duration-150 cursor-pointer border select-none ${filtroSemiarido
-              ? 'bg-surface border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-card'
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] w-[114px] min-w-[114px] max-w-[114px] px-2 rounded-full text-caption font-semibold transition-all duration-150 cursor-pointer border select-none active:scale-[0.99] ${filtroSemiarido
+              ? 'bg-amber-500 text-white border-amber-600 shadow-sm ring-2 ring-amber-400/30'
               : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
               }`}
           >
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-xs ${filtroSemiarido
-              ? 'bg-amber-500 text-white'
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-2xs ${filtroSemiarido
+              ? 'bg-white text-amber-600'
               : 'bg-surface-soft border border-border text-text-muted'
               }`}>
               {filtroSemiarido ? (
@@ -1624,7 +1624,7 @@ export default function SideMap({
             onClick={onToggleExpand}
             title={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
             aria-label={isExpanded ? 'Recolher mapa' : 'Expandir mapa'}
-            className={`flex items-center justify-center w-[32px] h-[32px] rounded-control transition-all border cursor-pointer select-none shadow-card ${isExpanded
+            className={`flex items-center justify-center w-[32px] h-[32px] rounded-full transition-all border cursor-pointer select-none shadow-card ${isExpanded
               ? (filtroSemiarido
                 ? 'bg-amber-600 text-white border-amber-600 shadow-card'
                 : 'bg-primary-700 text-white border-primary-700 shadow-card')

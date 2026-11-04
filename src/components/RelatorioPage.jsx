@@ -1224,7 +1224,7 @@ export default function RelatorioPage() {
   }, [statsSintese]);
 
   return (
-    <main className="flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full select-none print:h-auto print:overflow-visible print:p-0">
+    <main className="flex-1 min-w-0 h-full min-h-0 overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full select-none print:h-auto print:overflow-visible print:p-0">
 
       {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
       <div
@@ -1382,7 +1382,11 @@ export default function RelatorioPage() {
       <div id="relatorio-export-container" className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 min-h-[540px] relative z-10 print:block print:h-auto print:overflow-visible">
 
         {/* CARD DO MAPA (ESQUERDA - COMPACTO PARA DAR MAIS ESPAÇO À LISTA/TABELA) */}
-        <div className="w-full lg:w-[29%] xl:w-[30%] shrink-0 h-[420px] lg:h-auto min-h-[420px] bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col print:hidden">
+        <div className={`w-full lg:w-[29%] xl:w-[30%] shrink-0 h-[420px] lg:h-auto min-h-[420px] bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col print:hidden transition-all duration-300 ${
+          reportMode === 'semiarido'
+            ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
+            : 'border-border'
+        }`}>
           {(() => {
             const handleMapSelect = (t) => {
               if (t && t.id_territorio) setSelectedTerritoryId(String(t.id_territorio));
@@ -1501,12 +1505,12 @@ export default function RelatorioPage() {
                   type="button"
                   onClick={handleToggleReportMode}
                   title={reportMode === 'normal' ? 'Ativar Modo Semiárido' : 'Voltar ao Modo Normal'}
-                  className={`relative flex items-center gap-2 h-9 w-[116px] min-w-[116px] max-w-[116px] px-2 rounded-control text-caption font-semibold transition-colors duration-150 cursor-pointer border shrink-0 select-none ${reportMode === 'semiarido'
+                  className={`relative flex items-center gap-2 h-9 w-[116px] min-w-[116px] max-w-[116px] px-2 rounded-full text-caption font-semibold transition-colors duration-150 cursor-pointer border shrink-0 select-none ${reportMode === 'semiarido'
                     ? 'bg-amber-500/10 border-amber-300 dark:border-amber-500/40 text-amber-800 dark:text-amber-200 shadow-2xs'
                     : 'bg-surface-soft border-border text-text-secondary hover:border-border-strong hover:text-text-primary'
                     }`}
                 >
-                  <span className={`w-6 h-6 rounded-control flex items-center justify-center shrink-0 transition-colors duration-150 shadow-2xs ${reportMode === 'semiarido'
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-2xs ${reportMode === 'semiarido'
                     ? 'bg-amber-500 text-white'
                     : 'bg-surface border border-border text-text-muted'
                     }`}>
@@ -1552,7 +1556,7 @@ export default function RelatorioPage() {
             </div>
 
             {/* ABAS / BOTÕES DOS TIPOS DE RELATÓRIO */}
-            <div className="tour-relatorio-tipo flex items-center bg-surface-soft p-1 rounded-2xl border border-border gap-1 overflow-x-auto hide-scroll print:hidden min-w-0">
+            <div className="tour-relatorio-tipo flex items-center bg-surface-soft p-1 rounded-full border border-border gap-1 overflow-x-auto hide-scroll print:hidden min-w-0">
               {reportOptions.map((opt) => {
                 const isActive = reportType === opt.id;
                 const Icon = opt.icon;
@@ -1567,7 +1571,7 @@ export default function RelatorioPage() {
                       setSortField(null);
                       setSelectedCadeia(null);
                     }}
-                    className={`px-3 py-2 rounded-xl text-caption font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap flex items-center gap-1.5 flex-1 justify-center select-none ${isActive
+                    className={`px-3 py-2 rounded-full text-caption font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap flex items-center gap-1.5 flex-1 justify-center select-none ${isActive
                       ? (reportMode === 'semiarido' ? 'bg-amber-600 text-white shadow-xs' : 'bg-primary-600 text-white shadow-xs')
                       : 'text-text-secondary hover:text-text-primary hover:bg-surface'
                       }`}
@@ -1725,17 +1729,14 @@ export default function RelatorioPage() {
                   subtitle="Fonte: Base Oficial SECTI / SDR"
                   icon={GitPullRequest}
                 />
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx) => (
-                    <span
-                      key={idx}
-                      className={`text-caption font-medium px-2.5 py-1 rounded-control shadow-2xs inline-flex items-center justify-center leading-none transition-colors ${reportMode === 'semiarido'
-                        ? 'bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-200 hover:bg-amber-500/25'
-                        : 'bg-surface border border-border text-text-secondary hover:text-text-primary'
-                        }`}
-                    >
-                      {cad}
-                    </span>
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 pt-1 text-caption text-text-secondary">
+                  {Array.from(new Set(scopedCadeias.map(c => c.entidade || c.cadeia_produtiva || c.nome_cadeia || c.id_cadeia))).slice(0, 24).map((cad, idx, arr) => (
+                    <React.Fragment key={idx}>
+                      <span className={`font-medium transition-colors ${reportMode === 'semiarido' ? 'text-amber-900 dark:text-amber-300' : 'text-text-primary'}`}>
+                        {cad}
+                      </span>
+                      {idx < arr.length - 1 && <span className="text-border-strong select-none">•</span>}
+                    </React.Fragment>
                   ))}
                   {scopedCadeias.length === 0 && (
                     <span className="text-body-sm text-text-muted">Nenhuma cadeia produtiva mapeada individualmente neste escopo.</span>

@@ -206,7 +206,7 @@ export default function FontesReferenciasSection() {
                 <button
                   key={cat.id}
                   onClick={() => handleSelectCategory(cat.id)}
-                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-control text-caption font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-caption font-semibold transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-primary-600 text-white shadow-xs'
                       : 'bg-surface-soft text-text-secondary border border-border hover:bg-surface hover:text-text-primary'
@@ -215,7 +215,7 @@ export default function FontesReferenciasSection() {
                   <IconComp size={14} className={isSelected ? 'text-white' : 'text-primary-600 dark:text-primary-400'} />
                   <span>{cat.label}</span>
                   <span
-                    className={`text-caption px-1.5 py-0.5 rounded-full font-medium ${
+                    className={`text-caption px-1.5 py-0.5 rounded-full font-medium tnum ${
                       isSelected ? 'bg-primary-700 text-white' : 'bg-surface border border-border text-text-secondary'
                     }`}
                   >
@@ -244,7 +244,7 @@ export default function FontesReferenciasSection() {
                       setSelectedSubcategory(sub.id);
                       setVisibleCount(12);
                     }}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control text-caption font-medium transition-all cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-caption font-medium transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-primary-900 text-white shadow-xs font-bold border border-primary-800'
                         : 'bg-surface-soft text-text-secondary border border-border hover:bg-surface hover:text-text-primary'
@@ -252,7 +252,7 @@ export default function FontesReferenciasSection() {
                   >
                     <span>{sub.label}</span>
                     <span
-                      className={`text-caption px-1.5 py-0.5 rounded-full font-medium ${
+                      className={`text-caption px-1.5 py-0.5 rounded-full font-medium tnum ${
                         isSelected ? 'bg-primary-950 text-white' : 'bg-surface border border-border text-text-muted'
                       }`}
                     >
@@ -285,7 +285,7 @@ export default function FontesReferenciasSection() {
       {/* GRID DE CARDS DE REFERÊNCIAS */}
       {filteredReferences.length === 0 ? (
         <Card className="p-12 text-center border-dashed flex flex-col items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-control bg-surface-soft text-text-muted flex items-center justify-center border border-border">
+          <div className="w-12 h-12 rounded-xl bg-surface-soft text-text-muted flex items-center justify-center border border-border">
             <Search size={22} />
           </div>
           <h4 className="text-body font-bold text-text-primary">Nenhuma referência encontrada</h4>

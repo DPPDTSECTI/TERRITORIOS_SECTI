@@ -593,11 +593,11 @@ export default function RelatorioAnalisePage() {
             </div>
 
             {/* Centro: Seletor de Módulo / Visão */}
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-medium w-full md:w-auto overflow-x-auto">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-full text-xs font-medium w-full md:w-auto overflow-x-auto">
               <button
                 type="button"
                 onClick={() => { setActiveTab('sintese'); setSearchParams({ tipo: 'sintese', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'sintese'
+                className={`px-2.5 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${activeTab === 'sintese'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
@@ -607,7 +607,7 @@ export default function RelatorioAnalisePage() {
               <button
                 type="button"
                 onClick={() => { setActiveTab('ativos'); setSearchParams({ tipo: 'ativos', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'ativos'
+                className={`px-2.5 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${activeTab === 'ativos'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
@@ -617,7 +617,7 @@ export default function RelatorioAnalisePage() {
               <button
                 type="button"
                 onClick={() => { setActiveTab('cursos'); setSearchParams({ tipo: 'cursos', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'cursos'
+                className={`px-2.5 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${activeTab === 'cursos'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
@@ -627,7 +627,7 @@ export default function RelatorioAnalisePage() {
               <button
                 type="button"
                 onClick={() => { setActiveTab('cadeias'); setSearchParams({ tipo: 'cadeias', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'cadeias'
+                className={`px-2.5 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${activeTab === 'cadeias'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
@@ -637,7 +637,7 @@ export default function RelatorioAnalisePage() {
               <button
                 type="button"
                 onClick={() => { setActiveTab('municipios'); setSearchParams({ tipo: 'municipios', territorio: selectedTerritoryId, modo: reportMode }); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${activeTab === 'municipios'
+                className={`px-2.5 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${activeTab === 'municipios'
                     ? 'bg-white dark:bg-slate-700 text-primary-900 dark:text-white shadow-2xs font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}

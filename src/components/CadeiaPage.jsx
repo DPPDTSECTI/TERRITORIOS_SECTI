@@ -445,8 +445,8 @@ export default function CadeiaPage() {
         return list;
     }, [territoryCadeias, selectedTipo]);
 
-    // 1. Ranking global de segmentos (calculado uma vez sobre o conjunto COMPLETO de cadeias, estável entre filtros)
-    const { globalTop7Set, segmentColorMap, neutralSegmentColor } = useMemo(() => {
+    // 1. Mapeamento de cores dos segmentos (calculado sobre o conjunto COMPLETO de cadeias, estável entre filtros)
+    const { segmentColorMap, neutralSegmentColor } = useMemo(() => {
         const counts = {};
         (enrichedCadeias || []).forEach(c => {
             const seg = c.segmento || 'Outros Segmentos';
@@ -457,28 +457,20 @@ export default function CadeiaPage() {
             .sort((a, b) => b[1] - a[1]);
 
         const palette = chartTheme.palette || [];
-        const neutral = palette[7] || chartTheme.textMuted || 'rgb(148, 163, 184)';
+        const neutral = palette[0] || 'rgb(148, 163, 184)';
 
         const colorMap = new Map();
-        const top7 = new Set();
-
         sorted.forEach(([name], idx) => {
-            if (idx < 7) {
-                top7.add(name);
-                colorMap.set(name, palette[idx] || palette[0]);
-            } else {
-                colorMap.set(name, neutral);
-            }
+            colorMap.set(name, palette[idx % palette.length] || neutral);
         });
 
         return {
-            globalTop7Set: top7,
             segmentColorMap: colorMap,
             neutralSegmentColor: neutral
         };
-    }, [enrichedCadeias, chartTheme.palette, chartTheme.textMuted]);
+    }, [enrichedCadeias, chartTheme.palette]);
 
-    // 2. getSegmentColor estável que consulta exclusivamente o ranking global
+    // 2. getSegmentColor estável que consulta o mapa de cores de segmentos
     const getSegmentColor = useCallback((segName) => {
         if (!segName) return neutralSegmentColor;
         return segmentColorMap.get(segName) || neutralSegmentColor;
@@ -499,20 +491,16 @@ export default function CadeiaPage() {
 
         return sorted.map(([name, count]) => {
             const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
-            const isTop7 = globalTop7Set.has(name);
             const color = getSegmentColor(name);
-            const legendLabel = isTop7 ? name : 'Demais segmentos';
 
             return {
                 name,
                 count,
                 percent,
-                color,
-                isTop7,
-                legendLabel
+                color
             };
         });
-    }, [baseCadeiasForStats, globalTop7Set, getSegmentColor]);
+    }, [baseCadeiasForStats, getSegmentColor]);
 
     const filteredCadeias = useMemo(() => {
         let list = territoryCadeias;
@@ -717,7 +705,7 @@ export default function CadeiaPage() {
     ];
 
     return (
-        <main className="flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
+        <main className="flex-1 min-w-0 h-full min-h-0 overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
@@ -725,42 +713,45 @@ export default function CadeiaPage() {
                 className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
                     }`}
             >
+                {/* 0. AMBIENT WARM TINT ACROSS CANVAS */}
+                <div className="absolute inset-0 bg-gradient-to-b from-amber-500/[0.06] via-amber-400/[0.02] to-transparent pointer-events-none" />
+
                 {/* 1. HALO RADIAL DIFUSO */}
                 <div
-                    className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+                    className="absolute -top-[16vw] -right-[10vw] w-[64vw] h-[64vw] min-w-[580px] min-h-[580px] max-w-[1100px] max-h-[1100px] rounded-full animate-sun-breath"
                     style={{
-                        background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
-                        filter: 'blur(35px)',
+                        background: 'radial-gradient(circle at 75% 25%, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.12) 32%, rgba(251, 191, 36, 0.05) 55%, transparent 75%)',
+                        filter: 'blur(45px)',
                     }}
                 />
 
                 {/* 2. ARCO / ANEL LUMINOSO */}
                 <div
-                    className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+                    className="absolute -top-[14vw] -right-[8vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
                     style={{
-                        border: '1.5px solid rgba(245, 158, 11, 0.22)',
-                        boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
-                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
-                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+                        border: '2px solid rgba(245, 158, 11, 0.35)',
+                        boxShadow: '0 0 50px rgba(251, 191, 36, 0.18), inset 0 0 50px rgba(245, 158, 11, 0.06)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0) 70%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0) 70%)',
                     }}
                 />
 
                 {/* 3. SEGUNDO ARCO EXPANSIVO */}
                 <div
-                    className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+                    className="absolute -top-[20vw] -right-[14vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
                     style={{
-                        border: '1px solid rgba(217, 119, 6, 0.11)',
-                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
-                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+                        border: '1.5px solid rgba(217, 119, 6, 0.22)',
+                        maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.45) 30%, rgba(0,0,0,0) 60%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.45) 30%, rgba(0,0,0,0) 60%)',
                     }}
                 />
 
                 {/* 4. GLOW DOURADO DE TOPO */}
                 <div
-                    className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+                    className="absolute top-0 right-0 w-[520px] h-[360px] rounded-full opacity-80 animate-sun-breath"
                     style={{
-                        background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
-                        filter: 'blur(40px)',
+                        background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.05) 50%, transparent 80%)',
+                        filter: 'blur(45px)',
                     }}
                 />
             </div>
@@ -774,10 +765,16 @@ export default function CadeiaPage() {
                         </h1>
                     </div>
                     <p className="text-body-sm text-text-secondary mt-1 font-medium">
-                        Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia
+                        {filtroSemiarido
+                            ? 'Mapeamento territorial de APLs e IGs presentes no Semiárido Baiano'
+                            : 'Mapeamento territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas do Estado da Bahia'}
                     </p>
                     <div
-                        className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}
+                        className={`divider-territorial w-56 mt-3 transition-all duration-500 ${
+                            filtroSemiarido
+                                ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent shadow-[0_0_12px_rgba(245,158,11,0.35)]'
+                                : ''
+                        }`}
                     />
                 </div>
             </div>
@@ -806,20 +803,22 @@ export default function CadeiaPage() {
                                 >
                                     <div
                                         title={kpi.tooltip || kpi.label}
-                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] rounded-card cursor-default overflow-hidden transition-colors duration-150 hover:border-border-strong select-none ${isHero
+                                        className={`p-4 sm:p-5 flex flex-col justify-between min-h-[108px] h-full rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
                                             ? (filtroSemiarido
-                                                ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                                                ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                                                 : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                                             : (filtroSemiarido
-                                                ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary'
-                                                : 'bg-surface-soft border border-border/70 text-text-primary')
+                                                ? 'bg-gradient-to-br from-amber-50/80 via-surface to-surface dark:from-amber-950/30 dark:via-zinc-900 dark:to-zinc-900 border border-amber-300/70 dark:border-amber-600/40 shadow-2xs hover:border-amber-400 dark:hover:border-amber-500 text-text-primary'
+                                                : 'bg-surface-soft border border-border/70 text-text-primary hover:border-border-strong')
                                             }`}
                                     >
                                         {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
                                         <div className="flex items-start justify-between gap-2 w-full min-w-0">
                                             <div className="flex flex-col min-w-0 flex-1">
                                                 <span
-                                                    className={`text-[13px] font-medium leading-tight truncate ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                                                    className={`text-[13px] font-medium leading-tight truncate ${isHero
+                                                        ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85')
+                                                        : (filtroSemiarido ? 'text-amber-900/85 dark:text-amber-200/90' : 'text-text-secondary')
                                                         }`}
                                                     title={kpi.label}
                                                 >
@@ -829,20 +828,24 @@ export default function CadeiaPage() {
 
                                             {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
                                             <div
-                                                className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isHero
+                                                className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center transition-colors duration-150 ${isHero
                                                     ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
-                                                    : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
+                                                    : (filtroSemiarido
+                                                        ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300/70 dark:border-amber-600/50 text-amber-700 dark:text-amber-300 shadow-2xs'
+                                                        : 'bg-surface border border-border/80 text-text-secondary shadow-2xs')
                                                     }`}
                                             >
                                                 <kpi.icon size={15} strokeWidth={2} />
                                             </div>
                                         </div>
 
-                                        {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + BADGE */}
+                                        {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + TEXTO PURO */}
                                         <div className="flex items-baseline w-full justify-between min-w-0 pt-0.5">
-                                            <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                                            <div className="flex items-baseline gap-2 min-w-0 flex-1 flex-wrap">
                                                 <span
-                                                    className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
+                                                    className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero
+                                                        ? 'text-white'
+                                                        : (filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary')
                                                         }`}
                                                 >
                                                     <AnimatedNumber value={kpi.value} />
@@ -851,12 +854,12 @@ export default function CadeiaPage() {
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
-                                                            ? 'bg-white/15 text-white border border-white/20'
-                                                            : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
+                                                        className={`text-caption font-semibold tabular-nums truncate shrink-0 ${isHero
+                                                            ? 'text-white/80'
+                                                            : 'text-amber-700 dark:text-amber-400'
                                                             }`}
                                                     >
-                                                        {kpi.percent}
+                                                        ({kpi.percent})
                                                     </span>
                                                 )}
                                             </div>
@@ -880,8 +883,13 @@ export default function CadeiaPage() {
                 {/* MAPA DE CADEIAS */}
                 <motion.div
                     variants={fadeUp}
-                    style={{ width: isMapExpanded ? 'calc(100% - 440px)' : 'calc(40% - 12px)' }}
-                    className="shrink-0 h-full min-h-[460px] min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col transition-[width] duration-300"
+                    className={`shrink-0 w-full h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-all duration-300 ${
+                        filtroSemiarido
+                            ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
+                            : 'border-border'
+                    } ${
+                        isMapExpanded ? 'lg:w-[calc(100%-440px)]' : 'lg:w-[calc(40%-10px)]'
+                    }`}
                 >
                     <SideMap
                         mode="cadeias"
@@ -1000,12 +1008,9 @@ export default function CadeiaPage() {
                                                     </div>
                                                 </div>
 
-                                                <Badge
-                                                    variant={tipoVariant}
-                                                    className="text-caption font-medium shrink-0"
-                                                >
+                                                <span className="text-caption font-semibold text-text-muted dark:text-zinc-400 uppercase tracking-wider shrink-0">
                                                     {c.tipo}
-                                                </Badge>
+                                                </span>
                                             </div>
                                         );
                                     })
@@ -1218,32 +1223,21 @@ export default function CadeiaPage() {
                                                                     </h4>
 
                                                                     <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-caption text-text-secondary mt-1 font-medium">
-                                                                        <Badge
-                                                                            variant="neutral"
-                                                                            className="text-caption font-medium"
-                                                                            style={{
-                                                                                backgroundColor: `${getSegmentColor(c.segmento)}15`,
-                                                                                color: getSegmentColor(c.segmento),
-                                                                                borderColor: `${getSegmentColor(c.segmento)}30`
-                                                                            }}
-                                                                        >
+                                                                        <span className="font-medium text-text-secondary dark:text-zinc-300">
                                                                             {c.segmento}
-                                                                        </Badge>
+                                                                        </span>
                                                                         <span>•</span>
-                                                                        <span className="font-semibold text-text-primary">Sede: {c.municipio_sede}</span>
+                                                                        <span className="font-semibold text-text-primary">{c.municipio_sede}</span>
                                                                         <span>•</span>
                                                                         <span className="text-text-muted">{c.territorio_identidade}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
 
-                                                            <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
-                                                                <Badge
-                                                                    variant={tipoVariant}
-                                                                    className="text-caption font-medium"
-                                                                >
+                                                            <div className="flex items-center gap-2 shrink-0 self-start mt-0.5">
+                                                                <span className="text-caption font-semibold text-text-muted dark:text-zinc-400 uppercase tracking-wider shrink-0">
                                                                     {c.tipo}
-                                                                </Badge>
+                                                                </span>
                                                                 {c.fonte && (
                                                                     <a
                                                                         href={c.fonte}
@@ -1318,17 +1312,6 @@ export default function CadeiaPage() {
                                         </div>
                                     </div>
 
-                                    {/* LEGENDA DE SEGMENTOS: TOP 7 DESTACADOS + DEMAIS SEGMENTOS */}
-                                    <div className="flex items-center gap-2.5 text-caption font-medium text-text-muted mb-2 px-0.5 shrink-0 flex-wrap">
-                                        <span className="flex items-center gap-1.5 font-medium">
-                                            Top 7 segmentos (em destaque)
-                                        </span>
-                                        <span className="text-border-strong">•</span>
-                                        <span className="flex items-center gap-1.5 font-medium">
-                                            Demais segmentos
-                                        </span>
-                                    </div>
-
                                     <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full">
                                         {segmentStats.length > 0 ? (
                                             segmentStats.map((seg) => {
@@ -1364,11 +1347,6 @@ export default function CadeiaPage() {
                                                         <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                             <div className="flex items-center gap-1.5 min-w-0">
                                                                 <span className="truncate">{seg.name}</span>
-                                                                {!seg.isTop7 && (
-                                                                    <span className="text-caption font-medium text-text-muted px-1.5 py-0.5 rounded-control bg-surface-soft border border-border/60 shrink-0">
-                                                                        Demais segmentos
-                                                                    </span>
-                                                                )}
                                                             </div>
                                                         </div>
 

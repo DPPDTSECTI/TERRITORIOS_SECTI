@@ -218,13 +218,21 @@ export default function DashboardPainel() {
       mapEntidades[chaveAgrupamento].count += 1;
     });
 
-    const styles = [
-      { bg: 'bg-primary-900', text: 'text-white' },
-      { bg: 'bg-primary-600/10', text: 'text-primary-600' },
-      { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
-      { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
-      { bg: 'bg-border/50', text: 'text-text-primary' }
-    ];
+    const styles = filtroSemiarido
+      ? [
+          { bg: 'bg-amber-600', text: 'text-white' },
+          { bg: 'bg-amber-500/20', text: 'text-amber-800 dark:text-amber-300' },
+          { bg: 'bg-amber-500/15', text: 'text-amber-900/80 dark:text-amber-200/80' },
+          { bg: 'bg-amber-500/10', text: 'text-text-secondary' },
+          { bg: 'bg-border/50', text: 'text-text-primary' }
+        ]
+      : [
+          { bg: 'bg-primary-900', text: 'text-white' },
+          { bg: 'bg-primary-600/10', text: 'text-primary-600' },
+          { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
+          { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
+          { bg: 'bg-border/50', text: 'text-text-primary' }
+        ];
 
     return Object.values(mapEntidades)
       .sort((a, b) => b.count - a.count)
@@ -237,7 +245,7 @@ export default function DashboardPainel() {
         color: styles[idx % styles.length].bg,
         text: styles[idx % styles.length].text
       }));
-  }, [activeScopedCursos]);
+  }, [activeScopedCursos, filtroSemiarido]);
 
   // 6. CustomPieChart (Distribuição dos Ativos de CT&I)
   const ecosystemData = useMemo(() => {
@@ -277,13 +285,21 @@ export default function DashboardPainel() {
       counts[key] = (counts[key] || 0) + 1;
     });
 
-    const styles = [
-      { bg: 'bg-primary-900', text: 'text-white' },
-      { bg: 'bg-primary-600/10', text: 'text-primary-600' },
-      { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
-      { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
-      { bg: 'bg-border/50', text: 'text-text-primary' }
-    ];
+    const styles = filtroSemiarido
+      ? [
+          { bg: 'bg-amber-600', text: 'text-white' },
+          { bg: 'bg-amber-500/20', text: 'text-amber-800 dark:text-amber-300' },
+          { bg: 'bg-amber-500/15', text: 'text-amber-900/80 dark:text-amber-200/80' },
+          { bg: 'bg-amber-500/10', text: 'text-text-secondary' },
+          { bg: 'bg-border/50', text: 'text-text-primary' }
+        ]
+      : [
+          { bg: 'bg-primary-900', text: 'text-white' },
+          { bg: 'bg-primary-600/10', text: 'text-primary-600' },
+          { bg: 'bg-primary-600/10', text: 'text-text-secondary' },
+          { bg: 'bg-primary-300/20', text: 'text-text-secondary' },
+          { bg: 'bg-border/50', text: 'text-text-primary' }
+        ];
 
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
@@ -295,7 +311,7 @@ export default function DashboardPainel() {
         color: styles[idx % styles.length].bg,
         text: styles[idx % styles.length].text
       }));
-  }, [activeScopedAtivos, selectedTerritory]);
+  }, [activeScopedAtivos, selectedTerritory, filtroSemiarido]);
 
   // 7. Infraestrutura RNP
   const rnpComparisonData = useMemo(() => {
@@ -537,7 +553,7 @@ export default function DashboardPainel() {
   ];
 
   return (
-    <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
+    <main className="flex-1 h-full min-h-0 overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
 
       {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
       <div
@@ -545,42 +561,45 @@ export default function DashboardPainel() {
         className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
           }`}
       >
-        {/* 1. HALO RADIAL DIFUSO (Região de calor com opacidade sutil entre 6% e 12%) */}
+        {/* 0. AMBIENT WARM TINT ACROSS CANVAS */}
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-500/[0.06] via-amber-400/[0.02] to-transparent pointer-events-none" />
+
+        {/* 1. HALO RADIAL DIFUSO (Região de calor do sol) */}
         <div
-          className="absolute -top-[18vw] -right-[12vw] w-[62vw] h-[62vw] min-w-[550px] min-h-[550px] max-w-[1080px] max-h-[1080px] rounded-full animate-sun-breath"
+          className="absolute -top-[16vw] -right-[10vw] w-[64vw] h-[64vw] min-w-[580px] min-h-[580px] max-w-[1100px] max-h-[1100px] rounded-full animate-sun-breath"
           style={{
-            background: 'radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.07) 30%, rgba(251, 191, 36, 0.03) 55%, transparent 75%)',
-            filter: 'blur(35px)',
+            background: 'radial-gradient(circle at 75% 25%, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.12) 32%, rgba(251, 191, 36, 0.05) 55%, transparent 75%)',
+            filter: 'blur(45px)',
           }}
         />
 
         {/* 2. ARCO / ANEL LUMINOSO (Círculo gigante parcialmente fora da viewport) */}
         <div
-          className="absolute -top-[16vw] -right-[10vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
+          className="absolute -top-[14vw] -right-[8vw] w-[54vw] h-[54vw] min-w-[480px] min-h-[480px] max-w-[940px] max-h-[940px] rounded-full animate-sun-arc"
           style={{
-            border: '1.5px solid rgba(245, 158, 11, 0.22)',
-            boxShadow: '0 0 45px rgba(251, 191, 36, 0.10), inset 0 0 45px rgba(245, 158, 11, 0.04)',
-            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
-            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0) 70%)',
+            border: '2px solid rgba(245, 158, 11, 0.35)',
+            boxShadow: '0 0 50px rgba(251, 191, 36, 0.18), inset 0 0 50px rgba(245, 158, 11, 0.06)',
+            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0) 70%)',
+            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0) 70%)',
           }}
         />
 
         {/* 3. SEGUNDO ARCO EXPANSIVO (Halo sutil e elegante) */}
         <div
-          className="absolute -top-[22vw] -right-[16vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
+          className="absolute -top-[20vw] -right-[14vw] w-[70vw] h-[70vw] min-w-[620px] min-h-[620px] max-w-[1220px] max-h-[1220px] rounded-full animate-sun-breath"
           style={{
-            border: '1px solid rgba(217, 119, 6, 0.11)',
-            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
-            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0) 60%)',
+            border: '1.5px solid rgba(217, 119, 6, 0.22)',
+            maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.45) 30%, rgba(0,0,0,0) 60%)',
+            WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.45) 30%, rgba(0,0,0,0) 60%)',
           }}
         />
 
         {/* 4. GLOW DOURADO DE TOPO (Suave difusão atmosférica no topo direito) */}
         <div
-          className="absolute top-0 right-0 w-[460px] h-[320px] rounded-full opacity-60 animate-sun-breath"
+          className="absolute top-0 right-0 w-[520px] h-[360px] rounded-full opacity-80 animate-sun-breath"
           style={{
-            background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 80%)',
-            filter: 'blur(40px)',
+            background: 'radial-gradient(ellipse at top right, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.05) 50%, transparent 80%)',
+            filter: 'blur(45px)',
           }}
         />
       </div>
@@ -588,7 +607,7 @@ export default function DashboardPainel() {
       {/* HEADER DA PÁGINA */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full shrink-0 relative z-10">
         <div>
-          <div className="flex items-center gap-3 relative z-10">
+          <div className="flex items-center gap-3 relative z-10 flex-wrap">
             <h1 className="text-headline font-bold text-text-primary tracking-tight">Visão Geral</h1>
             {selectedTerritory && (
               <Badge variant="brand" className="font-medium">
@@ -596,8 +615,16 @@ export default function DashboardPainel() {
               </Badge>
             )}
           </div>
-          <p className="text-body-sm text-text-secondary mt-1 font-medium">Dashboard Integrado de CTI</p>
-          <div className={`divider-territorial w-48 mt-3 ${filtroSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`}></div>
+          <p className="text-body-sm text-text-secondary mt-1 font-medium">
+            {filtroSemiarido
+              ? 'Dashboard Integrado de CTI • Dados filtrados para o Semiárido Baiano'
+              : 'Dashboard Integrado de CTI'}
+          </p>
+          <div className={`divider-territorial w-56 mt-3 transition-all duration-500 ${
+            filtroSemiarido
+              ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent shadow-[0_0_12px_rgba(245,158,11,0.35)]'
+              : ''
+          }`} />
         </div>
       </div>
 
@@ -621,20 +648,22 @@ export default function DashboardPainel() {
                 <motion.div key={index} variants={fadeUp} className="h-full">
                   <div
                     title={kpi.tooltip || kpi.label}
-                    className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] rounded-card cursor-default overflow-hidden transition-colors duration-150 hover:border-border-strong select-none ${isHero
+                    className={`p-4 sm:p-5 flex flex-col justify-between min-h-[108px] h-full rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
                         ? (filtroSemiarido
-                          ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                          ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                           : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                         : (filtroSemiarido
-                          ? 'bg-surface-soft border border-amber-200/50 dark:border-amber-500/30 text-text-primary'
-                          : 'bg-surface-soft border border-border/70 text-text-primary')
+                          ? 'bg-gradient-to-br from-amber-50/80 via-surface to-surface dark:from-amber-950/30 dark:via-zinc-900 dark:to-zinc-900 border border-amber-300/70 dark:border-amber-600/40 shadow-2xs hover:border-amber-400 dark:hover:border-amber-500 text-text-primary'
+                          : 'bg-surface-soft border border-border/70 text-text-primary hover:border-border-strong')
                       }`}
                   >
                     {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
                     <div className="flex items-start justify-between gap-2 w-full min-w-0">
                       <div className="flex flex-col min-w-0 flex-1">
                         <span
-                          className={`text-[13px] font-medium leading-tight truncate ${isHero ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                          className={`text-[13px] font-medium leading-tight truncate ${isHero
+                            ? (filtroSemiarido ? 'text-amber-100' : 'text-white/85')
+                            : (filtroSemiarido ? 'text-amber-900/85 dark:text-amber-200/90' : 'text-text-secondary')
                             }`}
                           title={kpi.label}
                         >
@@ -644,20 +673,24 @@ export default function DashboardPainel() {
 
                       {/* ÍCONE CIRCULAR NO CANTO SUPERIOR DIREITO */}
                       <div
-                        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isHero
+                        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center transition-colors duration-150 ${isHero
                             ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
-                            : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
+                            : (filtroSemiarido
+                              ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300/70 dark:border-amber-600/50 text-amber-700 dark:text-amber-300 shadow-2xs'
+                              : 'bg-surface border border-border/80 text-text-secondary shadow-2xs')
                           }`}
                       >
                         <kpi.icon size={15} strokeWidth={2} />
                       </div>
                     </div>
 
-                    {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + BADGE */}
+                    {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + TEXTO PURO */}
                     <div className="flex items-baseline w-full justify-between min-w-0 pt-0.5">
-                      <div className="flex items-baseline gap-2 min-w-0 flex-1">
+                      <div className="flex items-baseline gap-2 min-w-0 flex-1 flex-wrap">
                         <span
-                          className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero ? 'text-white' : 'text-text-primary'
+                          className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero
+                            ? 'text-white'
+                            : (filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary')
                             }`}
                         >
                           <AnimatedNumber value={kpi.value} format={kpi.isIndex ? 'decimal' : 'int'} digits={3} />
@@ -666,12 +699,12 @@ export default function DashboardPainel() {
                         {filtroSemiarido && kpi.percent && (
                           <span
                             title={`(${kpi.percent})`}
-                            className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none truncate max-w-[130px] shrink-0 ${isHero
-                                ? 'bg-white/15 text-white border border-white/20'
-                                : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
+                            className={`text-caption font-semibold tabular-nums truncate shrink-0 ${isHero
+                                ? 'text-white/80'
+                                : 'text-amber-700 dark:text-amber-400'
                               }`}
                           >
-                            {kpi.percent}
+                            ({kpi.percent})
                           </span>
                         )}
 
@@ -689,7 +722,11 @@ export default function DashboardPainel() {
       <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div style={{ width: 'calc(40% - 12px)' }} className="tour-map shrink-0 h-full min-h-[460px] min-w-0 bg-surface rounded-card border border-border shadow-card relative overflow-hidden flex flex-col">
+        <div className={`tour-map shrink-0 w-full lg:w-[calc(40%-10px)] h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-all duration-300 ${
+          filtroSemiarido
+            ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
+            : 'border-border'
+        }`}>
           <div className="flex-1 w-full h-full relative">
             <PtiMap
               selectedTerritory={selectedTerritory}
@@ -708,7 +745,7 @@ export default function DashboardPainel() {
           variants={staggerContainer(0.04)}
           initial="initial"
           animate="animate"
-          className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-700 ${filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.03] via-amber-400/[0.01] to-transparent rounded-card' : ''
+          className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-500 ${filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.04] via-amber-400/[0.015] to-transparent rounded-card p-1 -m-1' : ''
             }`}
         >
           {loadingStats ? (

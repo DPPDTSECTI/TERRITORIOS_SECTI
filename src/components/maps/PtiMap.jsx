@@ -970,7 +970,7 @@ export default function PtiMap({
               ? 'Voltar para camada de Territórios'
               : 'Ver mapa real com precisão geográfica (sem camada por cima)'
           }
-          className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-lg text-caption font-semibold transition-all duration-150 cursor-pointer border select-none backdrop-blur-md ${
+          className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-full text-caption font-semibold transition-all duration-150 cursor-pointer border select-none backdrop-blur-md ${
             modoGeografico
               ? 'bg-white/90 dark:bg-zinc-900/90 border-primary-500/40 text-primary-700 dark:text-primary-300 shadow-sm'
               : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-text-secondary hover:text-text-primary shadow-sm'
@@ -993,16 +993,16 @@ export default function PtiMap({
             type="button"
             onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
             title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] w-[114px] min-w-[114px] max-w-[114px] px-2 rounded-lg text-caption font-semibold transition-all duration-150 cursor-pointer border select-none backdrop-blur-md ${
+            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] w-[114px] min-w-[114px] max-w-[114px] px-2 rounded-full text-caption font-semibold transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
               filtroSemiarido
-                ? 'bg-white/90 dark:bg-zinc-900/90 border-amber-500/40 text-amber-700 dark:text-amber-300 shadow-sm'
+                ? 'bg-amber-500 text-white border-amber-600 shadow-sm ring-2 ring-amber-400/30'
                 : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-text-secondary hover:text-text-primary shadow-sm'
             }`}
           >
             <span
               className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-2xs ${
                 filtroSemiarido
-                  ? 'bg-amber-500 text-white'
+                  ? 'bg-white text-amber-600'
                   : 'bg-surface-soft border border-border text-text-muted'
               }`}
             >
