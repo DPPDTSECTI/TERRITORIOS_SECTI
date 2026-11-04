@@ -134,6 +134,11 @@ export default function SobrePage() {
         <PageHeader
           title="Sobre o Painel Territorial de CT&I"
           subtitle="Documentação institucional, fundamentação metodológica e glossário dos indicadores estratégicos do ecossistema de Ciência, Tecnologia e Inovação da Bahia."
+          badge={
+            <Badge variant="primary" size="md">
+              SECTI · Governo da Bahia
+            </Badge>
+          }
           actions={
             <div className="flex items-center gap-3">
               <Button
@@ -186,7 +191,7 @@ export default function SobrePage() {
           className="scroll-mt-6"
         >
           <Card className="p-6 sm:p-8">
-            <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-col gap-6 max-w-5xl">
               <div>
                 <span className="text-caption font-medium text-primary-600 dark:text-primary-400 block mb-1.5">
                   Infraestrutura Digital · Rede Nacional de Ensino e Pesquisa (RNP)
@@ -210,44 +215,66 @@ export default function SobrePage() {
                     {
                       titulo: 'Campi Univ. Público Federal',
                       siglas: 'UFBA · UFRB · UFSB · UFOB · UNIVASF',
-                      desc: 'Polos de pós-graduação stricto sensu e pesquisa avançada com conexão RNP de alta velocidade.'
+                      desc: 'Polos de pós-graduação stricto sensu e laboratórios avançados com conexão RNP de altíssima performance e velocidade.',
+                      tag: 'Pública Federal'
                     },
                     {
                       titulo: 'Campi Univ. Público Estadual',
                       siglas: 'UNEB · UEFS · UESC · UESB',
-                      desc: 'Espinha dorsal de interiorização do ensino superior público entre o semiárido e o litoral.'
+                      desc: 'Principal espinha dorsal de interiorização do ensino superior público, articulando o semiárido ao litoral baiano.',
+                      tag: 'Pública Estadual'
                     },
                     {
                       titulo: 'Campi Inst. Federal',
                       siglas: 'IFBA · IF Baiano',
-                      desc: 'Institutos de formação tecnológica e profissionalizante integrados às vocações regionais.'
+                      desc: 'Institutos federais de formação profissionalizante e tecnológica, com inovação aplicada às vocações regionais.',
+                      tag: 'Rede Federal EPCT'
                     },
                     {
                       titulo: 'Campi Univ. Privada',
                       siglas: 'Faculdades e Centros Universitários',
-                      desc: 'Instituições privadas credenciadas com graduações ativas nas áreas prioritárias de CT&I.'
+                      desc: 'Instituições privadas credenciadas com graduações ativas e estruturadas nas áreas de Ciência, Tecnologia e Inovação.',
+                      tag: 'Rede Privada'
                     },
                     {
                       titulo: 'ICTs (Institutos de Pesquisa)',
                       siglas: 'SENAI CIMATEC · Fiocruz/IGM · Embrapa',
-                      desc: 'Centros e institutos dedicados à pesquisa aplicada, ensaios laboratoriais e desenvolvimento.'
+                      desc: 'Centros e institutos dedicados à pesquisa aplicada, ensaios laboratoriais certificados e desenvolvimento de ponta.',
+                      tag: 'P&D Tecnológico'
                     },
                     {
                       titulo: 'Critério & Ordenação',
-                      siglas: 'Metodologia de Ranqueamento',
-                      desc: 'Mapeia a razão com/sem RNP por território e tipologia, ordenando registros em modo decrescente.'
+                      siglas: 'Métrica RNP · Priorização Decrescente',
+                      desc: 'Métrica que compara a proporção com e sem RNP por território e categoria, ordenando os registros em ordem decrescente.',
+                      tag: 'Metodologia',
+                      isMetodologia: true
                     }
                   ].map((cat, i) => (
                     <div
                       key={i}
-                      className="bg-surface-soft border border-border rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-border-strong transition-colors h-full"
+                      className={`rounded-xl p-4 sm:p-5 border flex flex-col justify-between transition-colors h-full ${
+                        cat.isMetodologia
+                          ? 'bg-primary-50/30 dark:bg-primary-950/20 border-primary-200/50 dark:border-primary-800/40'
+                          : 'bg-surface-soft border-border hover:border-border-strong'
+                      }`}
                     >
                       <div className="flex flex-col">
-                        <strong className="block text-body-sm font-semibold text-text-primary tracking-tight">
-                          {cat.titulo}
-                        </strong>
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <strong className="block text-body-sm font-semibold text-text-primary tracking-tight truncate">
+                            {cat.titulo}
+                          </strong>
+                          <span
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 border ${
+                              cat.isMetodologia
+                                ? 'bg-primary-100/60 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 border-primary-200/60 dark:border-primary-700/50'
+                                : 'bg-surface text-text-muted border-border/80'
+                            }`}
+                          >
+                            {cat.tag}
+                          </span>
+                        </div>
 
-                        <span className="block text-caption font-medium text-text-muted mt-0.5 mb-2.5 truncate">
+                        <span className="block text-caption font-medium text-text-muted mb-2 truncate">
                           {cat.siglas}
                         </span>
 
@@ -451,41 +478,36 @@ export default function SobrePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               {
-                num: '1',
+                passo: '01',
                 titulo: 'Coleta & Higienização',
                 desc: 'Extração automatizada de microdados públicos e bases setoriais da SECTI. Deduplicação de cadastros, validação de nomes institucionais e conformidade documental.'
               },
               {
-                num: '2',
+                passo: '02',
                 titulo: 'Georreferenciamento',
                 desc: 'Vinculação espacial estrita às malhas territoriais dos 27 Territórios de Identidade e coordenadas oficiais dos 417 municípios do IBGE.'
               },
               {
-                num: '3',
+                passo: '03',
                 titulo: 'Cálculo & Inteligência',
                 desc: 'Processamento de rankings dinâmicos, cruzamento com o índice FIRJAN (IFDM) e cálculo de indicadores de conectividade RNP e Semiárido.'
               }
             ].map((step, idx) => (
               <Card
                 key={idx}
-                className="relative overflow-hidden p-5 sm:p-6 flex flex-col justify-between hover:border-border-strong transition-all duration-300 group"
+                className="p-5 sm:p-6 flex flex-col justify-between hover:border-border-strong transition-colors"
               >
-                <div className="relative z-10">
-                  <h3 className="text-title font-bold text-text-primary mb-2.5 tracking-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                <div>
+                  <div className="inline-flex items-center px-2 py-0.5 rounded-control bg-surface-soft border border-border text-caption font-mono font-bold text-text-muted mb-3">
+                    ETAPA {step.passo}
+                  </div>
+                  <h3 className="text-title font-semibold text-text-primary mb-2">
                     {step.titulo}
                   </h3>
                   <p className="text-body-sm text-text-secondary leading-relaxed font-normal">
                     {step.desc}
                   </p>
                 </div>
-
-                {/* Numeral marca d'água no fundo à direita */}
-                <span
-                  aria-hidden="true"
-                  className="absolute -bottom-6 right-1 sm:right-2 text-[120px] sm:text-[140px] font-black leading-none select-none pointer-events-none text-zinc-900/[0.08] dark:text-zinc-100/[0.12] group-hover:text-primary-600/[0.16] dark:group-hover:text-primary-400/[0.18] transition-colors duration-300 tabular-nums z-0 font-sans tracking-tighter"
-                >
-                  {step.num}
-                </span>
               </Card>
             ))}
           </div>

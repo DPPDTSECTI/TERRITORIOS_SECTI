@@ -3,29 +3,17 @@ import { cn } from '../../lib/cn';
 
 const badgeVariants = {
   neutral:
-    'bg-zinc-500/10 text-zinc-700 dark:text-zinc-300 border border-zinc-500/20 dark:border-zinc-500/20',
+    'bg-surface-soft text-text-secondary border border-border dark:bg-zinc-800/60 dark:text-zinc-300 dark:border-zinc-700/60',
   primary:
-    'bg-primary-500/10 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-500/30',
-  brand:
-    'bg-primary-500/10 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-500/30',
+    'bg-[#DBEAFE] text-[#1D4ED8] dark:bg-primary-500/15 dark:text-primary-300 border border-[#BFDBFE] dark:border-primary-500/30',
   success:
-    'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 dark:border-emerald-500/30',
+    'bg-[#DCFCE7] text-[#15803D] dark:bg-emerald-500/15 dark:text-emerald-300 border border-[#BBF7D0] dark:border-emerald-500/30',
   warning:
-    'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 dark:border-amber-500/30',
+    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-500/15 dark:text-amber-300 border border-[#FDE68A] dark:border-amber-500/30',
   accent:
-    'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 dark:border-amber-500/30',
+    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-500/15 dark:text-amber-300 border border-[#FDE68A] dark:border-amber-500/30',
   danger:
-    'bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20 dark:border-rose-500/30',
-};
-
-const badgeDots = {
-  neutral: 'bg-zinc-400 dark:bg-zinc-500',
-  primary: 'bg-primary-600 dark:bg-primary-400',
-  brand: 'bg-primary-600 dark:bg-primary-400',
-  success: 'bg-emerald-600 dark:bg-emerald-400',
-  warning: 'bg-amber-600 dark:bg-amber-400',
-  accent: 'bg-amber-600 dark:bg-amber-400',
-  danger: 'bg-rose-600 dark:bg-rose-400',
+    'bg-[#FEE2E2] text-[#B91C1C] dark:bg-rose-500/15 dark:text-rose-300 border border-[#FECACA] dark:border-rose-500/30',
 };
 
 const chipUnselectedVariants = {
@@ -62,28 +50,19 @@ const chipSelectedVariants = {
  * @param {React.ReactNode} props.children - Conteúdo do badge
  */
 export const Badge = forwardRef(function Badge(
-  { variant = 'neutral', icon, dot = false, className, children, ...props },
+  { variant = 'neutral', icon, className, children, ...props },
   ref
 ) {
   return (
     <span
       ref={ref}
       className={cn(
-        'text-caption font-medium px-2 py-0.5 rounded-md inline-flex items-center gap-1.5 border leading-none shrink-0 select-none tracking-tight',
+        'text-caption font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1.5 border leading-none shrink-0 select-none',
         badgeVariants[variant] || badgeVariants.neutral,
         className
       )}
       {...props}
     >
-      {dot && (
-        <span
-          className={cn(
-            'w-1.5 h-1.5 rounded-full shrink-0',
-            badgeDots[variant] || badgeDots.neutral
-          )}
-          aria-hidden="true"
-        />
-      )}
       {icon && <span className="inline-flex shrink-0">{icon}</span>}
       <span>{children}</span>
     </span>

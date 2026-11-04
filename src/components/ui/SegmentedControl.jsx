@@ -46,7 +46,7 @@ export function SegmentedControl({
     <div
       role="radiogroup"
       className={cn(
-        'inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-lg border border-border select-none overflow-x-auto max-w-full shadow-xs',
+        'inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-full border border-border select-none overflow-x-auto max-w-full shadow-xs',
         className
       )}
     >
@@ -63,7 +63,7 @@ export function SegmentedControl({
             onClick={() => onChange?.(option.value)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             className={cn(
-              'relative inline-flex items-center justify-center gap-2 font-medium transition-colors duration-120 whitespace-nowrap rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
+              'relative inline-flex items-center justify-center gap-2 font-medium transition-colors duration-120 whitespace-nowrap rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               sizes[size] || sizes.md,
               isSelected
                 ? 'text-white font-semibold'
@@ -73,7 +73,7 @@ export function SegmentedControl({
             {isSelected && (
               <motion.div
                 layoutId={activeLayoutId}
-                className="absolute inset-0 bg-carbon dark:bg-primary-600 shadow-xs rounded-md pointer-events-none"
+                className="absolute inset-0 bg-carbon dark:bg-primary-600 shadow-xs rounded-full pointer-events-none"
                 transition={{ type: 'spring', stiffness: 420, damping: 32 }}
               />
             )}

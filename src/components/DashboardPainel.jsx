@@ -666,9 +666,9 @@ export default function DashboardPainel() {
                         {filtroSemiarido && kpi.percent && (
                           <span
                             title={`(${kpi.percent})`}
-                            className={`text-caption font-medium px-2 py-0.5 rounded-md tabular-nums inline-flex items-center leading-none truncate max-w-[130px] shrink-0 ${isHero
+                            className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none truncate max-w-[130px] shrink-0 ${isHero
                                 ? 'bg-white/15 text-white border border-white/20'
-                                : 'bg-amber-500/10 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800/60'
+                                : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                               }`}
                           >
                             {kpi.percent}

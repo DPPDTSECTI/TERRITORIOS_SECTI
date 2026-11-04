@@ -589,12 +589,12 @@ export default function RelatorioAtivosPage() {
             </h1>
 
             {isSemiarido ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-amber-500/10 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-500/20 dark:border-amber-700/50">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
                 <span className="w-2 h-2 rounded-full bg-amber-500" />
                 Recorte Oficial: Semiárido Baiano (278 Municípios)
               </span>
             ) : selectedTerritory ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-primary-500/10 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-800/60">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
                 <MapPin size={13} className="text-primary-600 dark:text-primary-400" />
                 Recorte: {territoryName}
                 <button
@@ -607,7 +607,7 @@ export default function RelatorioAtivosPage() {
                 </button>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-primary-500/10 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-800/60">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
                 <span className="w-2 h-2 rounded-full bg-primary-600" />
                 Cenário Geral: Estado da Bahia (417 Municípios)
               </span>
@@ -637,7 +637,7 @@ export default function RelatorioAtivosPage() {
               navigate(`?${newParams.toString()}`, { replace: true });
             }}
             title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
               isSemiarido
                 ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
                 : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
@@ -647,7 +647,7 @@ export default function RelatorioAtivosPage() {
             <span>Semiárido</span>
           </button>
 
-          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-500/10 dark:bg-primary-950/40 border border-primary-500/20 dark:border-primary-800/40 px-3 py-1 rounded-md inline-flex items-center gap-1.5">
+          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/40 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
             <Award size={14} className="text-primary-600 dark:text-primary-400" />
             Dados Oficiais SECTI/BA
           </span>
@@ -732,7 +732,7 @@ export default function RelatorioAtivosPage() {
 
                   {kpi.badge && (
                     <span
-                      className={`text-caption font-medium px-2 py-0.5 rounded-md tabular-nums inline-flex items-center leading-none truncate shrink-0 ${
+                      className={`text-caption font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center leading-none truncate shrink-0 ${
                         isHero
                           ? 'bg-white/15 text-white border border-white/20'
                           : (isSemiarido
@@ -800,7 +800,7 @@ export default function RelatorioAtivosPage() {
                           {item.sigla}
                         </span>
                       </div>
-                      <span className={`text-[9.5px] font-semibold px-1.5 py-0.5 rounded-md leading-none shrink-0 ${item.redeInfo.badgeClass}`}>
+                      <span className={`text-[9.5px] font-semibold px-1.5 py-0.5 rounded-full leading-none shrink-0 ${item.redeInfo.badgeClass}`}>
                         {item.redeInfo.rede}
                       </span>
                     </div>
@@ -808,7 +808,7 @@ export default function RelatorioAtivosPage() {
                     {/* BARRA DE PÍLULAS PROPORCIONAIS (PÍLULA DE COR SÓLIDA + PÍLULA COMPLEMENTAR) */}
                     <div className="flex items-center gap-1.5 w-full">
                       <div
-                        className="h-[22px] rounded-md flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                        className="h-[22px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                         style={{
                           flexGrow: item.total,
                           flexBasis: 0,
@@ -896,7 +896,7 @@ export default function RelatorioAtivosPage() {
 
                     <div className="flex items-center gap-1.5 w-full">
                       <div
-                        className="h-[24px] rounded-md flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                        className="h-[24px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                         style={{
                           flexGrow: cat.total,
                           flexBasis: 0,

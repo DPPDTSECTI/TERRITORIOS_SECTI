@@ -52,7 +52,7 @@ export function Tabs({
       className={cn(
         isUnderline
           ? 'flex items-center gap-2 border-b border-border w-full overflow-x-auto scrollbar-none'
-          : 'h-9 inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-lg border border-border overflow-x-auto scrollbar-none max-w-full shadow-xs shrink-0',
+          : 'h-9 inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-full border border-border overflow-x-auto scrollbar-none max-w-full shadow-xs shrink-0',
         className
       )}
     >
@@ -72,12 +72,12 @@ export function Tabs({
               'relative h-full inline-flex items-center justify-center gap-2 font-medium transition-colors duration-120 whitespace-nowrap select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               isUnderline
                 ? 'px-3.5 py-2.5 text-caption -mb-px'
-                : 'px-3.5 rounded-md text-caption',
+                : 'px-3.5 rounded-full text-caption',
               isActive
                 ? isUnderline
                   ? 'text-primary-700 dark:text-primary-300 font-semibold'
                   : 'text-white font-semibold'
-                : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70 rounded-md'
+                : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70 rounded-full'
             )}
           >
             {isActive && (
@@ -87,7 +87,7 @@ export function Tabs({
                   'pointer-events-none',
                   isUnderline
                     ? 'absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full'
-                    : 'absolute inset-0 bg-carbon dark:bg-primary-600 rounded-md shadow-xs'
+                    : 'absolute inset-0 bg-carbon dark:bg-primary-600 rounded-full shadow-xs'
                 )}
                 transition={{ type: 'spring', stiffness: 400, damping: 32 }}
               />

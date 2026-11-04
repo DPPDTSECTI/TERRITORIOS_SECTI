@@ -582,7 +582,7 @@ export default function RelatorioAnalisePage() {
                   <h1 className="text-sm font-bold text-slate-900 dark:text-white truncate">
                     Modo Análise • Relatório de Dados Brutos
                   </h1>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                     A4 Retrato
                   </span>
                 </div>
