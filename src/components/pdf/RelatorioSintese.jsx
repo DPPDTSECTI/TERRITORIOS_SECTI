@@ -280,12 +280,12 @@ export default function RelatorioSintese() {
             </h1>
 
             {isSemiarido ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-amber-500/10 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-500/20 dark:border-amber-700/50">
                 <span className="w-2 h-2 rounded-full bg-amber-500" />
                 Recorte Oficial: Semiárido Baiano (278 Municípios)
               </span>
             ) : selectedTerritory ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-primary-500/10 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-800/60">
                 <MapPin size={13} className="text-primary-600 dark:text-primary-400" />
                 Recorte: {territoryTitle}
                 <button
@@ -298,7 +298,7 @@ export default function RelatorioSintese() {
                 </button>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-primary-500/10 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-800/60">
                 <span className="w-2 h-2 rounded-full bg-primary-600" />
                 Cenário Geral: Estado da Bahia (417 Municípios)
               </span>
@@ -328,7 +328,7 @@ export default function RelatorioSintese() {
               navigate(`?${newParams.toString()}`, { replace: true });
             }}
             title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
               isSemiarido
                 ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
                 : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
@@ -338,7 +338,7 @@ export default function RelatorioSintese() {
             <span>Semiárido</span>
           </button>
 
-          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/40 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
+          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-500/10 dark:bg-primary-950/40 border border-primary-500/20 dark:border-primary-800/40 px-3 py-1 rounded-md inline-flex items-center gap-1.5">
             <Award size={14} className="text-primary-600 dark:text-primary-400" />
             Dados Oficiais SECTI/BA
           </span>
@@ -423,7 +423,7 @@ export default function RelatorioSintese() {
 
                   {kpi.badge && (
                     <span
-                      className={`text-caption font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center leading-none truncate shrink-0 ${
+                      className={`text-caption font-medium px-2 py-0.5 rounded-md tabular-nums inline-flex items-center leading-none truncate shrink-0 ${
                         isHero
                           ? 'bg-white/15 text-white border border-white/20'
                           : (isSemiarido
@@ -495,7 +495,7 @@ export default function RelatorioSintese() {
                   </h3>
                   <p className="text-caption text-text-muted font-medium mt-0.5">Conectividade e adesão à rede acadêmica</p>
                 </div>
-                <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/60 px-2.5 py-0.5 rounded-full">
+                <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-500/10 dark:bg-primary-950/40 border border-primary-500/20 dark:border-primary-800/60 px-2 py-0.5 rounded-md">
                   {stats.totalAtivos} Ativos
                 </span>
               </div>
@@ -512,7 +512,7 @@ export default function RelatorioSintese() {
 
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[22px] rounded-full bg-primary-600 flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                      className="h-[22px] rounded-md bg-primary-600 flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                       style={{
                         flexGrow: Math.max(1, stats.rnpAtivos),
                         flexBasis: 0,
@@ -525,14 +525,14 @@ export default function RelatorioSintese() {
                     </div>
 
                     <div
-                      className="h-[22px] rounded-full bg-surface-soft border border-border flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
+                      className="h-[22px] rounded-md bg-surface-soft border border-border flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
                       style={{
                         flexGrow: Math.max(1, stats.totalAtivos - stats.rnpAtivos),
                         flexBasis: 0
                       }}
                     />
 
-                    <div className="h-[22px] min-w-[50px] px-2 rounded-full bg-surface-soft border border-border text-text-primary flex items-center justify-center shrink-0 select-none shadow-2xs">
+                    <div className="h-[22px] min-w-[50px] px-2 rounded-md bg-surface-soft border border-border text-text-primary flex items-center justify-center shrink-0 select-none shadow-2xs">
                       <span className="text-caption font-semibold tabular-nums leading-none">
                         {stats.rnpTaxa}%
                       </span>
@@ -551,7 +551,7 @@ export default function RelatorioSintese() {
 
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[22px] rounded-full bg-text-muted flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                      className="h-[22px] rounded-md bg-text-muted flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                       style={{
                         flexGrow: Math.max(1, stats.totalAtivos - stats.rnpAtivos),
                         flexBasis: 0,
@@ -564,14 +564,14 @@ export default function RelatorioSintese() {
                     </div>
 
                     <div
-                      className="h-[22px] rounded-full bg-surface-soft border border-border flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
+                      className="h-[22px] rounded-md bg-surface-soft border border-border flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs"
                       style={{
                         flexGrow: Math.max(1, stats.rnpAtivos),
                         flexBasis: 0
                       }}
                     />
 
-                    <div className="h-[22px] min-w-[50px] px-2 rounded-full bg-surface-soft border border-border text-text-primary flex items-center justify-center shrink-0 select-none shadow-2xs">
+                    <div className="h-[22px] min-w-[50px] px-2 rounded-md bg-surface-soft border border-border text-text-primary flex items-center justify-center shrink-0 select-none shadow-2xs">
                       <span className="text-caption font-semibold tabular-nums leading-none">
                         {(100 - Number(stats.rnpTaxa)).toFixed(1)}%
                       </span>
@@ -591,7 +591,7 @@ export default function RelatorioSintese() {
                   </h3>
                   <p className="text-caption text-text-muted font-medium mt-0.5">Distribuição por rede acadêmica</p>
                 </div>
-                <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/60 px-2.5 py-0.5 rounded-full">
+                <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-500/10 dark:bg-primary-950/40 border border-primary-500/20 dark:border-primary-800/60 px-2 py-0.5 rounded-md">
                   {stats.totalCursos} Cursos
                 </span>
               </div>
@@ -605,13 +605,13 @@ export default function RelatorioSintese() {
                   </div>
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[18px] rounded-full bg-[#2563EB] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      className="h-[18px] rounded-md bg-[#2563EB] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
                       style={{ flexGrow: Math.max(1, stats.estadualCursos), flexBasis: 0, minWidth: '32px' }}
                     >
                       <span className="text-[10px] font-bold tabular-nums leading-none">{stats.estadualCursos}</span>
                     </div>
                     <div
-                      className="h-[18px] rounded-full bg-surface-soft border border-border"
+                      className="h-[18px] rounded-md bg-surface-soft border border-border"
                       style={{ flexGrow: Math.max(1, stats.totalCursos - stats.estadualCursos), flexBasis: 0 }}
                     />
                   </div>
@@ -625,13 +625,13 @@ export default function RelatorioSintese() {
                   </div>
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[18px] rounded-full bg-[#10B981] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      className="h-[18px] rounded-md bg-[#10B981] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
                       style={{ flexGrow: Math.max(1, stats.federalCursos), flexBasis: 0, minWidth: '32px' }}
                     >
                       <span className="text-[10px] font-bold tabular-nums leading-none">{stats.federalCursos}</span>
                     </div>
                     <div
-                      className="h-[18px] rounded-full bg-surface-soft border border-border"
+                      className="h-[18px] rounded-md bg-surface-soft border border-border"
                       style={{ flexGrow: Math.max(1, stats.totalCursos - stats.federalCursos), flexBasis: 0 }}
                     />
                   </div>
@@ -645,13 +645,13 @@ export default function RelatorioSintese() {
                   </div>
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[18px] rounded-full bg-[#F59E0B] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      className="h-[18px] rounded-md bg-[#F59E0B] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
                       style={{ flexGrow: Math.max(1, stats.privadaCursos), flexBasis: 0, minWidth: '32px' }}
                     >
                       <span className="text-[10px] font-bold tabular-nums leading-none">{stats.privadaCursos}</span>
                     </div>
                     <div
-                      className="h-[18px] rounded-full bg-surface-soft border border-border"
+                      className="h-[18px] rounded-md bg-surface-soft border border-border"
                       style={{ flexGrow: Math.max(1, stats.totalCursos - stats.privadaCursos), flexBasis: 0 }}
                     />
                   </div>
@@ -674,7 +674,7 @@ export default function RelatorioSintese() {
               {cadeiasNomes.map((nome, idx) => (
                 <span
                   key={idx}
-                  className="text-caption font-semibold px-2.5 py-1 rounded-full bg-surface-soft border border-border text-text-primary shadow-2xs"
+                  className="text-caption font-semibold px-2 py-0.5 rounded-md bg-surface-soft border border-border text-text-primary shadow-2xs"
                 >
                   {nome}
                 </span>

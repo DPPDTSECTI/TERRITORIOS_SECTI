@@ -1662,7 +1662,7 @@ export default function RelatorioPage() {
                         <span className="font-medium tnum">{statsSintese.totalAtivos - statsSintese.rnpAtivos} <span className="text-text-secondary font-medium">({(100 - Number(statsSintese.rnpTaxa)).toFixed(1)}%)</span></span>
                       </div>
                     </div>
-                    <div className="w-full h-3.5 rounded-full bg-surface border border-border/70 overflow-hidden flex">
+                    <div className="w-full h-3.5 rounded-md bg-surface border border-border/70 overflow-hidden flex">
                       <div
                         className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all`}
                         style={{ width: `${statsSintese.rnpTaxa}%` }}
@@ -1689,7 +1689,7 @@ export default function RelatorioPage() {
                         <span>Rede Pública Estadual</span>
                         <span className="tnum font-medium">{statsSintese.estadualCursos} ({statsSintese.estadualTaxa}%)</span>
                       </div>
-                      <div className="w-full h-3 rounded-full bg-surface border border-border/70 overflow-hidden flex">
+                      <div className="w-full h-3 rounded-md bg-surface border border-border/70 overflow-hidden flex">
                         <div className={`h-full ${reportMode === 'semiarido' ? 'bg-amber-600' : 'bg-primary-600'} transition-all rounded-full`} style={{ width: `${statsSintese.estadualTaxa}%` }} />
                       </div>
                     </div>
@@ -1699,8 +1699,8 @@ export default function RelatorioPage() {
                         <span>Rede Pública Federal</span>
                         <span className="tnum font-medium">{statsSintese.federalCursos} ({statsSintese.federalTaxa}%)</span>
                       </div>
-                      <div className="w-full h-3 rounded-full bg-surface border border-border/70 overflow-hidden flex">
-                        <div className="h-full bg-success-600 transition-all rounded-full" style={{ width: `${statsSintese.federalTaxa}%` }} />
+                      <div className="w-full h-3 rounded-md bg-surface border border-border/70 overflow-hidden flex">
+                        <div className="h-full bg-success-600 transition-all rounded-md" style={{ width: `${statsSintese.federalTaxa}%` }} />
                       </div>
                     </div>
 
@@ -1709,8 +1709,8 @@ export default function RelatorioPage() {
                         <span>Rede Privada / Outros</span>
                         <span className="tnum font-medium">{statsSintese.privadaCursos} ({statsSintese.privadaTaxa}%)</span>
                       </div>
-                      <div className="w-full h-3 rounded-full bg-surface border border-border/70 overflow-hidden flex">
-                        <div className="h-full bg-accent-600 transition-all rounded-full" style={{ width: `${statsSintese.privadaTaxa}%` }} />
+                      <div className="w-full h-3 rounded-md bg-surface border border-border/70 overflow-hidden flex">
+                        <div className="h-full bg-accent-600 transition-all rounded-md" style={{ width: `${statsSintese.privadaTaxa}%` }} />
                       </div>
                     </div>
                   </div>
@@ -1909,7 +1909,7 @@ export default function RelatorioPage() {
 
                             {reportType !== 'municipios' && (
                               <td className="py-2.5 px-3.5" title={row.col3}>
-                                <span className="bg-surface-soft text-text-primary px-2.5 py-1 rounded-full text-caption font-medium inline-block leading-none border border-border/60 max-w-full truncate align-middle">
+                                <span className="bg-surface-soft text-text-primary px-2.5 py-1 rounded-md text-caption font-medium inline-block leading-none border border-border/60 max-w-full truncate align-middle">
                                   {row.col3}
                                 </span>
                               </td>
@@ -1928,21 +1928,21 @@ export default function RelatorioPage() {
                             {reportType !== 'cadeias' && (
                               <td className="py-2.5 px-3.5 text-right font-medium whitespace-nowrap">
                                 {reportType === 'ativos' && row.col6 === 'Sim' ? (
-                                  <span className="text-caption font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full inline-flex items-center gap-1 justify-center leading-none">
+                                  <span className="text-caption font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md inline-flex items-center gap-1 justify-center leading-none">
                                     <Wifi size={12} />
                                     Sim
                                   </span>
                                 ) : reportType === 'municipios' && row.col6 === 'Sim' ? (
-                                  <span className="text-caption font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none">
+                                  <span className="text-caption font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md inline-flex items-center justify-center leading-none">
                                     Atendido
                                   </span>
                                 ) : row.col6 === 'EaD' ? (
-                                  <span className="text-caption font-medium text-purple-700 dark:text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-full inline-flex items-center gap-1 justify-center leading-none">
+                                  <span className="text-caption font-medium text-purple-700 dark:text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-md inline-flex items-center gap-1 justify-center leading-none">
                                     <Wifi size={12} />
                                     EaD
                                   </span>
                                 ) : row.col6 === 'Presencial' ? (
-                                  <span className="text-caption font-medium text-text-secondary bg-surface-soft border border-border/60 px-2.5 py-1 rounded-full inline-flex items-center justify-center leading-none">
+                                  <span className="text-caption font-medium text-text-secondary bg-surface-soft border border-border/60 px-2.5 py-1 rounded-md inline-flex items-center justify-center leading-none">
                                     Presencial
                                   </span>
                                 ) : (

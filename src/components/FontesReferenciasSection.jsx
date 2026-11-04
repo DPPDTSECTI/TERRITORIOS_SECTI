@@ -215,7 +215,7 @@ export default function FontesReferenciasSection() {
                   <IconComp size={14} className={isSelected ? 'text-white' : 'text-primary-600 dark:text-primary-400'} />
                   <span>{cat.label}</span>
                   <span
-                    className={`text-caption px-1.5 py-0.5 rounded-full font-medium ${
+                    className={`text-caption px-1.5 py-0.5 rounded-md font-medium tabular-nums ${
                       isSelected ? 'bg-primary-700 text-white' : 'bg-surface border border-border text-text-secondary'
                     }`}
                   >
@@ -252,7 +252,7 @@ export default function FontesReferenciasSection() {
                   >
                     <span>{sub.label}</span>
                     <span
-                      className={`text-caption px-1.5 py-0.5 rounded-full font-medium ${
+                      className={`text-caption px-1.5 py-0.5 rounded-md font-medium tabular-nums ${
                         isSelected ? 'bg-primary-950 text-white' : 'bg-surface border border-border text-text-muted'
                       }`}
                     >
@@ -313,29 +313,39 @@ export default function FontesReferenciasSection() {
                 className="p-5 sm:p-6 flex flex-col justify-between group"
               >
                 <div>
-                  {/* Topo do Card: Categoria, Subcategoria e Botão Copiar */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="primary" size="sm">
-                        {ref.categoriaNome}
-                      </Badge>
-                      <Badge variant="warning" size="sm">
-                        {ref.subcategoriaNome}
-                      </Badge>
+                  {/* Topo do Card: Trilha de Taxonomia & Ações */}
+                  <div className="flex items-center justify-between gap-3 mb-3 pb-2.5 border-b border-border/70">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-5 h-5 rounded-md bg-surface-soft border border-border flex items-center justify-center shrink-0 text-primary-600 dark:text-primary-400">
+                        {React.createElement(ICONES_CATEGORIA[ref.categoriaId] || Layers, { size: 12 })}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs min-w-0">
+                        <span className="font-semibold text-text-primary text-[11px] tracking-tight">
+                          {ref.categoriaNome}
+                        </span>
+                        {ref.subcategoriaNome && (
+                          <>
+                            <span className="text-text-muted opacity-40 font-light select-none">›</span>
+                            <span className="text-text-secondary text-[11px] font-medium">
+                              {ref.subcategoriaNome}
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     <button
                       onClick={() => handleCopyCitation(ref)}
                       title="Copiar citação para ABNT/trabalhos"
-                      className="p-1.5 rounded-control text-text-muted hover:text-text-primary hover:bg-surface-soft transition-colors cursor-pointer shrink-0 border border-transparent hover:border-border"
+                      className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-soft transition-colors cursor-pointer shrink-0 border border-transparent hover:border-border"
                       aria-label="Copiar citação ABNT"
                     >
                       {isCopied ? (
-                        <span className="inline-flex items-center gap-1 text-caption font-medium text-success-600">
-                          <Check size={14} /> Copiado!
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                          <Check size={13} /> Copiado!
                         </span>
                       ) : (
-                        <Copy size={15} />
+                        <Copy size={14} />
                       )}
                     </button>
                   </div>

@@ -663,9 +663,9 @@ export default function AtivosPage() {
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                                                        className={`text-caption font-medium px-2 py-0.5 rounded-md tabular-nums inline-flex items-center leading-none ${isHero
                                                             ? 'bg-white/15 text-white border border-white/20'
-                                                            : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
+                                                            : 'bg-amber-500/10 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800/60'
                                                             }`}
                                                     >
                                                         {kpi.percent}
@@ -910,11 +910,11 @@ export default function AtivosPage() {
 
                                                 <div className="flex items-center gap-1 shrink-0">
                                                     {ativo.sigla ? (
-                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-surface-soft dark:bg-zinc-800/80 border border-border/70 dark:border-zinc-700/60 text-text-muted dark:text-zinc-400 shrink-0">
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wider uppercase bg-surface-soft dark:bg-zinc-800/80 border border-border/70 dark:border-zinc-700/60 text-text-muted dark:text-zinc-400 shrink-0">
                                                             {ativo.sigla}
                                                         </span>
                                                     ) : ativo.rnp ? (
-                                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase shrink-0 transition-colors ${filtroSemiarido
+                                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wider uppercase shrink-0 transition-colors ${filtroSemiarido
                                                             ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20'
                                                             : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20'
                                                             }`}>
@@ -986,7 +986,7 @@ export default function AtivosPage() {
                                         <Filter size={14} className={activeFiltersCount > 0 ? (filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400') : 'text-text-muted'} />
                                         <span>Filtros</span>
                                         {activeFiltersCount > 0 && (
-                                            <span className={`w-4 h-4 rounded-full text-micro font-bold flex items-center justify-center text-white leading-none ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'
+                                            <span className={`min-w-[16px] h-4 px-1 rounded-md text-micro font-bold tabular-nums flex items-center justify-center text-white leading-none ${filtroSemiarido ? 'bg-amber-600' : 'bg-primary-600'
                                                 }`}>
                                                 {activeFiltersCount}
                                             </span>
@@ -1256,7 +1256,7 @@ export default function AtivosPage() {
 
                                                                     <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-caption text-text-secondary mt-1 font-medium">
                                                                         <span
-                                                                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-caption font-medium bg-surface-soft dark:bg-zinc-800/60 border border-border/80 dark:border-zinc-700/60 text-text-secondary dark:text-zinc-300 shrink-0 whitespace-nowrap"
+                                                                            className="inline-flex items-center px-2 py-0.5 rounded-md text-caption font-medium bg-surface-soft dark:bg-zinc-800/60 border border-border/80 dark:border-zinc-700/60 text-text-secondary dark:text-zinc-300 shrink-0 whitespace-nowrap"
                                                                             title={ativo.tipo}
                                                                         >
                                                                             <span>{ativo.shortTipo || ativo.tipo}</span>
@@ -1271,13 +1271,13 @@ export default function AtivosPage() {
 
                                                             <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
                                                                 {ativo.sigla && (
-                                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-surface-soft dark:bg-zinc-800/80 border border-border/70 dark:border-zinc-700/60 text-text-muted dark:text-zinc-400 shrink-0">
+                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold tracking-wider uppercase bg-surface-soft dark:bg-zinc-800/80 border border-border/70 dark:border-zinc-700/60 text-text-muted dark:text-zinc-400 shrink-0">
                                                                         {ativo.sigla}
                                                                     </span>
                                                                 )}
                                                                 {ativo.rnp && (
                                                                     <span
-                                                                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase transition-colors shrink-0 ${filtroSemiarido
+                                                                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold tracking-wider uppercase transition-colors shrink-0 ${filtroSemiarido
                                                                             ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20'
                                                                             : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20'
                                                                             }`}
@@ -1348,7 +1348,7 @@ export default function AtivosPage() {
                                         </div>
 
                                         {selectedTerritory && (
-                                            <span className={`text-caption font-medium text-text-primary px-2.5 py-1 rounded-full flex items-center gap-1 justify-center leading-none ${filtroSemiarido ? 'bg-amber-200/60' : 'bg-primary-200/40'}`}>
+                                            <span className={`text-caption font-medium text-text-primary px-2.5 py-1 rounded-md flex items-center gap-1 justify-center leading-none border ${filtroSemiarido ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20' : 'bg-primary-500/10 text-primary-700 dark:text-primary-300 border-primary-500/20'}`}>
                                                 <MapPin size={16} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-500'} />
                                                 {territoryName}
                                             </span>
@@ -1395,7 +1395,7 @@ export default function AtivosPage() {
                                                         {/* BARRAS DE PÍLULAS */}
                                                         <div className="flex items-center gap-2 w-full">
                                                             <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                 style={{
                                                                     flexGrow: total,
                                                                     flexBasis: 0,
@@ -1411,7 +1411,7 @@ export default function AtivosPage() {
 
                                                             {remaining > 0 && (
                                                                 <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                     style={{
                                                                         flexGrow: remaining,
                                                                         flexBasis: 0
@@ -1420,7 +1420,7 @@ export default function AtivosPage() {
                                                             )}
 
                                                             <div
-                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                 title={`${cat.percent}% dos ativos (${total} ativos)`}
                                                             >
                                                                 <span className="text-caption font-semibold tabular-nums leading-none">
@@ -1468,7 +1468,7 @@ export default function AtivosPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedTerritory(null)}
-                                                    className={`text-caption font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${filtroSemiarido
+                                                    className={`text-caption font-medium px-2.5 py-1 rounded-control flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${filtroSemiarido
                                                         ? 'text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 bg-amber-100/70 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-700/50'
                                                         : 'text-primary-700 dark:text-primary-300 hover:text-primary-900 dark:hover:text-primary-100 hover:underline bg-primary-200/50 dark:bg-primary-950/40'
                                                         }`}
@@ -1526,7 +1526,7 @@ export default function AtivosPage() {
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: total,
                                                                         flexBasis: 0,
@@ -1542,7 +1542,7 @@ export default function AtivosPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1551,7 +1551,7 @@ export default function AtivosPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                     title={`${m.percentTotal}% do território (${total} ativos)`}
                                                                 >
                                                                     <span className="text-caption font-semibold tabular-nums leading-none">
@@ -1615,7 +1615,7 @@ export default function AtivosPage() {
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: total,
                                                                         flexBasis: 0,
@@ -1631,7 +1631,7 @@ export default function AtivosPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1640,7 +1640,7 @@ export default function AtivosPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                     title={`${t.percentTotal}% do estado (${total} ativos)`}
                                                                 >
                                                                     <span className="text-caption font-semibold tabular-nums leading-none">

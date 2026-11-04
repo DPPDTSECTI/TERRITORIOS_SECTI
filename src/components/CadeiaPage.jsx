@@ -851,7 +851,7 @@ export default function CadeiaPage() {
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                                                        className={`text-caption font-medium px-2 py-0.5 rounded-md tabular-nums inline-flex items-center leading-none ${isHero
                                                             ? 'bg-white/15 text-white border border-white/20'
                                                             : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                                                             }`}
@@ -1375,7 +1375,7 @@ export default function CadeiaPage() {
                                                         {/* BARRAS DE PÍLULAS */}
                                                         <div className="flex items-center gap-2 w-full">
                                                             <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                 style={{
                                                                     flexGrow: seg.count,
                                                                     flexBasis: 0,
@@ -1391,7 +1391,7 @@ export default function CadeiaPage() {
 
                                                             {remaining > 0 && (
                                                                 <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                     style={{
                                                                         flexGrow: remaining,
                                                                         flexBasis: 0
@@ -1400,7 +1400,7 @@ export default function CadeiaPage() {
                                                             )}
 
                                                             <div
-                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                 title={`${seg.percent}% da densidade (${seg.count} arranjos)`}
                                                             >
                                                                 <span className="text-caption font-semibold tabular-nums leading-none">
@@ -1441,7 +1441,7 @@ export default function CadeiaPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => handleSelectTerritory(null)}
-                                                className="text-caption font-semibold px-2.5 py-1 rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/70 dark:bg-primary-950/40 hover:bg-primary-200/70 dark:hover:bg-primary-900/50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                                                className="text-caption font-semibold px-2.5 py-1 rounded-control text-primary-700 dark:text-primary-300 bg-primary-100/70 dark:bg-primary-950/40 hover:bg-primary-200/70 dark:hover:bg-primary-900/50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
                                             >
                                                 ← Ver Todos os Territórios
                                             </button>
@@ -1484,7 +1484,7 @@ export default function CadeiaPage() {
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: m.count,
                                                                         flexBasis: 0,
@@ -1500,7 +1500,7 @@ export default function CadeiaPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1509,7 +1509,7 @@ export default function CadeiaPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                     title={`${m.percentTotal}% do território (${m.count} arranjos)`}
                                                                 >
                                                                     <span className="text-caption font-semibold tabular-nums leading-none">
@@ -1570,7 +1570,7 @@ export default function CadeiaPage() {
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: t.count,
                                                                         flexBasis: 0,
@@ -1586,7 +1586,7 @@ export default function CadeiaPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1595,7 +1595,7 @@ export default function CadeiaPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                     title={`${t.percentTotal}% do estado (${t.count} arranjos)`}
                                                                 >
                                                                     <span className="text-caption font-semibold tabular-nums leading-none">

@@ -581,12 +581,12 @@ export default function RelatorioEnsinoPage() {
             </h1>
 
             {isSemiarido ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-amber-500/10 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-500/20 dark:border-amber-700/50">
                 <span className="w-2 h-2 rounded-full bg-amber-500" />
                 Recorte Oficial: Semiárido Baiano (278 Municípios)
               </span>
             ) : selectedTerritory ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-primary-500/10 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-800/60">
                 <MapPin size={13} className="text-primary-600 dark:text-primary-400" />
                 Recorte: {territoryName}
                 <button
@@ -599,7 +599,7 @@ export default function RelatorioEnsinoPage() {
                 </button>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-caption font-semibold bg-primary-500/10 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-500/20 dark:border-primary-800/60">
                 <span className="w-2 h-2 rounded-full bg-primary-600" />
                 Cenário Geral: Estado da Bahia (417 Municípios)
               </span>
@@ -629,7 +629,7 @@ export default function RelatorioEnsinoPage() {
               navigate(`?${newParams.toString()}`, { replace: true });
             }}
             title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
               isSemiarido
                 ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
                 : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
@@ -639,7 +639,7 @@ export default function RelatorioEnsinoPage() {
             <span>Semiárido</span>
           </button>
 
-          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/40 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
+          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-500/10 dark:bg-primary-950/40 border border-primary-500/20 dark:border-primary-800/40 px-3 py-1 rounded-md inline-flex items-center gap-1.5">
             <Award size={14} className="text-primary-600 dark:text-primary-400" />
             Dados Oficiais SECTI/BA
           </span>
@@ -851,7 +851,7 @@ export default function RelatorioEnsinoPage() {
                     </div>
 
                     {/* BARRA DE PÍLULA PROPORCIONAL MULTI-SEGMENTO */}
-                    <div className="w-full h-[22px] rounded-full bg-surface-sunken border border-border/80 overflow-hidden flex shadow-2xs">
+                    <div className="w-full h-[22px] rounded-md bg-surface-sunken border border-border/80 overflow-hidden flex shadow-2xs">
                       {segments.map(seg => (
                         <div
                           key={seg.key}

@@ -702,7 +702,7 @@ export default function CursosPage() {
                                                 {filtroSemiarido && kpi.percent && (
                                                     <span
                                                         title={`(${kpi.percent})`}
-                                                        className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none ${isHero
+                                                        className={`text-caption font-medium px-2 py-0.5 rounded-md tabular-nums inline-flex items-center leading-none ${isHero
                                                             ? 'bg-white/15 text-white border border-white/20'
                                                             : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
                                                             }`}
@@ -841,7 +841,7 @@ export default function CursosPage() {
 
                                                 {/* STATUS REDE (Pública / Privada) EM PÍLULA */}
                                                 <span
-                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase shrink-0 transition-colors ${redeInfo.isPublica
+                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold tracking-wider uppercase shrink-0 transition-colors ${redeInfo.isPublica
                                                         ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
                                                         : 'text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20'
                                                         }`}
@@ -902,7 +902,7 @@ export default function CursosPage() {
                                                 <span className="inline-flex items-center gap-1.5">
                                                     <span>Filtros</span>
                                                     {activeFiltersCount > 0 && (
-                                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] leading-none font-bold bg-primary-600 text-white dark:bg-primary-500">
+                                                        <span className="px-1.5 py-0.5 rounded-md text-[10px] leading-none font-bold tabular-nums bg-primary-600 text-white dark:bg-primary-500">
                                                             {activeFiltersCount}
                                                         </span>
                                                     )}
@@ -1063,7 +1063,7 @@ export default function CursosPage() {
                                                             <div className="flex items-center flex-wrap gap-2 shrink-0 self-start mt-0.5">
                                                                 {/* 1. Indicador de Rede */}
                                                                 <span
-                                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-colors shrink-0 ${redeInfo.isPublica
+                                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wider uppercase transition-colors shrink-0 ${redeInfo.isPublica
                                                                         ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
                                                                         : 'text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20'
                                                                         }`}
@@ -1072,14 +1072,14 @@ export default function CursosPage() {
                                                                 </span>
 
                                                                 {/* 2. Modalidade em Pílula Clean */}
-                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption text-text-muted font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 shrink-0">
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-caption text-text-muted font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 shrink-0">
                                                                     <Building2 size={12} className="text-text-muted/70 shrink-0" />
                                                                     <span>Presencial</span>
                                                                 </span>
 
                                                                 {/* 3. Área / Categoria em Pílula Completa (sem corte/truncate) */}
                                                                 <div
-                                                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-caption font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 text-text-secondary dark:text-zinc-300 shrink-0 transition-colors hover:border-border-strong whitespace-nowrap"
+                                                                    className="inline-flex items-center px-2.5 py-0.5 rounded-md text-caption font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 text-text-secondary dark:text-zinc-300 shrink-0 transition-colors hover:border-border-strong whitespace-nowrap"
                                                                     title={c.categoria || c.tipo || 'Geral'}
                                                                 >
                                                                     <span>
@@ -1248,7 +1248,7 @@ export default function CursosPage() {
                                                             <div className="flex items-center flex-wrap gap-2 shrink-0 self-start mt-0.5">
                                                                 {/* 1. Indicador de Rede */}
                                                                 <span
-                                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-colors shrink-0 ${redeInfo.isPublica
+                                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wider uppercase transition-colors shrink-0 ${redeInfo.isPublica
                                                                         ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
                                                                         : 'text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20'
                                                                         }`}
@@ -1257,14 +1257,14 @@ export default function CursosPage() {
                                                                 </span>
 
                                                                 {/* 2. Modalidade em Pílula Clean */}
-                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption text-primary-600 dark:text-primary-400 font-medium bg-primary-500/10 border border-primary-500/20 shrink-0">
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-caption text-primary-600 dark:text-primary-400 font-medium bg-primary-500/10 border border-primary-500/20 shrink-0">
                                                                     <Wifi size={12} className="shrink-0" />
                                                                     <span>EaD</span>
                                                                 </span>
 
                                                                 {/* 3. Área / Categoria em Pílula Completa (sem corte/truncate) */}
                                                                 <div
-                                                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-caption font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 text-text-secondary dark:text-zinc-300 shrink-0 transition-colors hover:border-border-strong whitespace-nowrap"
+                                                                    className="inline-flex items-center px-2.5 py-0.5 rounded-md text-caption font-medium bg-surface-soft dark:bg-zinc-850 border border-border/80 dark:border-zinc-800 text-text-secondary dark:text-zinc-300 shrink-0 transition-colors hover:border-border-strong whitespace-nowrap"
                                                                     title={c.categoria || c.tipo || 'Geral'}
                                                                 >
                                                                     <span>
@@ -1369,7 +1369,7 @@ export default function CursosPage() {
                                                         {/* BARRAS DE PÍLULAS */}
                                                         <div className="flex items-center gap-2 w-full">
                                                             <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                className="h-[28px] rounded-lg flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                 style={{
                                                                     flexGrow: cat.count,
                                                                     flexBasis: 0,
@@ -1386,7 +1386,7 @@ export default function CursosPage() {
 
                                                             {remaining > 0 && (
                                                                 <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                     style={{
                                                                         flexGrow: remaining,
                                                                         flexBasis: 0
@@ -1395,7 +1395,7 @@ export default function CursosPage() {
                                                             )}
 
                                                             <div
-                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                 title={`${cat.percent}% da oferta (${cat.count} cursos)`}
                                                             >
                                                                 <span className="text-caption font-semibold tabular-nums leading-none">
@@ -1436,7 +1436,7 @@ export default function CursosPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setSelectedTerritory(null)}
-                                                className="text-caption font-semibold px-2.5 py-1 rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/70 dark:bg-primary-950/40 hover:bg-primary-200/70 dark:hover:bg-primary-900/50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                                                className="text-caption font-semibold px-2.5 py-1 rounded-control text-primary-700 dark:text-primary-300 bg-primary-100/70 dark:bg-primary-950/40 hover:bg-primary-200/70 dark:hover:bg-primary-900/50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
                                             >
                                                 ← Ver Todos os Territórios
                                             </button>
@@ -1482,7 +1482,7 @@ export default function CursosPage() {
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: total,
                                                                         flexBasis: 0,
@@ -1498,7 +1498,7 @@ export default function CursosPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1507,7 +1507,7 @@ export default function CursosPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                     title={`${m.percentTotal}% do território (${total} cursos)`}
                                                                 >
                                                                     <span className="text-caption font-semibold tabular-nums leading-none">
@@ -1571,7 +1571,7 @@ export default function CursosPage() {
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: total,
                                                                         flexBasis: 0,
@@ -1587,7 +1587,7 @@ export default function CursosPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1596,7 +1596,7 @@ export default function CursosPage() {
                                                                 )}
 
                                                                 <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                     title={`${t.percentTotal}% do estado (${total} cursos)`}
                                                                 >
                                                                     <span className="text-caption font-semibold tabular-nums leading-none">
@@ -1691,7 +1691,7 @@ export default function CursosPage() {
                                                         <div className="flex items-center gap-2 w-full">
                                                             {/* PREENCHIMENTO */}
                                                             <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                className="h-[28px] rounded-lg flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                 style={{
                                                                     flexGrow: ies.count,
                                                                     flexBasis: 0,
@@ -1708,7 +1708,7 @@ export default function CursosPage() {
                                                             {/* RESTANTE */}
                                                             {remaining > 0 && (
                                                                 <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    className={`h-[28px] rounded-lg ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                     style={{
                                                                         flexGrow: remaining,
                                                                         flexBasis: 0
@@ -1718,7 +1718,7 @@ export default function CursosPage() {
 
                                                             {/* PERCENTUAL */}
                                                             <div
-                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
+                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-lg ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                                                                 title={`${pct}% da oferta (${ies.count} cursos)`}
                                                             >
                                                                 <span className="text-caption font-semibold tabular-nums leading-none">
