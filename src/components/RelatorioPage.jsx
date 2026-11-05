@@ -1382,7 +1382,7 @@ export default function RelatorioPage() {
       <div id="relatorio-export-container" className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 min-h-[540px] relative z-10 print:block print:h-auto print:overflow-visible">
 
         {/* CARD DO MAPA (ESQUERDA - COMPACTO PARA DAR MAIS ESPAÇO À LISTA/TABELA) */}
-        <div className={`w-full lg:w-[29%] xl:w-[30%] shrink-0 h-[420px] lg:h-auto min-h-[420px] bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col print:hidden transition-all duration-300 ${
+        <div className={`w-full lg:w-[29%] xl:w-[30%] shrink-0 h-[420px] lg:h-auto min-h-[420px] bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col print:hidden transition-[width,border-color,box-shadow] duration-300 ${
           reportMode === 'semiarido'
             ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
             : 'border-border'

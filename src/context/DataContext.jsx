@@ -1,8 +1,13 @@
-import React, { createContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { supabase } from '../services/supabase';
 import { getTextoReferencia } from '../data/referenciasDB';
 
 export const DataContext = createContext();
+
+export const useData = () => {
+  const context = useContext(DataContext);
+  return context || {};
+};
 
 const CACHE_KEY = '@SectiPainel_Data_v14_SUPABASE_PROD';
 const CACHE_TIME_MS = 10 * 60 * 1000;

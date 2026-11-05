@@ -59,23 +59,23 @@ export default function CustomPieChart({
   const chartData = !isEmpty ? normalizedData : [{ [valueKey]: 1, fill: chartTheme.grid, [labelKey]: 'Sem dados' }];
 
   return (
-    <div className={`flex-1 bg-surface rounded-card border border-border p-5 relative flex flex-col justify-start h-full group cursor-default ${cardClassName}`}>
+    <div className={`flex-1 bg-surface rounded-card border border-border p-3.5 sm:p-4 relative flex flex-col justify-start h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
 
-      {/* CABEÇALHO */}
-      <div className="flex justify-between items-start mb-3 relative z-10 w-full shrink-0">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <h2 className="text-text-primary font-semibold text-subtitle tracking-tight">{title}</h2>
+      {/* CABEÇALHO COM ALTURA ESTÁVEL E TRUNCATE */}
+      <div className="flex justify-between items-start mb-1.5 relative z-10 w-full shrink-0 min-w-0">
+        <div className="flex flex-col min-w-0 flex-1 pr-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate" title={title}>{title}</h2>
             {badge && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                 {badge}
               </span>
             )}
           </div>
-          <p className="text-text-muted text-caption font-medium mt-0.5">{subtitle}</p>
+          <p className="text-text-muted text-caption font-medium mt-0.5 truncate" title={subtitle}>{subtitle}</p>
         </div>
       </div>
-      <div className="w-full h-px bg-border/70 mb-4 shrink-0"></div>
+      <div className="w-full h-px bg-border/70 mb-2 shrink-0"></div>
 
       {isEmpty ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
@@ -226,7 +226,7 @@ export default function CustomPieChart({
                       {/* BARRA: TRACK + FILL + NOME */}
                       <div className={`relative flex-1 h-[26px] sm:h-[28px] rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
                         <div
-                          className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                          className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-[width,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden z-0 flex items-center`}
                           style={{ width: `${percentOfMax}%` }}
                         />
 

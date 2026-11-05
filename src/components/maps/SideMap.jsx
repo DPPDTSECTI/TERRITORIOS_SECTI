@@ -1567,14 +1567,20 @@ export default function SideMap({
           }
           className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-full text-caption font-semibold transition-colors duration-150 cursor-pointer border select-none ${
             modoGeografico
-              ? 'bg-surface border-primary-500/40 text-primary-700 dark:text-primary-300 shadow-card'
-              : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card'
+              ? (filtroSemiarido
+                ? 'bg-surface border-amber-500/60 dark:border-amber-500/50 text-amber-800 dark:text-amber-300 shadow-card ring-1 ring-amber-400/20'
+                : 'bg-surface border-primary-500/40 text-primary-700 dark:text-primary-300 shadow-card')
+              : (filtroSemiarido
+                ? 'bg-surface border-border text-text-secondary hover:border-amber-400/60 hover:text-amber-800 dark:hover:text-amber-300 shadow-card'
+                : 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary shadow-card')
           }`}
         >
           <span
             className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-xs ${
               modoGeografico
-                ? 'bg-primary-600 text-white'
+                ? (filtroSemiarido
+                  ? 'bg-amber-500 text-white shadow-amber-500/30'
+                  : 'bg-primary-600 text-white')
                 : 'bg-surface-soft border border-border text-text-muted'
             }`}
           >

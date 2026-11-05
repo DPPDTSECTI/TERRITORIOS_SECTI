@@ -110,13 +110,13 @@ export default function RankingBarChart({
   }, [allRanked, filterMode, highlightedItem]);
 
   return (
-    <div className={`flex-1 bg-surface rounded-card border border-border p-4 sm:p-4.5 relative flex flex-col group cursor-default h-full min-h-0 ${cardClassName}`}>
+    <div className={`flex-1 bg-surface rounded-card border border-border p-3.5 sm:p-4 relative flex flex-col group cursor-default h-full min-h-0 overflow-hidden ${cardClassName}`}>
 
-      {/* HEADER + CONTROLES */}
-      <div className="flex justify-between items-start mb-2 shrink-0">
-        <div className="flex flex-col min-w-0 pr-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-text-primary font-semibold text-subtitle tracking-tight">{title}</h3>
+      {/* HEADER + CONTROLES COM ALTURA ESTÁVEL */}
+      <div className="flex justify-between items-start mb-1.5 shrink-0 min-w-0">
+        <div className="flex flex-col min-w-0 pr-2 flex-1">
+          <div className="flex items-center gap-2 min-w-0">
+            <h3 className="text-text-primary font-semibold text-subtitle tracking-tight truncate" title={title}>{title}</h3>
             {badge && (
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
@@ -124,7 +124,7 @@ export default function RankingBarChart({
               </span>
             )}
             {highlightedItem && (
-              <span className={`text-caption font-semibold tabular-nums px-2.5 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none ${
+              <span className={`text-caption font-semibold tabular-nums px-2 py-0.5 rounded-full shrink-0 inline-flex items-center justify-center leading-none ${
                 (isSemiarido || !!badge)
                   ? 'bg-accent-50 text-accent-800 dark:bg-accent-950 dark:text-accent-200 border border-accent-200/60'
                   : 'bg-primary-50 text-primary-800 dark:bg-primary-950 dark:text-primary-200 border border-primary-200/60'
@@ -133,7 +133,7 @@ export default function RankingBarChart({
               </span>
             )}
           </div>
-          <p className="text-text-muted font-normal text-caption mt-0.5 truncate">{subtitle}</p>
+          <p className="text-text-muted font-normal text-caption mt-0.5 truncate" title={subtitle}>{subtitle}</p>
         </div>
 
         <div className="flex flex-row items-center justify-center gap-0.5 bg-surface-sunken border border-border rounded-full p-0.5 relative z-40 shrink-0 shadow-2xs">
@@ -234,7 +234,7 @@ export default function RankingBarChart({
                 {/* BARRA: TRACK + FILL + NOME */}
                 <div className={`relative flex-1 h-[30px] sm:h-[32px] rounded-xl sm:rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
                   <div
-                    className={`absolute left-0 top-0 bottom-0 rounded-xl sm:rounded-full ${fillColor} transition-all duration-500 ease-out overflow-hidden z-0 flex items-center`}
+                    className={`absolute left-0 top-0 bottom-0 rounded-xl sm:rounded-full ${fillColor} transition-[width,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden z-0 flex items-center`}
                     style={{ width: `${percentOfMax}%` }}
                   />
 

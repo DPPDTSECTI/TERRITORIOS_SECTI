@@ -445,7 +445,7 @@ export default function CadeiaPage() {
         return list;
     }, [territoryCadeias, selectedTipo]);
 
-    // 1. Mapeamento de cores dos segmentos (calculado sobre o conjunto COMPLETO de cadeias, estável entre filtros)
+    // 1. Mapeamento de cores dos segmentos em tons azuis harmonizados (estável entre filtros)
     const { segmentColorMap, neutralSegmentColor } = useMemo(() => {
         const counts = {};
         (enrichedCadeias || []).forEach(c => {
@@ -456,8 +456,12 @@ export default function CadeiaPage() {
         const sorted = Object.entries(counts)
             .sort((a, b) => b[1] - a[1]);
 
-        const palette = chartTheme.palette || [];
-        const neutral = palette[0] || 'rgb(148, 163, 184)';
+        // Paleta em padrão de tons azuis profissionais (ou âmbar no modo semiárido)
+        const palette = filtroSemiarido
+            ? (chartTheme.goldenPalette || ['#D97706', '#B45309', '#F59E0B', '#92400E', '#FBBF24', '#CA8A04'])
+            : (chartTheme.bluePalette || ['#2563EB', '#1D4ED8', '#0284C7', '#1E40AF', '#3B82F6', '#0369A1', '#1E3A8A', '#0EA5E9']);
+
+        const neutral = palette[0] || (filtroSemiarido ? '#D97706' : '#2563EB');
 
         const colorMap = new Map();
         sorted.forEach(([name], idx) => {
@@ -468,7 +472,7 @@ export default function CadeiaPage() {
             segmentColorMap: colorMap,
             neutralSegmentColor: neutral
         };
-    }, [enrichedCadeias, chartTheme.palette]);
+    }, [enrichedCadeias, chartTheme.bluePalette, chartTheme.goldenPalette, filtroSemiarido]);
 
     // 2. getSegmentColor estável que consulta o mapa de cores de segmentos
     const getSegmentColor = useCallback((segName) => {
@@ -689,7 +693,7 @@ export default function CadeiaPage() {
             label: filtroSemiarido
                 ? (selectedTerritory ? 'Municípios Sede no Semiárido' : 'Territórios no Semiárido')
                 : (selectedTerritory ? 'Municípios Sede' : 'Territórios com Arranjos'),
-            value: loadingStats ? '...' : (selectedTerritory ? `${totalMunicipiosSede} munic.` : `${territoryRanking.length} de ${territoriosData.length || 27}`),
+            value: loadingStats ? '...' : (selectedTerritory ? `${totalMunicipiosSede} munic.` : `${territoryRanking.length} / ${territoriosData.length || 27}`),
             icon: selectedTerritory ? Building2 : MapPin
         },
         {
@@ -698,8 +702,9 @@ export default function CadeiaPage() {
             icon: Layers
         },
         {
-            label: topSegment ? (filtroSemiarido ? `Maior Segmento: ${topSegment.name}` : `Maior Segmento: ${topSegment.name}`) : 'Maior Segmento',
+            label: topSegment ? (filtroSemiarido ? `Principal: ${topSegment.name}` : `Principal: ${topSegment.name}`) : 'Maior Segmento',
             value: loadingStats ? '...' : (topSegment ? `${topSegment.percent}%` : '-'),
+            tooltip: topSegment ? `${topSegment.name} (${topSegment.percent}%)` : undefined,
             icon: Sparkles
         }
     ];
@@ -710,7 +715,7 @@ export default function CadeiaPage() {
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-500 ease-out select-none ${filtroSemiarido ? 'opacity-100 visible' : 'opacity-0 invisible'
                     }`}
             >
                 {/* 0. AMBIENT WARM TINT ACROSS CANVAS */}
@@ -799,11 +804,11 @@ export default function CadeiaPage() {
                                 <motion.div
                                     key={index}
                                     variants={fadeUp}
-                                    className="h-full"
+                                    className="h-full flex flex-col"
                                 >
                                     <div
                                         title={kpi.tooltip || kpi.label}
-                                        className={`p-4 sm:p-5 flex flex-col justify-between min-h-[108px] h-full rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] flex-1 rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
                                             ? (filtroSemiarido
                                                 ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                                                 : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
@@ -883,7 +888,7 @@ export default function CadeiaPage() {
                 {/* MAPA DE CADEIAS */}
                 <motion.div
                     variants={fadeUp}
-                    className={`shrink-0 w-full h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-all duration-300 ${
+                    className={`shrink-0 w-full h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-[width,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         filtroSemiarido
                             ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
                             : 'border-border'
@@ -1044,7 +1049,7 @@ export default function CadeiaPage() {
                                             {
                                                 id: 'segmentos',
                                                 label: 'Segmentos',
-                                                icon: <Filter size={15} />
+                                                icon: <Layers size={15} />
                                             },
                                             {
                                                 id: 'ranking',
@@ -1056,6 +1061,7 @@ export default function CadeiaPage() {
                                         onChange={setActiveTab}
                                         variant="pill"
                                         className="shrink-0"
+                                        isSemiarido={filtroSemiarido}
                                     />
 
                                     {/* FILTROS POR TIPO AO LADO DAS ABAS (QUANDO NO CATÁLOGO) */}
@@ -1101,49 +1107,6 @@ export default function CadeiaPage() {
                                     />
                                 </div>
                             </div>
-
-                            {/* LINHA DE FILTROS ATIVOS (SE HOUVER FILTRO ATIVO) */}
-                            {(selectedSegmento || selectedTerritory) && (
-                                <div className="flex items-center gap-2 flex-wrap min-w-0 pt-0.5 animate-in fade-in duration-150">
-                                    <span className="text-caption font-medium text-text-muted">Filtros ativos:</span>
-                                    {selectedSegmento && (
-                                        <Chip
-                                            selected
-                                            onClick={() => setSelectedSegmento(null)}
-                                            icon={<Filter size={12} />}
-                                            variant="primary"
-                                            size="sm"
-                                            className="max-w-[280px]"
-                                            title={`Segmento: ${selectedSegmento}`}
-                                        >
-                                            Segmento: {selectedSegmento} ×
-                                        </Chip>
-                                    )}
-                                    {selectedTerritory && (
-                                        <Chip
-                                            selected
-                                            onClick={() => handleSelectTerritory(null)}
-                                            icon={<MapPin size={12} />}
-                                            variant="neutral"
-                                            size="sm"
-                                            className="max-w-[240px]"
-                                            title={`Território: ${territoryName}`}
-                                        >
-                                            {territoryName} ×
-                                        </Chip>
-                                    )}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setSelectedSegmento(null);
-                                            handleSelectTerritory(null);
-                                        }}
-                                        className="text-caption font-medium text-text-muted hover:text-danger-600 transition-colors ml-1 cursor-pointer"
-                                    >
-                                        Limpar todos
-                                    </button>
-                                </div>
-                            )}
                         </div>
 
                         {/* CONTEÚDO DAS ABAS */}
@@ -1157,14 +1120,32 @@ export default function CadeiaPage() {
                                                 {selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos Produtivos e IGs no Estado'}
                                             </h3>
                                         </div>
-                                        {selectedTerritory && (
-                                            <Badge
-                                                variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                icon={<MapPin size={13} />}
-                                            >
-                                                {territoryName}
-                                            </Badge>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {selectedSegmento && (
+                                                <Badge
+                                                    variant="neutral"
+                                                    icon={<Layers size={12} />}
+                                                    className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                    onClick={() => setSelectedSegmento(null)}
+                                                    title="Clique para remover filtro de segmento"
+                                                >
+                                                    <span className="max-w-[140px] truncate">{selectedSegmento}</span>
+                                                    <span className="ml-0.5 font-bold text-text-muted hover:text-text-primary text-[11px] leading-none">×</span>
+                                                </Badge>
+                                            )}
+                                            {selectedTerritory && (
+                                                <Badge
+                                                    variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                    icon={<MapPin size={12} />}
+                                                    className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                    onClick={() => handleSelectTerritory(null)}
+                                                    title="Clique para remover filtro de território"
+                                                >
+                                                    <span className="max-w-[140px] truncate">{territoryName}</span>
+                                                    <span className="ml-0.5 font-bold opacity-60 hover:opacity-100 text-[11px] leading-none">×</span>
+                                                </Badge>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div ref={catalogListRef} className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
@@ -1303,13 +1284,25 @@ export default function CadeiaPage() {
                             {/* ABA 2: SEGMENTOS */}
                             {activeTab === 'segmentos' && (
                                 <div className="flex-1 flex flex-col min-h-0 w-full overflow-hidden">
-                                    <div className="mb-2.5 shrink-0 flex items-center justify-between">
+                                    <div className="mb-3 shrink-0 flex items-center justify-between">
                                         <div>
                                             <h3 className="text-body-sm font-semibold text-text-primary">
                                                 {selectedTerritory ? `Segmentos em ${territoryName}` : 'Segmentos Econômicos da Bahia'}
                                             </h3>
                                             <p className="text-caption text-text-secondary font-medium">Distribuição por vocação produtiva</p>
                                         </div>
+                                        {selectedTerritory && (
+                                            <Badge
+                                                variant={filtroSemiarido ? 'warning' : 'primary'}
+                                                icon={<MapPin size={12} />}
+                                                className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                onClick={() => handleSelectTerritory(null)}
+                                                title="Clique para remover filtro de território"
+                                            >
+                                                <span className="max-w-[140px] truncate">{territoryName}</span>
+                                                <span className="ml-0.5 font-bold opacity-60 hover:opacity-100 text-[11px] leading-none">×</span>
+                                            </Badge>
+                                        )}
                                     </div>
 
                                     <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full">
@@ -1348,12 +1341,15 @@ export default function CadeiaPage() {
                                                             <div className="flex items-center gap-1.5 min-w-0">
                                                                 <span className="truncate">{seg.name}</span>
                                                             </div>
+                                                            <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
+                                                                {seg.count} {seg.count === 1 ? 'arranjo' : 'arranjos'}
+                                                            </span>
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
                                                         <div className="flex items-center gap-2 w-full">
                                                             <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                 style={{
                                                                     flexGrow: seg.count,
                                                                     flexBasis: 0,
@@ -1369,7 +1365,7 @@ export default function CadeiaPage() {
 
                                                             {remaining > 0 && (
                                                                 <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                     style={{
                                                                         flexGrow: remaining,
                                                                         flexBasis: 0
@@ -1419,7 +1415,10 @@ export default function CadeiaPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => handleSelectTerritory(null)}
-                                                className="text-caption font-semibold px-2.5 py-1 rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/70 dark:bg-primary-950/40 hover:bg-primary-200/70 dark:hover:bg-primary-900/50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                                                className={`text-caption font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${filtroSemiarido
+                                                    ? 'text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 bg-amber-100/70 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-700/50'
+                                                    : 'text-primary-700 dark:text-primary-300 hover:text-primary-900 dark:hover:text-primary-100 hover:underline bg-primary-200/50 dark:bg-primary-950/40'
+                                                    }`}
                                             >
                                                 ← Ver Todos os Territórios
                                             </button>
@@ -1429,7 +1428,7 @@ export default function CadeiaPage() {
                                     <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
-                                                municipalityRanking.map((m) => {
+                                                municipalityRanking.map((m, idx) => {
                                                     const totalMunCount = municipalityRanking.reduce((acc, x) => acc + x.count, 0) || 1;
                                                     const remaining = Math.max(0, totalMunCount - m.count);
 
@@ -1456,13 +1455,19 @@ export default function CadeiaPage() {
                                                         >
                                                             {/* RÓTULO COM NOME DO MUNICÍPIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
-                                                                <span className="truncate">{m.name}</span>
+                                                                <div className="flex items-center gap-1.5 min-w-0">
+                                                                    <span className="w-5 text-[11px] font-bold text-text-muted dark:text-zinc-400 tabular-nums shrink-0">{idx + 1}º</span>
+                                                                    <span className="truncate">{m.name}</span>
+                                                                </div>
+                                                                <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
+                                                                    {m.count} {m.count === 1 ? 'arranjo' : 'arranjos'}
+                                                                </span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: m.count,
                                                                         flexBasis: 0,
@@ -1478,7 +1483,7 @@ export default function CadeiaPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1509,7 +1514,7 @@ export default function CadeiaPage() {
                                             )
                                         ) : (
                                             territoryRanking.length > 0 ? (
-                                                territoryRanking.map((t) => {
+                                                territoryRanking.map((t, idx) => {
                                                     const isSelected = selectedTerritory && (
                                                         (t.id && Number(selectedTerritory.id_territorio) === Number(t.id)) ||
                                                         normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio || selectedTerritory.nome) === normalizeName(t.name)
@@ -1542,13 +1547,19 @@ export default function CadeiaPage() {
                                                         >
                                                             {/* RÓTULO COM NOME DO TERRITÓRIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
-                                                                <span className="truncate">{t.name}</span>
+                                                                <div className="flex items-center gap-1.5 min-w-0">
+                                                                    <span className="w-5 text-[11px] font-bold text-text-muted dark:text-zinc-400 tabular-nums shrink-0">{idx + 1}º</span>
+                                                                    <span className="truncate">{t.name}</span>
+                                                                </div>
+                                                                <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
+                                                                    {t.count} {t.count === 1 ? 'arranjo' : 'arranjos'}
+                                                                </span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: t.count,
                                                                         flexBasis: 0,
@@ -1564,7 +1575,7 @@ export default function CadeiaPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0

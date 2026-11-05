@@ -48,6 +48,28 @@ export const LIGHT_CHART_PALETTE = [
   '#DC2626', // Red 600
 ];
 
+export const LIGHT_BLUE_PALETTE = [
+  '#2563EB', // Royal Blue 600 (Primary Brand)
+  '#1D4ED8', // Royal Blue 700
+  '#0284C7', // Cerulean Blue 600
+  '#1E40AF', // Deep Navy 800
+  '#3B82F6', // Cobalt Blue 500
+  '#0369A1', // Marine Sky 700
+  '#1E3A8A', // Midnight Blue 900
+  '#0EA5E9', // Ocean Sky 500
+];
+
+export const DARK_BLUE_PALETTE = [
+  '#38BDF8', // Sky Blue 400
+  '#60A5FA', // Royal Light 400
+  '#2563EB', // Royal Blue 600
+  '#7DD3FC', // Ice Sky 300
+  '#3B82F6', // Cobalt Blue 500
+  '#93C5FD', // Soft Blue 300
+  '#0284C7', // Cerulean Blue 600
+  '#1D4ED8', // Sapphire 700
+];
+
 export const DARK_CHART_PALETTE = [
   '#38BDF8', // Sky Blue 400
   '#60A5FA', // Royal Light 400
@@ -69,6 +91,7 @@ export function useChartTheme() {
 
   return useMemo(() => {
     const palette = isDark ? DARK_CHART_PALETTE : LIGHT_CHART_PALETTE;
+    const bluePalette = isDark ? DARK_BLUE_PALETTE : LIGHT_BLUE_PALETTE;
 
     const goldenPalette = isDark
       ? [
@@ -106,6 +129,7 @@ export function useChartTheme() {
     return {
       isDark,
       palette,
+      bluePalette,
       goldenPalette,
       semiaridoPalette: goldenPalette,
       primary,

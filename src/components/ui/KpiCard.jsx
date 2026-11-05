@@ -10,13 +10,13 @@ import { KpiSkeleton } from './Skeleton';
  * @param {object} props
  * @param {number|string} props.value - Valor numérico alvo
  * @param {'int'|'decimal'|'percent'|'compact'|'raw'} [props.format='int'] - Formato numérico
- * @param {number} [props.duration=600] - Duração da animação em milissegundos
+ * @param {number} [props.duration=380] - Duração da animação em milissegundos
  * @param {string} [props.className] - Classes customizadas
  */
 export function AnimatedNumber({
   value,
   format = 'int',
-  duration = 600,
+  duration = 380,
   digits = 1,
   className,
 }) {
@@ -55,8 +55,8 @@ export function AnimatedNumber({
       if (!startTimeRef.current) startTimeRef.current = timestamp;
       const progress = Math.min((timestamp - startTimeRef.current) / duration, 1);
 
-      // Easing cúbico suave
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      // Easing quártico suave (snappy & fluido)
+      const easeProgress = 1 - Math.pow(1 - progress, 4);
       const val = startVal + (numericTarget - startVal) * easeProgress;
 
       setCurrent(val);

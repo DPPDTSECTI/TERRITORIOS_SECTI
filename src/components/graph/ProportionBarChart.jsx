@@ -98,13 +98,15 @@ export default function ProportionBarChart({
       ? 'bg-accent-100 dark:bg-accent-950 text-accent-800 dark:text-accent-200 border border-accent-200'
       : 'bg-primary-100 dark:bg-primary-950 text-primary-800 dark:text-primary-200 border border-primary-200';
 
+    const pillH = 'h-[21px]';
+
     return (
-      <div className={`flex-1 bg-surface rounded-card border border-border p-4 relative flex flex-col justify-between h-full group cursor-default overflow-hidden ${cardClassName}`}>
-        {/* CABEÇALHO */}
-        <div className="flex justify-between items-start mb-1.5 relative z-10 w-full shrink-0">
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2">
-              <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate">{title}</h2>
+      <div className={`flex-1 bg-surface rounded-card border border-border p-3.5 sm:p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 ${cardClassName}`}>
+        {/* CABEÇALHO COMPACTO E ESTÁVEL */}
+        <div className="flex justify-between items-start mb-1 relative z-10 w-full shrink-0 min-w-0">
+          <div className="flex flex-col min-w-0 flex-1 pr-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate" title={title}>{title}</h2>
               {badge && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-medium bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 border border-accent-100 dark:border-accent-800 shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
@@ -112,7 +114,7 @@ export default function ProportionBarChart({
                 </span>
               )}
             </div>
-            <p className="text-text-muted text-caption font-normal mt-0.5 truncate">{subtitle}</p>
+            <p className="text-text-muted text-caption font-normal mt-0.5 truncate" title={subtitle}>{subtitle}</p>
           </div>
         </div>
 
@@ -125,7 +127,7 @@ export default function ProportionBarChart({
           </div>
         ) : (
           <>
-            <div className={`flex flex-col justify-between flex-1 w-full ${data.length > 4 ? 'gap-1 py-0.5' : 'gap-2 py-1'} my-auto min-h-0 overflow-hidden`}>
+            <div className="flex flex-col justify-between flex-1 w-full gap-1 py-0.5 min-h-0">
               {data.map((item, idx) => {
                 const pos = Number(item.positive || 0);
                 const neg = Number(item.negative || 0);
@@ -133,30 +135,27 @@ export default function ProportionBarChart({
                 const percentPos = Number(((pos / total) * 100).toFixed(1));
                 const percentNeg = Number(((neg / total) * 100).toFixed(1));
 
-                const isCompact = data.length > 4;
-                const pillH = isCompact ? 'h-[23px]' : 'h-[26px]';
-
                 return (
                   <div key={idx} className="flex flex-col gap-0.5 w-full group/item">
-                    <div className="text-caption font-medium text-text-primary leading-tight truncate px-0.5" title={item.label}>
+                    <div className="text-[11px] sm:text-caption font-medium text-text-primary leading-tight truncate px-0.5" title={item.label}>
                       {item.label}
                     </div>
 
                     <div className="flex items-center gap-1.5 w-full">
                       {pos > 0 && (
                         <div
-                          className={`${pillH} rounded-full ${posPillColor} flex items-center justify-center px-2 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-xs whitespace-nowrap`}
+                          className={`${pillH} rounded-full ${posPillColor} flex items-center justify-center px-2 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                           style={{
                             flexGrow: pos,
                             flexBasis: 0,
-                            minWidth: neg > 0 ? (isCompact ? '64px' : '72px') : 'auto'
+                            minWidth: neg > 0 ? '54px' : 'auto'
                           }}
                           title={`${positiveLabel}: ${pos} (${percentPos}%)`}
                         >
-                          <span className="text-caption font-semibold tnum leading-none whitespace-nowrap">
+                          <span className="text-[11px] font-semibold tnum leading-none whitespace-nowrap">
                             {pos}
                           </span>
-                          <span className="text-caption font-normal opacity-90 ml-1 tnum leading-none whitespace-nowrap">
+                          <span className="text-[10px] font-normal opacity-90 ml-1 tnum leading-none whitespace-nowrap">
                             ({percentPos}%)
                           </span>
                         </div>
@@ -164,28 +163,28 @@ export default function ProportionBarChart({
 
                       {neg > 0 && (
                         <div
-                          className={`${pillH} rounded-full ${negPillStyle} flex items-center justify-center px-2 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-xs whitespace-nowrap`}
+                          className={`${pillH} rounded-full ${negPillStyle} flex items-center justify-center px-2 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                           style={{
                             flexGrow: neg,
                             flexBasis: 0,
-                            minWidth: pos > 0 ? (isCompact ? '64px' : '72px') : 'auto'
+                            minWidth: pos > 0 ? '54px' : 'auto'
                           }}
                           title={`${negativeLabel}: ${neg} (${percentNeg}%)`}
                         >
-                          <span className="text-caption font-semibold tnum leading-none whitespace-nowrap">
+                          <span className="text-[11px] font-semibold tnum leading-none whitespace-nowrap">
                             {neg}
                           </span>
-                          <span className="text-caption font-normal opacity-85 ml-1 tnum leading-none whitespace-nowrap">
+                          <span className="text-[10px] font-normal opacity-85 ml-1 tnum leading-none whitespace-nowrap">
                             ({percentNeg}%)
                           </span>
                         </div>
                       )}
 
                       <div
-                        className={`${pillH} min-w-[30px] px-2 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-xs`}
+                        className={`${pillH} min-w-[28px] px-1.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
                         title={`Total: ${total}`}
                       >
-                        <span className="text-caption font-semibold tnum leading-none">
+                        <span className="text-[11px] font-semibold tnum leading-none">
                           {total}
                         </span>
                       </div>
@@ -195,17 +194,17 @@ export default function ProportionBarChart({
               })}
             </div>
 
-            <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-border shrink-0 text-caption font-medium mt-auto">
+            <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-border/70 shrink-0 text-[11px] font-medium mt-auto">
               <div className="flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${posPillColor} shadow-xs`}></span>
+                <span className={`w-2 h-2 rounded-full ${posPillColor} shadow-2xs`}></span>
                 <span className={isSemi ? "text-accent-800 dark:text-accent-300" : "text-primary-700 dark:text-primary-300"}>{positiveLabel}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-accent-500/40' : 'bg-primary-300'} shadow-xs`}></span>
+                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-accent-500/40' : 'bg-primary-300'} shadow-2xs`}></span>
                 <span className={isSemi ? "text-accent-800 dark:text-accent-300" : "text-primary-700 dark:text-primary-300"}>{negativeLabel}</span>
               </div>
               <div className="flex items-center gap-1.5 text-text-muted">
-                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-accent-400' : 'bg-primary-400'} shadow-xs`}></span>
+                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-accent-400' : 'bg-primary-400'} shadow-2xs`}></span>
                 <span className={isSemi ? "text-accent-800 dark:text-accent-300" : ""}>Total</span>
               </div>
             </div>

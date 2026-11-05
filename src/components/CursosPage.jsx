@@ -388,22 +388,25 @@ export default function CursosPage() {
             counts[cat].total += 1;
         });
 
-        const palette = filtroSemiarido ? chartTheme.semiaridoPalette : chartTheme.palette;
+        const sorted = Object.entries(counts)
+            .sort((a, b) => b[1].total - a[1].total);
 
-        return Object.entries(counts)
-            .map(([name, data], idx) => {
-                const percent = total > 0 ? ((data.total / total) * 100).toFixed(1) : '0.0';
-                const color = palette[idx % palette.length];
-                return {
-                    name,
-                    count: data.total,
-                    percent,
-                    color,
-                    shortName: name
-                };
-            })
-            .sort((a, b) => b.count - a.count);
-    }, [activeScopedCursos, filtroSemiarido, chartTheme.semiaridoPalette, chartTheme.palette]);
+        const palette = filtroSemiarido
+            ? (chartTheme.goldenPalette || ['#D97706', '#B45309', '#F59E0B', '#92400E', '#FBBF24', '#CA8A04'])
+            : (chartTheme.bluePalette || ['#2563EB', '#1D4ED8', '#0284C7', '#1E40AF', '#3B82F6', '#0369A1', '#1E3A8A', '#0EA5E9']);
+
+        return sorted.map(([name, data], idx) => {
+            const percent = total > 0 ? ((data.total / total) * 100).toFixed(1) : '0.0';
+            const color = palette[idx % palette.length];
+            return {
+                name,
+                count: data.total,
+                percent,
+                color,
+                shortName: name
+            };
+        });
+    }, [activeScopedCursos, filtroSemiarido, chartTheme.goldenPalette, chartTheme.bluePalette]);
 
     const categoryColorMap = useMemo(() => {
         const map = {};
@@ -603,7 +606,7 @@ export default function CursosPage() {
             {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
             <div
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
+                className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-500 ease-out select-none ${filtroSemiarido ? 'opacity-100 visible' : 'opacity-0 invisible'
                     }`}
             >
                 {/* 0. AMBIENT WARM TINT ACROSS CANVAS */}
@@ -687,10 +690,10 @@ export default function CursosPage() {
                             const isHero = index === 0;
 
                             return (
-                                <motion.div key={index} variants={fadeUp} className="h-full">
+                                <motion.div key={index} variants={fadeUp} className="h-full flex flex-col">
                                     <div
                                         title={kpi.tooltip || kpi.label}
-                                        className={`p-4 sm:p-5 flex flex-col justify-between min-h-[108px] h-full rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
+                                        className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] flex-1 rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
                                             ? (filtroSemiarido
                                                 ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                                                 : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
@@ -770,7 +773,7 @@ export default function CursosPage() {
                 {/* LADO ESQUERDO: MAPA */}
                 <motion.div
                     variants={fadeUp}
-                    className={`shrink-0 w-full h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-all duration-300 ${
+                    className={`shrink-0 w-full h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-[width,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         filtroSemiarido
                             ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
                             : 'border-border'
@@ -945,6 +948,7 @@ export default function CursosPage() {
                                     onChange={(tab) => setActiveTab(tab)}
                                     variant="pill"
                                     className="shrink-0"
+                                    isSemiarido={filtroSemiarido}
                                 />
 
                                 {/* BOTÃO E CAIXA COM DROPDOWN DE FILTROS */}
@@ -974,7 +978,7 @@ export default function CursosPage() {
                                                     <Filter size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600 dark:text-primary-400'} />
                                                     <span className="text-xs font-bold text-text-primary dark:text-zinc-100">Filtros de Cursos</span>
                                                 </div>
-                                                {activeFiltersCount > 0 && (
+                                                {activeFiltersCount > 0 ? (
                                                     <button
                                                         type="button"
                                                         onClick={handleClearAllFilters}
@@ -982,6 +986,8 @@ export default function CursosPage() {
                                                     >
                                                         Limpar todos
                                                     </button>
+                                                ) : (
+                                                    <div className="h-4 w-16" aria-hidden="true" />
                                                 )}
                                             </div>
 
@@ -1079,21 +1085,21 @@ export default function CursosPage() {
 
                                             {/* FILTRO 4: RECORTE SEMIÁRIDO BAIANO */}
                                             <div className="flex flex-col gap-1.5">
-                                                <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between">
+                                                <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between min-h-[20px]">
                                                     <span>
                                                         Recorte Semiárido
                                                     </span>
-                                                    {filtroSemiarido && (
-                                                        <span className="text-caption font-medium text-amber-600 dark:text-amber-400">Ativo</span>
-                                                    )}
+                                                    <span className={`text-caption font-medium text-amber-600 dark:text-amber-400 transition-opacity duration-150 ${filtroSemiarido ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
+                                                        Ativo
+                                                    </span>
                                                 </label>
                                                 <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-surface-soft/60 dark:bg-zinc-950/40 border border-border dark:border-zinc-800">
                                                     <button
                                                         type="button"
                                                         onClick={() => setFiltroSemiarido(false)}
-                                                        className={`py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap ${!filtroSemiarido
-                                                            ? 'bg-surface dark:bg-zinc-800 text-text-primary shadow-2xs'
-                                                            : 'text-text-muted hover:text-text-primary'
+                                                        className={`py-1.5 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center select-none whitespace-nowrap ${!filtroSemiarido
+                                                            ? 'bg-surface dark:bg-zinc-800 text-text-primary shadow-2xs border-border/70 dark:border-zinc-700'
+                                                            : 'border-transparent text-text-muted hover:text-text-primary'
                                                             }`}
                                                     >
                                                         Todo o Estado
@@ -1101,32 +1107,15 @@ export default function CursosPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => setFiltroSemiarido(true)}
-                                                        className={`py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap ${filtroSemiarido
-                                                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-950 dark:text-amber-200 shadow-2xs border border-amber-300/50 dark:border-amber-700/50'
-                                                            : 'text-text-muted hover:text-amber-700 dark:hover:text-amber-400'
+                                                        className={`py-1.5 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center select-none whitespace-nowrap ${filtroSemiarido
+                                                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-950 dark:text-amber-200 shadow-2xs border-amber-300/50 dark:border-amber-700/50'
+                                                            : 'border-transparent text-text-muted hover:text-amber-700 dark:hover:text-amber-400'
                                                             }`}
                                                     >
                                                         Apenas Semiárido
                                                     </button>
                                                 </div>
                                             </div>
-
-                                            {/* FILTRO 5: TERRITÓRIO SELECIONADO */}
-                                            {selectedTerritory && (
-                                                <div className="flex items-center justify-between p-2 rounded-xl bg-surface-soft dark:bg-zinc-800/60 border border-border/80 dark:border-zinc-700">
-                                                    <span className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5 truncate">
-                                                        <MapPin size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
-                                                        <span className="truncate">{territoryName}</span>
-                                                    </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedTerritory(null)}
-                                                        className="text-caption font-medium text-danger-600 dark:text-danger-400 hover:underline cursor-pointer shrink-0 ml-2"
-                                                    >
-                                                        Remover
-                                                    </button>
-                                                </div>
-                                            )}
 
                                             {/* STATUS E FECHAR */}
                                             <div className="flex items-center justify-between pt-2 border-t border-border/70 dark:border-zinc-800 text-caption font-medium">
@@ -1209,20 +1198,40 @@ export default function CursosPage() {
                                             </div>
 
                                             <div className="flex items-center gap-2">
+                                                {selectedCategory !== 'todas' && (
+                                                    <Badge
+                                                        variant="neutral"
+                                                        icon={<Filter size={12} />}
+                                                        className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                        onClick={() => setSelectedCategory('todas')}
+                                                        title="Clique para remover filtro de área"
+                                                    >
+                                                        <span className="max-w-[140px] truncate">{selectedCategory}</span>
+                                                        <span className="ml-0.5 font-bold text-text-muted hover:text-text-primary text-[11px] leading-none">×</span>
+                                                    </Badge>
+                                                )}
                                                 {selectedIES && (
                                                     <Badge
                                                         variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                        icon={<Building2 size={13} />}
+                                                        icon={<Building2 size={12} />}
+                                                        className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                        onClick={() => setSelectedIES(null)}
+                                                        title="Clique para remover filtro de instituição"
                                                     >
-                                                        {selectedIES}
+                                                        <span className="max-w-[140px] truncate">{selectedIES}</span>
+                                                        <span className="ml-0.5 font-bold opacity-60 hover:opacity-100 text-[11px] leading-none">×</span>
                                                     </Badge>
                                                 )}
                                                 {selectedTerritory && (
                                                     <Badge
                                                         variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                        icon={<MapPin size={13} />}
+                                                        icon={<MapPin size={12} />}
+                                                        className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                        onClick={() => setSelectedTerritory(null)}
+                                                        title="Clique para remover filtro de território"
                                                     >
-                                                        {territoryName}
+                                                        <span className="max-w-[140px] truncate">{territoryName}</span>
+                                                        <span className="ml-0.5 font-bold opacity-60 hover:opacity-100 text-[11px] leading-none">×</span>
                                                     </Badge>
                                                 )}
                                             </div>
@@ -1392,20 +1401,40 @@ export default function CursosPage() {
                                             </div>
 
                                             <div className="flex items-center gap-2">
+                                                {selectedCategory !== 'todas' && (
+                                                    <Badge
+                                                        variant="neutral"
+                                                        icon={<Filter size={12} />}
+                                                        className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                        onClick={() => setSelectedCategory('todas')}
+                                                        title="Clique para remover filtro de área"
+                                                    >
+                                                        <span className="max-w-[140px] truncate">{selectedCategory}</span>
+                                                        <span className="ml-0.5 font-bold text-text-muted hover:text-text-primary text-[11px] leading-none">×</span>
+                                                    </Badge>
+                                                )}
                                                 {selectedIES && (
                                                     <Badge
                                                         variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                        icon={<Building2 size={13} />}
+                                                        icon={<Building2 size={12} />}
+                                                        className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                        onClick={() => setSelectedIES(null)}
+                                                        title="Clique para remover filtro de instituição"
                                                     >
-                                                        {selectedIES}
+                                                        <span className="max-w-[140px] truncate">{selectedIES}</span>
+                                                        <span className="ml-0.5 font-bold opacity-60 hover:opacity-100 text-[11px] leading-none">×</span>
                                                     </Badge>
                                                 )}
                                                 {selectedTerritory && (
                                                     <Badge
                                                         variant={filtroSemiarido ? 'warning' : 'primary'}
-                                                        icon={<MapPin size={13} />}
+                                                        icon={<MapPin size={12} />}
+                                                        className="h-6 inline-flex items-center cursor-pointer hover:opacity-80"
+                                                        onClick={() => setSelectedTerritory(null)}
+                                                        title="Clique para remover filtro de território"
                                                     >
-                                                        {territoryName}
+                                                        <span className="max-w-[140px] truncate">{territoryName}</span>
+                                                        <span className="ml-0.5 font-bold opacity-60 hover:opacity-100 text-[11px] leading-none">×</span>
                                                     </Badge>
                                                 )}
                                             </div>
@@ -1589,17 +1618,19 @@ export default function CursosPage() {
                                                             <div className="flex items-center gap-1.5 min-w-0">
                                                                 <span className="truncate">{cat.name}</span>
                                                             </div>
+                                                            <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
+                                                                {cat.count} {cat.count === 1 ? 'curso' : 'cursos'}
+                                                            </span>
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
                                                         <div className="flex items-center gap-2 w-full">
                                                             <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                 style={{
                                                                     flexGrow: cat.count,
                                                                     flexBasis: 0,
                                                                     backgroundColor: cat.color,
-                                                                    color: getContrastTextColor(cat.color),
                                                                     minWidth: remaining > 0 ? '44px' : 'auto'
                                                                 }}
                                                                 title={`${cat.name}: ${cat.count} cursos (${cat.percent}%)`}
@@ -1611,7 +1642,7 @@ export default function CursosPage() {
 
                                                             {remaining > 0 && (
                                                                 <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                     style={{
                                                                         flexGrow: remaining,
                                                                         flexBasis: 0
@@ -1661,7 +1692,10 @@ export default function CursosPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setSelectedTerritory(null)}
-                                                className="text-caption font-semibold px-2.5 py-1 rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/70 dark:bg-primary-950/40 hover:bg-primary-200/70 dark:hover:bg-primary-900/50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                                                className={`text-caption font-medium px-2.5 py-1 rounded-full flex items-center gap-1 transition-all cursor-pointer justify-center leading-none ${filtroSemiarido
+                                                    ? 'text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 bg-amber-100/70 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-700/50'
+                                                    : 'text-primary-700 dark:text-primary-300 hover:text-primary-900 dark:hover:text-primary-100 hover:underline bg-primary-200/50 dark:bg-primary-950/40'
+                                                    }`}
                                             >
                                                 ← Ver Todos os Territórios
                                             </button>
@@ -1672,7 +1706,7 @@ export default function CursosPage() {
                                     <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2">
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
-                                                municipalityRanking.map((m) => {
+                                                municipalityRanking.map((m, idx) => {
                                                     const pos = Number(m.publicaCount || 0);
                                                     const total = Number(m.count || 0);
                                                     const neg = Math.max(0, total - pos);
@@ -1701,13 +1735,19 @@ export default function CursosPage() {
                                                         >
                                                             {/* RÓTULO COM NOME DO MUNICÍPIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
-                                                                <span className="truncate">{m.name}</span>
+                                                                <div className="flex items-center gap-1.5 min-w-0">
+                                                                    <span className="w-5 text-[11px] font-bold text-text-muted dark:text-zinc-400 tabular-nums shrink-0">{idx + 1}º</span>
+                                                                    <span className="truncate">{m.name}</span>
+                                                                </div>
+                                                                <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
+                                                                    {total} {total === 1 ? 'curso' : 'cursos'}
+                                                                </span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: total,
                                                                         flexBasis: 0,
@@ -1723,7 +1763,7 @@ export default function CursosPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1754,7 +1794,7 @@ export default function CursosPage() {
                                             )
                                         ) : (
                                             territoryRanking.length > 0 ? (
-                                                territoryRanking.map((t) => {
+                                                territoryRanking.map((t, idx) => {
                                                     const isSelected = selectedTerritory && (
                                                         (t.id && Number(selectedTerritory.id_territorio) === Number(t.id)) ||
                                                         normalize(selectedTerritory.nome_territorio || selectedTerritory.territorio || selectedTerritory.nome) === normalize(t.name)
@@ -1790,13 +1830,19 @@ export default function CursosPage() {
                                                         >
                                                             {/* RÓTULO COM NOME DO TERRITÓRIO */}
                                                             <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
-                                                                <span className="truncate">{t.name}</span>
+                                                                <div className="flex items-center gap-1.5 min-w-0">
+                                                                    <span className="w-5 text-[11px] font-bold text-text-muted dark:text-zinc-400 tabular-nums shrink-0">{idx + 1}º</span>
+                                                                    <span className="truncate">{t.name}</span>
+                                                                </div>
+                                                                <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
+                                                                    {total} {total === 1 ? 'curso' : 'cursos'}
+                                                                </span>
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
                                                             <div className="flex items-center gap-2 w-full">
                                                                 <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                     style={{
                                                                         flexGrow: total,
                                                                         flexBasis: 0,
@@ -1812,7 +1858,7 @@ export default function CursosPage() {
 
                                                                 {remaining > 0 && (
                                                                     <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                         style={{
                                                                             flexGrow: remaining,
                                                                             flexBasis: 0
@@ -1906,17 +1952,20 @@ export default function CursosPage() {
                                                         {/* RÓTULO COM RANK E NOME DA IES */}
                                                         <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
                                                             <div className="flex items-center gap-1.5 min-w-0">
-                                                                <span className="text-text-muted font-bold tnum">{rankStr}.</span>
+                                                                <span className="w-5 text-[11px] font-bold text-text-muted dark:text-zinc-400 tabular-nums shrink-0">{idx + 1}º</span>
                                                                 <span className="truncate">{ies.sigla}</span>
                                                                 <span className="text-caption text-text-muted font-normal truncate hidden sm:inline">· {ies.fullName}</span>
                                                             </div>
+                                                            <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
+                                                                {ies.count} {ies.count === 1 ? 'curso' : 'cursos'}
+                                                            </span>
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
                                                         <div className="flex items-center gap-2 w-full">
                                                             {/* PREENCHIMENTO */}
                                                             <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
+                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
                                                                 style={{
                                                                     flexGrow: ies.count,
                                                                     flexBasis: 0,
@@ -1933,7 +1982,7 @@ export default function CursosPage() {
                                                             {/* RESTANTE */}
                                                             {remaining > 0 && (
                                                                 <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-all duration-500 overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
+                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                                                                     style={{
                                                                         flexGrow: remaining,
                                                                         flexBasis: 0

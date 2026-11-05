@@ -21,6 +21,8 @@ export function Tabs({
   variant = 'pill',
   layoutId,
   className,
+  isSemiarido = false,
+  accent,
 }) {
   const generatedId = useId();
   const activeLayoutId = layoutId || `tabs-indicator-${generatedId}`;
@@ -44,6 +46,7 @@ export function Tabs({
   };
 
   const isUnderline = variant === 'underline';
+  const isAmber = isSemiarido || accent === 'amber';
 
   return (
     <div
@@ -52,7 +55,8 @@ export function Tabs({
       className={cn(
         isUnderline
           ? 'flex items-center gap-2 border-b border-border w-full overflow-x-auto scrollbar-none'
-          : 'h-9 inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-full border border-border overflow-x-auto scrollbar-none max-w-full shadow-xs shrink-0',
+          : 'h-9 inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-full border border-border overflow-x-auto scrollbar-none max-w-full shadow-xs shrink-0 transition-colors duration-200',
+        isAmber && !isUnderline && 'border-amber-300/70 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/30',
         className
       )}
     >
@@ -75,9 +79,11 @@ export function Tabs({
                 : 'px-3.5 rounded-full text-caption',
               isActive
                 ? isUnderline
-                  ? 'text-primary-700 dark:text-primary-300 font-semibold'
+                  ? (isAmber ? 'text-amber-700 dark:text-amber-300 font-semibold' : 'text-primary-700 dark:text-primary-300 font-semibold')
                   : 'text-white font-semibold'
-                : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70 rounded-full'
+                : (isAmber
+                    ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40 rounded-full'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70 rounded-full')
             )}
           >
             {isActive && (
@@ -86,10 +92,12 @@ export function Tabs({
                 className={cn(
                   'pointer-events-none',
                   isUnderline
-                    ? 'absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full'
-                    : 'absolute inset-0 bg-carbon dark:bg-primary-600 rounded-full shadow-xs'
+                    ? (isAmber ? 'absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full' : 'absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full')
+                    : (isAmber
+                        ? 'absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 rounded-full shadow-xs'
+                        : 'absolute inset-0 bg-carbon dark:bg-primary-600 rounded-full shadow-xs')
                 )}
-                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                transition={{ type: 'spring', stiffness: 480, damping: 34, mass: 0.8 }}
               />
             )}
 

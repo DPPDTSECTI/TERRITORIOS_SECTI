@@ -17,10 +17,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { IconButton } from './ui/Button';
 import { cn } from '../lib/cn';
 import { useTheme } from '../context/ThemeContext';
+import { useData } from '../context/DataContext';
 
 export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
+  const { filtroSemiarido } = useData();
 
   const [isPinned, setIsPinned] = useState(() => {
     try {
@@ -69,8 +71,11 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          'tour-sidebar absolute top-4 bottom-4 left-4 bg-white dark:bg-carbon border border-border/80 rounded-[28px] shadow-bento flex flex-col py-4 px-3 transition-[width,box-shadow] duration-200 ease-standard overflow-hidden z-50',
-          isExpanded ? 'w-[236px] shadow-float' : 'w-[64px]'
+          'tour-sidebar absolute top-4 bottom-4 left-4 bg-white dark:bg-carbon border rounded-[28px] flex flex-col py-4 px-3 transition-all duration-200 ease-standard overflow-hidden z-50',
+          filtroSemiarido
+            ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.14)]'
+            : 'border-border/80 shadow-bento',
+          isExpanded ? (filtroSemiarido ? 'w-[236px] shadow-[0_8px_32px_-4px_rgba(217,119,6,0.2)]' : 'w-[236px] shadow-float') : 'w-[64px]'
         )}
       >
         {/* ================= TOPO: LOGO & PIN BUTTON ================= */}
@@ -85,13 +90,19 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
 
           <span
             className={cn(
-              'text-subtitle font-bold text-text-primary tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1',
+              'text-subtitle font-bold tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1 flex items-center gap-1.5',
+              filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary',
               isExpanded
                 ? 'opacity-100 translate-x-0'
                 : 'w-0 opacity-0 -translate-x-2 pointer-events-none'
             )}
           >
-            {username}
+            <span>{username}</span>
+            {filtroSemiarido && (
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 leading-none">
+                Semiárido
+              </span>
+            )}
           </span>
 
           <IconButton
@@ -102,14 +113,17 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
             onClick={togglePin}
             tabIndex={isExpanded ? 0 : -1}
             className={cn(
-              'text-text-muted hover:text-text-primary shrink-0 rounded-full transition-[opacity,transform,width,margin] duration-200 ease-standard overflow-hidden',
+              'shrink-0 rounded-full transition-[opacity,transform,width,margin] duration-200 ease-standard overflow-hidden',
+              filtroSemiarido
+                ? 'text-amber-700/70 dark:text-amber-400/70 hover:text-amber-900 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-950/40'
+                : 'text-text-muted hover:text-text-primary',
               isExpanded
                 ? 'w-8 ml-1 opacity-100 scale-100'
                 : 'w-0 ml-0 opacity-0 scale-90 pointer-events-none'
             )}
           >
             {isPinned ? (
-              <PinOff size={16} strokeWidth={1.75} className="text-primary-600 dark:text-primary-400 shrink-0" />
+              <PinOff size={16} strokeWidth={1.75} className={cn('shrink-0', filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400')} />
             ) : (
               <Pin size={16} strokeWidth={1.75} className="shrink-0" />
             )}
@@ -122,7 +136,8 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
           <div className="w-full h-5 flex items-center px-2 shrink-0">
             <span
               className={cn(
-                'text-caption font-semibold uppercase tracking-wider text-text-muted transition-all duration-200 ease-standard text-[11px]',
+                'text-caption font-semibold uppercase tracking-wider transition-all duration-200 ease-standard text-[11px]',
+                filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted',
                 isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
               )}
             >
@@ -140,13 +155,18 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                   to={item.path}
                   title={!isExpanded ? item.label : undefined}
                   className={cn(
-                    'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
+                    'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2',
+                    filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
                     item.tourClass,
                     isActive
                       ? isExpanded
-                        ? 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold'
+                        ? (filtroSemiarido
+                            ? 'bg-amber-100/80 dark:bg-amber-950/50 text-amber-950 dark:text-amber-100 font-semibold border border-amber-300/50 dark:border-amber-600/30'
+                            : 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold')
                         : 'text-white'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70'
+                      : (filtroSemiarido
+                          ? 'text-text-secondary hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-50/80 dark:hover:bg-amber-950/30'
+                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
                   )}
                 >
                   <div
@@ -159,8 +179,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                       className={cn(
                         'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150',
                         isActive
-                          ? 'bg-carbon dark:bg-primary-600 text-white shadow-xs'
-                          : 'text-text-muted group-hover:text-text-primary'
+                          ? (filtroSemiarido
+                              ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white shadow-xs shadow-amber-500/30'
+                              : 'bg-carbon dark:bg-primary-600 text-white shadow-xs')
+                          : (filtroSemiarido
+                              ? 'text-text-muted group-hover:text-amber-600 dark:group-hover:text-amber-400'
+                              : 'text-text-muted group-hover:text-text-primary')
                       )}
                     >
                       <Icon
@@ -177,7 +201,9 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                       isExpanded
                         ? 'opacity-100 translate-x-0'
                         : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
-                      isActive ? 'font-semibold text-text-primary' : 'font-medium text-text-secondary'
+                      isActive
+                        ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
+                        : 'font-medium text-text-secondary'
                     )}
                   >
                     {item.label}
@@ -193,7 +219,8 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               <div className="w-full h-5 flex items-center px-2 shrink-0">
                 <span
                   className={cn(
-                    'text-caption font-semibold uppercase tracking-wider text-text-muted transition-all duration-200 ease-standard text-[11px]',
+                    'text-caption font-semibold uppercase tracking-wider transition-all duration-200 ease-standard text-[11px]',
+                    filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted',
                     isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
                   )}
                 >
@@ -211,13 +238,18 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                       to={item.path}
                       title={!isExpanded ? item.label : undefined}
                       className={cn(
-                        'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
+                        'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2',
+                        filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
                         item.tourClass,
                         isActive
                           ? isExpanded
-                            ? 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold'
+                            ? (filtroSemiarido
+                                ? 'bg-amber-100/80 dark:bg-amber-950/50 text-amber-950 dark:text-amber-100 font-semibold border border-amber-300/50 dark:border-amber-600/30'
+                                : 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold')
                             : 'text-white'
-                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70'
+                          : (filtroSemiarido
+                              ? 'text-text-secondary hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-50/80 dark:hover:bg-amber-950/30'
+                              : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
                       )}
                     >
                       <div
@@ -230,8 +262,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                           className={cn(
                             'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150',
                             isActive
-                              ? 'bg-carbon dark:bg-primary-600 text-white shadow-xs'
-                              : 'text-text-muted group-hover:text-text-primary'
+                              ? (filtroSemiarido
+                                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white shadow-xs shadow-amber-500/30'
+                                  : 'bg-carbon dark:bg-primary-600 text-white shadow-xs')
+                              : (filtroSemiarido
+                                  ? 'text-text-muted group-hover:text-amber-600 dark:group-hover:text-amber-400'
+                                  : 'text-text-muted group-hover:text-text-primary')
                           )}
                         >
                           <Icon
@@ -248,7 +284,9 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                           isExpanded
                             ? 'opacity-100 translate-x-0'
                             : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
-                          isActive ? 'font-semibold text-text-primary' : 'font-medium text-text-secondary'
+                          isActive
+                            ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
+                            : 'font-medium text-text-secondary'
                         )}
                       >
                         {item.label}
@@ -274,7 +312,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
             )}
           >
             <div
-              className="w-[212px] h-24 rounded-2xl bg-surface-soft/80 dark:bg-surface-raised/40 border border-border/70 dark:border-border/50 p-2.5 flex items-center justify-center select-none overflow-hidden"
+              className={cn(
+                'w-[212px] h-24 rounded-2xl p-2.5 flex items-center justify-center select-none overflow-hidden transition-colors duration-150',
+                filtroSemiarido
+                  ? 'bg-amber-50/50 dark:bg-amber-950/30 border border-amber-300/60 dark:border-amber-700/50'
+                  : 'bg-surface-soft/80 dark:bg-surface-raised/40 border border-border/70 dark:border-border/50'
+              )}
               title="Governo do Estado da Bahia — SECTI"
             >
               <img
@@ -292,7 +335,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
 
           {/* TOGGLE DARK MODE (CONTAINER ÚNICO H-10 SEM SALTO DE ALTURA OU REMOUNT) */}
           <div
-            className="relative w-full h-10 rounded-full bg-surface-soft/90 dark:bg-surface-raised/60 border border-border/80 dark:border-border/60 shadow-2xs overflow-hidden shrink-0 select-none"
+            className={cn(
+              'relative w-full h-10 rounded-full shadow-2xs overflow-hidden shrink-0 select-none transition-colors duration-150',
+              filtroSemiarido
+                ? 'bg-amber-50/50 dark:bg-amber-950/30 border border-amber-300/70 dark:border-amber-700/60'
+                : 'bg-surface-soft/90 dark:bg-surface-raised/60 border border-border/80 dark:border-border/60'
+            )}
             role="radiogroup"
             aria-label="Alternar modo de exibição claro ou escuro"
           >
@@ -304,7 +352,8 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               aria-label={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
               title={!isExpanded ? (isDark ? 'Modo Claro' : 'Modo Escuro') : undefined}
               className={cn(
-                'absolute inset-y-0 left-0 w-[38px] h-full rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary transition-[opacity,transform] duration-200 ease-standard cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 z-20',
+                'absolute inset-y-0 left-0 w-[38px] h-full rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary transition-[opacity,transform] duration-200 ease-standard cursor-pointer focus-visible:outline-none focus-visible:ring-2 z-20',
+                filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
                 isExpanded
                   ? 'opacity-0 scale-90 pointer-events-none'
                   : 'opacity-100 scale-100'
@@ -328,7 +377,10 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               <div
                 aria-hidden="true"
                 className={cn(
-                  'absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-white dark:bg-zinc-800 shadow-2xs border border-border/70 dark:border-zinc-700/70 pointer-events-none transition-transform duration-200 ease-standard',
+                  'absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full shadow-2xs pointer-events-none transition-transform duration-200 ease-standard',
+                  filtroSemiarido
+                    ? 'bg-white dark:bg-zinc-800 border border-amber-300/70 dark:border-amber-600/30'
+                    : 'bg-white dark:bg-zinc-800 border border-border/70 dark:border-zinc-700/70',
                   isDark ? 'translate-x-full' : 'translate-x-0'
                 )}
               />
@@ -341,9 +393,10 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                 aria-checked={!isDark}
                 onClick={() => isDark && toggleTheme()}
                 className={cn(
-                  'relative z-10 h-full rounded-full flex items-center justify-center gap-1.5 text-xs whitespace-nowrap transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                  'relative z-10 h-full rounded-full flex items-center justify-center gap-1.5 text-xs whitespace-nowrap transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2',
+                  filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
                   !isDark
-                    ? 'font-semibold text-text-primary'
+                    ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
                     : 'font-medium text-text-muted hover:text-text-secondary'
                 )}
               >
@@ -359,13 +412,14 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                 aria-checked={isDark}
                 onClick={() => !isDark && toggleTheme()}
                 className={cn(
-                  'relative z-10 h-full rounded-full flex items-center justify-center gap-1.5 text-xs whitespace-nowrap transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                  'relative z-10 h-full rounded-full flex items-center justify-center gap-1.5 text-xs whitespace-nowrap transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2',
+                  filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
                   isDark
-                    ? 'font-semibold text-white'
+                    ? (filtroSemiarido ? 'font-semibold text-amber-300' : 'font-semibold text-white')
                     : 'font-medium text-text-muted hover:text-text-secondary'
                 )}
               >
-                <Moon size={13} strokeWidth={2} className={cn('shrink-0', isDark ? 'text-primary-400' : '')} />
+                <Moon size={13} strokeWidth={2} className={cn('shrink-0', isDark ? (filtroSemiarido ? 'text-amber-400' : 'text-primary-400') : '')} />
                 <span>Escuro</span>
               </button>
             </div>
@@ -377,7 +431,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
             onClick={() => window.dispatchEvent(new Event('start-tour'))}
             title={!isExpanded ? 'Tutorial Guiado' : 'Iniciar Tutorial Guiado do Painel'}
             aria-label="Tutorial do Painel"
-            className="tour-help-button relative w-full h-10 rounded-full bg-surface-soft/90 dark:bg-surface-raised/60 hover:bg-surface-soft dark:hover:bg-surface-raised border border-border/80 dark:border-border/60 flex items-center text-xs font-medium text-text-secondary hover:text-text-primary transition-colors duration-150 cursor-pointer shadow-2xs select-none active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 overflow-hidden shrink-0 group"
+            className={cn(
+              'tour-help-button relative w-full h-10 rounded-full flex items-center text-xs font-medium transition-colors duration-150 cursor-pointer shadow-2xs select-none active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 overflow-hidden shrink-0 group',
+              filtroSemiarido
+                ? 'bg-amber-50/50 dark:bg-amber-950/30 hover:bg-amber-100/60 dark:hover:bg-amber-950/50 border border-amber-300/70 dark:border-amber-700/60 text-amber-900/90 dark:text-amber-200/90 focus-visible:ring-amber-500'
+                : 'bg-surface-soft/90 dark:bg-surface-raised/60 hover:bg-surface-soft dark:hover:bg-surface-raised border border-border/80 dark:border-border/60 text-text-secondary hover:text-text-primary focus-visible:ring-primary-500'
+            )}
           >
             <div
               className={cn(
@@ -388,7 +447,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               <HelpCircle
                 size={17}
                 strokeWidth={1.75}
-                className="text-text-muted group-hover:text-text-primary transition-colors duration-150 shrink-0"
+                className={cn(
+                  'transition-colors duration-150 shrink-0',
+                  filtroSemiarido
+                    ? 'text-amber-600/70 dark:text-amber-400/70 group-hover:text-amber-700 dark:group-hover:text-amber-300'
+                    : 'text-text-muted group-hover:text-text-primary'
+                )}
               />
             </div>
             <span

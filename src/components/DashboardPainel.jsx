@@ -497,7 +497,7 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido')
         : (selectedTerritory ? `Ativos em ${territoryName}` : 'Ativos de CT&I'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiAtivos : (selectedTerritory ? scopedAtivos.length : kpisGlobais.ativos)),
-      percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}% do total de ativos` : null,
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctAtivos}%` : null,
       tooltip: filtroSemiarido
         ? `No Semiárido: ${semiaridoMetrics.semiAtivos} (${semiaridoMetrics.pctAtivos}% do total de ativos) | Fora: ${Math.max(0, scopedAtivos.length - semiaridoMetrics.semiAtivos)}`
         : undefined,
@@ -509,7 +509,7 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos no Semiárido')
         : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos de CT&I'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCursos : (selectedTerritory ? scopedCursos.length : kpisGlobais.cursos)),
-      percent: filtroSemiarido ? `${semiaridoMetrics.pctCursos}% do total de cursos` : null,
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctCursos}%` : null,
       tooltip: filtroSemiarido
         ? `No Semiárido: ${semiaridoMetrics.semiCursos} (${semiaridoMetrics.pctCursos}% do total de cursos) | Fora: ${Math.max(0, scopedCursos.length - semiaridoMetrics.semiCursos)}`
         : undefined,
@@ -531,7 +531,7 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? `Cadeias no Território` : 'Cadeias')
         : (selectedTerritory ? `Cadeias no Território` : 'Cadeias'),
       value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCadeias : (selectedTerritory ? (scopedTerritorioRow?.cadeias_produtivas ?? 0) : kpisGlobais.cadeias)),
-      percent: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}% do total de cadeias` : null,
+      percent: filtroSemiarido && !selectedTerritory ? `${semiaridoMetrics.pctCadeias}%` : null,
       tooltip: filtroSemiarido && !selectedTerritory
         ? `No Semiárido: ${semiaridoMetrics.semiCadeias} (${semiaridoMetrics.pctCadeias}% do total de cadeias) | Fora: ${Math.max(0, (kpisGlobais.cadeias || 0) - semiaridoMetrics.semiCadeias)}`
         : undefined,
@@ -543,7 +543,7 @@ export default function DashboardPainel() {
         ? (selectedTerritory ? 'Municípios no Semiárido' : 'Municípios')
         : (selectedTerritory ? 'Municípios no Território' : 'Municípios'),
       value: loadingStats ? '...' : (filtroSemiarido ? `${semiaridoMetrics.munSemi}` : (selectedTerritory ? (scopedTerritorioRow ? `${scopedTerritorioRow.qtd_mun_total || (Number(scopedTerritorioRow.qtd_mun_semiarido || 0) + Number(scopedTerritorioRow.qtd_mun_nao_semiarido || 0))} mun.` : '-') : `${semiaridoStats.semiarido}`)),
-      percent: filtroSemiarido ? `${semiaridoMetrics.pctMun}% do total de municípios` : null,
+      percent: filtroSemiarido ? `${semiaridoMetrics.pctMun}%` : null,
       tooltip: filtroSemiarido
         ? `No Semiárido: ${semiaridoMetrics.munSemi} (${semiaridoMetrics.pctMun}% do total de municípios) | Fora: ${semiaridoMetrics.munTot - semiaridoMetrics.munSemi}`
         : undefined,
@@ -558,8 +558,9 @@ export default function DashboardPainel() {
       {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 ease-in-out select-none ${filtroSemiarido ? 'opacity-100' : 'opacity-0'
-          }`}
+        className={`pointer-events-none absolute inset-0 overflow-hidden z-0 transition-opacity duration-500 ease-out select-none ${
+          filtroSemiarido ? 'opacity-100 visible' : 'opacity-0 invisible'
+        }`}
       >
         {/* 0. AMBIENT WARM TINT ACROSS CANVAS */}
         <div className="absolute inset-0 bg-gradient-to-b from-amber-500/[0.06] via-amber-400/[0.02] to-transparent pointer-events-none" />
@@ -645,10 +646,10 @@ export default function DashboardPainel() {
               const isHero = index === 0;
 
               return (
-                <motion.div key={index} variants={fadeUp} className="h-full">
+                <motion.div key={index} variants={fadeUp} className="h-[108px] flex flex-col">
                   <div
                     title={kpi.tooltip || kpi.label}
-                    className={`p-4 sm:p-5 flex flex-col justify-between min-h-[108px] h-full rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
+                    className={`p-4 sm:p-5 flex flex-col justify-between h-[108px] min-h-[108px] max-h-[108px] flex-1 rounded-card cursor-default overflow-hidden transition-all duration-200 select-none ${isHero
                         ? (filtroSemiarido
                           ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                           : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
@@ -658,7 +659,7 @@ export default function DashboardPainel() {
                       }`}
                   >
                     {/* LINHA SUPERIOR: LABEL ACIMA + ÍCONE CIRCULAR À DIREITA */}
-                    <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                    <div className="flex items-center justify-between gap-2 w-full min-w-0">
                       <div className="flex flex-col min-w-0 flex-1">
                         <span
                           className={`text-[13px] font-medium leading-tight truncate ${isHero
@@ -684,11 +685,11 @@ export default function DashboardPainel() {
                       </div>
                     </div>
 
-                    {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE (28px - 34px) + TEXTO PURO */}
+                    {/* LINHA INFERIOR: VALOR NUMÉRICO GRANDE + PERCENTUAL COMPACTO NA MESMA LINHA */}
                     <div className="flex items-baseline w-full justify-between min-w-0 pt-0.5">
-                      <div className="flex items-baseline gap-2 min-w-0 flex-1 flex-wrap">
+                      <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
                         <span
-                          className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero
+                          className={`text-[28px] sm:text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${isHero
                             ? 'text-white'
                             : (filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary')
                             }`}
@@ -719,10 +720,10 @@ export default function DashboardPainel() {
       </div>
 
       {/* GRID PRINCIPAL */}
-      <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[500px]">
+      <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div className={`tour-map shrink-0 w-full lg:w-[calc(40%-10px)] h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-all duration-300 ${
+        <div className={`tour-map shrink-0 w-full lg:w-[calc(40%-10px)] h-full min-h-[480px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-[width,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           filtroSemiarido
             ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
             : 'border-border'
@@ -745,7 +746,7 @@ export default function DashboardPainel() {
           variants={staggerContainer(0.04)}
           initial="initial"
           animate="animate"
-          className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-500 ${filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.04] via-amber-400/[0.015] to-transparent rounded-card p-1 -m-1' : ''
+          className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-500 ${filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.04] via-amber-400/[0.015] to-transparent rounded-card' : ''
             }`}
         >
           {loadingStats ? (
