@@ -31,7 +31,8 @@ import {
     EmptyState,
     KpiSkeleton,
     AnimatedNumber,
-    PillBar
+    PillBar,
+    ScrollableList
 } from './ui';
 import { useChartTheme, resolveCssRgb } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -208,6 +209,7 @@ export default function CadeiaPage() {
 
     // Sincronização e reset de estados mutuamente exclusivos
     const handleSelectTerritory = (terr) => {
+        if (terr && selectedCadeia) return;
         setSelectedTerritory(terr);
         setSelectedCadeia(null);
         setFocusedAsset(null);
@@ -220,9 +222,7 @@ export default function CadeiaPage() {
             return;
         }
         setSelectedCadeia(cadeia);
-        if (cadeia?.lat && cadeia?.lng) {
-            setFocusedAsset([cadeia.lat, cadeia.lng]);
-        }
+        setFocusedAsset(null);
         setActiveTab('catalogo');
 
         setTimeout(() => {
@@ -1164,7 +1164,12 @@ export default function CadeiaPage() {
                                         </div>
                                     </div>
 
-                                    <div ref={catalogListRef} className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                    <ScrollableList
+                                        ref={catalogListRef}
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={`${selectedTipo}-${selectedSegmento}-${territoryName}-${searchQuery}`}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2"
+                                    >
                                         {filteredCadeias.length > 0 ? (
                                             filteredCadeias.map((c, idx) => {
                                                 const IconComp = c.icone || Wheat;
@@ -1188,7 +1193,7 @@ export default function CadeiaPage() {
                                                                 setFocusedAsset(null);
                                                             } else {
                                                                 setSelectedCadeia(c);
-                                                                if (c.lat && c.lng) setFocusedAsset([c.lat, c.lng]);
+                                                                setFocusedAsset(null);
                                                             }
                                                         }}
                                                         className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full scroll-mt-2 ${isSelected
@@ -1293,7 +1298,7 @@ export default function CadeiaPage() {
                                                 }
                                             />
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1321,7 +1326,11 @@ export default function CadeiaPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full">
+                                    <ScrollableList
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={territoryName}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full"
+                                    >
                                         {segmentStats.length > 0 ? (
                                             segmentStats.map((seg, idx) => {
                                                 const isSelected = selectedSegmento === seg.name;
@@ -1387,7 +1396,7 @@ export default function CadeiaPage() {
                                                 />
                                             </div>
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1418,8 +1427,10 @@ export default function CadeiaPage() {
                                         )}
                                     </div>
 
-                                    <div
+                                    <ScrollableList
                                         key={selectedTerritory ? `ranking-muni-${selectedTerritory.id_territorio || 'muni'}` : 'ranking-territorios'}
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={territoryName}
                                         className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2"
                                     >
                                         {selectedTerritory ? (
@@ -1555,7 +1566,7 @@ export default function CadeiaPage() {
                                                 </div>
                                             )
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
                         </div>

@@ -23,8 +23,19 @@ export function MapPaneManager() {
   return null;
 }
 
-export function MapClickHandler({ onClearPinned, onClearTerritory }) {
-  const map = useMap();
+export function fitMapToBahia(map, territoriosLayerRef, padding = [18, 18]) {
+  if (!map) return;
+  if (territoriosLayerRef?.current && typeof territoriosLayerRef.current.getBounds === 'function') {
+    const b = territoriosLayerRef.current.getBounds();
+    if (b && b.isValid()) {
+      map.fitBounds(b, { padding, maxZoom: 6.5, duration: 0.32 });
+      return;
+    }
+  }
+  map.flyTo([-12.9, -41.6], 5.75, { duration: 0.32, easeLinearity: 0.3 });
+}
+
+export function MapClickHandler({ onClearPinned }) {
   useMapEvents({
     click: (e) => {
       const target = e.originalEvent?.target;
@@ -39,16 +50,12 @@ export function MapClickHandler({ onClearPinned, onClearTerritory }) {
         return;
       }
       onClearPinned?.();
-      if (onClearTerritory) {
-        onClearTerritory();
-        map.flyTo([-13.0, -41.6], 5.75, { duration: 0.55 });
-      }
     }
   });
   return null;
 }
 
-export function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryRef }) {
+export function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTerritoryRef, territoriosLayerRef }) {
   const map = useMap();
   const prevTerritoryRef = useRef(selectedTerritory);
 
@@ -71,7 +78,7 @@ export function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTer
         if (layer && typeof layer.getBounds === 'function') {
           const bounds = layer.getBounds();
           if (bounds && bounds.isValid()) {
-            map.fitBounds(bounds, { padding: [28, 28], maxZoom: 8.75, duration: 0.55 });
+            map.fitBounds(bounds, { padding: [32, 32], maxZoom: 8.5, duration: 0.45 });
             return true;
           }
         }
@@ -87,16 +94,22 @@ export function TerritoryFocusController({ selectedTerritory, geoJsonLayersByTer
         };
       }
     } else if (prevTerritoryRef.current && !selectedTerritory) {
-      map.flyTo([-13.0, -41.6], 5.75, { duration: 0.55 });
+      fitMapToBahia(map, territoriosLayerRef);
     }
     prevTerritoryRef.current = selectedTerritory;
-  }, [selectedTerritory, map, geoJsonLayersByTerritoryRef]);
+  }, [selectedTerritory, map, geoJsonLayersByTerritoryRef, territoriosLayerRef]);
 
   return null;
 }
 
-export function CadeiaFocusController({ selectedCadeia }) {
+export function CadeiaFocusController({
+  selectedCadeia,
+  selectedTerritory,
+  geoJsonLayersByTerritoryRef,
+  territoriosLayerRef
+}) {
   const map = useMap();
+  const prevCadeiaRef = useRef(selectedCadeia);
 
   useEffect(() => {
     if (selectedCadeia) {
@@ -128,57 +141,62 @@ export function CadeiaFocusController({ selectedCadeia }) {
           }
         }
 
-        if (isInsideBahia(mLat, mLng)) bounds.push([mLat, mLng]);
+        if (isInsideBahia(mLat, mLng)) {
+          const isSame = Math.abs(mLat - cLat) < 0.001 && Math.abs(mLng - cLng) < 0.001;
+          if (!isSame) bounds.push([mLat, mLng]);
+        }
       });
 
       if (bounds.length > 1) {
         map.fitBounds(bounds, {
-          padding: [45, 45],
-          maxZoom: 8.75,
+          padding: [56, 56],
+          maxZoom: 7.5,
           animate: true,
-          duration: 0.55
+          duration: 0.45
         });
       } else {
-        map.flyTo([cLat, cLng], 8.75, { duration: 0.55 });
+        map.flyTo([cLat, cLng], 7.5, { duration: 0.45, easeLinearity: 0.25 });
       }
-    }
-  }, [selectedCadeia, map]);
+    } else if (prevCadeiaRef.current && !selectedCadeia) {
+      if (selectedTerritory) {
+        const idTerr = selectedTerritory.id_territorio ? String(selectedTerritory.id_territorio) : null;
+        const numId = idTerr ? Number(idTerr) : null;
+        const rawNome = selectedTerritory.nome_territorio || selectedTerritory.territorio || '';
+        const nome = normalizeName(rawNome.replace(/^Território de Identidade\s+/i, '').trim());
+        const dict = geoJsonLayersByTerritoryRef?.current || {};
+        const layer =
+          (idTerr && dict[idTerr]) ||
+          (numId && dict[numId]) ||
+          (nome && dict[nome]) ||
+          dict[rawNome];
 
-  return null;
-}
-
-export function ConnectionsFocusController({ showAllConnections, mode, connectionLines, selectedTerritory }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (mode === 'cadeias' && showAllConnections && !selectedTerritory && connectionLines.length > 0) {
-      const points = [];
-      connectionLines.forEach((l) => {
-        if (l.positions && l.positions.length >= 2) {
-          if (isInsideBahia(l.positions[0][0], l.positions[0][1])) points.push(l.positions[0]);
-          if (isInsideBahia(l.positions[1][0], l.positions[1][1])) points.push(l.positions[1]);
+        if (layer && typeof layer.getBounds === 'function') {
+          const b = layer.getBounds();
+          if (b && b.isValid()) {
+            map.fitBounds(b, { padding: [32, 32], maxZoom: 8.5, duration: 0.45 });
+            prevCadeiaRef.current = selectedCadeia;
+            return;
+          }
         }
-      });
-      if (points.length > 0) {
-        map.fitBounds(points, {
-          padding: [24, 24],
-          maxZoom: 7.25,
-          animate: true,
-          duration: 0.55
-        });
       }
+      fitMapToBahia(map, territoriosLayerRef);
     }
-  }, [showAllConnections, mode, selectedTerritory, connectionLines, map]);
+    prevCadeiaRef.current = selectedCadeia;
+  }, [selectedCadeia, selectedTerritory, geoJsonLayersByTerritoryRef, territoriosLayerRef, map]);
 
   return null;
 }
 
-export function ChangeMapView({ coords }) {
+export function ConnectionsFocusController() {
+  return null;
+}
+
+export function ChangeMapView({ coords, modoGeografico = false }) {
   const map = useMap();
   useEffect(() => {
     if (!coords) return;
     let lat, lng;
-    let targetZoom = 14.5;
+    let targetZoom = modoGeografico ? 13.0 : 9.25;
     if (Array.isArray(coords) && coords.length >= 2) {
       lat = Number(coords[0]);
       lng = Number(coords[1]);
@@ -192,13 +210,11 @@ export function ChangeMapView({ coords }) {
     }
     if (lat != null && lng != null && !isNaN(lat) && !isNaN(lng) && lat !== 0) {
       const currentZoom = map.getZoom();
-      if (currentZoom >= 9.5) {
-        map.panTo([lat, lng], { animate: true, duration: 0.55 });
-      } else {
-        map.flyTo([lat, lng], targetZoom, { duration: 0.55 });
-      }
+      const maxZoomAllowed = modoGeografico ? 15 : 10.5;
+      const desiredZoom = Math.min(Math.max(currentZoom, targetZoom), maxZoomAllowed);
+      map.flyTo([lat, lng], desiredZoom, { duration: 0.45, easeLinearity: 0.25 });
     }
-  }, [coords, map]);
+  }, [coords, modoGeografico, map]);
   return null;
 }
 
@@ -227,13 +243,34 @@ export function MapResizeHandler({ isExpanded }) {
   return null;
 }
 
-export function MapZoomWatcher({ onZoomChange }) {
+export function MapZoomWatcher({ onZoomChange, onBoundsChange }) {
   const map = useMap();
+  const lastZoomRef = useRef(null);
+
+  const reportView = () => {
+    const z = map.getZoom();
+    const rounded = Math.round(z * 4) / 4;
+    if (lastZoomRef.current !== rounded) {
+      lastZoomRef.current = rounded;
+      onZoomChange?.(rounded);
+    }
+    if (onBoundsChange) {
+      const b = map.getBounds();
+      onBoundsChange({
+        south: Number(b.getSouth().toFixed(4)),
+        west: Number(b.getWest().toFixed(4)),
+        north: Number(b.getNorth().toFixed(4)),
+        east: Number(b.getEast().toFixed(4))
+      });
+    }
+  };
+
   useMapEvents({
-    zoomend: () => onZoomChange(map.getZoom())
+    zoomend: reportView,
+    moveend: reportView
   });
   useEffect(() => {
-    onZoomChange(map.getZoom());
-  }, [map, onZoomChange]);
+    reportView();
+  }, [map]);
   return null;
 }

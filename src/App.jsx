@@ -1,8 +1,8 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
-import { DataProvider } from './context/DataContext';
+import { DataProvider, DataContext } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -103,12 +103,77 @@ const PageWrapper = ({ children }) => {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { filtroSemiarido } = useContext(DataContext) || {};
   const isHome = location.pathname === '/';
   const isPrintPage = location.pathname.startsWith('/relatorio/');
   const hideNavigation = isHome || isPrintPage;
 
   return (
-    <div className={`flex w-full ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-dvh bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
+    <div className={`flex w-full relative ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-dvh bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
+      {/* ATMOSFERA GLOBAL: ESFERAS SUTIS ESTILO LANTERNA DE MAGMA */}
+      {!hideNavigation && (
+        <div
+          aria-hidden="true"
+          data-html2canvas-ignore="true"
+          className="pointer-events-none fixed inset-0 overflow-hidden z-0 print:hidden select-none"
+        >
+          {/* Esfera 1 — Topo Esquerdo / Centro */}
+          <div
+            className="
+              absolute -top-[10%] left-[8%]
+              w-[42vw] h-[42vw] min-w-[380px] min-h-[380px] max-w-[660px] max-h-[660px]
+              rounded-full animate-magma-1
+            "
+            style={{
+              background: filtroSemiarido
+                ? 'radial-gradient(circle, rgba(245, 158, 11, 0.30) 0%, rgba(217, 119, 6, 0.16) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+                : 'radial-gradient(circle, rgba(37, 99, 235, 0.32) 0%, rgba(59, 130, 246, 0.17) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)'
+            }}
+          />
+
+          {/* Esfera 2 — Topo / Direita */}
+          <div
+            className="
+              absolute top-[8%] right-[2%]
+              w-[44vw] h-[44vw] min-w-[400px] min-h-[400px] max-w-[700px] max-h-[700px]
+              rounded-full animate-magma-2
+            "
+            style={{
+              background: filtroSemiarido
+                ? 'radial-gradient(circle, rgba(251, 191, 36, 0.30) 0%, rgba(245, 158, 11, 0.16) 36%, rgba(251, 191, 36, 0.05) 58%, transparent 74%)'
+                : 'radial-gradient(circle, rgba(56, 189, 248, 0.34) 0%, rgba(37, 99, 235, 0.18) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)'
+            }}
+          />
+
+          {/* Esfera 3 — Centro / Esquerda */}
+          <div
+            className="
+              absolute -bottom-[12%] left-[4%]
+              w-[40vw] h-[40vw] min-w-[360px] min-h-[360px] max-w-[620px] max-h-[620px]
+              rounded-full animate-magma-3
+            "
+            style={{
+              background: filtroSemiarido
+                ? 'radial-gradient(circle, rgba(217, 119, 6, 0.28) 0%, rgba(245, 158, 11, 0.14) 36%, rgba(217, 119, 6, 0.05) 58%, transparent 74%)'
+                : 'radial-gradient(circle, rgba(14, 165, 233, 0.30) 0%, rgba(56, 189, 248, 0.16) 36%, rgba(14, 165, 233, 0.05) 58%, transparent 74%)'
+            }}
+          />
+
+          {/* Esfera 4 — Base Direita / Centro */}
+          <div
+            className="
+              absolute bottom-[0%] right-[14%]
+              w-[38vw] h-[38vw] min-w-[340px] min-h-[340px] max-w-[580px] max-h-[580px]
+              rounded-full animate-magma-4
+            "
+            style={{
+              background: filtroSemiarido
+                ? 'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(251, 191, 36, 0.14) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+                : 'radial-gradient(circle, rgba(59, 130, 246, 0.30) 0%, rgba(37, 99, 235, 0.16) 36%, rgba(96, 165, 250, 0.05) 58%, transparent 74%)'
+            }}
+          />
+        </div>
+      )}
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">
         {!hideNavigation && (

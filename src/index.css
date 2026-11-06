@@ -534,6 +534,101 @@
   animation: sunArcGlow 11s ease-in-out infinite;
 }
 
+/* ================= ATMOSFERA: LANTERNA DE MAGMA AZUL (ORBES EM MOVIMENTO DINÂMICO) ================= */
+@keyframes magmaOrb1 {
+  0% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+  20% {
+    transform: translate3d(38%, 22%, 0) scale(1.22);
+  }
+  45% {
+    transform: translate3d(20%, 52%, 0) scale(0.88);
+  }
+  75% {
+    transform: translate3d(-24%, 28%, 0) scale(1.16);
+  }
+  100% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+}
+
+@keyframes magmaOrb2 {
+  0% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(-42%, 28%, 0) scale(1.24);
+  }
+  55% {
+    transform: translate3d(-22%, -38%, 0) scale(0.86);
+  }
+  80% {
+    transform: translate3d(26%, -18%, 0) scale(1.15);
+  }
+  100% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+}
+
+@keyframes magmaOrb3 {
+  0% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+  30% {
+    transform: translate3d(36%, -40%, 0) scale(1.2);
+  }
+  65% {
+    transform: translate3d(-32%, -18%, 0) scale(0.88);
+  }
+  100% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+}
+
+@keyframes magmaOrb4 {
+  0% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(-36%, -32%, 0) scale(1.18);
+  }
+  55% {
+    transform: translate3d(30%, -44%, 0) scale(0.9);
+  }
+  80% {
+    transform: translate3d(18%, 26%, 0) scale(1.22);
+  }
+  100% {
+    transform: translate3d(0%, 0%, 0) scale(1);
+  }
+}
+
+.animate-magma-1 {
+  animation: magmaOrb1 11s ease-in-out infinite;
+}
+
+.animate-magma-2 {
+  animation: magmaOrb2 13s ease-in-out infinite;
+}
+
+.animate-magma-3 {
+  animation: magmaOrb3 15s ease-in-out infinite;
+}
+
+.animate-magma-4 {
+  animation: magmaOrb4 12s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-magma-1,
+  .animate-magma-2,
+  .animate-magma-3,
+  .animate-magma-4 {
+    animation: none !important;
+  }
+}
+
 /* ================= ANIMAÇÃO DE CARREGAMENTO DE BARRAS DE PÍLULAS (PILL BARS) ================= */
 @keyframes pillBarGrow {
   0% {
@@ -688,14 +783,22 @@
 
 .leaflet-container,
 .dark .leaflet-container {
-  background-color: rgb(var(--color-surface-soft)) !important;
+  background-color: transparent !important;
 }
 
-.leaflet-popup-content-wrapper,
+.leaflet-popup-content-wrapper {
+  background: #FFFFFF !important;
+  color: #090D16 !important;
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
 .leaflet-popup-tip {
   background: #FFFFFF !important;
   color: #090D16 !important;
-  border-radius: 12px !important;
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08) !important;
   border: 1px solid #E2E8F0 !important;
 }
@@ -705,7 +808,37 @@
   background: #111827 !important;
   color: #F8FAFC !important;
   border-color: #1E293B !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.45) !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  top: 10px !important;
+  right: 10px !important;
+  width: 22px !important;
+  height: 22px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 9999px !important;
+  color: #64748B !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  transition: background-color 150ms ease, color 150ms ease !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  background-color: #F1F5F9 !important;
+  color: #090D16 !important;
+}
+
+.dark .leaflet-container a.leaflet-popup-close-button {
+  color: #94A3B8 !important;
+}
+
+.dark .leaflet-container a.leaflet-popup-close-button:hover {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
 }
 
 .leaflet-tooltip {
@@ -722,6 +855,14 @@
   background: #111827 !important;
   color: #F8FAFC !important;
   border-color: #1E293B !important;
+}
+
+.leaflet-tooltip.clean-city-tooltip,
+.dark .leaflet-tooltip.clean-city-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .leaflet-popup-content,

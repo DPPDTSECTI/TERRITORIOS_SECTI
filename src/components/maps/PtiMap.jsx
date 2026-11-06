@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useRef, useCallback, useContext } 
 import { MapContainer, TileLayer, GeoJSON, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Globe } from 'lucide-react';
+import { Globe, Maximize2, RotateCcw, ChevronRight, X, Layers } from 'lucide-react';
 
 import { municipiosDB } from '../../data/municipiosDB';
 import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
@@ -167,17 +167,21 @@ export default function PtiMap({
   const [currentZoom, setCurrentZoom] = useState(5.8);
   const isZoomedIn = currentZoom >= 6.75;
 
-  const [hoveredTerritoryId, setHoveredTerritoryId] = useState(null);
-  const [hoveredMunicipalityId, setHoveredMunicipalityId] = useState(null);
   const [isMunListExpanded, setIsMunListExpanded] = useState(false);
 
   const geoJsonLayerRef = useRef(null);
   const selectedMunLayerRef = useRef(null);
   const mapContainerRef = useRef(null);
+  const containerRectRef = useRef(null);
   const mapRef = useRef(null);
   const layersByTerritory = useRef({});
   const tooltipDomRef = useRef(null);
-  const lastPointerPosRef = useRef({ x: 0, y: 0 });
+  const tooltipAccentRef = useRef(null);
+  const tooltipMunRef = useRef(null);
+  const tooltipTitleRef = useRef(null);
+  const tooltipAtivosRef = useRef(null);
+  const tooltipIfdmRef = useRef(null);
+  const isTooltipVisibleRef = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -201,11 +205,15 @@ export default function PtiMap({
     };
   }, [topologia]);
 
-  // ResizeObserver para manter o canvas do Leaflet nítido em qualquer mudança de layout
+  // ResizeObserver para manter o canvas do Leaflet nítido e cachear o rect do container sem reflow no mousemove
   useEffect(() => {
     const container = mapContainerRef.current;
     if (!container) return;
+    containerRectRef.current = container.getBoundingClientRect();
     const ro = new ResizeObserver(() => {
+      if (mapContainerRef.current) {
+        containerRectRef.current = mapContainerRef.current.getBoundingClientRect();
+      }
       if (mapRef.current) {
         mapRef.current.invalidateSize({ animate: false });
       }
@@ -419,9 +427,9 @@ export default function PtiMap({
   });
 
   const updateTooltipPosition = useCallback((clientX, clientY) => {
-    const container = mapContainerRef.current;
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
+    if (!tooltipDomRef.current) return;
+    const rect = containerRectRef.current || mapContainerRef.current?.getBoundingClientRect();
+    if (!rect) return;
     const tooltipWidth = 244;
     const tooltipHeight = 165;
     const offset = 16;
@@ -434,28 +442,66 @@ export default function PtiMap({
     if (x < 8) x = 8;
     if (y < 8) y = 8;
 
-    lastPointerPosRef.current = { x, y };
+    tooltipDomRef.current.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+  }, []);
+
+  const showHoverTooltip = useCallback(
+    (idTer, munId, clientX, clientY) => {
+      const { territoriosData: tData, filtroSemiarido: semi } = stateRef.current;
+      const hoveredData = idTer ? tData.find((t) => Number(t.id_territorio) === idTer) : null;
+      const fallbackName = idTer ? uniqueTerritories.find((t) => t.id === idTer)?.nome || '' : '';
+      const munName = munId ? municipioByIdMap[munId]?.nome_municipio || '' : '';
+
+      if (tooltipAccentRef.current) {
+        tooltipAccentRef.current.style.backgroundColor = semi
+          ? semiaridoTerritoryColorMap[idTer] || '#F59E0B'
+          : territoryColorMap[idTer] || 'rgb(var(--color-primary-600))';
+      }
+      if (tooltipMunRef.current) {
+        if (munName) {
+          tooltipMunRef.current.textContent = munName;
+          tooltipMunRef.current.style.display = 'block';
+        } else {
+          tooltipMunRef.current.style.display = 'none';
+        }
+      }
+      if (tooltipTitleRef.current) {
+        tooltipTitleRef.current.textContent = hoveredData ? hoveredData.territorio : fallbackName;
+      }
+      if (tooltipAtivosRef.current) {
+        tooltipAtivosRef.current.textContent = String(hoveredData?.ativos_cti || 0);
+      }
+      if (tooltipIfdmRef.current) {
+        tooltipIfdmRef.current.textContent = hoveredData?.media_ifdm
+          ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3)
+          : '0.000';
+      }
+
+      isTooltipVisibleRef.current = true;
+      if (clientX != null && clientY != null) {
+        updateTooltipPosition(clientX, clientY);
+      }
+      if (tooltipDomRef.current) {
+        tooltipDomRef.current.style.opacity = '1';
+      }
+    },
+    [updateTooltipPosition]
+  );
+
+  const hideHoverTooltip = useCallback(() => {
+    isTooltipVisibleRef.current = false;
     if (tooltipDomRef.current) {
-      tooltipDomRef.current.style.left = `${Math.round(x)}px`;
-      tooltipDomRef.current.style.top = `${Math.round(y)}px`;
+      tooltipDomRef.current.style.opacity = '0';
     }
   }, []);
 
   const handleMouseMove = useCallback(
     (e) => {
+      if (!isTooltipVisibleRef.current) return;
       updateTooltipPosition(e.clientX, e.clientY);
     },
     [updateTooltipPosition]
   );
-
-  // Posiciona o tooltip imediatamente quando ele monta no DOM
-  useEffect(() => {
-    if (hoveredTerritoryId && tooltipDomRef.current) {
-      const { x, y } = lastPointerPosRef.current;
-      tooltipDomRef.current.style.left = `${Math.round(x)}px`;
-      tooltipDomRef.current.style.top = `${Math.round(y)}px`;
-    }
-  }, [hoveredTerritoryId, hoveredMunicipalityId]);
 
   const selectTerritoryById = useCallback((idTer, fallbackNome) => {
     const { territoriosData: tData, selectedTerritory: selTer, onSelectTerritory: onSelect } = stateRef.current;
@@ -485,13 +531,11 @@ export default function PtiMap({
           const isSelectedMap = selTer && Number(selTer.id_territorio) === idTer;
           if (selTer && isSelectedMap) return;
 
-          if (e.originalEvent) {
-            updateTooltipPosition(e.originalEvent.clientX, e.originalEvent.clientY);
-          }
+          const cx = e.originalEvent?.clientX;
+          const cy = e.originalEvent?.clientY;
 
           if (!selTer && !zoomed) {
-            setHoveredTerritoryId(idTer);
-            setHoveredMunicipalityId(null);
+            showHoverTooltip(idTer, null, cx, cy);
 
             layersByTerritory.current[idTer]?.forEach((l) => {
               l.setStyle({
@@ -504,8 +548,7 @@ export default function PtiMap({
               }
             });
           } else {
-            setHoveredTerritoryId(idTer);
-            setHoveredMunicipalityId(feature.properties.id_municipio || null);
+            showHoverTooltip(idTer, feature.properties.id_municipio || null, cx, cy);
             e.target.setStyle({
               fillOpacity: selTer ? 0.72 : 1,
               color: palette.stroke.hover,
@@ -522,8 +565,7 @@ export default function PtiMap({
           } else {
             e.target.setStyle(styleFn(feature));
           }
-          setHoveredTerritoryId(null);
-          setHoveredMunicipalityId(null);
+          hideHoverTooltip();
         },
         click: (e) => {
           L.DomEvent.stopPropagation(e);
@@ -542,7 +584,7 @@ export default function PtiMap({
         }
       });
     },
-    [selectTerritoryById, updateTooltipPosition]
+    [selectTerritoryById, showHoverTooltip, hideHoverTooltip]
   );
 
   const onEachSelectedMunicipioFeature = useCallback(
@@ -552,11 +594,12 @@ export default function PtiMap({
 
       layer.on({
         mouseover: (e) => {
-          if (e.originalEvent) {
-            updateTooltipPosition(e.originalEvent.clientX, e.originalEvent.clientY);
-          }
-          setHoveredTerritoryId(idTer);
-          setHoveredMunicipalityId(feature.properties.id_municipio || null);
+          showHoverTooltip(
+            idTer,
+            feature.properties.id_municipio || null,
+            e.originalEvent?.clientX,
+            e.originalEvent?.clientY
+          );
           e.target.setStyle({
             fillOpacity: 1,
             color: stateRef.current.mapPalette.stroke.hover,
@@ -568,29 +611,21 @@ export default function PtiMap({
         },
         mouseout: (e) => {
           e.target.setStyle(stateRef.current.styleSelectedMunicipio(feature));
-          setHoveredTerritoryId(null);
-          setHoveredMunicipalityId(null);
+          hideHoverTooltip();
         },
         click: (e) => {
           L.DomEvent.stopPropagation(e);
-          selectTerritoryById(idTer, feature.properties.nome_territorio);
+          if (mapRef.current && e.target && typeof e.target.getBounds === 'function') {
+            const b = e.target.getBounds();
+            if (b && b.isValid()) {
+              mapRef.current.fitBounds(b, { padding: [48, 48], maxZoom: 9.5, duration: 0.35 });
+            }
+          }
         }
       });
     },
-    [selectTerritoryById, updateTooltipPosition]
+    [showHoverTooltip, hideHoverTooltip]
   );
-
-  const hoveredData = useMemo(
-    () => (hoveredTerritoryId ? territoriosData.find((t) => Number(t.id_territorio) === hoveredTerritoryId) : null),
-    [hoveredTerritoryId, territoriosData]
-  );
-
-  const fallbackName = useMemo(
-    () => (hoveredTerritoryId ? uniqueTerritories.find((t) => t.id === hoveredTerritoryId)?.nome : ''),
-    [hoveredTerritoryId]
-  );
-
-  const hoveredMunName = hoveredMunicipalityId ? municipioByIdMap[hoveredMunicipalityId]?.nome_municipio : null;
 
   const selectedTerritoryMunicipalities = useMemo(() => {
     if (!selectedTerritory || !selectedTerritory.id_territorio) return [];
@@ -712,15 +747,18 @@ export default function PtiMap({
   return (
     <div
       ref={mapContainerRef}
-      className="tour-map relative isolate w-full h-full min-h-0 flex items-center justify-center bg-surface-sunken rounded-card overflow-hidden select-none z-10"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => {
-        setHoveredTerritoryId(null);
-        setHoveredMunicipalityId(null);
+      className="tour-map relative isolate w-full h-full min-h-0 flex items-center justify-center bg-surface dark:bg-surface-sunken rounded-card overflow-hidden select-none z-10"
+      onMouseEnter={() => {
+        if (mapContainerRef.current) {
+          containerRectRef.current = mapContainerRef.current.getBoundingClientRect();
+        }
       }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={hideHoverTooltip}
     >
+
       {loading || !baseLayerData ? (
-        <div className="flex flex-col items-center text-primary-600">
+        <div className="flex flex-col items-center text-primary-600 relative z-10">
           <svg className="animate-spin h-6 w-6 mb-2 text-primary-600" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path
@@ -737,12 +775,12 @@ export default function PtiMap({
           preferCanvas={true}
           center={[-12.8, -41.2]}
           zoom={5.8}
-          minZoom={modoGeografico ? 4.0 : 5.0}
-          maxZoom={modoGeografico ? 19 : 11}
-          zoomSnap={0.25}
+          minZoom={modoGeografico ? 4.5 : 5.25}
+          maxZoom={modoGeografico ? 18 : 10.5}
+          zoomSnap={0.5}
           zoomDelta={0.5}
-          wheelPxPerZoomLevel={90}
-          wheelDebounceTime={30}
+          wheelPxPerZoomLevel={110}
+          wheelDebounceTime={40}
           inertia={true}
           inertiaDeceleration={3000}
           maxBounds={
@@ -760,15 +798,12 @@ export default function PtiMap({
           zoomControl={false}
           attributionControl={false}
           scrollWheelZoom={true}
-          doubleClickZoom={false}
-          className="w-full h-full outline-none z-0"
-          style={{ background: 'rgb(var(--color-surface-sunken))' }}
+          doubleClickZoom={true}
+          className="w-full h-full outline-none z-10"
+          style={{ background: 'transparent' }}
         >
           <MapInteractionTracker
             onZoomChange={setCurrentZoom}
-            onBackgroundClick={() => {
-              if (selectedTerritory) onSelectTerritory(null);
-            }}
           />
 
           {modoGeografico && (
@@ -781,9 +816,9 @@ export default function PtiMap({
               }
               maxZoom={19}
               minZoom={3}
-              keepBuffer={8}
+              keepBuffer={2}
               updateWhenZooming={false}
-              updateWhenIdle={false}
+              updateWhenIdle={true}
               eventHandlers={{
                 tileerror: (e) => {
                   const target = e.tile;
@@ -871,23 +906,6 @@ export default function PtiMap({
             />
           )}
 
-          {/* Destaque perimetral externo do território ao passar o mouse */}
-          {hoveredTerritoryId && !selectedTerritory && !isZoomedIn && territoryMeshes[hoveredTerritoryId] && (
-            <GeoJSON
-              key={`hover-mesh-${hoveredTerritoryId}-${filtroSemiarido ? '1' : '0'}`}
-              data={territoryMeshes[hoveredTerritoryId]}
-              style={{
-                color: filtroSemiarido ? '#92400E' : '#1D3557',
-                weight: 3.2,
-                opacity: 1,
-                fill: false,
-                lineCap: 'round',
-                lineJoin: 'round'
-              }}
-              interactive={false}
-            />
-          )}
-
           {/* Contorno perimetral externo do território selecionado */}
           {selectedTerritory && territoryMeshes[selectedTerritory.id_territorio] && (
             <GeoJSON
@@ -907,252 +925,255 @@ export default function PtiMap({
         </MapContainer>
       )}
 
-      {/* ================= CONTROLES DE NAVEGAÇÃO ================= */}
-      <div className="absolute bottom-4 right-4 z-[400] flex flex-col bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-xl border border-zinc-200/80 dark:border-zinc-800 shadow-sm overflow-hidden">
-        <button
-          onClick={() => mapRef.current?.zoomIn(0.75)}
-          aria-label="Aproximar mapa"
-          className="w-9 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] border-b border-zinc-200/80 dark:border-zinc-800 cursor-pointer"
-          title="Aproximar"
-        >
-          <span className="text-lg font-medium leading-none">+</span>
-        </button>
-        <button
-          onClick={() => mapRef.current?.zoomOut(0.75)}
-          aria-label="Afastar mapa"
-          className="w-9 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] border-b border-zinc-200/80 dark:border-zinc-800 cursor-pointer"
-          title="Afastar"
-        >
-          <span className="text-lg font-medium leading-none">−</span>
-        </button>
-        <button
-          onClick={() => {
-            if (geoJsonLayerRef.current) {
-              const b = geoJsonLayerRef.current.getBounds();
-              if (b.isValid()) {
-                mapRef.current?.fitBounds(b, { padding: [14, 14], duration: 0.55 });
+      {/* ================= BREADCRUMB DE NAVEGAÇÃO (CANTO SUPERIOR ESQUERDO) ================= */}
+      <div className="absolute top-3 left-3 z-[400] flex flex-col gap-2 pointer-events-none select-none max-w-[calc(100%-220px)]">
+        <div className="pointer-events-auto inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/80 dark:border-zinc-800 shadow-sm text-xs">
+          <button
+            type="button"
+            onClick={() => {
+              onSelectTerritory(null);
+              if (geoJsonLayerRef.current) {
+                const b = geoJsonLayerRef.current.getBounds();
+                if (b.isValid()) {
+                  mapRef.current?.fitBounds(b, { padding: [14, 14], duration: 0.45 });
+                  return;
+                }
               }
-            } else {
-              mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.55, easeLinearity: 0.25 });
-            }
-            onSelectTerritory(null);
-          }}
-          aria-label="Limpar seleção e ver toda a Bahia"
-          className={`w-9 h-9 flex items-center justify-center transition-all duration-150 ease-out active:scale-[0.99] cursor-pointer ${
-            selectedTerritory
-              ? 'text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20'
-              : 'text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70'
-          }`}
-          title="Limpar seleção e centralizar Bahia (Esc)"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+              mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.45 });
+            }}
+            className={`inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer ${
+              selectedTerritory
+                ? 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                : 'text-zinc-900 dark:text-zinc-100'
+            }`}
+            title="Enquadrar toda a Bahia"
           >
-            <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" />
-            <path d="M22 21H7" />
-            <path d="m5 11 9 9" />
-          </svg>
-        </button>
+            <Layers size={13} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+            <span>Bahia</span>
+          </button>
+
+          {selectedTerritory ? (
+            <>
+              <ChevronRight size={12} className="text-zinc-400 shrink-0" />
+              <span
+                className="font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[150px]"
+                title={selectedTerritory.nome_territorio || selectedTerritory.territorio}
+              >
+                {selectedTerritory.nome_territorio || selectedTerritory.territorio}
+              </span>
+              <button
+                type="button"
+                onClick={() => onSelectTerritory(null)}
+                aria-label="Voltar para visão da Bahia"
+                title="Voltar para toda a Bahia (Esc)"
+                className="ml-0.5 w-5 h-5 rounded-full flex items-center justify-center text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer shrink-0"
+              >
+                <X size={12} strokeWidth={2.25} />
+              </button>
+            </>
+          ) : (
+            <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-normal pl-0.5 hidden sm:inline">
+              · {currentZoom >= 7.0 ? 'Divisas Municipais' : '27 Territórios'}
+            </span>
+          )}
+        </div>
+
+        {/* LISTA COMPACTA DE MUNICÍPIOS DO TERRITÓRIO SELECIONADO */}
+        {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
+          <div className="pointer-events-auto w-56 max-h-[240px] overflow-y-auto hide-scroll p-3 rounded-xl border bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-zinc-200/80 dark:border-zinc-800 shadow-sm transition-all duration-200">
+            <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-zinc-200/70 dark:border-zinc-800/70">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 tabular-nums">
+                {selectedTerritoryMunicipalities.length} Municípios
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (selectedMunLayerRef.current) {
+                    const b = selectedMunLayerRef.current.getBounds();
+                    if (b && b.isValid()) {
+                      mapRef.current?.fitBounds(b, { padding: [36, 36], maxZoom: 8.5, duration: 0.45 });
+                    }
+                  }
+                }}
+                className="text-[11px] font-medium text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"
+                title="Centralizar território"
+              >
+                Enquadrar
+              </button>
+            </div>
+            <ul className="flex flex-col gap-0.5">
+              {municipalitiesToShow.map((m, idx) => (
+                <li
+                  key={idx}
+                  className="text-xs font-medium flex items-center justify-between gap-2 text-zinc-700 dark:text-zinc-300 py-1 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50 rounded-md px-1.5 cursor-default transition-colors"
+                >
+                  <span className="truncate">{m}</span>
+                </li>
+              ))}
+            </ul>
+            {selectedTerritoryMunicipalities.length > 4 && (
+              <button
+                type="button"
+                onClick={() => setIsMunListExpanded(!isMunListExpanded)}
+                className="w-full mt-2 text-center text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white py-1 rounded-full bg-zinc-100/80 dark:bg-zinc-800/80 hover:bg-zinc-200/70 dark:hover:bg-zinc-700/70 transition-colors cursor-pointer tabular-nums"
+              >
+                {isMunListExpanded ? 'Ver menos' : `Ver todos (${selectedTerritoryMunicipalities.length})`}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* ================= TOGGLE GEOGRÁFICO + SEMIÁRIDO (CANTO SUPERIOR DIREITO) ================= */}
-      <div className="absolute top-3 right-3 z-[400] flex items-center gap-2">
+      {/* ================= BARRA DE CAMADAS (CANTO SUPERIOR DIREITO) ================= */}
+      <div className="absolute top-3 right-3 z-[400] flex items-center gap-1.5">
         <button
           type="button"
           onClick={toggleModoGeografico}
           title={
             modoGeografico
-              ? 'Voltar para camada de Territórios'
-              : 'Ver mapa real com precisão geográfica (sem camada por cima)'
+              ? 'Voltar para malha cartográfica dos Territórios'
+              : 'Alternar para mapa geográfico com ruas e relevo'
           }
-          className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-full text-caption font-semibold transition-all duration-150 cursor-pointer border select-none backdrop-blur-md ${
+          className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
             modoGeografico
-              ? (filtroSemiarido
-                ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white border-amber-500/80 shadow-xs ring-1 ring-amber-500/30'
-                : 'bg-primary-600 text-white border-primary-700 shadow-sm')
-              : (filtroSemiarido
-                ? 'border-amber-300/70 dark:border-amber-700/60 bg-white/90 dark:bg-zinc-900/90 text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40 shadow-xs'
-                : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-text-secondary hover:text-text-primary shadow-sm')
+              ? filtroSemiarido
+                ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                : 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 shadow-xs'
+              : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 shadow-sm'
           }`}
         >
-          <span
-            className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-2xs ${
-              modoGeografico
-                ? (filtroSemiarido
-                  ? 'bg-white text-amber-600 shadow-2xs'
-                  : 'bg-white text-primary-600 shadow-2xs')
-                : (filtroSemiarido
-                  ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-300/50'
-                  : 'bg-surface-soft border border-border text-text-muted')
-            }`}
-          >
-            <Globe size={13} strokeWidth={2.1} />
-          </span>
-          <span className="truncate text-left">Geográfico</span>
+          <Globe size={13} strokeWidth={2} />
+          <span className="truncate">Geográfico</span>
         </button>
 
         {Boolean(onToggleSemiarido) && (
           <button
             type="button"
             onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
-            title={filtroSemiarido ? 'Voltar ao Modo Normal' : 'Ativar Modo Semiárido'}
-            className={`tour-toggle-semiarido relative flex items-center gap-2 h-[32px] w-[114px] min-w-[114px] max-w-[114px] px-2 rounded-full text-caption font-semibold transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
+            title={filtroSemiarido ? 'Voltar ao Modo Normal (27 Territórios)' : 'Filtrar municípios do Semiárido'}
+            className={`tour-toggle-semiarido inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
               filtroSemiarido
-                ? 'bg-amber-500 text-white border-amber-600 shadow-sm ring-2 ring-amber-400/30'
-                : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-text-secondary hover:text-text-primary shadow-sm'
+                ? 'bg-amber-500 text-white border-amber-600 shadow-xs ring-2 ring-amber-400/30'
+                : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 shadow-sm'
             }`}
           >
             <span
-              className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-2xs ${
-                filtroSemiarido
-                  ? 'bg-white text-amber-600'
-                  : 'bg-surface-soft border border-border text-text-muted'
+              className={`w-2 h-2 rounded-full shrink-0 ${
+                filtroSemiarido ? 'bg-white' : 'bg-amber-500'
               }`}
-            >
-              {filtroSemiarido ? (
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="4" />
-                  <line x1="12" y1="2" x2="12" y2="5" />
-                  <line x1="12" y1="19" x2="12" y2="22" />
-                  <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
-                  <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
-                  <line x1="2" y1="12" x2="5" y2="12" />
-                  <line x1="19" y1="12" x2="22" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
-                  <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
-                </svg>
-              ) : (
-                <span className="w-2 h-2 rounded-full bg-slate-300 block" />
-              )}
-            </span>
-            <span className="truncate flex-1 text-left">{filtroSemiarido ? 'Semiárido' : 'Normal'}</span>
+            />
+            <span className="truncate">Semiárido</span>
           </button>
         )}
       </div>
 
-      {/* ================= CAIXA LATERAL DE MUNICÍPIOS (LADO OPOSTO AO TERRITÓRIO) ================= */}
-      {selectedTerritory && selectedTerritoryMunicipalities.length > 0 && (
-        <div
-          className={`absolute ${
-            isTerritoryOnRight ? 'top-3.5 left-3.5' : 'top-[52px] right-3.5'
-          } z-[400] w-60 max-h-[calc(100%-84px)] overflow-y-auto hide-scroll p-3.5 rounded-xl border bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-zinc-200/80 dark:border-zinc-800 shadow-sm transition-all duration-200 animate-soft-fade pointer-events-auto`}
-        >
-          <div className="flex justify-between items-center mb-2.5 border-b border-zinc-200/70 dark:border-zinc-800/70 pb-2.5">
-            <div className="min-w-0 pr-2">
-              <span className="block text-[10px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                Municípios ({selectedTerritoryMunicipalities.length})
-              </span>
-              <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 leading-tight truncate">
-                {selectedTerritory.nome_territorio || selectedTerritory.territorio}
-              </h4>
-            </div>
-            <button
-              onClick={() => onSelectTerritory(null)}
-              aria-label="Fechar seleção de território"
-              className="text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors bg-zinc-100/80 dark:bg-zinc-800/80 hover:bg-rose-500/10 rounded-lg p-1.5 shrink-0 cursor-pointer"
-              title="Voltar para visão estadual (Esc)"
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-          <ul className="flex flex-col gap-0.5">
-            {municipalitiesToShow.map((m, idx) => (
-              <li
-                key={idx}
-                className="text-xs font-medium flex items-center justify-between gap-2 text-zinc-700 dark:text-zinc-300 py-1 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50 rounded-md px-2 cursor-default transition-colors"
-              >
-                <span className="truncate">{m}</span>
-              </li>
-            ))}
-          </ul>
-          {selectedTerritoryMunicipalities.length > 4 && (
-            <button
-              onClick={() => setIsMunListExpanded(!isMunListExpanded)}
-              className="w-full mt-2.5 text-center text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white py-1.5 rounded-lg bg-zinc-100/80 dark:bg-zinc-800/80 hover:bg-zinc-200/70 dark:hover:bg-zinc-700/70 transition-colors cursor-pointer tabular-nums"
-            >
-              {isMunListExpanded ? 'Ver menos' : `Ver todos (${selectedTerritoryMunicipalities.length})`}
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* ================= TOOLTIP FLUTUANTE (ZERO RE-RENDERS NO MOUSEMOVE) ================= */}
-      {hoveredTerritoryId && (
-        <div
-          ref={tooltipDomRef}
-          className="absolute top-0 left-0 z-[1000] overflow-hidden rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-md pointer-events-none"
-          style={{ width: 244 }}
-        >
-          <div
-            className="h-1 w-full"
-            style={{
-              backgroundColor: filtroSemiarido
-                ? semiaridoTerritoryColorMap[hoveredTerritoryId] || '#F59E0B'
-                : territoryColorMap[hoveredTerritoryId] || 'rgb(var(--color-primary-600))'
+      {/* ================= CONTROLES DE ZOOM E ENQUADRAMENTO (CANTO INFERIOR DIREITO) ================= */}
+      <div className="absolute bottom-3 right-3 z-[400] flex flex-col items-end gap-1.5">
+        {(selectedTerritory || Math.abs(currentZoom - 5.8) > 0.35) && (
+          <button
+            type="button"
+            onClick={() => {
+              onSelectTerritory(null);
+              if (geoJsonLayerRef.current) {
+                const b = geoJsonLayerRef.current.getBounds();
+                if (b.isValid()) {
+                  mapRef.current?.fitBounds(b, { padding: [14, 14], duration: 0.45 });
+                  return;
+                }
+              }
+              mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.45 });
             }}
-          />
-          <div className="p-3">
-            <div className="flex flex-col mb-2.5">
-              {hoveredMunName && (
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-0.5 truncate">
-                  {hoveredMunName}
-                </span>
-              )}
-              <h2 className="font-semibold text-sm text-zinc-950 dark:text-zinc-50 leading-snug truncate">
-                {hoveredData ? hoveredData.territorio : fallbackName}
-              </h2>
+            aria-label="Enquadrar toda a Bahia"
+            title="Enquadrar toda a Bahia (Esc)"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/80 dark:border-zinc-800 shadow-sm text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 transition-all duration-150 ease-out active:scale-[0.99] cursor-pointer"
+          >
+            {selectedTerritory ? <RotateCcw size={14} /> : <Maximize2 size={14} />}
+          </button>
+        )}
+
+        <div className="flex flex-col bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-full border border-zinc-200/80 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button
+            type="button"
+            onClick={() => mapRef.current?.zoomIn(0.5)}
+            disabled={currentZoom >= (modoGeografico ? 18 : 10.5)}
+            aria-label="Aproximar mapa"
+            className="w-9 h-8 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+            title="Aproximar (+)"
+          >
+            <span className="text-base font-medium leading-none">+</span>
+          </button>
+
+          <div
+            className="px-1.5 py-1 border-y border-zinc-200/70 dark:border-zinc-800/80 text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 text-center tabular-nums select-none"
+            title="Nível de zoom atual"
+          >
+            {Math.max(1, (currentZoom / 5.8)).toFixed(1)}x
+          </div>
+
+          <button
+            type="button"
+            onClick={() => mapRef.current?.zoomOut(0.5)}
+            disabled={currentZoom <= (modoGeografico ? 4.5 : 5.25)}
+            aria-label="Afastar mapa"
+            className="w-9 h-8 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+            title="Afastar (−)"
+          >
+            <span className="text-base font-medium leading-none">−</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ================= TOOLTIP FLUTUANTE (ZERO RE-RENDERS NO HOVER E MOUSEMOVE) ================= */}
+      <div
+        ref={tooltipDomRef}
+        className="absolute top-0 left-0 z-[1000] overflow-hidden rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-md pointer-events-none transition-opacity duration-75"
+        style={{ width: 244, opacity: 0, transform: 'translate3d(0px, 0px, 0)' }}
+      >
+        <div
+          ref={tooltipAccentRef}
+          className="h-1 w-full"
+          style={{ backgroundColor: 'rgb(var(--color-primary-600))' }}
+        />
+        <div className="p-3">
+          <div className="flex flex-col mb-2.5">
+            <span
+              ref={tooltipMunRef}
+              className="text-[11px] font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-0.5 truncate"
+              style={{ display: 'none' }}
+            />
+            <h2
+              ref={tooltipTitleRef}
+              className="font-semibold text-sm text-zinc-950 dark:text-zinc-50 leading-snug truncate"
+            >
+              Território
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">
+                Ativos CT&I
+              </span>
+              <span
+                ref={tooltipAtivosRef}
+                className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums"
+              >
+                0
+              </span>
             </div>
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">
-                  Ativos CT&I
-                </span>
-                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
-                  {hoveredData?.ativos_cti || 0}
-                </span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">
-                  Média IFDM
-                </span>
-                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
-                  {hoveredData?.media_ifdm
-                    ? (Math.trunc(Number(hoveredData.media_ifdm) * 1000) / 1000).toFixed(3)
-                    : '0.000'}
-                </span>
-              </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">
+                Média IFDM
+              </span>
+              <span
+                ref={tooltipIfdmRef}
+                className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums"
+              >
+                0.000
+              </span>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

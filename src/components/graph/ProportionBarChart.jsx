@@ -129,7 +129,7 @@ export default function ProportionBarChart({
           </div>
         ) : (
           <>
-            <div className="flex flex-col justify-between flex-1 w-full gap-1 py-0.5 min-h-0">
+            <div className={`flex flex-col flex-1 w-full py-0.5 min-h-0 ${data.length >= 4 ? 'justify-between gap-1' : 'justify-start gap-3'}`}>
               {data.map((item, idx) => {
                 const pos = Number(item.positive || 0);
                 const neg = Number(item.negative || 0);
@@ -138,19 +138,19 @@ export default function ProportionBarChart({
                 const percentNeg = Number(((neg / total) * 100).toFixed(1));
 
                 return (
-                  <div key={idx} className="flex flex-col gap-0.5 w-full group/item">
+                  <div key={idx} className="flex flex-col gap-1 w-full group/item">
                     <div className="text-[11px] sm:text-caption font-medium text-text-primary leading-tight truncate px-0.5" title={item.label}>
                       {item.label}
                     </div>
 
                     <div className="flex items-center gap-1.5 w-full">
-                      {pos > 0 && (
+                      {pos > 0 ? (
                         <div
                           className={`${pillH} rounded-full ${posPillColor} flex items-center justify-center px-2 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                           style={{
                             flexGrow: pos,
                             flexBasis: 0,
-                            minWidth: neg > 0 ? '54px' : 'auto'
+                            minWidth: '58px'
                           }}
                           title={`${positiveLabel}: ${pos} (${percentPos}%)`}
                         >
@@ -161,15 +161,28 @@ export default function ProportionBarChart({
                             ({percentPos}%)
                           </span>
                         </div>
+                      ) : (
+                        <div
+                          className={`${pillH} rounded-full flex items-center justify-center px-2 shrink-0 select-none whitespace-nowrap border ${
+                            isSemi
+                              ? 'bg-amber-500/10 text-amber-700/70 dark:text-amber-400/70 border-amber-300/40 dark:border-amber-800/40'
+                              : 'bg-surface-sunken text-text-muted border-border/70'
+                          }`}
+                          style={{ width: '58px' }}
+                          title={`${positiveLabel}: 0 (0%)`}
+                        >
+                          <span className="text-[11px] font-semibold tnum leading-none">0</span>
+                          <span className="text-[10px] font-normal opacity-80 ml-0.5 tnum leading-none">(0%)</span>
+                        </div>
                       )}
 
-                      {neg > 0 && (
+                      {neg > 0 ? (
                         <div
                           className={`${pillH} rounded-full ${negPillStyle} flex items-center justify-center px-2 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
                           style={{
                             flexGrow: neg,
                             flexBasis: 0,
-                            minWidth: pos > 0 ? '54px' : 'auto'
+                            minWidth: '58px'
                           }}
                           title={`${negativeLabel}: ${neg} (${percentNeg}%)`}
                         >
@@ -179,6 +192,19 @@ export default function ProportionBarChart({
                           <span className="text-[10px] font-normal opacity-85 ml-1 tnum leading-none whitespace-nowrap">
                             ({percentNeg}%)
                           </span>
+                        </div>
+                      ) : (
+                        <div
+                          className={`${pillH} rounded-full flex items-center justify-center px-2 shrink-0 select-none whitespace-nowrap border ${
+                            isSemi
+                              ? 'bg-amber-500/10 text-amber-700/70 dark:text-amber-400/70 border-amber-300/40 dark:border-amber-800/40'
+                              : 'bg-surface-sunken text-text-muted border-border/70'
+                          }`}
+                          style={{ width: '58px' }}
+                          title={`${negativeLabel}: 0 (0%)`}
+                        >
+                          <span className="text-[11px] font-semibold tnum leading-none">0</span>
+                          <span className="text-[10px] font-normal opacity-80 ml-0.5 tnum leading-none">(0%)</span>
                         </div>
                       )}
 

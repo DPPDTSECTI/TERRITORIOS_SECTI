@@ -18,6 +18,7 @@ export { Skeleton, KpiSkeleton, ListRowSkeleton, ChartSkeleton } from './Skeleto
 export { EmptyState } from './EmptyState';
 export { ProgressBar } from './ProgressBar';
 export { PillBar } from './PillBar';
+export { ScrollableList } from './ScrollableList';
 
 // Overlays e Notificações
 export { Tooltip } from './Tooltip';

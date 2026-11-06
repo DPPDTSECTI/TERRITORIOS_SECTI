@@ -17,8 +17,8 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
     : (isDark ? (ativo.corHexDark || ativo.corHex || '#60A5FA') : (ativo.corHex || '#2563EB'));
 
   return (
-    <div className="p-3 min-w-[220px] max-w-[280px] flex flex-col gap-2 font-sans bg-surface text-text-primary border border-border rounded-card">
-      <div className="flex items-center justify-between gap-2 border-b border-border pb-1.5">
+    <div className="p-3.5 min-w-[230px] max-w-[280px] flex flex-col gap-2.5 font-sans bg-surface text-text-primary">
+      <div className="flex items-center justify-between gap-2 border-b border-border pb-2 pr-6">
         <div className="flex items-center gap-1.5 min-w-0">
           <div
             className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-xs"
@@ -36,7 +36,7 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
         {ativo.nome || ativo.entidade}
       </h4>
 
-      <div className="flex flex-col gap-1.5 bg-surface-soft p-2.5 rounded-control border border-border text-caption">
+      <div className="flex flex-col gap-1.5 bg-surface-soft p-2.5 rounded-xl border border-border text-caption">
         <div className="flex items-center gap-1.5 text-text-secondary">
           <MapPin size={14} className={filtroSemiarido ? 'text-amber-600 shrink-0' : 'text-primary-600 shrink-0'} />
           <span className="font-semibold text-text-primary truncate">{ativo.municipio}</span>
@@ -50,7 +50,7 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
           </div>
         )}
         {ativo.rnp && (
-          <div className={`flex items-center gap-1.5 text-caption font-medium px-2 py-1 rounded-control border ${
+          <div className={`flex items-center gap-1.5 text-caption font-medium px-2 py-1 rounded-lg border ${
             filtroSemiarido
               ? 'text-amber-800 dark:text-amber-300 bg-amber-500/15 border-amber-500/30'
               : 'text-info-600 dark:text-info-400 bg-info-500/15 border-info-500/20'
@@ -73,10 +73,10 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
   const corSegmento = cadeia?.corSegmento || (getSegmentColor && cadeia?.segmento ? getSegmentColor(cadeia.segmento) : null);
 
   return (
-    <div className="p-3 max-w-[280px] text-left select-text font-sans bg-surface text-text-primary border border-border rounded-card">
-      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+    <div className="p-3.5 min-w-[240px] max-w-[285px] text-left select-text font-sans bg-surface text-text-primary">
+      <div className="flex items-center gap-1.5 mb-2 flex-wrap pr-6">
         <span
-          className="text-caption font-medium px-2 py-0.5 rounded-control"
+          className="text-caption font-medium px-2.5 py-0.5 rounded-control"
           style={{
             backgroundColor: `${badgeColor}20`,
             color: badgeColor
@@ -86,7 +86,7 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
         </span>
         {cadeia.segmento && (
           <span
-            className="text-caption font-medium px-2 py-0.5 rounded-control border border-border/60"
+            className="text-caption font-medium px-2.5 py-0.5 rounded-control border border-border/60"
             style={corSegmento ? {
               backgroundColor: `${corSegmento}18`,
               color: corSegmento,
@@ -98,11 +98,11 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
         )}
       </div>
 
-      <h4 className="text-body-sm font-semibold text-text-primary leading-snug mb-1.5">
+      <h4 className="text-body-sm font-semibold text-text-primary leading-snug mb-2">
         {cadeia.nome || cadeia.entidade || 'Cadeia Produtiva'}
       </h4>
 
-      <div className="flex flex-col gap-1.5 text-caption text-text-muted mt-2 border-t border-border pt-2">
+      <div className="flex flex-col gap-1.5 text-caption text-text-muted border-t border-border pt-2.5">
         {(cadeia.municipio_sede || cadeia.municipio) && (
           <div className="flex items-center gap-1.5 text-text-secondary">
             <Building size={13} className="shrink-0 text-text-muted" />
@@ -120,7 +120,7 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
         )}
 
         {cadeia.municipios_cobertos && cadeia.municipios_cobertos.length > 0 && (
-          <div className="flex items-center gap-1.5 text-text-secondary mt-0.5">
+          <div className="flex items-center gap-1.5 text-text-secondary">
             <MapPin size={13} className="shrink-0 text-text-muted" />
             <span className="font-semibold text-text-primary tnum">
               {cadeia.municipios_cobertos.length}
@@ -130,12 +130,14 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
         )}
 
         {cadeia.texto_referencia && (
-          <div className="mt-2 p-2 rounded-control bg-amber-500/10 border border-amber-500/20 text-caption text-amber-900 dark:text-amber-200 leading-snug">
-            <div className="flex items-center gap-1 font-medium text-amber-800 dark:text-amber-300 mb-0.5">
-              <BookOpen size={11} className="text-amber-700 dark:text-amber-400 shrink-0" />
+          <div className="mt-1.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-caption text-amber-900 dark:text-amber-200 leading-relaxed">
+            <div className="flex items-center gap-1.5 font-semibold text-amber-800 dark:text-amber-300 mb-1">
+              <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
               <span>Artigo / Referência Acadêmica:</span>
             </div>
-            <span className="italic line-clamp-3 text-text-secondary dark:text-amber-200/90">"{cadeia.texto_referencia}"</span>
+            <p className="italic line-clamp-3 text-text-secondary dark:text-amber-200/90 m-0">
+              "{cadeia.texto_referencia}"
+            </p>
           </div>
         )}
       </div>
@@ -143,12 +145,37 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
   );
 }
 
-export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({ elem, ativo, setPinnedAssetId, onAssetClick, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
+export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({ elem, ativo, setPinnedAssetId, onAssetClick, onAssetHover, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
   const { isDark } = useTheme();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const eventHandlers = useMemo(() => {
+    const handlers = {
+      popupopen: () => setIsPopupOpen(true),
+      popupclose: () => setIsPopupOpen(false),
+      click: (e) => {
+        L.DomEvent.stopPropagation(e);
+        if (isSelected) {
+          setPinnedAssetId(null);
+          onAssetClick?.(null);
+        } else {
+          setPinnedAssetId(ativo.id);
+          onAssetClick?.(ativo);
+        }
+      }
+    };
+    if (onAssetHover) {
+      handlers.mouseover = () => onAssetHover(ativo);
+      handlers.mouseout = () => onAssetHover(null);
+    }
+    return handlers;
+  }, [isSelected, ativo, setPinnedAssetId, onAssetClick, onAssetHover]);
+
   return (
     <Marker
       key={elem.key}
       position={[elem.lat, elem.lng]}
+      zIndexOffset={isSelected ? 1000 : 0}
       icon={createSingleAssetIconWithSvg(
         isDark ? (ativo.corHexDark || ativo.corHex) : ativo.corHex,
         ativo.iconSvg,
@@ -157,33 +184,22 @@ export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({
         ativo.tipo || ativo.shortTipo || ativo.categoria || ativo.nome,
         isDark
       )}
-      eventHandlers={{
-        click: (e) => {
-          L.DomEvent.stopPropagation(e);
-          if (isSelected) {
-            setPinnedAssetId(null);
-            onAssetClick?.(null);
-          } else {
-            setPinnedAssetId(ativo.id);
-            onAssetClick?.(ativo);
-          }
-        }
-      }}
+      eventHandlers={eventHandlers}
     >
-      {mode !== 'cadeias' ? (
-        <Popup className="custom-premium-popup" autoPan={true}>
-          <SingleAssetPopupContent ativo={ativo} filtroSemiarido={filtroSemiarido} />
-        </Popup>
-      ) : (
-        <Popup className="custom-premium-popup" autoPan={true}>
-          <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} getSegmentColor={getSegmentColor} />
-        </Popup>
-      )}
+      <Popup className="custom-premium-popup" autoPan={mode !== 'cadeias'}>
+        {(isPopupOpen || isSelected) ? (
+          mode !== 'cadeias' ? (
+            <SingleAssetPopupContent ativo={ativo} filtroSemiarido={filtroSemiarido} />
+          ) : (
+            <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} getSegmentColor={getSegmentColor} />
+          )
+        ) : null}
+      </Popup>
     </Marker>
   );
 });
 
-export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, selectedCadeia, mode, filtroSemiarido = false, getSegmentColor = null }) {
+export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, onAssetHover, selectedCadeia, mode, filtroSemiarido = false, getSegmentColor = null, modoGeografico = false }) {
   const map = useMap();
   const { isDark } = useTheme();
   const [bounds, setBounds] = useState(null);
@@ -262,19 +278,38 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
     }));
 
     const sc = new Supercluster({
-      radius: 40,
-      maxZoom: 14,
+      radius: 38,
+      maxZoom: modoGeografico ? 13 : 9,
       minPoints: 2
     });
 
     sc.load(points);
     return sc;
-  }, [deduplicatedAtivos, selectedCadeia]);
+  }, [deduplicatedAtivos, selectedCadeia, modoGeografico]);
 
   const updateBoundsAndZoom = useCallback(() => {
-    const b = map.getBounds().pad(0.6);
-    setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
-    setZoom(map.getZoom());
+    const b = map.getBounds().pad(0.18);
+    const nextBounds = [
+      Number(b.getWest().toFixed(3)),
+      Number(b.getSouth().toFixed(3)),
+      Number(b.getEast().toFixed(3)),
+      Number(b.getNorth().toFixed(3))
+    ];
+    const nextZoom = Math.round(map.getZoom());
+
+    setBounds((prev) => {
+      if (
+        prev &&
+        prev[0] === nextBounds[0] &&
+        prev[1] === nextBounds[1] &&
+        prev[2] === nextBounds[2] &&
+        prev[3] === nextBounds[3]
+      ) {
+        return prev;
+      }
+      return nextBounds;
+    });
+    setZoom((prev) => (prev === nextZoom ? prev : nextZoom));
   }, [map]);
 
   useMapEvents({
@@ -288,18 +323,27 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
 
   const renderedElements = useMemo(() => {
     if (selectedCadeia) {
-      return deduplicatedAtivos.map((ativo, idx) => ({
-        isCluster: false,
-        lng: ativo.lng,
-        lat: ativo.lat,
-        ativo,
-        key: `ativo-focused-${ativo.id}-${idx}`
-      }));
+      const focusedList = deduplicatedAtivos.filter(
+        (ativo) =>
+          (selectedCadeia.id_cadeia != null && ativo.id_cadeia === selectedCadeia.id_cadeia) ||
+          (selectedCadeia.id != null && ativo.id === selectedCadeia.id) ||
+          (selectedCadeia.nome && ativo.nome === selectedCadeia.nome)
+      );
+      const listToRender = focusedList.length > 0 ? focusedList : [selectedCadeia];
+      return listToRender
+        .filter((ativo) => ativo && ativo.lat && ativo.lng)
+        .map((ativo, idx) => ({
+          isCluster: false,
+          lng: Number(ativo.lng),
+          lat: Number(ativo.lat),
+          ativo,
+          key: `ativo-focused-${ativo.id || ativo.id_cadeia}-${idx}`
+        }));
     }
 
     if (!bounds || !superclusterIndex) return [];
 
-    const clusters = superclusterIndex.getClusters(bounds, Math.floor(zoom));
+    const clusters = superclusterIndex.getClusters(bounds, Math.round(zoom));
     const elements = [];
 
     clusters.forEach((c) => {
@@ -338,11 +382,13 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
               icon={createClusterIcon(elem.pointCount, filtroSemiarido, isDark)}
               eventHandlers={{
                 click: () => {
+                  const maxAllowed = modoGeografico ? 14 : 10;
+                  const rawExpansion = superclusterIndex.getClusterExpansionZoom(elem.clusterId);
                   const expansionZoom = Math.min(
-                    superclusterIndex.getClusterExpansionZoom(elem.clusterId),
-                    16
+                    Math.max(rawExpansion, map.getZoom() + 1.5),
+                    maxAllowed
                   );
-                  map.flyTo([elem.lat, elem.lng], expansionZoom, { duration: 0.6 });
+                  map.flyTo([elem.lat, elem.lng], expansionZoom, { duration: 0.45, easeLinearity: 0.25 });
                 }
               }}
             />
@@ -364,6 +410,7 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
             pinnedAssetId={pinnedAssetId}
             setPinnedAssetId={setPinnedAssetId}
             onAssetClick={onAssetClick}
+            onAssetHover={onAssetHover}
             isSelected={isSelected}
             mode={mode}
             filtroSemiarido={filtroSemiarido}

@@ -31,7 +31,8 @@ import {
     KpiSkeleton,
     ListRowSkeleton,
     AnimatedNumber,
-    PillBar
+    PillBar,
+    ScrollableList
 } from './ui';
 import { useChartTheme } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -1267,7 +1268,11 @@ export default function CursosPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                    <ScrollableList
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={`${selectedCategory}-${selectedIES}-${selectedRede}-${territoryName}-${searchQuery}`}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2"
+                                    >
                                         {loadingStats ? (
                                             <div className="p-3">
                                                 <ListRowSkeleton count={6} />
@@ -1384,7 +1389,7 @@ export default function CursosPage() {
                                                 }
                                             />
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1470,7 +1475,11 @@ export default function CursosPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                    <ScrollableList
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={`${selectedCategory}-${selectedIES}-${selectedRede}-${territoryName}-${searchQuery}`}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2"
+                                    >
                                         {loadingStats ? (
                                             <div className="p-3">
                                                 <ListRowSkeleton count={6} />
@@ -1587,7 +1596,7 @@ export default function CursosPage() {
                                                 }
                                             />
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1619,7 +1628,11 @@ export default function CursosPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
+                                    <ScrollableList
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={territoryName}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0"
+                                    >
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat, idx) => {
                                                 const isSelected = selectedCategory === cat.name;
@@ -1677,7 +1690,7 @@ export default function CursosPage() {
                                                 />
                                             </div>
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1709,8 +1722,10 @@ export default function CursosPage() {
                                     </div>
 
                                     {/* LISTA RANKING: ESTILO DE PÍLULAS PROPORCIONAIS */}
-                                    <div
+                                    <ScrollableList
                                         key={selectedTerritory ? `ranking-muni-${selectedTerritory.id_territorio || 'muni'}` : 'ranking-territorios'}
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={territoryName}
                                         className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2"
                                     >
                                         {selectedTerritory ? (
@@ -1851,7 +1866,7 @@ export default function CursosPage() {
                                                 </div>
                                             )
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1883,7 +1898,11 @@ export default function CursosPage() {
                                     </div>
 
                                     {/* LISTA RANKING IES */}
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
+                                    <ScrollableList
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={territoryName}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0"
+                                    >
                                         {iesRanking.length > 0 ? (
                                             iesRanking.map((ies, idx) => {
                                                 const isSelected = selectedIES && (
@@ -1949,7 +1968,7 @@ export default function CursosPage() {
                                                 />
                                             </div>
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
