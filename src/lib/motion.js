@@ -42,6 +42,7 @@ export const fadeUp = {
   animate: {
     opacity: 1,
     y: 0,
+    transitionEnd: { transform: 'none' },
     transition: { duration: DURATIONS.emphasized, ease: EASINGS.emphasized },
   },
   exit: {
@@ -56,6 +57,7 @@ export const scaleIn = {
   animate: {
     opacity: 1,
     scale: 1,
+    transitionEnd: { transform: 'none' },
     transition: { duration: DURATIONS.normal, ease: EASINGS.emphasized },
   },
   exit: {

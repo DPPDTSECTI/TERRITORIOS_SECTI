@@ -22,8 +22,15 @@ export async function captureDomElement(element, options = {}) {
     });
   });
 
+  const exportScale = Math.max(
+    typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1,
+    Number(options.scale) || 2,
+    2
+  );
+
   const canvas = await html2canvas(element, {
-    scale: options.scale || 2,
+    ...options,
+    scale: exportScale,
     useCORS: true,
     allowTaint: false, // Obrigatório: allowTaint: true tonta o canvas e impede toBlob/toDataURL!
     logging: false,
@@ -42,8 +49,7 @@ export async function captureDomElement(element, options = {}) {
       if (typeof options.onclone === 'function') {
         options.onclone(clonedDoc);
       }
-    },
-    ...options
+    }
   });
 
   return canvas;
@@ -89,8 +95,8 @@ export function downloadCanvasAsPdf(canvas, filename = 'relatorio.pdf') {
     compress: true
   });
 
-  const imgData = canvas.toDataURL('image/jpeg', 0.95);
-  pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+  const imgData = canvas.toDataURL('image/png', 1.0);
+  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
   pdf.save(filename);
 }
 
@@ -144,7 +150,7 @@ export async function captureReportViaIframe(route, format = 'pdf', filename = '
         await new Promise((r) => setTimeout(r, 450));
 
         const canvas = await captureDomElement(targetEl, {
-          scale: 2,
+          scale: Math.max(typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1, 2),
           windowWidth: 1920,
           windowHeight: 1080,
           useCORS: true,

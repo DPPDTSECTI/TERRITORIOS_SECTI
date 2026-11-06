@@ -75,7 +75,7 @@ export function Drawer({
             ref={drawerRef}
             tabIndex={-1}
             initial={{ x: '100%' }}
-            animate={{ x: 0 }}
+            animate={{ x: 0, transitionEnd: { transform: 'none' } }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 350 }}
             className={cn(

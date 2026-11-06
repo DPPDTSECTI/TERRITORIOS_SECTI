@@ -9,7 +9,7 @@ export const createClusterIcon = (count, isSemiarido = false, isDark = false) =>
   if (cached) return cached;
 
   const size = 20;
-  const fontSize = 9.5;
+  const fontSize = 10;
   const bg = isSemiarido
     ? (isDark ? '#F59E0B' : '#D97706')
     : (isDark ? '#38BDF8' : '#1E40AF');
@@ -26,7 +26,7 @@ export const createClusterIcon = (count, isSemiarido = false, isDark = false) =>
       height: ${size}px;
       background: ${bg};
       color: ${textColor};
-      border: 1.5px solid ${borderColor};
+      border: 2px solid ${borderColor};
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -104,7 +104,7 @@ export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = fal
   const borderColor = isDark ? '#0F172A' : '#FFFFFF';
   const selectedShadow = isSemiarido ? '0 3px 10px rgba(217, 119, 6, 0.5)' : '0 3px 10px rgba(30, 64, 175, 0.45)';
 
-  const defaultSvg = `<svg width="${isSelected ? 13 : 10}" height="${isSelected ? 13 : 10}" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
+  const defaultSvg = `<svg width="${isSelected ? 12 : 10}" height="${isSelected ? 12 : 10}" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
   let innerSvg = svgMarkup || defaultSvg;
   if (isSemiarido && innerSvg) {
     innerSvg = innerSvg.replace(/stroke="[^"]+"/g, 'stroke="#ffffff"');
@@ -117,7 +117,7 @@ export const createSingleAssetIconWithSvg = (corHex, svgMarkup, isSelected = fal
       height: ${size}px;
       background-color: ${safeColor};
       color: #ffffff;
-      border: ${isSelected ? `2.5px solid ${selectedBorderColor}` : `1.5px solid ${borderColor}`};
+      border: ${isSelected ? `2px solid ${selectedBorderColor}` : `2px solid ${borderColor}`};
       border-radius: 50%;
       display: flex;
       align-items: center;

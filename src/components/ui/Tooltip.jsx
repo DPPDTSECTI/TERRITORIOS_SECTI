@@ -3,17 +3,17 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '../../lib/cn';
 
 const positionClasses = {
-  top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-  bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-  right: 'left-full top-1/2 -translate-y-1/2 ml-2',
-  left: 'right-full top-1/2 -translate-y-1/2 mr-2',
+  top: 'bottom-full inset-x-0 flex justify-center mb-2',
+  bottom: 'top-full inset-x-0 flex justify-center mt-2',
+  right: 'left-full inset-y-0 flex items-center ml-2',
+  left: 'right-full inset-y-0 flex items-center mr-2',
 };
 
 const animationVariants = {
-  top: { initial: { opacity: 0, y: 4, scale: 0.95 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: 4, scale: 0.95 } },
-  bottom: { initial: { opacity: 0, y: -4, scale: 0.95 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: -4, scale: 0.95 } },
-  right: { initial: { opacity: 0, x: -4, scale: 0.95 }, animate: { opacity: 1, x: 0, scale: 1 }, exit: { opacity: 0, x: -4, scale: 0.95 } },
-  left: { initial: { opacity: 0, x: 4, scale: 0.95 }, animate: { opacity: 1, x: 0, scale: 1 }, exit: { opacity: 0, x: 4, scale: 0.95 } },
+  top: { initial: { opacity: 0, y: 4 }, animate: { opacity: 1, y: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, y: 4 } },
+  bottom: { initial: { opacity: 0, y: -4 }, animate: { opacity: 1, y: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, y: -4 } },
+  right: { initial: { opacity: 0, x: -4 }, animate: { opacity: 1, x: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, x: -4 } },
+  left: { initial: { opacity: 0, x: 4 }, animate: { opacity: 1, x: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, x: 4 } },
 };
 
 /**
@@ -70,20 +70,26 @@ export function Tooltip({
 
       <AnimatePresence>
         {isVisible && (
-          <motion.div
-            role="tooltip"
-            initial={animationVariants[side]?.initial || animationVariants.top.initial}
-            animate={animationVariants[side]?.animate || animationVariants.top.animate}
-            exit={animationVariants[side]?.exit || animationVariants.top.exit}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
+          <div
             className={cn(
-              'absolute bg-neutral-900 text-white dark:bg-surface-raised dark:text-text-primary text-caption px-2.5 py-1.5 rounded-control shadow-float border border-border z-[120] whitespace-nowrap pointer-events-none select-none font-medium',
-              positionClasses[side] || positionClasses.top,
-              className
+              'absolute z-[120] pointer-events-none select-none',
+              positionClasses[side] || positionClasses.top
             )}
           >
-            {content}
-          </motion.div>
+            <motion.div
+              role="tooltip"
+              initial={animationVariants[side]?.initial || animationVariants.top.initial}
+              animate={animationVariants[side]?.animate || animationVariants.top.animate}
+              exit={animationVariants[side]?.exit || animationVariants.top.exit}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              className={cn(
+                'bg-neutral-900 text-white dark:bg-surface-raised dark:text-text-primary text-caption px-2.5 py-1.5 rounded-control shadow-float border border-border whitespace-nowrap font-medium',
+                className
+              )}
+            >
+              {content}
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

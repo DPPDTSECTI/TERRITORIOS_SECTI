@@ -89,7 +89,7 @@ const PageWrapper = ({ children }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1, y: 0, transitionEnd: { transform: 'none' } }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
       className="w-full h-full flex flex-col relative"
@@ -115,7 +115,7 @@ function AnimatedRoutes() {
           <motion.div
             key="global-sidebar"
             initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+            animate={{ x: 0, opacity: 1, transitionEnd: { transform: 'none' } }}
             exit={{ x: -50, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="h-dvh sticky top-0 z-50 flex-shrink-0 print:hidden"

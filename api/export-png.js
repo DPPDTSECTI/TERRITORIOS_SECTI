@@ -39,7 +39,8 @@ export default async function handler(req, res) {
     const result = await captureReportWithPlaywright({
       route: fullRoute,
       baseUrl,
-      theme
+      theme,
+      deviceScaleFactor: 2
     });
 
     res.setHeader('Content-Type', 'image/png');

@@ -85,7 +85,8 @@ export default function DonutChart({
           {/* LADO ESQUERDO: GRÁFICO E RÓTULOS */}
           <div className="flex flex-col items-center justify-center w-[170px] shrink-0">
             <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
-              <svg width={size} height={size} className="absolute inset-0" style={{ transform: 'rotate(45deg)' }}>
+              <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="absolute inset-0">
+                <g transform={`rotate(45 ${center} ${center})`}>
                 {normalizedData.map((item, index) => {
                   const radius = baseRadius - (index * gap);
                   const circumference = 2 * Math.PI * radius;
@@ -114,7 +115,7 @@ export default function DonutChart({
                         cx={center} cy={center} r={radius} fill="none"
                         stroke={item.color} strokeWidth={strokeWidth}
                         strokeLinecap="round" strokeDasharray={`${animatedLength} ${circumference}`}
-                        className={`transition-all duration-700 ease-out pointer-events-none ${isHovered ? 'brightness-110 filter' : ''} ${isOtherHovered ? 'opacity-30' : 'opacity-100'}`}
+                        className={`transition-all duration-700 ease-out pointer-events-none ${isHovered ? 'opacity-90' : ''} ${isOtherHovered ? 'opacity-30' : 'opacity-100'}`}
                       />
 
                       <circle
@@ -126,6 +127,7 @@ export default function DonutChart({
                     </g>
                   );
                 })}
+                </g>
               </svg>
 
               {/* VALOR NO CENTRO DO GRÁFICO (PARTE VAZIA DO MEIO) */}
@@ -188,7 +190,7 @@ export default function DonutChart({
                     : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
                   const textStyle = isFirst
-                    ? 'font-semibold text-white drop-shadow-xs'
+                    ? 'font-semibold text-white'
                     : (isSemi ? 'font-medium text-accent-950 dark:text-accent-100' : 'font-medium text-text-primary');
 
                   const valueStyle = isFirst

@@ -207,7 +207,7 @@ export default function RankingBarChart({
                 : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
             const textStyle = (isFirst || isSelected)
-              ? 'font-semibold text-white drop-shadow-xs'
+              ? 'font-semibold text-white'
               : (isSemi ? 'font-semibold text-accent-950 dark:text-accent-100' : 'font-semibold text-text-primary');
 
             const valueStyle = isFirst
@@ -222,7 +222,7 @@ export default function RankingBarChart({
               <div
                 key={idx}
                 title={`${item.rank}º · ${item.cleanName} (IFDM: ${formattedVal}${item.extra > 0 ? ` · ${item.extra} ${extraLabel}` : ''})`}
-                className={`group/row relative flex items-center gap-2 sm:gap-2.5 w-full min-w-0 transition-all duration-150 hover:scale-[1.006] cursor-default ${
+                className={`group/row relative flex items-center gap-2 sm:gap-2.5 w-full min-w-0 transition-opacity duration-150 hover:opacity-95 cursor-default ${
                   isSelected ? (isSemi ? 'ring-2 ring-accent-400/80 rounded-xl p-0.5 -m-0.5' : 'ring-2 ring-primary-500/80 rounded-xl p-0.5 -m-0.5') : ''
                 }`}
               >

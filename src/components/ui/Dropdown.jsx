@@ -101,7 +101,7 @@ export function Dropdown({
           <motion.div
             role="menu"
             initial={{ opacity: 0, scale: 0.95, y: -4 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            animate={{ opacity: 1, scale: 1, y: 0, transitionEnd: { transform: 'none' } }}
             exit={{ opacity: 0, scale: 0.95, y: -4 }}
             transition={{ duration: 0.14, ease: 'easeOut' }}
             className={cn(

@@ -669,7 +669,8 @@ export default function SideMap({
 
     lastPointerPosRef.current = { x, y };
     if (tooltipDomRef.current) {
-      tooltipDomRef.current.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+      tooltipDomRef.current.style.left = `${Math.round(x)}px`;
+      tooltipDomRef.current.style.top = `${Math.round(y)}px`;
     }
   }, []);
 
@@ -683,7 +684,8 @@ export default function SideMap({
   useEffect(() => {
     if (hoveredFeatureName && tooltipDomRef.current) {
       const { x, y } = lastPointerPosRef.current;
-      tooltipDomRef.current.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+      tooltipDomRef.current.style.left = `${Math.round(x)}px`;
+      tooltipDomRef.current.style.top = `${Math.round(y)}px`;
     }
   }, [hoveredFeatureName]);
 
@@ -1696,11 +1698,11 @@ export default function SideMap({
         </button>
       </div>
 
-      {/* TOOLTIP FLUTUANTE ACELERADO POR GPU (ZERO RE-RENDERS NO MOUSEMOVE) */}
+      {/* TOOLTIP FLUTUANTE (ZERO RE-RENDERS NO MOUSEMOVE) */}
       {hoveredInfo && (
         <div
           ref={tooltipDomRef}
-          className="absolute top-0 left-0 z-[1000] rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-3 py-2.5 shadow-md pointer-events-none will-change-transform"
+          className="absolute top-0 left-0 z-[1000] rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-3 py-2.5 shadow-md pointer-events-none"
           style={{ width: 216 }}
         >
           <div className="flex flex-col gap-1">

@@ -436,7 +436,8 @@ export default function PtiMap({
 
     lastPointerPosRef.current = { x, y };
     if (tooltipDomRef.current) {
-      tooltipDomRef.current.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+      tooltipDomRef.current.style.left = `${Math.round(x)}px`;
+      tooltipDomRef.current.style.top = `${Math.round(y)}px`;
     }
   }, []);
 
@@ -451,7 +452,8 @@ export default function PtiMap({
   useEffect(() => {
     if (hoveredTerritoryId && tooltipDomRef.current) {
       const { x, y } = lastPointerPosRef.current;
-      tooltipDomRef.current.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+      tooltipDomRef.current.style.left = `${Math.round(x)}px`;
+      tooltipDomRef.current.style.top = `${Math.round(y)}px`;
     }
   }, [hoveredTerritoryId, hoveredMunicipalityId]);
 
@@ -1102,11 +1104,11 @@ export default function PtiMap({
         </div>
       )}
 
-      {/* ================= TOOLTIP ACELERADO POR GPU (ZERO RE-RENDERS NO MOUSEMOVE) ================= */}
+      {/* ================= TOOLTIP FLUTUANTE (ZERO RE-RENDERS NO MOUSEMOVE) ================= */}
       {hoveredTerritoryId && (
         <div
           ref={tooltipDomRef}
-          className="absolute top-0 left-0 z-[1000] overflow-hidden rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-md pointer-events-none will-change-transform"
+          className="absolute top-0 left-0 z-[1000] overflow-hidden rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-md pointer-events-none"
           style={{ width: 244 }}
         >
           <div

@@ -132,9 +132,14 @@ async function captureReportElementToCanvas(element, scale = 2) {
   const rect = element.getBoundingClientRect();
   const width = Math.round(rect.width) || element.offsetWidth || 1920;
   const height = Math.round(rect.height) || element.offsetHeight || 1080;
+  const effectiveScale = Math.max(
+    typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1,
+    Number(scale) || 2,
+    2
+  );
 
   const canvas = await html2canvas(element, {
-    scale,
+    scale: effectiveScale,
     width,
     height,
     scrollX: 0,
@@ -356,8 +361,14 @@ async function captureReportViaIframe(route, scale = 2) {
 
         await waitForReportReady(iframeDoc, reportEl);
 
+        const effectiveScale = Math.max(
+          typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1,
+          Number(scale) || 2,
+          2
+        );
+
         const canvas = await html2canvas(reportEl, {
-          scale,
+          scale: effectiveScale,
           width: 1920,
           height: 1080,
           scrollX: 0,
@@ -443,7 +454,7 @@ export async function exportReportAsPng({
   territorioId = null,
   modo = 'normal',
   filename = null,
-  scale = 2
+  scale = Math.max(typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1, 2)
 }) {
   const effectiveType = type === 'cursos' ? 'cursos' : type;
   const defaultFilename = filename || `relatorio_${effectiveType}_${modo}.png`;

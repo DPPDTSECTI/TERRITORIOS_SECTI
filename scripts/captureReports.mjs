@@ -58,22 +58,25 @@ export async function captureReportWithPlaywright({
   pdfPath,
   baseUrl = 'http://localhost:5173',
   browserInstance = null,
-  theme = null
+  theme = null,
+  deviceScaleFactor = 2
 }) {
   const shouldCloseBrowser = !browserInstance;
   const browser = browserInstance || await launchChromium();
 
   const isDark = theme === 'dark' || route.includes('theme=dark');
+  const effectiveScaleFactor = Math.max(Number(deviceScaleFactor) || 2, 2);
 
   try {
-    // 1. Configura viewport oficial de 1920x1080 com deviceScaleFactor: 3 (5760x3240 px)
+    // 1. Configura viewport oficial de 1920x1080 com deviceScaleFactor >= 2
     const context = await browser.newContext({
       viewport: { width: 1920, height: 1080 },
-      deviceScaleFactor: 3,
+      deviceScaleFactor: effectiveScaleFactor,
       colorScheme: isDark ? 'dark' : 'light'
     });
 
     const page = await context.newPage();
+    await page.setViewportSize({ width: 1920, height: 1080 });
     const pageErrors = [];
     page.on('pageerror', err => {
       console.error('[Playwright Page Error]:', err.message);

@@ -209,7 +209,7 @@ export default function CustomPieChart({
                     : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
                   const textStyle = isFirst
-                    ? 'font-semibold text-white drop-shadow-xs'
+                    ? 'font-semibold text-white'
                     : (isSemi ? 'font-medium text-accent-950 dark:text-accent-100' : 'font-medium text-text-primary');
 
                   const valueStyle = isFirst

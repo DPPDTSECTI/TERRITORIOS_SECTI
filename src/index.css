@@ -303,6 +303,7 @@
     font-feature-settings: "tnum" 0;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -410,14 +411,17 @@
 
 @keyframes enterFadeZoom {
   from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: none; }
 }
 
 @keyframes enterFadeSlideRight {
   from { opacity: 0; transform: translate3d(16px, 0, 0); }
+  to { opacity: 1; transform: none; }
 }
 
 @keyframes enterFadeSlideTop {
   from { opacity: 0; transform: translate3d(0, -8px, 0); }
+  to { opacity: 1; transform: none; }
 }
 
 .animate-in {
@@ -524,12 +528,10 @@
 
 .animate-sun-breath {
   animation: sunBreath 10s ease-in-out infinite;
-  will-change: transform, opacity;
 }
 
 .animate-sun-arc {
   animation: sunArcGlow 11s ease-in-out infinite;
-  will-change: transform, opacity;
 }
 
 /* ================= ANIMAÇÃO DE CARREGAMENTO DE BARRAS DE PÍLULAS (PILL BARS) ================= */
@@ -567,7 +569,7 @@
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
   }
 }
 
@@ -578,7 +580,7 @@
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: none;
   }
 }
 

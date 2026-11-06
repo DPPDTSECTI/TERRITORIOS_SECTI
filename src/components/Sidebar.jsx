@@ -93,7 +93,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               'text-subtitle font-bold tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1',
               filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary',
               isExpanded
-                ? 'opacity-100 translate-x-0'
+                ? 'opacity-100'
                 : 'w-0 opacity-0 -translate-x-2 pointer-events-none'
             )}
           >
@@ -113,7 +113,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                 ? 'text-amber-700/70 dark:text-amber-400/70 hover:text-amber-900 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-950/40'
                 : 'text-text-muted hover:text-text-primary',
               isExpanded
-                ? 'w-8 ml-1 opacity-100 scale-100'
+                ? 'w-8 ml-1 opacity-100'
                 : 'w-0 ml-0 opacity-0 scale-90 pointer-events-none'
             )}
           >
@@ -133,7 +133,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               className={cn(
                 'text-caption font-semibold uppercase tracking-wider transition-all duration-200 ease-standard text-[11px]',
                 filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted',
-                isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
+                isExpanded ? 'opacity-100' : 'opacity-0 -translate-x-2 pointer-events-none'
               )}
             >
               Menu
@@ -167,7 +167,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                   <div
                     className={cn(
                       'w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-150',
-                      isActive ? 'scale-100' : 'group-hover:scale-105'
+                      !isActive && 'group-hover:scale-105'
                     )}
                   >
                     <div
@@ -194,7 +194,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                     className={cn(
                       'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2 pl-1',
                       isExpanded
-                        ? 'opacity-100 translate-x-0'
+                        ? 'opacity-100'
                         : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
                       isActive
                         ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
@@ -216,7 +216,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                   className={cn(
                     'text-caption font-semibold uppercase tracking-wider transition-all duration-200 ease-standard text-[11px]',
                     filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted',
-                    isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'
+                    isExpanded ? 'opacity-100' : 'opacity-0 -translate-x-2 pointer-events-none'
                   )}
                 >
                   Módulos
@@ -250,7 +250,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                       <div
                         className={cn(
                           'w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-150',
-                          isActive ? 'scale-100' : 'group-hover:scale-105'
+                          !isActive && 'group-hover:scale-105'
                         )}
                       >
                         <div
@@ -277,7 +277,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                         className={cn(
                           'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2 pl-1',
                           isExpanded
-                            ? 'opacity-100 translate-x-0'
+                            ? 'opacity-100'
                             : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
                           isActive
                             ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
@@ -351,7 +351,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                 filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
                 isExpanded
                   ? 'opacity-0 scale-90 pointer-events-none'
-                  : 'opacity-100 scale-100'
+                  : 'opacity-100'
               )}
             >
               {isDark ? (
@@ -454,7 +454,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               className={cn(
                 'whitespace-nowrap overflow-hidden transition-[opacity,transform] duration-200 ease-standard pr-3',
                 isExpanded
-                  ? 'opacity-100 translate-x-0'
+                  ? 'opacity-100'
                   : 'w-0 opacity-0 -translate-x-2 pointer-events-none p-0'
               )}
             >
