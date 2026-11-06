@@ -1000,22 +1000,40 @@ export default function AtivosPage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsFilterDropdownOpen(prev => !prev)}
-                                        className={`h-9 w-[96px] min-w-[96px] max-w-[96px] px-2.5 justify-center rounded-full border text-caption font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${activeFiltersCount > 0
+                                        className={`h-9 w-[96px] min-w-[96px] max-w-[96px] px-2.5 justify-center rounded-full border text-caption font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${activeFiltersCount > 0 || isFilterDropdownOpen
                                             ? (filtroSemiarido
-                                                ? 'bg-amber-500/15 border-amber-500/30 text-amber-800 dark:text-amber-200 shadow-2xs ring-1 ring-amber-500/20'
+                                                ? 'bg-amber-500/20 border-amber-500/50 text-amber-900 dark:text-amber-100 shadow-2xs ring-1 ring-amber-500/30'
                                                 : 'bg-primary-500/10 dark:bg-primary-500/15 border-primary-500/30 text-primary-700 dark:text-primary-300 shadow-2xs ring-1 ring-primary-500/20')
-                                            : 'bg-surface-soft border-border text-text-secondary hover:text-text-primary hover:border-border-strong hover:bg-surface'
+                                            : (filtroSemiarido
+                                                ? 'bg-amber-500/10 dark:bg-amber-950/30 border-amber-400/40 dark:border-amber-600/40 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/60 shadow-2xs'
+                                                : 'bg-surface-soft border-border text-text-secondary hover:text-text-primary hover:border-border-strong hover:bg-surface')
                                             }`}
                                         title="Filtros por Tipo de Ativo e Conectividade RNP"
                                     >
-                                        <Filter size={14} className={activeFiltersCount > 0 ? (filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400') : 'text-text-muted'} />
+                                        <Filter
+                                            size={14}
+                                            className={
+                                                activeFiltersCount > 0 || isFilterDropdownOpen
+                                                    ? (filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400')
+                                                    : (filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-text-muted')
+                                            }
+                                        />
                                         <span>Filtros</span>
-                                        <ChevronDown size={13} className={`text-text-muted transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''}`} />
+                                        <ChevronDown
+                                            size={13}
+                                            className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''} ${
+                                                filtroSemiarido ? 'text-amber-600/70 dark:text-amber-400/70' : 'text-text-muted'
+                                            }`}
+                                        />
                                     </button>
 
                                     {/* CAIXA COM DROPDOWN */}
                                     {isFilterDropdownOpen && (
-                                        <div className="absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] bg-surface dark:bg-zinc-900 border border-border dark:border-zinc-800 shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150">
+                                        <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${
+                                            filtroSemiarido
+                                                ? 'border-amber-400/60 dark:border-amber-600/40 ring-1 ring-amber-400/20'
+                                                : 'border-border dark:border-zinc-800'
+                                        }`}>
                                             {/* TOPO DA CAIXA */}
                                             <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-zinc-800 min-h-[28px]">
                                                 <div className="flex items-center gap-2">
@@ -1042,7 +1060,9 @@ export default function AtivosPage() {
                                                         <Layers size={13} />
                                                         <span>Tipos de Ativo</span>
                                                     </label>
-                                                    <span className={`text-caption font-medium text-primary-600 dark:text-primary-400 transition-opacity duration-150 ${selectedTipos.length > 0 && !selectedTipos.includes('todos') ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
+                                                    <span className={`text-caption font-medium transition-opacity duration-150 ${
+                                                        filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400'
+                                                    } ${selectedTipos.length > 0 && !selectedTipos.includes('todos') ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
                                                         {selectedTipos.length > 0 && !selectedTipos.includes('todos') ? `${selectedTipos.length} selecionado${selectedTipos.length > 1 ? 's' : ''}` : '0 selecionados'}
                                                     </span>
                                                 </div>
@@ -1065,7 +1085,9 @@ export default function AtivosPage() {
                                                                 type="checkbox"
                                                                 checked={selectedTipos.length === 0 || selectedTipos.includes('todos')}
                                                                 onChange={() => { }}
-                                                                className="rounded accent-primary-600 dark:accent-primary-500 cursor-pointer w-3.5 h-3.5 shrink-0"
+                                                                className={`rounded cursor-pointer w-3.5 h-3.5 shrink-0 ${
+                                                                    filtroSemiarido ? 'accent-amber-600' : 'accent-primary-600 dark:accent-primary-500'
+                                                                }`}
                                                             />
                                                             <span className="truncate">Todos os tipos</span>
                                                         </div>
@@ -1092,7 +1114,9 @@ export default function AtivosPage() {
                                                                         type="checkbox"
                                                                         checked={isChecked}
                                                                         onChange={() => { }}
-                                                                        className="rounded accent-primary-600 dark:accent-primary-500 cursor-pointer w-3.5 h-3.5 shrink-0"
+                                                                        className={`rounded cursor-pointer w-3.5 h-3.5 shrink-0 ${
+                                                                            filtroSemiarido ? 'accent-amber-600' : 'accent-primary-600 dark:accent-primary-500'
+                                                                        }`}
                                                                     />
                                                                     <span className="truncate">{cat.shortName || cat.name}</span>
                                                                 </div>

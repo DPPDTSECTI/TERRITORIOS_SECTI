@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useChartTheme } from './chartTheme';
+import { useData } from '../../context/DataContext';
 
 /**
  * Componente DonutChart padronizado com anéis proporcionais e ranking lateral.
@@ -21,6 +22,8 @@ export default function DonutChart({
   const [mounted, setMounted] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const chartTheme = useChartTheme();
+  const { filtroSemiarido } = useData() || {};
+  const isSemi = Boolean(isSemiarido || filtroSemiarido || badge === 'Semiárido' || !!badge);
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100);
@@ -74,7 +77,7 @@ export default function DonutChart({
 
       {isEmpty ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
-          <X size={64} className="text-primary-500" strokeWidth={2} />
+          <X size={64} className={isSemi ? 'text-amber-500' : 'text-primary-500'} strokeWidth={2} />
           <span className="text-text-muted font-medium text-body-sm">Nenhum dado disponível</span>
         </div>
       ) : (
@@ -131,7 +134,9 @@ export default function DonutChart({
                   {displayValue.toLocaleString('pt-BR')}
                 </span>
                 {hoveredPct !== null && (
-                  <span className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 tnum leading-none mt-1">
+                  <span className={`text-[11px] font-semibold tnum leading-none mt-1 ${
+                    isSemi ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400'
+                  }`}>
                     {hoveredPct}%
                   </span>
                 )}
@@ -172,7 +177,6 @@ export default function DonutChart({
                   const rankNum = item.rank || index + 1;
                   const rankStr = String(rankNum).padStart(2, '0');
                   const isFirst = index === 0;
-                  const isSemi = isSemiarido || !!badge;
                   const displayName = item.sigla || item.name;
 
                   const rankStyle = isFirst

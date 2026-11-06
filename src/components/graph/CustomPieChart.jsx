@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { PieChart, Pie, Sector } from 'recharts';
 import { X } from 'lucide-react';
 import { useChartTheme } from './chartTheme';
+import { useData } from '../../context/DataContext';
 
 /**
  * Componente genérico de Pizza com ranking lateral integrado e cores do Design System.
@@ -24,6 +25,8 @@ export default function CustomPieChart({
   const [hoveredItem, setHoveredItem] = useState(null);
   const hoverTimeoutRef = useRef(null);
   const chartTheme = useChartTheme();
+  const { filtroSemiarido } = useData() || {};
+  const isSemi = Boolean(isSemiarido || filtroSemiarido || badge === 'Semiárido' || !!badge);
 
   useEffect(() => {
     return () => {
@@ -79,7 +82,7 @@ export default function CustomPieChart({
 
       {isEmpty ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 opacity-60 mt-4">
-          <X size={64} className="text-primary-500" strokeWidth={2} />
+          <X size={64} className={isSemi ? 'text-amber-500' : 'text-primary-500'} strokeWidth={2} />
           <span className="text-text-muted font-medium text-body-sm">Nenhum dado disponível</span>
         </div>
       ) : (
@@ -153,7 +156,9 @@ export default function CustomPieChart({
                   {displayValue.toLocaleString('pt-BR')}
                 </span>
                 {hoveredPct !== null && (
-                  <span className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 tnum leading-none mt-1">
+                  <span className={`text-[11px] font-semibold tnum leading-none mt-1 ${
+                    isSemi ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400'
+                  }`}>
                     {hoveredPct}%
                   </span>
                 )}
@@ -194,7 +199,6 @@ export default function CustomPieChart({
                   const rankNum = item.rank || idx + 1;
                   const rankStr = String(rankNum).padStart(2, '0');
                   const isFirst = idx === 0;
-                  const isSemi = isSemiarido || !!badge;
 
                   const rankStyle = isFirst
                     ? (isSemi ? 'bg-accent-600 text-white shadow-xs font-bold' : 'bg-primary-600 text-white shadow-xs font-bold')

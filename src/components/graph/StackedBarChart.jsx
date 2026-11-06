@@ -238,7 +238,11 @@ function StackedBarChart({
                         segments: item.segments
                       });
                     }}
-                    className="flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-full bg-surface-soft border border-border text-[11px] tabular-nums font-semibold text-text-primary group-hover/bar:bg-primary-600 group-hover/bar:text-white group-hover/bar:border-primary-600 transition-all mb-1 select-none cursor-pointer leading-none shrink-0 shadow-2xs"
+                    className={`flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-full bg-surface-soft border border-border text-[11px] tabular-nums font-semibold text-text-primary transition-all mb-1 select-none cursor-pointer leading-none shrink-0 shadow-2xs ${
+                      isSemiarido
+                        ? 'group-hover/bar:bg-amber-600 group-hover/bar:text-white group-hover/bar:border-amber-600'
+                        : 'group-hover/bar:bg-primary-600 group-hover/bar:text-white group-hover/bar:border-primary-600'
+                    }`}
                     title="Ver todos os ativos da região"
                   >
                     {totalVal}

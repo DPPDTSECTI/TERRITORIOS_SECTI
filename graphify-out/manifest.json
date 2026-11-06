@@ -156,9 +156,9 @@
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1793903164.3182418,
-    "seen": 1793903234.4409184,
-    "ast_hash": "975dbdbe85f9ac856e1cbdbaf2dfba7a",
+    "mtime": 1793904667.8650646,
+    "seen": 1793904768.2892213,
+    "ast_hash": "15a578c9f73bbb4944105f335c7c7d27",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {
-    "mtime": 1793903188.8261893,
-    "seen": 1793903234.4409184,
-    "ast_hash": "4e61942f2902f0a53b17c8d5fbfa0676",
+    "mtime": 1793904697.0141518,
+    "seen": 1793904768.2892213,
+    "ast_hash": "28cd4afa85527e08d729367cb121f496",
     "semantic_hash": ""
   },
   "src/components/DashboardPainel.jsx": {
@@ -222,15 +222,15 @@
     "semantic_hash": "462b994da5b76e0b48017b33095a1ab4"
   },
   "src/components/graph/CustomPieChart.jsx": {
-    "mtime": 1793901007.0185168,
-    "seen": 1793901086.1783476,
-    "ast_hash": "bb5dde5660b1e8131842f4c252108d65",
+    "mtime": 1793904320.651042,
+    "seen": 1793904471.439443,
+    "ast_hash": "fd3de9cf15f99312d75eb0e078bf6f85",
     "semantic_hash": ""
   },
   "src/components/graph/DonutChart.jsx": {
-    "mtime": 1793900653.497697,
-    "seen": 1793900718.222655,
-    "ast_hash": "60285dbdcd5e7cf1667fb63853e7c726",
+    "mtime": 1793904390.7279167,
+    "seen": 1793904471.439443,
+    "ast_hash": "41d790a876dcb30a1e148f4f01920e3e",
     "semantic_hash": ""
   },
   "src/components/graph/ProportionBarChart.jsx": {
@@ -246,9 +246,9 @@
     "semantic_hash": ""
   },
   "src/components/graph/StackedBarChart.jsx": {
-    "mtime": 1793724959.4976165,
-    "seen": 1793810170.0989802,
-    "ast_hash": "0ebd389cd964e582619e8a9e9b5118d6",
+    "mtime": 1793904422.9030662,
+    "seen": 1793904471.439443,
+    "ast_hash": "2745b079355959f0c2a49322b2e1c167",
     "semantic_hash": ""
   },
   "src/components/graph/chartTheme.js": {
