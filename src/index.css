@@ -532,6 +532,85 @@
   will-change: transform, opacity;
 }
 
+/* ================= ANIMAÇÃO DE CARREGAMENTO DE BARRAS DE PÍLULAS (PILL BARS) ================= */
+@keyframes pillBarGrow {
+  0% {
+    flex-grow: 0;
+    min-width: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  100% {
+    flex-grow: var(--bar-grow);
+    min-width: var(--bar-min-w, 44px);
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+}
+
+@keyframes trackPillShrink {
+  0% {
+    flex-grow: var(--total-scoped, 100);
+  }
+  100% {
+    flex-grow: var(--track-grow);
+  }
+}
+
+@keyframes pillTextFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pillBadgeFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-pill-bar {
+  animation: pillBarGrow 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--bar-delay, 0ms);
+}
+
+.animate-pill-bar > span {
+  animation: pillTextFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--bar-delay, 0ms);
+}
+
+.animate-pill-track {
+  animation: trackPillShrink 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--bar-delay, 0ms);
+}
+
+.animate-pill-badge {
+  animation: pillBadgeFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--bar-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pill-bar,
+  .animate-pill-bar > span,
+  .animate-pill-track,
+  .animate-pill-badge {
+    animation: none !important;
+  }
+}
+
 /* Transições de calor (Warmth) suave para os cards no modo Semiárido */
 .semiarido-card-warmth-1 {
   /* Superior Esquerdo */

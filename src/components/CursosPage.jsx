@@ -30,7 +30,8 @@ import {
     EmptyState,
     KpiSkeleton,
     ListRowSkeleton,
-    AnimatedNumber
+    AnimatedNumber,
+    PillBar
 } from './ui';
 import { useChartTheme } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -792,6 +793,7 @@ export default function CursosPage() {
                         onSelectIES={setSelectedIES}
                         isExpanded={isMapExpanded}
                         onToggleExpand={() => setIsMapExpanded(prev => !prev)}
+                        filtroSemiarido={filtroSemiarido}
                     />
                 </motion.div>
 
@@ -949,209 +951,218 @@ export default function CursosPage() {
                                     variant="pill"
                                     className="shrink-0"
                                     isSemiarido={filtroSemiarido}
-                                />
-
-                                {/* BOTÃO E CAIXA COM DROPDOWN DE FILTROS */}
-                                <div className="relative" ref={filterDropdownRef}>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsFilterDropdownOpen(prev => !prev)}
-                                        className={`h-9 w-[96px] min-w-[96px] max-w-[96px] px-2.5 justify-center rounded-full border text-caption font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${activeFiltersCount > 0 || isFilterDropdownOpen
-                                            ? (filtroSemiarido
-                                                ? 'bg-amber-500/20 border-amber-500/50 text-amber-900 dark:text-amber-100 shadow-2xs ring-1 ring-amber-500/30'
-                                                : 'bg-primary-500/10 dark:bg-primary-500/15 border-primary-500/30 text-primary-700 dark:text-primary-300 shadow-2xs ring-1 ring-primary-500/20')
-                                            : (filtroSemiarido
-                                                ? 'bg-amber-500/10 dark:bg-amber-950/30 border-amber-400/40 dark:border-amber-600/40 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/60 shadow-2xs'
-                                                : 'bg-surface-soft border-border text-text-secondary hover:text-text-primary hover:border-border-strong hover:bg-surface')
-                                            }`}
-                                        title="Filtros por Área, Rede de Ensino, Instituição e Região"
-                                    >
-                                        <Filter
-                                            size={14}
-                                            className={
-                                                activeFiltersCount > 0 || isFilterDropdownOpen
-                                                    ? (filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400')
-                                                    : (filtroSemiarido ? 'text-amber-600 dark:text-amber-400' : 'text-text-muted')
-                                            }
-                                        />
-                                        <span>Filtros</span>
-                                        <ChevronDown
-                                            size={13}
-                                            className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''} ${
-                                                filtroSemiarido ? 'text-amber-600/70 dark:text-amber-400/70' : 'text-text-muted'
-                                            }`}
-                                        />
-                                    </button>
-
-                                    {/* CAIXA COM DROPDOWN FLUTUANTE */}
-                                    {isFilterDropdownOpen && (
-                                        <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${
-                                            filtroSemiarido
-                                                ? 'border-amber-400/60 dark:border-amber-600/40 ring-1 ring-amber-400/20'
-                                                : 'border-border dark:border-zinc-800'
-                                        }`}>
-                                            {/* TOPO DA CAIXA */}
-                                            <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-zinc-800 min-h-[28px]">
-                                                <div className="flex items-center gap-2">
-                                                    <Filter size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600 dark:text-primary-400'} />
-                                                    <span className="text-xs font-bold text-text-primary dark:text-zinc-100">Filtros de Cursos</span>
-                                                </div>
-                                                {activeFiltersCount > 0 ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={handleClearAllFilters}
-                                                        className="text-caption font-medium text-danger-600 dark:text-danger-400 hover:underline cursor-pointer"
-                                                    >
-                                                        Limpar todos
-                                                    </button>
-                                                ) : (
-                                                    <div className="h-4 w-16" aria-hidden="true" />
+                                    trailing={(activeTab === 'catalogo' || activeTab === 'ead') ? (
+                                        <div className="relative h-full inline-flex items-center" ref={filterDropdownRef}>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsFilterDropdownOpen(prev => !prev)}
+                                                className={`h-full inline-flex items-center justify-center gap-1.5 px-3 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${activeFiltersCount > 0 || isFilterDropdownOpen
+                                                    ? (filtroSemiarido
+                                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
+                                                        : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
+                                                    : (filtroSemiarido
+                                                        ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
+                                                        : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
+                                                    }`}
+                                                title="Filtros por Área, Rede de Ensino, Instituição e Região"
+                                            >
+                                                <Filter
+                                                    size={14}
+                                                    className={
+                                                        activeFiltersCount > 0 || isFilterDropdownOpen
+                                                            ? 'text-white'
+                                                            : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted')
+                                                    }
+                                                />
+                                                <span>Filtros</span>
+                                                {activeFiltersCount > 0 && (
+                                                    <span className={`w-4 h-4 rounded-full text-2xs font-bold inline-flex items-center justify-center shrink-0 ${
+                                                        filtroSemiarido ? 'bg-white text-amber-800' : 'bg-white text-primary-700'
+                                                    }`}>
+                                                        {activeFiltersCount}
+                                                    </span>
                                                 )}
-                                            </div>
+                                                <ChevronDown
+                                                    size={13}
+                                                    className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''} ${
+                                                        activeFiltersCount > 0 || isFilterDropdownOpen
+                                                            ? 'text-white/80'
+                                                            : (filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted')
+                                                    }`}
+                                                />
+                                            </button>
 
-                                            {/* FILTRO 1: REDE DE ENSINO */}
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5">
-                                                    <GraduationCap size={13} />
-                                                    Rede de Ensino
-                                                </label>
-                                                <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-surface-soft/60 dark:bg-zinc-950/40 border border-border dark:border-zinc-800">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedRede('todas')}
-                                                        className={`py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap border ${selectedRede === 'todas'
-                                                            ? (filtroSemiarido ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-950 dark:text-amber-200 shadow-2xs border-amber-300/50 dark:border-amber-700/50' : 'bg-surface dark:bg-zinc-800 text-text-primary shadow-2xs border-border/70 dark:border-zinc-700')
-                                                            : 'border-transparent text-text-muted hover:text-text-primary'
-                                                            }`}
-                                                    >
-                                                        Todas <span className="text-caption opacity-80 tnum">({redeStats.total})</span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
-                                                        className={`py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap border ${selectedRede === 'publica'
-                                                            ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 shadow-2xs border-emerald-300/50 dark:border-emerald-700/50'
-                                                            : 'border-transparent text-text-muted hover:text-emerald-700 dark:hover:text-emerald-400'
-                                                            }`}
-                                                    >
-                                                        Pública <span className="text-caption opacity-80 tnum">({redeStats.publica})</span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
-                                                        className={`py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap border ${selectedRede === 'privada'
-                                                            ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-900 dark:text-purple-200 shadow-2xs border-purple-300/50 dark:border-purple-700/50'
-                                                            : 'border-transparent text-text-muted hover:text-purple-700 dark:hover:text-purple-400'
-                                                            }`}
-                                                    >
-                                                        Privada <span className="text-caption opacity-80 tnum">({redeStats.privada})</span>
-                                                    </button>
+                                            {/* CAIXA COM DROPDOWN FLUTUANTE */}
+                                            {isFilterDropdownOpen && (
+                                                <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${
+                                                    filtroSemiarido
+                                                        ? 'border-amber-400/60 dark:border-amber-600/40 ring-1 ring-amber-400/20'
+                                                        : 'border-border dark:border-zinc-800'
+                                                }`}>
+                                                    {/* TOPO DA CAIXA */}
+                                                    <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-zinc-800 min-h-[28px]">
+                                                        <div className="flex items-center gap-2">
+                                                            <Filter size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600 dark:text-primary-400'} />
+                                                            <span className="text-xs font-bold text-text-primary dark:text-zinc-100">Filtros de Cursos</span>
+                                                        </div>
+                                                        {activeFiltersCount > 0 ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleClearAllFilters}
+                                                                className="text-caption font-medium text-danger-600 dark:text-danger-400 hover:underline cursor-pointer"
+                                                            >
+                                                                Limpar todos
+                                                            </button>
+                                                        ) : (
+                                                            <div className="h-4 w-16" aria-hidden="true" />
+                                                        )}
+                                                    </div>
+
+                                                    {/* FILTRO 1: REDE DE ENSINO */}
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5">
+                                                            <GraduationCap size={13} />
+                                                            Rede de Ensino
+                                                        </label>
+                                                        <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-surface-soft/60 dark:bg-zinc-950/40 border border-border dark:border-zinc-800">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setSelectedRede('todas')}
+                                                                className={`py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap border ${selectedRede === 'todas'
+                                                                    ? (filtroSemiarido ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs border-amber-500' : 'bg-surface dark:bg-zinc-800 text-text-primary shadow-2xs border-border/70 dark:border-zinc-700')
+                                                                    : 'border-transparent text-text-muted hover:text-text-primary'
+                                                                    }`}
+                                                            >
+                                                                Todas <span className="text-caption opacity-80 tnum">({redeStats.total})</span>
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
+                                                                className={`py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap border ${selectedRede === 'publica'
+                                                                    ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 shadow-2xs border-emerald-300/50 dark:border-emerald-700/50'
+                                                                    : 'border-transparent text-text-muted hover:text-emerald-700 dark:hover:text-emerald-400'
+                                                                    }`}
+                                                            >
+                                                                Pública <span className="text-caption opacity-80 tnum">({redeStats.publica})</span>
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
+                                                                className={`py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none whitespace-nowrap border ${selectedRede === 'privada'
+                                                                    ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-900 dark:text-purple-200 shadow-2xs border-purple-300/50 dark:border-purple-700/50'
+                                                                    : 'border-transparent text-text-muted hover:text-purple-700 dark:hover:text-purple-400'
+                                                                    }`}
+                                                            >
+                                                                Privada <span className="text-caption opacity-80 tnum">({redeStats.privada})</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* FILTRO 2: ÁREA TEMÁTICA DE CT&I */}
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5">
+                                                            <Filter size={13} />
+                                                            <span>Área Temática de CT&I</span>
+                                                        </label>
+                                                        <div className="relative">
+                                                            <select
+                                                                value={selectedCategory}
+                                                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                                                className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                                                    }`}
+                                                            >
+                                                                <option value="todas" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                    Todas as Áreas ({activeScopedCursos.length})
+                                                                </option>
+                                                                {categoryStats.map((cat) => (
+                                                                    <option key={cat.name} value={cat.name} className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                        {cat.name} ({cat.count})
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* FILTRO 3: INSTITUIÇÃO DE ENSINO SUPERIOR (IES) */}
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5">
+                                                            <Building2 size={13} />
+                                                            <span>Instituição (IES)</span>
+                                                        </label>
+                                                        <div className="relative">
+                                                            <select
+                                                                value={selectedIES || ''}
+                                                                onChange={(e) => setSelectedIES(e.target.value ? e.target.value : null)}
+                                                                className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                                                    }`}
+                                                            >
+                                                                <option value="" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                    Todas as Instituições ({totalIesUnicas})
+                                                                </option>
+                                                                {iesRanking.map((ies) => (
+                                                                    <option key={ies.sigla} value={ies.sigla} className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                        {ies.sigla} ({ies.count} curso{ies.count === 1 ? '' : 's'})
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* FILTRO 4: RECORTE SEMIÁRIDO BAIANO */}
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between min-h-[20px]">
+                                                            <span>
+                                                                Recorte Semiárido
+                                                            </span>
+                                                            <span className={`text-caption font-medium text-amber-600 dark:text-amber-400 transition-opacity duration-150 ${filtroSemiarido ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
+                                                                Ativo
+                                                            </span>
+                                                        </label>
+                                                        <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-surface-soft/60 dark:bg-zinc-950/40 border border-border dark:border-zinc-800">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setFiltroSemiarido(false)}
+                                                                className={`py-1.5 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center select-none whitespace-nowrap ${!filtroSemiarido
+                                                                    ? 'bg-surface dark:bg-zinc-800 text-text-primary shadow-2xs border-border/70 dark:border-zinc-700'
+                                                                    : 'border-transparent text-text-muted hover:text-text-primary'
+                                                                    }`}
+                                                            >
+                                                                Todo o Estado
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setFiltroSemiarido(true)}
+                                                                className={`py-1.5 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center select-none whitespace-nowrap ${filtroSemiarido
+                                                                    ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-950 dark:text-amber-200 shadow-2xs border-amber-300/50 dark:border-amber-700/50'
+                                                                    : 'border-transparent text-text-muted hover:text-amber-700 dark:hover:text-amber-400'
+                                                                    }`}
+                                                            >
+                                                                Apenas Semiárido
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* STATUS E FECHAR */}
+                                                    <div className="flex items-center justify-between pt-2 border-t border-border/70 dark:border-zinc-800 text-caption font-medium">
+                                                        <span className="text-text-secondary dark:text-zinc-300">
+                                                            <strong className="text-text-primary dark:text-zinc-100 tnum">{filteredCursos.length}</strong> pres. • <strong className="text-text-primary dark:text-zinc-100 tnum">{filteredEadCursos.length}</strong> EaD
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setIsFilterDropdownOpen(false)}
+                                                            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs ${filtroSemiarido ? 'bg-amber-600 hover:bg-amber-700' : 'bg-primary-600 hover:bg-primary-500'
+                                                                }`}
+                                                        >
+                                                            Fechar
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-
-                                            {/* FILTRO 2: ÁREA TEMÁTICA DE CT&I */}
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5">
-                                                    <Filter size={13} />
-                                                    <span>Área Temática de CT&I</span>
-                                                </label>
-                                                <div className="relative">
-                                                    <select
-                                                        value={selectedCategory}
-                                                        onChange={(e) => setSelectedCategory(e.target.value)}
-                                                        className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
-                                                            }`}
-                                                    >
-                                                        <option value="todas" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
-                                                            Todas as Áreas ({activeScopedCursos.length})
-                                                        </option>
-                                                        {categoryStats.map((cat) => (
-                                                            <option key={cat.name} value={cat.name} className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
-                                                                {cat.name} ({cat.count})
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-                                                </div>
-                                            </div>
-
-                                            {/* FILTRO 3: INSTITUIÇÃO DE ENSINO SUPERIOR (IES) */}
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5">
-                                                    <Building2 size={13} />
-                                                    <span>Instituição (IES)</span>
-                                                </label>
-                                                <div className="relative">
-                                                    <select
-                                                        value={selectedIES || ''}
-                                                        onChange={(e) => setSelectedIES(e.target.value ? e.target.value : null)}
-                                                        className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
-                                                            }`}
-                                                    >
-                                                        <option value="" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
-                                                            Todas as Instituições ({totalIesUnicas})
-                                                        </option>
-                                                        {iesRanking.map((ies) => (
-                                                            <option key={ies.sigla} value={ies.sigla} className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
-                                                                {ies.sigla} ({ies.count} curso{ies.count === 1 ? '' : 's'})
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-                                                </div>
-                                            </div>
-
-                                            {/* FILTRO 4: RECORTE SEMIÁRIDO BAIANO */}
-                                            <div className="flex flex-col gap-1.5">
-                                                <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between min-h-[20px]">
-                                                    <span>
-                                                        Recorte Semiárido
-                                                    </span>
-                                                    <span className={`text-caption font-medium text-amber-600 dark:text-amber-400 transition-opacity duration-150 ${filtroSemiarido ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
-                                                        Ativo
-                                                    </span>
-                                                </label>
-                                                <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-surface-soft/60 dark:bg-zinc-950/40 border border-border dark:border-zinc-800">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setFiltroSemiarido(false)}
-                                                        className={`py-1.5 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center select-none whitespace-nowrap ${!filtroSemiarido
-                                                            ? 'bg-surface dark:bg-zinc-800 text-text-primary shadow-2xs border-border/70 dark:border-zinc-700'
-                                                            : 'border-transparent text-text-muted hover:text-text-primary'
-                                                            }`}
-                                                    >
-                                                        Todo o Estado
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setFiltroSemiarido(true)}
-                                                        className={`py-1.5 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center select-none whitespace-nowrap ${filtroSemiarido
-                                                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-950 dark:text-amber-200 shadow-2xs border-amber-300/50 dark:border-amber-700/50'
-                                                            : 'border-transparent text-text-muted hover:text-amber-700 dark:hover:text-amber-400'
-                                                            }`}
-                                                    >
-                                                        Apenas Semiárido
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {/* STATUS E FECHAR */}
-                                            <div className="flex items-center justify-between pt-2 border-t border-border/70 dark:border-zinc-800 text-caption font-medium">
-                                                <span className="text-text-secondary dark:text-zinc-300">
-                                                    <strong className="text-text-primary dark:text-zinc-100 tnum">{filteredCursos.length}</strong> pres. • <strong className="text-text-primary dark:text-zinc-100 tnum">{filteredEadCursos.length}</strong> EaD
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setIsFilterDropdownOpen(false)}
-                                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs ${filtroSemiarido ? 'bg-amber-600 hover:bg-amber-700' : 'bg-primary-600 hover:bg-primary-500'
-                                                        }`}
-                                                >
-                                                    Fechar
-                                                </button>
-                                            </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
+                                    ) : null}
+                                />
                             </div>
 
                             {/* INPUT DE BUSCA */}
@@ -1192,7 +1203,7 @@ export default function CursosPage() {
                                                 <Chip
                                                     selected={selectedRede === 'todas'}
                                                     onClick={() => setSelectedRede('todas')}
-                                                    variant="neutral"
+                                                    variant={filtroSemiarido ? 'warning' : 'neutral'}
                                                     size="sm"
                                                 >
                                                     Todas
@@ -1395,7 +1406,7 @@ export default function CursosPage() {
                                                 <Chip
                                                     selected={selectedRede === 'todas'}
                                                     onClick={() => setSelectedRede('todas')}
-                                                    variant="neutral"
+                                                    variant={filtroSemiarido ? 'warning' : 'neutral'}
                                                     size="sm"
                                                 >
                                                     Todas
@@ -1610,7 +1621,7 @@ export default function CursosPage() {
 
                                     <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
                                         {categoryStats.length > 0 ? (
-                                            categoryStats.map((cat) => {
+                                            categoryStats.map((cat, idx) => {
                                                 const isSelected = selectedCategory === cat.name;
                                                 const totalCourses = activeScopedCursos.length || categoryStats.reduce((acc, c) => acc + c.count, 0) || 1;
                                                 const remaining = Math.max(0, totalCourses - cat.count);
@@ -1642,41 +1653,18 @@ export default function CursosPage() {
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
-                                                        <div className="flex items-center gap-2 w-full">
-                                                            <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                style={{
-                                                                    flexGrow: cat.count,
-                                                                    flexBasis: 0,
-                                                                    backgroundColor: cat.color,
-                                                                    minWidth: remaining > 0 ? '44px' : 'auto'
-                                                                }}
-                                                                title={`${cat.name}: ${cat.count} cursos (${cat.percent}%)`}
-                                                            >
-                                                                <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                    {cat.count}
-                                                                </span>
-                                                            </div>
-
-                                                            {remaining > 0 && (
-                                                                <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
-                                                                    style={{
-                                                                        flexGrow: remaining,
-                                                                        flexBasis: 0
-                                                                    }}
-                                                                />
-                                                            )}
-
-                                                            <div
-                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                title={`${cat.percent}% da oferta (${cat.count} cursos)`}
-                                                            >
-                                                                <span className="text-caption font-semibold tabular-nums leading-none">
-                                                                    {cat.percent}%
-                                                                </span>
-                                                            </div>
-                                                        </div>
+                                                        <PillBar
+                                                            value={cat.count}
+                                                            totalScoped={totalCourses}
+                                                            remaining={remaining}
+                                                            percent={cat.percent}
+                                                            color={cat.color}
+                                                            negPillStyle={negPillStyle}
+                                                            totalPillStyle={totalPillStyle}
+                                                            index={idx}
+                                                            valueTitle={`${cat.name}: ${cat.count} cursos (${cat.percent}%)`}
+                                                            percentTitle={`${cat.percent}% da oferta (${cat.count} cursos)`}
+                                                        />
                                                     </div>
                                                 );
                                             })
@@ -1721,7 +1709,10 @@ export default function CursosPage() {
                                     </div>
 
                                     {/* LISTA RANKING: ESTILO DE PÍLULAS PROPORCIONAIS */}
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2">
+                                    <div
+                                        key={selectedTerritory ? `ranking-muni-${selectedTerritory.id_territorio || 'muni'}` : 'ranking-territorios'}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2"
+                                    >
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
                                                 municipalityRanking.map((m, idx) => {
@@ -1763,41 +1754,18 @@ export default function CursosPage() {
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
-                                                            <div className="flex items-center gap-2 w-full">
-                                                                <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                    style={{
-                                                                        flexGrow: total,
-                                                                        flexBasis: 0,
-                                                                        backgroundColor: posPillColor,
-                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
-                                                                    }}
-                                                                    title={`${m.name}: ${total} cursos (${m.percentTotal}% do território) · Pública: ${pos} | Privada: ${neg}`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                        {total}
-                                                                    </span>
-                                                                </div>
-
-                                                                {remaining > 0 && (
-                                                                    <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
-                                                                        style={{
-                                                                            flexGrow: remaining,
-                                                                            flexBasis: 0
-                                                                        }}
-                                                                    />
-                                                                )}
-
-                                                                <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`${m.percentTotal}% do território (${total} cursos)`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
-                                                                        {m.percentTotal}%
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                            <PillBar
+                                                                value={total}
+                                                                totalScoped={totalMunCourses}
+                                                                remaining={remaining}
+                                                                percent={m.percentTotal}
+                                                                color={posPillColor}
+                                                                negPillStyle={negPillStyle}
+                                                                totalPillStyle={totalPillStyle}
+                                                                index={idx}
+                                                                valueTitle={`${m.name}: ${total} cursos (${m.percentTotal}% do território) · Pública: ${pos} | Privada: ${neg}`}
+                                                                percentTitle={`${m.percentTotal}% do território (${total} cursos)`}
+                                                            />
                                                         </div>
                                                     );
                                                 })
@@ -1858,41 +1826,18 @@ export default function CursosPage() {
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
-                                                            <div className="flex items-center gap-2 w-full">
-                                                                <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                    style={{
-                                                                        flexGrow: total,
-                                                                        flexBasis: 0,
-                                                                        backgroundColor: posPillColor,
-                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
-                                                                    }}
-                                                                    title={`${t.name}: ${total} cursos (${t.percentTotal}% do estado) · Pública: ${pos} | Privada: ${neg}`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                        {total}
-                                                                    </span>
-                                                                </div>
-
-                                                                {remaining > 0 && (
-                                                                    <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
-                                                                        style={{
-                                                                            flexGrow: remaining,
-                                                                            flexBasis: 0
-                                                                        }}
-                                                                    />
-                                                                )}
-
-                                                                <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`${t.percentTotal}% do estado (${total} cursos)`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
-                                                                        {t.percentTotal}%
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                            <PillBar
+                                                                value={total}
+                                                                totalScoped={totalTerrCourses}
+                                                                remaining={remaining}
+                                                                percent={t.percentTotal}
+                                                                color={posPillColor}
+                                                                negPillStyle={negPillStyle}
+                                                                totalPillStyle={totalPillStyle}
+                                                                index={idx}
+                                                                valueTitle={`${t.name}: ${total} cursos (${t.percentTotal}% do estado) · Pública: ${pos} | Privada: ${neg}`}
+                                                                percentTitle={`${t.percentTotal}% do estado (${total} cursos)`}
+                                                            />
                                                         </div>
                                                     );
                                                 })
@@ -1980,44 +1925,18 @@ export default function CursosPage() {
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
-                                                        <div className="flex items-center gap-2 w-full">
-                                                            {/* PREENCHIMENTO */}
-                                                            <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                style={{
-                                                                    flexGrow: ies.count,
-                                                                    flexBasis: 0,
-                                                                    backgroundColor: fillColor,
-                                                                    minWidth: remaining > 0 ? '44px' : 'auto'
-                                                                }}
-                                                                title={`${ies.fullName}: ${ies.count} cursos (${pct}% da oferta · ${ies.municipios.size} ${ies.municipios.size === 1 ? 'cidade' : 'cidades'})`}
-                                                            >
-                                                                <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                    {ies.count}
-                                                                </span>
-                                                            </div>
-
-                                                            {/* RESTANTE */}
-                                                            {remaining > 0 && (
-                                                                <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
-                                                                    style={{
-                                                                        flexGrow: remaining,
-                                                                        flexBasis: 0
-                                                                    }}
-                                                                />
-                                                            )}
-
-                                                            {/* PERCENTUAL */}
-                                                            <div
-                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                title={`${pct}% da oferta (${ies.count} cursos)`}
-                                                            >
-                                                                <span className="text-caption font-semibold tabular-nums leading-none">
-                                                                    {pct}%
-                                                                </span>
-                                                            </div>
-                                                        </div>
+                                                        <PillBar
+                                                            value={ies.count}
+                                                            totalScoped={totalScopedCount}
+                                                            remaining={remaining}
+                                                            percent={pct}
+                                                            color={fillColor}
+                                                            negPillStyle={negPillStyle}
+                                                            totalPillStyle={totalPillStyle}
+                                                            index={idx}
+                                                            valueTitle={`${ies.fullName}: ${ies.count} cursos (${pct}% da oferta · ${ies.municipios.size} ${ies.municipios.size === 1 ? 'cidade' : 'cidades'})`}
+                                                            percentTitle={`${pct}% da oferta (${ies.count} cursos)`}
+                                                        />
                                                     </div>
                                                 );
                                             })

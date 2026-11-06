@@ -17,6 +17,7 @@ export { PageHeader } from './PageHeader';
 export { Skeleton, KpiSkeleton, ListRowSkeleton, ChartSkeleton } from './Skeleton';
 export { EmptyState } from './EmptyState';
 export { ProgressBar } from './ProgressBar';
+export { PillBar } from './PillBar';
 
 // Overlays e Notificações
 export { Tooltip } from './Tooltip';

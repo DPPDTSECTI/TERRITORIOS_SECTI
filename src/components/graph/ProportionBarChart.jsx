@@ -90,12 +90,14 @@ export default function ProportionBarChart({
   // MODO VISÃO GERAL
   if (isVisaoGeral) {
     const isSemi = isSemiarido || cardClassName.includes('semiarido') || !!badge;
-    const posPillColor = isSemi ? 'bg-accent-600' : (positiveColor || 'bg-primary-600');
+    const posPillColor = isSemi
+      ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold'
+      : (positiveColor || 'bg-primary-600');
     const negPillStyle = isSemi
-      ? 'bg-accent-50 text-accent-800 dark:text-accent-300 border border-accent-100'
+      ? 'bg-amber-500/15 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 border border-amber-300/60 dark:border-amber-700/60'
       : 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60';
     const totalPillStyle = isSemi
-      ? 'bg-accent-100 dark:bg-accent-950 text-accent-800 dark:text-accent-200 border border-accent-200'
+      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/70'
       : 'bg-primary-100 dark:bg-primary-950 text-primary-800 dark:text-primary-200 border border-primary-200';
 
     const pillH = 'h-[21px]';
@@ -196,16 +198,16 @@ export default function ProportionBarChart({
 
             <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-border/70 shrink-0 text-[11px] font-medium mt-auto">
               <div className="flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${posPillColor} shadow-2xs`}></span>
-                <span className={isSemi ? "text-accent-800 dark:text-accent-300" : "text-primary-700 dark:text-primary-300"}>{positiveLabel}</span>
+                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-500' : posPillColor} shadow-2xs`}></span>
+                <span className={isSemi ? "text-amber-900 dark:text-amber-200 font-semibold" : "text-primary-700 dark:text-primary-300"}>{positiveLabel}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-accent-500/40' : 'bg-primary-300'} shadow-2xs`}></span>
-                <span className={isSemi ? "text-accent-800 dark:text-accent-300" : "text-primary-700 dark:text-primary-300"}>{negativeLabel}</span>
+                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-400/60' : 'bg-primary-300'} shadow-2xs`}></span>
+                <span className={isSemi ? "text-amber-800 dark:text-amber-300" : "text-primary-700 dark:text-primary-300"}>{negativeLabel}</span>
               </div>
               <div className="flex items-center gap-1.5 text-text-muted">
-                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-accent-400' : 'bg-primary-400'} shadow-2xs`}></span>
-                <span className={isSemi ? "text-accent-800 dark:text-accent-300" : ""}>Total</span>
+                <span className={`w-2 h-2 rounded-full ${isSemi ? 'bg-amber-400' : 'bg-primary-400'} shadow-2xs`}></span>
+                <span className={isSemi ? "text-amber-800 dark:text-amber-300" : ""}>Total</span>
               </div>
             </div>
           </>

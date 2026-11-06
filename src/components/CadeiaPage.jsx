@@ -30,7 +30,8 @@ import {
     Tabs,
     EmptyState,
     KpiSkeleton,
-    AnimatedNumber
+    AnimatedNumber,
+    PillBar
 } from './ui';
 import { useChartTheme, resolveCssRgb } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -911,6 +912,7 @@ export default function CadeiaPage() {
                         isExpanded={isMapExpanded}
                         onToggleExpand={() => setIsMapExpanded(prev => !prev)}
                         getSegmentColor={getSegmentColor}
+                        filtroSemiarido={filtroSemiarido}
                     />
                 </motion.div>
 
@@ -1062,33 +1064,47 @@ export default function CadeiaPage() {
                                         variant="pill"
                                         className="shrink-0"
                                         isSemiarido={filtroSemiarido}
-                                    />
-
-                                    {/* FILTROS POR TIPO AO LADO DAS ABAS (QUANDO NO CATÁLOGO) */}
-                                    {activeTab === 'catalogo' && (
-                                        <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
-                                            <div className="h-4 w-px bg-border/80 shrink-0 self-center mx-1" />
-                                            <Chip
-                                                selected={selectedTipo === 'todos'}
-                                                onClick={() => setSelectedTipo('todos')}
-                                                variant={selectedTipo === 'todos' ? (filtroSemiarido ? 'warning' : 'primary') : 'neutral'}
-                                                size="md"
-                                            >
-                                                Todos
-                                            </Chip>
-                                            {availableTipos.map((tipo) => (
-                                                <Chip
-                                                    key={tipo}
-                                                    selected={selectedTipo === tipo}
-                                                    onClick={() => setSelectedTipo(selectedTipo === tipo ? 'todos' : tipo)}
-                                                    variant={selectedTipo === tipo ? (filtroSemiarido ? 'warning' : getTipoBadgeVariant(tipo)) : 'neutral'}
-                                                    size="md"
+                                        trailing={activeTab === 'catalogo' ? (
+                                            <div className="h-full inline-flex items-center gap-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedTipo('todos')}
+                                                    className={`relative h-full inline-flex items-center justify-center px-3.5 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${
+                                                        selectedTipo === 'todos'
+                                                            ? (filtroSemiarido
+                                                                ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
+                                                                : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
+                                                            : (filtroSemiarido
+                                                                ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
+                                                                : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
+                                                    }`}
                                                 >
-                                                    {tipo}
-                                                </Chip>
-                                            ))}
-                                        </div>
-                                    )}
+                                                    Todos
+                                                </button>
+                                                {availableTipos.map((tipo) => {
+                                                    const isSelected = selectedTipo === tipo;
+                                                    return (
+                                                        <button
+                                                            key={tipo}
+                                                            type="button"
+                                                            onClick={() => setSelectedTipo(isSelected ? 'todos' : tipo)}
+                                                            className={`relative h-full inline-flex items-center justify-center px-3.5 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${
+                                                                isSelected
+                                                                    ? (filtroSemiarido
+                                                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
+                                                                        : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
+                                                                    : (filtroSemiarido
+                                                                        ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
+                                                                        : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
+                                                            }`}
+                                                        >
+                                                            {tipo}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : null}
+                                    />
                                 </div>
 
                                 {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
@@ -1307,7 +1323,7 @@ export default function CadeiaPage() {
 
                                     <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full">
                                         {segmentStats.length > 0 ? (
-                                            segmentStats.map((seg) => {
+                                            segmentStats.map((seg, idx) => {
                                                 const isSelected = selectedSegmento === seg.name;
                                                 const dotColor = getSegmentColor(seg.name);
                                                 const totalDensity = baseCadeiasForStats.length || segmentStats.reduce((acc, s) => acc + s.count, 0) || 1;
@@ -1347,41 +1363,18 @@ export default function CadeiaPage() {
                                                         </div>
 
                                                         {/* BARRAS DE PÍLULAS */}
-                                                        <div className="flex items-center gap-2 w-full">
-                                                            <div
-                                                                className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                style={{
-                                                                    flexGrow: seg.count,
-                                                                    flexBasis: 0,
-                                                                    backgroundColor: dotColor,
-                                                                    minWidth: remaining > 0 ? '44px' : 'auto'
-                                                                }}
-                                                                title={`${seg.name}: ${seg.count} arranjos (${seg.percent}%)`}
-                                                            >
-                                                                <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                    {seg.count}
-                                                                </span>
-                                                            </div>
-
-                                                            {remaining > 0 && (
-                                                                <div
-                                                                    className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
-                                                                    style={{
-                                                                        flexGrow: remaining,
-                                                                        flexBasis: 0
-                                                                    }}
-                                                                />
-                                                            )}
-
-                                                            <div
-                                                                className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                title={`${seg.percent}% da densidade (${seg.count} arranjos)`}
-                                                            >
-                                                                <span className="text-caption font-semibold tabular-nums leading-none">
-                                                                    {seg.percent}%
-                                                                </span>
-                                                            </div>
-                                                        </div>
+                                                        <PillBar
+                                                            value={seg.count}
+                                                            totalScoped={totalDensity}
+                                                            remaining={remaining}
+                                                            percent={seg.percent}
+                                                            color={dotColor}
+                                                            negPillStyle={negPillStyle}
+                                                            totalPillStyle={totalPillStyle}
+                                                            index={idx}
+                                                            valueTitle={`${seg.name}: ${seg.count} arranjos (${seg.percent}%)`}
+                                                            percentTitle={`${seg.percent}% da densidade (${seg.count} arranjos)`}
+                                                        />
                                                     </div>
                                                 );
                                             })
@@ -1425,7 +1418,10 @@ export default function CadeiaPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2">
+                                    <div
+                                        key={selectedTerritory ? `ranking-muni-${selectedTerritory.id_territorio || 'muni'}` : 'ranking-territorios'}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2"
+                                    >
                                         {selectedTerritory ? (
                                             municipalityRanking.length > 0 ? (
                                                 municipalityRanking.map((m, idx) => {
@@ -1465,41 +1461,18 @@ export default function CadeiaPage() {
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
-                                                            <div className="flex items-center gap-2 w-full">
-                                                                <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                    style={{
-                                                                        flexGrow: m.count,
-                                                                        flexBasis: 0,
-                                                                        backgroundColor: posPillColor,
-                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
-                                                                    }}
-                                                                    title={`${m.name}: ${m.count} arranjos (${m.percentTotal}%)`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                        {m.count}
-                                                                    </span>
-                                                                </div>
-
-                                                                {remaining > 0 && (
-                                                                    <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
-                                                                        style={{
-                                                                            flexGrow: remaining,
-                                                                            flexBasis: 0
-                                                                        }}
-                                                                    />
-                                                                )}
-
-                                                                <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`${m.percentTotal}% do território (${m.count} arranjos)`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
-                                                                        {m.percentTotal}%
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                            <PillBar
+                                                                value={m.count}
+                                                                totalScoped={totalMunCount}
+                                                                remaining={remaining}
+                                                                percent={m.percentTotal}
+                                                                color={posPillColor}
+                                                                negPillStyle={negPillStyle}
+                                                                totalPillStyle={totalPillStyle}
+                                                                index={idx}
+                                                                valueTitle={`${m.name}: ${m.count} arranjos (${m.percentTotal}%)`}
+                                                                percentTitle={`${m.percentTotal}% do território (${m.count} arranjos)`}
+                                                            />
                                                         </div>
                                                     );
                                                 })
@@ -1557,41 +1530,18 @@ export default function CadeiaPage() {
                                                             </div>
 
                                                             {/* BARRAS DE PÍLULAS */}
-                                                            <div className="flex items-center gap-2 w-full">
-                                                                <div
-                                                                    className="h-[28px] rounded-full flex items-center justify-center px-2.5 text-white transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap"
-                                                                    style={{
-                                                                        flexGrow: t.count,
-                                                                        flexBasis: 0,
-                                                                        backgroundColor: posPillColor,
-                                                                        minWidth: remaining > 0 ? '44px' : 'auto'
-                                                                    }}
-                                                                    title={`${t.name}: ${t.count} arranjos (${t.percentTotal}%)`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none whitespace-nowrap">
-                                                                        {t.count}
-                                                                    </span>
-                                                                </div>
-
-                                                                {remaining > 0 && (
-                                                                    <div
-                                                                        className={`h-[28px] rounded-full ${negPillStyle} flex items-center justify-center px-2.5 transition-[flex-grow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden shrink-0 select-none shadow-2xs whitespace-nowrap`}
-                                                                        style={{
-                                                                            flexGrow: remaining,
-                                                                            flexBasis: 0
-                                                                        }}
-                                                                    />
-                                                                )}
-
-                                                                <div
-                                                                    className={`h-[28px] min-w-[54px] px-2.5 rounded-full ${totalPillStyle} flex items-center justify-center shrink-0 select-none shadow-2xs`}
-                                                                    title={`${t.percentTotal}% do estado (${t.count} arranjos)`}
-                                                                >
-                                                                    <span className="text-caption font-semibold tabular-nums leading-none">
-                                                                        {t.percentTotal}%
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                            <PillBar
+                                                                value={t.count}
+                                                                totalScoped={totalTerrCount}
+                                                                remaining={remaining}
+                                                                percent={t.percentTotal}
+                                                                color={posPillColor}
+                                                                negPillStyle={negPillStyle}
+                                                                totalPillStyle={totalPillStyle}
+                                                                index={idx}
+                                                                valueTitle={`${t.name}: ${t.count} arranjos (${t.percentTotal}%)`}
+                                                                percentTitle={`${t.percentTotal}% do estado (${t.count} arranjos)`}
+                                                            />
                                                         </div>
                                                     );
                                                 })

@@ -140,7 +140,7 @@ export default function RankingBarChart({
           {highlightedItem && (
             <button
               onClick={() => setFilterMode('focus')}
-              className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'focus' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+              className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'focus' ? ((isSemiarido || !!badge) ? 'text-amber-600 dark:text-amber-400 bg-surface shadow-xs font-semibold' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
               title={`Foco em ${highlightedItem.cleanName} (${highlightedItem.rank}º de ${allRanked.length})`}
               aria-label={`Foco em ${highlightedItem.cleanName}`}
             >
@@ -149,7 +149,7 @@ export default function RankingBarChart({
           )}
           <button
             onClick={() => setFilterMode('top')}
-            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'top' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'top' ? ((isSemiarido || !!badge) ? 'text-amber-600 dark:text-amber-400 bg-surface shadow-xs font-semibold' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={topSubtitle}
             aria-label={topSubtitle}
           >
@@ -157,7 +157,7 @@ export default function RankingBarChart({
           </button>
           <button
             onClick={() => setFilterMode('medium')}
-            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'medium' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'medium' ? ((isSemiarido || !!badge) ? 'text-amber-600 dark:text-amber-400 bg-surface shadow-xs font-semibold' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={mediumSubtitle}
             aria-label={mediumSubtitle}
           >
@@ -165,7 +165,7 @@ export default function RankingBarChart({
           </button>
           <button
             onClick={() => setFilterMode('bottom')}
-            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'bottom' ? ((isSemiarido || !!badge) ? 'text-accent-600 bg-surface shadow-xs font-medium' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
+            className={`w-6 h-6 rounded-full transition-all duration-150 flex items-center justify-center ${filterMode === 'bottom' ? ((isSemiarido || !!badge) ? 'text-amber-600 dark:text-amber-400 bg-surface shadow-xs font-semibold' : 'text-primary-600 bg-surface shadow-xs font-medium') : 'text-text-muted hover:text-text-primary hover:bg-surface-soft'}`}
             title={bottomSubtitle}
             aria-label={bottomSubtitle}
           >

@@ -973,10 +973,10 @@ export default function PtiMap({
           className={`relative flex items-center gap-2 h-[32px] px-2.5 rounded-full text-caption font-semibold transition-all duration-150 cursor-pointer border select-none backdrop-blur-md ${
             modoGeografico
               ? (filtroSemiarido
-                ? 'bg-white/90 dark:bg-zinc-900/90 border-amber-500/60 dark:border-amber-500/50 text-amber-800 dark:text-amber-300 shadow-sm ring-1 ring-amber-400/20'
-                : 'bg-white/90 dark:bg-zinc-900/90 border-primary-500/40 text-primary-700 dark:text-primary-300 shadow-sm')
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white border-amber-500/80 shadow-xs ring-1 ring-amber-500/30'
+                : 'bg-primary-600 text-white border-primary-700 shadow-sm')
               : (filtroSemiarido
-                ? 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-text-secondary hover:border-amber-400/60 hover:text-amber-800 dark:hover:text-amber-300 shadow-sm'
+                ? 'border-amber-300/70 dark:border-amber-700/60 bg-white/90 dark:bg-zinc-900/90 text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40 shadow-xs'
                 : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-text-secondary hover:text-text-primary shadow-sm')
           }`}
         >
@@ -984,9 +984,11 @@ export default function PtiMap({
             className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 shadow-2xs ${
               modoGeografico
                 ? (filtroSemiarido
-                  ? 'bg-amber-500 text-white shadow-amber-500/30'
-                  : 'bg-primary-600 text-white')
-                : 'bg-surface-soft border border-border text-text-muted'
+                  ? 'bg-white text-amber-600 shadow-2xs'
+                  : 'bg-white text-primary-600 shadow-2xs')
+                : (filtroSemiarido
+                  ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-300/50'
+                  : 'bg-surface-soft border border-border text-text-muted')
             }`}
           >
             <Globe size={13} strokeWidth={2.1} />

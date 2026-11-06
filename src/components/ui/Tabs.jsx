@@ -23,6 +23,7 @@ export function Tabs({
   className,
   isSemiarido = false,
   accent,
+  trailing,
 }) {
   const generatedId = useId();
   const activeLayoutId = layoutId || `tabs-indicator-${generatedId}`;
@@ -55,7 +56,7 @@ export function Tabs({
       className={cn(
         isUnderline
           ? 'flex items-center gap-2 border-b border-border w-full overflow-x-auto scrollbar-none'
-          : 'h-9 inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-full border border-border overflow-x-auto scrollbar-none max-w-full shadow-xs shrink-0 transition-colors duration-200',
+          : 'h-9 inline-flex items-center gap-1 p-1 bg-surface-soft dark:bg-surface-raised rounded-full border border-border max-w-full shadow-xs shrink-0 transition-colors duration-200',
         isAmber && !isUnderline && 'border-amber-300/70 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/30',
         className
       )}
@@ -108,6 +109,19 @@ export function Tabs({
           </button>
         );
       })}
+
+      {trailing && (
+        <>
+          <div
+            aria-hidden="true"
+            className={cn(
+              'w-[1px] h-4 mx-0.5 shrink-0 select-none pointer-events-none',
+              isAmber ? 'bg-amber-300/70 dark:bg-amber-700/60' : 'bg-border dark:bg-zinc-700'
+            )}
+          />
+          {trailing}
+        </>
+      )}
     </div>
   );
 }

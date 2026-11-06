@@ -20,8 +20,8 @@ const chipUnselectedVariants = {
   neutral: 'bg-surface border-border text-text-secondary hover:border-border-strong hover:text-text-primary',
   primary: 'bg-surface border-border text-text-secondary hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-400',
   success: 'bg-surface border-border text-text-secondary hover:border-success-500 hover:text-success-700 dark:hover:text-success-400',
-  warning: 'bg-surface border-border text-text-secondary hover:border-warning-500 hover:text-warning-700 dark:hover:text-warning-400',
-  accent: 'bg-surface border-border text-text-secondary hover:border-accent-500 hover:text-accent-700 dark:hover:text-accent-400',
+  warning: 'border-amber-300/70 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/30 text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 shadow-xs',
+  accent: 'border-amber-300/70 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/30 text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 shadow-xs',
   danger: 'bg-surface border-border text-text-secondary hover:border-danger-500 hover:text-danger-700 dark:hover:text-danger-400',
 };
 
@@ -32,9 +32,9 @@ const chipSelectedVariants = {
   success:
     'bg-success-50 text-success-700 border-success-600 font-medium dark:bg-success-950 dark:text-success-300 dark:border-success-500 shadow-xs',
   warning:
-    'bg-warning-50 text-warning-700 border-warning-600 font-medium dark:bg-warning-950 dark:text-warning-300 dark:border-warning-500 shadow-xs',
+    'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold border-amber-500 dark:border-amber-600 shadow-xs',
   accent:
-    'bg-accent-50 text-accent-700 border-accent-600 font-medium dark:bg-accent-950 dark:text-accent-300 dark:border-accent-500 shadow-xs',
+    'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold border-amber-500 dark:border-amber-600 shadow-xs',
   danger:
     'bg-danger-50 text-danger-700 border-danger-600 font-medium dark:bg-danger-950 dark:text-danger-300 dark:border-danger-500 shadow-xs',
 };

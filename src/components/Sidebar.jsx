@@ -90,19 +90,14 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
 
           <span
             className={cn(
-              'text-subtitle font-bold tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1 flex items-center gap-1.5',
+              'text-subtitle font-bold tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1',
               filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary',
               isExpanded
                 ? 'opacity-100 translate-x-0'
                 : 'w-0 opacity-0 -translate-x-2 pointer-events-none'
             )}
           >
-            <span>{username}</span>
-            {filtroSemiarido && (
-              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 leading-none">
-                Semiárido
-              </span>
-            )}
+            {username}
           </span>
 
           <IconButton
