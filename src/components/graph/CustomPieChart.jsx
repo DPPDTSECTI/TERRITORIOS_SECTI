@@ -89,20 +89,20 @@ export default function CustomPieChart({
         /* CONTEÚDO */
         <div className="flex flex-row items-center justify-between flex-1 gap-4 sm:gap-5 min-h-0">
 
-          {/* GRÁFICO */}
-          <div className="flex flex-col items-center justify-center w-[170px] shrink-0">
+          {/* GRÁFICO (GEOMETRIA 100% TRAVADA) */}
+          <div className="flex flex-col items-center justify-between w-[170px] h-[196px] shrink-0">
             <div
               onMouseLeave={handleMouseLeave}
               className="relative flex items-center justify-center shrink-0 w-[136px] h-[136px]"
             >
-              <PieChart width={136} height={136}>
+              <PieChart width={136} height={136} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                 <Pie
                   isAnimationActive={false}
                   data={chartData}
                   cx="50%"
                   cy="50%"
                   innerRadius={36}
-                  outerRadius={62}
+                  outerRadius={60}
                   paddingAngle={1.5}
                   dataKey={valueKey}
                   nameKey={labelKey}
@@ -117,7 +117,7 @@ export default function CustomPieChart({
                     const isHovered = Boolean(hoveredItem && itemData && hoveredItem[labelKey] === itemData[labelKey]);
                     const isOtherHovered = Boolean(hoveredItem && !isHovered);
 
-                    // Expansão geométrica suave do raio externo em hover (sem scale transform que quebra coordenadas)
+                    // Expansão geométrica suave do raio externo em hover (sem ultrapassar o viewBox 136x136)
                     const currentOuter = isHovered ? outerRadius + 3 : outerRadius;
                     const currentInner = innerRadius;
 
@@ -165,14 +165,18 @@ export default function CustomPieChart({
               </div>
             </div>
 
-            {/* LEGENDA ABAIXO DO GRÁFICO (ALTURA FIXA E ALINHADA - NUNCA REDIMENSIONA) */}
+            {/* LEGENDA ABAIXO DO GRÁFICO (ALTURA 100% FIXA DE 52px E SEM CORTE DE TEXTO) */}
             <div
               title={displayLabel}
-              className="w-full h-[52px] shrink-0 mt-2 bg-surface-soft/80 dark:bg-surface-raised/70 border border-border/80 dark:border-border/60 rounded-xl px-3 py-1.5 flex items-center justify-center text-center shadow-2xs transition-colors duration-150 overflow-hidden"
+              className="w-full h-[52px] shrink-0 bg-surface-soft/80 dark:bg-surface-raised/70 border border-border/80 dark:border-border/60 rounded-xl px-2 py-1 flex items-center justify-center text-center shadow-2xs transition-colors duration-150 overflow-hidden"
             >
               <span
-                className={`font-semibold text-text-primary dark:text-zinc-100 text-center transition-all duration-150 break-words line-clamp-2 select-none tracking-tight ${
-                  displayLabel.length > 30 ? 'text-[11px] leading-[14px]' : displayLabel.length > 20 ? 'text-[11.5px] leading-[15px]' : 'text-xs leading-[16px]'
+                className={`font-semibold text-text-primary dark:text-zinc-100 text-center break-words select-none tracking-tight ${
+                  displayLabel.length > 38
+                    ? 'text-[10px] leading-[12.5px]'
+                    : displayLabel.length > 22
+                      ? 'text-[11px] leading-[13.5px]'
+                      : 'text-xs leading-[15px]'
                 }`}
               >
                 {displayLabel}
@@ -184,14 +188,14 @@ export default function CustomPieChart({
           {children ? (
             children
           ) : (
-            <div className="flex flex-col flex-1 justify-between h-full py-0.5 min-w-0">
-              <div className="flex items-center justify-between mb-1.5 shrink-0">
+            <div className="flex flex-col flex-1 justify-start h-full py-0.5 min-w-0">
+              <div className="flex items-center justify-between mb-2 shrink-0">
                 <h3 className="text-text-muted font-medium text-caption truncate">
                   {listTitle}
                 </h3>
               </div>
 
-              <div className="flex flex-col justify-between flex-1 gap-2 w-full min-h-0">
+              <div className={`flex flex-col flex-1 w-full min-h-0 ${topList.slice(0, 5).length >= 5 ? 'justify-between gap-1.5' : 'justify-start gap-2.5'}`}>
                 {topList.slice(0, 5).map((item, idx) => {
                   const maxCount = Math.max(...topList.slice(0, 5).map(t => Number(t.count) || 0), 1);
                   const count = Number(item.count) || 0;
@@ -206,7 +210,7 @@ export default function CustomPieChart({
 
                   const fillColor = isFirst
                     ? (isSemi ? 'bg-accent-500' : 'bg-primary-600')
-                    : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
+                    : (isSemi ? 'bg-accent-500/[0.12] dark:bg-accent-400/[0.15]' : 'bg-primary-500/[0.09] dark:bg-primary-400/[0.14]');
 
                   const textStyle = isFirst
                     ? 'font-semibold text-white'
@@ -231,7 +235,7 @@ export default function CustomPieChart({
                       <div className={`relative flex-1 h-[26px] sm:h-[28px] rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
                         <div
                           className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-[width,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden z-0 flex items-center`}
-                          style={{ width: `${percentOfMax}%` }}
+                          style={{ width: `${isFirst ? 100 : percentOfMax}%` }}
                         />
 
                         <span className={`absolute left-3 right-3 text-caption truncate leading-none pointer-events-none select-none z-10 tracking-tight ${textStyle}`}>

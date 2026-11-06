@@ -32,7 +32,8 @@ import {
     KpiSkeleton,
     ListRowSkeleton,
     AnimatedNumber,
-    PillBar
+    PillBar,
+    ScrollableList
 } from './ui';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
@@ -1266,7 +1267,11 @@ export default function AtivosPage() {
 
 
                                     {/* LISTAGEM SCROLLÁVEL */}
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2">
+                                    <ScrollableList
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={`${selectedTipo}-${selectedTipos.join(',')}-${filterRnp}-${territoryName}-${searchQuery}`}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2.5 min-h-0 w-full pb-2"
+                                    >
                                         {loadingStats ? (
                                             <div className="p-3">
                                                 <ListRowSkeleton count={6} />
@@ -1403,7 +1408,7 @@ export default function AtivosPage() {
                                                 />
                                             </div>
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1437,7 +1442,11 @@ export default function AtivosPage() {
                                         )}
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0">
+                                    <ScrollableList
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={territoryName}
+                                        className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0"
+                                    >
                                         {categoryStats.length > 0 ? (
                                             categoryStats.map((cat, idx) => {
                                                 const isSelected = selectedTipos.includes(cat.name) || selectedTipo === cat.name;
@@ -1502,7 +1511,7 @@ export default function AtivosPage() {
                                                 />
                                             </div>
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 
@@ -1542,8 +1551,10 @@ export default function AtivosPage() {
                                     </div>
 
                                     {/* LISTA RANKING: ESTILO DE PÍLULAS PROPORCIONAIS */}
-                                    <div
+                                    <ScrollableList
                                         key={selectedTerritory ? `ranking-muni-${selectedTerritory.id_territorio || selectedTerritory.nome_territorio || 'muni'}` : 'ranking-territorios'}
+                                        filtroSemiarido={filtroSemiarido}
+                                        resetKey={territoryName}
                                         className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0 w-full pb-2"
                                     >
                                         {selectedTerritory ? (
@@ -1692,7 +1703,7 @@ export default function AtivosPage() {
                                                 </div>
                                             )
                                         )}
-                                    </div>
+                                    </ScrollableList>
                                 </div>
                             )}
 

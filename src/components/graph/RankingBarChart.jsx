@@ -183,7 +183,7 @@ export default function RankingBarChart({
           <span className="text-text-muted font-medium text-body-sm">Nenhum dado disponível</span>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col justify-between py-0.5 w-full min-h-0 gap-1.5">
+        <div className={`flex-1 flex flex-col py-0.5 w-full min-h-0 ${processedData.length >= 5 ? 'justify-between gap-1.5' : 'justify-start gap-2.5'}`}>
           {processedData.map((item, idx) => {
             const isSelected = highlightedItem && item.normName === highlightedItem.normName;
             const maxVal = Math.max(...processedData.map(d => Number(d.val) || 0), 0.001);
@@ -232,9 +232,9 @@ export default function RankingBarChart({
                 </div>
 
                 {/* BARRA: TRACK + FILL + NOME */}
-                <div className={`relative flex-1 h-[30px] sm:h-[32px] rounded-xl sm:rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
+                <div className={`relative flex-1 h-[30px] sm:h-[32px] rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
                   <div
-                    className={`absolute left-0 top-0 bottom-0 rounded-xl sm:rounded-full ${fillColor} transition-[width,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden z-0 flex items-center`}
+                    className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-[width,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden z-0 flex items-center`}
                     style={{ width: `${percentOfMax}%` }}
                   />
 
