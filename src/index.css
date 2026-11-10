@@ -709,32 +709,13 @@
 }
 
 /* Transições de calor (Warmth) suave para os cards no modo Semiárido */
-.semiarido-card-warmth-1 {
-  /* Superior Esquerdo */
-  background: linear-gradient(155deg, rgba(254, 243, 199, 0.45) 0%, rgba(255, 251, 235, 0.20) 35%, #ffffff 100%) !important;
-  border-color: rgba(245, 158, 11, 0.38) !important;
-  box-shadow: 0 4px 20px -2px rgba(217, 119, 6, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
-}
-
-.semiarido-card-warmth-2 {
-  /* Superior Direito: mais próximo da luz do sol */
-  background: linear-gradient(155deg, rgba(254, 243, 199, 0.55) 0%, rgba(255, 251, 235, 0.25) 40%, #ffffff 100%) !important;
-  border-color: rgba(245, 158, 11, 0.45) !important;
-  box-shadow: 0 4px 24px -2px rgba(217, 119, 6, 0.10), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
-}
-
-.semiarido-card-warmth-3 {
-  /* Inferior Esquerdo: mais distante da luz do sol */
-  background: linear-gradient(155deg, rgba(254, 243, 199, 0.35) 0%, rgba(255, 251, 235, 0.15) 30%, #ffffff 100%) !important;
-  border-color: rgba(245, 158, 11, 0.32) !important;
-  box-shadow: 0 4px 16px -2px rgba(217, 119, 6, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
-}
-
+.semiarido-card-warmth-1,
+.semiarido-card-warmth-2,
+.semiarido-card-warmth-3,
 .semiarido-card-warmth-4 {
-  /* Inferior Direito */
-  background: linear-gradient(155deg, rgba(254, 243, 199, 0.45) 0%, rgba(255, 251, 235, 0.20) 35%, #ffffff 100%) !important;
-  border-color: rgba(245, 158, 11, 0.38) !important;
-  box-shadow: 0 4px 20px -2px rgba(217, 119, 6, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(245, 158, 11, 0.20) !important;
+  box-shadow: 0 2px 12px -2px rgba(217, 119, 6, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
 }
 
 /* ================= DARK MODE OVERRIDES ================= */
@@ -757,28 +738,13 @@
   background-color: rgb(var(--color-neutral-300) / 0.85);
 }
 
-.dark .semiarido-card-warmth-1 {
-  background: linear-gradient(155deg, rgba(245, 158, 11, 0.14) 0%, rgba(24, 24, 27, 0.96) 40%, #18181b 100%) !important;
-  border-color: rgba(245, 158, 11, 0.40) !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.40), 0 1px 3px rgba(245, 158, 11, 0.08) !important;
-}
-
-.dark .semiarido-card-warmth-2 {
-  background: linear-gradient(155deg, rgba(245, 158, 11, 0.20) 0%, rgba(24, 24, 27, 0.96) 45%, #18181b 100%) !important;
-  border-color: rgba(245, 158, 11, 0.48) !important;
-  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(245, 158, 11, 0.12) !important;
-}
-
-.dark .semiarido-card-warmth-3 {
-  background: linear-gradient(155deg, rgba(245, 158, 11, 0.10) 0%, rgba(24, 24, 27, 0.96) 35%, #18181b 100%) !important;
-  border-color: rgba(245, 158, 11, 0.34) !important;
-  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(245, 158, 11, 0.06) !important;
-}
-
+.dark .semiarido-card-warmth-1,
+.dark .semiarido-card-warmth-2,
+.dark .semiarido-card-warmth-3,
 .dark .semiarido-card-warmth-4 {
-  background: linear-gradient(155deg, rgba(245, 158, 11, 0.14) 0%, rgba(24, 24, 27, 0.96) 40%, #18181b 100%) !important;
-  border-color: rgba(245, 158, 11, 0.40) !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.40), 0 1px 3px rgba(245, 158, 11, 0.08) !important;
+  background: rgba(24, 24, 27, 0.92) !important;
+  border-color: rgba(245, 158, 11, 0.24) !important;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.35) !important;
 }
 
 .leaflet-container,

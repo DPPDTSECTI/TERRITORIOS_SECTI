@@ -224,20 +224,25 @@ export function MapResizeHandler({ isExpanded }) {
   useEffect(() => {
     const container = map.getContainer();
     if (!container || typeof ResizeObserver === 'undefined') return;
+    let rafId = null;
     const ro = new ResizeObserver(() => {
-      map.invalidateSize({ animate: false });
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        map.invalidateSize({ animate: false, pan: false });
+      });
     });
     ro.observe(container);
-    return () => ro.disconnect();
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      ro.disconnect();
+    };
   }, [map]);
 
   useEffect(() => {
-    const t1 = setTimeout(() => map.invalidateSize({ animate: false }), 120);
-    const t2 = setTimeout(() => map.invalidateSize({ animate: false }), 300);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    const raf = requestAnimationFrame(() => {
+      map.invalidateSize({ animate: false, pan: false });
+    });
+    return () => cancelAnimationFrame(raf);
   }, [isExpanded, map]);
 
   return null;
@@ -246,6 +251,7 @@ export function MapResizeHandler({ isExpanded }) {
 export function MapZoomWatcher({ onZoomChange, onBoundsChange }) {
   const map = useMap();
   const lastZoomRef = useRef(null);
+  const lastBoundsKeyRef = useRef('');
 
   const reportView = () => {
     const z = map.getZoom();
@@ -256,12 +262,15 @@ export function MapZoomWatcher({ onZoomChange, onBoundsChange }) {
     }
     if (onBoundsChange) {
       const b = map.getBounds();
-      onBoundsChange({
-        south: Number(b.getSouth().toFixed(4)),
-        west: Number(b.getWest().toFixed(4)),
-        north: Number(b.getNorth().toFixed(4)),
-        east: Number(b.getEast().toFixed(4))
-      });
+      const south = Number(b.getSouth().toFixed(3));
+      const west = Number(b.getWest().toFixed(3));
+      const north = Number(b.getNorth().toFixed(3));
+      const east = Number(b.getEast().toFixed(3));
+      const key = `${south},${west},${north},${east}`;
+      if (lastBoundsKeyRef.current !== key) {
+        lastBoundsKeyRef.current = key;
+        onBoundsChange({ south, west, north, east });
+      }
     }
   };
 
@@ -271,6 +280,6 @@ export function MapZoomWatcher({ onZoomChange, onBoundsChange }) {
   });
   useEffect(() => {
     reportView();
-  }, [map]);
+  }, [map, onBoundsChange]);
   return null;
 }

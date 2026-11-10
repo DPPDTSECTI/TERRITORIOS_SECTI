@@ -204,7 +204,7 @@ export default function RankingBarChart({
               ? (isSemi ? 'bg-accent-500' : 'bg-primary-600')
               : isSelected
                 ? (isSemi ? 'bg-accent-400' : 'bg-primary-500')
-                : (isSemi ? 'bg-accent-200/80 dark:bg-accent-500/30' : 'bg-primary-200/80 dark:bg-primary-500/30');
+                : (isSemi ? 'bg-accent-500/[0.12] dark:bg-accent-400/[0.15]' : 'bg-primary-200/80 dark:bg-primary-500/30');
 
             const textStyle = (isFirst || isSelected)
               ? 'font-semibold text-white'
@@ -232,7 +232,7 @@ export default function RankingBarChart({
                 </div>
 
                 {/* BARRA: TRACK + FILL + NOME */}
-                <div className={`relative flex-1 h-[30px] sm:h-[32px] rounded-full ${isSemi ? 'bg-accent-50/60 dark:bg-accent-950/40 border border-accent-200/50 dark:border-accent-800/50' : 'bg-surface-sunken border border-border/70'} overflow-hidden min-w-0 flex items-center shadow-2xs`}>
+                <div className="relative flex-1 h-[30px] sm:h-[32px] rounded-full bg-surface-sunken border border-border/70 overflow-hidden min-w-0 flex items-center shadow-2xs">
                   <div
                     className={`absolute left-0 top-0 bottom-0 rounded-full ${fillColor} transition-[width,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden z-0 flex items-center`}
                     style={{ width: `${percentOfMax}%` }}
