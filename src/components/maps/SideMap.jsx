@@ -109,6 +109,27 @@ export default function SideMap({
     }
   }, [setContextModoGeo]);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const bahiaBounds = [
+      [-19.0, -47.5],
+      [-7.5, -36.5]
+    ];
+    const targetMinZoom = 5.25;
+    const targetMaxZoom = modoGeografico ? 18 : 11;
+    map.options.maxBoundsViscosity = 0.9;
+    map.setMinZoom(targetMinZoom);
+    map.setMaxZoom(targetMaxZoom);
+    map.setMaxBounds(bahiaBounds);
+    if (map.getZoom() > targetMaxZoom) {
+      map.setZoom(targetMaxZoom);
+    } else if (map.getZoom() < targetMinZoom) {
+      map.setZoom(targetMinZoom);
+    }
+    map.panInsideBounds(bahiaBounds, { animate: false });
+  }, [modoGeografico]);
+
   const filtroSemiarido = propFiltroSemiarido !== undefined ? Boolean(propFiltroSemiarido) : Boolean(contextFiltroSemiarido);
   const { isDark } = useTheme();
   const mapPalette = useMapTheme(filtroSemiarido);
@@ -830,6 +851,49 @@ export default function SideMap({
       normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio) === norm
     );
 
+    if (modoGeografico) {
+      if (filtroSemiarido && !isTerrSemiarido) {
+        return {
+          fillColor: '#000000',
+          fillOpacity: 0,
+          stroke: false,
+          weight: 0,
+          opacity: 0,
+          className: 'outline-none pointer-events-none'
+        };
+      }
+
+      if (selectedTerritory) {
+        if (isSelected) {
+          return {
+            fillColor: filtroSemiarido ? '#F59E0B' : '#3B82F6',
+            fillOpacity: 0.04,
+            stroke: false,
+            weight: 0,
+            opacity: 0,
+            className: 'outline-none cursor-pointer'
+          };
+        }
+        return {
+          fillColor: '#000000',
+          fillOpacity: 0.002,
+          stroke: false,
+          weight: 0,
+          opacity: 0,
+          className: 'outline-none cursor-pointer'
+        };
+      }
+
+      return {
+        fillColor: '#000000',
+        fillOpacity: 0.002,
+        stroke: false,
+        weight: 0,
+        opacity: 0,
+        className: 'cursor-pointer outline-none'
+      };
+    }
+
     if (mode === 'cursos') {
       const tStat = cursosStatsByTerritory[`id_${idTerr}`] || cursosStatsByTerritory[norm];
       const count = tStat ? tStat.count : 0;
@@ -1009,6 +1073,7 @@ export default function SideMap({
     territoryBorderStyle,
     municipioBorderStyle,
     mode,
+    modoGeografico,
     selectedTerritory,
     selectedCadeia,
     filtroSemiarido,
@@ -1027,6 +1092,7 @@ export default function SideMap({
       territoryBorderStyle,
       municipioBorderStyle,
       mode,
+      modoGeografico,
       selectedTerritory,
       selectedCadeia,
       filtroSemiarido,
@@ -1048,6 +1114,7 @@ export default function SideMap({
     }
   }, [
     mode,
+    modoGeografico,
     filtroSemiarido,
     isDark,
     selectedTerritory,
@@ -1098,7 +1165,7 @@ export default function SideMap({
 
     layer.on({
       mouseover: (e) => {
-        const { mode: curMode, selectedTerritory: selTer, selectedCadeia: selCad, filtroSemiarido: semi, isDark: dark, mapPalette: palette } = styleRefs.current;
+        const { mode: curMode, modoGeografico: modoGeo, selectedTerritory: selTer, selectedCadeia: selCad, filtroSemiarido: semi, isDark: dark } = styleRefs.current;
         if (selCad) return;
         showHoverTooltip(
           nome,
@@ -1108,22 +1175,22 @@ export default function SideMap({
           e.originalEvent?.clientY
         );
         if (!selTer) {
-          if (curMode === 'cursos') {
+          if (modoGeo) {
             e.target.setStyle({
-              fillOpacity: 1.0,
-              color: palette.stroke.hover,
-              weight: 1.8
+              fillColor: semi ? '#F59E0B' : '#3B82F6',
+              fillOpacity: 0.08,
+              stroke: false,
+              weight: 0
+            });
+          } else if (curMode === 'cursos') {
+            e.target.setStyle({
+              fillOpacity: 1.0
             });
           } else {
             e.target.setStyle({
               fillColor: semi ? (dark ? '#78350F35' : '#FEF3C7') : (dark ? '#1e293b' : '#EFF6FF'),
-              fillOpacity: 1,
-              color: semi ? '#D97706' : (dark ? '#60A5FA' : '#2563EB'),
-              weight: 1.8
+              fillOpacity: 1
             });
-          }
-          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-            e.target.bringToFront();
           }
         }
       },
@@ -1169,8 +1236,7 @@ export default function SideMap({
           e.originalEvent?.clientY
         );
         e.target.setStyle({
-          weight: 2.0,
-          color: styleRefs.current.filtroSemiarido ? '#D97706' : '#1D3557'
+          fillOpacity: styleRefs.current.mode === 'cursos' ? 1 : 0.65
         });
       },
       mouseout: (e) => {
@@ -1286,7 +1352,7 @@ export default function SideMap({
         preferCanvas={true}
         center={[-13.0, -41.6]}
         zoom={5.75}
-        minZoom={modoGeografico ? 4.5 : 5.25}
+        minZoom={5.25}
         maxZoom={modoGeografico ? 18 : 11}
         zoomSnap={0.5}
         zoomDelta={0.5}
@@ -1294,18 +1360,11 @@ export default function SideMap({
         wheelDebounceTime={40}
         inertia={true}
         inertiaDeceleration={3000}
-        maxBounds={
-          modoGeografico
-            ? [
-                [-35.0, -75.0],
-                [6.0, -32.0]
-              ]
-            : [
-                [-18.8, -47.5],
-                [-7.5, -36.5]
-              ]
-        }
-        maxBoundsViscosity={modoGeografico ? 0.3 : 0.85}
+        maxBounds={[
+          [-19.0, -47.5],
+          [-7.5, -36.5]
+        ]}
+        maxBoundsViscosity={0.9}
         scrollWheelZoom={true}
         doubleClickZoom={true}
         className="w-full h-full z-10 flex-1 min-h-0 outline-none"
@@ -1368,7 +1427,7 @@ export default function SideMap({
           />
         )}
 
-        {!modoGeografico && territoriosGeoJson && (
+        {territoriosGeoJson && (
           <GeoJSON
             key="territorios-base-layer"
             ref={territoriosLayerRef}
@@ -1390,14 +1449,16 @@ export default function SideMap({
 
         <Pane name="boundaries-pane" style={{ zIndex: 430, pointerEvents: 'none' }}>
           {/* MALHA DE CONTORNOS UNIFICADOS DE TODOS OS TERRITÓRIOS (SEM LINHAS DUPLAS) */}
-          {!modoGeografico && !selectedTerritory && allTerritoryMesh && (
+          {(!selectedTerritory || modoGeografico) && allTerritoryMesh && (
             <GeoJSON
-              key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}`}
+              key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}-${modoGeografico ? 'geo' : 'carto'}-${selectedTerritory ? 'sel' : 'all'}`}
               data={allTerritoryMesh}
               style={{
-                color: filtroSemiarido ? (isDark ? '#F59E0B' : '#B45309') : (isDark ? '#334666' : '#CBD5E1'),
-                weight: filtroSemiarido ? 1.5 : 1.2,
-                opacity: filtroSemiarido ? 0.85 : 0.95,
+                color: modoGeografico
+                  ? (filtroSemiarido ? (isDark ? '#F59E0B' : '#B45309') : (isDark ? '#64748B' : '#64748B'))
+                  : (filtroSemiarido ? (isDark ? '#F59E0B' : '#B45309') : (isDark ? '#334666' : '#CBD5E1')),
+                weight: modoGeografico ? 0.75 : (filtroSemiarido ? 1.5 : 1.2),
+                opacity: modoGeografico ? (selectedTerritory ? 0.25 : 0.38) : (filtroSemiarido ? 0.85 : 0.95),
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'
@@ -1413,8 +1474,8 @@ export default function SideMap({
               data={stateBoundaryMesh}
               style={{
                 color: filtroSemiarido ? '#92400E' : (isDark ? '#475569' : '#64748B'),
-                weight: modoGeografico ? 1.5 : 1.8,
-                opacity: modoGeografico ? 0.55 : 1,
+                weight: modoGeografico ? 1.1 : 1.8,
+                opacity: modoGeografico ? 0.45 : 1,
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'
@@ -1426,14 +1487,14 @@ export default function SideMap({
           {/* CONTORNO COMPLETO, NÍTIDO E SEM CORTES DO TERRITÓRIO SELECIONADO */}
           {selectedTerritory && selectedTerritoryMesh && (
             <GeoJSON
-              key={`selected-territory-mesh-${selectedTerritory.id_territorio || selectedTerritory.nome_territorio || 'sel'}-${filtroSemiarido ? '1' : '0'}-${isDark ? 'dark' : 'light'}`}
+              key={`selected-territory-mesh-${selectedTerritory.id_territorio || selectedTerritory.nome_territorio || 'sel'}-${filtroSemiarido ? '1' : '0'}-${isDark ? 'dark' : 'light'}-${modoGeografico ? 'geo' : 'carto'}`}
               data={selectedTerritoryMesh}
               style={{
                 color: filtroSemiarido
                   ? (isDark ? '#F59E0B' : '#D97706')
                   : (isDark ? '#60A5FA' : '#1D4ED8'),
-                weight: 2.8,
-                opacity: 1,
+                weight: modoGeografico ? 1.35 : 2.8,
+                opacity: modoGeografico ? 0.75 : 1,
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'
@@ -1711,7 +1772,6 @@ export default function SideMap({
               : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 shadow-sm'
               }`}
           >
-            <span className={`w-2 h-2 rounded-full shrink-0 ${filtroSemiarido ? 'bg-white' : 'bg-amber-500'}`} />
             <span className="truncate">Semiárido</span>
           </button>
         )}

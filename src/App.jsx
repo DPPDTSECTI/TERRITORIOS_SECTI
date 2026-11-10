@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useContext } from 'react';
+import React, { Suspense, lazy, useEffect, useContext, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
@@ -101,6 +101,129 @@ const PageWrapper = ({ children }) => {
   );
 };
 
+const MAGMA_ORBS_CONFIG = [
+  {
+    sizeClass: 'w-[42vw] h-[42vw] min-w-[380px] min-h-[380px] max-w-[660px] max-h-[660px]',
+    normalBg: 'radial-gradient(circle, rgba(37, 99, 235, 0.32) 0%, rgba(59, 130, 246, 0.17) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)',
+    semiBg: 'radial-gradient(circle, rgba(245, 158, 11, 0.30) 0%, rgba(217, 119, 6, 0.16) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+  },
+  {
+    sizeClass: 'w-[44vw] h-[44vw] min-w-[400px] min-h-[400px] max-w-[700px] max-h-[700px]',
+    normalBg: 'radial-gradient(circle, rgba(56, 189, 248, 0.34) 0%, rgba(37, 99, 235, 0.18) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)',
+    semiBg: 'radial-gradient(circle, rgba(251, 191, 36, 0.30) 0%, rgba(245, 158, 11, 0.16) 36%, rgba(251, 191, 36, 0.05) 58%, transparent 74%)'
+  },
+  {
+    sizeClass: 'w-[40vw] h-[40vw] min-w-[360px] min-h-[360px] max-w-[620px] max-h-[620px]',
+    normalBg: 'radial-gradient(circle, rgba(14, 165, 233, 0.30) 0%, rgba(56, 189, 248, 0.16) 36%, rgba(14, 165, 233, 0.05) 58%, transparent 74%)',
+    semiBg: 'radial-gradient(circle, rgba(217, 119, 6, 0.28) 0%, rgba(245, 158, 11, 0.14) 36%, rgba(217, 119, 6, 0.05) 58%, transparent 74%)'
+  },
+  {
+    sizeClass: 'w-[38vw] h-[38vw] min-w-[340px] min-h-[340px] max-w-[580px] max-h-[580px]',
+    normalBg: 'radial-gradient(circle, rgba(59, 130, 246, 0.30) 0%, rgba(37, 99, 235, 0.16) 36%, rgba(96, 165, 250, 0.05) 58%, transparent 74%)',
+    semiBg: 'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(251, 191, 36, 0.14) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+  },
+  {
+    sizeClass: 'w-[34vw] h-[34vw] min-w-[300px] min-h-[300px] max-w-[520px] max-h-[520px]',
+    normalBg: 'radial-gradient(circle, rgba(96, 165, 250, 0.28) 0%, rgba(14, 165, 233, 0.15) 36%, rgba(59, 130, 246, 0.05) 58%, transparent 74%)',
+    semiBg: 'radial-gradient(circle, rgba(251, 191, 36, 0.26) 0%, rgba(217, 119, 6, 0.14) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+  }
+];
+
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function generateRandomState() {
+  const x = randomBetween(-14, 72);
+  const y = randomBetween(-16, 68);
+  const sx = randomBetween(0.76, 1.34);
+  const sy = randomBetween(0.76, 1.34);
+  const rot = randomBetween(-35, 35);
+  return `translate3d(${x.toFixed(1)}vw, ${y.toFixed(1)}vh, 0) rotate(${rot.toFixed(1)}deg) scale3d(${sx.toFixed(2)}, ${sy.toFixed(2)}, 1)`;
+}
+
+function MagmaLampBackground({ filtroSemiarido }) {
+  const orbRefs = useRef([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    let cancelled = false;
+    const activeAnimations = [];
+
+    orbRefs.current.forEach((el, idx) => {
+      if (!el || typeof el.animate !== 'function') return;
+
+      let currentTransform = generateRandomState();
+      el.style.transform = currentTransform;
+
+      const runNextLeg = () => {
+        if (cancelled || !el) return;
+        const midTransform1 = generateRandomState();
+        const midTransform2 = generateRandomState();
+        const nextTransform = generateRandomState();
+        const duration = Math.round(randomBetween(11000, 21000));
+
+        const anim = el.animate(
+          [
+            { transform: currentTransform },
+            { transform: midTransform1, offset: randomBetween(0.28, 0.42) },
+            { transform: midTransform2, offset: randomBetween(0.62, 0.78) },
+            { transform: nextTransform }
+          ],
+          {
+            duration,
+            easing: 'cubic-bezier(0.42, 0, 0.58, 1)',
+            fill: 'forwards'
+          }
+        );
+
+        activeAnimations[idx] = anim;
+        anim.onfinish = () => {
+          currentTransform = nextTransform;
+          runNextLeg();
+        };
+      };
+
+      runNextLeg();
+    });
+
+    return () => {
+      cancelled = true;
+      activeAnimations.forEach((a) => {
+        try {
+          a?.cancel();
+        } catch {
+          // ignore
+        }
+      });
+    };
+  }, []);
+
+  return (
+    <div
+      aria-hidden="true"
+      data-html2canvas-ignore="true"
+      className="pointer-events-none fixed inset-0 overflow-hidden z-0 print:hidden select-none"
+    >
+      {MAGMA_ORBS_CONFIG.map((orb, idx) => (
+        <div
+          key={idx}
+          ref={(el) => {
+            orbRefs.current[idx] = el;
+          }}
+          className={`absolute top-0 left-0 rounded-full ${orb.sizeClass}`}
+          style={{
+            background: filtroSemiarido ? orb.semiBg : orb.normalBg
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   const { filtroSemiarido } = useContext(DataContext) || {};
@@ -110,70 +233,8 @@ function AnimatedRoutes() {
 
   return (
     <div className={`flex w-full relative ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-dvh bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
-      {/* ATMOSFERA GLOBAL: ESFERAS SUTIS ESTILO LANTERNA DE MAGMA */}
-      {!hideNavigation && (
-        <div
-          aria-hidden="true"
-          data-html2canvas-ignore="true"
-          className="pointer-events-none fixed inset-0 overflow-hidden z-0 print:hidden select-none"
-        >
-          {/* Esfera 1 — Topo Esquerdo / Centro */}
-          <div
-            className="
-              absolute -top-[10%] left-[8%]
-              w-[42vw] h-[42vw] min-w-[380px] min-h-[380px] max-w-[660px] max-h-[660px]
-              rounded-full animate-magma-1
-            "
-            style={{
-              background: filtroSemiarido
-                ? 'radial-gradient(circle, rgba(245, 158, 11, 0.30) 0%, rgba(217, 119, 6, 0.16) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
-                : 'radial-gradient(circle, rgba(37, 99, 235, 0.32) 0%, rgba(59, 130, 246, 0.17) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)'
-            }}
-          />
-
-          {/* Esfera 2 — Topo / Direita */}
-          <div
-            className="
-              absolute top-[8%] right-[2%]
-              w-[44vw] h-[44vw] min-w-[400px] min-h-[400px] max-w-[700px] max-h-[700px]
-              rounded-full animate-magma-2
-            "
-            style={{
-              background: filtroSemiarido
-                ? 'radial-gradient(circle, rgba(251, 191, 36, 0.30) 0%, rgba(245, 158, 11, 0.16) 36%, rgba(251, 191, 36, 0.05) 58%, transparent 74%)'
-                : 'radial-gradient(circle, rgba(56, 189, 248, 0.34) 0%, rgba(37, 99, 235, 0.18) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)'
-            }}
-          />
-
-          {/* Esfera 3 — Centro / Esquerda */}
-          <div
-            className="
-              absolute -bottom-[12%] left-[4%]
-              w-[40vw] h-[40vw] min-w-[360px] min-h-[360px] max-w-[620px] max-h-[620px]
-              rounded-full animate-magma-3
-            "
-            style={{
-              background: filtroSemiarido
-                ? 'radial-gradient(circle, rgba(217, 119, 6, 0.28) 0%, rgba(245, 158, 11, 0.14) 36%, rgba(217, 119, 6, 0.05) 58%, transparent 74%)'
-                : 'radial-gradient(circle, rgba(14, 165, 233, 0.30) 0%, rgba(56, 189, 248, 0.16) 36%, rgba(14, 165, 233, 0.05) 58%, transparent 74%)'
-            }}
-          />
-
-          {/* Esfera 4 — Base Direita / Centro */}
-          <div
-            className="
-              absolute bottom-[0%] right-[14%]
-              w-[38vw] h-[38vw] min-w-[340px] min-h-[340px] max-w-[580px] max-h-[580px]
-              rounded-full animate-magma-4
-            "
-            style={{
-              background: filtroSemiarido
-                ? 'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(251, 191, 36, 0.14) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
-                : 'radial-gradient(circle, rgba(59, 130, 246, 0.30) 0%, rgba(37, 99, 235, 0.16) 36%, rgba(96, 165, 250, 0.05) 58%, transparent 74%)'
-            }}
-          />
-        </div>
-      )}
+      {/* ATMOSFERA GLOBAL: ESFERAS ALEATORIZADAS ESTILO LANTERNA DE MAGMA */}
+      {!hideNavigation && <MagmaLampBackground filtroSemiarido={filtroSemiarido} />}
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">
         {!hideNavigation && (

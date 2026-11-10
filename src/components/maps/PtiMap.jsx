@@ -161,6 +161,27 @@ export default function PtiMap({
     }
   }, [setContextModoGeo]);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const bahiaBounds = [
+      [-19.0, -47.5],
+      [-7.5, -36.5]
+    ];
+    const targetMinZoom = 5.25;
+    const targetMaxZoom = modoGeografico ? 18 : 10.5;
+    map.options.maxBoundsViscosity = 0.9;
+    map.setMinZoom(targetMinZoom);
+    map.setMaxZoom(targetMaxZoom);
+    map.setMaxBounds(bahiaBounds);
+    if (map.getZoom() > targetMaxZoom) {
+      map.setZoom(targetMaxZoom);
+    } else if (map.getZoom() < targetMinZoom) {
+      map.setZoom(targetMinZoom);
+    }
+    map.panInsideBounds(bahiaBounds, { animate: false });
+  }, [modoGeografico]);
+
   const [topologia, setTopologia] = useState(() => getCachedBahiaTopologia());
   const [loading, setLoading] = useState(() => !getCachedBahiaTopologia());
 
@@ -253,6 +274,53 @@ export default function PtiMap({
       const faintStroke = mapPalette.border;
 
       const isSelectedMap = selectedTerritory && Number(selectedTerritory.id_territorio) === idTer;
+
+      if (modoGeografico) {
+        if (filtroSemiarido) {
+          const isSemi =
+            feature.properties.is_semiarido ??
+            isMunicipioSemiarido(
+              feature.properties.nome_municipio_oficial ||
+                feature.properties.NOME ||
+                feature.properties.nome ||
+                ''
+            );
+          if (!isSemi) {
+            return {
+              fillColor: '#000000',
+              fillOpacity: 0,
+              stroke: false,
+              weight: 0,
+              className: 'outline-none'
+            };
+          }
+        }
+        if (selectedTerritory) {
+          if (isSelectedMap) {
+            return {
+              fillColor: filtroSemiarido ? '#F59E0B' : '#3B82F6',
+              fillOpacity: 0.04,
+              stroke: false,
+              weight: 0,
+              className: 'outline-none cursor-pointer'
+            };
+          }
+          return {
+            fillColor: '#000000',
+            fillOpacity: 0.002,
+            stroke: false,
+            weight: 0,
+            className: 'outline-none cursor-pointer'
+          };
+        }
+        return {
+          fillColor: '#000000',
+          fillOpacity: 0.002,
+          stroke: false,
+          weight: 0,
+          className: 'outline-none cursor-pointer'
+        };
+      }
 
       // Quando há território selecionado, a camada base renderiza os demais territórios suavemente esmaecidos (e clicáveis!)
       if (selectedTerritory) {
@@ -347,7 +415,7 @@ export default function PtiMap({
         className: 'outline-none cursor-pointer'
       };
     },
-    [selectedTerritory, isZoomedIn, filtroSemiarido, territoriesDynamicStats, mapPalette, isDark]
+    [selectedTerritory, isZoomedIn, filtroSemiarido, modoGeografico, territoriesDynamicStats, mapPalette, isDark]
   );
 
   // Estilo exclusivo para os municípios do território selecionado (~15 polígonos em vez de 417)
@@ -407,6 +475,8 @@ export default function PtiMap({
     selectedTerritory,
     isZoomedIn,
     filtroSemiarido,
+    modoGeografico,
+    isDark,
     territoriosData,
     onSelectTerritory,
     mapPalette,
@@ -418,6 +488,8 @@ export default function PtiMap({
       selectedTerritory,
       isZoomedIn,
       filtroSemiarido,
+      modoGeografico,
+      isDark,
       territoriosData,
       onSelectTerritory,
       mapPalette,
@@ -527,38 +599,46 @@ export default function PtiMap({
 
       layer.on({
         mouseover: (e) => {
-          const { selectedTerritory: selTer, isZoomedIn: zoomed, mapPalette: palette } = stateRef.current;
+          const { selectedTerritory: selTer, isZoomedIn: zoomed, modoGeografico: modoGeo, filtroSemiarido: semi } = stateRef.current;
           const isSelectedMap = selTer && Number(selTer.id_territorio) === idTer;
-          if (selTer && isSelectedMap) return;
+          if (!modoGeo && selTer && isSelectedMap) return;
 
           const cx = e.originalEvent?.clientX;
           const cy = e.originalEvent?.clientY;
+
+          if (modoGeo) {
+            showHoverTooltip(idTer, zoomed ? (feature.properties.id_municipio || null) : null, cx, cy);
+            if (!isSelectedMap) {
+              layersByTerritory.current[idTer]?.forEach((l) => {
+                l.setStyle({
+                  fillColor: semi ? '#F59E0B' : '#3B82F6',
+                  fillOpacity: 0.08,
+                  stroke: false,
+                  weight: 0
+                });
+              });
+            }
+            return;
+          }
 
           if (!selTer && !zoomed) {
             showHoverTooltip(idTer, null, cx, cy);
 
             layersByTerritory.current[idTer]?.forEach((l) => {
               l.setStyle({
-                fillOpacity: 1.0,
-                weight: 2.2,
-                color: palette.stroke.hover
+                fillOpacity: 1.0
               });
-              if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                l.bringToFront();
-              }
             });
           } else {
             showHoverTooltip(idTer, feature.properties.id_municipio || null, cx, cy);
             e.target.setStyle({
-              fillOpacity: selTer ? 0.72 : 1,
-              color: palette.stroke.hover,
-              weight: 2.0
+              fillOpacity: selTer ? 0.72 : 1
             });
           }
         },
         mouseout: (e) => {
-          const { selectedTerritory: selTer, isZoomedIn: zoomed, styleBaseFeature: styleFn } = stateRef.current;
-          if (!selTer && !zoomed) {
+          const { selectedTerritory: selTer, isZoomedIn: zoomed, modoGeografico: modoGeo, styleBaseFeature: styleFn } = stateRef.current;
+          if (modoGeo || (!selTer && !zoomed)) {
             layersByTerritory.current[idTer]?.forEach((l) => {
               l.setStyle(styleFn(l.feature));
             });
@@ -601,13 +681,8 @@ export default function PtiMap({
             e.originalEvent?.clientY
           );
           e.target.setStyle({
-            fillOpacity: 1,
-            color: stateRef.current.mapPalette.stroke.hover,
-            weight: 2.4
+            fillOpacity: 1
           });
-          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-            e.target.bringToFront();
-          }
         },
         mouseout: (e) => {
           e.target.setStyle(stateRef.current.styleSelectedMunicipio(feature));
@@ -775,7 +850,7 @@ export default function PtiMap({
           preferCanvas={true}
           center={[-12.8, -41.2]}
           zoom={5.8}
-          minZoom={modoGeografico ? 4.5 : 5.25}
+          minZoom={5.25}
           maxZoom={modoGeografico ? 18 : 10.5}
           zoomSnap={0.5}
           zoomDelta={0.5}
@@ -783,18 +858,11 @@ export default function PtiMap({
           wheelDebounceTime={40}
           inertia={true}
           inertiaDeceleration={3000}
-          maxBounds={
-            modoGeografico
-              ? [
-                  [-35.0, -75.0],
-                  [6.0, -32.0]
-                ]
-              : [
-                  [-19.0, -47.5],
-                  [-7.5, -36.5]
-                ]
-          }
-          maxBoundsViscosity={modoGeografico ? 0.3 : 0.85}
+          maxBounds={[
+            [-19.0, -47.5],
+            [-7.5, -36.5]
+          ]}
+          maxBoundsViscosity={0.9}
           zoomControl={false}
           attributionControl={false}
           scrollWheelZoom={true}
@@ -834,15 +902,13 @@ export default function PtiMap({
             />
           )}
 
-          {!modoGeografico && (
-            <GeoJSON
-              key={baseLayerKey}
-              ref={geoJsonLayerRef}
-              data={baseLayerData}
-              style={styleBaseFeature}
-              onEachFeature={onEachBaseFeature}
-            />
-          )}
+          <GeoJSON
+            key={baseLayerKey}
+            ref={geoJsonLayerRef}
+            data={baseLayerData}
+            style={styleBaseFeature}
+            onEachFeature={onEachBaseFeature}
+          />
 
           {/* Malha contínua de divisas municipais (renderizada apenas quando o zoom está aproximado) */}
           {!modoGeografico && !selectedTerritory && isZoomedIn && allMunicipiosMesh && (
@@ -872,15 +938,17 @@ export default function PtiMap({
             />
           )}
 
-          {/* Contornos nítidos de TODOS os territórios de identidade na visão geral */}
-          {!modoGeografico && !selectedTerritory && allTerritoryMesh && (
+          {/* Contornos de TODOS os territórios de identidade */}
+          {(!selectedTerritory || modoGeografico) && allTerritoryMesh && (
             <GeoJSON
-              key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'normal'}-${isDark ? 'dark' : 'light'}`}
+              key={`all-territory-mesh-${filtroSemiarido ? 'semi' : 'normal'}-${isDark ? 'dark' : 'light'}-${modoGeografico ? 'geo' : 'carto'}-${selectedTerritory ? 'sel' : 'all'}`}
               data={allTerritoryMesh}
               style={{
-                color: filtroSemiarido ? (isDark ? '#F59E0B' : '#78350F') : isDark ? '#334666' : '#FFFFFF',
-                weight: filtroSemiarido ? 1.6 : 1.8,
-                opacity: filtroSemiarido ? 0.7 : isDark ? 0.85 : 0.95,
+                color: modoGeografico
+                  ? (filtroSemiarido ? (isDark ? '#F59E0B' : '#92400E') : '#64748B')
+                  : (filtroSemiarido ? (isDark ? '#F59E0B' : '#78350F') : isDark ? '#334666' : '#FFFFFF'),
+                weight: modoGeografico ? 0.75 : (filtroSemiarido ? 1.6 : 1.8),
+                opacity: modoGeografico ? (selectedTerritory ? 0.25 : 0.38) : (filtroSemiarido ? 0.7 : isDark ? 0.85 : 0.95),
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'
@@ -896,8 +964,8 @@ export default function PtiMap({
               data={stateBoundaryMesh}
               style={{
                 color: filtroSemiarido ? '#92400E' : isDark ? '#4a6288' : (modoGeografico ? '#64748B' : '#FFFFFF'),
-                weight: modoGeografico ? 1.6 : 2.2,
-                opacity: modoGeografico ? 0.6 : 1,
+                weight: modoGeografico ? 1.1 : 2.2,
+                opacity: modoGeografico ? 0.45 : 1,
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'
@@ -909,12 +977,12 @@ export default function PtiMap({
           {/* Contorno perimetral externo do território selecionado */}
           {selectedTerritory && territoryMeshes[selectedTerritory.id_territorio] && (
             <GeoJSON
-              key={`selected-mesh-${selectedTerritory.id_territorio}-${filtroSemiarido ? '1' : '0'}`}
+              key={`selected-mesh-${selectedTerritory.id_territorio}-${filtroSemiarido ? '1' : '0'}-${modoGeografico ? 'geo' : 'carto'}`}
               data={territoryMeshes[selectedTerritory.id_territorio]}
               style={{
-                color: filtroSemiarido ? '#78350F' : isDark ? '#60A5FA' : '#1D3557',
-                weight: 3.0,
-                opacity: 1,
+                color: filtroSemiarido ? '#78350F' : isDark ? '#60A5FA' : (modoGeografico ? '#2563EB' : '#1D3557'),
+                weight: modoGeografico ? 1.35 : 3.0,
+                opacity: modoGeografico ? 0.75 : 1,
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'
@@ -1057,11 +1125,6 @@ export default function PtiMap({
                 : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 shadow-sm'
             }`}
           >
-            <span
-              className={`w-2 h-2 rounded-full shrink-0 ${
-                filtroSemiarido ? 'bg-white' : 'bg-amber-500'
-              }`}
-            />
             <span className="truncate">Semiárido</span>
           </button>
         )}
