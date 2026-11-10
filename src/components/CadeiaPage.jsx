@@ -889,7 +889,7 @@ export default function CadeiaPage() {
                 {/* MAPA DE CADEIAS */}
                 <motion.div
                     variants={fadeUp}
-                    className={`shrink-0 w-full h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-[width,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    className={`shrink-0 w-full h-full min-h-[460px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-[border-color,box-shadow] duration-200 ${
                         filtroSemiarido
                             ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
                             : 'border-border'
@@ -970,6 +970,7 @@ export default function CadeiaPage() {
                                             <div
                                                 key={c.id_cadeia || idx}
                                                 ref={(el) => { itemRefs.current[c.id_cadeia] = el; }}
+                                                style={{ contentVisibility: 'auto', containIntrinsicSize: '0 56px' }}
                                                 onClick={() => {
                                                     if (isSelected) {
                                                         setSelectedCadeia(null);

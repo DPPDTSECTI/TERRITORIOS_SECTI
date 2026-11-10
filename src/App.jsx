@@ -105,27 +105,27 @@ const MAGMA_ORBS_CONFIG = [
   {
     sizeClass: 'w-[42vw] h-[42vw] min-w-[380px] min-h-[380px] max-w-[660px] max-h-[660px]',
     normalBg: 'radial-gradient(circle, rgba(37, 99, 235, 0.32) 0%, rgba(59, 130, 246, 0.17) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)',
-    semiBg: 'radial-gradient(circle, rgba(245, 158, 11, 0.30) 0%, rgba(217, 119, 6, 0.16) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+    semiBg: 'radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.09) 36%, rgba(245, 158, 11, 0.03) 58%, transparent 74%)'
   },
   {
     sizeClass: 'w-[44vw] h-[44vw] min-w-[400px] min-h-[400px] max-w-[700px] max-h-[700px]',
     normalBg: 'radial-gradient(circle, rgba(56, 189, 248, 0.34) 0%, rgba(37, 99, 235, 0.18) 36%, rgba(56, 189, 248, 0.06) 58%, transparent 74%)',
-    semiBg: 'radial-gradient(circle, rgba(251, 191, 36, 0.30) 0%, rgba(245, 158, 11, 0.16) 36%, rgba(251, 191, 36, 0.05) 58%, transparent 74%)'
+    semiBg: 'radial-gradient(circle, rgba(251, 191, 36, 0.18) 0%, rgba(245, 158, 11, 0.09) 36%, rgba(251, 191, 36, 0.03) 58%, transparent 74%)'
   },
   {
     sizeClass: 'w-[40vw] h-[40vw] min-w-[360px] min-h-[360px] max-w-[620px] max-h-[620px]',
     normalBg: 'radial-gradient(circle, rgba(14, 165, 233, 0.30) 0%, rgba(56, 189, 248, 0.16) 36%, rgba(14, 165, 233, 0.05) 58%, transparent 74%)',
-    semiBg: 'radial-gradient(circle, rgba(217, 119, 6, 0.28) 0%, rgba(245, 158, 11, 0.14) 36%, rgba(217, 119, 6, 0.05) 58%, transparent 74%)'
+    semiBg: 'radial-gradient(circle, rgba(217, 119, 6, 0.16) 0%, rgba(245, 158, 11, 0.08) 36%, rgba(217, 119, 6, 0.03) 58%, transparent 74%)'
   },
   {
     sizeClass: 'w-[38vw] h-[38vw] min-w-[340px] min-h-[340px] max-w-[580px] max-h-[580px]',
     normalBg: 'radial-gradient(circle, rgba(59, 130, 246, 0.30) 0%, rgba(37, 99, 235, 0.16) 36%, rgba(96, 165, 250, 0.05) 58%, transparent 74%)',
-    semiBg: 'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(251, 191, 36, 0.14) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+    semiBg: 'radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, rgba(251, 191, 36, 0.08) 36%, rgba(245, 158, 11, 0.03) 58%, transparent 74%)'
   },
   {
     sizeClass: 'w-[34vw] h-[34vw] min-w-[300px] min-h-[300px] max-w-[520px] max-h-[520px]',
     normalBg: 'radial-gradient(circle, rgba(96, 165, 250, 0.28) 0%, rgba(14, 165, 233, 0.15) 36%, rgba(59, 130, 246, 0.05) 58%, transparent 74%)',
-    semiBg: 'radial-gradient(circle, rgba(251, 191, 36, 0.26) 0%, rgba(217, 119, 6, 0.14) 36%, rgba(245, 158, 11, 0.05) 58%, transparent 74%)'
+    semiBg: 'radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, rgba(217, 119, 6, 0.08) 36%, rgba(245, 158, 11, 0.03) 58%, transparent 74%)'
   }
 ];
 

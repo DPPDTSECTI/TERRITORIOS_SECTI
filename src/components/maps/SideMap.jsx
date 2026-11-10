@@ -1374,7 +1374,10 @@ export default function SideMap({
       >
         <MapPaneManager />
         <MapResizeHandler isExpanded={isExpanded} />
-        <MapZoomWatcher onZoomChange={setCurrentZoom} onBoundsChange={setViewportBounds} />
+        <MapZoomWatcher
+          onZoomChange={setCurrentZoom}
+          onBoundsChange={mode === 'cadeias' && selectedCadeia ? setViewportBounds : undefined}
+        />
         <MapClickHandler
           onClearPinned={() => {
             setPinnedAssetId(null);

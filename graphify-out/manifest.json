@@ -108,9 +108,9 @@
     "semantic_hash": "510064325a06d44966af0dcdfd3482be"
   },
   "src/App.jsx": {
-    "mtime": 1794314127.186793,
-    "seen": 1794314202.062906,
-    "ast_hash": "5198cb5d0a2a2de4c2c76dcc6dd5d5a7",
+    "mtime": 1794316926.1150131,
+    "seen": 1794317000.6851573,
+    "ast_hash": "b6fadbef8da0dd19c5d5146d9b8394e0",
     "semantic_hash": ""
   },
   "src/__tests__/lib/format.test.js": {
@@ -156,27 +156,27 @@
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1793993794.0772352,
-    "seen": 1793994215.897156,
-    "ast_hash": "ab26fdd646ef18a94dfb41d589f7078a",
+    "mtime": 1794317504.400292,
+    "seen": 1794317536.7978814,
+    "ast_hash": "ec932bc7bc6f23500d0a73b8d9ebb115",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
-    "mtime": 1793993794.091183,
-    "seen": 1793994215.897156,
-    "ast_hash": "54f34e51750cce9abc99df2b2874bec9",
+    "mtime": 1794317512.535743,
+    "seen": 1794317536.7978814,
+    "ast_hash": "a875618d354de30dd1fa540e2e5128b7",
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {
-    "mtime": 1793993794.0939841,
-    "seen": 1793994215.897156,
-    "ast_hash": "791217dd9115b4997d66d45400195e86",
+    "mtime": 1794317508.3301258,
+    "seen": 1794317536.7978814,
+    "ast_hash": "3c1ec9f07bddf00d0c37cddc5d455e6f",
     "semantic_hash": ""
   },
   "src/components/DashboardPainel.jsx": {
-    "mtime": 1793990603.635356,
-    "seen": 1793990672.3073883,
-    "ast_hash": "c7c00b7cc6fb3d73baf669d87e3394fc",
+    "mtime": 1794316923.981193,
+    "seen": 1794317000.6851573,
+    "ast_hash": "46199eef7ed09ea61b1520d55e1acd98",
     "semantic_hash": ""
   },
   "src/components/FontesReferenciasSection.jsx": {
@@ -222,15 +222,15 @@
     "semantic_hash": "462b994da5b76e0b48017b33095a1ab4"
   },
   "src/components/graph/CustomPieChart.jsx": {
-    "mtime": 1793993794.095493,
-    "seen": 1793994215.897156,
-    "ast_hash": "ef26fed6380107312470243b1cfbb634",
+    "mtime": 1794316973.4443393,
+    "seen": 1794317000.6851573,
+    "ast_hash": "f0c5181ee21575fb41ca5caea497dc23",
     "semantic_hash": ""
   },
   "src/components/graph/DonutChart.jsx": {
-    "mtime": 1793993794.095493,
-    "seen": 1793994215.897156,
-    "ast_hash": "c0f16a97113dd756bb07ac26c5b19e25",
+    "mtime": 1794316975.6259804,
+    "seen": 1794317000.6851573,
+    "ast_hash": "14a2315f175fb53bf9c88983c0095c44",
     "semantic_hash": ""
   },
   "src/components/graph/ProportionBarChart.jsx": {
@@ -240,9 +240,9 @@
     "semantic_hash": ""
   },
   "src/components/graph/RankingBarChart.jsx": {
-    "mtime": 1793993794.100429,
-    "seen": 1793994215.897156,
-    "ast_hash": "ab72752262055d4af38188314ec8762c",
+    "mtime": 1794316971.4286122,
+    "seen": 1794317000.6851573,
+    "ast_hash": "60006549e8cc93ce5920a7aa06e1e1b8",
     "semantic_hash": ""
   },
   "src/components/graph/StackedBarChart.jsx": {
@@ -270,9 +270,9 @@
     "semantic_hash": ""
   },
   "src/components/maps/SideMap.jsx": {
-    "mtime": 1794315776.4645436,
-    "seen": 1794315881.6934211,
-    "ast_hash": "34fd8b590299cb49588eb40f7ffa6427",
+    "mtime": 1794317436.472052,
+    "seen": 1794317536.7978814,
+    "ast_hash": "c6619c099055aa2f4d538a930c4046d1",
     "semantic_hash": ""
   },
   "src/components/maps/bahiaTopologiaCache.js": {
@@ -288,9 +288,9 @@
     "semantic_hash": "afeb11b063d7674f634bde44283150b7"
   },
   "src/components/maps/side/MapControllers.jsx": {
-    "mtime": 1793993794.108947,
-    "seen": 1793994215.897156,
-    "ast_hash": "172b81bb2d35286ec249295a46e0eba3",
+    "mtime": 1794317434.0800784,
+    "seen": 1794317536.7978814,
+    "ast_hash": "a7f1b02a5cf500634cda9b5b3db4cb10",
     "semantic_hash": ""
   },
   "src/components/maps/side/MapMarkersAndPopups.jsx": {

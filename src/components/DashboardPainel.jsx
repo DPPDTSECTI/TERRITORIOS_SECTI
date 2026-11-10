@@ -654,7 +654,7 @@ export default function DashboardPainel() {
                           ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                           : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                         : (filtroSemiarido
-                          ? 'bg-gradient-to-br from-amber-50/80 via-surface to-surface dark:from-amber-950/30 dark:via-zinc-900 dark:to-zinc-900 border border-amber-300/70 dark:border-amber-600/40 shadow-2xs hover:border-amber-400 dark:hover:border-amber-500 text-text-primary'
+                          ? 'bg-white/90 dark:bg-zinc-900/90 border border-amber-200/70 dark:border-amber-700/35 shadow-2xs hover:border-amber-300 dark:hover:border-amber-600 text-text-primary'
                           : 'bg-surface-soft border border-border/70 text-text-primary hover:border-border-strong')
                       }`}
                   >
@@ -746,8 +746,7 @@ export default function DashboardPainel() {
           variants={staggerContainer(0.04)}
           initial="initial"
           animate="animate"
-          className={`tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-500 ${filtroSemiarido ? 'bg-gradient-to-br from-amber-500/[0.04] via-amber-400/[0.015] to-transparent rounded-card' : ''
-            }`}
+          className="tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-500"
         >
           {loadingStats ? (
             Array.from({ length: 4 }).map((_, i) => (
