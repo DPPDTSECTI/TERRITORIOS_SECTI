@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "src/components/AdminPage.jsx": {
-    "mtime": 1793986556.9483325,
-    "seen": 1794507358.3044078,
-    "ast_hash": "83393ae1a87832bbf9151c013cd4ad76",
+    "mtime": 1794509118.699688,
+    "seen": 1794509152.722616,
+    "ast_hash": "cad3ae4b0a6e5e17fb671d0e6bf53873",
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
@@ -192,9 +192,9 @@
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1793986556.9671052,
-    "seen": 1794507358.3044078,
-    "ast_hash": "8c52d0973f942cdb7cb39a60e68d224d",
+    "mtime": 1794507684.8404944,
+    "seen": 1794507821.85287,
+    "ast_hash": "848e8771e64dbdefb47069fd261c9e71",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
@@ -498,9 +498,9 @@
     "semantic_hash": ""
   },
   "src/context/DataContext.jsx": {
-    "mtime": 1793986557.0296166,
-    "seen": 1794507358.3044078,
-    "ast_hash": "4d3f5e3dee14a900194f3c91a082a486",
+    "mtime": 1794507645.0371401,
+    "seen": 1794507821.85287,
+    "ast_hash": "6694ce67181e145c2290e90fd7ff7a44",
     "semantic_hash": ""
   },
   "src/context/ThemeContext.jsx": {
@@ -723,6 +723,18 @@
     "mtime": 1790188651.1295295,
     "seen": 1794507358.3044078,
     "ast_hash": "8bbd8c2f5d9eeccaa8704d3db8e096af",
+    "semantic_hash": ""
+  },
+  "src/__tests__/utils/crudDraft.test.js": {
+    "mtime": 1794507835.0895803,
+    "seen": 1794508064.311436,
+    "ast_hash": "e31a9cc66f1aadae82fe9917e66680ba",
+    "semantic_hash": ""
+  },
+  "src/utils/crudDraft.js": {
+    "mtime": 1794507836.4650106,
+    "seen": 1794508064.311436,
+    "ast_hash": "793c6b5cf91690faf32580b5a4daa8bb",
     "semantic_hash": ""
   },
   "package-lock.json": {
