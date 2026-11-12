@@ -24,5 +24,6 @@ export { ScrollableList } from './ScrollableList';
 export { Tooltip } from './Tooltip';
 export { Dialog } from './Dialog';
 export { Drawer } from './Drawer';
+export { DetailIsland } from './DetailIsland';
 export { Dropdown } from './Dropdown';
 export { ToastProvider, useToast } from './Toast';

@@ -32,7 +32,8 @@ import {
     ListRowSkeleton,
     AnimatedNumber,
     PillBar,
-    ScrollableList
+    ScrollableList,
+    DetailIsland
 } from './ui';
 import { useChartTheme } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -145,6 +146,7 @@ export default function CursosPage() {
     const [selectedRede, setSelectedRede] = useState('todas'); // 'todas' | 'publica' | 'privada'
     const [selectedIES, setSelectedIES] = useState(null);
     const [selectedCursoId, setSelectedCursoId] = useState(null);
+    const [selectedCurso, setSelectedCurso] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'ead' | 'areas' | 'ranking' | 'ies'
     const [isMapExpanded, setIsMapExpanded] = useState(false);
@@ -222,6 +224,7 @@ export default function CursosPage() {
         setSelectedTerritory(null);
         setSearchQuery('');
         setSelectedCursoId(null);
+        setSelectedCurso(null);
     };
 
     // 1. Filtragem Geral dos Cursos Presenciais
@@ -568,6 +571,117 @@ export default function CursosPage() {
         return { semiCursos, pctCursos };
     }, [territoryCursos]);
 
+    const selectedCursoDetails = useMemo(() => {
+        if (!selectedCurso) return null;
+        const redeInfo = classificarInstituicao(selectedCurso);
+        const ead = isCursoEad(selectedCurso);
+        const iesFull = cleanIesName(selectedCurso.entidade || selectedCurso.instituicao || 'Instituição de Ensino', selectedCurso.municipio);
+        const iesSigla = selectedCurso.sigla ? String(selectedCurso.sigla).trim().toUpperCase() : '';
+        const areaNome = selectedCurso.categoria || selectedCurso.tipo || 'Geral';
+        const munNome = selectedCurso.municipio || 'Bahia';
+        const terrNome = cleanTerritorioName(selectedCurso.territorio_identidade || selectedCurso.territorio) || 'Bahia';
+        const isSemi = isMunicipioSemiarido(munNome);
+
+        const basePool = ead ? (cursosEadData || []) : (cursosData || []);
+        const cursosMesmaIes = basePool.filter(c => {
+            const s = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
+            const f = cleanIesName(c.entidade || c.instituicao || '', c.municipio);
+            return (iesSigla && s === iesSigla) || (iesFull && f === iesFull);
+        });
+        const outrosCursosIesMun = cursosMesmaIes.filter(
+            c => normalize(c.municipio) === normalize(munNome) && (c.curso || c.nome) !== (selectedCurso.curso || selectedCurso.nome)
+        );
+        const cursosMesmoMun = basePool.filter(c => normalize(c.municipio) === normalize(munNome));
+        const cursosMesmaArea = basePool.filter(c => (c.categoria || c.tipo) === areaNome);
+
+        const territorioInfo = (territoriosData || []).find(t =>
+            (selectedCurso.id_territorio && Number(t.id_territorio) === Number(selectedCurso.id_territorio)) ||
+            normalize(cleanTerritorioName(t.nome_territorio || t.territorio || '')) === normalize(terrNome)
+        );
+
+        const accentColor = categoryColorMap[areaNome] || (filtroSemiarido ? '#D97706' : '#2563EB');
+
+        const statusPills = [
+            {
+                label: redeInfo.isPublica ? 'Rede Pública' : 'Rede Privada',
+                variant: redeInfo.isPublica ? 'success' : 'neutral'
+            },
+            {
+                label: ead ? 'Modalidade EaD' : 'Presencial',
+                variant: 'primary',
+                icon: ead ? <Wifi size={11} /> : <Building2 size={11} />
+            },
+            {
+                label: isSemi ? 'Semiárido Baiano' : 'Fora do Semiárido',
+                variant: isSemi ? 'warning' : 'neutral'
+            }
+        ];
+
+        const metrics = [
+            { label: 'Instituição (IES)', value: iesFull, fullWidth: true },
+            { label: 'Sigla da IES', value: iesSigla || '-' },
+            { label: 'Município de Oferta', value: munNome },
+            { label: 'Território de Identidade', value: terrNome, fullWidth: true },
+            { label: 'Oferta da IES na BA', value: `${cursosMesmaIes.length} curso(s)`, tabular: true },
+            { label: 'Cursos no Município', value: `${cursosMesmoMun.length} curso(s)`, tabular: true },
+            { label: 'Mesma Área na BA', value: `${cursosMesmaArea.length} curso(s)`, tabular: true },
+            {
+                label: 'IFDM Educação (Terr.)',
+                value: territorioInfo?.ifdm_educacao != null ? Number(territorioInfo.ifdm_educacao).toFixed(3).replace('.', ',') : '-',
+                tabular: true
+            }
+        ];
+
+        const extraSection = outrosCursosIesMun.length > 0 ? (
+            <div className="rounded-xl bg-zinc-50/90 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col gap-2 shrink-0">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    Outros cursos de {iesSigla || iesFull} em {munNome} ({outrosCursosIesMun.length})
+                </span>
+                <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-1">
+                    {outrosCursosIesMun.slice(0, 10).map((outro, i) => (
+                        <button
+                            key={outro.id || `${outro.curso || outro.nome}-${i}`}
+                            type="button"
+                            onClick={() => {
+                                setSelectedCurso(outro);
+                                setSelectedCursoId(outro.id || outro.id_curso || `${outro.curso || outro.nome}`);
+                            }}
+                            title={outro.curso || outro.nome}
+                            className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 truncate max-w-full transition-colors cursor-pointer"
+                        >
+                            {outro.curso || outro.nome}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        ) : null;
+
+        const targetIesFilter = iesSigla || iesFull;
+        const isCurrentIesFiltered = selectedIES && (
+            (iesSigla && selectedIES.toUpperCase() === iesSigla) ||
+            selectedIES === iesFull
+        );
+
+        return {
+            title: selectedCurso.curso || selectedCurso.nome || 'Curso de CT&I',
+            subtitle: `${iesSigla ? `${iesSigla} · ` : ''}${munNome} · ${terrNome}`,
+            badgeText: areaNome,
+            accentColor,
+            icon: ead ? Laptop : GraduationCap,
+            statusPills,
+            metrics,
+            extraSection,
+            externalUrl: selectedCurso.url_referencia || null,
+            secondaryAction: targetIesFilter
+                ? {
+                      label: isCurrentIesFiltered ? 'Remover filtro IES' : `Filtrar ${iesSigla || 'IES'}`,
+                      icon: <Building2 size={13} />,
+                      onClick: () => setSelectedIES(isCurrentIesFiltered ? null : targetIesFilter)
+                  }
+                : null
+        };
+    }, [selectedCurso, cursosData, cursosEadData, territoriosData, categoryColorMap, filtroSemiarido, selectedIES]);
+
     const kpis = [
         {
             label: filtroSemiarido
@@ -674,6 +788,9 @@ export default function CursosPage() {
                     }`} />
                 </div>
             </div>
+
+            {/* CONTAINER DE CONTEÚDO (KPIS + MAPA + PAINEL DIREITO + ILHA FLUTUANTE POR CIMA) */}
+            <div className="flex-1 min-h-0 min-w-0 flex flex-col gap-5 relative z-10">
 
             {/* GRID DE KPIS */}
             <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
@@ -816,7 +933,10 @@ export default function CursosPage() {
                                     <Button
                                         variant="ghost"
                                         size="xs"
-                                        onClick={() => setSelectedCursoId(null)}
+                                        onClick={() => {
+                                            setSelectedCursoId(null);
+                                            setSelectedCurso(null);
+                                        }}
                                         className="text-caption text-text-secondary hover:text-danger-600"
                                     >
                                         Limpar
@@ -850,7 +970,13 @@ export default function CursosPage() {
                                                 key={cursoKey}
                                                 style={{ contentVisibility: 'auto', containIntrinsicSize: '0 56px' }}
                                                 onClick={() => {
-                                                    setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
+                                                    if (isSelected) {
+                                                        setSelectedCursoId(null);
+                                                        setSelectedCurso(null);
+                                                    } else {
+                                                        setSelectedCursoId(cursoKey);
+                                                        setSelectedCurso(c);
+                                                    }
                                                 }}
                                                 title={`${c.curso || c.nome} (${redeInfo.isPublica ? 'Pública' : 'Privada'})\n${c.categoria || c.tipo || ''}`}
                                                 className={`rounded-card p-2.5 flex items-center justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full ${isSelected
@@ -1293,7 +1419,13 @@ export default function CursosPage() {
                                                         }}
                                                         style={{ contentVisibility: 'auto', containIntrinsicSize: '0 88px' }}
                                                         onClick={() => {
-                                                            setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
+                                                            if (isSelected) {
+                                                                setSelectedCursoId(null);
+                                                                setSelectedCurso(null);
+                                                            } else {
+                                                                setSelectedCursoId(cursoKey);
+                                                                setSelectedCurso(c);
+                                                            }
                                                         }}
                                                         className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full scroll-mt-2 ${isSelected
                                                             ? (filtroSemiarido
@@ -1500,7 +1632,13 @@ export default function CursosPage() {
                                                         }}
                                                         style={{ contentVisibility: 'auto', containIntrinsicSize: '0 88px' }}
                                                         onClick={() => {
-                                                            setSelectedCursoId(prev => prev === cursoKey ? null : cursoKey);
+                                                            if (isSelected) {
+                                                                setSelectedCursoId(null);
+                                                                setSelectedCurso(null);
+                                                            } else {
+                                                                setSelectedCursoId(cursoKey);
+                                                                setSelectedCurso(c);
+                                                            }
                                                         }}
                                                         className={`rounded-card p-3.5 flex flex-col justify-between gap-2.5 transition-colors duration-150 group cursor-pointer border w-full scroll-mt-2 ${isSelected
                                                             ? (filtroSemiarido
@@ -1978,6 +2116,32 @@ export default function CursosPage() {
                 )}
 
             </motion.div>
+
+            {/* ILHA FLUTUANTE DE DETALHES POR CIMA DOS COMPONENTES ATUAIS */}
+            {selectedCurso && selectedCursoDetails && (
+                <DetailIsland
+                    isOpen={true}
+                    onClose={() => {
+                        setSelectedCursoId(null);
+                        setSelectedCurso(null);
+                    }}
+                    title={selectedCursoDetails.title}
+                    subtitle={selectedCursoDetails.subtitle}
+                    badgeText={selectedCursoDetails.badgeText}
+                    accentColor={selectedCursoDetails.accentColor}
+                    icon={selectedCursoDetails.icon}
+                    statusPills={selectedCursoDetails.statusPills}
+                    metrics={selectedCursoDetails.metrics}
+                    extraSection={selectedCursoDetails.extraSection}
+                    externalUrl={selectedCursoDetails.externalUrl}
+                    externalLabel="Fonte Oficial"
+                    secondaryAction={selectedCursoDetails.secondaryAction}
+                    filtroSemiarido={filtroSemiarido}
+                    className="absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40"
+                />
+            )}
+
+            </div>
 
         </main>
     );

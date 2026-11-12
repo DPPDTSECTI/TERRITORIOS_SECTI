@@ -32,7 +32,8 @@ import {
     KpiSkeleton,
     AnimatedNumber,
     PillBar,
-    ScrollableList
+    ScrollableList,
+    DetailIsland
 } from './ui';
 import { useChartTheme, resolveCssRgb } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -673,6 +674,99 @@ export default function CadeiaPage() {
         return { total, semi, pct };
     }, [enrichedCadeias]);
 
+    const selectedCadeiaDetails = useMemo(() => {
+        if (!selectedCadeia) return null;
+        const totalAbrangencia = (selectedCadeia.municipios_cobertos && selectedCadeia.municipios_cobertos.length > 0)
+            ? selectedCadeia.municipios_cobertos.length
+            : 1;
+        const munsList = (selectedCadeia.municipios_cobertos && selectedCadeia.municipios_cobertos.length > 0)
+            ? selectedCadeia.municipios_cobertos
+            : [{ id_municipio: selectedCadeia.id_sede || 1, nome_municipio: selectedCadeia.municipio_sede }];
+        const qtdSemi = munsList.filter(m => isMunicipioSemiarido(m.nome_municipio)).length;
+        const isSemi = isCadeiaSemiarido(selectedCadeia);
+        const accentColor = filtroSemiarido
+            ? getSemiaridoArrangementColor(selectedCadeia.tipo, chartTheme)
+            : (selectedCadeia.corHex || '#2563EB');
+
+        const cadeiasMesmoSegmento = enrichedCadeias.filter(c => c.segmento === selectedCadeia.segmento);
+        const tipoVar = getTipoBadgeVariant(selectedCadeia.tipo);
+
+        const statusPills = [
+            {
+                label: selectedCadeia.tipo,
+                variant: tipoVar === 'warning' ? 'warning' : tipoVar === 'success' ? 'success' : 'primary'
+            },
+            {
+                label: isSemi ? 'Presente no Semiárido' : 'Fora do Semiárido',
+                variant: isSemi ? 'warning' : 'neutral'
+            }
+        ];
+
+        const metrics = [
+            { label: 'Segmento Produtivo', value: selectedCadeia.segmento, fullWidth: true },
+            { label: 'Município Sede', value: selectedCadeia.municipio_sede },
+            { label: 'Território Sede', value: selectedCadeia.territorio_identidade },
+            { label: 'Abrangência Total', value: `${totalAbrangencia} município(s)`, tabular: true },
+            { label: 'No Semiárido', value: `${qtdSemi} de ${totalAbrangencia} munic.`, tabular: true },
+            { label: 'Arranjos no Segmento', value: `${cadeiasMesmoSegmento.length} na Bahia`, tabular: true },
+            {
+                label: 'Coordenadas da Sede',
+                value: selectedCadeia.lat && selectedCadeia.lng
+                    ? `${Number(selectedCadeia.lat).toFixed(4)}°, ${Number(selectedCadeia.lng).toFixed(4)}°`
+                    : '-',
+                tabular: true
+            }
+        ];
+
+        const extraSection = (
+            <div className="rounded-xl bg-zinc-50/90 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col gap-2 shrink-0">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    Municípios de Abrangência ({munsList.length})
+                </span>
+                <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto pr-1">
+                    {munsList.map((m, i) => {
+                        const isSede = normalizeName(m.nome_municipio) === normalizeName(selectedCadeia.municipio_sede);
+                        return (
+                            <span
+                                key={m.id_municipio || `${m.nome_municipio}-${i}`}
+                                title={isSede ? `${m.nome_municipio} (Sede)` : m.nome_municipio}
+                                className={`text-[11px] font-medium px-2 py-0.5 rounded-md border truncate max-w-full ${
+                                    isSede
+                                        ? 'bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30 font-semibold'
+                                        : 'bg-white dark:bg-zinc-900 border-zinc-200/80 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300'
+                                }`}
+                            >
+                                {m.nome_municipio}{isSede ? ' (Sede)' : ''}
+                            </span>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+
+        const isCurrentSegFiltered = selectedSegmento === selectedCadeia.segmento;
+
+        return {
+            title: selectedCadeia.entidade || selectedCadeia.nome,
+            subtitle: `Sede em ${selectedCadeia.municipio_sede} · ${selectedCadeia.territorio_identidade}`,
+            badgeText: `${selectedCadeia.tipo} · ${selectedCadeia.segmento}`,
+            accentColor,
+            icon: selectedCadeia.icone || Wheat,
+            statusPills,
+            metrics,
+            extraSection,
+            referenceQuote: selectedCadeia.texto_referencia || null,
+            externalUrl: selectedCadeia.fonte || null,
+            secondaryAction: selectedCadeia.segmento
+                ? {
+                      label: isCurrentSegFiltered ? 'Limpar Segmento' : 'Filtrar Segmento',
+                      icon: <Layers size={13} />,
+                      onClick: () => setSelectedSegmento(isCurrentSegFiltered ? null : selectedCadeia.segmento)
+                  }
+                : null
+        };
+    }, [selectedCadeia, enrichedCadeias, filtroSemiarido, chartTheme, selectedSegmento]);
+
     const kpis = [
         {
             label: filtroSemiarido
@@ -784,6 +878,9 @@ export default function CadeiaPage() {
                     />
                 </div>
             </div>
+
+            {/* CONTAINER DE CONTEÚDO (KPIS + MAPA + PAINEL DIREITO + ILHA FLUTUANTE POR CIMA) */}
+            <div className="flex-1 min-h-0 min-w-0 flex flex-col gap-5 relative z-10">
 
             {/* GRID DE KPIS */}
             <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
@@ -1575,6 +1672,33 @@ export default function CadeiaPage() {
                 )}
 
             </motion.div>
+
+            {/* ILHA FLUTUANTE DE DETALHES POR CIMA DOS COMPONENTES ATUAIS */}
+            {selectedCadeia && selectedCadeiaDetails && (
+                <DetailIsland
+                    isOpen={true}
+                    onClose={() => {
+                        setSelectedCadeia(null);
+                        setFocusedAsset(null);
+                    }}
+                    title={selectedCadeiaDetails.title}
+                    subtitle={selectedCadeiaDetails.subtitle}
+                    badgeText={selectedCadeiaDetails.badgeText}
+                    accentColor={selectedCadeiaDetails.accentColor}
+                    icon={selectedCadeiaDetails.icon}
+                    statusPills={selectedCadeiaDetails.statusPills}
+                    metrics={selectedCadeiaDetails.metrics}
+                    extraSection={selectedCadeiaDetails.extraSection}
+                    referenceQuote={selectedCadeiaDetails.referenceQuote}
+                    externalUrl={selectedCadeiaDetails.externalUrl}
+                    externalLabel="Acessar Fonte Oficial"
+                    secondaryAction={selectedCadeiaDetails.secondaryAction}
+                    filtroSemiarido={filtroSemiarido}
+                    className="absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40"
+                />
+            )}
+
+            </div>
 
         </main>
     );

@@ -33,7 +33,8 @@ import {
     ListRowSkeleton,
     AnimatedNumber,
     PillBar,
-    ScrollableList
+    ScrollableList,
+    DetailIsland
 } from './ui';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
@@ -487,6 +488,114 @@ export default function AtivosPage() {
         return { semiAtivos, pctAtivos };
     }, [territoryAtivos]);
 
+    // Ativo selecionado e indicadores contextuais para a Ilha Flutuante de Detalhes
+    const selectedAsset = useMemo(() => {
+        if (!selectedAssetId) return null;
+        return ativosProcessados.find(a => a.id === selectedAssetId) || null;
+    }, [ativosProcessados, selectedAssetId]);
+
+    const selectedAssetDetails = useMemo(() => {
+        if (!selectedAsset) return null;
+        const munNorm = normalizeName(selectedAsset.municipio);
+        const terrNorm = selectedAsset.normTerritorio;
+
+        const ativosMesmoMunicipio = ativosProcessados.filter(a => normalizeName(a.municipio) === munNorm);
+        const outrosAtivosMunicipio = ativosMesmoMunicipio.filter(a => a.id !== selectedAsset.id);
+        const ativosMesmoTerritorio = ativosProcessados.filter(a => a.normTerritorio === terrNorm);
+        const ativosMesmoTipo = ativosProcessados.filter(a => a.tipo === selectedAsset.tipo);
+        const pctMesmoTipo = ativosProcessados.length > 0
+            ? ((ativosMesmoTipo.length / ativosProcessados.length) * 100).toFixed(1)
+            : '0.0';
+
+        const territorioInfo = (territoriosData || []).find(t =>
+            (selectedAsset.id_territorio && Number(t.id_territorio) === Number(selectedAsset.id_territorio)) ||
+            normalizeTerritoryName(t.nome_territorio || t.territorio || '') === terrNorm
+        );
+
+        const isSemi = isMunicipioSemiarido(selectedAsset.municipio);
+        const accentColor = filtroSemiarido
+            ? getSemiaridoPointColor(isDark ? (selectedAsset.corHexDark || selectedAsset.corHex) : selectedAsset.corHex, selectedAsset.tipo || selectedAsset.shortTipo || selectedAsset.nome, isDark)
+            : (isDark ? (selectedAsset.corHexDark || selectedAsset.corHex || '#60A5FA') : (selectedAsset.corHex || '#2563EB'));
+
+        const statusPills = [
+            ...(selectedAsset.sigla ? [{ label: selectedAsset.sigla, variant: 'primary' }] : []),
+            {
+                label: selectedAsset.rnp ? 'Conectado à RNP' : 'Sem conexão RNP',
+                variant: selectedAsset.rnp ? 'success' : 'neutral',
+                icon: <Network size={11} />
+            },
+            {
+                label: isSemi ? 'Semiárido Baiano' : 'Fora do Semiárido',
+                variant: isSemi ? 'warning' : 'neutral'
+            }
+        ];
+
+        const metrics = [
+            { label: 'Município', value: selectedAsset.municipio },
+            { label: 'Território', value: selectedAsset.territorio },
+            { label: 'Ativos no Município', value: `${ativosMesmoMunicipio.length} mapeado(s)`, tabular: true },
+            { label: 'Ativos no Território', value: `${ativosMesmoTerritorio.length} mapeado(s)`, tabular: true },
+            { label: 'Mesma Tipologia na BA', value: `${ativosMesmoTipo.length} (${pctMesmoTipo}%)`, tabular: true },
+            {
+                label: 'IFDM do Território',
+                value: territorioInfo?.ifdm_geral != null ? Number(territorioInfo.ifdm_geral).toFixed(3).replace('.', ',') : '-',
+                tabular: true
+            },
+            {
+                label: 'Coordenadas Geográficas',
+                value: selectedAsset.lat && selectedAsset.lng
+                    ? `${Number(selectedAsset.lat).toFixed(4)}°, ${Number(selectedAsset.lng).toFixed(4)}°`
+                    : '-',
+                tabular: true,
+                fullWidth: true
+            },
+            ...(selectedAsset.tituloReferencia
+                ? [{ label: 'Referência / Unidade', value: selectedAsset.tituloReferencia, fullWidth: true }]
+                : [])
+        ];
+
+        const extraSection = outrosAtivosMunicipio.length > 0 ? (
+            <div className="rounded-xl bg-zinc-50/90 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col gap-2 shrink-0">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    Outros ativos em {selectedAsset.municipio} ({outrosAtivosMunicipio.length})
+                </span>
+                <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-1">
+                    {outrosAtivosMunicipio.slice(0, 12).map((outro) => (
+                        <button
+                            key={outro.id}
+                            type="button"
+                            onClick={() => {
+                                setSelectedAssetId(outro.id);
+                                if (outro.lat && outro.lng) {
+                                    setFocusedAsset({
+                                        lat: outro.lat,
+                                        lng: outro.lng,
+                                        id: outro.id,
+                                        tipo: outro.tipo,
+                                        zoom: 15,
+                                        ts: Date.now()
+                                    });
+                                }
+                            }}
+                            title={outro.nome}
+                            className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 truncate max-w-full transition-colors cursor-pointer"
+                        >
+                            {outro.sigla || outro.nome}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        ) : null;
+
+        return {
+            accentColor,
+            statusPills,
+            metrics,
+            extraSection,
+            externalUrl: selectedAsset.urlReferencia || null
+        };
+    }, [selectedAsset, ativosProcessados, territoriosData, filtroSemiarido, isDark]);
+
     // 7. 5 Indicadores Estratégicos (KPIs com adaptação contextual à região e ao Semiárido)
     const kpis = [
         {
@@ -596,6 +705,9 @@ export default function AtivosPage() {
                     />
                 </div>
             </div>
+
+            {/* CONTAINER DE CONTEÚDO (KPIS + MAPA + PAINEL DIREITO + ILHA FLUTUANTE POR CIMA) */}
+            <div className="flex-1 min-h-0 min-w-0 flex flex-col gap-5 relative z-10">
 
             {/* GRID DE KPIS */}
             <div className="tour-kpis w-full relative z-10 shrink-0 min-w-0">
@@ -1713,6 +1825,48 @@ export default function AtivosPage() {
                 )}
 
             </motion.div>
+
+            {/* ILHA FLUTUANTE DE DETALHES POR CIMA DOS COMPONENTES ATUAIS */}
+            {selectedAsset && selectedAssetDetails && (
+                <DetailIsland
+                    isOpen={true}
+                    onClose={() => {
+                        setSelectedAssetId(null);
+                        setFocusedAsset(null);
+                    }}
+                    title={selectedAsset.nome}
+                    subtitle={`${selectedAsset.municipio} · ${selectedAsset.territorio}`}
+                    badgeText={selectedAsset.tipo}
+                    accentColor={selectedAssetDetails.accentColor}
+                    icon={selectedAsset.icone || Database}
+                    statusPills={selectedAssetDetails.statusPills}
+                    metrics={selectedAssetDetails.metrics}
+                    extraSection={selectedAssetDetails.extraSection}
+                    externalUrl={selectedAssetDetails.externalUrl}
+                    externalLabel="Acessar Site Oficial"
+                    secondaryAction={
+                        selectedAsset.lat && selectedAsset.lng
+                            ? {
+                                  label: 'Focar no Mapa',
+                                  icon: <MapPin size={15} />,
+                                  onClick: () =>
+                                      setFocusedAsset({
+                                          lat: selectedAsset.lat,
+                                          lng: selectedAsset.lng,
+                                          id: selectedAsset.id,
+                                          tipo: selectedAsset.tipo,
+                                          zoom: 15,
+                                          ts: Date.now()
+                                      })
+                              }
+                            : null
+                    }
+                    filtroSemiarido={filtroSemiarido}
+                    className="absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40"
+                />
+            )}
+
+            </div>
 
         </main>
     );
