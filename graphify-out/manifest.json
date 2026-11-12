@@ -156,21 +156,21 @@
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1794425490.2474325,
-    "seen": 1794425608.884235,
-    "ast_hash": "292069e982dd4c6d2399726b3ba1040b",
+    "mtime": 1794502066.083346,
+    "seen": 1794502200.4769719,
+    "ast_hash": "13cbb6a56e2a2fae654f11591a8af8c0",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
-    "mtime": 1794425582.9212077,
-    "seen": 1794425608.884235,
-    "ast_hash": "bd6426861eb016f4adbd0cff38eb8665",
+    "mtime": 1794502066.1170769,
+    "seen": 1794502200.4769719,
+    "ast_hash": "ecad128ec33de93cf387b3a4b99cf6f9",
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {
-    "mtime": 1794425573.4035537,
-    "seen": 1794425608.884235,
-    "ast_hash": "67ca73a020a10bd7c74a49224e3cd832",
+    "mtime": 1794502066.083346,
+    "seen": 1794502200.4769719,
+    "ast_hash": "83f53c5c2e8a2655889b11236198e35f",
     "semantic_hash": ""
   },
   "src/components/DashboardPainel.jsx": {
@@ -720,9 +720,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/DetailIsland.jsx": {
-    "mtime": 1794425437.230479,
-    "seen": 1794425608.884235,
-    "ast_hash": "5dffe5545b5432c51baaaf5e1678c580",
+    "mtime": 1794501856.5321155,
+    "seen": 1794502200.4769719,
+    "ast_hash": "749148601c04df8070895834486f99f2",
     "semantic_hash": ""
   },
   "package-lock.json": {
