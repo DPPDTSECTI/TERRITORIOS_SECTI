@@ -12,6 +12,7 @@ import {
   Sun,
   Moon,
   HelpCircle,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { IconButton } from './ui/Button';
@@ -22,7 +23,7 @@ import { useData } from '../context/DataContext';
 export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
-  const { filtroSemiarido } = useData();
+  const { filtroSemiarido, crudStats } = useData();
 
   const [isPinned, setIsPinned] = useState(() => {
     try {
@@ -59,6 +60,117 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
     { path: '/cadeia', label: 'Cadeia', icon: GitPullRequest, tourClass: 'tour-nav-cadeias' },
     { path: '/cursos', label: 'Cursos CT&I', icon: GraduationCap, tourClass: 'tour-nav-cursos' },
   ];
+
+  const adminItems = [
+    {
+      path: '/admin',
+      label: 'Gestão CRUD',
+      icon: SlidersHorizontal,
+      tourClass: 'tour-nav-admin',
+      badgeCount: crudStats?.total > 0 ? crudStats.total : 0,
+    },
+  ];
+
+  const renderSectionLabel = (text) => (
+    <div className="w-full h-5 flex items-center px-2 shrink-0">
+      <span
+        className={cn(
+          'text-caption font-semibold uppercase tracking-wider transition-all duration-200 ease-standard text-[11px]',
+          filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted',
+          isExpanded ? 'opacity-100' : 'opacity-0 -translate-x-2 pointer-events-none'
+        )}
+      >
+        {text}
+      </span>
+    </div>
+  );
+
+  const renderNavItem = (item) => {
+    const isActive = location.pathname === item.path;
+    const Icon = item.icon;
+
+    return (
+      <div key={item.path} className="w-full shrink-0">
+        <Link
+          to={item.path}
+          title={!isExpanded ? item.label : undefined}
+          className={cn(
+            'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2',
+            filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
+            item.tourClass,
+            isActive
+              ? isExpanded
+                ? (filtroSemiarido
+                    ? 'bg-amber-100/80 dark:bg-amber-950/50 text-amber-950 dark:text-amber-100 font-semibold border border-amber-300/50 dark:border-amber-600/30'
+                    : 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold')
+                : 'text-white'
+              : (filtroSemiarido
+                  ? 'text-text-secondary hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-50/80 dark:hover:bg-amber-950/30'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
+          )}
+        >
+          <div
+            className={cn(
+              'w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-150',
+              !isActive && 'group-hover:scale-105'
+            )}
+          >
+            <div
+              className={cn(
+                'relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150',
+                isActive
+                  ? (filtroSemiarido
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white shadow-xs shadow-amber-500/30'
+                      : 'bg-carbon dark:bg-primary-600 text-white shadow-xs')
+                  : (filtroSemiarido
+                      ? 'text-text-muted group-hover:text-amber-600 dark:group-hover:text-amber-400'
+                      : 'text-text-muted group-hover:text-text-primary')
+              )}
+            >
+              <Icon
+                size={17}
+                strokeWidth={1.75}
+                className={isActive ? 'text-white' : 'currentColor'}
+              />
+              {!isExpanded && item.badgeCount > 0 && (
+                <span
+                  aria-hidden="true"
+                  className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-amber-500 ring-2 ring-white dark:ring-carbon"
+                />
+              )}
+            </div>
+          </div>
+
+          <span
+            className={cn(
+              'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2 pl-1 flex-1',
+              isExpanded
+                ? 'opacity-100'
+                : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
+              isActive
+                ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
+                : 'font-medium text-text-secondary'
+            )}
+          >
+            {item.label}
+          </span>
+
+          {isExpanded && item.badgeCount > 0 && (
+            <span
+              className={cn(
+                'mr-2.5 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums rounded-full border shrink-0',
+                filtroSemiarido
+                  ? 'bg-amber-500/15 text-amber-800 dark:text-amber-200 border-amber-500/30'
+                  : 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20'
+              )}
+            >
+              {item.badgeCount}
+            </span>
+          )}
+        </Link>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -128,170 +240,22 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
         {/* ================= NAVEGAÇÃO ================= */}
         <nav className="flex-1 min-h-0 w-full flex flex-col gap-1 overflow-y-auto overflow-x-hidden scrollbar-none pt-1">
           {/* SEÇÃO: MENU */}
-          <div className="w-full h-5 flex items-center px-2 shrink-0">
-            <span
-              className={cn(
-                'text-caption font-semibold uppercase tracking-wider transition-all duration-200 ease-standard text-[11px]',
-                filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted',
-                isExpanded ? 'opacity-100' : 'opacity-0 -translate-x-2 pointer-events-none'
-              )}
-            >
-              Menu
-            </span>
-          </div>
-
-          {navItemsGroup1.map((item) => {
-            const isActive = location.pathname === item.path;
-            const Icon = item.icon;
-
-            return (
-              <div key={item.path} className="w-full shrink-0">
-                <Link
-                  to={item.path}
-                  title={!isExpanded ? item.label : undefined}
-                  className={cn(
-                    'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2',
-                    filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
-                    item.tourClass,
-                    isActive
-                      ? isExpanded
-                        ? (filtroSemiarido
-                            ? 'bg-amber-100/80 dark:bg-amber-950/50 text-amber-950 dark:text-amber-100 font-semibold border border-amber-300/50 dark:border-amber-600/30'
-                            : 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold')
-                        : 'text-white'
-                      : (filtroSemiarido
-                          ? 'text-text-secondary hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-50/80 dark:hover:bg-amber-950/30'
-                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-150',
-                      !isActive && 'group-hover:scale-105'
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150',
-                        isActive
-                          ? (filtroSemiarido
-                              ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white shadow-xs shadow-amber-500/30'
-                              : 'bg-carbon dark:bg-primary-600 text-white shadow-xs')
-                          : (filtroSemiarido
-                              ? 'text-text-muted group-hover:text-amber-600 dark:group-hover:text-amber-400'
-                              : 'text-text-muted group-hover:text-text-primary')
-                      )}
-                    >
-                      <Icon
-                        size={17}
-                        strokeWidth={1.75}
-                        className={isActive ? 'text-white' : 'currentColor'}
-                      />
-                    </div>
-                  </div>
-
-                  <span
-                    className={cn(
-                      'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2 pl-1',
-                      isExpanded
-                        ? 'opacity-100'
-                        : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
-                      isActive
-                        ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
-                        : 'font-medium text-text-secondary'
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </Link>
-              </div>
-            );
-          })}
+          {renderSectionLabel('Menu')}
+          {navItemsGroup1.map(renderNavItem)}
 
           {/* SEÇÃO: MÓDULOS */}
           {!navOnly && (
             <div className="mt-3 flex flex-col gap-1 w-full shrink-0">
-              <div className="w-full h-5 flex items-center px-2 shrink-0">
-                <span
-                  className={cn(
-                    'text-caption font-semibold uppercase tracking-wider transition-all duration-200 ease-standard text-[11px]',
-                    filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted',
-                    isExpanded ? 'opacity-100' : 'opacity-0 -translate-x-2 pointer-events-none'
-                  )}
-                >
-                  Módulos
-                </span>
-              </div>
-
-              {modulesItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                const Icon = item.icon;
-
-                return (
-                  <div key={item.path} className="w-full shrink-0">
-                    <Link
-                      to={item.path}
-                      title={!isExpanded ? item.label : undefined}
-                      className={cn(
-                        'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2',
-                        filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
-                        item.tourClass,
-                        isActive
-                          ? isExpanded
-                            ? (filtroSemiarido
-                                ? 'bg-amber-100/80 dark:bg-amber-950/50 text-amber-950 dark:text-amber-100 font-semibold border border-amber-300/50 dark:border-amber-600/30'
-                                : 'bg-surface-soft dark:bg-surface-raised text-text-primary font-semibold')
-                            : 'text-white'
-                          : (filtroSemiarido
-                              ? 'text-text-secondary hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-50/80 dark:hover:bg-amber-950/30'
-                              : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          'w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-150',
-                          !isActive && 'group-hover:scale-105'
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150',
-                            isActive
-                              ? (filtroSemiarido
-                                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white shadow-xs shadow-amber-500/30'
-                                  : 'bg-carbon dark:bg-primary-600 text-white shadow-xs')
-                              : (filtroSemiarido
-                                  ? 'text-text-muted group-hover:text-amber-600 dark:group-hover:text-amber-400'
-                                  : 'text-text-muted group-hover:text-text-primary')
-                          )}
-                        >
-                          <Icon
-                            size={17}
-                            strokeWidth={1.75}
-                            className={isActive ? 'text-white' : 'currentColor'}
-                          />
-                        </div>
-                      </div>
-
-                      <span
-                        className={cn(
-                          'text-body-sm tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pr-2 pl-1',
-                          isExpanded
-                            ? 'opacity-100'
-                            : 'w-0 opacity-0 -translate-x-2 pointer-events-none',
-                          isActive
-                            ? (filtroSemiarido ? 'font-semibold text-amber-950 dark:text-amber-100' : 'font-semibold text-text-primary')
-                            : 'font-medium text-text-secondary'
-                        )}
-                      >
-                        {item.label}
-                      </span>
-                    </Link>
-                  </div>
-                );
-              })}
+              {renderSectionLabel('Módulos')}
+              {modulesItems.map(renderNavItem)}
             </div>
           )}
+
+          {/* SEÇÃO: ADMINISTRAÇÃO / CRUD */}
+          <div className="mt-3 flex flex-col gap-1 w-full shrink-0">
+            {renderSectionLabel('Gestão')}
+            {adminItems.map(renderNavItem)}
+          </div>
         </nav>
 
         {/* ================= RODAPÉ DA SIDEBAR: BRASÃO, MODO ESCURO & TUTORIAL ================= */}

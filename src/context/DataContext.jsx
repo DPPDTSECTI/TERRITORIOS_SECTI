@@ -1,6 +1,18 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 import { getTextoReferencia } from '../data/referenciasDB';
+import {
+  ENTITY_META,
+  createEmptyDraft,
+  loadCrudDraft,
+  saveCrudDraft,
+  clearCrudDraft,
+  getEntityItemId,
+  getEntityItemLabel,
+  applyCrudPatch,
+  applyCadeiasDistribuicaoPatch,
+  countDraftChanges,
+} from '../utils/crudDraft';
 
 export const DataContext = createContext();
 
@@ -13,13 +25,14 @@ const CACHE_KEY = '@SectiPainel_Data_v14_SUPABASE_PROD';
 const CACHE_TIME_MS = 10 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
-  const [territoriosData, setTerritoriosData] = useState([]);
-  const [ativosData, setAtivosData] = useState([]);
-  const [cursosData, setCursosData] = useState([]);
+  const [baseTerritoriosData, setBaseTerritoriosData] = useState([]);
+  const [baseAtivosData, setBaseAtivosData] = useState([]);
+  const [baseCursosData, setBaseCursosData] = useState([]);
   const [cursosEadData, setCursosEadData] = useState([]);
-  const [distribuicaoCadeias, setDistribuicaoCadeias] = useState([]);
-  const [listaCadeias, setListaCadeias] = useState([]);
+  const [baseDistribuicaoCadeias, setBaseDistribuicaoCadeias] = useState([]);
+  const [baseListaCadeias, setBaseListaCadeias] = useState([]);
   const [municipiosTerritorios, setMunicipiosTerritorios] = useState([]);
+  const [crudDraft, setCrudDraft] = useState(() => loadCrudDraft());
   
   const [tiposAtivos, setTiposAtivos] = useState([]);
   const [tiposCursos, setTiposCursos] = useState([]);
@@ -57,12 +70,12 @@ export const DataProvider = ({ children }) => {
           const idadeDoCache = Date.now() - cache.timestamp;
 
           if (cache.distCadeias && cache.distCadeias.length > 88 && idadeDoCache < CACHE_TIME_MS) {
-            setTerritoriosData(cache.stats || []);
-            setAtivosData(cache.ativos || []);
-            setCursosData(cache.cursos || []);
+            setBaseTerritoriosData(cache.stats || []);
+            setBaseAtivosData(cache.ativos || []);
+            setBaseCursosData(cache.cursos || []);
             setCursosEadData(cache.cursosEad || []);
-            setDistribuicaoCadeias(cache.distCadeias || []);
-            setListaCadeias(cache.listaCadeias || []);
+            setBaseDistribuicaoCadeias(cache.distCadeias || []);
+            setBaseListaCadeias(cache.listaCadeias || []);
             setMunicipiosTerritorios(cache.munTer || []);
             setTiposAtivos(cache.tiposAtivos || []);
             setTiposCursos(cache.tiposCursos || []);
@@ -205,12 +218,12 @@ export const DataProvider = ({ children }) => {
           console.warn("LocalStorage lotado, rodando sem cache.");
         }
 
-        setTerritoriosData(novoCache.stats);
-        setAtivosData(novoCache.ativos);
-        setCursosData(novoCache.cursos);
+        setBaseTerritoriosData(novoCache.stats);
+        setBaseAtivosData(novoCache.ativos);
+        setBaseCursosData(novoCache.cursos);
         setCursosEadData(novoCache.cursosEad);
-        setDistribuicaoCadeias(novoCache.distCadeias);
-        setListaCadeias(novoCache.listaCadeias);
+        setBaseDistribuicaoCadeias(novoCache.distCadeias);
+        setBaseListaCadeias(novoCache.listaCadeias);
         setMunicipiosTerritorios(novoCache.munTer);
         setTiposAtivos(novoCache.tiposAtivos);
         setTiposCursos(novoCache.tiposCursos);
@@ -225,6 +238,215 @@ export const DataProvider = ({ children }) => {
 
     carregarEstatisticas();
   }, []);
+
+  const persistDraft = useCallback((updater) => {
+    setCrudDraft((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater;
+      saveCrudDraft(next);
+      return next;
+    });
+  }, []);
+
+  const createCrudItem = useCallback(
+    (entity, payload) => {
+      const meta = ENTITY_META[entity];
+      if (!meta) return null;
+      const newId = `draft-${entity}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const record = {
+        ...payload,
+        id: newId,
+        [meta.idKey]: newId,
+      };
+      const label = getEntityItemLabel(entity, record);
+
+      persistDraft((prev) => ({
+        ...prev,
+        [entity]: {
+          ...prev[entity],
+          added: [record, ...(prev[entity]?.added || [])],
+        },
+        auditLog: [
+          {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            entity,
+            action: 'create',
+            targetId: newId,
+            label,
+            timestamp: new Date().toISOString(),
+          },
+          ...(prev.auditLog || []),
+        ].slice(0, 50),
+      }));
+
+      return record;
+    },
+    [persistDraft]
+  );
+
+  const updateCrudItem = useCallback(
+    (entity, targetId, payload) => {
+      const idStr = String(targetId);
+      const label = getEntityItemLabel(entity, payload);
+
+      persistDraft((prev) => {
+        const slice = prev[entity] || { added: [], updated: {}, deleted: [] };
+        const isAdded = (slice.added || []).some((item) => getEntityItemId(entity, item) === idStr);
+
+        const nextAdded = isAdded
+          ? slice.added.map((item) =>
+              getEntityItemId(entity, item) === idStr ? { ...item, ...payload } : item
+            )
+          : slice.added;
+
+        const nextUpdated = isAdded
+          ? slice.updated
+          : {
+              ...slice.updated,
+              [idStr]: { ...(slice.updated?.[idStr] || {}), ...payload },
+            };
+
+        return {
+          ...prev,
+          [entity]: {
+            ...slice,
+            added: nextAdded,
+            updated: nextUpdated,
+          },
+          auditLog: [
+            {
+              id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+              entity,
+              action: 'update',
+              targetId: idStr,
+              label,
+              timestamp: new Date().toISOString(),
+            },
+            ...(prev.auditLog || []),
+          ].slice(0, 50),
+        };
+      });
+    },
+    [persistDraft]
+  );
+
+  const deleteCrudItem = useCallback(
+    (entity, targetId, labelOverride) => {
+      const idStr = String(targetId);
+
+      persistDraft((prev) => {
+        const slice = prev[entity] || { added: [], updated: {}, deleted: [] };
+        const isAdded = (slice.added || []).some((item) => getEntityItemId(entity, item) === idStr);
+        const nextAdded = isAdded
+          ? slice.added.filter((item) => getEntityItemId(entity, item) !== idStr)
+          : slice.added;
+
+        const nextUpdated = { ...(slice.updated || {}) };
+        delete nextUpdated[idStr];
+
+        const nextDeleted = isAdded
+          ? slice.deleted
+          : Array.from(new Set([...(slice.deleted || []).map(String), idStr]));
+
+        return {
+          ...prev,
+          [entity]: {
+            ...slice,
+            added: nextAdded,
+            updated: nextUpdated,
+            deleted: nextDeleted,
+          },
+          auditLog: [
+            {
+              id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+              entity,
+              action: 'delete',
+              targetId: idStr,
+              label: labelOverride || idStr,
+              timestamp: new Date().toISOString(),
+            },
+            ...(prev.auditLog || []),
+          ].slice(0, 50),
+        };
+      });
+    },
+    [persistDraft]
+  );
+
+  const resetCrudDrafts = useCallback(() => {
+    clearCrudDraft();
+    setCrudDraft(createEmptyDraft());
+  }, []);
+
+  const crudStats = useMemo(() => countDraftChanges(crudDraft), [crudDraft]);
+
+  const ativosData = useMemo(
+    () => applyCrudPatch(baseAtivosData, crudDraft.ativos, 'ativos'),
+    [baseAtivosData, crudDraft.ativos]
+  );
+
+  const cursosData = useMemo(
+    () => applyCrudPatch(baseCursosData, crudDraft.cursos, 'cursos'),
+    [baseCursosData, crudDraft.cursos]
+  );
+
+  const listaCadeias = useMemo(
+    () => applyCrudPatch(baseListaCadeias, crudDraft.cadeias, 'cadeias'),
+    [baseListaCadeias, crudDraft.cadeias]
+  );
+
+  const distribuicaoCadeias = useMemo(
+    () => applyCadeiasDistribuicaoPatch(baseDistribuicaoCadeias, crudDraft.cadeias),
+    [baseDistribuicaoCadeias, crudDraft.cadeias]
+  );
+
+  const territoriosData = useMemo(() => {
+    if (!baseTerritoriosData.length || crudStats.total === 0) {
+      return baseTerritoriosData;
+    }
+
+    const countByTerritory = (list) => {
+      const map = {};
+      list.forEach((item) => {
+        const tid = item?.id_territorio;
+        if (tid != null && tid !== '') {
+          map[tid] = (map[tid] || 0) + 1;
+        }
+      });
+      return map;
+    };
+
+    const baseAtivosByT = countByTerritory(baseAtivosData);
+    const curAtivosByT = countByTerritory(ativosData);
+    const baseCursosByT = countByTerritory(baseCursosData);
+    const curCursosByT = countByTerritory(cursosData);
+    const baseCadeiasByT = countByTerritory(baseListaCadeias);
+    const curCadeiasByT = countByTerritory(listaCadeias);
+
+    return baseTerritoriosData.map((t) => {
+      const tid = t.id_territorio;
+      const deltaAtivos = (curAtivosByT[tid] || 0) - (baseAtivosByT[tid] || 0);
+      const deltaCursos = (curCursosByT[tid] || 0) - (baseCursosByT[tid] || 0);
+      const deltaCadeias = (curCadeiasByT[tid] || 0) - (baseCadeiasByT[tid] || 0);
+
+      if (deltaAtivos === 0 && deltaCursos === 0 && deltaCadeias === 0) return t;
+
+      return {
+        ...t,
+        ativos_cti: Math.max(0, Number(t.ativos_cti || 0) + deltaAtivos),
+        qtd_cursos_cti: Math.max(0, Number(t.qtd_cursos_cti || 0) + deltaCursos),
+        cadeias_produtivas: Math.max(0, Number(t.cadeias_produtivas || 0) + deltaCadeias),
+      };
+    });
+  }, [
+    baseTerritoriosData,
+    crudStats.total,
+    baseAtivosData,
+    ativosData,
+    baseCursosData,
+    cursosData,
+    baseListaCadeias,
+    listaCadeias,
+  ]);
 
  const territoriesDynamicStats = useMemo(() => {
  const stats = {};
@@ -284,7 +506,13 @@ export const DataProvider = ({ children }) => {
  filtroSemiarido,
  setFiltroSemiarido,
  modoGeografico,
- setModoGeografico
+ setModoGeografico,
+ crudDraft,
+ crudStats,
+ createCrudItem,
+ updateCrudItem,
+ deleteCrudItem,
+ resetCrudDrafts,
  }}>
  {children}
  </DataContext.Provider>
