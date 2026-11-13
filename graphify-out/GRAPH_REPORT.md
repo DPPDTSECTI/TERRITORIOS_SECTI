@@ -1,17 +1,17 @@
 # Graph Report - TERRITORIOS_SECTI  (2026-11-13)
 
 ## Corpus Check
-- 114 files · ~167,280 words
+- 114 files · ~167,274 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 723 nodes · 2266 edges · 27 communities (21 shown, 6 thin omitted)
+- 723 nodes · 2277 edges · 27 communities (21 shown, 6 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 57 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `31bcccdc`
+- Built from commit: `1b1a622f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -46,8 +46,8 @@
 1. `react` - 60 edges
 2. `cn()` - 53 edges
 3. `lucide-react` - 38 edges
-4. `useTheme()` - 36 edges
-5. `SideMap()` - 31 edges
+4. `SideMap()` - 36 edges
+5. `useTheme()` - 36 edges
 6. `AdminPage()` - 30 edges
 7. `getSemanticColors()` - 29 edges
 8. `isMunicipioSemiarido()` - 28 edges
@@ -77,7 +77,7 @@ Nodes (83): [Media] Acessibilidade: div onClick, graficos so mouse, Tabs/Dialog/
 
 ### Community 1 - "SideMap.jsx"
 Cohesion: 0.07
-Nodes (63): [Media] lib/format.js nao usado (~38 formatacoes manuais), react-to-print@^3.3.0, react-to-print, getContrastTextColor(), DashboardPainel(), MUN_LOOKUP, normalizeName(), normalizeTerritoryName() (+55 more)
+Nodes (64): [Media] lib/format.js nao usado (~38 formatacoes manuais), react-to-print@^3.3.0, react-to-print, getContrastTextColor(), DashboardPainel(), MUN_LOOKUP, normalizeName(), normalizeTerritoryName() (+56 more)
 
 ### Community 2 - "optimize-images.mjs"
 Cohesion: 0.22
@@ -85,7 +85,7 @@ Nodes (9): README Painel Territorial CT&I, Painel Territorial CT&I SECTI Bahia, 
 
 ### Community 3 - "SideMap.jsx"
 Cohesion: 0.10
-Nodes (50): leaflet@^1.9.4, leaflet, react-leaflet, DARK_CHART_PALETTE, buildTopologiaPayload(), getCachedBahiaTopologia(), loadBahiaTopologia(), CtrlScrollZoom() (+42 more)
+Nodes (49): leaflet@^1.9.4, leaflet, react-leaflet, buildTopologiaPayload(), getCachedBahiaTopologia(), loadBahiaTopologia(), CtrlScrollZoom(), getMapPalette() (+41 more)
 
 ### Community 4 - "dependencies"
 Cohesion: 0.08
@@ -170,7 +170,7 @@ Nodes (21): @dnd-kit/modifiers@^9.0.0, @dnd-kit/utilities@^3.2.2, @fontsource-va
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `react` connect `react` to `SideMap.jsx`, `package.json`, `SideMap.jsx`, `dependencies`, `Design System SECTI Territorios (Bento Grid)`, `CadeiaPage.jsx`, `App.jsx`, `DataContext.jsx`?**
-  _High betweenness centrality (0.147) - this node is a cross-community bridge._
+  _High betweenness centrality (0.146) - this node is a cross-community bridge._
 - **What connects `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao`, `Deploy Vercel (cron, headers, rewrites)` to the rest of the system?**
   _7 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `react` be split into smaller, more focused modules?**
@@ -178,7 +178,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `lucide-react` connect `react` to `SideMap.jsx`, `package.json`, `SideMap.jsx`, `dependencies`, `Design System SECTI Territorios (Bento Grid)`, `CadeiaPage.jsx`, `App.jsx`?**
   _High betweenness centrality (0.066) - this node is a cross-community bridge._
 - **Should `SideMap.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.0694579681921454 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06835443037974684 - nodes in this community are weakly interconnected._
 
 ### Low-confidence Hints
 _AMBIGUOUS edges — the extractor was unsure. Verify before acting on these._
