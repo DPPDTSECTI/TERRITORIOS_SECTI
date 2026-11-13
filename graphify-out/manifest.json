@@ -725,6 +725,54 @@
     "ast_hash": "8bbd8c2f5d9eeccaa8704d3db8e096af",
     "semantic_hash": ""
   },
+  "src/__tests__/utils/crudDraft.test.js": {
+    "mtime": 1794593624.5842335,
+    "seen": 1794593640.0623298,
+    "ast_hash": "a1a98d30b8aff9596fcdffb22c7ee278",
+    "semantic_hash": ""
+  },
+  "src/components/AccessibilityBar.jsx": {
+    "mtime": 1794593624.5842335,
+    "seen": 1794593640.0623298,
+    "ast_hash": "2dfbe204a95a5147a4053aeb49eda775",
+    "semantic_hash": ""
+  },
+  "src/components/maps/CtrlScrollZoom.jsx": {
+    "mtime": 1794593624.6215708,
+    "seen": 1794593640.0623298,
+    "ast_hash": "76f1e38ec89e6521f0a4c4bfdcd5f2c3",
+    "semantic_hash": ""
+  },
+  "src/components/ui/PanelMark.jsx": {
+    "mtime": 1794593624.6539488,
+    "seen": 1794593640.0623298,
+    "ast_hash": "83166298304addcd6a55e54bef6ad006",
+    "semantic_hash": ""
+  },
+  "src/utils/crudDraft.js": {
+    "mtime": 1794593624.6661892,
+    "seen": 1794593640.0623298,
+    "ast_hash": "0f8dc554a5f79f0994dcded6cb8666ad",
+    "semantic_hash": ""
+  },
+  "public/img/SECTI - SECRETARIA DE CIENCIA, TECNOLOGIA E INOVACAO - GOVBA 0126__H.png": {
+    "mtime": 1794593624.5842335,
+    "seen": 1794593640.0623298,
+    "ast_hash": "744a619c6668f51508a665639e954787",
+    "semantic_hash": ""
+  },
+  "public/img/secti-govba-horizontal-branco.svg": {
+    "mtime": 1794593624.5842335,
+    "seen": 1794593640.0623298,
+    "ast_hash": "34e0a1bee59e8d82866761a0fe202aa9",
+    "semantic_hash": ""
+  },
+  "public/img/secti-govba-horizontal.svg": {
+    "mtime": 1794593624.5842335,
+    "seen": 1794593640.0623298,
+    "ast_hash": "a80072a42602ca761e2438b392e1b4af",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
     "mtime": 1794593624.5801165,
     "seen": 1794593628.5299551,
